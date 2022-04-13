@@ -1,0 +1,147 @@
+﻿/*
+ * Created by SharpDevelop.
+ * User: Reika
+ * Date: 04/11/2019
+ * Time: 11:28 AM
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+using System;
+using System.IO;    //For data read/write methods
+using System.Collections;   //Working with Lists and Collections
+using System.Collections.Generic;   //Working with Lists and Collections
+using System.Linq;   //More advanced manipulation of lists/collections
+using System.Reflection;
+using System.Reflection.Emit;
+using HarmonyLib;
+using UnityEngine;  //Needed for most Unity Enginer manipulations: Vectors, GameObjects, Audio, etc.
+using ReikaKalseki.DIAlterra;
+
+namespace ReikaKalseki.SeaToSea {
+	
+	[HarmonyPatch(typeof(DayNightCycle))]
+	[HarmonyPatch("Update")]
+	public static class UpdateLoopHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {/*
+				int sub = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Sub);
+				List<CodeInstruction> inject = new List<CodeInstruction>();
+				inject.Add(new CodeInstruction(OpCodes.Ldsfld, InstructionHandlers.convertFieldOperand("ReikaKalseki.SeaToSea.SeaToSeaMod", "onRoomFindMachine")));
+				codes.InsertRange(sub+1, inject);
+				*/
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Insert(1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onTick", false, typeof(DayNightCycle)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(BlueprintHandTarget))]
+	[HarmonyPatch("Start")]
+	public static class DataboxRecipeHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {/*
+				int sub = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Sub);
+				List<CodeInstruction> inject = new List<CodeInstruction>();
+				inject.Add(new CodeInstruction(OpCodes.Ldsfld, InstructionHandlers.convertFieldOperand("ReikaKalseki.SeaToSea.SeaToSeaMod", "onRoomFindMachine")));
+				codes.InsertRange(sub+1, inject);
+				*/
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Insert(1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onDataboxActivate", false, typeof(BlueprintHandTarget)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(BlueprintHandTarget))]
+	[HarmonyPatch("UnlockBlueprint")]
+	public static class DataboxUseHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				for (int i = 0; i < codes.Count; i++) {
+					if (codes[i].opcode == OpCodes.Call && ((MethodInfo)codes[i].operand).DeclaringType.Name.Contains("KnownTech") && ((MethodInfo)codes[i].operand).Name == "Add") {
+						codes[i].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.SeaToSeaMod", "onDataboxUsed", false, typeof(TechType), typeof(bool), typeof(BlueprintHandTarget));
+						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+						FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType+" @ "+i);
+						i += 2;
+					}
+				}
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(PDAScanner))]
+	[HarmonyPatch("Scan")]
+	public static class FragmentScanCompleteHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			FileLog.Log(Assembly.GetExecutingAssembly().GetName().Name+": running patch FragmentScanCompleteHook from trace "+System.Environment.StackTrace);
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Stloc_0);
+				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onFragmentScanned", false, typeof(TechType)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(PDAScanner.ScanTarget))]
+	[HarmonyPatch("Initialize")]
+	public static class FragmentScanHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldarg_1);
+				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "interceptScannerTarget", false, typeof(GameObject), typeof(PDAScanner.ScanTarget).MakeByRefType()));
+				codes.Insert(idx+1, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+}
