@@ -17,12 +17,21 @@ namespace ReikaKalseki.SeaToSea
 	{
 		public static readonly BuildingHandler instance = new BuildingHandler();
 		
+		public bool isEnabled {get; private set;}
+		
 		private GameObject lastPlaced;
-		private List<Selection> selected = new List<Selection>();
+		private Dictionary<int, Selection> selected = new Dictionary<int, Selection>();
 		
 		private BuildingHandler()
 		{
 			
+		}
+		
+		public void setEnabled(bool on) {
+			isEnabled = on;
+			foreach (Selection go in selected.Values) {
+				go.fx.SetActive(on);
+			}
 		}
 		
 		private class Selection {
@@ -49,15 +58,15 @@ namespace ReikaKalseki.SeaToSea
 				fx = bubb;
 			}
 			
+			internal void setPosition(Vector3 pos) {
+				obj.transform.position = pos;
+				fx.transform.position = pos;
+			}
+			
 		}
 		
-		public void highlightSelected() {
-
-		}
-		
-		public void selectLooked(bool clearSel = true) {
-			if (clearSel)
-				clearSelection();
+		public void handleClick(bool isCtrl = false) {
+			GameObject any = null;
 			GameObject found = null;
 			float dist;
 			Targeting.GetTarget(Player.main.gameObject, 40, out found, out dist);
@@ -67,13 +76,56 @@ namespace ReikaKalseki.SeaToSea
 				GameObject use;
 				if (Targeting.GetRoot(found, out tech, out use)) {
 					if (use != null)
-						select(use);
-					SBUtil.writeToChat("Selected "+found+" @ "+found.transform.position);
+						any = use;
+					SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
+				}
+				else {
+					SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
+					any = found;
 				}
 			}
 			else {
 				SBUtil.writeToChat("Raytrace found nothing.");
 			}
+			Selection sel = getSelectionFor(any);
+			if (any == null) {
+				if (!isCtrl) {
+					clearSelection();
+				}
+			}
+			else if (sel != null) {
+				if (isCtrl)
+					deselect(sel);
+			}
+			else {
+				if (!isCtrl)
+					clearSelection();
+				select(any);
+			}
+		}
+		
+		public void deleteSelected() {
+			List<Selection> li = new List<Selection>(selected.Values);
+			foreach (Selection go in li) {
+				deselect(go);
+				delete(go.obj);
+			}
+		}
+		
+		public void delete(GameObject go) {
+			GameObject.Destroy(go);
+		}
+		
+		private Selection getSelectionFor(GameObject go) {
+			if (go == null)
+				return null;
+			Selection s = null;
+			selected.TryGetValue(go.GetInstanceID(), out s);
+			return s;
+		}
+		
+		public bool isSelected(GameObject go) {
+			return getSelectionFor(go) != null;
 		}
 		
 		public void selectLastPlaced() {
@@ -81,44 +133,40 @@ namespace ReikaKalseki.SeaToSea
 				select(lastPlaced);
 		}
 		
-		public void selectViaClick() {
-			//TODO
-		}
-		
 		public void select(GameObject go) {
-			foreach (Selection s in selected) {
-				if (s.obj == go)
-					return;
+			Selection s = null;
+			if (!selected.TryGetValue(go.GetInstanceID(), out s)) {
+				selected[go.GetInstanceID()] = new Selection(go);
 			}
-			selected.Add(new Selection(go));
 		}
 		
 		public void deselect(GameObject go) {
-			foreach (Selection s in selected) {
-				if (s.obj == go)
-					deselect(s);
+			Selection s = null;
+			if (selected.TryGetValue(go.GetInstanceID(), out s)) {
+				deselect(s);
 			}
 		}
 		
 		private void deselect(Selection go) {
-			selected.Remove(go);
-			GameObject.Destroy(go.fx);
+			selected.Remove(go.obj.GetInstanceID());
+			delete(go.fx);
 		}
 		
 		public void clearSelection() {
-			while (selected.Count > 0) {
-				deselect(selected[0]);
+			List<Selection> li = new List<Selection>(selected.Values);
+			foreach (Selection go in li) {
+				deselect(go);
 			}
 		}
 		
 		public void moveSelected(Vector3 mov) {
-			foreach (Selection go in selected) {
+			foreach (Selection go in selected.Values) {
 				Vector3 vec = go.obj.transform.position;
 				vec.x += mov.x;
 				vec.y += mov.y;
 				vec.z += mov.z;
-				go.obj.transform.position = vec;
-				SBUtil.writeToChat(go.obj.transform.position.ToString());
+				go.setPosition(vec);
+				//SBUtil.writeToChat(go.obj.transform.position.ToString());
 			}
 		}
 		
@@ -127,10 +175,10 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void rotateSelected(double roll, double yaw, double pitch) {
-			foreach (Selection go in selected) {
+			foreach (Selection go in selected.Values) {
 				Vector3 euler = go.obj.transform.rotation.eulerAngles;
 				go.obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
-				SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 			}
 		}
 		
@@ -139,24 +187,36 @@ namespace ReikaKalseki.SeaToSea
 		}
     
 	    public void spawnPrefabAtLook(string id) {
+			if (!isEnabled)
+				return;
 	    	Transform transform = MainCamera.camera.transform;
 			Vector3 position = transform.position;
 			Vector3 forward = transform.forward;
 			Vector3 pos = position+(forward.normalized*7.5F);
 			GameObject prefab;
+			id = getPrefabKeyFromID(id);
 			if (UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
 				GameObject go = GameObject.Instantiate(prefab);
 				go.SetActive(true);
 				go.transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
 				SBUtil.writeToChat("Spawned a "+PrefabData.getPrefab(id)+" at "+pos);
-				SBUtil.log("Spawned a "+PrefabData.getPrefab(id)+" at "+pos);
 				lastPlaced = go;
 				selectLastPlaced();
 			}
 			else {
-				SBUtil.writeToChat("Prefab not placed.");
-				SBUtil.log("Prefab not placed.");
+				SBUtil.writeToChat("Prefab not placed; nothing found for '"+id+"'.");
 			}
 	    }
+		
+		private string getPrefabKeyFromID(string id) {
+			if (id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] == '-')
+			    return id;
+			if (id.ToUpper().StartsWith("RES_")) {
+				return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
+			}
+			if (id.IndexOf('/') >= 0)
+			    return PrefabData.getPrefabID(id);
+			return PrefabData.getPrefabIDByShortName(id);
+		}
 	}
 }
