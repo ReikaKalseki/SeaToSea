@@ -42,8 +42,10 @@ namespace ReikaKalseki.SeaToSea
         //DevConsole.RegisterConsoleCommand(new test(), "makepfb");
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("builder", BuildingHandler.instance.setEnabled);  
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("builderexport", BuildingHandler.instance.dumpSelection);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("bden", BuildingHandler.instance.setEnabled);  
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexs", BuildingHandler.instance.dumpSelection);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexa", BuildingHandler.instance.dumpAll);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdld", BuildingHandler.instance.loadFile);
         
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -81,6 +83,9 @@ namespace ReikaKalseki.SeaToSea
 	    	if (GameInput.GetButtonDown(GameInput.Button.LeftHand)) {
 	    		BuildingHandler.instance.handleClick(KeyCodeUtils.GetKeyHeld(KeyCode.LeftControl));
 	    	}
+    		if (GameInput.GetButtonDown(GameInput.Button.RightHand)) {
+	    		BuildingHandler.instance.handleRClick(KeyCodeUtils.GetKeyHeld(KeyCode.LeftControl));
+	    	}
 	    	
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Delete)) {
 	    		BuildingHandler.instance.deleteSelected();
@@ -88,24 +93,7 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 	    		float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.25F : 0.05F;
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.UpArrow))
-	    			BuildingHandler.instance.moveSelected(new Vector3(0, 0, s));
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.DownArrow))
-	    			BuildingHandler.instance.moveSelected(new Vector3(0, 0, -s));
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftArrow))
-	    			BuildingHandler.instance.moveSelected(new Vector3(-s, 0, 0));
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.RightArrow))
-	    			BuildingHandler.instance.moveSelected(new Vector3(s, 0, 0));
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
-	    			BuildingHandler.instance.rotateSelectedYaw(1);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-	    			BuildingHandler.instance.rotateSelected(0, 0, -1);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-	    			BuildingHandler.instance.rotateSelected(0, 0, 1);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
-	    			BuildingHandler.instance.rotateSelected(-1, 0, 0);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
-	    			BuildingHandler.instance.rotateSelected(1, 0, 0);
+	    		BuildingHandler.instance.moveSelected(s);
 	    	}
     	}
     }

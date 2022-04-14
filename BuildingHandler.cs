@@ -13,6 +13,9 @@ using System.Xml.Serialization;
 using UnityEngine;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.SeaToSea;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {
@@ -132,10 +135,26 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
+		public void handleRClick(bool isCtrl = false) {
+			Transform transform = MainCamera.camera.transform;
+			Vector3 position = transform.position;
+			Vector3 forward = transform.forward;
+			Ray ray = new Ray(position, forward);
+			if (UWE.Utils.RaycastIntoSharedBuffer(ray, 30) > 0) {
+				RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
+				if (hit.transform != null) {
+					foreach (PlacedObject go in selected.Values) {
+						go.setPosition(hit.point);
+					}
+				}
+			}
+		}
+		
 		public void handleClick(bool isCtrl = false) {
 			GameObject found = null;
 			float dist;
 			Targeting.GetTarget(Player.main.gameObject, 40, out found, out dist);
+			Targeting.Reset();
 			if (found == null) {
 				SBUtil.writeToChat("Raytrace found nothing.");
 			}
@@ -254,6 +273,34 @@ namespace ReikaKalseki.SeaToSea
 			foreach (PlacedObject go in li) {
 				deselect(go);
 			}
+		}
+		
+		public void moveSelected(float s) {
+			Vector3 vec = MainCamera.camera.transform.forward.normalized;
+			Vector3 right = MainCamera.camera.transform.right.normalized;
+			Vector3 up = MainCamera.camera.transform.up.normalized;
+			if (KeyCodeUtils.GetKeyHeld(KeyCode.UpArrow))
+	    		moveSelected(vec*s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.DownArrow))
+	    		moveSelected(vec*-s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftArrow))
+	    		moveSelected(right*-s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightArrow))
+	    		moveSelected(right*s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Equals)) //+
+	    		moveSelected(up*s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
+	    		moveSelected(up*-s);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
+	    		rotateSelectedYaw(1);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
+	    		rotateSelected(0, 0, -1);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
+	    		rotateSelected(0, 0, 1);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
+	    		rotateSelected(-1, 0, 0);
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
+	    		rotateSelected(1, 0, 0);
 		}
 		
 		public void moveSelected(Vector3 mov) {
