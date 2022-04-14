@@ -41,8 +41,9 @@ namespace ReikaKalseki.SeaToSea
         //CommandHandler.instance.registerCommand("buildprefab", BuildingHandler.instance.spawnPrefabAtLook);
         //DevConsole.RegisterConsoleCommand(new test(), "makepfb");
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("builder", BuildingHandler.instance.setEnabled);
-        
+        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("builder", BuildingHandler.instance.setEnabled);  
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("builderexport", BuildingHandler.instance.dumpSelection);
         
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -98,13 +99,13 @@ namespace ReikaKalseki.SeaToSea
 	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
 	    			BuildingHandler.instance.rotateSelectedYaw(1);
 	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-	    			BuildingHandler.instance.rotateSelected(-1, 0, 0);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-	    			BuildingHandler.instance.rotateSelected(1, 0, 0);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
 	    			BuildingHandler.instance.rotateSelected(0, 0, -1);
-	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
+	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
 	    			BuildingHandler.instance.rotateSelected(0, 0, 1);
+	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
+	    			BuildingHandler.instance.rotateSelected(-1, 0, 0);
+	    		if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
+	    			BuildingHandler.instance.rotateSelected(1, 0, 0);
 	    	}
     	}
     }

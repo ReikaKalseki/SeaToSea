@@ -7,6 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using UnityEngine;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
@@ -19,8 +22,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		public bool isEnabled {get; private set;}
 		
-		private GameObject lastPlaced;
+		private Selection lastPlaced = null;
 		private Dictionary<int, Selection> selected = new Dictionary<int, Selection>();
+		private Dictionary<int, Selection> placedPrefabs = new Dictionary<int, Selection>();
 		
 		private BuildingHandler()
 		{
@@ -34,15 +38,34 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		private static int genID(GameObject go) {
+			if (go.transform.root != null && go.transform.root.gameObject != null)
+				return go.transform.root.gameObject.GetInstanceID();
+			else
+				return go.GetInstanceID();
+		}
+		
+		private class SelectionComponent : Component {
+			
+			internal Selection select;
+			
+		}
+		
 		private class Selection {
 			
 			private static GameObject bubblePrefab = null;
 			
+			internal readonly int referenceID;
+			internal readonly string prefabName;
+			internal readonly TechType tech;
 			internal readonly GameObject obj;
 			internal readonly GameObject fx;
 			
-			internal Selection(GameObject go) {
+			internal Selection(GameObject go, string pfb) {
+				referenceID = genID(go);
+				prefabName = pfb;
 				obj = go;
+				tech = CraftData.GetTechType(go);
 				
 				GameObject bubb = null;
 				if (bubblePrefab == null) {
@@ -63,6 +86,20 @@ namespace ReikaKalseki.SeaToSea
 				fx.transform.position = pos;
 			}
 			
+			public override string ToString() {
+				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")";
+			}
+			
+			internal XmlNode asXML(XmlDocument doc) {
+				XmlNode n = doc.CreateElement("object");
+				n.addProperty("prefab", prefabName);
+				if (tech != TechType.None)
+					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
+				n.addProperty("position", obj.transform.position);
+				n.addProperty("rotation", obj.transform.rotation.eulerAngles);
+				return n;
+			}
+			
 		}
 		
 		public void handleClick(bool isCtrl = false) {
@@ -73,16 +110,7 @@ namespace ReikaKalseki.SeaToSea
 			if (found != null) {
 				//SBUtil.writeToChat("Selected "+found+" @ "+found.transform.position);
 				TechType tech;
-				GameObject use;
-				if (Targeting.GetRoot(found, out tech, out use)) {
-					if (use != null)
-						any = use;
-					SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
-				}
-				else {
-					SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
-					any = found;
-				}
+				any = getMasterObject(found, out tech);
 			}
 			else {
 				SBUtil.writeToChat("Raytrace found nothing.");
@@ -104,6 +132,41 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		private GameObject getMasterObject(GameObject found, out TechType tech) {
+			GameObject use;
+			if (Targeting.GetRoot(found, out tech, out use)) {
+				if (use != null) {
+					SBUtil.writeToChat("Raytrace found inner "+found+" @ "+found.transform.position);
+					return use;
+				}
+			}
+			SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
+			return found;
+		}
+		
+		public void dumpSelection(string file) {
+			string folder = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "ObjectDump");
+			string path = Path.Combine(folder, file+".xml");
+			Directory.CreateDirectory(folder);
+			XmlDocument doc = new XmlDocument();
+			XmlElement rootnode = doc.CreateElement("Root");
+			doc.AppendChild(rootnode);
+			SBUtil.log("=================================");
+			SBUtil.log("Building Handler has "+selected.Count+" items: ");
+			List<Selection> li = new List<Selection>(selected.Values);
+			foreach (Selection go in li) {
+				try {
+					SBUtil.log(go.ToString());
+					doc.DocumentElement.AppendChild(go.asXML(doc));
+				}
+				catch (Exception e) {
+					throw new Exception(go.ToString(), e);
+				}
+			}
+			SBUtil.log("=================================");
+			doc.Save(path);
+		}
+		
 		public void deleteSelected() {
 			List<Selection> li = new List<Selection>(selected.Values);
 			foreach (Selection go in li) {
@@ -120,7 +183,7 @@ namespace ReikaKalseki.SeaToSea
 			if (go == null)
 				return null;
 			Selection s = null;
-			selected.TryGetValue(go.GetInstanceID(), out s);
+			selected.TryGetValue(genID(go), out s);
 			return s;
 		}
 		
@@ -129,26 +192,38 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void selectLastPlaced() {
-			if (lastPlaced != null)
+			if (lastPlaced != null) {
 				select(lastPlaced);
+			}
 		}
 		
 		public void select(GameObject go) {
-			Selection s = null;
-			if (!selected.TryGetValue(go.GetInstanceID(), out s)) {
-				selected[go.GetInstanceID()] = new Selection(go);
+			Selection pre = null;
+			int id = genID(go);
+			if (placedPrefabs.TryGetValue(id, out pre)) {
+				select(pre);
+			}
+			else {
+				SBUtil.writeToChat("Game object "+go+" ("+id+") was not mapped to a prefab.");
+			}
+		}
+		
+		private void select(Selection s) {
+			if (!selected.TryGetValue(s.referenceID, out s)) {
+				selected[s.referenceID] = s;
+				SBUtil.writeToChat("Selected "+s);
 			}
 		}
 		
 		public void deselect(GameObject go) {
 			Selection s = null;
-			if (selected.TryGetValue(go.GetInstanceID(), out s)) {
+			if (selected.TryGetValue(genID(go), out s)) {
 				deselect(s);
 			}
 		}
 		
 		private void deselect(Selection go) {
-			selected.Remove(go.obj.GetInstanceID());
+			selected.Remove(go.referenceID);
 			delete(go.fx);
 		}
 		
@@ -181,10 +256,6 @@ namespace ReikaKalseki.SeaToSea
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 			}
 		}
-		
-		public void spawnPrefabAtLook(string[] args) {
-			spawnPrefabAtLook(args[0]);
-		}
     
 	    public void spawnPrefabAtLook(string id) {
 			if (!isEnabled)
@@ -199,8 +270,11 @@ namespace ReikaKalseki.SeaToSea
 				GameObject go = GameObject.Instantiate(prefab);
 				go.SetActive(true);
 				go.transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
-				SBUtil.writeToChat("Spawned a "+PrefabData.getPrefab(id)+" at "+pos);
-				lastPlaced = go;
+				SelectionComponent sel = go.AddComponent<SelectionComponent>();
+				lastPlaced = new Selection(go, id);**
+				sel.select = lastPlaced;
+				cachePlace(lastPlaced);
+				SBUtil.writeToChat("Spawned a "+lastPlaced);
 				selectLastPlaced();
 			}
 			else {
@@ -208,11 +282,32 @@ namespace ReikaKalseki.SeaToSea
 			}
 	    }
 		
+		private void cachePlace(Selection s) {
+			placedPrefabs[s.referenceID] = s;
+		}
+		/*
+		public void spawnTechTypeAtLook(string tech) {
+			spawnTechTypeAtLook(getTech(tech));
+		}
+		
+		public void spawnTechTypeAtLook(TechType tech) {
+			
+		}
+		
+		private TechType getTech(string name) {
+			
+		}*/
+		
 		private string getPrefabKeyFromID(string id) {
-			if (id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] == '-')
+			if (id.Length >= 24 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] == '-')
 			    return id;
-			if (id.ToUpper().StartsWith("RES_")) {
-				return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
+			if (id.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
+				try {
+					return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
+				}
+				catch (Exception e) {
+					return null;
+				}
 			}
 			if (id.IndexOf('/') >= 0)
 			    return PrefabData.getPrefabID(id);
