@@ -22,9 +22,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public bool isEnabled {get; private set;}
 		
-		private Selection lastPlaced = null;
-		private Dictionary<int, Selection> selected = new Dictionary<int, Selection>();
-		private Dictionary<int, Selection> placedPrefabs = new Dictionary<int, Selection>();
+		private PlacedObject lastPlaced = null;
+		private Dictionary<int, PlacedObject> selected = new Dictionary<int, PlacedObject>();
 		
 		private BuildingHandler()
 		{
@@ -33,7 +32,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public void setEnabled(bool on) {
 			isEnabled = on;
-			foreach (Selection go in selected.Values) {
+			foreach (PlacedObject go in selected.Values) {
 				go.fx.SetActive(on);
 			}
 		}
@@ -45,13 +44,21 @@ namespace ReikaKalseki.SeaToSea
 				return go.GetInstanceID();
 		}
 		
-		private class SelectionComponent : Component {
+		private class BuilderPlaced : MonoBehaviour {
 			
-			internal Selection select;
+			internal PlacedObject placement;
+			
+			void Start() {
+				SBUtil.log("Initialized builderplaced of "+placement);
+			}
+			
+			void Update() {
+				
+			}
 			
 		}
 		
-		private class Selection {
+		private class PlacedObject {
 			
 			private static GameObject bubblePrefab = null;
 			
@@ -61,24 +68,47 @@ namespace ReikaKalseki.SeaToSea
 			internal readonly GameObject obj;
 			internal readonly GameObject fx;
 			
-			internal Selection(GameObject go, string pfb) {
+			internal bool isSelected;
+			
+			internal PlacedObject(GameObject go, string pfb) {
+				if (go == null)
+					throw new Exception("Tried to make a place of a null obj!");
+				if (go.transform == null)
+					SBUtil.log("Place of obj "+go+" has null transform?!");
 				referenceID = genID(go);
 				prefabName = pfb;
 				obj = go;
 				tech = CraftData.GetTechType(go);
 				
-				GameObject bubb = null;
-				if (bubblePrefab == null) {
-					if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
+				try {
+					if (bubblePrefab == null) {
+						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
+							SBUtil.writeToChat("Bubbles not loadable!");
+						}
+					}
+					if (bubblePrefab != null) {
+						fx = Utils.SpawnFromPrefab(bubblePrefab, obj.transform);
+						if (fx != null) {
+							if (fx.transform != null)
+								fx.transform.position = obj.transform.position;
+							fx.SetActive(false);
+						}
+						else {
+							SBUtil.writeToChat("Bubbles not constructable!");
+						}
+					}
+					else {
 						SBUtil.writeToChat("Bubbles not found.");
 					}
 				}
-				else {
-					Vector3 pos = go.transform.position;
-					bubb = Utils.SpawnFromPrefab(bubblePrefab, null);
-					bubb.transform.position = pos;
+				catch (Exception e) {
+					throw new Exception("Error in bubbles", e);
 				}
-				fx = bubb;
+			}
+			
+			internal void setSelected(bool sel) {
+				isSelected = sel;
+				fx.SetActive(isSelected);
 			}
 			
 			internal void setPosition(Vector3 pos) {
@@ -103,20 +133,14 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void handleClick(bool isCtrl = false) {
-			GameObject any = null;
 			GameObject found = null;
 			float dist;
 			Targeting.GetTarget(Player.main.gameObject, 40, out found, out dist);
-			if (found != null) {
-				//SBUtil.writeToChat("Selected "+found+" @ "+found.transform.position);
-				TechType tech;
-				any = getMasterObject(found, out tech);
-			}
-			else {
+			if (found == null) {
 				SBUtil.writeToChat("Raytrace found nothing.");
 			}
-			Selection sel = getSelectionFor(any);
-			if (any == null) {
+			PlacedObject sel = getSelectionFor(found);
+			if (found == null) {
 				if (!isCtrl) {
 					clearSelection();
 				}
@@ -128,20 +152,8 @@ namespace ReikaKalseki.SeaToSea
 			else {
 				if (!isCtrl)
 					clearSelection();
-				select(any);
+				select(found);
 			}
-		}
-		
-		private GameObject getMasterObject(GameObject found, out TechType tech) {
-			GameObject use;
-			if (Targeting.GetRoot(found, out tech, out use)) {
-				if (use != null) {
-					SBUtil.writeToChat("Raytrace found inner "+found+" @ "+found.transform.position);
-					return use;
-				}
-			}
-			SBUtil.writeToChat("Raytrace found "+found+" @ "+found.transform.position);
-			return found;
 		}
 		
 		public void dumpSelection(string file) {
@@ -153,8 +165,8 @@ namespace ReikaKalseki.SeaToSea
 			doc.AppendChild(rootnode);
 			SBUtil.log("=================================");
 			SBUtil.log("Building Handler has "+selected.Count+" items: ");
-			List<Selection> li = new List<Selection>(selected.Values);
-			foreach (Selection go in li) {
+			List<PlacedObject> li = new List<PlacedObject>(selected.Values);
+			foreach (PlacedObject go in li) {
 				try {
 					SBUtil.log(go.ToString());
 					doc.DocumentElement.AppendChild(go.asXML(doc));
@@ -168,23 +180,20 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void deleteSelected() {
-			List<Selection> li = new List<Selection>(selected.Values);
-			foreach (Selection go in li) {
+			List<PlacedObject> li = new List<PlacedObject>(selected.Values);
+			foreach (PlacedObject go in li) {
 				deselect(go);
-				delete(go.obj);
+				GameObject.Destroy(go.obj);
+				GameObject.Destroy(go.fx);
 			}
 		}
 		
-		public void delete(GameObject go) {
-			GameObject.Destroy(go);
-		}
-		
-		private Selection getSelectionFor(GameObject go) {
-			if (go == null)
+		private PlacedObject getSelectionFor(GameObject go) {
+			PlacedObject s = getPlacement(go);
+			if (s != null && selected.TryGetValue(s.referenceID, out s))
+				return s;
+			else
 				return null;
-			Selection s = null;
-			selected.TryGetValue(genID(go), out s);
-			return s;
 		}
 		
 		public bool isSelected(GameObject go) {
@@ -197,45 +206,58 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public void select(GameObject go) {
-			Selection pre = null;
-			int id = genID(go);
-			if (placedPrefabs.TryGetValue(id, out pre)) {
-				select(pre);
+		private PlacedObject getPlacement(GameObject go) {
+			if (go == null)
+				return null;
+			BuilderPlaced pre = go.GetComponentInParent<BuilderPlaced>();
+			if (pre != null) {
+				return pre.placement;
 			}
 			else {
-				SBUtil.writeToChat("Game object "+go+" ("+id+") was not mapped to a prefab.");
+				SBUtil.writeToChat("Game object "+go+" ("+genID(go)+") was not was not placed by the builder system.");
+				return null;
 			}
 		}
 		
-		private void select(Selection s) {
-			if (!selected.TryGetValue(s.referenceID, out s)) {
+		public void select(GameObject go) {
+			PlacedObject pre = getPlacement(go);
+			if (go != null && pre == null)
+				SBUtil.dumpObjectData(go);
+			if (pre != null) {
+				select(pre);
+			}
+		}
+		
+		private void select(PlacedObject s) {
+			PlacedObject trash;
+			if (!selected.TryGetValue(s.referenceID, out trash)) {
 				selected[s.referenceID] = s;
+				s.setSelected(true);
 				SBUtil.writeToChat("Selected "+s);
 			}
 		}
 		
 		public void deselect(GameObject go) {
-			Selection s = null;
-			if (selected.TryGetValue(genID(go), out s)) {
-				deselect(s);
+			PlacedObject pre = getPlacement(go);
+			if (pre != null) {
+				deselect(pre);
 			}
 		}
 		
-		private void deselect(Selection go) {
+		private void deselect(PlacedObject go) {
 			selected.Remove(go.referenceID);
-			delete(go.fx);
+			go.setSelected(false);
 		}
 		
 		public void clearSelection() {
-			List<Selection> li = new List<Selection>(selected.Values);
-			foreach (Selection go in li) {
+			List<PlacedObject> li = new List<PlacedObject>(selected.Values);
+			foreach (PlacedObject go in li) {
 				deselect(go);
 			}
 		}
 		
 		public void moveSelected(Vector3 mov) {
-			foreach (Selection go in selected.Values) {
+			foreach (PlacedObject go in selected.Values) {
 				Vector3 vec = go.obj.transform.position;
 				vec.x += mov.x;
 				vec.y += mov.y;
@@ -250,14 +272,14 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void rotateSelected(double roll, double yaw, double pitch) {
-			foreach (Selection go in selected.Values) {
+			foreach (PlacedObject go in selected.Values) {
 				Vector3 euler = go.obj.transform.rotation.eulerAngles;
 				go.obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 			}
 		}
     
-	    public void spawnPrefabAtLook(string id) {
+	    public void spawnPrefabAtLook(string arg) {
 			if (!isEnabled)
 				return;
 	    	Transform transform = MainCamera.camera.transform;
@@ -265,26 +287,32 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 forward = transform.forward;
 			Vector3 pos = position+(forward.normalized*7.5F);
 			GameObject prefab;
-			id = getPrefabKeyFromID(id);
-			if (UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
-				GameObject go = GameObject.Instantiate(prefab);
-				go.SetActive(true);
-				go.transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
-				SelectionComponent sel = go.AddComponent<SelectionComponent>();
-				lastPlaced = new Selection(go, id);**
-				sel.select = lastPlaced;
-				cachePlace(lastPlaced);
-				SBUtil.writeToChat("Spawned a "+lastPlaced);
-				selectLastPlaced();
+			string id = getPrefabKeyFromID(arg);
+			if (id != null && UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
+				if (prefab != null) {
+					GameObject go = GameObject.Instantiate(prefab);
+					if (go != null) {
+						go.SetActive(true);
+						go.transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
+						BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
+						lastPlaced = new PlacedObject(go, id);
+						sel.placement = lastPlaced;
+						SBUtil.writeToChat("Spawned a "+lastPlaced);
+						SBUtil.dumpObjectData(lastPlaced.obj);
+						selectLastPlaced();
+					}
+					else {
+						SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
+					}
+				}
+				else {
+					SBUtil.writeToChat("Prefab found but was null?!");
+				}
 			}
 			else {
-				SBUtil.writeToChat("Prefab not placed; nothing found for '"+id+"'.");
+				SBUtil.writeToChat("Prefab not placed; nothing found for '"+(id == null ? "null" : id)+"'.");
 			}
 	    }
-		
-		private void cachePlace(Selection s) {
-			placedPrefabs[s.referenceID] = s;
-		}
 		/*
 		public void spawnTechTypeAtLook(string tech) {
 			spawnTechTypeAtLook(getTech(tech));
