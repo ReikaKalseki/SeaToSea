@@ -11,6 +11,8 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.Scripting;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
@@ -48,9 +50,12 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		[Serializable]
+		//[ProtoContract]
+		//[ProtoInclude(30000, typeof(BuilderPlaced))]
 		private class BuilderPlaced : MonoBehaviour {
 			
 			[SerializeField]
+			//[SerializeReference]
 			internal PlacedObject placement;
 			
 			void Start() {
@@ -63,14 +68,13 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		private class PlacedObject {
+		[Serializable]
+		private class PlacedObject : PositionedPrefab {
 			
 			private static GameObject bubblePrefab = null;
 			
 			[SerializeField]
 			internal int referenceID;
-			[SerializeField]
-			internal string prefabName;
 			[SerializeField]
 			internal TechType tech;
 			[SerializeField]
@@ -81,13 +85,12 @@ namespace ReikaKalseki.SeaToSea
 			[SerializeField]
 			internal bool isSelected;
 			
-			internal PlacedObject(GameObject go, string pfb) {
+			internal PlacedObject(GameObject go, string pfb) : base(pfb) {
 				if (go == null)
 					throw new Exception("Tried to make a place of a null obj!");
 				if (go.transform == null)
 					SBUtil.log("Place of obj "+go+" has null transform?!");
 				referenceID = genID(go);
-				prefabName = pfb;
 				obj = go;
 				tech = CraftData.GetTechType(go);
 				
@@ -162,7 +165,8 @@ namespace ReikaKalseki.SeaToSea
 				if (tech != TechType.None)
 					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
 				n.addProperty("position", obj.transform.position);
-				n.addProperty("rotation", obj.transform.rotation.eulerAngles);
+				XmlElement rot = n.addProperty("rotation", obj.transform.rotation.eulerAngles);
+				rot.addProperty("quaternion", obj.transform.rotation);
 				return n;
 			}
 			
@@ -176,9 +180,22 @@ namespace ReikaKalseki.SeaToSea
 			if (UWE.Utils.RaycastIntoSharedBuffer(ray, 30) > 0) {
 				RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
 				if (hit.transform != null) {
-					foreach (PlacedObject go in items.Values) {
-						if (go.isSelected)
-							go.setPosition(hit.point);
+					if (isCtrl) {
+						if (lastPlaced != null) {
+							PlacedObject b = createPrefab(lastPlaced.prefabName);
+							if (b != null) {
+								b.obj.transform.SetPositionAndRotation(hit.point, hit.transform.rotation);
+								lastPlaced = b;
+								selectLastPlaced();
+							}
+						}
+					}
+					else {
+						foreach (PlacedObject go in items.Values) {
+							if (go.isSelected) {
+								go.setPosition(hit.point);
+							}
+						}
 					}
 				}
 			}
@@ -247,25 +264,36 @@ namespace ReikaKalseki.SeaToSea
 			doc.Load(getDumpFile(file));
 			XmlElement rootnode = doc.DocumentElement;
 			foreach (XmlElement e in rootnode.ChildNodes) {
-				string pfb = e.getProperty("prefab");
-				if (pfb != null) {
-					PlacedObject b = createPrefab(pfb);
-					if (b != null) {
-						string tech = e.getProperty("tech");
-						if (b.tech == TechType.None && tech != "None") {
-							b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
+				try {
+					string pfb = e.getProperty("prefab");
+					if (pfb != null) {
+						PlacedObject b = createPrefab(pfb);
+						if (b != null) {
+							string tech = e.getProperty("tech", true);
+							if (b.tech == TechType.None && tech != null && tech != "None") {
+								b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
+							}
+							XmlElement elem;
+							Vector3 rot = e.getVector("rotation", out elem);
+							b.obj.transform.SetPositionAndRotation(e.getVector("position"), Quaternion.Euler(rot.x, rot.y, rot.y));
+							Quaternion? quat = elem.getQuaternion("quaternion", true);
+							if (quat != null && quat.HasValue) {
+								b.obj.transform.rotation = quat.Value;
+							}
+							lastPlaced = b;
+							selectLastPlaced();
 						}
-						Vector3 rot = e.getVector("rotation");
-						b.obj.transform.SetPositionAndRotation(e.getVector("position"), Quaternion.Euler(rot.x, rot.y, rot.y));
-						lastPlaced = b;
-						selectLastPlaced();
+						else {
+							SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
+						}
 					}
 					else {
-						SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
+						SBUtil.writeToChat("Could not load XML block, no prefab: "+e.InnerText);
 					}
 				}
-				else {
-					SBUtil.writeToChat("Could not load XML block, no prefab: "+e.InnerText);
+				catch (Exception ex) {
+					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.InnerText+" -> "+ex.ToString());
+					SBUtil.log(ex.ToString());
 				}
 			}
 		}

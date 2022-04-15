@@ -7,8 +7,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Serialization;
 using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
@@ -19,9 +22,28 @@ namespace ReikaKalseki.SeaToSea
 		
 		private readonly Dictionary<Vector3, Dictionary<Vector3, TechType>> data = new Dictionary<Vector3, Dictionary<Vector3, TechType>>();
 		
-		private DataboxTypingMap() //TODO load from XML
-		{
-			
+		private DataboxTypingMap() {
+			string xml = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "databoxes.xml");
+			if (File.Exists(xml)) {
+				SBUtil.log("Loading databox map from XML @ "+xml);
+				XmlDocument doc = new XmlDocument();
+				doc.Load(xml);
+				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
+					try {
+						Vector3 pos = e.getVector("position");
+						string tech = e.getProperty("tech");
+						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+						addValue(pos, techt);
+					}
+					catch (Exception ex) {
+						SBUtil.log("Could not load element "+e.InnerText);
+						SBUtil.log(ex.ToString());
+					}
+				}
+			}
+			else {
+				SBUtil.log("Databox XML not found!");
+			}
 		}
 		
 		public void addValue(double x, double y, double z, TechType type) {
@@ -34,6 +56,7 @@ namespace ReikaKalseki.SeaToSea
 				data[rnd] = new Dictionary<Vector3, TechType>();
 			}
 			data[rnd][pos] = type;
+			SBUtil.log("Registered mapping "+type+" @ "+pos);
 		}
 		
 		public TechType getOverride(BlueprintHandTarget bpt) {
