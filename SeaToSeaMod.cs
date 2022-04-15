@@ -92,8 +92,8 @@ namespace ReikaKalseki.SeaToSea
 	    	}
 	    	
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
-	    		float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.25F : 0.05F;
-	    		BuildingHandler.instance.moveSelected(s);
+    			float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.15F : (KeyCodeUtils.GetKeyHeld(KeyCode.X) ? 0.02F : 0.05F);
+	    		BuildingHandler.instance.manipulateSelected(s);
 	    	}
     	}
     }

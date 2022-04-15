@@ -126,6 +126,25 @@ namespace ReikaKalseki.SeaToSea
 				obj.transform.position = pos;
 				fx.transform.position = pos;
 			}
+		
+			internal void move(Vector3 mov) {
+				Vector3 vec = obj.transform.position;
+				vec.x += mov.x;
+				vec.y += mov.y;
+				vec.z += mov.z;
+				setPosition(vec);
+				//SBUtil.writeToChat(go.obj.transform.position.ToString());
+			}
+			
+			internal void rotateYaw(double ang) {
+				rotate(0, ang, 0);
+			}
+			
+			internal void rotate(double roll, double yaw, double pitch) {
+				Vector3 euler = obj.transform.rotation.eulerAngles;
+				obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
+				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+			}
 			
 			internal void delete() {
 				GameObject.Destroy(obj);
@@ -134,7 +153,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public override string ToString() {
-				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")";
+				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
 			}
 			
 			internal XmlNode asXML(XmlDocument doc) {
@@ -173,24 +192,22 @@ namespace ReikaKalseki.SeaToSea
 			if (found == null) {
 				SBUtil.writeToChat("Raytrace found nothing.");
 			}
-			if (found == null) {
+			PlacedObject has = getPlacement(found);
+			//SBUtil.writeToChat("Has is "+has);
+			if (has == null) {
 				if (!isCtrl) {
 					clearSelection();
 				}
-				return;
 			}
-			PlacedObject sel = getPlacement(found);
-			if (sel == null) {
-				return;
-			}
-			else if (sel.isSelected) {
-				if (isCtrl)
-					deselect(sel);
+			else if (isCtrl) {
+				if (has.isSelected)
+					deselect(has);
+				else
+					select(has);
 			}
 			else {
-				if (!isCtrl)
-					clearSelection();
-				select(found);
+				clearSelection();
+				select(has);
 			}
 		}
 		
@@ -310,8 +327,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void select(PlacedObject s) {
+			//SBUtil.writeToChat("Selected "+s);
 			s.setSelected(true);
-			SBUtil.writeToChat("Selected "+s);
 		}
 		
 		public void deselect(GameObject go) {
@@ -322,6 +339,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void deselect(PlacedObject go) {
+			//SBUtil.writeToChat("Deselected "+go);
 			go.setSelected(false);
 		}
 		
@@ -331,58 +349,39 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public void moveSelected(float s) {
-			Vector3 vec = MainCamera.camera.transform.forward.normalized;
-			Vector3 right = MainCamera.camera.transform.right.normalized;
-			Vector3 up = MainCamera.camera.transform.up.normalized;
-			if (KeyCodeUtils.GetKeyHeld(KeyCode.UpArrow))
-	    		moveSelected(vec*s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.DownArrow))
-	    		moveSelected(vec*-s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftArrow))
-	    		moveSelected(right*-s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightArrow))
-	    		moveSelected(right*s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Equals)) //+
-	    		moveSelected(up*s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
-	    		moveSelected(up*-s);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
-	    		rotateSelectedYaw(1);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-	    		rotateSelected(0, 0, -1);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-	    		rotateSelected(0, 0, 1);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
-	    		rotateSelected(-1, 0, 0);
-	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
-	    		rotateSelected(1, 0, 0);
-		}
-		
-		public void moveSelected(Vector3 mov) {
+		public void manipulateSelected(float s) {
 			foreach (PlacedObject go in items.Values) {
 				if (!go.isSelected)
 					continue;
-				Vector3 vec = go.obj.transform.position;
-				vec.x += mov.x;
-				vec.y += mov.y;
-				vec.z += mov.z;
-				go.setPosition(vec);
-				//SBUtil.writeToChat(go.obj.transform.position.ToString());
-			}
-		}
-		
-		public void rotateSelectedYaw(double ang) {
-			rotateSelected(0, ang, 0);
-		}
-		
-		public void rotateSelected(double roll, double yaw, double pitch) {
-			foreach (PlacedObject go in items.Values) {
-				if (!go.isSelected)
-					continue;
-				Vector3 euler = go.obj.transform.rotation.eulerAngles;
-				go.obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
-				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				Transform t = MainCamera.camera.transform;
+				if (KeyCodeUtils.GetKeyHeld(KeyCode.Z)) {
+					t = go.obj.transform;
+				}
+				Vector3 vec = t.forward.normalized;
+				Vector3 right = t.right.normalized;
+				Vector3 up = t.up.normalized;
+				if (KeyCodeUtils.GetKeyHeld(KeyCode.UpArrow))
+		    		go.move(vec*s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.DownArrow))
+		    		go.move(vec*-s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftArrow))
+		    		go.move(right*-s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightArrow))
+		    		go.move(right*s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Equals)) //+
+		    		go.move(up*s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
+		    		go.move(up*-s);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
+		    		go.rotateYaw(1);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
+		    		go.rotate(0, 0, -1);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
+		    		go.rotate(0, 0, 1);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
+		    		go.rotate(-1, 0, 0);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
+		    		go.rotate(1, 0, 0);
 			}
 		}
     
@@ -411,6 +410,7 @@ namespace ReikaKalseki.SeaToSea
 						go.SetActive(true);
 						BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
 						PlacedObject ret = new PlacedObject(go, id);
+						items[ret.referenceID] = ret;
 						sel.placement = ret;
 						SBUtil.writeToChat("Spawned a "+ret);
 						//SBUtil.dumpObjectData(ret.obj);
