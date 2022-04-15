@@ -38,6 +38,9 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
+        WorldgenDatabase.instance.load();
+        DataboxTypingMap.instance.load();
+        
         //CommandHandler.instance.registerCommand("buildprefab", BuildingHandler.instance.spawnPrefabAtLook);
         //DevConsole.RegisterConsoleCommand(new test(), "makepfb");
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
@@ -46,9 +49,10 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexs", BuildingHandler.instance.dumpSelection);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexa", BuildingHandler.instance.dumpAll);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdld", BuildingHandler.instance.loadFile);
-        
+        /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
+        */
         /*
         for (int i = 0; i < 12; i++) {
         	double r = UnityEngine.Random.Range(1.5F, 12);
@@ -63,19 +67,6 @@ namespace ReikaKalseki.SeaToSea
         }*/
         
         //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
-    }
-    
-    private static void spawnDatabox(TechType tech, Vector3 pos) {
-    	spawnDatabox(tech, pos, Vector3.zero);
-    }
-    
-    private static void spawnDatabox(TechType tech, Vector3 pos, double rotY) {
-    	spawnDatabox(tech, pos, new Vector3(0, (float)rotY, 0));
-    }
-    
-    private static void spawnDatabox(TechType tech, Vector3 pos, Vector3 rot) {
-        GenUtil.spawnDatabox(pos, rot);
-    	DataboxTypingMap.instance.addValue(pos, tech);
     }
     
     public static void onTick(DayNightCycle cyc) {

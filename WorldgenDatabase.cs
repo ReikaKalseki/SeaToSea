@@ -24,9 +24,17 @@ namespace ReikaKalseki.SeaToSea
 				doc.Load(xml);
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					try {
-						WorldGen gen = WorldGen.getGen(e);
+						PositionedPrefab gen = PositionedPrefab.fromXML(e);
 						if (gen != null) {
-							
+							if (gen.prefabName == "databox") {
+								string tech = e.getProperty("tech");
+								TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+								spawnDatabox(techt, gen.position, gen.rotation);
+							}
+							else {
+								GenUtil.registerWorldgen(gen);
+							}
+							SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);
 						}
 						else {
 							SBUtil.log("No worldgen loadable for "+e.InnerText);
@@ -42,13 +50,18 @@ namespace ReikaKalseki.SeaToSea
 				SBUtil.log("Databox XML not found!");
 			}
 		}
-	
-		private class WorldGen {
-			
-			internal static WorldGen getGen(XmlElement e) {
-				return null;
-			}
-			
-		}
+    
+	    private void spawnDatabox(TechType tech, Vector3 pos) {
+	    	spawnDatabox(tech, pos, Quaternion.identity);
+	    }
+	    
+	    private void spawnDatabox(TechType tech, Vector3 pos, double rotY) {
+			spawnDatabox(tech, pos, Quaternion.Euler(0, (float)rotY, 0));
+	    }
+	    
+	    private void spawnDatabox(TechType tech, Vector3 pos, Quaternion rot) {
+	        GenUtil.spawnDatabox(pos, rot);
+	    	DataboxTypingMap.instance.addValue(pos, tech);
+	    }
 	}
 }

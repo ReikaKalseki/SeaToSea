@@ -23,6 +23,10 @@ namespace ReikaKalseki.SeaToSea
 		private readonly Dictionary<Vector3, Dictionary<Vector3, TechType>> data = new Dictionary<Vector3, Dictionary<Vector3, TechType>>();
 		
 		private DataboxTypingMap() {
+
+		}
+		
+		public void load() {
 			string xml = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "databoxes.xml");
 			if (File.Exists(xml)) {
 				SBUtil.log("Loading databox map from XML @ "+xml);
@@ -56,7 +60,7 @@ namespace ReikaKalseki.SeaToSea
 				data[rnd] = new Dictionary<Vector3, TechType>();
 			}
 			data[rnd][pos] = type;
-			SBUtil.log("Registered mapping "+type+" @ "+pos);
+			SBUtil.log("Registered databox mapping "+type+" @ "+pos);
 		}
 		
 		public TechType getOverride(BlueprintHandTarget bpt) {

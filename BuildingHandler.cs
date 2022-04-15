@@ -159,14 +159,10 @@ namespace ReikaKalseki.SeaToSea
 				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
 			}
 			
-			internal XmlNode asXML(XmlDocument doc) {
-				XmlNode n = doc.CreateElement("object");
-				n.addProperty("prefab", prefabName);
+			internal override XmlElement asXML(XmlDocument doc) {
+				XmlElement n = base.asXML(doc);
 				if (tech != TechType.None)
 					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
-				n.addProperty("position", obj.transform.position);
-				XmlElement rot = n.addProperty("rotation", obj.transform.rotation.eulerAngles);
-				rot.addProperty("quaternion", obj.transform.rotation);
 				return n;
 			}
 			
@@ -265,21 +261,15 @@ namespace ReikaKalseki.SeaToSea
 			XmlElement rootnode = doc.DocumentElement;
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
-					string pfb = e.getProperty("prefab");
+					PositionedPrefab pfb = PositionedPrefab.fromXML(e);
 					if (pfb != null) {
-						PlacedObject b = createPrefab(pfb);
+						PlacedObject b = createPrefab(pfb.prefabName);
 						if (b != null) {
 							string tech = e.getProperty("tech", true);
 							if (b.tech == TechType.None && tech != null && tech != "None") {
 								b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
 							}
-							XmlElement elem;
-							Vector3 rot = e.getVector("rotation", out elem);
-							b.obj.transform.SetPositionAndRotation(e.getVector("position"), Quaternion.Euler(rot.x, rot.y, rot.y));
-							Quaternion? quat = elem.getQuaternion("quaternion", true);
-							if (quat != null && quat.HasValue) {
-								b.obj.transform.rotation = quat.Value;
-							}
+							b.obj.transform.SetPositionAndRotation(pfb.position, pfb.rotation);
 							lastPlaced = b;
 							selectLastPlaced();
 						}
@@ -288,7 +278,7 @@ namespace ReikaKalseki.SeaToSea
 						}
 					}
 					else {
-						SBUtil.writeToChat("Could not load XML block, no prefab: "+e.InnerText);
+						SBUtil.writeToChat("Could not load XML builder block, no prefab: "+e.InnerText);
 					}
 				}
 				catch (Exception ex) {
