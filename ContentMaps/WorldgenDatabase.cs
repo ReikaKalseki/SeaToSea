@@ -25,6 +25,7 @@ namespace ReikaKalseki.SeaToSea
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					try {
 						PositionedPrefab gen = PositionedPrefab.fromXML(e);
+						//PlacedObject obj = PlacedObject.fromXML(e, gen, false);
 						if (gen != null) {
 							if (gen.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
 								gen.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(gen.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;

@@ -75,132 +75,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		private static int genID(GameObject go) {
+		internal static int genID(GameObject go) {
 			if (go.transform.root != null && go.transform.root.gameObject != null)
 				return go.transform.root.gameObject.GetInstanceID();
 			else
 				return go.GetInstanceID();
-		}
-		
-		[Serializable]
-		//[ProtoContract]
-		//[ProtoInclude(30000, typeof(BuilderPlaced))]
-		private class BuilderPlaced : MonoBehaviour {
-			
-			[SerializeField]
-			//[SerializeReference]
-			internal PlacedObject placement;
-			
-			void Start() {
-				SBUtil.log("Initialized builderplaced of "+placement);
-			}
-			
-			void Update() {
-				
-			}
-			
-		}
-		
-		[Serializable]
-		private class PlacedObject : PositionedPrefab {
-			
-			private static GameObject bubblePrefab = null;
-			
-			[SerializeField]
-			internal int referenceID;
-			[SerializeField]
-			internal TechType tech;
-			[SerializeField]
-			internal GameObject obj;
-			[SerializeField]
-			internal GameObject fx;
-			
-			[SerializeField]
-			internal bool isSelected;
-			
-			internal PlacedObject(GameObject go, string pfb) : base(pfb) {
-				if (go == null)
-					throw new Exception("Tried to make a place of a null obj!");
-				if (go.transform == null)
-					SBUtil.log("Place of obj "+go+" has null transform?!");
-				referenceID = genID(go);
-				obj = go;
-				tech = CraftData.GetTechType(go);
-				
-				try {
-					if (bubblePrefab == null) {
-						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
-							SBUtil.writeToChat("Bubbles not loadable!");
-						}
-					}
-					if (bubblePrefab != null) {
-						fx = Utils.SpawnFromPrefab(bubblePrefab, obj.transform);
-						if (fx != null) {
-							if (fx.transform != null)
-								fx.transform.position = obj.transform.position;
-							fx.SetActive(false);
-						}
-						else {
-							SBUtil.writeToChat("Bubbles not constructable!");
-						}
-					}
-					else {
-						SBUtil.writeToChat("Bubbles not found.");
-					}
-				}
-				catch (Exception e) {
-					throw new Exception("Error in bubbles", e);
-				}
-			}
-			
-			internal void setSelected(bool sel) {
-				isSelected = sel;
-				fx.SetActive(isSelected);
-			}
-			
-			internal void setPosition(Vector3 pos) {
-				position = pos;
-				obj.transform.position = position;
-				fx.transform.position = position;
-			}
-		
-			internal void move(Vector3 mov) {
-				Vector3 vec = obj.transform.position;
-				vec.x += mov.x;
-				vec.y += mov.y;
-				vec.z += mov.z;
-				setPosition(vec);
-				//SBUtil.writeToChat(go.obj.transform.position.ToString());
-			}
-			
-			internal void rotateYaw(double ang) {
-				rotate(0, ang, 0);
-			}
-			
-			internal void rotate(double roll, double yaw, double pitch) {
-				Vector3 euler = obj.transform.rotation.eulerAngles;
-				obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
-				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
-				rotation = obj.transform.rotation;
-			}
-			
-			internal void delete() {
-				GameObject.Destroy(obj);
-				GameObject.Destroy(fx);
-				instance.items.Remove(referenceID);
-			}
-			
-			public override string ToString() {
-				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
-			}
-			
-			internal override XmlElement asXML(XmlDocument doc) {
-				XmlElement n = base.asXML(doc);
-				if (tech != TechType.None)
-					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
-				return n;
-			}
-			
 		}
 		
 		public void handleRClick(bool isCtrl = false) {
@@ -213,8 +92,9 @@ namespace ReikaKalseki.SeaToSea
 				if (hit.transform != null) {
 					if (isCtrl) {
 						if (lastPlaced != null) {
-							PlacedObject b = createPrefab(lastPlaced.prefabName);
+							PlacedObject b = PlacedObject.createPrefab(lastPlaced.prefabName);
 							if (b != null) {
+								items[b.referenceID] = b;
 								b.obj.transform.SetPositionAndRotation(hit.point, hit.transform.rotation);
 								lastPlaced = b;
 								selectLastPlaced();
@@ -303,34 +183,10 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					PositionedPrefab pfb = PositionedPrefab.fromXML(e);
 					if (pfb != null) {
-						if (pfb.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
-							pfb.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(pfb.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
-						}
-						else if (pfb.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
-							pfb.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(pfb.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
-						}
-						else if (pfb.prefabName == "crate") {
-							pfb.prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
-							string tech = e.getProperty("item");
-							TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-						}
-						else if (pfb.prefabName == "databox") {
-							pfb.prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
-							string tech = e.getProperty("tech");
-							TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-						}
-						PlacedObject b = createPrefab(pfb.prefabName);
+						PlacedObject b = PlacedObject.fromXML(e, pfb);
 						if (b != null) {
-							string tech = e.getProperty("tech", true);
-							if (b.tech == TechType.None && tech != null && tech != "None") {
-								b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
-							}
-							b.setPosition(pfb.position);
-							b.rotation = pfb.rotation;
-							b.obj.transform.rotation = b.rotation;
-							b.fx.transform.rotation = b.rotation;
-							b.obj.transform.localScale = b.scale;
 							SBUtil.writeToChat("Loaded a "+b);
+							items[b.referenceID] = b;
 							lastPlaced = b;
 							selectLastPlaced();
 						}
@@ -359,10 +215,17 @@ namespace ReikaKalseki.SeaToSea
 			List<PlacedObject> li = new List<PlacedObject>(items.Values);
 			foreach (PlacedObject go in li) {
 				if (go.isSelected) {
-					go.delete();
+					delete(go);
 				}
 			}
 		}
+		
+		private void delete(PlacedObject go) {
+			GameObject.Destroy(go.obj);
+			GameObject.Destroy(go.fx);
+			items.Remove(go.referenceID);
+		}
+		
 		/*
 		private PlacedObject getSelectionFor(GameObject go) {
 			PlacedObject s = getPlacement(go);
@@ -472,42 +335,15 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 forward = transform.forward;
 			Vector3 pos = position+(forward.normalized*7.5F);
 			string id = getPrefabKeyFromID(arg);
-			PlacedObject b = createPrefab(id);
+			PlacedObject b = PlacedObject.createPrefab(id);
 			if (b != null) {
+				items[b.referenceID] = b;
 				b.obj.transform.SetPositionAndRotation(pos, Quaternion.identity);
 				SBUtil.writeToChat("Spawned a "+b);
 				lastPlaced = b;
 				selectLastPlaced();
 			}
 	    }
-		
-		private PlacedObject createPrefab(string id) {
-			GameObject prefab;
-			if (id != null && UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
-				if (prefab != null) {
-					GameObject go = GameObject.Instantiate(prefab);
-					if (go != null) {
-						go.SetActive(true);
-						BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
-						PlacedObject ret = new PlacedObject(go, id);
-						items[ret.referenceID] = ret;
-						sel.placement = ret;
-						//SBUtil.dumpObjectData(ret.obj);
-						return ret;
-					}
-					else {
-						SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
-					}
-				}
-				else {
-					SBUtil.writeToChat("Prefab found but was null?!");
-				}
-			}
-			else {
-				SBUtil.writeToChat("Prefab not placed; nothing found for '"+(id == null ? "null" : id)+"'.");
-			}
-			return null;
-		}
 		/*
 		public void spawnTechTypeAtLook(string tech) {
 			spawnTechTypeAtLook(getTech(tech));
