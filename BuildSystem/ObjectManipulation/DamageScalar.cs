@@ -22,13 +22,9 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal abstract class DamageScalar : ModifyComponent<MeleeAttack> {
+	internal sealed class DamageScalar : ModifyComponent<MeleeAttack> {
 		
 		private double scale = 1;
-		
-		internal DamageScalar(double s) {
-			scale = s;
-		}
 		
 		internal override void modifyComponent(MeleeAttack c) {
 			c.biteDamage *= (float)scale;

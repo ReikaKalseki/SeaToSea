@@ -95,10 +95,27 @@ namespace ReikaKalseki.SeaToSea
 					List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 					if (li.Count == 1) {
 						foreach (XmlElement e2 in li[0].ChildNodes) {
-							Type t = Type.GetType("ReikaKalseki.SeaToSea."+e2.Name);
-							ManipulationBase mb = (ManipulationBase)t.GetConstructor(new Type[0]).Invoke(new object[0]);
-							mb.loadFromXML(e2);
-							b.manipulations.Add(mb);
+							try {
+								if (e2 == null)
+									throw new Exception("Null XML elem");
+								Type t = Type.GetType("ReikaKalseki.SeaToSea."+e2.Name);
+								if (t == null)
+									throw new Exception("Type not found");
+								System.Reflection.ConstructorInfo ct = t.GetConstructor(new Type[0]);
+								if (ct == null)
+									throw new Exception("Constructor not found");
+								try {
+									ManipulationBase mb = (ManipulationBase)ct.Invoke(new object[0]);
+									mb.loadFromXML(e2);
+									b.manipulations.Add(mb);
+								}
+								catch (Exception ex) {
+									throw new Exception("Construction error "+ex);
+								}
+							}
+							catch (Exception ex) {
+								SBUtil.writeToChat("Could not rebuild manipulation from XML "+e2.Name+"/"+e2.InnerText+": "+ex);
+							}
 						}
 					}
 					return b;

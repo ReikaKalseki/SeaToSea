@@ -20,6 +20,8 @@ namespace ReikaKalseki.SeaToSea
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     
     private static SeamothVoidStealthModule voidStealth;
+    private static BasicCraftingItem honeycombComposite;
+    private static BasicCraftingItem crystalLens;
 
     [QModPatch]
     public static void Load()
@@ -40,8 +42,21 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
+        TechType mountainCaveResource = TechType.MercuryOre; //TODO replace mercury with unique new mountain cave resource
+        
+        honeycombComposite = new BasicCraftingItem("HoneycombComposite", "Honeycomb Composite Plating", "A lightweight and low-conductivity panel.");
+        honeycombComposite.isAdvanced = true;
+        honeycombComposite.unlockRequirement = TechType.Fabricator;
+        honeycombComposite.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
+        honeycombComposite.Patch();
+        crystalLens = new BasicCraftingItem("CrystalLens", "Refractive Lens", "A lens with the ability to refract several kinds of matter.");
+        crystalLens.isAdvanced = true;
+        crystalLens.unlockRequirement = TechType.Fabricator;
+        crystalLens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        crystalLens.Patch();
+        
         voidStealth = new SeamothVoidStealthModule();
-        voidStealth.addIngredient(TechType.SeaTreaderPoop, 4).addIngredient(TechType.Benzene, 4).addIngredient(TechType.Crabsnake, 1);
+        voidStealth.addIngredient(crystalLens.getTechType(), 1).addIngredient(honeycombComposite.getTechType(), 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
         WorldgenDatabase.instance.load();
@@ -56,6 +71,18 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
+        
+        string mountainCaveID = CraftData.GetClassIdForTechType(mountainCaveResource);
+        string mountainCavePath;
+        UWE.PrefabDatabase.TryGetPrefabFilename(mountainCaveID, out mountainCavePath);
+        List<LootDistributionData.BiomeData> li = new List<LootDistributionData.BiomeData>();
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveFloor, count = 1, probability = 0.1F});
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveWall, count = 1, probability = 0.1F});
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveCeiling, count = 1, probability = 0.1F});
+        UWE.WorldEntityInfo info = null;//new UWE.WorldEntityInfo();
+        UWE.WorldEntityDatabase.TryGetInfo(mountainCaveID, out info);
+       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveID, info);
+        LootDistributionHandler.AddLootDistributionData(mountainCaveID, mountainCavePath, li, info);
         /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -130,14 +157,14 @@ namespace ReikaKalseki.SeaToSea
     		c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
     	}
 		//TODO fix crate item set
-		*/
+		*//*
 		typeof(SupplyCrate).GetMethod("FindInsideItemAfterStart", unchecked((System.Reflection.BindingFlags)0x7fffffff)).Invoke(c, new object[0]);
 		SBUtil.log("T"+c.transform);
 		SBUtil.dumpObjectData(c.transform);
 		SBUtil.log("P"+c.transform.GetComponentInChildren<Pickupable>());
 		Pickupable p = c.transform.GetComponentInChildren<Pickupable>();
 		p.SetTechTypeOverride(item);
-		GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);
+		GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);*/
 		//p.
     }
     
