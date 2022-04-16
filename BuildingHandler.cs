@@ -476,6 +476,14 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 			}
+			if (id.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
+				try {
+					return ((VanillaCreatures)typeof(VanillaCreatures).GetField(id.Substring(6).ToUpper()).GetValue(null)).prefab;
+				}
+				catch (Exception e) {
+					return null;
+				}
+			}
 			if (id.IndexOf('/') >= 0)
 			    return PrefabData.getPrefabID(id);
 			return PrefabData.getPrefabIDByShortName(id);
