@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Scripting;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
@@ -30,15 +31,47 @@ namespace ReikaKalseki.SeaToSea
 		private PlacedObject lastPlaced = null;
 		private Dictionary<int, PlacedObject> items = new Dictionary<int, PlacedObject>();
 		
-		private BuildingHandler()
-		{
-			
+		private List<string> text = new List<string>();
+		private BasicText controlHint = new BasicText(TextAnchor.MiddleCenter);
+		
+		private BuildingHandler() {
+			addText("LMB to select, Lalt+RMB to place selected on ground at look, LCtrl+RMB to duplicate it there");
+			addText("Lalt+Arrow keys to move L/R Fwd/Back, +/- for U/D, add Z to make relative to obj");
+			addText("Lalt+R to yaw, [] to pitch (Z), ,. to roll (X)");
+			addText("Add C for fast, X for slow; DEL to delete all selected");
+		}
+		
+		private void addText(string s) {
+			text.Add(s);
+			controlHint.SetLocation(0, 300);
+			controlHint.SetSize(16);
+		}
+		
+		public void addCommand(string key, Action call) {
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>(key, call);
+			addText("/"+key+": "+call.Method.Name);
+		}
+		
+		public void addCommand<T>(string key, Action<T> call) {
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<T>>(key, call);
+			addText("/"+key+": "+call.Method.Name);
+		}
+		
+		public void addCommand<T1, T2>(string key, Action<T1, T2> call) {
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<T1, T2>>(key, call);
+			addText("/"+key+": "+call.Method.Name);
 		}
 		
 		public void setEnabled(bool on) {
 			isEnabled = on;
 			foreach (PlacedObject go in items.Values) {
 				go.fx.SetActive(go.isSelected);
+			}
+			if (on) {
+				controlHint.ShowMessage(string.Join("\n", text.ToArray()));
+			}
+			else {
+				controlHint.Hide();
 			}
 		}
 		
@@ -126,8 +159,9 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			internal void setPosition(Vector3 pos) {
-				obj.transform.position = pos;
-				fx.transform.position = pos;
+				position = pos;
+				obj.transform.position = position;
+				fx.transform.position = position;
 			}
 		
 			internal void move(Vector3 mov) {
@@ -147,6 +181,7 @@ namespace ReikaKalseki.SeaToSea
 				Vector3 euler = obj.transform.rotation.eulerAngles;
 				obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				rotation = obj.transform.rotation;
 			}
 			
 			internal void delete() {
@@ -186,7 +221,7 @@ namespace ReikaKalseki.SeaToSea
 							}
 						}
 					}
-					else {
+					else if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 						foreach (PlacedObject go in items.Values) {
 							if (go.isSelected) {
 								go.setPosition(hit.point);
@@ -230,11 +265,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public void dumpSelection(string file) {
+		public void saveSelection(string file) {
 			dumpSome(file, s => s.isSelected);
 		}
 		
-		public void dumpAll(string file) {
+		public void saveAll(string file) {
 			dumpSome(file, s => true);
 		}
 		
@@ -268,13 +303,34 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					PositionedPrefab pfb = PositionedPrefab.fromXML(e);
 					if (pfb != null) {
+						if (pfb.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
+							pfb.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(pfb.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
+						}
+						else if (pfb.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
+							pfb.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(pfb.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
+						}
+						else if (pfb.prefabName == "crate") {
+							pfb.prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
+							string tech = e.getProperty("item");
+							TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+						}
+						else if (pfb.prefabName == "databox") {
+							pfb.prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
+							string tech = e.getProperty("tech");
+							TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+						}
 						PlacedObject b = createPrefab(pfb.prefabName);
 						if (b != null) {
 							string tech = e.getProperty("tech", true);
 							if (b.tech == TechType.None && tech != null && tech != "None") {
 								b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
 							}
-							b.obj.transform.SetPositionAndRotation(pfb.position, pfb.rotation);
+							b.setPosition(pfb.position);
+							b.rotation = pfb.rotation;
+							b.obj.transform.rotation = b.rotation;
+							b.fx.transform.rotation = b.rotation;
+							b.obj.transform.localScale = b.scale;
+							SBUtil.writeToChat("Loaded a "+b);
 							lastPlaced = b;
 							selectLastPlaced();
 						}
@@ -418,7 +474,8 @@ namespace ReikaKalseki.SeaToSea
 			string id = getPrefabKeyFromID(arg);
 			PlacedObject b = createPrefab(id);
 			if (b != null) {
-				b.obj.transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
+				b.obj.transform.SetPositionAndRotation(pos, Quaternion.identity);
+				SBUtil.writeToChat("Spawned a "+b);
 				lastPlaced = b;
 				selectLastPlaced();
 			}
@@ -435,7 +492,6 @@ namespace ReikaKalseki.SeaToSea
 						PlacedObject ret = new PlacedObject(go, id);
 						items[ret.referenceID] = ret;
 						sel.placement = ret;
-						SBUtil.writeToChat("Spawned a "+ret);
 						//SBUtil.dumpObjectData(ret.obj);
 						return ret;
 					}

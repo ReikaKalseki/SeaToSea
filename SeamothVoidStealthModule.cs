@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class SeamothVoidStealthModule : SeamothModule {
 		
-		private static readonly string DESC = "Greatly reduces the detectability of basic seamoth systems to passive listeners. Will not affect active echolocators.";
+		private static readonly string DESC = "Greatly reduces the detectability of basic seamoth systems to passive listeners. Will not affect active echolocators, or creatures at close range.";
 				
 		public SeamothVoidStealthModule() : base("SeamothVoidStealth", "Acoustic Suppression Module", DESC) {
 			

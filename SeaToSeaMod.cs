@@ -18,6 +18,8 @@ namespace ReikaKalseki.SeaToSea
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
+    
+    private static SeamothVoidStealthModule voidStealth;
 
     [QModPatch]
     public static void Load()
@@ -38,18 +40,22 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
+        voidStealth = new SeamothVoidStealthModule();
+        voidStealth.addIngredient(TechType.SeaTreaderPoop, 4).addIngredient(TechType.Benzene, 4).addIngredient(TechType.Crabsnake, 1);
+        voidStealth.Patch();
+        
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
         //CommandHandler.instance.registerCommand("buildprefab", BuildingHandler.instance.spawnPrefabAtLook);
         //DevConsole.RegisterConsoleCommand(new test(), "makepfb");
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
-        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("bden", BuildingHandler.instance.setEnabled);  
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("bdsa", BuildingHandler.instance.selectAll);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexs", BuildingHandler.instance.dumpSelection);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexa", BuildingHandler.instance.dumpAll);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdld", BuildingHandler.instance.loadFile);
+        BuildingHandler.instance.addCommand<string>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
+        //BuildingHandler.instance.addCommand<string>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
+        BuildingHandler.instance.addCommand<bool>("bden", BuildingHandler.instance.setEnabled);  
+        BuildingHandler.instance.addCommand("bdsa", BuildingHandler.instance.selectAll);
+        BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
+        BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
+        BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -101,6 +107,23 @@ namespace ReikaKalseki.SeaToSea
     	if (over != TechType.None) {
     		SBUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
     		c.unlockTechType = over;
+    	}
+    }
+    
+    public static void onCrateActivate(SupplyCrate c) {
+    	//SBUtil.log("original databox unlock being reprogrammed on 'activate' from: "+c.unlockTechType);
+    	//SBUtil.log(c.gameObject.ToString());
+    	//SBUtil.log(c.gameObject.transform.ToString());
+    	//SBUtil.log(c.gameObject.transform.position.ToString());
+    	//SBUtil.log(c.gameObject.transform.eulerAngles.ToString());
+    	
+    	TechType over = CrateFillMap.instance.getOverride(c);
+    	if (over != TechType.None) {
+    		SBUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
+    		if (c.itemInside == null) {
+    			c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
+    		}
+			//TODO
     	}
     }
     
@@ -163,7 +186,7 @@ namespace ReikaKalseki.SeaToSea
     		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
 	    		foreach (int idx in sm.slotIndexes.Values) {
 	    			InventoryItem ii = sm.GetSlotItem(idx);
-	    			if (ii != null && ii.item.GetTechType() == TechType.MercuryOre) { //TODO
+	    			if (ii != null && ii.item.GetTechType() != TechType.None && ii.item.GetTechType() == voidStealth.getTechType()) {
     					//SBUtil.writeToChat("Avoid");
 	    				return false;
 	    			}
@@ -178,7 +201,8 @@ namespace ReikaKalseki.SeaToSea
     	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
     	if (pinged != null && pinged.getTimeSince() <= 10000)
     		return 0;
-    	int maxd = far ? 200 : 600;
+    	//TODO check for nearby leviathans?
+    	int maxd = far ? 200 : 900; //TODO rebalance
     	double depth = -sm.transform.position.y;
     	if (depth < maxd)
     		return 1;

@@ -26,10 +26,23 @@ namespace ReikaKalseki.SeaToSea
 					try {
 						PositionedPrefab gen = PositionedPrefab.fromXML(e);
 						if (gen != null) {
-							if (gen.prefabName == "databox") {
+							if (gen.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
+								gen.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(gen.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
+							}
+							else if (gen.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
+								gen.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(gen.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
+							}
+							else if (gen.prefabName == "crate") {
+								string tech = e.getProperty("item");
+								TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+								GenUtil.spawnItemCrate(gen.position, gen.rotation);
+						    	CrateFillMap.instance.addValue(gen.position, techt);
+							}
+							else if (gen.prefabName == "databox") {
 								string tech = e.getProperty("tech");
 								TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-								spawnDatabox(techt, gen.position, gen.rotation);
+						        GenUtil.spawnDatabox(gen.position, gen.rotation);
+						    	DataboxTypingMap.instance.addValue(gen.position, techt);
 							}
 							else {
 								GenUtil.registerWorldgen(gen);
@@ -50,18 +63,5 @@ namespace ReikaKalseki.SeaToSea
 				SBUtil.log("Databox XML not found!");
 			}
 		}
-    
-	    private void spawnDatabox(TechType tech, Vector3 pos) {
-	    	spawnDatabox(tech, pos, Quaternion.identity);
-	    }
-	    
-	    private void spawnDatabox(TechType tech, Vector3 pos, double rotY) {
-			spawnDatabox(tech, pos, Quaternion.Euler(0, (float)rotY, 0));
-	    }
-	    
-	    private void spawnDatabox(TechType tech, Vector3 pos, Quaternion rot) {
-	        GenUtil.spawnDatabox(pos, rot);
-	    	DataboxTypingMap.instance.addValue(pos, tech);
-	    }
 	}
 }
