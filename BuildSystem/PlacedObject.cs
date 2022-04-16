@@ -125,6 +125,24 @@ namespace ReikaKalseki.SeaToSea
 						if (b.tech == TechType.None && pfb.tech != TechType.None)
 							b.tech = pfb.tech;
 						b.manipulations.AddRange(pfb.manipulations);
+						if (pfb.isDatabox) {
+							BlueprintHandTarget bpt = b.obj.GetComponentInParent<BlueprintHandTarget>();
+							if (bpt != null) {
+								bpt.unlockTechType = b.tech;
+							}
+						}
+						else if (pfb.isCrate) {
+							SupplyCrate bpt = b.obj.GetComponentInParent<SupplyCrate>();
+							if (bpt != null) {
+								SeaToSeaMod.setCrateItem(bpt, b.tech);
+							}
+						}
+						else if (pfb.isFragment) {
+							
+						}
+						foreach (ManipulationBase mb in b.manipulations) {
+							mb.applyToObject(b);
+						}
 						return b;
 					}
 					else {

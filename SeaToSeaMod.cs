@@ -120,11 +120,20 @@ namespace ReikaKalseki.SeaToSea
     	TechType over = CrateFillMap.instance.getOverride(c);
     	if (over != TechType.None) {
     		SBUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
-    		if (c.itemInside == null) {
-    			c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
-    		}
-			//TODO
+    		setCrateItem(c, over);
     	}
+    }
+    
+    public static void setCrateItem(SupplyCrate c, TechType item) {
+    	/*
+	   	if (c.itemInside == null) {
+    		c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
+    	}
+		//TODO
+		*/
+		//Pickupable p = c.transform.GetComponentInChildren<Pickupable>();
+		//GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);
+		//p.
     }
     
     public static bool onDataboxUsed(TechType recipe, bool verb, BlueprintHandTarget c) {

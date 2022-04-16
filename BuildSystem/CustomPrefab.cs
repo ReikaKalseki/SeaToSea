@@ -59,8 +59,9 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public static new CustomPrefab fromXML(XmlElement e) {
+				PositionedPrefab pfb = PositionedPrefab.fromXML(e);
 				try {
-					CustomPrefab b = new CustomPrefab(e.getProperty("prefab"));
+					CustomPrefab b = new CustomPrefab(pfb);
 					if (b.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
 						b.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(b.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
 					}
