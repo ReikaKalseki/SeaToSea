@@ -41,6 +41,7 @@ namespace ReikaKalseki.SeaToSea
 							else {
 								GenUtil.registerWorldgen(gen);
 							}
+							//TODO callbacks for manipulations!!!
 							SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);
 						}
 						else {

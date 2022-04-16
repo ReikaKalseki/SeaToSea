@@ -105,7 +105,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public override string ToString() {
-				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
+				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" / "+obj.transform.localScale+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
 			}
 			
 			internal override XmlElement asXML(XmlDocument doc) {

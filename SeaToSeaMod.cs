@@ -129,10 +129,15 @@ namespace ReikaKalseki.SeaToSea
 	   	if (c.itemInside == null) {
     		c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
     	}
-		//TODO
+		//TODO fix crate item set
 		*/
-		//Pickupable p = c.transform.GetComponentInChildren<Pickupable>();
-		//GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);
+		typeof(SupplyCrate).GetMethod("FindInsideItemAfterStart", unchecked((System.Reflection.BindingFlags)0x7fffffff)).Invoke(c, new object[0]);
+		SBUtil.log("T"+c.transform);
+		SBUtil.dumpObjectData(c.transform);
+		SBUtil.log("P"+c.transform.GetComponentInChildren<Pickupable>());
+		Pickupable p = c.transform.GetComponentInChildren<Pickupable>();
+		p.SetTechTypeOverride(item);
+		GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);
 		//p.
     }
     
