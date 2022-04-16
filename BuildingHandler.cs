@@ -224,6 +224,12 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		public void selectAll() {
+			foreach (PlacedObject go in items.Values) {
+				select(go);
+			}
+		}
+		
 		public void dumpSelection(string file) {
 			dumpSome(file, s => s.isSelected);
 		}
@@ -239,8 +245,7 @@ namespace ReikaKalseki.SeaToSea
 			doc.AppendChild(rootnode);
 			SBUtil.log("=================================");
 			SBUtil.log("Building Handler has "+items.Count+" items: ");
-			List<PlacedObject> li = new List<PlacedObject>(items.Values);
-			foreach (PlacedObject go in li) {
+			foreach (PlacedObject go in items.Values) {
 				try {
 					bool use = flag(go);
 					SBUtil.log(go.ToString()+" dump = "+use);

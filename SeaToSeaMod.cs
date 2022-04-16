@@ -46,6 +46,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("bden", BuildingHandler.instance.setEnabled);  
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("bdsa", BuildingHandler.instance.selectAll);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexs", BuildingHandler.instance.dumpSelection);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdexa", BuildingHandler.instance.dumpAll);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("bdld", BuildingHandler.instance.loadFile);
@@ -147,6 +148,64 @@ namespace ReikaKalseki.SeaToSea
     	PDAScanner.ScanTarget tgt = PDAScanner.scanTarget;
     	SBUtil.log("Scanned fragment: "+original);
     	return original;
+    }
+    
+    public static bool isSpawnableVoid(string biome) {
+    	Player ep = Player.main;
+    	bool edge = string.Equals(biome, "void", StringComparison.OrdinalIgnoreCase);
+    	bool far = string.IsNullOrEmpty(biome);
+    	if (!far && !edge)
+    		return false;
+    	if (ep.inSeamoth) {
+    		SeaMoth sm = (SeaMoth)ep.GetVehicle();
+    		double ch = getAvoidanceChance(ep, sm, edge, far);
+    		//SBUtil.writeToChat(ch+" @ "+sm.transform.position);
+    		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
+	    		foreach (int idx in sm.slotIndexes.Values) {
+	    			InventoryItem ii = sm.GetSlotItem(idx);
+	    			if (ii != null && ii.item.GetTechType() == TechType.MercuryOre) { //TODO
+    					//SBUtil.writeToChat("Avoid");
+	    				return false;
+	    			}
+	    		}
+    			//SBUtil.writeToChat("Tried and failed");
+    		}
+    	}
+    	return true;
+    }
+    
+    private static double getAvoidanceChance(Player ep, SeaMoth sm, bool edge, bool far) {
+    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
+    	if (pinged != null && pinged.getTimeSince() <= 10000)
+    		return 0;
+    	int maxd = far ? 200 : 600;
+    	double depth = -sm.transform.position.y;
+    	if (depth < maxd)
+    		return 1;
+    	double over = depth-maxd;
+    	double frac = over/(far ? 90D : 120D);
+    	if (frac > 0 && sm.lightsActive) {
+    		frac *= 1.2;
+    	}
+    	return 1D-frac;
+    }
+    
+    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
+    	
+    }
+    
+    public static void pingSeamothSonar(SeaMoth sm) {
+    	SonarPinged ping = sm.gameObject.EnsureComponent<SonarPinged>();
+    	ping.lastPing = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+    }
+    
+    private class SonarPinged : MonoBehaviour {
+    	
+    	internal long lastPing;
+    	
+    	internal long getTimeSince() {
+    		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-lastPing;
+    	}
     }
 
   }
