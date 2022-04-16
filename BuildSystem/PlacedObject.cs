@@ -23,20 +23,16 @@ using SMLHelper.V2.Utility;
 namespace ReikaKalseki.SeaToSea
 {		
 		[Serializable]
-		internal class PlacedObject : PositionedPrefab {
+		internal class PlacedObject : CustomPrefab {
 			
 			private static GameObject bubblePrefab = null;
 			
 			[SerializeField]
 			internal int referenceID;
 			[SerializeField]
-			internal TechType tech;
-			[SerializeField]
 			internal GameObject obj;
 			[SerializeField]
 			internal GameObject fx;
-			[SerializeField]
-			internal readonly List<ManipulationBase> manipulations = new List<ManipulationBase>();
 			
 			[SerializeField]
 			internal bool isSelected;
@@ -53,6 +49,7 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					if (bubblePrefab == null) {
 						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
+						//if (!SBUtil.getPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
 							SBUtil.writeToChat("Bubbles not loadable!");
 						}
 					}
@@ -113,49 +110,21 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal override XmlElement asXML(XmlDocument doc) {
 				XmlElement n = base.asXML(doc);
-				if (tech != TechType.None)
-					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
-				if (manipulations.Count > 0) {
-					XmlElement e = doc.CreateElement("objectManipulation");
-					foreach (ManipulationBase mb in manipulations) {
-						XmlElement e2 = doc.CreateElement(mb.GetType().Name);
-						mb.saveToXML(e2);
-						e.AppendChild(e2);
-					}
-					n.AppendChild(e);
-				}
 				return n;
 			}
 			
-			public static PlacedObject fromXML(XmlElement e, PositionedPrefab pfb, bool construct) {
+			public static PlacedObject fromXML(XmlElement e, CustomPrefab pfb) {
 				try {
-					if (pfb.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
-						pfb.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(pfb.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
-					}
-					else if (pfb.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
-						pfb.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(pfb.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
-					}
-					else if (pfb.prefabName == "crate") {
-						pfb.prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
-						string tech = e.getProperty("item");
-						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-					}
-					else if (pfb.prefabName == "databox") {
-						pfb.prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
-						string tech = e.getProperty("tech");
-						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-					}
 					PlacedObject b = createPrefab(pfb.prefabName);
 					if (b != null) {
-						string tech = e.getProperty("tech", true);
-						if (b.tech == TechType.None && tech != null && tech != "None") {
-							b.tech = (TechType)Enum.Parse(typeof(TechType), tech);
-						}
 						b.setPosition(pfb.position);
 						b.rotation = pfb.rotation;
 						b.obj.transform.rotation = b.rotation;
 						b.fx.transform.rotation = b.rotation;
 						b.obj.transform.localScale = b.scale;
+						if (b.tech == TechType.None && pfb.tech != TechType.None)
+							b.tech = pfb.tech;
+						b.manipulations.AddRange(pfb.manipulations);
 						return b;
 					}
 					else {
@@ -163,7 +132,7 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				catch (Exception ex) {
-					SBUtil.log("Could not construct object from XML: "+ex);
+					SBUtil.log("Could not construct placed object from XML: "+ex);
 					return null;
 				}
 			}
@@ -171,8 +140,9 @@ namespace ReikaKalseki.SeaToSea
 			internal static PlacedObject createPrefab(string id) {
 				GameObject prefab;
 				if (id != null && UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
+				//if (id != null && SBUtil.getPrefab(id, out prefab)) {
 					if (prefab != null) {
-						GameObject go = GameObject.Instantiate(prefab);
+						GameObject go = UnityEngine.Object.Instantiate(prefab);
 						if (go != null) {
 							go.SetActive(true);
 							BuilderPlaced sel = go.AddComponent<BuilderPlaced>();

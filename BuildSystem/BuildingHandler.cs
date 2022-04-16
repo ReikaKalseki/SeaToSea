@@ -181,7 +181,7 @@ namespace ReikaKalseki.SeaToSea
 			XmlElement rootnode = doc.DocumentElement;
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
-					PositionedPrefab pfb = PositionedPrefab.fromXML(e);
+					CustomPrefab pfb = CustomPrefab.fromXML(e);
 					if (pfb != null) {
 						PlacedObject b = PlacedObject.fromXML(e, pfb);
 						if (b != null) {
@@ -364,7 +364,8 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
 				}
-				catch (Exception e) {
+				catch (Exception ex) {
+					SBUtil.log("Unable to fetch vanilla resource field '"+id+"': "+ex);
 					return null;
 				}
 			}
@@ -372,7 +373,8 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					return ((VanillaCreatures)typeof(VanillaCreatures).GetField(id.Substring(6).ToUpper()).GetValue(null)).prefab;
 				}
-				catch (Exception e) {
+				catch (Exception ex) {
+					SBUtil.log("Unable to fetch vanilla creature field '"+id+"': "+ex);
 					return null;
 				}
 			}

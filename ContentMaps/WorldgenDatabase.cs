@@ -24,27 +24,20 @@ namespace ReikaKalseki.SeaToSea
 				doc.Load(xml);
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					try {
-						PositionedPrefab gen = PositionedPrefab.fromXML(e);
-						//PlacedObject obj = PlacedObject.fromXML(e, gen, false);
+						CustomPrefab gen = CustomPrefab.fromXML(e);
 						if (gen != null) {
-							if (gen.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
-								gen.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(gen.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
-							}
-							else if (gen.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
-								gen.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(gen.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
-							}
-							else if (gen.prefabName == "crate") {
-								string tech = e.getProperty("item");
-								TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+							if (gen.isCrate) {
 								GenUtil.spawnItemCrate(gen.position, gen.rotation);
-						    	CrateFillMap.instance.addValue(gen.position, techt);
+						    	CrateFillMap.instance.addValue(gen.position, gen.tech);
 							}
-							else if (gen.prefabName == "databox") {
-								string tech = e.getProperty("tech");
-								TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+							else if (gen.isDatabox) {
 						        GenUtil.spawnDatabox(gen.position, gen.rotation);
-						    	DataboxTypingMap.instance.addValue(gen.position, techt);
+						    	DataboxTypingMap.instance.addValue(gen.position, gen.tech);
 							}
+							//else if (gen.isFragment) {
+						    //    GenUtil.spawnFragment(gen.position, gen.rotation);
+						    //	FragmentTypingMap.instance.addValue(gen.position, gen.tech);
+							//}
 							else {
 								GenUtil.registerWorldgen(gen);
 							}
