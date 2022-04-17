@@ -17,13 +17,13 @@ namespace ReikaKalseki.SeaToSea
 		public SeamothVoidStealthModule() : base("SeamothVoidStealth", "Acoustic Suppression Module", DESC) {
 			
 		}
-/*
+
 		public override TechType RequiredForUnlock {
 			get {
-				return TechType.BaseUpgradeConsole;
+				return TechType.Kyanite;
 			}
 		}
-*/
+
 		public override QuickSlotType QuickSlotType {
 			get {
 				return QuickSlotType.Passive;

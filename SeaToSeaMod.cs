@@ -46,14 +46,14 @@ namespace ReikaKalseki.SeaToSea
         
         honeycombComposite = new BasicCraftingItem("HoneycombComposite", "Honeycomb Composite Plating", "A lightweight and low-conductivity panel.");
         honeycombComposite.isAdvanced = true;
-        honeycombComposite.unlockRequirement = TechType.Fabricator;
+        honeycombComposite.unlockRequirement = TechType.AramidFibers;
         honeycombComposite.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
         honeycombComposite.craftingTime = 12;
         honeycombComposite.Patch();
         
         crystalLens = new BasicCraftingItem("CrystalLens", "Refractive Lens", "A lens with the ability to refract several kinds of matter.");
         crystalLens.isAdvanced = true;
-        crystalLens.unlockRequirement = TechType.Fabricator;
+        crystalLens.unlockRequirement = TechType.Diamond;
         crystalLens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         honeycombComposite.craftingTime = 20;
         crystalLens.Patch();
@@ -61,6 +61,7 @@ namespace ReikaKalseki.SeaToSea
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(crystalLens.TechType, 1).addIngredient(honeycombComposite.TechType, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
+        
         
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
