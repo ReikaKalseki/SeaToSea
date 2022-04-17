@@ -125,16 +125,25 @@ namespace ReikaKalseki.SeaToSea
 						if (b.tech == TechType.None && pfb.tech != TechType.None)
 							b.tech = pfb.tech;
 						b.manipulations.AddRange(pfb.manipulations);
+						//SBUtil.writeToChat("S"+b.prefabName);
 						if (pfb.isDatabox) {
+							//SBUtil.writeToChat("Reprogramming databox");
 							BlueprintHandTarget bpt = b.obj.GetComponentInParent<BlueprintHandTarget>();
 							if (bpt != null) {
 								bpt.unlockTechType = b.tech;
 							}
+							else {
+								SBUtil.writeToChat("Databox had no blueprint component!");
+							}
 						}
 						else if (pfb.isCrate) {
+							//SBUtil.writeToChat("Reprogramming crate");
 							SupplyCrate bpt = b.obj.GetComponentInParent<SupplyCrate>();
 							if (bpt != null) {
-								SeaToSeaMod.setCrateItem(bpt, b.tech);
+								SBUtil.setCrateItem(bpt, b.tech);
+							}
+							else {
+								SBUtil.writeToChat("Crate had no supply component!");
 							}
 						}
 						else if (pfb.isFragment) {

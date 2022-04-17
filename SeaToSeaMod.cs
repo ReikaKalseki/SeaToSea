@@ -48,15 +48,18 @@ namespace ReikaKalseki.SeaToSea
         honeycombComposite.isAdvanced = true;
         honeycombComposite.unlockRequirement = TechType.Fabricator;
         honeycombComposite.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
+        honeycombComposite.craftingTime = 12;
         honeycombComposite.Patch();
+        
         crystalLens = new BasicCraftingItem("CrystalLens", "Refractive Lens", "A lens with the ability to refract several kinds of matter.");
         crystalLens.isAdvanced = true;
         crystalLens.unlockRequirement = TechType.Fabricator;
         crystalLens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        honeycombComposite.craftingTime = 20;
         crystalLens.Patch();
         
         voidStealth = new SeamothVoidStealthModule();
-        voidStealth.addIngredient(crystalLens.getTechType(), 1).addIngredient(honeycombComposite.getTechType(), 2).addIngredient(TechType.Aerogel, 12);
+        voidStealth.addIngredient(crystalLens.TechType, 1).addIngredient(honeycombComposite.TechType, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
         WorldgenDatabase.instance.load();
@@ -137,37 +140,14 @@ namespace ReikaKalseki.SeaToSea
     	}
     }
     
-    public static void onCrateActivate(SupplyCrate c) {
-    	//SBUtil.log("original databox unlock being reprogrammed on 'activate' from: "+c.unlockTechType);
-    	//SBUtil.log(c.gameObject.ToString());
-    	//SBUtil.log(c.gameObject.transform.ToString());
-    	//SBUtil.log(c.gameObject.transform.position.ToString());
-    	//SBUtil.log(c.gameObject.transform.eulerAngles.ToString());
-    	
+    public static void onCrateActivate(SupplyCrate c) {    	
     	TechType over = CrateFillMap.instance.getOverride(c);
     	if (over != TechType.None) {
     		SBUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
-    		setCrateItem(c, over);
+    		SBUtil.setCrateItem(c, over);
     	}
     }
-    
-    public static void setCrateItem(SupplyCrate c, TechType item) {
-    	/*
-	   	if (c.itemInside == null) {
-    		c.itemInside = c.transform.gameObject.AddComponent<Pickupable>();
-    	}
-		//TODO fix crate item set
-		*//*
-		typeof(SupplyCrate).GetMethod("FindInsideItemAfterStart", unchecked((System.Reflection.BindingFlags)0x7fffffff)).Invoke(c, new object[0]);
-		SBUtil.log("T"+c.transform);
-		SBUtil.dumpObjectData(c.transform);
-		SBUtil.log("P"+c.transform.GetComponentInChildren<Pickupable>());
-		Pickupable p = c.transform.GetComponentInChildren<Pickupable>();
-		p.SetTechTypeOverride(item);
-		GameObject use = CraftData.GetPrefabForTechType(item);//Utils.CreateGenericLoot(item);*/
-		//p.
-    }
-    
+    /*
     public static bool onDataboxUsed(TechType recipe, bool verb, BlueprintHandTarget c) {
     	bool flag = KnownTech.Add(recipe, verb);
     	SBUtil.log("Used databox: "+recipe);
@@ -175,7 +155,7 @@ namespace ReikaKalseki.SeaToSea
     	SBUtil.writeToChat(c.gameObject.transform.position.ToString());
     	SBUtil.writeToChat(c.gameObject.transform.eulerAngles.ToString());
     	return flag;
-    }
+    }*/
     
     public static GameObject interceptScannerTarget(GameObject original, ref PDAScanner.ScanTarget tgt) { //the GO is the collider, NOT the parent
     	/*
@@ -227,7 +207,7 @@ namespace ReikaKalseki.SeaToSea
     		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
 	    		foreach (int idx in sm.slotIndexes.Values) {
 	    			InventoryItem ii = sm.GetSlotItem(idx);
-	    			if (ii != null && ii.item.GetTechType() != TechType.None && ii.item.GetTechType() == voidStealth.getTechType()) {
+	    			if (ii != null && ii.item.GetTechType() != TechType.None && ii.item.GetTechType() == voidStealth.TechType) {
     					//SBUtil.writeToChat("Avoid");
 	    				return false;
 	    			}

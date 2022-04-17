@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(BlueprintHandTarget))]
 	[HarmonyPatch("UnlockBlueprint")]
 	public static class DataboxUseHook {
@@ -97,7 +97,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}
+	}*/
 	
 	[HarmonyPatch(typeof(PDAScanner))]
 	[HarmonyPatch("Scan")]
