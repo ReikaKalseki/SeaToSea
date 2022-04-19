@@ -75,7 +75,12 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal void setSelected(bool sel) {
 				isSelected = sel;
-				fx.SetActive(isSelected);
+				try {
+					fx.SetActive(isSelected);
+				}
+				catch (Exception ex) {
+					SBUtil.writeToChat("Could not set enabled state of "+this+" due to FX ("+fx+") GO error: "+ex.ToString());
+				}
 			}
 			
 			internal void setPosition(Vector3 pos) {
@@ -85,10 +90,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 		
 			internal void move(Vector3 mov) {
+				move(mov.x, mov.y, mov.z);
+			}
+		
+			internal void move(double x, double y, double z) {
 				Vector3 vec = obj.transform.position;
-				vec.x += mov.x;
-				vec.y += mov.y;
-				vec.z += mov.z;
+				vec.x += (float)x;
+				vec.y += (float)y;
+				vec.z += (float)z;
 				setPosition(vec);
 				//SBUtil.writeToChat(go.obj.transform.position.ToString());
 			}
@@ -105,7 +114,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public override string ToString() {
-				return prefabName+" ["+tech+"] @ "+obj.transform.position+" / "+obj.transform.rotation.eulerAngles+" / "+obj.transform.localScale+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
+				try {
+					Transform t = obj.transform;
+					string pos = t == null ? "null-transform @ "+position+" / "+rotation+" / "+scale : t.position+" / "+t.rotation.eulerAngles+" / "+t.localScale;
+					return prefabName+" ["+tech+"] @ "+pos+" ("+referenceID+")"+" "+(isSelected ? "*" : "");
+				}
+				catch (Exception ex) {
+					return "Errored "+prefabName+" @ "+position+": "+ex.ToString();
+				}
 			}
 			
 			internal override XmlElement asXML(XmlDocument doc) {

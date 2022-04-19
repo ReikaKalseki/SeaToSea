@@ -24,28 +24,32 @@ namespace ReikaKalseki.SeaToSea
 				doc.Load(xml);
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					try {
-						CustomPrefab gen = CustomPrefab.fromXML(e);
-						if (gen != null) {
-							if (gen.isCrate) {
-								GenUtil.spawnItemCrate(gen.position, gen.rotation);
-						    	CrateFillMap.instance.addValue(gen.position, gen.tech);
+						string count = e.GetAttribute("count");
+						int amt = string.IsNullOrEmpty(count) ? 1 : int.Parse(count);
+						for (int i = 0; i < amt; i++) {
+							CustomPrefab gen = CustomPrefab.fromXML(e);
+							if (gen != null) {
+								if (gen.isCrate) {
+									GenUtil.spawnItemCrate(gen.position, gen.rotation);
+							    	CrateFillMap.instance.addValue(gen.position, gen.tech);
+								}
+								else if (gen.isDatabox) {
+							        GenUtil.spawnDatabox(gen.position, gen.rotation);
+							    	DataboxTypingMap.instance.addValue(gen.position, gen.tech);
+								}
+								//else if (gen.isFragment) {
+							    //    GenUtil.spawnFragment(gen.position, gen.rotation);
+							    //	FragmentTypingMap.instance.addValue(gen.position, gen.tech);
+								//}
+								else {
+									GenUtil.registerWorldgen(gen);
+								}
+								//TODO callbacks for manipulations!!!
+								SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);
 							}
-							else if (gen.isDatabox) {
-						        GenUtil.spawnDatabox(gen.position, gen.rotation);
-						    	DataboxTypingMap.instance.addValue(gen.position, gen.tech);
-							}
-							//else if (gen.isFragment) {
-						    //    GenUtil.spawnFragment(gen.position, gen.rotation);
-						    //	FragmentTypingMap.instance.addValue(gen.position, gen.tech);
-							//}
 							else {
-								GenUtil.registerWorldgen(gen);
+								SBUtil.log("No worldgen loadable for "+e.InnerText);
 							}
-							//TODO callbacks for manipulations!!!
-							SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);
-						}
-						else {
-							SBUtil.log("No worldgen loadable for "+e.InnerText);
 						}
 					}
 					catch (Exception ex) {

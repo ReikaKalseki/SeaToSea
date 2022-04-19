@@ -22,8 +22,8 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public class BuildingHandler
-	{
+	public class BuildingHandler {
+		
 		public static readonly BuildingHandler instance = new BuildingHandler();
 		
 		public bool isEnabled {get; private set;}
@@ -35,7 +35,7 @@ namespace ReikaKalseki.SeaToSea
 		private BasicText controlHint = new BasicText(TextAnchor.MiddleCenter);
 		
 		private BuildingHandler() {
-			addText("LMB to select, Lalt+RMB to place selected on ground at look, LCtrl+RMB to duplicate it there");
+			addText("LMB to select, Lalt+RMB to place selected on ground at look, LCtrl+RMB to duplicate them there");
 			addText("Lalt+Arrow keys to move L/R Fwd/Back, +/- for U/D, add Z to make relative to obj");
 			addText("Lalt+R to yaw, [] to pitch (Z), ,. to roll (X)");
 			addText("Add C for fast, X for slow; DEL to delete all selected");
@@ -65,7 +65,12 @@ namespace ReikaKalseki.SeaToSea
 		public void setEnabled(bool on) {
 			isEnabled = on;
 			foreach (PlacedObject go in items.Values) {
-				go.fx.SetActive(go.isSelected);
+				try {
+					go.fx.SetActive(go.isSelected);
+				}
+				catch (Exception ex) {
+					SBUtil.writeToChat("Could not set enabled state of "+go+" due to GO error: "+ex.ToString());
+				}
 			}
 			if (on) {
 				controlHint.ShowMessage(string.Join("\n", text.ToArray()));
@@ -91,15 +96,19 @@ namespace ReikaKalseki.SeaToSea
 				RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
 				if (hit.transform != null) {
 					if (isCtrl) {
-						if (lastPlaced != null) {
-							PlacedObject b = PlacedObject.createPrefab(lastPlaced.prefabName);
-							if (b != null) {
+						List<PlacedObject> added = new List<PlacedObject>();
+						foreach (PlacedObject p in new List<PlacedObject>(items.Values)) {
+							if (p.isSelected) {
+								PlacedObject b = PlacedObject.createPrefab(p.prefabName);
 								items[b.referenceID] = b;
 								b.obj.transform.SetPositionAndRotation(hit.point, hit.transform.rotation);
 								lastPlaced = b;
-								selectLastPlaced();
+								added.Add(b);
 							}
 						}
+						clearSelection();
+						foreach (PlacedObject b in added)
+							select(b);
 					}
 					else if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 						foreach (PlacedObject go in items.Values) {
@@ -181,21 +190,25 @@ namespace ReikaKalseki.SeaToSea
 			XmlElement rootnode = doc.DocumentElement;
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
-					CustomPrefab pfb = CustomPrefab.fromXML(e);
-					if (pfb != null) {
-						PlacedObject b = PlacedObject.fromXML(e, pfb);
-						if (b != null) {
-							SBUtil.writeToChat("Loaded a "+b);
-							items[b.referenceID] = b;
-							lastPlaced = b;
-							selectLastPlaced();
+					string count = e.GetAttribute("count");
+					int amt = string.IsNullOrEmpty(count) ? 1 : int.Parse(count);
+					for (int i = 0; i < amt; i++) {
+						CustomPrefab pfb = CustomPrefab.fromXML(e);
+						if (pfb != null) {
+							PlacedObject b = PlacedObject.fromXML(e, pfb);
+							if (b != null) {
+								SBUtil.writeToChat("Loaded a "+b);
+								items[b.referenceID] = b;
+								lastPlaced = b;
+								selectLastPlaced();
+							}
+							else {
+								SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
+							}
 						}
 						else {
-							SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
+							SBUtil.writeToChat("Could not load XML builder block, no prefab: "+e.InnerText);
 						}
-					}
-					else {
-						SBUtil.writeToChat("Could not load XML builder block, no prefab: "+e.InnerText);
 					}
 				}
 				catch (Exception ex) {
