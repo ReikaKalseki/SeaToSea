@@ -20,6 +20,7 @@ namespace ReikaKalseki.SeaToSea
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     
     private static SeamothVoidStealthModule voidStealth;
+    private static SeamothDepthModule depth1300;
 
     [QModPatch]
     public static void Load()
@@ -55,6 +56,9 @@ namespace ReikaKalseki.SeaToSea
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
+        
+        depth1300 = new SeamothDepthModule("SMDepth4", "Depth Module MK4", "Increases crush depth to 1300m.", 1300);
+        depth1300.Patch();
         
         
         WorldgenDatabase.instance.load();
@@ -116,8 +120,7 @@ namespace ReikaKalseki.SeaToSea
 	    	}
 	    	
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
-    			float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.15F : (KeyCodeUtils.GetKeyHeld(KeyCode.X) ? 0.02F : 0.05F);
-	    		BuildingHandler.instance.manipulateSelected(s);
+	    		BuildingHandler.instance.manipulateSelected();
 	    	}
     	}
     }
@@ -188,6 +191,40 @@ namespace ReikaKalseki.SeaToSea
     	PDAScanner.ScanTarget tgt = PDAScanner.scanTarget;
     	SBUtil.log("Scanned fragment: "+original);
     	return original;
+    }
+    doesnotwork - nondepth modules cause early break
+    public static Dictionary<TechType, float> updateSMDepthDictionary(Dictionary<TechType, float> dict, SeaMoth sm) {
+    	SBUtil.writeToChat(""+depth1300.TechType);
+for (int i = 0; i < sm.slotIDs.Length; i++)
+		{
+			string slot = sm.slotIDs[i];
+			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
+    	SBUtil.writeToChat(i+": "+techTypeInSlot);
+}
+
+    	dict[depth1300.TechType] = 1200;
+    	return dict;
+    }
+    try outright replace
+    public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
+    	//SBUtil.writeToChat("Spawned chunk "+chunk);
+    	BreakableResource res = chunk.GetComponentInParent<BreakableResource>();
+    	if (res != null) {
+    		BreakableResource.RandomPrefab pfb = new BreakableResource.RandomPrefab();
+    		pfb.chance = 0.6F;
+			if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.KYANITE.prefab, out pfb.prefab)) {
+				if (pfb.prefab != null) {
+    				res.prefabList.Insert(0, pfb);
+    				SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
+				}
+				else {
+					SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
+				}
+			}
+			else {
+				SBUtil.writeToChat("Prefab found but was null?!");
+			}
+    	}
     }
     
     public static bool isSpawnableVoid(string biome) {

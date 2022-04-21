@@ -304,7 +304,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public void manipulateSelected(bool fast) {
+		public void manipulateSelected() {
     		float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.15F : (KeyCodeUtils.GetKeyHeld(KeyCode.X) ? 0.02F : 0.05F);
 			foreach (PlacedObject go in items.Values) {
 				if (!go.isSelected)
