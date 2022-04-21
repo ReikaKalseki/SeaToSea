@@ -175,11 +175,12 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "updateSeamothModules", false, typeof(SeaMoth), typeof(int), typeof(TechType), typeof(bool)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_3));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_2));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				//injectSMModuleHook(codes, 0);
+				for (int i = codes.Count-1; i >= 0; i--) {
+					if (codes[i].opcode == OpCodes.Ret) {
+						injectSMModuleHook(codes, i);
+					}
+				}
 				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
@@ -190,6 +191,14 @@ namespace ReikaKalseki.SeaToSea {
 				FileLog.Log(e.ToString());
 			}
 			return codes.AsEnumerable();
+		}
+	
+		private static void injectSMModuleHook(List<CodeInstruction> codes, int idx) {
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "updateSeamothModules", false, typeof(SeaMoth), typeof(int), typeof(TechType), typeof(bool)));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_3));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_2));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
 	
@@ -203,29 +212,6 @@ namespace ReikaKalseki.SeaToSea {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "SNCameraRoot", "SonarPing", true, new Type[0]);
 				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "pingSeamothSonar", false, typeof(SeaMoth)));
 				codes.Insert(idx+1, new CodeInstruction(OpCodes.Ldarg_0));
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(SeaMoth))]
-	[HarmonyPatch("OnUpgradeModuleChange")]
-	public static class SeamothDepthHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_2);
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "updateSMDepthDictionary", false, typeof(System.Collections.Generic.Dictionary<TechType, float>), typeof(SeaMoth)));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}

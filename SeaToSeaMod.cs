@@ -43,49 +43,21 @@ namespace ReikaKalseki.SeaToSea
         
         TechType mountainCaveResource = TechType.MercuryOre; //TODO replace mercury with unique new mountain cave resource
         
-        CraftingItems.Item comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
-        comb.getItem().craftingTime = 12;
-        comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
-        comb.register();
+        addItemsAndRecipes(mountainCaveResource);        
         
-        CraftingItems.Item lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
-        lens.getItem().craftingTime = 20;
-        lens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
-        lens.register();
-        
-        voidStealth = new SeamothVoidStealthModule();
-        voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
-        voidStealth.Patch();
-        
-        depth1300 = new SeamothDepthModule("SMDepth4", "Depth Module MK4", "Increases crush depth to 1300m.", 1300);
-        depth1300.Patch();
-        
+        try {
+        	Story.StoryGoalManager.main.AddListener(StoryHandler.instance);
+        }
+        catch (Exception e) {
+        	throw new Exception("Could not register story injection!", e);
+        }
         
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
-        //CommandHandler.instance.registerCommand("buildprefab", BuildingHandler.instance.spawnPrefabAtLook);
-        //DevConsole.RegisterConsoleCommand(new test(), "makepfb");
-        BuildingHandler.instance.addCommand<string>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
-        //BuildingHandler.instance.addCommand<string>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
-        BuildingHandler.instance.addCommand<bool>("bden", BuildingHandler.instance.setEnabled);  
-        BuildingHandler.instance.addCommand("bdsa", BuildingHandler.instance.selectAll);
-        BuildingHandler.instance.addCommand("bdslp", BuildingHandler.instance.selectLastPlaced);
-        BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
-        BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
-        BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
+        addCommands();
         
-        string mountainCaveID = CraftData.GetClassIdForTechType(mountainCaveResource);
-        string mountainCavePath;
-        UWE.PrefabDatabase.TryGetPrefabFilename(mountainCaveID, out mountainCavePath);
-        List<LootDistributionData.BiomeData> li = new List<LootDistributionData.BiomeData>();
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveFloor, count = 1, probability = 0.1F});
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveWall, count = 1, probability = 0.1F});
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveCeiling, count = 1, probability = 0.1F});
-        UWE.WorldEntityInfo info = null;//new UWE.WorldEntityInfo();
-        UWE.WorldEntityDatabase.TryGetInfo(mountainCaveID, out info);
-       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveID, info);
-        LootDistributionHandler.AddLootDistributionData(mountainCaveID, mountainCavePath, li, info);
+        addOreGen(mountainCaveResource);
         /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -104,6 +76,50 @@ namespace ReikaKalseki.SeaToSea
         }*/
         
         //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
+    }
+    
+    private static void addOreGen(TechType mountainCaveResource) {
+        string mountainCaveID = CraftData.GetClassIdForTechType(mountainCaveResource);
+        string mountainCavePath;
+        UWE.PrefabDatabase.TryGetPrefabFilename(mountainCaveID, out mountainCavePath);
+        List<LootDistributionData.BiomeData> li = new List<LootDistributionData.BiomeData>();
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveFloor, count = 1, probability = 0.1F});
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveWall, count = 1, probability = 0.1F});
+        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveCeiling, count = 1, probability = 0.1F});
+        UWE.WorldEntityInfo info = null;//new UWE.WorldEntityInfo();
+        UWE.WorldEntityDatabase.TryGetInfo(mountainCaveID, out info);
+       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveID, info);
+        LootDistributionHandler.AddLootDistributionData(mountainCaveID, mountainCavePath, li, info);
+    }
+    
+    private static void addCommands() {
+        BuildingHandler.instance.addCommand<string>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
+        //BuildingHandler.instance.addCommand<string>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
+        BuildingHandler.instance.addCommand<bool>("bden", BuildingHandler.instance.setEnabled);  
+        BuildingHandler.instance.addCommand("bdsa", BuildingHandler.instance.selectAll);
+        BuildingHandler.instance.addCommand("bdslp", BuildingHandler.instance.selectLastPlaced);
+        BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
+        BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
+        BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
+    }
+    
+    private static void addItemsAndRecipes(TechType mountainCaveResource) {
+        CraftingItems.Item comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
+        comb.getItem().craftingTime = 12;
+        comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
+        comb.register();
+        
+        CraftingItems.Item lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
+        lens.getItem().craftingTime = 20;
+        lens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.register();
+        
+        voidStealth = new SeamothVoidStealthModule();
+        voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
+        voidStealth.Patch();
+        
+        depth1300 = new SeamothDepthModule("SMDepth4", "Depth Module MK4", "Increases crush depth to 1300m.", 1300);
+        depth1300.Patch();
     }
     
     public static void onTick(DayNightCycle cyc) {
@@ -192,30 +208,28 @@ namespace ReikaKalseki.SeaToSea
     	SBUtil.log("Scanned fragment: "+original);
     	return original;
     }
-    doesnotwork - nondepth modules cause early break
-    public static Dictionary<TechType, float> updateSMDepthDictionary(Dictionary<TechType, float> dict, SeaMoth sm) {
-    	SBUtil.writeToChat(""+depth1300.TechType);
-for (int i = 0; i < sm.slotIDs.Length; i++)
-		{
-			string slot = sm.slotIDs[i];
-			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
-    	SBUtil.writeToChat(i+": "+techTypeInSlot);
-}
-
-    	dict[depth1300.TechType] = 1200;
-    	return dict;
-    }
-    try outright replace
+    
     public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
     	//SBUtil.writeToChat("Spawned chunk "+chunk);
     	BreakableResource res = chunk.GetComponentInParent<BreakableResource>();
     	if (res != null) {
     		BreakableResource.RandomPrefab pfb = new BreakableResource.RandomPrefab();
-    		pfb.chance = 0.6F;
+    		//pfb.chance = 0.6F;
 			if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.KYANITE.prefab, out pfb.prefab)) {
 				if (pfb.prefab != null) {
-    				res.prefabList.Insert(0, pfb);
-    				SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
+    				//res.prefabList.Insert(0, pfb);
+    				//SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
+    				GameObject placed = UnityEngine.Object.Instantiate(pfb.prefab, res.gameObject.transform.position, res.gameObject.transform.rotation);
+    				SinkingGroundChunk added = placed.AddComponent<SinkingGroundChunk>();
+    				added.modelTransform = chunk.modelTransform;
+    				added.onSurfaceModelPosition = chunk.onSurfaceModelPosition;
+    				added.sinkedModelPosition = chunk.sinkedModelPosition;
+    				added.sinkHeight = chunk.sinkHeight;
+    				added.sinkTime = chunk.sinkTime;
+    				added.stage = chunk.stage;
+    				added.startTime = chunk.startTime;
+    				added.toSurfaceTime = chunk.toSurfaceTime;
+    				UnityEngine.Object.Destroy(res.gameObject);
 				}
 				else {
 					SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
@@ -269,7 +283,79 @@ for (int i = 0; i < sm.slotIDs.Length; i++)
     }
     
     public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
-    	
+		for (int i = 0; i < sm.slotIDs.Length; i++) {
+			string slot = sm.slotIDs[i];
+			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
+			if (techTypeInSlot == depth1300.TechType) {
+				sm.crushDamage.SetExtraCrushDepth(depth1300.depthBonus);
+			}
+		}
+    	/*
+		if (slotID >= 0 && slotID < sm.storageInputs.Length) {
+			sm.storageInputs[slotID].SetEnabled(added && techType == TechType.VehicleStorageModule);
+			GameObject gameObject = sm.torpedoSilos[slotID];
+			if (gameObject != null)
+			{
+				gameObject.SetActive(added && techType == TechType.SeamothTorpedoModule);
+			}
+		}
+		int count = sm.modules.GetCount(techType);
+		if (techType != TechType.SeamothReinforcementModule)
+		{
+			if (techType != TechType.SeamothSolarCharge)
+			{
+				if (techType - TechType.VehicleHullModule1 <= 2)
+				{
+					goto IL_7D;
+				}
+				sm.OnUpgradeModuleChange(slotID, techType, added);
+			}
+			else
+			{
+				sm.CancelInvoke("UpdateSolarRecharge");
+				if (count > 0)
+				{
+					sm.InvokeRepeating("UpdateSolarRecharge", 1f, 1f);
+					return;
+				}
+			}
+			return;
+		}
+		IL_7D:
+		Dictionary<TechType, float> dictionary = new Dictionary<TechType, float>
+		{
+			{
+				TechType.SeamothReinforcementModule,
+				800f
+			},
+			{
+				TechType.VehicleHullModule1,
+				100f
+			},
+			{
+				TechType.VehicleHullModule2,
+				300f
+			},
+			{
+				TechType.VehicleHullModule3,
+				700f
+			}
+		};
+		float num = 0f;
+		for (int i = 0; i < sm.slotIDs.Length; i++)
+		{
+			string slot = sm.slotIDs[i];
+			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
+			if (dictionary.ContainsKey(techTypeInSlot))
+			{
+				float num2 = dictionary[techTypeInSlot];
+				if (num2 > num)
+				{
+					num = num2;
+				}
+			}
+		}
+		sm.crushDamage.SetExtraCrushDepth(num);*/
     }
     
     public static void pingSeamothSonar(SeaMoth sm) {

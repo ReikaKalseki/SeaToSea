@@ -13,9 +13,11 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class SeamothDepthModule : SeamothModule {
 		
 		public readonly int maxDepth;
+		public readonly int depthBonus;
 		
 		public SeamothDepthModule(string id, string name, string desc, int d) : base(id, name, desc) {
 			maxDepth = d;
+			depthBonus = maxDepth-200;
 		}
 
 		public override TechType RequiredForUnlock {
