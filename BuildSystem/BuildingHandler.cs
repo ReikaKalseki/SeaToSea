@@ -37,7 +37,7 @@ namespace ReikaKalseki.SeaToSea
 		private BuildingHandler() {
 			addText("LMB to select, Lalt+RMB to place selected on ground at look, LCtrl+RMB to duplicate them there");
 			addText("Lalt+Arrow keys to move L/R Fwd/Back, +/- for U/D, add Z to make relative to obj");
-			addText("Lalt+R to yaw, [] to pitch (Z), ,. to roll (X)");
+			addText("Lalt+QR to yaw, [] to pitch (Z), ,. to roll (X)");
 			addText("Add C for fast, X for slow; DEL to delete all selected");
 		}
 		
@@ -304,7 +304,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public void manipulateSelected(float s) {
+		public void manipulateSelected(bool fast) {
+    		float s = KeyCodeUtils.GetKeyHeld(KeyCode.C) ? 0.15F : (KeyCodeUtils.GetKeyHeld(KeyCode.X) ? 0.02F : 0.05F);
 			foreach (PlacedObject go in items.Values) {
 				if (!go.isSelected)
 					continue;
@@ -328,15 +329,17 @@ namespace ReikaKalseki.SeaToSea
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
 		    		go.move(up*-s);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
-		    		go.rotateYaw(1);
+		    		go.rotateYaw(s*20);
+		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Q))
+		    		go.rotateYaw(-s*20);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-		    		go.rotate(0, 0, -1);
+		    		go.rotate(0, 0, -s*20);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-		    		go.rotate(0, 0, 1);
+		    		go.rotate(0, 0, s*20);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
-		    		go.rotate(-1, 0, 0);
+		    		go.rotate(-s*20, 0, 0);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
-		    		go.rotate(1, 0, 0);
+		    		go.rotate(s*20, 0, 0);
 			}
 		}
     

@@ -20,8 +20,6 @@ namespace ReikaKalseki.SeaToSea
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     
     private static SeamothVoidStealthModule voidStealth;
-    private static BasicCraftingItem honeycombComposite;
-    private static BasicCraftingItem crystalLens;
 
     [QModPatch]
     public static void Load()
@@ -44,22 +42,18 @@ namespace ReikaKalseki.SeaToSea
         
         TechType mountainCaveResource = TechType.MercuryOre; //TODO replace mercury with unique new mountain cave resource
         
-        honeycombComposite = new BasicCraftingItem("HoneycombComposite", "Honeycomb Composite Plating", "A lightweight and low-conductivity panel.");
-        honeycombComposite.isAdvanced = true;
-        honeycombComposite.unlockRequirement = TechType.AramidFibers;
-        honeycombComposite.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
-        honeycombComposite.craftingTime = 12;
-        honeycombComposite.Patch();
+        CraftingItems.Item comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
+        comb.getItem().craftingTime = 12;
+        comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
+        comb.register();
         
-        crystalLens = new BasicCraftingItem("CrystalLens", "Refractive Lens", "A lens with the ability to refract several kinds of matter.");
-        crystalLens.isAdvanced = true;
-        crystalLens.unlockRequirement = TechType.Diamond;
-        crystalLens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
-        honeycombComposite.craftingTime = 20;
-        crystalLens.Patch();
+        CraftingItems.Item lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
+        lens.getItem().craftingTime = 20;
+        lens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.register();
         
         voidStealth = new SeamothVoidStealthModule();
-        voidStealth.addIngredient(crystalLens.TechType, 1).addIngredient(honeycombComposite.TechType, 2).addIngredient(TechType.Aerogel, 12);
+        voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
         
