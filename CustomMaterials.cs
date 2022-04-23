@@ -21,6 +21,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly Dictionary<Materials, Material> mappings = new Dictionary<Materials, Material>();
 		
+		static CustomMaterials() {
+			foreach (Materials m in Enum.GetValues(typeof(Materials))) {
+				getMaterial(m); //trigger registration
+			}
+		}
+		
 		public static void registerWorldgen(Materials m, BiomeType biome, int amt, float chance) {
 			SBUtil.log("Adding worldgen "+biome+" x"+amt+" @ "+chance+"% to "+m);
 			string id = CraftData.GetClassIdForTechType(getMaterial(m).getTechType());
@@ -44,6 +50,9 @@ namespace ReikaKalseki.SeaToSea
 		public static Material getMaterial(Materials key) {
 			if (!mappings.ContainsKey(key)) {
 				mappings[key] = lookupEntry(key);
+				SBUtil.log("Registering material "+key+": "+mappings[key]);
+				mappings[key].entity.Patch();
+				SBUtil.log(" > "+mappings[key].entity.TechType);
 				mappings[key].enumIndex = key;
 				PDAScanner.EntryData e = new PDAScanner.EntryData();
 				e.key = mappings[key].getTechType();
@@ -64,8 +73,8 @@ namespace ReikaKalseki.SeaToSea
 		public enum Materials {
 			[Material("Azurite", "A gemstone with exquisite optical properties and electromagnetic conductivity.", "URANIUM")]MOUNTAIN_CRYSTAL,
 			[Material("Platinum", "An ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.", "SALT")]PLATINUM,
-			[Material("Hadeoclase", "Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium. Potentially able to be alloyed into other materials for increased compressive strength.", "LARGE_RUBY")]PressureCrystals,
-			[Material("Avolite", "An integral part of a phase gate, allowing for the high-level manipulation of space and time. These are not fully understood.", "KYANITE")]PhaseCrystal,
+			[Material("Hadeoclase", "Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium.\nPotentially able to be alloyed into other materials for increased compressive strength.", "LARGE_RUBY")]PRESSURE_CRYSTALS,
+			[Material("Avolite", "An integral part of a phase gate, allowing for the high-level manipulation of space and time. These are not fully understood.", "KYANITE")]PHASE_CRYSTAL,
 			
 		}
 		
@@ -76,7 +85,7 @@ namespace ReikaKalseki.SeaToSea
 			internal MaterialEntity(Material m) : base(Enum.GetName(typeof(Materials), m.enumIndex), m.displayName, m.desc) {
 				material = m;
 				
-				OnFinishedPatching += () => {CraftData.pickupSoundList.Add(TechType, "event:/loot/pickup_glass");};
+				//OnFinishedPatching += () => {CraftData.pickupSoundList.Add(TechType, "event:/loot/pickup_glass");};
 			}
 			
 			public override GameObject GetGameObject() {
@@ -103,7 +112,6 @@ namespace ReikaKalseki.SeaToSea
 				desc = d;
 				baseTemplate = (VanillaResources)typeof(VanillaResources).GetField(template).GetValue(null);
 				entity = new MaterialEntity(this);
-				entity.Patch();
 			}
 			
 			public TechType getTechType() {
