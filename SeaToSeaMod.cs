@@ -41,17 +41,10 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
-        TechType mountainCaveResource = TechType.MercuryOre; //TODO replace mercury with unique new mountain cave resource
+        CustomMaterials.Material mountainCaveResource = CustomMaterials.getMaterial(CustomMaterials.Materials.MOUNTAIN_CRYSTAL);
         
-        addItemsAndRecipes(mountainCaveResource);        
-        
-        try {
-        	Story.StoryGoalManager.main.AddListener(StoryHandler.instance);
-        }
-        catch (Exception e) {
-        	throw new Exception("Could not register story injection!", e);
-        }
-        
+        addItemsAndRecipes(mountainCaveResource);
+                 
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
@@ -78,18 +71,19 @@ namespace ReikaKalseki.SeaToSea
         //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
     }
     
-    private static void addOreGen(TechType mountainCaveResource) {
-        string mountainCaveID = CraftData.GetClassIdForTechType(mountainCaveResource);
-        string mountainCavePath;
-        UWE.PrefabDatabase.TryGetPrefabFilename(mountainCaveID, out mountainCavePath);
+    private static void addOreGen(CustomMaterials.Material mountainCaveResource) {
         List<LootDistributionData.BiomeData> li = new List<LootDistributionData.BiomeData>();
         li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveFloor, count = 1, probability = 0.1F});
         li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveWall, count = 1, probability = 0.1F});
         li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveCeiling, count = 1, probability = 0.1F});
-        UWE.WorldEntityInfo info = null;//new UWE.WorldEntityInfo();
-        UWE.WorldEntityDatabase.TryGetInfo(mountainCaveID, out info);
-       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveID, info);
-        LootDistributionHandler.AddLootDistributionData(mountainCaveID, mountainCavePath, li, info);
+        UWE.WorldEntityInfo info = new UWE.WorldEntityInfo();
+        info.cellLevel = LargeWorldEntity.CellLevel.Near;
+        info.classId = mountainCaveResource.entity.ClassID;
+        info.localScale = Vector3.one;
+        info.slotType = EntitySlot.Type.Small;
+        info.techType = mountainCaveResource.getTechType();
+       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveResource.entity.ClassID, info);
+        LootDistributionHandler.AddLootDistributionData(mountainCaveResource.entity.ClassID, mountainCaveResource.entity.PrefabFileName, li, info);
     }
     
     private static void addCommands() {
@@ -103,7 +97,7 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
     }
     
-    private static void addItemsAndRecipes(TechType mountainCaveResource) {
+    private static void addItemsAndRecipes(CustomMaterials.Material mountainCaveResource) {
         CraftingItems.Item comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
         comb.getItem().craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
@@ -111,7 +105,7 @@ namespace ReikaKalseki.SeaToSea
         
         CraftingItems.Item lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
         lens.getItem().craftingTime = 20;
-        lens.addIngredient(mountainCaveResource, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.addIngredient(mountainCaveResource.getTechType(), 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         lens.register();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -210,35 +204,24 @@ namespace ReikaKalseki.SeaToSea
     }
     
     public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
-    	//SBUtil.writeToChat("Spawned chunk "+chunk);
-    	BreakableResource res = chunk.GetComponentInParent<BreakableResource>();
-    	if (res != null) {
-    		BreakableResource.RandomPrefab pfb = new BreakableResource.RandomPrefab();
-    		//pfb.chance = 0.6F;
-			if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.KYANITE.prefab, out pfb.prefab)) {
-				if (pfb.prefab != null) {
-    				//res.prefabList.Insert(0, pfb);
-    				//SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
-    				GameObject placed = UnityEngine.Object.Instantiate(pfb.prefab, res.gameObject.transform.position, res.gameObject.transform.rotation);
-    				SinkingGroundChunk added = placed.AddComponent<SinkingGroundChunk>();
-    				added.modelTransform = chunk.modelTransform;
-    				added.onSurfaceModelPosition = chunk.onSurfaceModelPosition;
-    				added.sinkedModelPosition = chunk.sinkedModelPosition;
-    				added.sinkHeight = chunk.sinkHeight;
-    				added.sinkTime = chunk.sinkTime;
-    				added.stage = chunk.stage;
-    				added.startTime = chunk.startTime;
-    				added.toSurfaceTime = chunk.toSurfaceTime;
-    				UnityEngine.Object.Destroy(res.gameObject);
-				}
-				else {
-					SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
-				}
+    	if (UnityEngine.Random.Range(0F, 1F) < 0.92)
+    		return;
+    	GameObject owner = chunk.gameObject;
+    	GameObject prefab;
+		if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.KYANITE.prefab, out prefab)) { //TODO switch this over
+			if (prefab != null) {
+    			//res.prefabList.Insert(0, pfb);
+    			//SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
+    			GameObject placed = UnityEngine.Object.Instantiate(prefab, owner.transform.position, owner.transform.rotation);
+    			UnityEngine.Object.Destroy(owner);
 			}
 			else {
-				SBUtil.writeToChat("Prefab found but was null?!");
+				SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
 			}
-    	}
+		}
+		else {
+			SBUtil.writeToChat("Prefab found but was null?!");
+		}
     }
     
     public static bool isSpawnableVoid(string biome) {
@@ -282,10 +265,20 @@ namespace ReikaKalseki.SeaToSea
     	return 1D-frac;
     }
     
+    public static void onStoryGoalCompleted(string key) {
+    	StoryHandler.instance.NotifyGoalComplete(key);
+    }
+    
+    public static void updateCrushDamage(float val) {
+    	SBUtil.log(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+": update crush to "+val+" from trace "+System.Environment.StackTrace);
+    	SBUtil.writeToChat("update crush to "+val);
+    }
+    
     public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
 		for (int i = 0; i < sm.slotIDs.Length; i++) {
 			string slot = sm.slotIDs[i];
 			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
+    		SBUtil.writeToChat(i+": "+techTypeInSlot);
 			if (techTypeInSlot == depth1300.TechType) {
 				sm.crushDamage.SetExtraCrushDepth(depth1300.depthBonus);
 			}
@@ -299,6 +292,18 @@ namespace ReikaKalseki.SeaToSea
 				gameObject.SetActive(added && techType == TechType.SeamothTorpedoModule);
 			}
 		}
+    	switch (techType) {
+    		case TechType.SeamothSolarCharge:
+    			break;
+    		case TechType.SeamothReinforcementModule:
+    			break;
+    		case TechType.VehicleHullModule1:
+    			break;
+    		case TechType.VehicleHullModule2:
+    			break;
+    		case TechType.VehicleHullModule3:
+    			break;
+    	}
 		int count = sm.modules.GetCount(techType);
 		if (techType != TechType.SeamothReinforcementModule)
 		{

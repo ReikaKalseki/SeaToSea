@@ -175,12 +175,24 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
+				//codes.Clear();
+				
 				//injectSMModuleHook(codes, 0);
+				
+				
 				for (int i = codes.Count-1; i >= 0; i--) {
 					if (codes[i].opcode == OpCodes.Ret) {
 						injectSMModuleHook(codes, i);
 					}
 				}
+				
+				/*
+				for (int i = codes.Count-1; i >= 0; i--) {
+					if (codes[i].opcode == OpCodes.Callvirt && ((MethodInfo)codes[i].operand).Name == "SetExtraCrushDepth") {
+						injectSMModuleHook(codes, i+1);
+					}
+				}*/
+				
 				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
@@ -201,7 +213,29 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
-	
+	/*
+	[HarmonyPatch(typeof(CrushDamage))]
+	[HarmonyPatch("SetExtraCrushDepth")]
+	public static class CrushDamageTracer {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "updateCrushDamage", false, typeof(float)));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
+				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	*/
 	[HarmonyPatch(typeof(SeaMoth))]
 	[HarmonyPatch("OnUpgradeModuleUse")]
 	public static class SeamothSonarHook {
@@ -234,6 +268,27 @@ namespace ReikaKalseki.SeaToSea {
 			try {
 				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onTreaderChunkSpawn", false, typeof(SinkingGroundChunk)));
 				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(StoryGoalCustomEventHandler))]
+	[HarmonyPatch("NotifyGoalComplete")]
+	public static class StoryHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onStoryGoalCompleted", false, typeof(string)));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

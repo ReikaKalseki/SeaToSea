@@ -72,14 +72,14 @@ namespace ReikaKalseki.SeaToSea
 						b.prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
 						b.isCrate = true;
 						string tech = e.getProperty("item");
-						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+						TechType techt = SBUtil.getTechType(tech);
 						b.tech = techt;
 					}
 					else if (b.prefabName == "databox") {
 						b.prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
 						b.isDatabox = true;
 						string tech = e.getProperty("tech");
-						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
+						TechType techt = SBUtil.getTechType(tech);
 						b.tech = techt;
 					}
 					//else if (b.prefabName == "fragment") {
@@ -90,7 +90,7 @@ namespace ReikaKalseki.SeaToSea
 					//}
 					string tech2 = e.getProperty("tech", true);
 					if (b.tech == TechType.None && tech2 != null && tech2 != "None") {
-						b.tech = (TechType)Enum.Parse(typeof(TechType), tech2);
+						b.tech = SBUtil.getTechType(tech2);
 					}
 					List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 					if (li.Count == 1) {

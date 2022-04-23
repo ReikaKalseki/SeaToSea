@@ -17,7 +17,10 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void NotifyGoalComplete(string key) {
-			SBUtil.writeToChat("'"+key+"'");
+			switch(key) {
+				case "SunbeamCheckPlayerRange":
+				break;
+			}
 		}
 		
 	}

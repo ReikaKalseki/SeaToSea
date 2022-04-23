@@ -15,9 +15,9 @@ namespace ReikaKalseki.SeaToSea
 		public enum Items {
 			[Item("Honeycomb Composite Plating", "A lightweight and low-conductivity panel.", true, TechType.AramidFibers)]HoneycombComposite,
 			[Item("Refractive Lens", "A lens with the ability to refract several kinds of matter.", true, TechType.Diamond)]CrystalLens,
-			[Item("Platinum", "An ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.", false, TechType.Diamond)]Platinum,
-			[Item("Pressure Crystals", "??", false, TechType.Nickel)]PressureCrystals,
-			[Item("Phase Crystal", "An integral part of a phase gate, allowing for the high-level manipulation of space and time.", false, TechType.Nickel)]PhaseCrystal,
+			//[Item("Platinum", "An ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.", false, TechType.Diamond)]Platinum,
+			//[Item("Pressure Crystals", "??", false, TechType.Nickel)]PressureCrystals,
+			//[Item("Phase Crystal", "An integral part of a phase gate, allowing for the high-level manipulation of space and time.", false, TechType.Nickel)]PhaseCrystal,
 			[Item("Hull Plating", "Heavy armor for vehicles.", true, TechType.PlasteelIngot)]HullPlating,
 		}
 		
