@@ -74,8 +74,7 @@ namespace ReikaKalseki.SeaToSea
 			[Material("Azurite", "A gemstone with exquisite optical properties and electromagnetic conductivity.", "URANIUM")]MOUNTAIN_CRYSTAL,
 			[Material("Platinum", "An ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.", "SALT")]PLATINUM,
 			[Material("Hadeoclase", "Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium.\nPotentially able to be alloyed into other materials for increased compressive strength.", "LARGE_RUBY")]PRESSURE_CRYSTALS,
-			[Material("Avolite", "An integral part of a phase gate, allowing for the high-level manipulation of space and time. These are not fully understood.", "KYANITE")]PHASE_CRYSTAL,
-			
+			[Material("Avolite", "An integral part of a phase gate, allowing for the high-level manipulation of space and time.\nThese crystals are not fully understood, but are known to only form in deep space.", "KYANITE")]PHASE_CRYSTAL,		
 		}
 		
 		public sealed class MaterialEntity : Spawnable {
