@@ -27,7 +27,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void load() {
-			string xml = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "crates.xml");
+			string xml = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "XML/crates.xml");
 			if (File.Exists(xml)) {
 				SBUtil.log("Loading crate map from XML @ "+xml);
 				XmlDocument doc = new XmlDocument();

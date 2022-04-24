@@ -1,0 +1,68 @@
+<Root>
+	<HoneycombComposite>
+		<name>
+			Honeycomb Composite Plating
+		</name>
+		<desc>
+			A strong lightweight panel with extremely low thermal conductivity, and very effective force and vibration absorption capabilities.
+		</desc>
+	</HoneycombComposite>
+	<CrystalLens>
+		<name>
+			Refractive Lens
+		</name>
+		<desc>
+			A lens with the ability to refract several kinds of energy and waves.
+		</desc>
+	</CrystalLens>
+	<HullPlating>
+		<name>
+			Hull Plating
+		</name>
+		<desc>
+			Heavy armor for vehicles.
+		</desc>
+	</HullPlating>
+	<MOUNTAIN_CRYSTAL>
+		<name>
+			Azurite
+		</name>
+		<desc>
+			A gemstone with exquisite optical properties and electromagnetic conductivity.
+		</desc>
+	</MOUNTAIN_CRYSTAL>
+	<PLATINUM>
+		<name>
+			Platinum
+		</name>
+		<desc>
+			A dense, valuable, ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.
+		</desc>
+	</PLATINUM>
+	<PRESSURE_CRYSTALS>
+		<name>
+			Hadeoclase
+		</name>
+		<desc>
+			Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium.
+			Potentially able to be alloyed into other materials for increased compressive strength.
+		</desc>
+	</PRESSURE_CRYSTALS>
+	<PHASE_CRYSTAL>
+		<name>
+			Avolite
+		</name>
+		<desc>
+			An integral part of a phase gate, allowing for the high-level manipulation of space and time.
+			These crystals are not fully understood, but are known to only form in deep space.
+		</desc>
+	</PHASE_CRYSTAL>
+	<enum>
+		<name>
+			
+		</name>
+		<desc>
+			
+		</desc>
+	</enum>
+</Root>

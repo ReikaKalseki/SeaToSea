@@ -41,16 +41,14 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
-        CustomMaterials.Material mountainCaveResource = CustomMaterials.getMaterial(CustomMaterials.Materials.MOUNTAIN_CRYSTAL);
-        
-        addItemsAndRecipes(mountainCaveResource);
+        addItemsAndRecipes();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
         addCommands();
         
-        addOreGen(mountainCaveResource);
+        addOreGen();
         /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
@@ -71,19 +69,11 @@ namespace ReikaKalseki.SeaToSea
         //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
     }
     
-    private static void addOreGen(CustomMaterials.Material mountainCaveResource) {
-        List<LootDistributionData.BiomeData> li = new List<LootDistributionData.BiomeData>();
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveFloor, count = 1, probability = 0.1F});
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveWall, count = 1, probability = 0.1F});
-        li.Add(new LootDistributionData.BiomeData{biome = BiomeType.Mountains_CaveCeiling, count = 1, probability = 0.1F});
-        UWE.WorldEntityInfo info = new UWE.WorldEntityInfo();
-        info.cellLevel = LargeWorldEntity.CellLevel.Near;
-        info.classId = mountainCaveResource.entity.ClassID;
-        info.localScale = Vector3.one;
-        info.slotType = EntitySlot.Type.Small;
-        info.techType = mountainCaveResource.getTechType();
-       	WorldEntityDatabaseHandler.AddCustomInfo(mountainCaveResource.entity.ClassID, info);
-        LootDistributionHandler.AddLootDistributionData(mountainCaveResource.entity.ClassID, mountainCaveResource.entity.PrefabFileName, li, info);
+    private static void addOreGen() {
+    	BasicCustomOre mountainCaveResource = CustomMaterials.getItem(CustomMaterials.Materials.MOUNTAIN_CRYSTAL);
+    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveFloor, 1, 0.1F);
+    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveWall, 1, 0.1F);
+    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveCeiling, 1, 0.1F);
     }
     
     private static void addCommands() {
@@ -97,22 +87,22 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
     }
     
-    private static void addItemsAndRecipes(CustomMaterials.Material mountainCaveResource) {
-        CraftingItems.Item comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
-        comb.getItem().craftingTime = 12;
+    private static void addItemsAndRecipes() {
+        BasicCraftingItem comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
+        comb.craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
-        comb.register();
+        comb.Patch();
         
-        CraftingItems.Item lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
+        BasicCraftingItem lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
         lens.getItem().craftingTime = 20;
-        lens.addIngredient(mountainCaveResource.getTechType(), 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.MOUNTAIN_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         lens.register();
         
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
-        depth1300 = new SeamothDepthModule("SMDepth4", "Depth Module MK4", "Increases crush depth to 1300m.", 1300);
+        depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
         depth1300.Patch();
     }
     

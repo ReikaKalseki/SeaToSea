@@ -18,8 +18,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public void load() {
 			string root = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-			string folder = Path.Combine(root, "WorldgenSets");
-			string xml = Path.Combine(root, "worldgen.xml");
+			string folder = Path.Combine(root, "XML/WorldgenSets");
+			string xml = Path.Combine(root, "XML/worldgen.xml");
 			if (Directory.Exists(folder)) {
 				foreach (string file in Directory.GetFiles(folder)) {
 					loadXML(file);
