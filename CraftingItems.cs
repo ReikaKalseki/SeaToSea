@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea
 				mappings[m] = item;
 				item.isAdvanced = attr.isAdvanced;
 				item.unlockRequirement = attr.dependency;
-				item.sprite = TextureManager.getSprite("Textures/Items/"+m);
+				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
 				item.Patch();	
 			}
 		}
