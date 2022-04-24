@@ -16,17 +16,22 @@ namespace ReikaKalseki.SeaToSea
 		static CraftingItems() {
 			foreach (Items m in Enum.GetValues(typeof(Items))) {
 				string id = Enum.GetName(typeof(Items), m);
-				SBUtil.log("Registering crafting item "+id);
-				Item attr = getMaterial(m);
-				XmlElement e = CustomMaterials.getItemElement(id);
-				string name = e != null ? e.getProperty("name").Trim() : "#NULL";
-				string desc = e != null ? e.getProperty("desc").Trim() : "#NULL";
-				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, name, desc});
+				SBUtil.log("Constructing crafting item "+id);
+				Item attr = getAttr(m);
+				XMLLocale.LocaleEntry e = SeaToSeaMod.locale.getEntry(id);
+				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc});
 				mappings[m] = item;
 				item.isAdvanced = attr.isAdvanced;
 				item.unlockRequirement = attr.dependency;
+				item.sprite = TextureManager.getSprite("Textures/Items/"+m);
 				item.Patch();	
-				SBUtil.log(" > "+item);
+			}
+		}
+		
+		public static void addAll() {
+			foreach (BasicCraftingItem item in mappings.Values) {
+				item.Patch();
+				SBUtil.log("Registered > "+item);
 			}
 		}
 		
@@ -36,7 +41,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem), true, TechType.PlasteelIngot)]HullPlating,
 		}
 		
-		private static Item getMaterial(Items key) {
+		private static Item getAttr(Items key) {
 			FieldInfo info = typeof(Items).GetField(Enum.GetName(typeof(Items), key));
 			return (Item)Attribute.GetCustomAttribute(info, typeof(Item));
 		}

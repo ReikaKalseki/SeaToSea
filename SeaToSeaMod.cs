@@ -18,6 +18,7 @@ namespace ReikaKalseki.SeaToSea
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
+    public static readonly XMLLocale locale = new XMLLocale("XML/items.xml");
     
     private static SeamothVoidStealthModule voidStealth;
     private static SeamothDepthModule depth1300;
@@ -40,6 +41,8 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.StackTrace);
 			FileLog.Log(e.ToString());
         }
+        
+        locale.load();
         
         addItemsAndRecipes();
                  
@@ -88,21 +91,22 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addItemsAndRecipes() {
-        BasicCraftingItem comb = CraftingItems.getItemEntry(CraftingItems.Items.HoneycombComposite);
+        BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
-        comb.Patch();
         
-        BasicCraftingItem lens = CraftingItems.getItemEntry(CraftingItems.Items.CrystalLens);
-        lens.getItem().craftingTime = 20;
+        BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
+        lens.craftingTime = 20;
         lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.MOUNTAIN_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
-        lens.register();
+        
+        CraftingItems.addAll();
         
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
+        //depth1300.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         depth1300.Patch();
     }
     
