@@ -17,7 +17,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly string ROCK_CHUNK = "91af2ecb-d63c-44f4-b6ad-395cf2c9ef04";
 		private static readonly double TERRAIN_THICK = 9.1; //crash zone rock is 9.1m thick
 		
-		private static readonly Dictionary<string, Pod> prefabs = new Dictionary<string, Pod>();
+		private static readonly Dictionary<string, AnchoredProp> podPrefabs = new Dictionary<string, AnchoredProp>();
+		private static readonly Dictionary<string, AnchoredProp> plantPrefabs = new Dictionary<string, AnchoredProp>();
 		
 		private static readonly double measuredYDatum = -25.26;
 		
@@ -27,10 +28,20 @@ namespace ReikaKalseki.SeaToSea
 			addPodType("1cafd118-47e6-48c4-bfd7-718df9984685", -20.45, -32.52); //"WorldEntities/Environment/Coral_reef_floating_stones_mid_01"
 			addPodType("7444baa0-1416-4cb6-aa9a-162ccd4b98c7", -20.78, -43.45); //"WorldEntities/Environment/Coral_reef_floating_stones_mid_02"
 			addPodType("c72724f3-125d-4e87-b82f-a91b5892c936", -20.7, -52.36); //"WorldEntities/Environment/Coral_reef_floating_stones_big_02"
+						
+			addPlantType("", 0, 0); //""
 		}
 		
 		private static void addPodType(string prefab, double ymax, double ymin) {
-			prefabs[prefab] = new Pod(prefab, ymax-measuredYDatum, ymin-measuredYDatum);
+			addProp(podPrefabs, prefab, ymax, ymin);
+		}
+		
+		private static void addPlantType(string prefab, double ymax, double ymin) {
+			addProp(plantPrefabs, prefab, ymax, ymin);
+		}
+		
+		private static void addProp(Dictionary<string, AnchoredProp> list, string prefab, double ymax, double ymin) {
+			list[prefab] = new AnchoredProp(prefab, ymax-measuredYDatum, ymin-measuredYDatum);
 		}
 		
 		private float rotation;
@@ -44,6 +55,7 @@ namespace ReikaKalseki.SeaToSea
 		public GrandReefVoidChunk(Vector3 pos) : base(pos) {
 			rotation = UnityEngine.Random.Range(0F, 360F);
 			podCount = UnityEngine.Random.Range(2, 7); //2-6
+			scale = new Vector3(UnityEngine.Random.Range(0.5F, 2.5F), UnityEngine.Random.Range(0.9F, 1.2F), UnityEngine.Random.Range(0.5F, 2.5F));
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -61,9 +73,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("scale", scale);
 		}
 		
-		public override void generate() {
-			scale = new Vector3(UnityEngine.Random.Range(0.5F, 2.5F), UnityEngine.Random.Range(0.9F, 1.2F), UnityEngine.Random.Range(0.5F, 2.5F));
-			
+		public override void generate() {			
 			rock = PlacedObject.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
@@ -72,6 +82,8 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < podCount; i++) {
 				spawnAnchorPod(true, true);
 			}
+			
+			double plantYAvg = position.y+4.5;
 			
 			//TODO ensure no floating pods
 			//TODO add underside rocks, mineral
@@ -89,9 +101,9 @@ namespace ReikaKalseki.SeaToSea
 			if (dist > 7) {
 				allowMediumSize = false;
 			}
-			List<Pod> li = new List<Pod>(prefabs.Values);
-			int max = allowLargeSize ? prefabs.Count : (allowMediumSize ? prefabs.Count-1 : 2);
-			Pod p = li[UnityEngine.Random.Range(0, max)];
+			List<AnchoredProp> li = new List<AnchoredProp>(podPrefabs.Values);
+			int max = allowLargeSize ? podPrefabs.Count : (allowMediumSize ? podPrefabs.Count-1 : 2);
+			AnchoredProp p = li[UnityEngine.Random.Range(0, max)];
 			GameObject go = PlacedObject.createWorldObject(p.prefab);
 			go.transform.position = pos.Value;
 			setPodHeight(p, go);
@@ -102,7 +114,7 @@ namespace ReikaKalseki.SeaToSea
 			Vector3? rand = null;
 			int tries = 0;
 			while ((rand == null || !rand.HasValue) && tries < 25) {
-				rand = new Vector3(position.x, position.y, position.z); //TODO pick random locations, use polar coords
+				rand = new Vector3(position.x, position.y, position.z); //TODO pick random locations, use polar coords, ellipse maybe
 				foreach (GameObject go in pods) {
 					if (rand.Value.DistanceSqrXZ(go.transform.position) < 9) {
 						rand = null;
@@ -114,24 +126,24 @@ namespace ReikaKalseki.SeaToSea
 			return rand;
 		}
 		
-		private void setPodHeight(Pod p, GameObject go) {
+		private void setPodHeight(AnchoredProp p, GameObject go) {
 			double maxSink = Math.Min(p.maximumSink*0.8, scale.y*TERRAIN_THICK);
 			float sink = UnityEngine.Random.Range(0F, (float)maxSink);
-			double newY = position.y+p.vineBaseOffset-sink;
+			double newY = position.y+p.baseOffset-sink;
 			Vector3 pos = go.transform.position;
 			pos.y = (float)newY;
 			go.transform.position = pos;
 		}
 		
-		private class Pod {
+		private class AnchoredProp {
 			
 			internal readonly string prefab;
-			internal readonly double vineBaseOffset; //amount needed to rise to only just embed, always > 0
+			internal readonly double baseOffset; //amount needed to rise to only just embed, always > 0
 			internal readonly double maximumSink; //further sinkability from @ vineBaseOffset, always > 0
 			
-			internal Pod(string pfb, double y, double ym) {
+			internal AnchoredProp(string pfb, double y, double ym) {
 				prefab = pfb;
-				vineBaseOffset = y;
+				baseOffset = y;
 				maximumSink = -ym-y;
 			}
 			
