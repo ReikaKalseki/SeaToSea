@@ -80,6 +80,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		public void selectedInfo() {
+			foreach (PlacedObject go in items.Values) {
+				if (go.isSelected) {
+					SBUtil.writeToChat(go.ToString());
+				}
+			}
+		}
+		
 		internal static int genID(GameObject go) {
 			if (go.transform.root != null && go.transform.root.gameObject != null)
 				return go.transform.root.gameObject.GetInstanceID();
@@ -374,8 +382,8 @@ namespace ReikaKalseki.SeaToSea
 		}*/
 		
 		private string getPrefabKeyFromID(string id) {
-			if (id.Length >= 24 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] == '-')
-			    return id;
+			//if (id.Length >= 24 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] == '-')
+			//    return id;
 			if (id.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
 				try {
 					return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
@@ -394,9 +402,10 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 			}
-			if (id.IndexOf('/') >= 0)
-			    return PrefabData.getPrefabID(id);
-			return PrefabData.getPrefabIDByShortName(id);
+			//if (id.IndexOf('/') >= 0)
+			//    return PrefabData.getPrefabID(id);
+			//return PrefabData.getPrefabIDByShortName(id);
+			return id;
 		}
 	}
 }

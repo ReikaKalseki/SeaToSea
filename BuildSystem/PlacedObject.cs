@@ -42,9 +42,7 @@ namespace ReikaKalseki.SeaToSea
 					throw new Exception("Tried to make a place of a null obj!");
 				if (go.transform == null)
 					SBUtil.log("Place of obj "+go+" has null transform?!");
-				referenceID = BuildingHandler.genID(go);
-				obj = go;
-				tech = CraftData.GetTechType(go);
+				key(go);
 				
 				try {
 					if (bubblePrefab == null) {
@@ -71,6 +69,25 @@ namespace ReikaKalseki.SeaToSea
 				catch (Exception e) {
 					throw new Exception("Error in bubbles", e);
 				}
+			}
+		
+			public sealed override void replaceObject(string pfb) {
+				base.replaceObject(pfb);
+				
+				GameObject put = createWorldObject(pfb);
+				if (put != null && put.transform != null) {
+					UnityEngine.Object.Destroy(obj);
+					key(put);
+					put.transform.position = this.position;
+					put.transform.rotation = this.rotation;
+					put.transform.localScale = this.scale;
+				}
+			}
+			
+			private void key(GameObject go) {
+				obj = go;
+				referenceID = BuildingHandler.genID(go);
+				tech = CraftData.GetTechType(go);
 			}
 			
 			internal void setSelected(bool sel) {
@@ -108,9 +125,15 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal void rotate(double roll, double yaw, double pitch) {
 				Vector3 euler = obj.transform.rotation.eulerAngles;
-				obj.transform.rotation = Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch);
+				setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
-				rotation = obj.transform.rotation;
+			}
+			
+			internal void setRotation(Quaternion rot) {
+				obj.transform.rotation = rot;
+				fx.transform.rotation = rot;
+				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				rotation = rot;
 			}
 			
 			public override string ToString() {
@@ -181,31 +204,49 @@ namespace ReikaKalseki.SeaToSea
 			}
 		
 			internal static PlacedObject createPrefab(string id) {
-				GameObject prefab;
-				if (id != null && UWE.PrefabDatabase.TryGetPrefab(id, out prefab)) {
-				//if (id != null && SBUtil.getPrefab(id, out prefab)) {
-					if (prefab != null) {
-						GameObject go = UnityEngine.Object.Instantiate(prefab);
-						if (go != null) {
-							go.SetActive(true);
-							BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
-							PlacedObject ret = new PlacedObject(go, id);
-							sel.placement = ret;
-							//SBUtil.dumpObjectData(ret.obj);
-							return ret;
-						}
-						else {
-							SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
-						}
+				if (id == null) {
+					SBUtil.writeToChat("Prefab not placed; ID was null");
+					return null;
+				}
+				GameObject go = createWorldObject(id);
+				if (go != null) {
+					BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
+					PlacedObject ret = new PlacedObject(go, id);
+					sel.placement = ret;
+					//SBUtil.dumpObjectData(ret.obj);
+					return ret;
+				}
+				return null;
+			}
+			
+			internal static GameObject createWorldObject(string id) {
+				GameObject prefab = lookupPrefab(id);
+				if (prefab != null) {
+					GameObject go = UnityEngine.Object.Instantiate(prefab);
+					if (go != null) {
+						go.SetActive(true);
+						return go;
 					}
 					else {
-						SBUtil.writeToChat("Prefab found but was null?!");
+						SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
+						return null;
 					}
 				}
 				else {
-					SBUtil.writeToChat("Prefab not placed; nothing found for '"+(id == null ? "null" : id)+"'.");
+					SBUtil.writeToChat("Prefab not found for id '"+id+"'.");
+					return null;
 				}
-				return null;
+			}
+			
+			internal static GameObject lookupPrefab(string id) {
+				GameObject ret = null;
+				if (UWE.PrefabDatabase.TryGetPrefab(id, out ret))
+					return ret;
+				TechType key;
+				if (TechTypeHandler.TryGetModdedTechType(id, out key)) {
+					ret = CraftData.GetPrefabForTechType(key);
+				}
+				return ret;
 			}
 			
 		}

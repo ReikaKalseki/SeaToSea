@@ -22,25 +22,38 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal class Scatter : ManipulationBase {
+	internal class RandomRotation : ManipulationBase {
 		
-		private Vector3 range = Vector3.zero;
+		private bool randomX;
+		private bool randomY;
+		private bool randomZ;
 		
 		internal override void applyToObject(PlacedObject go) {
-			double dx = UnityEngine.Random.Range(-range.x, range.x);
-			double dy = UnityEngine.Random.Range(-range.y, range.y);
-			double dz = UnityEngine.Random.Range(-range.z, range.z);
-			go.move(dx, dy, dz);
+			if (randomX && randomY && randomZ) {
+				go.setRotation(UnityEngine.Random.rotationUniform);
+			}
+			else {
+				Vector3 angs = go.rotation.eulerAngles;
+				if (randomX)
+					angs.x = UnityEngine.Random.Range(0F, 360F);
+				if (randomY)
+					angs.y = UnityEngine.Random.Range(0F, 360F);
+				if (randomZ)
+					angs.z = UnityEngine.Random.Range(0F, 360F);
+				go.setRotation(Quaternion.Euler(angs));
+			}
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			range = ((XmlElement)e.ParentNode).getVector("Scatter").Value;
+			randomX = e.getBoolean("x");
+			randomY = e.getBoolean("y");
+			randomZ = e.getBoolean("z");
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			e.addProperty("x", range.x);
-			e.addProperty("y", range.y);
-			e.addProperty("z", range.z);
+			e.addProperty("x", randomX);
+			e.addProperty("y", randomY);
+			e.addProperty("z", randomZ);
 		}
 		
 	}

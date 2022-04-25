@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 				doc.Load(xml);
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					try {
-						Vector3 pos = e.getVector("position");
+						Vector3 pos = e.getVector("position").Value;
 						string tech = e.getProperty("tech");
 						TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
 						addValue(pos, techt);

@@ -88,6 +88,7 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
+        BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
     }
     
     private static void addItemsAndRecipes() {
