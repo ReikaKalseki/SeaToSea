@@ -13,8 +13,9 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class GrandReefVoidChunk : WorldGenerator {
 		
-		private static readonly string ROCK_CHUNK = "a474e5fa-1552-4cea-abdb-945f85ed4b1a";
-		private static readonly double ROCK_THICK = 9.1; //crash zone rock is 9.1m thick
+		private static readonly string TERRAIN_CHUNK = "a474e5fa-1552-4cea-abdb-945f85ed4b1a";
+		private static readonly string ROCK_CHUNK = "91af2ecb-d63c-44f4-b6ad-395cf2c9ef04";
+		private static readonly double TERRAIN_THICK = 9.1; //crash zone rock is 9.1m thick
 		
 		private static readonly Dictionary<string, Pod> prefabs = new Dictionary<string, Pod>();
 		
@@ -63,7 +64,7 @@ namespace ReikaKalseki.SeaToSea
 		public override void generate() {
 			scale = new Vector3(UnityEngine.Random.Range(0.5F, 2.5F), UnityEngine.Random.Range(0.9F, 1.2F), UnityEngine.Random.Range(0.5F, 2.5F));
 			
-			rock = PlacedObject.createWorldObject(ROCK_CHUNK);
+			rock = PlacedObject.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
 			rock.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.up);
@@ -71,6 +72,10 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < podCount; i++) {
 				spawnAnchorPod(true, true);
 			}
+			
+			//TODO ensure no floating pods
+			//TODO add underside rocks, mineral
+			//TODO add flora like gabe feather and ghostweed
 		}
 		
 		private void spawnAnchorPod(bool allowLargeSize, bool allowMediumSize) {
@@ -90,13 +95,14 @@ namespace ReikaKalseki.SeaToSea
 			GameObject go = PlacedObject.createWorldObject(p.prefab);
 			go.transform.position = pos.Value;
 			setPodHeight(p, go);
+			pods.Add(go);
 		}
 		
 		private Vector3? getRandomPodPosition() {
 			Vector3? rand = null;
 			int tries = 0;
 			while ((rand == null || !rand.HasValue) && tries < 25) {
-				rand = new Vector3(position.x, position.y, position.z);
+				rand = new Vector3(position.x, position.y, position.z); //TODO pick random locations, use polar coords
 				foreach (GameObject go in pods) {
 					if (rand.Value.DistanceSqrXZ(go.transform.position) < 9) {
 						rand = null;
@@ -109,7 +115,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void setPodHeight(Pod p, GameObject go) {
-			double maxSink = Math.Min(p.maximumSink*0.8, scale.y*ROCK_THICK);
+			double maxSink = Math.Min(p.maximumSink*0.8, scale.y*TERRAIN_THICK);
 			float sink = UnityEngine.Random.Range(0F, (float)maxSink);
 			double newY = position.y+p.vineBaseOffset-sink;
 			Vector3 pos = go.transform.position;

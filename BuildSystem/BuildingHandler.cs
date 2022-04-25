@@ -234,6 +234,8 @@ namespace ReikaKalseki.SeaToSea
 						string typeName = e.getProperty("type");
 						Vector3 pos = e.getVector("position").Value;
 						Type tt = InstructionHandlers.getTypeBySimpleName(typeName);
+						if (tt == null)
+							throw new Exception("No class found for '"+typeName+"'!");
 						WorldGenerator gen = (WorldGenerator)Activator.CreateInstance(tt, new object[]{pos});
 						gen.loadFromXML(e);
 						gen.generate();
