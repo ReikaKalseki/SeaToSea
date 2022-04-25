@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea
 {		
 	internal class GrandReefPodRandomizer : ManipulationBase {
 		
-		private static readonly Dictionary<string, Pod> prefabs = new Dictionary<string, Pod>(); //crash zone rock is 9.1m thick
+		private static readonly Dictionary<string, Pod> prefabs = new Dictionary<string, Pod>();
 		
 		private static readonly double measuredYDatum = -25.26;
 		

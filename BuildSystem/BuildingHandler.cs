@@ -198,9 +198,21 @@ namespace ReikaKalseki.SeaToSea
 			XmlElement rootnode = doc.DocumentElement;
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
-					string count = e.GetAttribute("count");
-					int amt = string.IsNullOrEmpty(count) ? 1 : int.Parse(count);
-					for (int i = 0; i < amt; i++) {
+					buildElement(e);
+				}
+				catch (Exception ex) {
+					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.InnerText+" -> "+ex.ToString());
+					SBUtil.log(ex.ToString());
+				}
+			}
+		}
+		
+		private void buildElement(XmlElement e) {
+			string count = e.GetAttribute("count");
+			int amt = string.IsNullOrEmpty(count) ? 1 : int.Parse(count);
+			for (int i = 0; i < amt; i++) {
+				switch(e.Name) {
+					case "object":
 						CustomPrefab pfb = CustomPrefab.fromXML(e);
 						if (pfb != null) {
 							PlacedObject b = PlacedObject.fromXML(e, pfb);
@@ -217,11 +229,15 @@ namespace ReikaKalseki.SeaToSea
 						else {
 							SBUtil.writeToChat("Could not load XML builder block, no prefab: "+e.InnerText);
 						}
-					}
-				}
-				catch (Exception ex) {
-					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.InnerText+" -> "+ex.ToString());
-					SBUtil.log(ex.ToString());
+					break;
+					case "generator":
+						string typeName = e.getProperty("type");
+						Vector3 pos = e.getVector("position").Value;
+						Type tt = InstructionHandlers.getTypeBySimpleName(typeName);
+						WorldGenerator gen = (WorldGenerator)Activator.CreateInstance(tt, new object[]{pos});
+						gen.loadFromXML(e);
+						gen.generate();
+					break;
 				}
 			}
 		}
