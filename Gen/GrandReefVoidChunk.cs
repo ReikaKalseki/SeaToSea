@@ -17,32 +17,21 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly string ROCK_CHUNK = "91af2ecb-d63c-44f4-b6ad-395cf2c9ef04";
 		private static readonly double TERRAIN_THICK = 9.1; //crash zone rock is 9.1m thick
 		
-		private static readonly Dictionary<string, AnchoredProp> podPrefabs = new Dictionary<string, AnchoredProp>();
-		private static readonly Dictionary<string, AnchoredProp> plantPrefabs = new Dictionary<string, AnchoredProp>();
+		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
+			VanillaFlora.ANCHOR_POD_SMALL1,
+			VanillaFlora.ANCHOR_POD_SMALL2,
+			VanillaFlora.ANCHOR_POD_MED1,
+			VanillaFlora.ANCHOR_POD_MED2,
+			VanillaFlora.ANCHOR_POD_LARGE,
+		};
 		
-		private static readonly double measuredYDatum = -25.26;
-		
-		static GrandReefVoidChunk() { //median 4.81
-			addPodType("228e5af5-a579-4c99-9fb0-04b653f73cd3", -19.98-2.5, -26.62); //"WorldEntities/Environment/Coral_reef_floating_stones_small_01"
-			addPodType("1645f35d-af23-4b98-b1e4-44d430421721", -20.18, -31.74); //"WorldEntities/Environment/Coral_reef_floating_stones_small_02"
-			addPodType("1cafd118-47e6-48c4-bfd7-718df9984685", -20.45, -32.52); //"WorldEntities/Environment/Coral_reef_floating_stones_mid_01"
-			addPodType("7444baa0-1416-4cb6-aa9a-162ccd4b98c7", -20.78, -43.45); //"WorldEntities/Environment/Coral_reef_floating_stones_mid_02"
-			addPodType("c72724f3-125d-4e87-b82f-a91b5892c936", -20.7, -52.36); //"WorldEntities/Environment/Coral_reef_floating_stones_big_02"
-						
-			addPlantType("", 0, 0); //""
-		}
-		
-		private static void addPodType(string prefab, double ymax, double ymin) {
-			addProp(podPrefabs, prefab, ymax, ymin);
-		}
-		
-		private static void addPlantType(string prefab, double ymax, double ymin) {
-			addProp(plantPrefabs, prefab, ymax, ymin);
-		}
-		
-		private static void addProp(Dictionary<string, AnchoredProp> list, string prefab, double ymax, double ymin) {
-			list[prefab] = new AnchoredProp(prefab, ymax-measuredYDatum, ymin-measuredYDatum);
-		}
+		private static readonly VanillaFlora[] plantPrefabs = new VanillaFlora[]{
+			VanillaFlora.GABE_FEATHER,
+			VanillaFlora.GHOSTWEED,
+			VanillaFlora.MEMBRAIN,
+			VanillaFlora.REGRESS,	
+			VanillaFlora.BRINE_LILY,		
+		};
 		
 		private float rotation;
 		private Vector3 scale = Vector3.one;
@@ -51,6 +40,7 @@ namespace ReikaKalseki.SeaToSea
 		private GameObject rock;
 		
 		private List<GameObject> pods = new List<GameObject>();
+		private List<GameObject> plants = new List<GameObject>();
 		
 		public GrandReefVoidChunk(Vector3 pos) : base(pos) {
 			rotation = UnityEngine.Random.Range(0F, 360F);
@@ -84,10 +74,20 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			double plantYAvg = position.y+4.5;
+			for (int i = 0; i < 8; i++) {
+				VanillaFlora p = plantPrefabs[UnityEngine.Random.Range(0, plantPrefabs.Length)];
+				Vector3? pos = getRandomPlantPosition();
+				if (pos != null && pos.HasValue) {
+					GameObject go = PlacedObject.createWorldObject(p.prefab);
+					go.transform.position = pos.Value;
+					go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
+					setPlantHeight(p, go);
+					plants.Add(go);
+				}
+			}
 			
 			//TODO ensure no floating pods
 			//TODO add underside rocks, mineral
-			//TODO add flora like gabe feather and ghostweed
 		}
 		
 		private void spawnAnchorPod(bool allowLargeSize, bool allowMediumSize) {
@@ -101,22 +101,30 @@ namespace ReikaKalseki.SeaToSea
 			if (dist > 7) {
 				allowMediumSize = false;
 			}
-			List<AnchoredProp> li = new List<AnchoredProp>(podPrefabs.Values);
-			int max = allowLargeSize ? podPrefabs.Count : (allowMediumSize ? podPrefabs.Count-1 : 2);
-			AnchoredProp p = li[UnityEngine.Random.Range(0, max)];
+			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
+			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(0, max)];
 			GameObject go = PlacedObject.createWorldObject(p.prefab);
 			go.transform.position = pos.Value;
-			setPodHeight(p, go);
+			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
+			setPlantHeight(p, go);
 			pods.Add(go);
 		}
 		
 		private Vector3? getRandomPodPosition() {
+			return getRandomFreePosition(pods, 3);
+		}
+		
+		private Vector3? getRandomPlantPosition() {
+			return getRandomFreePosition(plants, 1.5);
+		}
+		
+		private Vector3? getRandomFreePosition(IEnumerable<GameObject> occupied, double minGap) {
 			Vector3? rand = null;
 			int tries = 0;
 			while ((rand == null || !rand.HasValue) && tries < 25) {
 				rand = new Vector3(position.x, position.y, position.z); //TODO pick random locations, use polar coords, ellipse maybe
-				foreach (GameObject go in pods) {
-					if (rand.Value.DistanceSqrXZ(go.transform.position) < 9) {
+				foreach (GameObject go in occupied) {
+					if (rand.Value.DistanceSqrXZ(go.transform.position) < minGap*minGap) {
 						rand = null;
 						break;
 					}
@@ -126,7 +134,7 @@ namespace ReikaKalseki.SeaToSea
 			return rand;
 		}
 		
-		private void setPodHeight(AnchoredProp p, GameObject go) {
+		private void setPlantHeight(VanillaFlora p, GameObject go) {
 			double maxSink = Math.Min(p.maximumSink*0.8, scale.y*TERRAIN_THICK);
 			float sink = UnityEngine.Random.Range(0F, (float)maxSink);
 			double newY = position.y+p.baseOffset-sink;
@@ -135,17 +143,7 @@ namespace ReikaKalseki.SeaToSea
 			go.transform.position = pos;
 		}
 		
-		private class AnchoredProp {
-			
-			internal readonly string prefab;
-			internal readonly double baseOffset; //amount needed to rise to only just embed, always > 0
-			internal readonly double maximumSink; //further sinkability from @ vineBaseOffset, always > 0
-			
-			internal AnchoredProp(string pfb, double y, double ym) {
-				prefab = pfb;
-				baseOffset = y;
-				maximumSink = -ym-y;
-			}
+		private class PlacementBox {
 			
 		}
 	}
