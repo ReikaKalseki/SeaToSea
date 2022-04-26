@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly string ROCK_CHUNK = "91af2ecb-d63c-44f4-b6ad-395cf2c9ef04";
 		private static readonly double TERRAIN_THICK = 9.1; //crash zone rock is 9.1m thick
 		
-		private WeightedRandom<PlacementBox> boxes = new WeightedRandom<PlacementBox>();
+		private static readonly WeightedRandom<PlacementBox> boxes = new WeightedRandom<PlacementBox>();
 		
 		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
 			VanillaFlora.ANCHOR_POD_SMALL1,
@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 		};
 		
 		static GrandReefVoidChunk() {
-			addBox();
+			//addBox();
 		}
 		
 		private static void addBox(double x1, double x2, double z1, double z2) {
@@ -89,7 +89,7 @@ namespace ReikaKalseki.SeaToSea
 				VanillaFlora p = plantPrefabs[UnityEngine.Random.Range(0, plantPrefabs.Length)];
 				Vector3? pos = getRandomPlantPosition();
 				if (pos != null && pos.HasValue) {
-					GameObject go = PlacedObject.createWorldObject(p.prefab);
+					GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
 					go.transform.position = pos.Value;
 					go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 					setPlantHeight(plantYAvg, p, go);
@@ -128,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(0, max)];
-			GameObject go = PlacedObject.createWorldObject(p.prefab);
+			GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
 			go.transform.position = pos.Value;
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p, go);
@@ -163,6 +163,8 @@ namespace ReikaKalseki.SeaToSea
 		private void setPlantHeight(double yRef, VanillaFlora p, GameObject go) {
 			double maxSink = Math.Min(p.maximumSink*0.8, scale.y*TERRAIN_THICK);
 			float sink = UnityEngine.Random.Range(0F, (float)maxSink);
+			if (p == VanillaFlora.BRINE_LILY)
+				sink = (float)(p.maximumSink*0.95);
 			double newY = yRef+p.baseOffset-sink;
 			Vector3 pos = go.transform.position;
 			pos.y = (float)newY;
