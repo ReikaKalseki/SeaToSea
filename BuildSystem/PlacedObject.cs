@@ -100,40 +100,46 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			internal void setPosition(Vector3 pos) {
+			internal void setPosition(Vector3 pos, bool printCoord = false) {
 				position = pos;
 				obj.transform.position = position;
 				fx.transform.position = position;
+				if (printCoord) {
+					SBUtil.writeToChat(position.ToString());
+				}
 			}
 		
-			internal void move(Vector3 mov) {
-				move(mov.x, mov.y, mov.z);
+			internal void move(Vector3 mov, bool printCoord = false) {
+				move(mov.x, mov.y, mov.z, printCoord);
 			}
 		
-			internal void move(double x, double y, double z) {
+			internal void move(double x, double y, double z, bool printCoord = false) {
 				Vector3 vec = obj.transform.position;
 				vec.x += (float)x;
 				vec.y += (float)y;
 				vec.z += (float)z;
-				setPosition(vec);
+				setPosition(vec, printCoord);
 				//SBUtil.writeToChat(go.obj.transform.position.ToString());
 			}
 			
-			internal void rotateYaw(double ang) {
-				rotate(0, ang, 0);
+			internal void rotateYaw(double ang, bool printCoord = false) {
+				rotate(0, ang, 0, printCoord);
 			}
 			
-			internal void rotate(double roll, double yaw, double pitch) {
+			internal void rotate(double roll, double yaw, double pitch, bool printCoord = false) {
 				Vector3 euler = obj.transform.rotation.eulerAngles;
-				setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
+				setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch), printCoord);
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 			}
 			
-			internal void setRotation(Quaternion rot) {
+			internal void setRotation(Quaternion rot, bool printCoord = false) {
 				obj.transform.rotation = rot;
 				fx.transform.rotation = rot;
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 				rotation = rot;
+				if (printCoord) {
+					SBUtil.writeToChat(rotation.eulerAngles.ToString());
+				}
 			}
 			
 			public override string ToString() {

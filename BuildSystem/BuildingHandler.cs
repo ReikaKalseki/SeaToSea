@@ -121,7 +121,7 @@ namespace ReikaKalseki.SeaToSea
 					else if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 						foreach (PlacedObject go in items.Values) {
 							if (go.isSelected) {
-								go.setPosition(hit.point);
+								go.setPosition(hit.point, selectionCount() == 1);
 							}
 						}
 					}
@@ -343,30 +343,39 @@ namespace ReikaKalseki.SeaToSea
 				Vector3 right = t.right.normalized;
 				Vector3 up = t.up.normalized;
 				if (KeyCodeUtils.GetKeyHeld(KeyCode.UpArrow))
-		    		go.move(vec*s);
+		    		go.move(vec*s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.DownArrow))
-		    		go.move(vec*-s);
+		    		go.move(vec*-s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftArrow))
-		    		go.move(right*-s);
+		    		go.move(right*-s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightArrow))
-		    		go.move(right*s);
+		    		go.move(right*s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Equals)) //+
-		    		go.move(up*s);
+		    		go.move(up*s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
-		    		go.move(up*-s);
+		    		go.move(up*-s, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
-		    		go.rotateYaw(s*20);
+		    		go.rotateYaw(s*20, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Q))
-		    		go.rotateYaw(-s*20);
+		    		go.rotateYaw(-s*20, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-		    		go.rotate(0, 0, -s*20);
+		    		go.rotate(0, 0, -s*20, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-		    		go.rotate(0, 0, s*20);
+		    		go.rotate(0, 0, s*20, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
-		    		go.rotate(-s*20, 0, 0);
+		    		go.rotate(-s*20, 0, 0, selectionCount() == 1);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
-		    		go.rotate(s*20, 0, 0);
+		    		go.rotate(s*20, 0, 0, selectionCount() == 1);
 			}
+		}
+		
+		private int selectionCount() {
+			int ret = 0;
+			foreach (PlacedObject p in items.Values) {
+				if (p.isSelected)
+					ret++;
+			}
+			return ret;
 		}
     
 	    public void spawnPrefabAtLook(string arg) {
