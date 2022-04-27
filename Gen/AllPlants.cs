@@ -36,13 +36,10 @@ namespace ReikaKalseki.SeaToSea
 			rock.transform.position = position;
 			rock.transform.localScale = new Vector3(150, 1, 150);
 			
-			foreach (FieldInfo f in typeof(VanillaFlora).GetFields()) {
-				if (f.IsStatic && f.FieldType == typeof(VanillaFlora)) {
-					VanillaFlora vf = (VanillaFlora)f.GetValue(null);
-					li.Add(spawnPlant(vf));
-					if (vf.maximumSink > 0.01) {
-						li.Add(spawnPlant(vf, vf.maximumSink));
-					}
+			foreach (VanillaFlora vf in VanillaFlora.getAll()) {
+				li.Add(spawnPlant(vf));
+				if (vf.maximumSink > 0.01) {
+					li.Add(spawnPlant(vf, vf.maximumSink));
 				}
 			}
 		}
