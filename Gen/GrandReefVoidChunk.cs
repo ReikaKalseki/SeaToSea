@@ -27,16 +27,14 @@ namespace ReikaKalseki.SeaToSea
 			VanillaFlora.ANCHOR_POD_LARGE,
 		};
 		
-		private static readonly VanillaFlora[] plantPrefabs = new VanillaFlora[]{
-			VanillaFlora.GABE_FEATHER,
-			VanillaFlora.GHOSTWEED,
-			VanillaFlora.MEMBRAIN,
-			VanillaFlora.REGRESS,	
-			VanillaFlora.BRINE_LILY,		
-		};
+		private static readonly WeightedRandom<VanillaFlora> plantPrefabs = new WeightedRandom<VanillaFlora>();
 		
 		static GrandReefVoidChunk() {
-			//addBox();
+			plantPrefabs.addEntry(VanillaFlora.GABE_FEATHER, 100);
+			plantPrefabs.addEntry(VanillaFlora.GHOSTWEED, 85);
+			plantPrefabs.addEntry(VanillaFlora.MEMBRAIN, 25);
+			plantPrefabs.addEntry(VanillaFlora.REGRESS, 10);
+			plantPrefabs.addEntry(VanillaFlora.BRINE_LILY, 50);
 		}
 		
 		private static void addBox(double x1, double x2, double z1, double z2) {
@@ -56,10 +54,10 @@ namespace ReikaKalseki.SeaToSea
 		private List<GameObject> resources = new List<GameObject>();
 		
 		public GrandReefVoidChunk(Vector3 pos) : base(pos) {
-			rotation = UnityEngine.Random.Range(0F, 360F);
+			rotation = UnityEngine.Random.Range(0F, 360F)*0;
 			scale = new Vector3(UnityEngine.Random.Range(0.75F, 2.5F), /*UnityEngine.Random.Range(0.9F, 1.2F)*/1, UnityEngine.Random.Range(0.75F, 2.5F));
 			double sf = scale.x*scale.z;
-			podCount = (int)(sf*UnityEngine.Random.Range(2, 7)); //2-6
+			podCount = Math.Max(1, (int)(sf*UnityEngine.Random.Range(2, 5))); //2-4 base
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -87,17 +85,23 @@ namespace ReikaKalseki.SeaToSea
 				spawnAnchorPod(true, true);
 			}
 			
-			double plantYAvg = position.y+4.5;
+			double plantYAvg = position.y+0.2;
 			int nplants = (int)(9*scale.x*scale.x*scale.z*scale.z);
 			for (int i = 0; i < nplants; i++) {
-				VanillaFlora p = plantPrefabs[UnityEngine.Random.Range(0, plantPrefabs.Length)];
+				VanillaFlora p = plantPrefabs.getRandomEntry();
 				Vector3? pos = getRandomPlantPosition();
 				if (pos != null && pos.HasValue) {
-					GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
-					go.transform.position = pos.Value;
-					go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
-					setPlantHeight(plantYAvg, p, go);
-					plants.Add(go);
+					Vector3 use = pos.Value;
+					while (!SBUtil.objectCollidesPosition(rock, use) && position.y-use.y < 2) {
+						use.y -= 0.05F;
+					}
+					if (position.y-use.y < 1.9) {
+						GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
+						go.transform.position = pos.Value;
+						go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
+						setPlantHeight(plantYAvg, p, go);
+						plants.Add(go);
+					}
 				}
 			}
 			
@@ -113,7 +117,8 @@ namespace ReikaKalseki.SeaToSea
 				rocks.Add(rock);
 			}
 			
-			for (int i = 0; i < 40; i++) {
+			int genned = 0;
+			for (int i = 0; i < 400 && genned < 5; i++) {
 				Vector3 pos = getRandomMountPosition();
 				pos.y = position.y-5;
 				while (position.y-pos.y < 9 && isColliding(pos, rocks)) {
@@ -124,10 +129,11 @@ namespace ReikaKalseki.SeaToSea
 					GameObject go = PlacedObject.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
 					go.transform.position = pos;
 					go.transform.rotation = UnityEngine.Random.rotationUniform;
+					genned++;
 				}
 			}
 			
-			rotateProps(); //about central axis
+			//rotateProps(); //about central axis
 		}
 		
 		private bool isColliding(Vector3 vec, List<GameObject> li) {
@@ -207,7 +213,7 @@ namespace ReikaKalseki.SeaToSea
 		private Vector3 getRandomMountPosition() {
 			//PlacementBox box = boxes.getRandomEntry();
 			//rand = box.pickRandomPosition();
-			return MathUtil.findRandomPointInsideEllipse(this.position, 26.6F*scale.z, 20.3F*scale.x); //Z is the long axis of the terrain prop
+			return MathUtil.findRandomPointInsideEllipse(this.position, 20.3F*scale.z*1.5F, 26.6F*scale.x*1.5F); //Z is the long axis of the terrain prop
 		}
 		
 		private void setPlantHeight(double yRef, VanillaFlora p, GameObject go) {
@@ -217,7 +223,6 @@ namespace ReikaKalseki.SeaToSea
 				sink = (float)(p.maximumSink*0.95);
 			double newY = yRef+p.baseOffset-sink;
 			Vector3 pos = go.transform.position;
-			pos.y = (float)newY;
 			go.transform.position = pos;
 		}
 		
