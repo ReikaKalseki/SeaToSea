@@ -67,15 +67,17 @@ namespace ReikaKalseki.SeaToSea
 				double newY = referenceY+p.vineBaseOffset-sink;
 				hoff = newY-go.position.y;
 			}
-			if (Math.Abs(hoff) > 0.01)
+			if (Math.Abs(hoff) > 0.01) {
 				go.move(0, hoff, 0);
+				SBUtil.writeToChat(go.prefabName+" > "+hoff);
+			}
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
 			XmlElement type;
 			randomType = e.getBoolean("randomType", out type);
-			allowMediumSize = bool.Parse(type.GetAttribute("medium"));
-			allowLargeSize = bool.Parse(type.GetAttribute("large"));
+			allowMediumSize = randomType && bool.Parse(type.GetAttribute("medium"));
+			allowLargeSize = randomType && bool.Parse(type.GetAttribute("large"));
 			
 			randomHeight = e.getBoolean("randomHeight");
 			referenceY = e.getFloat("referenceY", double.NaN);

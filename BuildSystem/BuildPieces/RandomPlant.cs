@@ -24,19 +24,35 @@ namespace ReikaKalseki.SeaToSea
 {		
 	internal class RandomPlant : PieceBase {
 		
-		private readonly WeightedRandom<VanillaFlora> plants = new WeightedRandom<VanillaFlora>();
+		protected readonly WeightedRandom<VanillaFlora> plants = new WeightedRandom<VanillaFlora>();
 		
-		private bool preferLit = true;
+		protected bool preferLit = true;
+		protected int count = 1;
+		protected Vector3 fuzz = Vector3.zero;
 		
 		public RandomPlant(Vector3 vec) : base(vec) {
 			
 		}
 		
 		public override void generate(List<GameObject> li) {
-			GameObject go = PlacedObject.createWorldObject(plants.getRandomEntry().getRandomPrefab(preferLit));
-			go.transform.position = position;
+			for (int i = 0; i < count; i++) {
+				Vector3 vec = new Vector3(position.x, position.y, position.z);
+				if (fuzz.magnitude > 0.05) {
+					vec.x += UnityEngine.Random.Range(-fuzz.x, fuzz.x);
+					vec.y += UnityEngine.Random.Range(-fuzz.y, fuzz.y);
+					vec.z += UnityEngine.Random.Range(-fuzz.z, fuzz.z);
+				}
+				string type = plants.getRandomEntry().getRandomPrefab(preferLit);
+				GameObject go = generatePlant(vec, type);
+				li.Add(go);
+			}
+		}
+		
+		protected virtual GameObject generatePlant(Vector3 vec, string type) {
+			GameObject go = PlacedObject.createWorldObject(type);
+			go.transform.position = vec;
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 360F), Vector3.up);
-			li.Add(go);
+			return go;
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -46,6 +62,10 @@ namespace ReikaKalseki.SeaToSea
 				plants.addEntry(VanillaFlora.getByName(name), double.Parse(wt));
 			}
 			preferLit = e.getBoolean("lit");
+			count = e.getInt("count", 1);
+			Vector3? f = e.getVector("fuzz", true);
+			if (f != null && f.HasValue)
+				fuzz = f.Value;
 		}
 		
 		public override void saveToXML(XmlElement e) {
@@ -56,6 +76,8 @@ namespace ReikaKalseki.SeaToSea
 				e.AppendChild(e2);
 			}
 			e.addProperty("lit", preferLit);
+			e.addProperty("count", count);
+			e.addProperty("fuzz", fuzz);
 		}
 		
 	}

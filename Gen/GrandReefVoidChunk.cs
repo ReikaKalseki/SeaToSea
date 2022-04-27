@@ -136,14 +136,6 @@ namespace ReikaKalseki.SeaToSea
 			//rotateProps(); //about central axis
 		}
 		
-		private bool isColliding(Vector3 vec, List<GameObject> li) {
-			foreach (GameObject go in li) {
-				if (SBUtil.objectCollidesPosition(go, vec))
-					return true;
-			}
-			return false;
-		}
-		
 		private void rotateProps() {
 			foreach (GameObject go in pods) {
 				MathUtil.rotateObjectAround(go, position, rotation);
