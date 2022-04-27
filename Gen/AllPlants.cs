@@ -31,31 +31,32 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		public override void generate() {			
+		public override void generate(List<GameObject> li) {			
 			GameObject rock = PlacedObject.createWorldObject("a474e5fa-1552-4cea-abdb-945f85ed4b1a");
 			rock.transform.position = position;
-			rock.transform.localScale = new Vector3(150, 1, 40);
+			rock.transform.localScale = new Vector3(150, 1, 150);
 			
 			foreach (FieldInfo f in typeof(VanillaFlora).GetFields()) {
 				if (f.IsStatic && f.FieldType == typeof(VanillaFlora)) {
 					VanillaFlora vf = (VanillaFlora)f.GetValue(null);
-					spawnPlant(vf);
+					li.Add(spawnPlant(vf));
 					if (vf.maximumSink > 0.01) {
-						spawnPlant(vf, vf.maximumSink);
+						li.Add(spawnPlant(vf, vf.maximumSink));
 					}
 				}
 			}
 		}
 		
-		private void spawnPlant(VanillaFlora f, double sink = 0) {
-			offsetZ = ((index%3)-1)*step;
+		private GameObject spawnPlant(VanillaFlora f, double sink = 0) {
+			offsetZ = ((index%5)-2)*step;
 			GameObject go = PlacedObject.createWorldObject(f.getRandomPrefab(false));
 			double d = f.baseOffset < -99 ? 6 : f.baseOffset;
 			d -= sink;
 			go.transform.position = new Vector3(position.x+(float)offsetX, position.y+(float)d, position.z+(float)offsetZ);
 			index++;
-			if (index%3 == 2)
+			if (index%5 == 4)
 				offsetX += 8;
+			return go;
 		}
 	}
 }

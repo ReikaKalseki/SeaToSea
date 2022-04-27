@@ -217,10 +217,7 @@ namespace ReikaKalseki.SeaToSea
 						if (pfb != null) {
 							PlacedObject b = PlacedObject.fromXML(e, pfb);
 							if (b != null) {
-								SBUtil.writeToChat("Loaded a "+b);
-								items[b.referenceID] = b;
-								lastPlaced = b;
-								selectLastPlaced();
+								addObject(b);
 							}
 							else {
 								SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
@@ -238,10 +235,27 @@ namespace ReikaKalseki.SeaToSea
 							throw new Exception("No class found for '"+typeName+"'!");
 						WorldGenerator gen = (WorldGenerator)Activator.CreateInstance(tt, new object[]{pos});
 						gen.loadFromXML(e);
-						gen.generate();
+						List<GameObject> li = new List<GameObject>();
+						gen.generate(li);
+						foreach (GameObject go in li) {
+							string id = SBUtil.getPrefabID(go);
+							if (id != null) {
+								PlacedObject b = new PlacedObject(go, id);
+								addObject(b);
+								BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
+								sel.placement = b;
+							}
+						}
 					break;
 				}
 			}
+		}
+		
+		private void addObject(PlacedObject b) {
+			SBUtil.writeToChat("Loaded a "+b);
+			items[b.referenceID] = b;
+			lastPlaced = b;
+			selectLastPlaced();
 		}
 		
 		private string getDumpFile(string name) {

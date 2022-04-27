@@ -52,11 +52,14 @@ namespace ReikaKalseki.SeaToSea
 		
 		private List<GameObject> pods = new List<GameObject>();
 		private List<GameObject> plants = new List<GameObject>();
+		private List<GameObject> rocks = new List<GameObject>();
+		private List<GameObject> resources = new List<GameObject>();
 		
 		public GrandReefVoidChunk(Vector3 pos) : base(pos) {
 			rotation = UnityEngine.Random.Range(0F, 360F);
-			podCount = UnityEngine.Random.Range(2, 7); //2-6
-			scale = new Vector3(UnityEngine.Random.Range(0.5F, 2.5F), UnityEngine.Random.Range(0.9F, 1.2F), UnityEngine.Random.Range(0.5F, 2.5F));
+			scale = new Vector3(UnityEngine.Random.Range(0.75F, 2.5F), /*UnityEngine.Random.Range(0.9F, 1.2F)*/1, UnityEngine.Random.Range(0.75F, 2.5F));
+			double sf = scale.x*scale.z;
+			podCount = (int)(sf*UnityEngine.Random.Range(2, 7)); //2-6
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -74,7 +77,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("scale", scale);
 		}
 		
-		public override void generate() {			
+		public override void generate(List<GameObject> generated) {			
 			rock = PlacedObject.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
@@ -85,7 +88,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			double plantYAvg = position.y+4.5;
-			for (int i = 0; i < 8; i++) {
+			int nplants = (int)(9*scale.x*scale.x*scale.z*scale.z);
+			for (int i = 0; i < nplants; i++) {
 				VanillaFlora p = plantPrefabs[UnityEngine.Random.Range(0, plantPrefabs.Length)];
 				Vector3? pos = getRandomPlantPosition();
 				if (pos != null && pos.HasValue) {
@@ -106,11 +110,51 @@ namespace ReikaKalseki.SeaToSea
 				GameObject go = PlacedObject.createWorldObject(ROCK_CHUNK);
 				go.transform.position = pos;
 				go.transform.rotation = UnityEngine.Random.rotationUniform;
+				rocks.Add(rock);
+			}
+			
+			for (int i = 0; i < 40; i++) {
+				Vector3 pos = getRandomMountPosition();
+				pos.y = position.y-5;
+				while (position.y-pos.y < 9 && isColliding(pos, rocks)) {
+					pos.y -= 0.1F;
+				}
+				if (!isColliding(pos, rocks)) {
+					pos.y += 0.05F;
+					GameObject go = PlacedObject.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
+					go.transform.position = pos;
+					go.transform.rotation = UnityEngine.Random.rotationUniform;
+				}
+			}
+			
+			rotateProps(); //about central axis
+		}
+		
+		private bool isColliding(Vector3 vec, List<GameObject> li) {
+			foreach (GameObject go in li) {
+				if (SBUtil.objectCollidesPosition(go, vec))
+					return true;
+			}
+			return false;
+		}
+		
+		private void rotateProps() {
+			foreach (GameObject go in pods) {
+				MathUtil.rotateObjectAround(go, position, rotation);
+			}
+			foreach (GameObject go in plants) {
+				MathUtil.rotateObjectAround(go, position, rotation);
+			}
+			foreach (GameObject go in rocks) {
+				MathUtil.rotateObjectAround(go, position, rotation);
+			}
+			foreach (GameObject go in resources) {
+				MathUtil.rotateObjectAround(go, position, rotation);
 			}
 		}
 		
 		private Vector3 getRandomRockPosition(double y) {
-			Vector3 vec = boxes.getRandomEntry().pickRandomPosition();
+			Vector3 vec = getRandomMountPosition();
 			vec.y = UnityEngine.Random.Range((float)y-1, (float)y+1);
 			return vec;
 		}
@@ -147,8 +191,7 @@ namespace ReikaKalseki.SeaToSea
 			Vector3? rand = null;
 			int tries = 0;
 			while ((rand == null || !rand.HasValue) && tries < 25) {
-				PlacementBox box = boxes.getRandomEntry();
-				rand = box.pickRandomPosition();
+				rand = getRandomMountPosition();
 				foreach (GameObject go in occupied) {
 					if (rand.Value.DistanceSqrXZ(go.transform.position) < minGap*minGap) {
 						rand = null;
@@ -157,7 +200,14 @@ namespace ReikaKalseki.SeaToSea
 				}
 				tries++;
 			}
+			//SBUtil.log("Found @ "+rand);
 			return rand;
+		}
+		
+		private Vector3 getRandomMountPosition() {
+			//PlacementBox box = boxes.getRandomEntry();
+			//rand = box.pickRandomPosition();
+			return MathUtil.findRandomPointInsideEllipse(this.position, 26.6F*scale.z, 20.3F*scale.x); //Z is the long axis of the terrain prop
 		}
 		
 		private void setPlantHeight(double yRef, VanillaFlora p, GameObject go) {
