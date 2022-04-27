@@ -19,10 +19,10 @@ namespace ReikaKalseki.SeaToSea
 		public void NotifyGoalComplete(string key) {
 			switch(key) {
 				case "SunbeamCheckPlayerRange":
+					AvoliteSpawner.instance.doSpawn();
 				break;
 			}
 		}
-		
 	}
 }
 	

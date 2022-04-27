@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea
 		private List<GameObject> gennedMushrooms = new List<GameObject>();
 		
 		public VoidChunkPlants(Vector3 vec) : base(vec) {
-			this.fuzz = new Vector3(1.2F, 0, 1.2F);
+			this.fuzz = new Vector3(1.2F, 0.05F, 1.2F);
 			this.count = UnityEngine.Random.Range(1, 4); //1-3
 			
 			plants.addEntry(VanillaFlora.GABE_FEATHER, 100);
@@ -53,11 +53,11 @@ namespace ReikaKalseki.SeaToSea
 				for (int i = 0; i < mushrooms; i++) {
 					Vector3 vec2 = new Vector3(vec.x+UnityEngine.Random.Range(-1F, 1F), vec.y, vec.z+UnityEngine.Random.Range(-1F, 1F));
 					int tries = 0;
-					while (isColliding(vec2, gennedMushrooms) && tries < 5) {
+					while ((SBUtil.objectCollidesPosition(go, vec2) || isColliding(vec2, gennedMushrooms)) && tries < 5) {
 						vec2 = new Vector3(vec.x+UnityEngine.Random.Range(-1F, 1F), vec.y, vec.z+UnityEngine.Random.Range(-1F, 1F));
 						tries++;
 					}
-					if (!isColliding(vec2, gennedMushrooms)) {
+					if (!SBUtil.objectCollidesPosition(go, vec2) && !isColliding(vec2, gennedMushrooms)) {
 						GameObject go2 = base.generatePlant(vec2, VanillaFlora.DEEP_MUSHROOM.getRandomPrefab(false));
 						gennedMushrooms.Add(go2);
 					}

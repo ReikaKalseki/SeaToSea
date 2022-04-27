@@ -31,6 +31,8 @@ namespace ReikaKalseki.SeaToSea
 		private PlacedObject lastPlaced = null;
 		private Dictionary<int, PlacedObject> items = new Dictionary<int, PlacedObject>();
 		
+		private readonly List<ManipulationBase> globalTransforms = new List<ManipulationBase>();
+		
 		private List<string> text = new List<string>();
 		private BasicText controlHint = new BasicText(TextAnchor.MiddleCenter);
 		
@@ -196,6 +198,13 @@ namespace ReikaKalseki.SeaToSea
 			XmlDocument doc = new XmlDocument();
 			doc.Load(getDumpFile(file));
 			XmlElement rootnode = doc.DocumentElement;
+			List<XmlElement> li = rootnode.getDirectElementsByTagName("transform");
+			globalTransforms.Clear();
+			foreach (XmlElement e in li) {
+				ManipulationBase mb = CustomPrefab.loadManipulation(e);
+				if (mb != null)
+					globalTransforms.Add(mb);
+			}
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
 					buildElement(e);
@@ -255,6 +264,9 @@ namespace ReikaKalseki.SeaToSea
 			SBUtil.writeToChat("Loaded a "+b);
 			items[b.referenceID] = b;
 			lastPlaced = b;
+			foreach (ManipulationBase mb in globalTransforms) {
+				mb.applyToObject(b);
+			}
 			selectLastPlaced();
 		}
 		

@@ -214,7 +214,7 @@ namespace ReikaKalseki.SeaToSea
 					SBUtil.writeToChat("Prefab not placed; ID was null");
 					return null;
 				}
-				GameObject go = createWorldObject(id);
+				GameObject go = SBUtil.createWorldObject(id);
 				if (go != null) {
 					BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
 					PlacedObject ret = new PlacedObject(go, id);
@@ -223,36 +223,6 @@ namespace ReikaKalseki.SeaToSea
 					return ret;
 				}
 				return null;
-			}
-			
-			internal static GameObject createWorldObject(string id) {
-				GameObject prefab = lookupPrefab(id);
-				if (prefab != null) {
-					GameObject go = UnityEngine.Object.Instantiate(prefab);
-					if (go != null) {
-						go.SetActive(true);
-						return go;
-					}
-					else {
-						SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
-						return null;
-					}
-				}
-				else {
-					SBUtil.writeToChat("Prefab not found for id '"+id+"'.");
-					return null;
-				}
-			}
-			
-			internal static GameObject lookupPrefab(string id) {
-				GameObject ret = null;
-				if (UWE.PrefabDatabase.TryGetPrefab(id, out ret))
-					return ret;
-				TechType key;
-				if (TechTypeHandler.TryGetModdedTechType(id, out key)) {
-					ret = CraftData.GetPrefabForTechType(key);
-				}
-				return ret;
 			}
 			
 		}

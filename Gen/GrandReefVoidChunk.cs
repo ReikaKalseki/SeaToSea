@@ -121,12 +121,12 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 400 && genned < 5; i++) {
 				Vector3 pos = getRandomMountPosition();
 				pos.y = position.y-5;
-				while (position.y-pos.y < 9 && isColliding(pos, rocks)) {
+				while (position.y-pos.y < 9 && SBUtil.isColliding(pos, rocks)) {
 					pos.y -= 0.1F;
 				}
-				if (!isColliding(pos, rocks)) {
+				if (!SBUtil.isColliding(pos, rocks)) {
 					pos.y += 0.05F;
-					GameObject go = PlacedObject.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
+					GameObject go = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
 					go.transform.position = pos;
 					go.transform.rotation = UnityEngine.Random.rotationUniform;
 					genned++;
@@ -170,7 +170,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(0, max)];
-			GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
+			GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
 			go.transform.position = pos.Value;
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p, go);

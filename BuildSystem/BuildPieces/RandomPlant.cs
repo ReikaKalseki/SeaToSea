@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected virtual GameObject generatePlant(Vector3 vec, string type) {
-			GameObject go = PlacedObject.createWorldObject(type);
+			GameObject go = SBUtil.createWorldObject(type);
 			go.transform.position = vec;
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 360F), Vector3.up);
 			return go;
