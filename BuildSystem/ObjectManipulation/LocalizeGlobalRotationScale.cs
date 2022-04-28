@@ -22,24 +22,24 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal sealed class AddComponent : ManipulationBase {
-		
-		private Type type;
+	internal class LocalizeGlobalRotationScale : ManipulationBase {
 		
 		internal override void applyToObject(GameObject go) {
-			go.EnsureComponent(type);
+			?
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
 			applyToObject(go.obj);
+			go.setRotation(go.obj.transform.rotation);
+			go.scale = go.obj.transform.localScale;
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			type = InstructionHandlers.getTypeBySimpleName(e.InnerText);
+			
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			e.InnerText = type.Name;
+			
 		}
 		
 	}

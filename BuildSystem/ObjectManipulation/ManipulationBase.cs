@@ -25,6 +25,7 @@ namespace ReikaKalseki.SeaToSea
 	internal abstract class ManipulationBase {
 		
 		internal abstract void applyToObject(PlacedObject go);
+		internal abstract void applyToObject(GameObject go);
 		
 		internal abstract void loadFromXML(XmlElement e);
 		internal abstract void saveToXML(XmlElement e);

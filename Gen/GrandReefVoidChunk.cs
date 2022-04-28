@@ -76,7 +76,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> generated) {			
-			rock = PlacedObject.createWorldObject(TERRAIN_CHUNK);
+			rock = SBUtil.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
 			rock.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.up);
@@ -96,7 +96,7 @@ namespace ReikaKalseki.SeaToSea
 						use.y -= 0.05F;
 					}
 					if (position.y-use.y < 1.9) {
-						GameObject go = PlacedObject.createWorldObject(p.getRandomPrefab(true));
+						GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
 						go.transform.position = pos.Value;
 						go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 						setPlantHeight(plantYAvg, p, go);
@@ -108,23 +108,35 @@ namespace ReikaKalseki.SeaToSea
 			//TODO ensure no floating pods
 			//TODO add underside rocks, mineral
 			
-			double rockYAvg = position.y-4.5;
+			double rockYAvg = position.y+24.5;
 			for (int i = 0; i < 30; i++) {
 				Vector3 pos = getRandomRockPosition(rockYAvg);
-				GameObject go = PlacedObject.createWorldObject(ROCK_CHUNK);
+				GameObject go = SBUtil.createWorldObject(ROCK_CHUNK);
 				go.transform.position = pos;
 				go.transform.rotation = UnityEngine.Random.rotationUniform;
-				rocks.Add(rock);
+				rocks.Add(go);
+				
+			WorldForces wf = go.EnsureComponent<WorldForces>();
+			wf.enabled = true;
+			wf.handleGravity = true;
+			Rigidbody b = go.EnsureComponent<Rigidbody>();
+			b.mass = 20;
+			b.useGravity = true;
+			b.position = go.transform.position;
+			b.centerOfMass = b.position;
+			b.detectCollisions = true;
+			Collider c = go.EnsureComponent<Collider>();
+			c.enabled = true;
 			}
 			
 			int genned = 0;
 			for (int i = 0; i < 400 && genned < 5; i++) {
 				Vector3 pos = getRandomMountPosition();
 				pos.y = position.y-5;
-				while (position.y-pos.y < 9 && SBUtil.isColliding(pos, rocks)) {
+				while (position.y-pos.y < 9 && isColliding(pos, rocks)) {
 					pos.y -= 0.1F;
 				}
-				if (!SBUtil.isColliding(pos, rocks)) {
+				if (!isColliding(pos, rocks)) {
 					pos.y += 0.05F;
 					GameObject go = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
 					go.transform.position = pos;

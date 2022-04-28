@@ -22,24 +22,33 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal sealed class AddComponent : ManipulationBase {
+	internal class Scale : ManipulationBase {
 		
-		private Type type;
+		private Vector3 min = Vector3.one;
+		private Vector3 max = Vector3.one;
 		
 		internal override void applyToObject(GameObject go) {
-			go.EnsureComponent(type);
+			Vector3 sc = MathUtil.getRandomVectorBetween(min, max);
+			Vector3 vec = go.transform.position;
+			vec.x *= sc.x;
+			vec.y *= sc.y;
+			vec.z *= sc.z;
+			go.transform.position = vec;
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
 			applyToObject(go.obj);
+			go.setPosition(go.obj.transform.position);
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			type = InstructionHandlers.getTypeBySimpleName(e.InnerText);
+			min = e.getVector("min").Value;
+			max = e.getVector("max").Value;
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			e.InnerText = type.Name;
+			e.addProperty("min", min);
+			e.addProperty("max", max);
 		}
 		
 	}

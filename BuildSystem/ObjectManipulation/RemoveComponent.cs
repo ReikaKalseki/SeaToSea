@@ -22,12 +22,16 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal class RemoveComponent : ManipulationBase {
+	internal sealed class RemoveComponent : ManipulationBase {
 		
 		private Type type;
 		
 		internal override void applyToObject(PlacedObject go) {
-			Component[] cc = go.obj.GetComponentsInParent(type);
+			applyToObject(go.obj);
+		}
+		
+		internal override void applyToObject(GameObject go) {
+			Component[] cc = go.GetComponentsInParent(type);
 			foreach (Component c in cc) {
 				UnityEngine.Object.Destroy(c);
 			}

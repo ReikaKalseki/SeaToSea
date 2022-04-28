@@ -49,6 +49,31 @@ namespace ReikaKalseki.SeaToSea
 		private double groundThickness = 0;
 		private double maxSinkFraction = 1;
 		
+		internal override void applyToObject(GameObject go) {
+			string id = SBUtil.getPrefabID(go);
+			double hoff = 0;
+			if (randomType) {
+				Pod old = prefabs[id];
+				List<Pod> li = new List<Pod>(prefabs.Values);
+				int max = allowLargeSize ? prefabs.Count : (allowMediumSize ? prefabs.Count-1 : 2);
+				Pod p = li[UnityEngine.Random.Range(0, max)];
+				double dh = go.transform.position.y-referenceY;
+				go = SBUtil.replaceObject(go, p.prefab);
+				hoff = p.vineBaseOffset-old.vineBaseOffset;
+			}
+			if (randomHeight) {
+				Pod p = prefabs[id];
+				double maxSink = Math.Min(p.maximumSink*maxSinkFraction, groundThickness);
+				float sink = UnityEngine.Random.Range(0F, (float)maxSink);
+				double newY = referenceY+p.vineBaseOffset-sink;
+				hoff = newY-go.transform.position.y;
+			}
+			if (Math.Abs(hoff) > 0.01) {
+				go.transform.position = (go.transform.position-new Vector3(0, (float)hoff, 0));
+				SBUtil.writeToChat(id+" > "+hoff);
+			}
+		}
+		
 		internal override void applyToObject(PlacedObject go) {
 			double hoff = 0;
 			if (randomType) {

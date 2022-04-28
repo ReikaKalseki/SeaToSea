@@ -21,7 +21,9 @@ namespace ReikaKalseki.SeaToSea
 			string folder = Path.Combine(root, "XML/WorldgenSets");
 			string xml = Path.Combine(root, "XML/worldgen.xml");
 			if (Directory.Exists(folder)) {
-				foreach (string file in Directory.GetFiles(folder)) {
+				string[] files = Directory.GetFiles(folder);
+				SBUtil.log("Loading worldgen maps from folder '"+folder+"': "+string.Join(", ", files));
+				foreach (string file in files) {
 					loadXML(file);
 				}
 			}
@@ -48,19 +50,19 @@ namespace ReikaKalseki.SeaToSea
 							CustomPrefab gen = CustomPrefab.fromXML(e);
 							if (gen != null) {
 								if (gen.isCrate) {
-									GenUtil.spawnItemCrate(gen.position, gen.rotation);
-							    	CrateFillMap.instance.addValue(gen.position, gen.tech);
+									GenUtil.spawnItemCrate(gen.position, gen.tech, gen.rotation);
+							    	//CrateFillMap.instance.addValue(gen.position, gen.tech);
 								}
 								else if (gen.isDatabox) {
-							        GenUtil.spawnDatabox(gen.position, gen.rotation);
-							    	DataboxTypingMap.instance.addValue(gen.position, gen.tech);
+							        GenUtil.spawnDatabox(gen.position, gen.tech, gen.rotation);
+							    	//DataboxTypingMap.instance.addValue(gen.position, gen.tech);
 								}
 								//else if (gen.isFragment) {
 							    //    GenUtil.spawnFragment(gen.position, gen.rotation);
 							    //	FragmentTypingMap.instance.addValue(gen.position, gen.tech);
 								//}
 								else {
-									GenUtil.registerWorldgen(gen);
+									GenUtil.registerWorldgen(gen, gen.getManipulationsCallable());
 								}
 								//TODO callbacks for manipulations!!!
 								SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);

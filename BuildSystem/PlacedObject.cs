@@ -74,7 +74,7 @@ namespace ReikaKalseki.SeaToSea
 			public sealed override void replaceObject(string pfb) {
 				base.replaceObject(pfb);
 				
-				GameObject put = createWorldObject(pfb);
+				GameObject put = SBUtil.createWorldObject(pfb);
 				if (put != null && put.transform != null) {
 					UnityEngine.Object.Destroy(obj);
 					key(put);

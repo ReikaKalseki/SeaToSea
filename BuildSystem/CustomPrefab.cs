@@ -58,6 +58,14 @@ namespace ReikaKalseki.SeaToSea
 				return n;
 			}
 			
+			public Action<GameObject> getManipulationsCallable() {
+				return go => {
+					foreach (ManipulationBase mb in manipulations) {
+						mb.applyToObject(go);
+					}
+				};
+			}
+			
 			public static new CustomPrefab fromXML(XmlElement e) {
 				PositionedPrefab pfb = PositionedPrefab.fromXML(e);
 				try {
@@ -92,6 +100,8 @@ namespace ReikaKalseki.SeaToSea
 					if (b.tech == TechType.None && tech2 != null && tech2 != "None") {
 						b.tech = SBUtil.getTechType(tech2);
 					}
+					if (glob != null)
+						b.manipulations.AddRange(glob);
 					List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 					if (li.Count == 1) {
 						loadManipulations(li[0], b.manipulations);
@@ -116,9 +126,9 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					if (e2 == null)
 						throw new Exception("Null XML elem");
-					Type t = Type.GetType("ReikaKalseki.SeaToSea."+e2.Name);
+					Type t = InstructionHandlers.getTypeBySimpleName("ReikaKalseki.SeaToSea."+e2.Name);
 					if (t == null)
-						throw new Exception("Type not found");
+						throw new Exception("Type '"+e2.Name+"' not found");
 					System.Reflection.ConstructorInfo ct = t.GetConstructor(new Type[0]);
 					if (ct == null)
 						throw new Exception("Constructor not found");

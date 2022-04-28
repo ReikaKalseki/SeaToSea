@@ -140,7 +140,7 @@ namespace ReikaKalseki.SeaToSea
     	TechType over = DataboxTypingMap.instance.getOverride(c);
     	if (over != TechType.None) {
     		SBUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
-    		c.unlockTechType = over;
+    		SBUtil.setDatabox(c, over);
     	}
     }
     

@@ -198,12 +198,14 @@ namespace ReikaKalseki.SeaToSea
 			XmlDocument doc = new XmlDocument();
 			doc.Load(getDumpFile(file));
 			XmlElement rootnode = doc.DocumentElement;
-			List<XmlElement> li = rootnode.getDirectElementsByTagName("transform");
 			globalTransforms.Clear();
-			foreach (XmlElement e in li) {
-				ManipulationBase mb = CustomPrefab.loadManipulation(e);
-				if (mb != null)
-					globalTransforms.Add(mb);
+			List<XmlElement> li = rootnode.getDirectElementsByTagName("transforms");
+			if (li.Count == 1) {
+				foreach (XmlElement e in li[0].ChildNodes) {
+					ManipulationBase mb = CustomPrefab.loadManipulation(e);
+					if (mb != null)
+						globalTransforms.Add(mb);
+				}
 			}
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
@@ -239,7 +241,7 @@ namespace ReikaKalseki.SeaToSea
 					case "generator":
 						string typeName = e.getProperty("type");
 						Vector3 pos = e.getVector("position").Value;
-						Type tt = InstructionHandlers.getTypeBySimpleName(typeName);
+						Type tt = InstructionHandlers.getTypeBySimpleName("ReikaKalseki.SeaToSea."+typeName);
 						if (tt == null)
 							throw new Exception("No class found for '"+typeName+"'!");
 						WorldGenerator gen = (WorldGenerator)Activator.CreateInstance(tt, new object[]{pos});

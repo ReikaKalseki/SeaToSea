@@ -27,8 +27,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		private MethodInfo call;
 				
-		internal override void applyToObject(PlacedObject go) {
+		internal override void applyToObject(GameObject go) {
 			call.Invoke(null, new object[]{go});
+		}
+				
+		internal override void applyToObject(PlacedObject go) {
+			applyToObject(go.obj);
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
@@ -36,7 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			string name = e.getProperty("name");
 			Type t = InstructionHandlers.getTypeBySimpleName(tn);
 			//call = t.GetMethod(name, unchecked((System.Reflection.BindingFlags)0x7fffffff));
-			call = t.GetMethod(name, new Type[]{typeof(PlacedObject)});
+			call = t.GetMethod(name, new Type[]{typeof(GameObject)});
 		}
 		
 		internal override void saveToXML(XmlElement e) {

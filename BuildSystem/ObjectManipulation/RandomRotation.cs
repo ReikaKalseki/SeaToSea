@@ -28,6 +28,22 @@ namespace ReikaKalseki.SeaToSea
 		private bool randomY;
 		private bool randomZ;
 		
+		internal override void applyToObject(GameObject go) {
+			if (randomX && randomY && randomZ) {
+				go.transform.rotation = UnityEngine.Random.rotationUniform;
+			}
+			else {
+				Vector3 angs = go.transform.rotation.eulerAngles;
+				if (randomX)
+					angs.x = UnityEngine.Random.Range(0F, 360F);
+				if (randomY)
+					angs.y = UnityEngine.Random.Range(0F, 360F);
+				if (randomZ)
+					angs.z = UnityEngine.Random.Range(0F, 360F);
+				go.transform.rotation = Quaternion.Euler(angs);
+			}
+		}
+		
 		internal override void applyToObject(PlacedObject go) {
 			if (randomX && randomY && randomZ) {
 				go.setRotation(UnityEngine.Random.rotationUniform);

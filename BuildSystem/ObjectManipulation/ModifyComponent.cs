@@ -25,7 +25,11 @@ namespace ReikaKalseki.SeaToSea
 	internal abstract class ModifyComponent<T> : ManipulationBase where T : Component {
 				
 		internal override sealed void applyToObject(PlacedObject go) {
-			T component = go.obj.GetComponentInParent<T>();
+			applyToObject(go.obj);
+		}
+				
+		internal override sealed void applyToObject(GameObject go) {
+			T component = go.GetComponentInParent<T>();
 			if (component != null)
 				modifyComponent(component);
 		}

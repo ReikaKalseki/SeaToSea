@@ -22,9 +22,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly TechType avolite = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType;
 		
-		private readonly Vector3 eventCenter = new Vector3(?);
-		private readonly Vector3 eventUITargetLocation = new Vector3(?);
-		private readonly Vector3 mountainCenter = new Vector3(?);
+		//private readonly Vector3 eventCenter = new Vector3(?);
+		//private readonly Vector3 eventUITargetLocation = new Vector3(?);
+		//private readonly Vector3 mountainCenter = new Vector3(?);
 		
 		private readonly Dictionary<Vector3, TechType> boxes = new Dictionary<Vector3, TechType>();
 		private readonly Dictionary<Vector3, string> looseItems = new Dictionary<Vector3, string>();
@@ -63,13 +63,13 @@ namespace ReikaKalseki.SeaToSea {
 			for (int i = 0; i < boxCount; i++) {
 				GameObject box = spawnBox();
 				if (box != null) {
-					SBUtil.setCrateItem(box.EnsureComponent<SupplyCrate>(), generateRandomItem());
+					SBUtil.setCrateItem(box.EnsureComponent<SupplyCrate>(), generateRandomItem(true));
 					ensureGravity(box);
 				}
 			}
 			for (int i = 0; i < looseCount; i++) {
 				Vector3 pos = getRandomPosition();
-				GameObject go = SBUtil.dropItem(pos, generateRandomItem());
+				GameObject go = SBUtil.dropItem(pos, generateRandomItem(false));
 				ensureGravity(go);
 			}
 			while (gennedAvolite < 3) {
@@ -118,11 +118,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private Vector3 getRandomPosition() {
-			return eventCenter; //TODO
+			return Vector3.zero; //TODO
 		}
 		
 		private void ensureGravity(GameObject go) {
-			
+			WorldForces wf = go.EnsureComponent<WorldForces>();
+			wf.enabled = true;
+			wf.handleGravity = true;
+			wf.underwaterGravity = 1;
 		}
 	}
 	

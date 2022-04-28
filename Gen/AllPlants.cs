@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> li) {			
-			GameObject rock = PlacedObject.createWorldObject("a474e5fa-1552-4cea-abdb-945f85ed4b1a");
+			GameObject rock = SBUtil.createWorldObject("a474e5fa-1552-4cea-abdb-945f85ed4b1a");
 			rock.transform.position = position;
 			rock.transform.localScale = new Vector3(150, 1, 150);
 			
@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private GameObject spawnPlant(VanillaFlora f, double sink = 0) {
 			offsetZ = ((index%5)-2)*step;
-			GameObject go = PlacedObject.createWorldObject(f.getRandomPrefab(false));
+			GameObject go = SBUtil.createWorldObject(f.getRandomPrefab(false));
 			double d = f.baseOffset < -99 ? 6 : f.baseOffset;
 			d -= sink;
 			go.transform.position = new Vector3(position.x+(float)offsetX, position.y+(float)d, position.z+(float)offsetZ);
