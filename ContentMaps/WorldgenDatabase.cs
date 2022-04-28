@@ -47,14 +47,15 @@ namespace ReikaKalseki.SeaToSea
 					double chance = string.IsNullOrEmpty(ch) ? 1 : double.Parse(ch);
 					for (int i = 0; i < amt; i++) {
 						if (UnityEngine.Random.Range(0F, 1F) <= chance) {
-							CustomPrefab gen = CustomPrefab.fromXML(e);
-							if (gen != null) {
-								if (gen.isCrate) {
-									GenUtil.spawnItemCrate(gen.position, gen.tech, gen.rotation);
+							ObjectTemplate ot = ObjectTemplate.construct(e);
+							if (ot is CustomPrefab) {
+								CustomPrefab pfb = (CustomPrefab)ot;
+								if (pfb.isCrate) {
+									GenUtil.spawnItemCrate(pfb.position, pfb.tech, pfb.rotation);
 							    	//CrateFillMap.instance.addValue(gen.position, gen.tech);
 								}
-								else if (gen.isDatabox) {
-							        GenUtil.spawnDatabox(gen.position, gen.tech, gen.rotation);
+								else if (pfb.isDatabox) {
+							        GenUtil.spawnDatabox(pfb.position, pfb.tech, pfb.rotation);
 							    	//DataboxTypingMap.instance.addValue(gen.position, gen.tech);
 								}
 								//else if (gen.isFragment) {
@@ -62,10 +63,14 @@ namespace ReikaKalseki.SeaToSea
 							    //	FragmentTypingMap.instance.addValue(gen.position, gen.tech);
 								//}
 								else {
-									GenUtil.registerWorldgen(gen, gen.getManipulationsCallable());
+									GenUtil.registerWorldgen(pfb, pfb.getManipulationsCallable());
 								}
-								//TODO callbacks for manipulations!!!
-								SBUtil.log("Loaded worldgen "+gen+" for "+e.InnerText);
+								SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.InnerText);
+							}
+							else if (ot is WorldGenerator) {
+								WorldGenerator gen = (WorldGenerator)ot;
+								GenUtil.registerWorldgen(gen);
+								SBUtil.log("Loaded worldgenator "+gen+" for "+e.InnerText);
 							}
 							else {
 								SBUtil.log("No worldgen loadable for "+e.InnerText);

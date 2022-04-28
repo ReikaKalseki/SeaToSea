@@ -22,24 +22,20 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal class LocalizeGlobalRotationScale : ManipulationBase {
+	internal sealed class PrefabCheck : LocalCheck {
 		
-		internal override void applyToObject(GameObject go) {
-			
-		}
+		private string id;
 		
-		internal override void applyToObject(PlacedObject go) {
-			applyToObject(go.obj);
-			go.setRotation(go.obj.transform.rotation);
-			go.scale = go.obj.transform.localScale;
+		internal override bool apply(GameObject go) {
+			return SBUtil.getPrefabID(go) == id;
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			
+			id = e.getProperty("id");
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			
+			e.addProperty("id", id);
 		}
 		
 	}

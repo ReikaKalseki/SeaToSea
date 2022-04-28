@@ -22,25 +22,11 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal class LocalizeGlobalRotationScale : ManipulationBase {
+	internal abstract class LocalCheck {
 		
-		internal override void applyToObject(GameObject go) {
-			
-		}
-		
-		internal override void applyToObject(PlacedObject go) {
-			applyToObject(go.obj);
-			go.setRotation(go.obj.transform.rotation);
-			go.scale = go.obj.transform.localScale;
-		}
-		
-		internal override void loadFromXML(XmlElement e) {
-			
-		}
-		
-		internal override void saveToXML(XmlElement e) {
-			
-		}
+		internal abstract bool apply(GameObject go);
+		internal abstract void loadFromXML(XmlElement e);
+		internal abstract void saveToXML(XmlElement e);
 		
 	}
 }

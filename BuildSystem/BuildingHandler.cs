@@ -183,8 +183,11 @@ namespace ReikaKalseki.SeaToSea
 				try {
 					bool use = flag(go);
 					SBUtil.log(go.ToString()+" dump = "+use);
-					if (use)
-						doc.DocumentElement.AppendChild(go.asXML(doc));
+					if (use) {
+						XmlElement e = doc.CreateElement(go.getTagName());
+						go.saveToXML(e);
+						doc.DocumentElement.AppendChild(e);
+					}
 				}
 				catch (Exception e) {
 					throw new Exception(go.ToString(), e);
@@ -199,14 +202,7 @@ namespace ReikaKalseki.SeaToSea
 			doc.Load(getDumpFile(file));
 			XmlElement rootnode = doc.DocumentElement;
 			globalTransforms.Clear();
-			List<XmlElement> li = rootnode.getDirectElementsByTagName("transforms");
-			if (li.Count == 1) {
-				foreach (XmlElement e in li[0].ChildNodes) {
-					ManipulationBase mb = CustomPrefab.loadManipulation(e);
-					if (mb != null)
-						globalTransforms.Add(mb);
-				}
-			}
+			CustomPrefab.loadManipulations(rootnode.getAllChildrenIn("transforms"), globalTransforms);
 			foreach (XmlElement e in rootnode.ChildNodes) {
 				try {
 					buildElement(e);
@@ -222,39 +218,29 @@ namespace ReikaKalseki.SeaToSea
 			string count = e.GetAttribute("count");
 			int amt = string.IsNullOrEmpty(count) ? 1 : int.Parse(count);
 			for (int i = 0; i < amt; i++) {
+				ObjectTemplate ot = ObjectTemplate.construct(e);
+				if (ot == null) {
+					throw new Exception("Could not load XML block, null result: "+e.InnerText);
+				}
 				switch(e.Name) {
 					case "object":
-						CustomPrefab pfb = CustomPrefab.fromXML(e);
-						if (pfb != null) {
-							PlacedObject b = PlacedObject.fromXML(e, pfb);
-							if (b != null) {
-								addObject(b);
-							}
-							else {
-								SBUtil.writeToChat("Could not load XML block, prefab '"+pfb+"' did not build");
-							}
-						}
-						else {
-							SBUtil.writeToChat("Could not load XML builder block, no prefab: "+e.InnerText);
+						PlacedObject b = (PlacedObject)ot;
+						addObject(b);
+						foreach (ManipulationBase mb in globalTransforms) {
+							mb.applyToObject(b);
 						}
 					break;
 					case "generator":
-						string typeName = e.getProperty("type");
-						Vector3 pos = e.getVector("position").Value;
-						Type tt = InstructionHandlers.getTypeBySimpleName("ReikaKalseki.SeaToSea."+typeName);
-						if (tt == null)
-							throw new Exception("No class found for '"+typeName+"'!");
-						WorldGenerator gen = (WorldGenerator)Activator.CreateInstance(tt, new object[]{pos});
-						gen.loadFromXML(e);
+						WorldGenerator gen = (WorldGenerator)ot;
 						List<GameObject> li = new List<GameObject>();
 						gen.generate(li);
 						foreach (GameObject go in li) {
 							string id = SBUtil.getPrefabID(go);
 							if (id != null) {
-								PlacedObject b = new PlacedObject(go, id);
-								addObject(b);
+								PlacedObject b2 = new PlacedObject(go, id);
+								addObject(b2);
 								BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
-								sel.placement = b;
+								sel.placement = b2;
 							}
 						}
 					break;
@@ -266,9 +252,6 @@ namespace ReikaKalseki.SeaToSea
 			SBUtil.writeToChat("Loaded a "+b);
 			items[b.referenceID] = b;
 			lastPlaced = b;
-			foreach (ManipulationBase mb in globalTransforms) {
-				mb.applyToObject(b);
-			}
 			selectLastPlaced();
 		}
 		

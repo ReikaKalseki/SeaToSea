@@ -42,20 +42,19 @@ namespace ReikaKalseki.SeaToSea
 				
 			}
 			
-			internal override XmlElement asXML(XmlDocument doc) {
-				XmlElement n = base.asXML(doc);
+			public override void saveToXML(XmlElement e) {
+				base.saveToXML(e);
 				if (tech != TechType.None)
-					n.addProperty("tech", Enum.GetName(typeof(TechType), tech));
+					e.addProperty("tech", Enum.GetName(typeof(TechType), tech));
 				if (manipulations.Count > 0) {
-					XmlElement e = doc.CreateElement("objectManipulation");
+					XmlElement e1 = e.OwnerDocument.CreateElement("objectManipulation");
 					foreach (ManipulationBase mb in manipulations) {
-						XmlElement e2 = doc.CreateElement(mb.GetType().Name);
+						XmlElement e2 = e.OwnerDocument.CreateElement(mb.GetType().Name);
 						mb.saveToXML(e2);
-						e.AppendChild(e2);
+						e1.AppendChild(e2);
 					}
-					n.AppendChild(e);
+					e.AppendChild(e1);
 				}
-				return n;
 			}
 			
 			public Action<GameObject> getManipulationsCallable() {
@@ -66,60 +65,55 @@ namespace ReikaKalseki.SeaToSea
 				};
 			}
 			
-			public static new CustomPrefab fromXML(XmlElement e) {
-				PositionedPrefab pfb = PositionedPrefab.fromXML(e);
-				try {
-					CustomPrefab b = new CustomPrefab(pfb);
-					if (b.prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
-						b.prefabName = ((VanillaResources)typeof(VanillaResources).GetField(b.prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
-					}
-					else if (b.prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
-						b.prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(b.prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
-					}
-					else if (b.prefabName == "crate") {
-						b.prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
-						b.isCrate = true;
-						string tech = e.getProperty("item");
-						TechType techt = SBUtil.getTechType(tech);
-						b.tech = techt;
-					}
-					else if (b.prefabName == "databox") {
-						b.prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
-						b.isDatabox = true;
-						string tech = e.getProperty("tech");
-						TechType techt = SBUtil.getTechType(tech);
-						b.tech = techt;
-					}
-					//else if (b.prefabName == "fragment") {
-					//	b.prefabName = ?;
-					//	b.isFragment = true;
-					//	string tech = e.getProperty("type");
-					//	TechType techt = (TechType)Enum.Parse(typeof(TechType), tech);
-					//}
-					string tech2 = e.getProperty("tech", true);
-					if (b.tech == TechType.None && tech2 != null && tech2 != "None") {
-						b.tech = SBUtil.getTechType(tech2);
-					}
-					if (glob != null)
-						b.manipulations.AddRange(glob);
-					List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
-					if (li.Count == 1) {
-						loadManipulations(li[0], b.manipulations);
-					}
-					return b;
+			public override void loadFromXML(XmlElement e) {
+				base.loadFromXML(e);
+				if (prefabName.StartsWith("res_", StringComparison.InvariantCultureIgnoreCase)) {
+					prefabName = ((VanillaResources)typeof(VanillaResources).GetField(prefabName.Substring(4).ToUpper()).GetValue(null)).prefab;
 				}
-				catch (Exception ex) {
-					SBUtil.log("Could not construct customprefab from XML: "+ex);
-					return null;
+				else if (prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
+					prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
+				}
+				else if (prefabName == "crate") {
+					prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
+					isCrate = true;
+					string techn = e.getProperty("item");
+					tech = SBUtil.getTechType(techn);
+				}
+				else if (prefabName == "databox") {
+					prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
+					isDatabox = true;
+					string techn = e.getProperty("tech");
+					tech = SBUtil.getTechType(techn);
+				}
+				//else if (prefabName == "fragment") {
+				//	prefabName = ?;
+				//	isFragment = true;
+				//	string techn = e.getProperty("type");
+				//	tech = SBUtil.getTechType(techn);
+				//}
+				string tech2 = e.getProperty("tech", true);
+				if (tech == TechType.None && tech2 != null && tech2 != "None") {
+					tech = SBUtil.getTechType(tech2);
+				}
+				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations);
+				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
+				if (li.Count == 1) {
+					loadManipulations(li[0], manipulations);
 				}
 			}
 			
-			public static void loadManipulations(XmlElement e, List<ManipulationBase> li) {
-				foreach (XmlElement e2 in e.ChildNodes) {
+			public static void loadManipulations(XmlNodeList es, List<ManipulationBase> li) {
+				if (es == null)
+					return;
+				foreach (XmlElement e2 in es) {
 					ManipulationBase mb = loadManipulation(e2);
 					if (mb != null)
 						li.Add(mb);
 				}
+			}
+			
+			private static void loadManipulations(XmlElement e, List<ManipulationBase> li) {
+				loadManipulations(e.ChildNodes, li);
 			}
 			
 			public static ManipulationBase loadManipulation(XmlElement e2) {

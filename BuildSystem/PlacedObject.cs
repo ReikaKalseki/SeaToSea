@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea
 {		
 		[Serializable]
 		internal class PlacedObject : CustomPrefab {
+		
+			public static readonly string TAGNAME = "object";
 			
 			private static GameObject bubblePrefab = null;
 			
@@ -36,6 +38,18 @@ namespace ReikaKalseki.SeaToSea
 			
 			[SerializeField]
 			internal bool isSelected;
+			
+			static PlacedObject() { //TODO might not be inited in time, might need to call explicitly, eg via buildinghandler class init
+				registerType(TAGNAME, e => {
+					CustomPrefab pfb = new CustomPrefab(e.getProperty("prefab"));
+					pfb.loadFromXML(e);
+					return PlacedObject.fromXML(e, pfb);
+				});
+			}
+		
+			public string getTagName() {
+				return TAGNAME;
+			}
 			
 			internal PlacedObject(GameObject go, string pfb) : base(pfb) {
 				if (go == null)
@@ -153,9 +167,37 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			internal override XmlElement asXML(XmlDocument doc) {
-				XmlElement n = base.asXML(doc);
-				return n;
+			public override void saveToXML(XmlElement e) {
+				base.saveToXML(e);
+			}
+			
+			public override void loadFromXML(XmlElement e) {
+				base.loadFromXML(e);
+				
+				if (isDatabox) {
+					//SBUtil.writeToChat("Reprogramming databox");
+					BlueprintHandTarget bpt = obj.EnsureComponent<BlueprintHandTarget>();
+					bpt.unlockTechType = tech;
+				}
+				else if (isCrate) {
+					//SBUtil.writeToChat("Reprogramming crate");
+					SupplyCrate bpt = obj.EnsureComponent<SupplyCrate>();
+					SBUtil.setCrateItem(bpt, tech);
+				}
+				else if (isFragment) {
+					//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
+				}
+				
+				foreach (ManipulationBase mb in manipulations) {
+					mb.applyToObject(this);
+				}
+			}
+		
+			protected override void setPrefabName(string name) {
+				string old = prefabName;
+				base.setPrefabName(name);
+				if (old != name)
+					replaceObject(name);
 			}
 			
 			public static PlacedObject fromXML(XmlElement e, CustomPrefab pfb) {
@@ -173,26 +215,16 @@ namespace ReikaKalseki.SeaToSea
 						//SBUtil.writeToChat("S"+b.prefabName);
 						if (pfb.isDatabox) {
 							//SBUtil.writeToChat("Reprogramming databox");
-							BlueprintHandTarget bpt = b.obj.GetComponentInParent<BlueprintHandTarget>();
-							if (bpt != null) {
-								bpt.unlockTechType = b.tech;
-							}
-							else {
-								SBUtil.writeToChat("Databox had no blueprint component!");
-							}
+							BlueprintHandTarget bpt = b.obj.EnsureComponent<BlueprintHandTarget>();
+							bpt.unlockTechType = b.tech;
 						}
 						else if (pfb.isCrate) {
 							//SBUtil.writeToChat("Reprogramming crate");
-							SupplyCrate bpt = b.obj.GetComponentInParent<SupplyCrate>();
-							if (bpt != null) {
-								SBUtil.setCrateItem(bpt, b.tech);
-							}
-							else {
-								SBUtil.writeToChat("Crate had no supply component!");
-							}
+							SupplyCrate bpt = b.obj.EnsureComponent<SupplyCrate>();
+							SBUtil.setCrateItem(bpt, b.tech);
 						}
 						else if (pfb.isFragment) {
-							
+							//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
 						}
 						foreach (ManipulationBase mb in b.manipulations) {
 							mb.applyToObject(b);
