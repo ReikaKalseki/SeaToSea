@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea
 {		
 		[Serializable]
 		internal class CustomPrefab : PositionedPrefab {
+		
+			public static readonly string TAGNAME = "customprefab";
 			
 			[SerializeField]
 			internal TechType tech = TechType.None;
@@ -40,6 +42,14 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal CustomPrefab(PositionedPrefab pfb) : base(pfb) {				
 				
+			}
+			
+			static CustomPrefab() {
+				registerType(TAGNAME, e => new CustomPrefab(e.getProperty("prefab")));
+			}
+		
+			public override string getTagName() {
+				return TAGNAME;
 			}
 			
 			public override void saveToXML(XmlElement e) {

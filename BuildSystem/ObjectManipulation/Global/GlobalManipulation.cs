@@ -46,11 +46,12 @@ namespace ReikaKalseki.SeaToSea
 		internal override void loadFromXML(XmlElement e) {
 			List<XmlElement> li = e.getDirectElementsByTagName("local");
 			if (li.Count == 1) {
-				string typeName = "ReikaKalseki.SeaToSea"+e.getProperty("type");
+				string typeName = "ReikaKalseki.SeaToSea."+li[0].getProperty("type");
 				Type tt = InstructionHandlers.getTypeBySimpleName(typeName);
 				if (tt == null)
 					throw new Exception("No class found for '"+typeName+"'!");
 				localApply = (LocalCheck)Activator.CreateInstance(tt);
+				localApply.loadFromXML(li[0]);
 			}
 		}
 		

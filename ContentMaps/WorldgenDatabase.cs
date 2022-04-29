@@ -48,7 +48,10 @@ namespace ReikaKalseki.SeaToSea
 					for (int i = 0; i < amt; i++) {
 						if (UnityEngine.Random.Range(0F, 1F) <= chance) {
 							ObjectTemplate ot = ObjectTemplate.construct(e);
-							if (ot is CustomPrefab) {
+							if (ot == null) {
+								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.InnerText+": NULL");
+							}
+							else if (ot is CustomPrefab) {
 								CustomPrefab pfb = (CustomPrefab)ot;
 								if (pfb.isCrate) {
 									GenUtil.spawnItemCrate(pfb.position, pfb.tech, pfb.rotation);
@@ -73,8 +76,8 @@ namespace ReikaKalseki.SeaToSea
 								SBUtil.log("Loaded worldgenator "+gen+" for "+e.InnerText);
 							}
 							else {
-								SBUtil.log("No worldgen loadable for "+e.InnerText);
-							}
+								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.InnerText);
+							}	
 						}
 					}
 				}

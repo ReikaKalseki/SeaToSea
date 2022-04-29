@@ -30,5 +30,12 @@ namespace ReikaKalseki.SeaToSea
 		internal abstract void loadFromXML(XmlElement e);
 		internal abstract void saveToXML(XmlElement e);
 		
+		public override string ToString() {
+			XmlDocument doc = new XmlDocument();
+			XmlElement e = doc.CreateElement(this.GetType().Name);
+			this.saveToXML(e);
+			return this.GetType()+" : "+e.InnerText;
+		}
+		
 	}
 }

@@ -42,6 +42,10 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(e.ToString());
         }
         
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldGenerator).TypeHandle);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(PlacedObject).TypeHandle);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
+        
         locale.load();
         
         addItemsAndRecipes();

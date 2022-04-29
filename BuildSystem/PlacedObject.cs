@@ -23,9 +23,9 @@ using SMLHelper.V2.Utility;
 namespace ReikaKalseki.SeaToSea
 {		
 		[Serializable]
-		internal class PlacedObject : CustomPrefab {
+		internal sealed class PlacedObject : CustomPrefab {
 		
-			public static readonly string TAGNAME = "object";
+			public static readonly new string TAGNAME = "object";
 			
 			private static GameObject bubblePrefab = null;
 			
@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea
 			[SerializeField]
 			internal bool isSelected;
 			
-			static PlacedObject() { //TODO might not be inited in time, might need to call explicitly, eg via buildinghandler class init
+			static PlacedObject() {
 				registerType(TAGNAME, e => {
 					CustomPrefab pfb = new CustomPrefab(e.getProperty("prefab"));
 					pfb.loadFromXML(e);
@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea
 				});
 			}
 		
-			public string getTagName() {
+			public override string getTagName() {
 				return TAGNAME;
 			}
 			
@@ -56,9 +56,15 @@ namespace ReikaKalseki.SeaToSea
 					throw new Exception("Tried to make a place of a null obj!");
 				if (go.transform == null)
 					SBUtil.log("Place of obj "+go+" has null transform?!");
-				key(go);
-				
+				key(go);				
+				createFX();
+			}
+			
+			private void createFX() {
 				try {
+					if (fx != null) {
+						UnityEngine.Object.Destroy(fx);
+					}
 					if (bubblePrefab == null) {
 						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
 						//if (!SBUtil.getPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
@@ -95,6 +101,7 @@ namespace ReikaKalseki.SeaToSea
 					put.transform.position = this.position;
 					put.transform.rotation = this.rotation;
 					put.transform.localScale = this.scale;
+					createFX();
 				}
 			}
 			
@@ -106,54 +113,72 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal void setSelected(bool sel) {
 				isSelected = sel;
+				if (fx == null) {
+					SBUtil.writeToChat("Could not set enabled visual of "+this+" due to null FX GO");
+					return;
+				}
 				try {
 					fx.SetActive(isSelected);
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not set enabled state of "+this+" due to FX ("+fx+") GO error: "+ex.ToString());
+					SBUtil.writeToChat("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error");
+					SBUtil.log("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error: "+ex.ToString());
 				}
 			}
 			
-			internal void setPosition(Vector3 pos, bool printCoord = false) {
+			internal void setPosition(Vector3 pos) {
 				position = pos;
 				obj.transform.position = position;
-				fx.transform.position = position;
-				if (printCoord) {
-					SBUtil.writeToChat(position.ToString());
-				}
+				if (fx != null && fx.transform != null)
+					fx.transform.position = position;
 			}
 		
-			internal void move(Vector3 mov, bool printCoord = false) {
-				move(mov.x, mov.y, mov.z, printCoord);
+			internal void move(Vector3 mov) {
+				move(mov.x, mov.y, mov.z);
 			}
 		
-			internal void move(double x, double y, double z, bool printCoord = false) {
+			internal void move(double x, double y, double z) {
 				Vector3 vec = obj.transform.position;
 				vec.x += (float)x;
 				vec.y += (float)y;
 				vec.z += (float)z;
-				setPosition(vec, printCoord);
+				setPosition(vec);
 				//SBUtil.writeToChat(go.obj.transform.position.ToString());
 			}
 			
-			internal void rotateYaw(double ang, bool printCoord = false) {
-				rotate(0, ang, 0, printCoord);
+			internal void rotateYaw(double ang, Vector3? relTo) {
+				rotate(0, ang, 0, relTo);
 			}
 			
-			internal void rotate(double roll, double yaw, double pitch, bool printCoord = false) {
-				Vector3 euler = obj.transform.rotation.eulerAngles;
-				setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch), printCoord);
+			internal void rotate(double roll, double yaw, double pitch, Vector3? relTo) {
+				Vector3 ctr = position;
+				Vector3 up = obj.transform.up;
+				Vector3 forward = obj.transform.forward;
+				Vector3 right = obj.transform.right;
+				if (relTo != null && relTo.HasValue) {
+					ctr = relTo.Value;
+					up = Vector3.up;
+					forward = Vector3.forward;
+					right = Vector3.right;
+				}
+				if (Math.Abs(yaw) > 0.001)
+					obj.transform.RotateAround(ctr, up, (float)yaw);
+				if (Math.Abs(roll) > 0.001)
+					obj.transform.RotateAround(ctr, forward, (float)roll);
+				if (Math.Abs(pitch) > 0.001)
+					obj.transform.RotateAround(ctr, right, (float)pitch);
+				setRotation(obj.transform.rotation);
+				//Vector3 euler = obj.transform.rotation.eulerAngles;
+				//setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 			}
 			
-			internal void setRotation(Quaternion rot, bool printCoord = false) {
+			internal void setRotation(Quaternion rot) {
 				obj.transform.rotation = rot;
-				fx.transform.rotation = rot;
+				if (fx != null && fx.transform != null)
+					fx.transform.rotation = rot;
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 				rotation = rot;
-				if (printCoord) {
-					SBUtil.writeToChat(rotation.eulerAngles.ToString());
-				}
 			}
 			
 			public override string ToString() {
@@ -201,42 +226,36 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public static PlacedObject fromXML(XmlElement e, CustomPrefab pfb) {
-				try {
-					PlacedObject b = createPrefab(pfb.prefabName);
-					if (b != null) {
-						b.setPosition(pfb.position);
-						b.rotation = pfb.rotation;
-						b.obj.transform.rotation = b.rotation;
-						b.fx.transform.rotation = b.rotation;
-						b.obj.transform.localScale = b.scale;
-						if (b.tech == TechType.None && pfb.tech != TechType.None)
-							b.tech = pfb.tech;
-						b.manipulations.AddRange(pfb.manipulations);
-						//SBUtil.writeToChat("S"+b.prefabName);
-						if (pfb.isDatabox) {
-							//SBUtil.writeToChat("Reprogramming databox");
-							BlueprintHandTarget bpt = b.obj.EnsureComponent<BlueprintHandTarget>();
-							bpt.unlockTechType = b.tech;
-						}
-						else if (pfb.isCrate) {
-							//SBUtil.writeToChat("Reprogramming crate");
-							SupplyCrate bpt = b.obj.EnsureComponent<SupplyCrate>();
-							SBUtil.setCrateItem(bpt, b.tech);
-						}
-						else if (pfb.isFragment) {
-							//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
-						}
-						foreach (ManipulationBase mb in b.manipulations) {
-							mb.applyToObject(b);
-						}
-						return b;
+				PlacedObject b = createPrefab(pfb.prefabName);
+				if (b != null) {
+					b.setPosition(pfb.position);
+					b.rotation = pfb.rotation;
+					b.obj.transform.rotation = b.rotation;
+					b.fx.transform.rotation = b.rotation;
+					b.obj.transform.localScale = b.scale;
+					if (b.tech == TechType.None && pfb.tech != TechType.None)
+						b.tech = pfb.tech;
+					b.manipulations.AddRange(pfb.manipulations);
+					//SBUtil.writeToChat("S"+b.prefabName);
+					if (pfb.isDatabox) {
+						//SBUtil.writeToChat("Reprogramming databox");
+						BlueprintHandTarget bpt = b.obj.EnsureComponent<BlueprintHandTarget>();
+						bpt.unlockTechType = b.tech;
 					}
-					else {
-						return null;
+					else if (pfb.isCrate) {
+						//SBUtil.writeToChat("Reprogramming crate");
+						SupplyCrate bpt = b.obj.EnsureComponent<SupplyCrate>();
+						SBUtil.setCrateItem(bpt, b.tech);
 					}
+					else if (pfb.isFragment) {
+						//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
+					}
+					foreach (ManipulationBase mb in b.manipulations) {
+						mb.applyToObject(b);
+					}
+					return b;
 				}
-				catch (Exception ex) {
-					SBUtil.log("Could not construct placed object from XML: "+ex);
+				else {
 					return null;
 				}
 			}

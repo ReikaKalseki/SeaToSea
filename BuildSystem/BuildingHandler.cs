@@ -38,8 +38,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private BuildingHandler() {
 			addText("LMB to select, Lalt+RMB to place selected on ground at look, LCtrl+RMB to duplicate them there");
-			addText("Lalt+Arrow keys to move L/R Fwd/Back, +/- for U/D, add Z to make relative to obj");
-			addText("Lalt+QR to yaw, [] to pitch (Z), ,. to roll (X)");
+			addText("Lalt+Arrow keys to move L/R Fwd/Back; +/- for U/D; add Z to make relative to obj");
+			addText("Lalt+QR to yaw; [] to pitch (Z); ,. to roll (X); add Z to make relative to obj");
 			addText("Add C for fast, X for slow; DEL to delete all selected");
 		}
 		
@@ -204,6 +204,8 @@ namespace ReikaKalseki.SeaToSea
 			globalTransforms.Clear();
 			CustomPrefab.loadManipulations(rootnode.getAllChildrenIn("transforms"), globalTransforms);
 			foreach (XmlElement e in rootnode.ChildNodes) {
+				if (e.Name == "transforms")
+					continue;
 				try {
 					buildElement(e);
 				}
@@ -220,14 +222,16 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < amt; i++) {
 				ObjectTemplate ot = ObjectTemplate.construct(e);
 				if (ot == null) {
-					throw new Exception("Could not load XML block, null result: "+e.InnerText);
+					throw new Exception("Could not load XML block, null result from '"+e.Name+"': "+e.InnerText);
 				}
 				switch(e.Name) {
 					case "object":
 						PlacedObject b = (PlacedObject)ot;
 						addObject(b);
 						foreach (ManipulationBase mb in globalTransforms) {
+							SBUtil.log("Applying global "+mb+" to "+b);
 							mb.applyToObject(b);
+							SBUtil.log(b.ToString());
 						}
 					break;
 					case "generator":
@@ -235,13 +239,10 @@ namespace ReikaKalseki.SeaToSea
 						List<GameObject> li = new List<GameObject>();
 						gen.generate(li);
 						foreach (GameObject go in li) {
-							string id = SBUtil.getPrefabID(go);
-							if (id != null) {
-								PlacedObject b2 = new PlacedObject(go, id);
-								addObject(b2);
-								BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
-								sel.placement = b2;
-							}
+							PlacedObject b2 = new PlacedObject(go, SBUtil.getPrefabID(go));
+							addObject(b2);
+							BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
+							sel.placement = b2;
 						}
 					break;
 				}
@@ -249,7 +250,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void addObject(PlacedObject b) {
-			SBUtil.writeToChat("Loaded a "+b);
+			SBUtil.log("Loaded a "+b);
 			items[b.referenceID] = b;
 			lastPlaced = b;
 			selectLastPlaced();
@@ -347,7 +348,8 @@ namespace ReikaKalseki.SeaToSea
 				if (!go.isSelected)
 					continue;
 				Transform t = MainCamera.camera.transform;
-				if (KeyCodeUtils.GetKeyHeld(KeyCode.Z)) {
+				bool rel = KeyCodeUtils.GetKeyHeld(KeyCode.Z);
+				if (rel) {
 					t = go.obj.transform;
 				}
 				Vector3 vec = t.forward.normalized;
@@ -366,18 +368,29 @@ namespace ReikaKalseki.SeaToSea
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Minus))
 		    		go.move(up*-s);
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.R))
-		    		go.rotateYaw(s*20);
+		    		go.rotateYaw(s*20, rel ? (Vector3?)null : getCenter());
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Q))
-		    		go.rotateYaw(-s*20);
+		    		go.rotateYaw(-s*20, rel ? (Vector3?)null : getCenter());
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftBracket))
-		    		go.rotate(0, 0, -s*20);
+		    		go.rotate(0, 0, -s*20, rel ? (Vector3?)null : getCenter());
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.RightBracket))
-		    		go.rotate(0, 0, s*20);
+		    		go.rotate(0, 0, s*20, rel ? (Vector3?)null : getCenter());
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Comma))
-		    		go.rotate(-s*20, 0, 0);
+		    		go.rotate(-s*20, 0, 0, rel ? (Vector3?)null : getCenter());
 		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Period))
-		    		go.rotate(s*20, 0, 0);
+		    		go.rotate(s*20, 0, 0, rel ? (Vector3?)null : getCenter());
 			}
+		}
+		
+		private Vector3? getCenter() {
+			if (items.Count == 0)
+				return null;
+			Vector3 vec = Vector3.zero;
+			foreach (PlacedObject obj in items.Values) {
+				vec += obj.position;
+			}
+			vec /= items.Values.Count;
+			return vec;
 		}
 		
 		private int selectionCount() {

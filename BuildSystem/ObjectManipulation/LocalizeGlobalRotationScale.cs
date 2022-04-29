@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea
 	internal class LocalizeGlobalRotationScale : ManipulationBase {
 		
 		internal override void applyToObject(GameObject go) {
-			
+			//NOOP
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
