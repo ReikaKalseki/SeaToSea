@@ -14,14 +14,14 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class VoidSpikes : WorldGenerator {
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
-			new Vector3(6, 4, 6),
-			new Vector3(10, 6, 10),
-			new Vector3(15, 8, 15),
-			new Vector3(20, 10, 20),
-			new Vector3(25, 15, 25),
+			new Vector3(16, 8, 16),
+			new Vector3(24, 10, 24),
+			new Vector3(32, 16, 32),
+			new Vector3(40, 16, 40),
+			new Vector3(50, 24, 50),
 		};
 		
-		private readonly List<VoidSpike> spikes = new List<VoidSpike>();
+		private readonly List<SpikeCluster> spikes = new List<SpikeCluster>();
 		
 		private int count;
 		private float scaleXZ = 1;
@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < count; i++) {
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
-					VoidSpike s = new VoidSpike(pos.Value);
+					SpikeCluster s = new SpikeCluster(pos.Value);
 					spikes.Add(s);
 					s.generate(generated);
 				}
@@ -57,6 +57,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private Vector3? getSafePosition() {
+			if (count == 1)
+				return position;
 			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ);
 			Vector3 ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
@@ -68,15 +70,45 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private bool isTooClose(Vector3 pos) {
-			foreach (VoidSpike s in spikes) {
-				if (MathUtil.py3d(s.position, pos) <= 4) {
+			foreach (SpikeCluster s in spikes) {
+				Vector3 dist = s.position-pos;
+				if (dist.x*dist.x+dist.z*dist.z <= 256) {
 					return true;
 				}
 			}
 			return false;
 		}
 		
-		private static class SpikeCluster {
+		private class SpikeCluster {
+		
+			internal readonly int spikeCount;
+			internal readonly Vector3 position;
+			private readonly List<VoidSpike> spikes = new List<VoidSpike>();
+			
+			private float topY = -10000;
+			
+			internal SpikeCluster(Vector3 vec) {
+				spikeCount = UnityEngine.Random.Range(2, 11);
+				position = vec;
+			}
+			
+			internal void generate(List<GameObject> li) {
+				for (int i = 0; i < spikeCount; i++) {
+					Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(4, 9, 4));
+					VoidSpike s = new VoidSpike(pos);
+					spikes.Add(s);
+					s.generate(li);
+					topY = Math.Max(topY, pos.y);
+				}
+				foreach (VoidSpike s in spikes) {
+					if (s.position.y < topY-4) {
+						s.hasFlora = false;
+						s.hasFloater = false;
+						s.hasPod = false;
+					}
+					s.generate(li);
+				}
+			}
 			
 		}
 	}
