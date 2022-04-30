@@ -43,8 +43,9 @@ namespace ReikaKalseki.SeaToSea
 		private float scale = 1;
 		private Vector3 scaleVec;
 		
-		private bool hasFloater = false;
-		private bool hasPod = false;
+		public bool hasFloater = false;
+		public bool hasPod = false;
+		public bool hasFlora = false;
 		
 		private GameObject spike;
 		private GameObject pod;
@@ -62,6 +63,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			else {
 				hasPod = true;
+				hasFlora = true;
 			}
 		}
 		
@@ -71,6 +73,8 @@ namespace ReikaKalseki.SeaToSea
 			
 			if (e.hasProperty("hasFloater"))
 				hasFloater = e.getBoolean("hasFloater");
+			if (e.hasProperty("hasFlora"))
+				hasFloater = e.getBoolean("hasFlora");
 			if (e.hasProperty("hasPod"))
 				hasPod = e.getBoolean("hasPod");
 		}
@@ -79,6 +83,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("scale", scale);
 			e.addProperty("hasFloater", hasFloater);
 			e.addProperty("hasPod", hasPod);
+			e.addProperty("hasFlora", hasFlora);
 		}
 		
 		public override void generate(List<GameObject> generated) {
@@ -90,7 +95,7 @@ namespace ReikaKalseki.SeaToSea
 			generated.Add(spike);
 			
 			if (hasPod) {
-				pod = spawnAnchorPod(scale >= 1.5, scale >= 1, scale <= 1);
+				pod = spawnAnchorPod(scale >= 1.5, scale >= 1 && scale <= 1.75, scale <= 1);
 				generated.Add(pod);
 			}
 			if (hasFloater) {
@@ -103,12 +108,13 @@ namespace ReikaKalseki.SeaToSea
 				generated.Add(floater);
 				generated.Add(floaterLight);
 			}
-			else {
+			if (hasFlora) {
 				VoidChunkPlants vc = new VoidChunkPlants(position+Vector3.up*0.5F*scale);
 				vc.fuzz *= 2*scale;
 				vc.fuzz.y *= 0.25F;
 				vc.generate(plants);
 			}
+			//TODO resources
 			generated.AddRange(plants);
 			generated.AddRange(resources);
 		}
@@ -118,14 +124,14 @@ namespace ReikaKalseki.SeaToSea
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];
 			GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
-			go.transform.position = position+Vector3.up*-0.4F*scale;
+			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*-0.4F*scale, 0.2F);
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p, go);
 			return go;
 		}
 		
 		private void setPlantHeight(double yRef, VanillaFlora p, GameObject go) {
-			double maxSink = Math.Min(p.maximumSink*0.8, scale*3);
+			double maxSink = Math.Min(p.maximumSink*0.8, scale*8);
 			float sink = UnityEngine.Random.Range(0F, (float)maxSink);
 			if (p == VanillaFlora.BRINE_LILY)
 				sink = (float)(p.maximumSink*0.95);
