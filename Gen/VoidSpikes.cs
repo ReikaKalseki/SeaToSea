@@ -59,7 +59,7 @@ namespace ReikaKalseki.SeaToSea
 		private Vector3? getSafePosition() {
 			if (count == 1)
 				return position;
-			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ);
+			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ)*2;
 			Vector3 ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
 			while (tries <= 50 && isTooClose(ret)) {
@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea
 		private bool isTooClose(Vector3 pos) {
 			foreach (SpikeCluster s in spikes) {
 				Vector3 dist = s.position-pos;
-				if (dist.x*dist.x+dist.z*dist.z <= 256) {
+				if (dist.x*dist.x+dist.z*dist.z <= 400) {
 					return true;
 				}
 			}
@@ -81,31 +81,81 @@ namespace ReikaKalseki.SeaToSea
 		
 		private class SpikeCluster {
 		
-			internal readonly int spikeCount;
+			internal readonly int terraceSpikeCount;
+			internal readonly int auxSpikeCount;
 			internal readonly Vector3 position;
-			private readonly List<VoidSpike> spikes = new List<VoidSpike>();
 			
-			private float topY = -10000;
-			
+			private VoidSpike centralSpike;
+			private readonly List<VoidSpike> firstRow = new List<VoidSpike>();
+			private readonly List<VoidSpike> auxSpikes = new List<VoidSpike>();
+						
 			internal SpikeCluster(Vector3 vec) {
-				spikeCount = UnityEngine.Random.Range(2, 11);
+				terraceSpikeCount = UnityEngine.Random.Range(2, 6);
+				auxSpikeCount = UnityEngine.Random.Range(2, 9);
 				position = vec;
 			}
 			
 			internal void generate(List<GameObject> li) {
-				for (int i = 0; i < spikeCount; i++) {
-					Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(4, 9, 4));
-					VoidSpike s = new VoidSpike(pos);
-					spikes.Add(s);
-					s.generate(li);
-					topY = Math.Max(topY, pos.y);
+				centralSpike = new VoidSpike(position);
+				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
+				centralSpike.generate(li);
+				if (UnityEngine.Random.Range(0, 4) > 0) {
+					centralSpike.hasFlora = false;
+					centralSpike.hasPod = false;
+					centralSpike.hasFloater = true;
 				}
-				foreach (VoidSpike s in spikes) {
-					if (s.position.y < topY-4) {
-						s.hasFlora = false;
-						s.hasFloater = false;
+				for (int i = 0; i < terraceSpikeCount; i++) {
+					float down = UnityEngine.Random.Range(1F, 3F);
+					float radius = UnityEngine.Random.Range(4F, 12F);
+					float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
+					float cos = (float)Math.Cos(angle);
+					float sin = (float)Math.Sin(angle);
+					Vector3 pos = new Vector3(position.x+radius*cos, position.y-down, position.z+radius*sin);
+					VoidSpike s = new VoidSpike(pos);
+					s.hasFloater = false;
+					s.hasFlora = true;
+					if (radius <= 9)
 						s.hasPod = false;
+					if (s.hasPod) {
+						s.podSizeDecr = 1;
+						s.podOffset = new Vector3(0.25F*cos, 0, 0.25F*sin);
 					}
+					s.validPlantPosCheck = vec => !SBUtil.objectCollidesPosition(centralSpike.spike, vec);
+					s.setScale(Math.Min(s.getScale(), 1.2F));
+					firstRow.Add(s);
+					s.generate(li);
+				}
+				generateAuxSpikes(centralSpike, li, 2);
+				foreach (VoidSpike s0 in firstRow) {
+					generateAuxSpikes(s0, li, 6);
+				}
+			}
+			
+			private bool posIntersectsAnySpikes(Vector3 vec) {
+				if (SBUtil.objectCollidesPosition(centralSpike.spike, vec))
+					return true;
+				foreach (VoidSpike s in firstRow) {
+					if (SBUtil.objectCollidesPosition(s.spike, vec))
+						return true;
+				}
+				foreach (VoidSpike s in auxSpikes) {
+					if (SBUtil.objectCollidesPosition(s.spike, vec))
+						return true;
+				}
+				return false;
+			}
+			
+			private void generateAuxSpikes(VoidSpike s0, List<GameObject> li, float down) {
+				for (int i = 0; i < auxSpikeCount; i++) {
+					Vector3 pos = MathUtil.getRandomVectorAround(s0.position-Vector3.up*down, new Vector3(4, down, 4));
+					pos.y = Math.Min(pos.y, s0.position.y-1);
+					VoidSpike s = new VoidSpike(pos);
+					s.setScale(Math.Min(s.getScale(), 0.875F));
+					s.hasFlora = true;
+					s.hasFloater = false;
+					s.hasPod = false;
+					s.validPlantPosCheck = vec => !posIntersectsAnySpikes(vec);
+					auxSpikes.Add(s);
 					s.generate(li);
 				}
 			}

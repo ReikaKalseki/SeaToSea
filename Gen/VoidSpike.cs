@@ -47,17 +47,21 @@ namespace ReikaKalseki.SeaToSea
 		public bool hasPod = false;
 		public bool hasFlora = false;
 		
-		private GameObject spike;
-		private GameObject pod;
-		private GameObject floater;
-		private GameObject floaterLight;
+		public int podSizeDecr = 0;
+		public Vector3 podOffset = Vector3.zero;
+		
+		public Func<Vector3, bool> validPlantPosCheck = null;
+		
+		internal GameObject spike;
+		internal GameObject pod;
+		internal GameObject floater;
+		internal GameObject floaterLight;
 		
 		private List<GameObject> plants = new List<GameObject>();
 		private List<GameObject> resources = new List<GameObject>();
 		
 		public VoidSpike(Vector3 pos) : base(pos) {
-			scale = UnityEngine.Random.Range(0.75F, 2.5F);
-			scaleVec = new Vector3(scale, scale, scale);
+			setScale(UnityEngine.Random.Range(0.75F, 2.5F));
 			if (UnityEngine.Random.Range(0, 4) == 0) {
 				hasFloater = true;
 			}
@@ -67,9 +71,17 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public override void loadFromXML(XmlElement e) {
-			scale = (float)e.getFloat("scale", scale);
+		public void setScale(float s) {
+			scale = s;
 			scaleVec = new Vector3(scale, scale, scale);
+		}
+		
+		public float getScale() {
+			return scale;
+		}
+		
+		public override void loadFromXML(XmlElement e) {
+			setScale((float)e.getFloat("scale", scale));
 			
 			if (e.hasProperty("hasFloater"))
 				hasFloater = e.getBoolean("hasFloater");
@@ -112,14 +124,33 @@ namespace ReikaKalseki.SeaToSea
 				VoidChunkPlants vc = new VoidChunkPlants(position+Vector3.up*0.5F*scale);
 				vc.fuzz *= 2*scale;
 				vc.fuzz.y *= 0.25F;
+				vc.validPlantPosCheck = validPlantPosCheck;
 				vc.generate(plants);
 			}
-			//TODO resources
+			for (int i = 0; i < 8; i++) {
+				float radius = UnityEngine.Random.Range(3.25F, 3.5F)*scale;
+				float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
+				float cos = (float)Math.Cos(angle);
+				float sin = (float)Math.Sin(angle);
+				Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.35F*scale, position.z+radius*sin);
+				if ((validPlantPosCheck == null || validPlantPosCheck(pos)) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
+					GameObject go = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
+					go.transform.position = pos;
+					go.transform.rotation = UnityEngine.Random.rotationUniform;
+					resources.Add(go);
+				}
+			}
 			generated.AddRange(plants);
 			generated.AddRange(resources);
 		}
 		
 		private GameObject spawnAnchorPod(bool allowLargeSize, bool allowMediumSize, bool allowSmallSize) {
+			if (podSizeDecr > 0) {
+				if (!allowLargeSize || podSizeDecr > 1) {
+					allowMediumSize = false;
+				}
+				allowLargeSize = false;
+			}
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];

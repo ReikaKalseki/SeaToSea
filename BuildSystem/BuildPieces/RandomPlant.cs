@@ -26,9 +26,11 @@ namespace ReikaKalseki.SeaToSea
 		
 		protected readonly WeightedRandom<VanillaFlora> plants = new WeightedRandom<VanillaFlora>();
 		
-		public bool preferLit = true;
+		public bool preferLit = false;
 		public int count = 1;
 		public Vector3 fuzz = Vector3.zero;
+		
+		public Func<Vector3, bool> validPlantPosCheck = null;
 		
 		public RandomPlant(Vector3 vec) : base(vec) {
 			
@@ -36,12 +38,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override void generate(List<GameObject> li) {
 			for (int i = 0; i < count; i++) {
-				Vector3 vec = new Vector3(position.x, position.y, position.z);
-				if (fuzz.magnitude > 0.05) {
-					vec.x += UnityEngine.Random.Range(-fuzz.x, fuzz.x);
-					vec.y += UnityEngine.Random.Range(-fuzz.y, fuzz.y);
-					vec.z += UnityEngine.Random.Range(-fuzz.z, fuzz.z);
-				}
+				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
+				if (validPlantPosCheck != null && !validPlantPosCheck(vec))
+					continue;
 				string type = plants.getRandomEntry().getRandomPrefab(preferLit);
 				GameObject go = generatePlant(vec, type);
 				li.Add(go);

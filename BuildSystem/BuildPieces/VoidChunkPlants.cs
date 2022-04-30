@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea
 		public VoidChunkPlants(Vector3 vec) : base(vec) {
 			this.fuzz = new Vector3(1.2F, 0.05F, 1.2F);
 			this.count = UnityEngine.Random.Range(1, 4); //1-3
+			this.preferLit = true;
 			
 			plants.addEntry(VanillaFlora.GABE_FEATHER, 100);
 			plants.addEntry(VanillaFlora.GHOSTWEED, 85);
