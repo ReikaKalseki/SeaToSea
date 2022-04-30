@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea
 						if (UnityEngine.Random.Range(0F, 1F) <= chance) {
 							ObjectTemplate ot = ObjectTemplate.construct(e);
 							if (ot == null) {
-								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.InnerText+": NULL");
+								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.format()+": NULL");
 							}
 							else if (ot is CustomPrefab) {
 								CustomPrefab pfb = (CustomPrefab)ot;
@@ -68,21 +68,21 @@ namespace ReikaKalseki.SeaToSea
 								else {
 									GenUtil.registerWorldgen(pfb, pfb.getManipulationsCallable());
 								}
-								SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.InnerText);
+								SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.format());
 							}
 							else if (ot is WorldGenerator) {
 								WorldGenerator gen = (WorldGenerator)ot;
 								GenUtil.registerWorldgen(gen);
-								SBUtil.log("Loaded worldgenator "+gen+" for "+e.InnerText);
+								SBUtil.log("Loaded worldgenator "+gen+" for "+e.format());
 							}
 							else {
-								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.InnerText);
+								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.format());
 							}	
 						}
 					}
 				}
 				catch (Exception ex) {
-					SBUtil.log("Could not load element "+e.InnerText);
+					SBUtil.log("Could not load element "+e.format());
 					SBUtil.log(ex.ToString());
 				}
 			}

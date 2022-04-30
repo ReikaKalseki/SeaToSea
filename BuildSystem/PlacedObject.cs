@@ -160,17 +160,19 @@ namespace ReikaKalseki.SeaToSea
 					up = Vector3.up;
 					forward = Vector3.forward;
 					right = Vector3.right;
+					if (Math.Abs(yaw) > 0.001)
+						obj.transform.RotateAround(ctr, up, (float)yaw);
+					if (Math.Abs(roll) > 0.001)
+						obj.transform.RotateAround(ctr, forward, (float)roll);
+					if (Math.Abs(pitch) > 0.001)
+						obj.transform.RotateAround(ctr, right, (float)pitch);
+					setRotation(obj.transform.rotation);
 				}
-				if (Math.Abs(yaw) > 0.001)
-					obj.transform.RotateAround(ctr, up, (float)yaw);
-				if (Math.Abs(roll) > 0.001)
-					obj.transform.RotateAround(ctr, forward, (float)roll);
-				if (Math.Abs(pitch) > 0.001)
-					obj.transform.RotateAround(ctr, right, (float)pitch);
-				setRotation(obj.transform.rotation);
-				//Vector3 euler = obj.transform.rotation.eulerAngles;
-				//setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
+				else {
+					Vector3 euler = obj.transform.rotation.eulerAngles;
+					setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
 				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				}
 			}
 			
 			internal void setRotation(Quaternion rot) {
@@ -216,6 +218,12 @@ namespace ReikaKalseki.SeaToSea
 				foreach (ManipulationBase mb in manipulations) {
 					mb.applyToObject(this);
 				}
+				
+				setPosition(position);
+				setRotation(rotation);
+				obj.transform.localScale = scale;
+				if (fx != null && fx.transform != null)
+					fx.transform.localScale = scale;
 			}
 		
 			protected override void setPrefabName(string name) {

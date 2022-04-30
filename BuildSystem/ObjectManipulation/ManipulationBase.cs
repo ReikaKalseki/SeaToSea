@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 			XmlDocument doc = new XmlDocument();
 			XmlElement e = doc.CreateElement(this.GetType().Name);
 			this.saveToXML(e);
-			return this.GetType()+" : "+e.InnerText;
+			return this.GetType()+" : "+e.format();
 		}
 		
 	}

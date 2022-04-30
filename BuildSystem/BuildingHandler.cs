@@ -210,7 +210,7 @@ namespace ReikaKalseki.SeaToSea
 					buildElement(e);
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.InnerText+" -> "+ex.ToString());
+					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.format()+" -> "+ex.ToString());
 					SBUtil.log(ex.ToString());
 				}
 			}
@@ -222,7 +222,7 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < amt; i++) {
 				ObjectTemplate ot = ObjectTemplate.construct(e);
 				if (ot == null) {
-					throw new Exception("Could not load XML block, null result from '"+e.Name+"': "+e.InnerText);
+					throw new Exception("Could not load XML block, null result from '"+e.Name+"': "+e.format());
 				}
 				switch(e.Name) {
 					case "object":
@@ -231,13 +231,14 @@ namespace ReikaKalseki.SeaToSea
 						foreach (ManipulationBase mb in globalTransforms) {
 							SBUtil.log("Applying global "+mb+" to "+b);
 							mb.applyToObject(b);
-							SBUtil.log(b.ToString());
+							SBUtil.log("Is now "+b.ToString());
 						}
 					break;
 					case "generator":
 						WorldGenerator gen = (WorldGenerator)ot;
 						List<GameObject> li = new List<GameObject>();
 						gen.generate(li);
+						SBUtil.writeToChat("Ran generator "+gen+" which produced "+li.Count+" objects");
 						foreach (GameObject go in li) {
 							PlacedObject b2 = new PlacedObject(go, SBUtil.getPrefabID(go));
 							addObject(b2);

@@ -61,8 +61,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void loadFromXML(XmlElement e) {
-			e.getFloat("rotation", rotation);
-			e.getInt("podCount", podCount);
+			rotation = (float)e.getFloat("rotation", rotation);
+			podCount = e.getInt("podCount", podCount);
 			Vector3? sc = e.getVector("scale", true);
 			if (sc != null && sc.HasValue) {
 				scale = sc.Value;

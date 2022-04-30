@@ -26,9 +26,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		protected readonly WeightedRandom<VanillaFlora> plants = new WeightedRandom<VanillaFlora>();
 		
-		protected bool preferLit = true;
-		protected int count = 1;
-		protected Vector3 fuzz = Vector3.zero;
+		public bool preferLit = true;
+		public int count = 1;
+		public Vector3 fuzz = Vector3.zero;
 		
 		public RandomPlant(Vector3 vec) : base(vec) {
 			
