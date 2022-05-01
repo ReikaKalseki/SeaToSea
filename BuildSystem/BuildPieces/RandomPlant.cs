@@ -30,21 +30,25 @@ namespace ReikaKalseki.SeaToSea
 		public int count = 1;
 		public Vector3 fuzz = Vector3.zero;
 		
-		public Func<Vector3, bool> validPlantPosCheck = null;
+		public Func<Vector3, string, bool> validPlantPosCheck = null;
 		
 		public RandomPlant(Vector3 vec) : base(vec) {
 			
 		}
 		
 		public override void generate(List<GameObject> li) {
+			SBUtil.log("Attempting "+count+" plants in "+fuzz+" of "+position+".");
 			for (int i = 0; i < count; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
-				//SBUtil.log("Attempted plant @ "+vec);
-				if (validPlantPosCheck != null && !validPlantPosCheck(vec))
+				VanillaFlora vf = plants.getRandomEntry();
+				SBUtil.log("Attempted plant "+vf.getName()+" @ "+vec);
+				if (validPlantPosCheck != null && !validPlantPosCheck(vec+Vector3.up*0.2F, vf.getName())) {
+					SBUtil.log("Intersect caused fail");
 					continue;
-				string type = plants.getRandomEntry().getRandomPrefab(preferLit);
+				}
+				string type = vf.getRandomPrefab(preferLit);
 				GameObject go = generatePlant(vec, type);
-				//SBUtil.log("success "+go+" @ "+vec);
+				SBUtil.log("success "+go+" = "+vf.getName()+" @ "+vec);
 				li.Add(go);
 			}
 		}

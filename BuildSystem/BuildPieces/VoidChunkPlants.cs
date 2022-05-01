@@ -59,6 +59,8 @@ namespace ReikaKalseki.SeaToSea
 						tries++;
 					}
 					if (!SBUtil.objectCollidesPosition(go, vec2) && !isColliding(vec2, gennedMushrooms)) {
+						if (validPlantPosCheck != null && !validPlantPosCheck(vec2+Vector3.up*0.2F, "mush"))
+							continue;
 						GameObject go2 = base.generatePlant(vec2, VanillaFlora.DEEP_MUSHROOM.getRandomPrefab(false));
 						gennedMushrooms.Add(go2);
 					}

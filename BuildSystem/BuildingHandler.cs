@@ -240,6 +240,10 @@ namespace ReikaKalseki.SeaToSea
 						gen.generate(li);
 						SBUtil.writeToChat("Ran generator "+gen+" which produced "+li.Count+" objects");
 						foreach (GameObject go in li) {
+							if (go == null) {
+								SBUtil.writeToChat("Generator "+gen+" produced a null object!");
+								continue;
+							}
 							PlacedObject b2 = new PlacedObject(go, SBUtil.getPrefabID(go));
 							addObject(b2);
 							BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
