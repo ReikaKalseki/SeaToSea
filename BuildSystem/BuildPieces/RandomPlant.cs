@@ -37,18 +37,18 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> li) {
-			SBUtil.log("Attempting "+count+" plants in "+fuzz+" of "+position+".");
+			//SBUtil.log("Attempting "+count+" plants in "+fuzz+" of "+position+".");
 			for (int i = 0; i < count; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
 				VanillaFlora vf = plants.getRandomEntry();
-				SBUtil.log("Attempted plant "+vf.getName()+" @ "+vec);
+				//SBUtil.log("Attempted plant "+vf.getName()+" @ "+vec);
 				if (validPlantPosCheck != null && !validPlantPosCheck(vec+Vector3.up*0.2F, vf.getName())) {
-					SBUtil.log("Intersect caused fail");
+					//SBUtil.log("Intersect caused fail");
 					continue;
 				}
 				string type = vf.getRandomPrefab(preferLit);
 				GameObject go = generatePlant(vec, type);
-				SBUtil.log("success "+go+" = "+vf.getName()+" @ "+vec);
+				//SBUtil.log("success "+go+" = "+vf.getName()+" @ "+vec);
 				li.Add(go);
 			}
 		}

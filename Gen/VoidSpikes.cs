@@ -21,17 +21,34 @@ namespace ReikaKalseki.SeaToSea
 			new Vector3(50, 24, 50),
 		};
 		
+		private static readonly WeightedRandom<VanillaCreatures> fishTypes = new WeightedRandom<VanillaCreatures>();
+		
 		private readonly List<SpikeCluster> spikes = new List<SpikeCluster>();
 		
 		private int count;
 		private float scaleXZ = 1;
 		private float scaleY = 1;
 		private bool generateAux = true;
+		private bool generateLeviathan = true;
+		private int fishCount;
+		
+		static VoidSpikes() {
+			fishTypes.addEntry(VanillaCreatures.REGINALD, 75);
+			fishTypes.addEntry(VanillaCreatures.BLADDERFISH, 25);
+			fishTypes.addEntry(VanillaCreatures.EYEYE, 40);
+			fishTypes.addEntry(VanillaCreatures.SHUTTLEBUG, 50);
+			fishTypes.addEntry(VanillaCreatures.SPINEFISH, 100);
+			
+			fishTypes.addEntry(VanillaCreatures.BLIGHTER, 40);
+			fishTypes.addEntry(VanillaCreatures.BLEEDER, 40);
+			fishTypes.addEntry(VanillaCreatures.MESMER, 20);
+		}
 		
 		public VoidSpikes(Vector3 pos) : base(pos) {
 			count = UnityEngine.Random.Range(5, 11);
 			scaleXZ = UnityEngine.Random.Range(1F, 4F);
 			scaleY = UnityEngine.Random.Range(0.75F, 2F);
+			fishCount = UnityEngine.Random.Range(40, 61);
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -40,6 +57,8 @@ namespace ReikaKalseki.SeaToSea
 			scaleY = (float)e.getFloat("scale", scaleY);
 			if (e.hasProperty("generateAux"))
 				generateAux = e.getBoolean("generateAux");
+			generateLeviathan = e.getBoolean("generateLeviathan");
+			fishCount = e.getInt("fishCount", fishCount);
 		}
 		
 		public override void saveToXML(XmlElement e) {
@@ -47,6 +66,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("scaleXZ", scaleXZ);
 			e.addProperty("scaleY", scaleY);
 			e.addProperty("generateAux", generateAux);
+			e.addProperty("generateLeviathan", generateLeviathan);
 		}
 		
 		public override void generate(List<GameObject> generated) {
@@ -58,6 +78,27 @@ namespace ReikaKalseki.SeaToSea
 					s.generate(generated);
 				}
 			}
+			for (int i = 0; i < fishCount; i++) {
+				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)*2));
+				if (posIntersectsAnySpikes(vec, "fish")) {
+					continue;
+				}
+				GameObject fish = SBUtil.createWorldObject(fishTypes.getRandomEntry().prefab);
+				//SBUtil.log("Spawning fish "+fish+" @ "+vec);
+				fish.transform.position = vec;
+			}
+			if (generateLeviathan) {
+				GameObject levi = SBUtil.createWorldObject(VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab);
+				levi.transform.position = position;
+			}
+		}
+		
+		private bool posIntersectsAnySpikes(Vector3 vec, string why) {
+			foreach (SpikeCluster s in spikes) {
+				if (s.posIntersectsAnySpikes(vec, why, null))
+					return true;
+			}
+			return false;
 		}
 		
 		private Vector3? getSafePosition() {
@@ -105,7 +146,7 @@ namespace ReikaKalseki.SeaToSea
 				centralSpike = new VoidSpike(position);
 				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
 				centralSpike.oreRichness = 0.2;
-				centralSpike.plantRate = 2;
+				centralSpike.plantRate = 2.5;
 				if (UnityEngine.Random.Range(0, 4) > 0) {
 					centralSpike.hasFlora = false;
 					centralSpike.hasPod = false;
@@ -127,7 +168,7 @@ namespace ReikaKalseki.SeaToSea
 					VoidSpike s = new VoidSpike(pos);
 					s.hasFloater = false;
 					s.hasFlora = true;
-					s.plantRate = 1.0;
+					s.plantRate = 2;
 					if (radius <= 9)
 						s.hasPod = false;
 					if (s.hasPod) {
@@ -151,14 +192,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			private void generateDeco(List<GameObject> li) {
-				SBUtil.log("Decorating central "+centralSpike);
+				//SBUtil.log("Decorating central "+centralSpike);
 				generateDeco(li, centralSpike);
 				foreach (VoidSpike s in firstRow) {
-					SBUtil.log("Decorating terrace "+s);
+					//SBUtil.log("Decorating terrace "+s);
 					generateDeco(li, s);
 				}
 				foreach (VoidSpike s in auxSpikes) {
-					SBUtil.log("Decorating aux "+s);
+					//SBUtil.log("Decorating aux "+s);
 					generateDeco(li, s);
 				}
 			}
@@ -169,22 +210,23 @@ namespace ReikaKalseki.SeaToSea
 				s.collateGenerated(li);
 			}
 			
-			private bool posIntersectsAnySpikes(Vector3 vec, string n, VoidSpike except) {
-				SBUtil.log("Checking "+vec+" "+n+" against central "+centralSpike);
-				if (centralSpike.intersects(vec))
+			internal bool posIntersectsAnySpikes(Vector3 vec, string n, VoidSpike except) {
+				double r = (n == "ore") ? 0 : (n.Contains("membrain") ? 0.3 : 0.15);
+				//SBUtil.log("Checking "+vec+" "+n+" against central "+centralSpike);
+				if (centralSpike.intersects(vec, r))
 					return true;
 				foreach (VoidSpike s in firstRow) {
 					if (s == except)
 						continue;
-					SBUtil.log("Checking "+vec+" "+n+" against terrace "+s);
-					if (s.intersects(vec))
+					//SBUtil.log("Checking "+vec+" "+n+" against terrace "+s);
+					if (s.intersects(vec, r))
 						return true;
 				}
 				foreach (VoidSpike s in auxSpikes) {
 					if (s == except)
 						continue;
-					SBUtil.log("Checking "+vec+" "+n+" against aux "+s);
-					if (s.intersects(vec))
+					//SBUtil.log("Checking "+vec+" "+n+" against aux "+s);
+					if (s.intersects(vec, r))
 						return true;
 				}
 				return false;
@@ -201,7 +243,7 @@ namespace ReikaKalseki.SeaToSea
 					s.hasPod = false;
 					s.validPlantPosCheck = (vec, n) => !posIntersectsAnySpikes(vec, n, s);
 					s.oreRichness = s0.oreRichness;
-					s.plantRate = 0.67;
+					s.plantRate = 1.5;
 					auxSpikes.Add(s);
 					s.generateSpike();
 				}

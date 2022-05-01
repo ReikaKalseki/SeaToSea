@@ -113,28 +113,27 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("hasFlora", hasFlora);
 		}
 		
-		public bool intersects(Vector3 vec) {
+		public bool intersects(Vector3 vec, double r = 0) {
 			if (spike == null)
 				return false;
-			if (SBUtil.objectCollidesPosition(spike, vec))
-				SBUtil.log("SPKC");
 			//vec = vec+Vector3.up*0.4F; //since we *want* the actual pos to slightly intersect
-			return SBUtil.objectCollidesPosition(spike, vec) || isPointWithinBoundingCone(vec);
+			return SBUtil.objectCollidesPosition(spike, vec) || isPointWithinBoundingCone(vec, r);
 		}
 		
-		private bool isPointWithinBoundingCone(Vector3 vec) {
+		private bool isPointWithinBoundingCone(Vector3 vec, double dr) {
 			double up = 0.0*scale;
-			double down = 16*scale;
+			double down = 24*scale;
 			if (vec.y > position.y+up)
 				return false;
 			if (vec.y < position.y-down)
 				return false;
 			double d = (position.y+up-vec.y)/(up+down);
-			double r = type.radius*scale*1.4*(1-d);
+			double r = type.radius*scale*1.3*(1-d);
 			if (r <= 0)
 				return false;
+			r += dr;
 			double dist = (vec.x-position.x)*(vec.x-position.x)+(vec.z-position.z)*(vec.z-position.z);
-			SBUtil.log("vec "+vec+" & pos "+position+", "+dist+" of "+r*r+" @ "+d+" > "+(dist <= r*r));
+			//SBUtil.log("vec "+vec+" & pos "+position+", "+dist+" of "+r*r+" @ "+d+" > "+(dist <= r*r));
 			return dist <= r*r;
 		}
 		
@@ -192,8 +191,8 @@ namespace ReikaKalseki.SeaToSea
 			
 		internal void generateResources() {
 			if (oreRichness > 0) {
-				int n = (int)(5*oreRichness);
-				SBUtil.log("Attempting "+n+" ores.");
+				int n = (int)(8*oreRichness);
+				//SBUtil.log("Attempting "+n+" ores.");
 				for (int i = 0; i < n; i++) {
 					float radius = UnityEngine.Random.Range(0, (float)(type.radius-0.15))*scale;
 					float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
@@ -201,8 +200,8 @@ namespace ReikaKalseki.SeaToSea
 					float sin = (float)Math.Sin(angle);
 					Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.5F*scale, position.z+radius*sin);
 					//pos.y += (3.5F-radius);
-					SBUtil.log("Attempted ore @ "+pos);
-					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.3F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
+					//SBUtil.log("Attempted ore @ "+pos);
+					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
 						string id = oreChoices.getRandomEntry();
 						GameObject go = SBUtil.createWorldObject(id);
 						if (id == VanillaResources.LARGE_QUARTZ.prefab || id == VanillaResources.LARGE_DIAMOND.prefab)
@@ -210,7 +209,7 @@ namespace ReikaKalseki.SeaToSea
 						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);
 						resources.Add(go);
-						SBUtil.log("Success "+go+" @ "+pos);
+						//SBUtil.log("Success "+go+" @ "+pos);
 					}
 				}
 			}
