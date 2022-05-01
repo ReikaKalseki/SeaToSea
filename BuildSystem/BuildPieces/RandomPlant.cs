@@ -39,10 +39,12 @@ namespace ReikaKalseki.SeaToSea
 		public override void generate(List<GameObject> li) {
 			for (int i = 0; i < count; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
+				//SBUtil.log("Attempted plant @ "+vec);
 				if (validPlantPosCheck != null && !validPlantPosCheck(vec))
 					continue;
 				string type = plants.getRandomEntry().getRandomPrefab(preferLit);
 				GameObject go = generatePlant(vec, type);
+				//SBUtil.log("success "+go+" @ "+vec);
 				li.Add(go);
 			}
 		}

@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea
 		private bool isTooClose(Vector3 pos) {
 			foreach (SpikeCluster s in spikes) {
 				Vector3 dist = s.position-pos;
-				if (dist.x*dist.x+dist.z*dist.z <= 400) {
+				if (dist.x*dist.x+dist.z*dist.z <= 625) {
 					return true;
 				}
 			}
@@ -90,15 +90,17 @@ namespace ReikaKalseki.SeaToSea
 			private readonly List<VoidSpike> auxSpikes = new List<VoidSpike>();
 						
 			internal SpikeCluster(Vector3 vec) {
-				terraceSpikeCount = UnityEngine.Random.Range(2, 6);
-				auxSpikeCount = UnityEngine.Random.Range(2, 9);
+				terraceSpikeCount = UnityEngine.Random.Range(4, 8);
+				auxSpikeCount = UnityEngine.Random.Range(3, 9);
 				position = vec;
 			}
 			
 			internal void generate(List<GameObject> li) {
 				centralSpike = new VoidSpike(position);
 				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
+				centralSpike.oreRichness = 0.2;
 				centralSpike.generate(li);
+				centralSpike.plantRate = 2;
 				if (UnityEngine.Random.Range(0, 4) > 0) {
 					centralSpike.hasFlora = false;
 					centralSpike.hasPod = false;
@@ -114,13 +116,15 @@ namespace ReikaKalseki.SeaToSea
 					VoidSpike s = new VoidSpike(pos);
 					s.hasFloater = false;
 					s.hasFlora = true;
+					s.plantRate = 1.0;
 					if (radius <= 9)
 						s.hasPod = false;
 					if (s.hasPod) {
 						s.podSizeDecr = 1;
-						s.podOffset = new Vector3(0.25F*cos, 0, 0.25F*sin);
+						s.podOffset = new Vector3(0.125F*cos, 0, 0.125F*sin);
 					}
-					s.validPlantPosCheck = vec => !SBUtil.objectCollidesPosition(centralSpike.spike, vec);
+					s.oreRichness = 0.5;
+					s.validPlantPosCheck = vec => !centralSpike.intersects(vec);
 					s.setScale(Math.Min(s.getScale(), 1.2F));
 					firstRow.Add(s);
 					s.generate(li);
@@ -132,14 +136,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			private bool posIntersectsAnySpikes(Vector3 vec) {
-				if (SBUtil.objectCollidesPosition(centralSpike.spike, vec))
+				if (centralSpike.intersects(vec))
 					return true;
 				foreach (VoidSpike s in firstRow) {
-					if (SBUtil.objectCollidesPosition(s.spike, vec))
+					if (s.intersects(vec))
 						return true;
 				}
 				foreach (VoidSpike s in auxSpikes) {
-					if (SBUtil.objectCollidesPosition(s.spike, vec))
+					if (s.intersects(vec))
 						return true;
 				}
 				return false;
@@ -155,6 +159,8 @@ namespace ReikaKalseki.SeaToSea
 					s.hasFloater = false;
 					s.hasPod = false;
 					s.validPlantPosCheck = vec => !posIntersectsAnySpikes(vec);
+					s.oreRichness = s0.oreRichness;
+					s.plantRate = 0.67;
 					auxSpikes.Add(s);
 					s.generate(li);
 				}

@@ -18,8 +18,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly float FLOATER_BASE_SCALE = 0.12F;
 		
 		private static readonly Spike[] spikes = new Spike[]{
-			new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880"),
-			new Spike("f0438971-2761-412c-bc42-df80577de473"),
+			new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880", 2.8),
+			new Spike("f0438971-2761-412c-bc42-df80577de473", 3),
 		};
 		
 		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea
 		};
 		
 		private static readonly WeightedRandom<VanillaFlora> plantPrefabs = new WeightedRandom<VanillaFlora>();
+		private static readonly WeightedRandom<string> oreChoices = new WeightedRandom<string>();
 		
 		static VoidSpike() {
 			plantPrefabs.addEntry(VanillaFlora.GABE_FEATHER, 100);
@@ -38,6 +39,13 @@ namespace ReikaKalseki.SeaToSea
 			plantPrefabs.addEntry(VanillaFlora.MEMBRAIN, 25);
 			plantPrefabs.addEntry(VanillaFlora.REGRESS, 10);
 			plantPrefabs.addEntry(VanillaFlora.BRINE_LILY, 50);
+			
+			oreChoices.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 100);
+			oreChoices.addEntry(VanillaResources.QUARTZ.prefab, 100);
+			oreChoices.addEntry(VanillaResources.DIAMOND.prefab, 25);
+			oreChoices.addEntry(VanillaResources.LARGE_DIAMOND.prefab, 5);
+			oreChoices.addEntry(VanillaResources.LARGE_QUARTZ.prefab, 10);
+			oreChoices.addEntry(VanillaResources.URANIUM.prefab, 5);
 		}
 		
 		private float scale = 1;
@@ -47,10 +55,15 @@ namespace ReikaKalseki.SeaToSea
 		public bool hasPod = false;
 		public bool hasFlora = false;
 		
+		public double oreRichness = 1;
+		public double plantRate = 1;
+		
 		public int podSizeDecr = 0;
 		public Vector3 podOffset = Vector3.zero;
 		
 		public Func<Vector3, bool> validPlantPosCheck = null;
+		
+		private Spike type;
 		
 		internal GameObject spike;
 		internal GameObject pod;
@@ -82,6 +95,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override void loadFromXML(XmlElement e) {
 			setScale((float)e.getFloat("scale", scale));
+			oreRichness = e.getFloat("oreRichness", oreRichness);
 			
 			if (e.hasProperty("hasFloater"))
 				hasFloater = e.getBoolean("hasFloater");
@@ -93,14 +107,36 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override void saveToXML(XmlElement e) {
 			e.addProperty("scale", scale);
+			e.addProperty("oreRichness", oreRichness);
 			e.addProperty("hasFloater", hasFloater);
 			e.addProperty("hasPod", hasPod);
 			e.addProperty("hasFlora", hasFlora);
 		}
 		
+		public bool intersects(Vector3 vec) {
+			if (spike == null)
+				return false;
+			//vec = vec+Vector3.up*0.4F; //since we *want* the actual pos to slightly intersect
+			return SBUtil.objectCollidesPosition(spike, vec);// || isPointWithinBoundingCone(vec);
+		}
+		
+		private bool isPointWithinBoundingCone(Vector3 vec) {
+			double up = 0.35*scale;
+			double down = 8*scale;
+			if (vec.y > position.y+up)
+				return false;
+			if (vec.y < position.y-down)
+				return false;
+			double d = position.y+up-vec.y/(up+down);
+			double r = type.radius*d;
+			double dist = (vec.x-position.x)*(vec.x-position.x)+(vec.z-position.z)*(vec.z-position.z);
+			//SBUtil.log("vec "+vec+" & pos "+position+", "+dist+" of "+r*r+" @ "+d);
+			return dist <= r*r;
+		}
+		
 		public override void generate(List<GameObject> generated) {
-			Spike s = spikes[UnityEngine.Random.Range(0, spikes.Length)];
-			spike = SBUtil.createWorldObject(s.prefab);
+			type = spikes[UnityEngine.Random.Range(0, spikes.Length)];
+			spike = SBUtil.createWorldObject(type.prefab);
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
@@ -122,22 +158,34 @@ namespace ReikaKalseki.SeaToSea
 			}
 			if (hasFlora) {
 				VoidChunkPlants vc = new VoidChunkPlants(position+Vector3.up*0.5F*scale);
+				vc.count = (int)(vc.count*1.5*plantRate);
 				vc.fuzz *= 2*scale;
+				if (hasPod)
+					vc.fuzz *= 0.8F;
 				vc.fuzz.y *= 0.25F;
 				vc.validPlantPosCheck = validPlantPosCheck;
 				vc.generate(plants);
 			}
-			for (int i = 0; i < 8; i++) {
-				float radius = UnityEngine.Random.Range(3.25F, 3.5F)*scale;
-				float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
-				float cos = (float)Math.Cos(angle);
-				float sin = (float)Math.Sin(angle);
-				Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.35F*scale, position.z+radius*sin);
-				if ((validPlantPosCheck == null || validPlantPosCheck(pos)) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
-					GameObject go = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
-					go.transform.position = pos;
-					go.transform.rotation = UnityEngine.Random.rotationUniform;
-					resources.Add(go);
+			if (oreRichness > 0) {
+				int n = (int)(8*oreRichness);
+				for (int i = 0; i < n; i++) {
+					float radius = UnityEngine.Random.Range(3.25F, 3.5F)*scale;
+					float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
+					float cos = (float)Math.Cos(angle);
+					float sin = (float)Math.Sin(angle);
+					Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.35F*scale, position.z+radius*sin);
+					pos.y += (3.5F-radius);
+					//SBUtil.log("Attempted ore @ "+pos);
+					if ((validPlantPosCheck == null || validPlantPosCheck(pos)) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
+						string id = oreChoices.getRandomEntry();
+						GameObject go = SBUtil.createWorldObject(id);
+						if (id == VanillaResources.LARGE_QUARTZ.prefab || id == VanillaResources.LARGE_DIAMOND.prefab)
+							pos += Vector3.up*1.4F;
+						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
+						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);
+						resources.Add(go);
+						//SBUtil.log("Success "+go+" @ "+pos);
+					}
 				}
 			}
 			generated.AddRange(plants);
@@ -174,9 +222,11 @@ namespace ReikaKalseki.SeaToSea
 		private class Spike {
 			
 			internal readonly string prefab;
+			internal readonly double radius;
 			
-			internal Spike(string s) {
+			internal Spike(string s, double r) {
 				prefab = s;
+				radius = r;
 			}
 			
 		}
