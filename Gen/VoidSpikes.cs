@@ -25,12 +25,15 @@ namespace ReikaKalseki.SeaToSea
 		
 		private readonly List<SpikeCluster> spikes = new List<SpikeCluster>();
 		
-		private int count;
-		private float scaleXZ = 1;
-		private float scaleY = 1;
-		private bool generateAux = true;
-		private bool generateLeviathan = true;
-		private int fishCount;
+		public int count;
+		public float scaleXZ = 1;
+		public float scaleY = 1;
+		public bool generateAux = true;
+		public bool generateLeviathan = true;
+		public int fishCount;
+		
+		public Func<Vector3, bool> positionValidity = null;
+		public Func<Vector3, double> depthCallback = null;
 		
 		static VoidSpikes() {
 			fishTypes.addEntry(VanillaCreatures.REGINALD, 75);
@@ -74,14 +77,17 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < count; i++) {
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
-					SpikeCluster s = new SpikeCluster(pos.Value, generateAux);
+					Vector3 vec = pos.Value;
+					if (depthCallback != null)
+						vec.y = (float)depthCallback(vec);
+					SpikeCluster s = new SpikeCluster(vec, generateAux);
 					spikes.Add(s);
 					s.generate(generated);
 				}
 			}
 			for (int i = 0; i < fishCount; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
-				if (posIntersectsAnySpikes(vec, "fish")) {
+				if (posIntersectsAnySpikes(vec, "fish") || (positionValidity != null && !positionValidity(vec))) {
 					continue;
 				}
 				GameObject fish = SBUtil.createWorldObject(fishTypes.getRandomEntry().prefab);
@@ -108,11 +114,19 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ)*2;
 			Vector3 ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
-			while (tries <= 50 && isTooClose(ret)) {
+			while (tries <= 50 && !isValidPosition(ret)) {
 				ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[tries/10], sc));
 				tries++;
 			}
 			return tries >= 50 ? (Vector3?)null : ret;
+		}
+		
+		private bool isValidPosition(Vector3 ret) {
+			if (positionValidity != null && !positionValidity(ret))
+				return false;
+			if (!isTooClose(ret))
+				return false;
+			return true;
 		}
 		
 		private bool isTooClose(Vector3 pos) {

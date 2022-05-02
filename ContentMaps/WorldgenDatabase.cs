@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 			string folder = Path.Combine(root, "XML/WorldgenSets");
 			string xml = Path.Combine(root, "XML/worldgen.xml");
 			if (Directory.Exists(folder)) {
-				string[] files = Directory.GetFiles(folder);
+				string[] files = Directory.GetFiles(folder, "*.xml", SearchOption.AllDirectories);
 				SBUtil.log("Loading worldgen maps from folder '"+folder+"': "+string.Join(", ", files));
 				foreach (string file in files) {
 					loadXML(file);

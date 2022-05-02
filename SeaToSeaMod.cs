@@ -60,6 +60,9 @@ namespace ReikaKalseki.SeaToSea
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
         */
+       
+		VoidSpikesBiome.instance.register();
+       
         /*
         for (int i = 0; i < 12; i++) {
         	double r = UnityEngine.Random.Range(1.5F, 12);
