@@ -78,8 +78,10 @@ namespace ReikaKalseki.SeaToSea
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
 					Vector3 vec = pos.Value;
+					SBUtil.log("Success, spike @ "+vec);
 					if (depthCallback != null)
 						vec.y = (float)depthCallback(vec);
+					SBUtil.log("Re-y spike @ "+vec);
 					SpikeCluster s = new SpikeCluster(vec, generateAux);
 					spikes.Add(s);
 					s.generate(generated);
@@ -114,7 +116,7 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ)*2;
 			Vector3 ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
-			while (tries <= 50 && !isValidPosition(ret)) {
+			while (tries < 50 && !isValidPosition(ret)) {
 				ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[tries/10], sc));
 				tries++;
 			}
@@ -124,7 +126,7 @@ namespace ReikaKalseki.SeaToSea
 		private bool isValidPosition(Vector3 ret) {
 			if (positionValidity != null && !positionValidity(ret))
 				return false;
-			if (!isTooClose(ret))
+			if (isTooClose(ret))
 				return false;
 			return true;
 		}

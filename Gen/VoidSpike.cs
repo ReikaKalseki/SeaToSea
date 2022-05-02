@@ -204,10 +204,16 @@ namespace ReikaKalseki.SeaToSea
 					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
 						string id = oreChoices.getRandomEntry();
 						GameObject go = SBUtil.createWorldObject(id);
-						if (id == VanillaResources.LARGE_QUARTZ.prefab || id == VanillaResources.LARGE_DIAMOND.prefab)
+						bool large = id == VanillaResources.LARGE_QUARTZ.prefab || id == VanillaResources.LARGE_DIAMOND.prefab;
+						if (large)
 							pos += Vector3.up*0.0F;
 						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);
+						if (!large) {
+							Pickupable p = go.EnsureComponent<Pickupable>();
+							p.isPickupable = true;
+							//p.SetTechTypeOverride();
+						}
 						resources.Add(go);
 						//SBUtil.log("Success "+go+" @ "+pos);
 					}

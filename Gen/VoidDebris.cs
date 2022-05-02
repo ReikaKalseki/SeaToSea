@@ -58,9 +58,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override void generate(List<GameObject> li) {		
 			for (int i = 0; i < 8; i++) {
-			GameObject go = SBUtil.createWorldObject(debrisProps.getRandomEntry());
-			go.transform.position = MathUtil.getRandomVectorAround(position, new Vector3(6, 0, 6));
-			li.Add(go);
+				GameObject go = SBUtil.createWorldObject(debrisProps.getRandomEntry());
+				go.transform.position = MathUtil.getRandomVectorAround(position, new Vector3(6, 0, 6));
+				VoidSpikesBiome.checkAndAddWaveBob(go.GetComponent<LargeWorldEntity>(), true);
+				li.Add(go);
 			}
 		}
 	}
