@@ -1,29 +1,4 @@
 <Root>
-  <object>
-    <prefab>00037e80-3037-48cf-b769-dc97c761e5f6</prefab>
-    <position>
-      <x>622.7</x>
-      <y>-250.0</y>
-      <z>-1122</z>
-    </position>
-    <rotation>
-      <x>0</x>
-      <y>32</y>
-      <z>0</z>
-    </rotation>
-  </object>
-  <object>
-    <prefab>databox</prefab>
-    <tech>SwimChargeFins</tech>
-    <position>
-      <x>622.7</x>
-      <y>-249.3</y>
-      <z>-1122</z>
-    </position>
-    <rotation>
-      <x>0</x>
-      <y>0</y>
-      <z>0</z>
-    </rotation>
-  </object>
+  <signal>
+  </signal>
 </Root>
