@@ -198,7 +198,7 @@ namespace ReikaKalseki.SeaToSea
 					float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
 					float cos = (float)Math.Cos(angle);
 					float sin = (float)Math.Sin(angle);
-					Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.5F*scale, position.z+radius*sin);
+					Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.55F*scale, position.z+radius*sin);
 					//pos.y += (3.5F-radius);
 					//SBUtil.log("Attempted ore @ "+pos);
 					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {

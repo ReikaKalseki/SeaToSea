@@ -38,6 +38,7 @@ namespace ReikaKalseki.SeaToSea
 			fishTypes.addEntry(VanillaCreatures.EYEYE, 40);
 			fishTypes.addEntry(VanillaCreatures.SHUTTLEBUG, 50);
 			fishTypes.addEntry(VanillaCreatures.SPINEFISH, 100);
+			fishTypes.addEntry(VanillaCreatures.SPADEFISH, 50);
 			
 			fishTypes.addEntry(VanillaCreatures.BLIGHTER, 40);
 			fishTypes.addEntry(VanillaCreatures.BLEEDER, 40);
@@ -79,7 +80,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			for (int i = 0; i < fishCount; i++) {
-				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)*2));
+				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
 				if (posIntersectsAnySpikes(vec, "fish")) {
 					continue;
 				}
