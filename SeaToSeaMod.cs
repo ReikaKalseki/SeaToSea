@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     public static readonly XMLLocale locale = new XMLLocale("XML/items.xml");
+    public static readonly XMLLocale signals = new XMLLocale("XML/signals.xml");
     
     private static SeamothVoidStealthModule voidStealth;
     private static SeamothDepthModule depth1300;
@@ -47,6 +48,7 @@ namespace ReikaKalseki.SeaToSea
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
         
         locale.load();
+        signals.load();
         
         addItemsAndRecipes();
                  
@@ -134,6 +136,28 @@ namespace ReikaKalseki.SeaToSea
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 	    		BuildingHandler.instance.manipulateSelected();
 	    	}
+    	}
+    }
+    
+    public static void addSignals(SignalDatabase db) {
+    	foreach (XMLLocale.LocaleEntry e in signals.getEntries()) {
+    		string id = e.getField<string>("id");
+    		if (string.IsNullOrEmpty(id))
+    			throw new Exception("Missing id for signal '"+e.dump()+"'!");
+    		Int3 pos = Int3.zero;
+    		if (e.hasField("location")) {
+    			pos = e.getField<Int3>("location");
+    		}
+    		if (id == "voidpod") {
+    			pos = VoidSpikesBiome.instance.signalLocation.roundToInt3();
+    		}
+    		SignalInfo info = new SignalInfo {
+    			biome = "void", //TODO fetch biome map
+    			batch = SBUtil.getBatch(pos.ToVector3()),
+    			position = pos,
+    			description = e.desc
+    		};
+    		db.entries.Add(info);
     	}
     }
     

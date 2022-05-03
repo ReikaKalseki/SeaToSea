@@ -25,6 +25,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
 		
+		private readonly PingType signal;
+		
 		private VoidSpikesBiome() {		
 			generator = new VoidSpikes((end500m+end900m)/2);
 	      	generator.count = 72;
@@ -39,6 +41,9 @@ namespace ReikaKalseki.SeaToSea {
 	      	generator.shouldRerollCounts = false;
 	      		
 			debris = new VoidDebris(signalLocation+Vector3.down*0.1F);
+			
+			//signal = PingHandler.RegisterNewPingType("voidpod", SpriteManager.Get(TechType.Signal));
+			//LargeWorld.main.signalDatabase.Add();
 		}
 		
 		public void register() {
@@ -92,10 +97,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			WaveBob b = go.EnsureComponent<WaveBob>();
 			b.rootPosition = go.transform.position;
-			b.speed = UnityEngine.Random.Range(2F, 3F);
-			b.amplitude = UnityEngine.Random.Range(0.2F, 0.3F);
-			b.speed2Ratio = UnityEngine.Random.Range(2F, 3F);
-			b.amplitude2Ratio = UnityEngine.Random.Range(0.07F, 0.13F);
+			b.speed = UnityEngine.Random.Range(1.75F, 2.5F);
+			b.amplitude = UnityEngine.Random.Range(0.15F, 0.3F);
+			b.speed2Ratio = UnityEngine.Random.Range(2.5F, 3F);
+			b.amplitude2Ratio = UnityEngine.Random.Range(0.05F, 0.1F);
 		}
 	}
 }

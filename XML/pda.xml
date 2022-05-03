@@ -1,0 +1,14 @@
+<Root>
+  <signal>
+	<id>
+		crashvoidpod
+	</id>
+	<text>
+		-pod detached too early, came down in the void-
+		-giant creature rammed the pod-
+	</text>
+	<audio>
+		C:\null.wav
+	</audio>
+  </signal>
+</Root>

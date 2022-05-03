@@ -1,4 +1,16 @@
 <Root>
   <signal>
+	<id>
+		voidpod
+	</id>
+	<name>
+		Potential surviving lifepod
+	</name>
+	<desc>
+		This is desc
+	</desc>
+	<pda>
+		While the seafloor in this zone is far below what can be detected from the surface, readings indicate a significantly shallower region approximately 1200 meters to the southwest. Depth estimated around 500 meters. This area may harbor aggressive native lifeforms. Caution is advised.
+	</pda>
   </signal>
 </Root>
