@@ -301,14 +301,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(LargeWorldEntity))]
+	[HarmonyPatch(typeof(SkyApplier))]
 	[HarmonyPatch("Start")]
 	public static class WaveBobbingDebrisHook {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(LargeWorldEntity)));
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(SkyApplier)));
 				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}

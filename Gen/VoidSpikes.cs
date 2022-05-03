@@ -11,7 +11,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator {
+	public sealed class VoidSpikes : WorldGenerator { //TODO 1. RESTRICT GOOD ORE TO DEEP, 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. SPLIT INTO GENS
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -31,9 +31,11 @@ namespace ReikaKalseki.SeaToSea
 		public bool generateAux = true;
 		public bool generateLeviathan = true;
 		public int fishCount;
+		public bool shouldRerollCounts = false;
 		
 		public Func<Vector3, bool> positionValidity = null;
 		public Func<Vector3, double> depthCallback = null;
+		public Func<Vector3> spikeLocationProvider = null;
 		
 		static VoidSpikes() {
 			fishTypes.addEntry(VanillaCreatures.REGINALD, 75);
@@ -49,10 +51,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public VoidSpikes(Vector3 pos) : base(pos) {
-			count = UnityEngine.Random.Range(5, 11);
-			scaleXZ = UnityEngine.Random.Range(1F, 4F);
-			scaleY = UnityEngine.Random.Range(0.75F, 2F);
-			fishCount = UnityEngine.Random.Range(40, 61);
+			rerollCounts();
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -73,15 +72,25 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("generateLeviathan", generateLeviathan);
 		}
 		
+		private void rerollCounts() {
+			count = UnityEngine.Random.Range(5, 11);
+			scaleXZ = UnityEngine.Random.Range(1F, 4F);
+			scaleY = UnityEngine.Random.Range(0.75F, 2F);
+			fishCount = UnityEngine.Random.Range(40, 61);
+		}
+		
 		public override void generate(List<GameObject> generated) {
+			UnityEngine.Random.InitState(SBUtil.getWorldSeedInt());
+			if (shouldRerollCounts)
+				rerollCounts();
 			for (int i = 0; i < count; i++) {
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
 					Vector3 vec = pos.Value;
-					SBUtil.log("Success, spike @ "+vec);
+					//SBUtil.log("Success, spike @ "+vec);
 					if (depthCallback != null)
 						vec.y = (float)depthCallback(vec);
-					SBUtil.log("Re-y spike @ "+vec);
+					//SBUtil.log("Re-y spike @ "+vec);
 					SpikeCluster s = new SpikeCluster(vec, generateAux);
 					spikes.Add(s);
 					s.generate(generated);
@@ -114,7 +123,7 @@ namespace ReikaKalseki.SeaToSea
 			if (count == 1)
 				return position;
 			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ)*2;
-			Vector3 ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
+			Vector3 ret = spikeLocationProvider != null ? spikeLocationProvider() : MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
 			while (tries < 50 && !isValidPosition(ret)) {
 				ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[tries/10], sc));
@@ -141,25 +150,36 @@ namespace ReikaKalseki.SeaToSea
 			return false;
 		}
 		
-		private class SpikeCluster {
+		private class SpikeCluster : WorldGenerator {
 		
-			internal readonly int terraceSpikeCount;
-			internal readonly int auxSpikeCount;
-			internal readonly Vector3 position;
-			private readonly bool generateAux;
+			internal int terraceSpikeCount;
+			internal int auxSpikeCount;
+			private bool generateAux;
 			
 			private VoidSpike centralSpike;
 			private readonly List<VoidSpike> firstRow = new List<VoidSpike>();
 			private readonly List<VoidSpike> auxSpikes = new List<VoidSpike>();
 						
-			internal SpikeCluster(Vector3 vec, bool aux) {
+			internal SpikeCluster(Vector3 vec, bool aux) : base(vec) {
 				terraceSpikeCount = UnityEngine.Random.Range(4, 8);
 				auxSpikeCount = UnityEngine.Random.Range(3, 9);
-				position = vec;
 				generateAux = aux;
 			}
 			
-			internal void generate(List<GameObject> li) {
+			public override void loadFromXML(XmlElement e) {
+				if (e.hasProperty("generateAux"))
+					generateAux = e.getBoolean("generateAux");
+				terraceSpikeCount = e.getInt("terraceSpikeCount", terraceSpikeCount);
+				auxSpikeCount = e.getInt("auxSpikeCount", auxSpikeCount);
+			}
+			
+			public override void saveToXML(XmlElement e) {
+				e.addProperty("generateAux", generateAux);
+				e.addProperty("terraceSpikeCount", terraceSpikeCount);
+				e.addProperty("auxSpikeCount", auxSpikeCount);
+			}
+			
+			public override void generate(List<GameObject> li) {
 				centralSpike = new VoidSpike(position);
 				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
 				centralSpike.oreRichness = 0.2;

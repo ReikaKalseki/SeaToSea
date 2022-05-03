@@ -185,11 +185,12 @@ namespace ReikaKalseki.SeaToSea
 					vc.fuzz *= 0.8F;
 				vc.fuzz.y *= 0.25F;
 				vc.validPlantPosCheck = validPlantPosCheck;
+				//vc.plantCallBackrotation = membrain;
 				vc.generate(plants);
 			}
 		}
 			
-		internal void generateResources() {
+		internal void generateResources() { //TODO these are not collectible for some reason
 			if (oreRichness > 0) {
 				int n = (int)(8*oreRichness);
 				//SBUtil.log("Attempting "+n+" ores.");

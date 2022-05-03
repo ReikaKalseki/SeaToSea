@@ -20,18 +20,22 @@ namespace ReikaKalseki.SeaToSea
 		internal class WaveBob : MonoBehaviour {
 			
 			public Vector3 rootPosition = Vector3.zero;
-			public double speed = 0.05;
+			
+			public double speed = 0.5;
 			public double amplitude = 1;
+			
+			public double speed2Ratio = 2.5;
+			public double amplitude2Ratio = 0.1;
 			
 			void Start() {
 				
 			}
 			
 			void Update() {
-				double y = amplitude*Math.Sin(speed*DayNightCycle.main.timePassedAsDouble);
-				Vector3 pos = gameObject.transform.position;
-				pos.y += (float)y;
-				gameObject.transform.position = pos;
+				double y = amplitude*Math.Sin((speed*DayNightCycle.main.timePassedAsDouble)%(20*Math.PI));
+				if (amplitude2Ratio > 0)
+					y += amplitude*amplitude2Ratio*Math.Sin((speed*speed2Ratio*DayNightCycle.main.timePassedAsDouble+238239)%(20*Math.PI));
+				gameObject.transform.position = new Vector3(rootPosition.x, rootPosition.y+(float)y, rootPosition.z);
 			}
 			
 		}

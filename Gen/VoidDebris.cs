@@ -15,6 +15,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class VoidDebris : WorldGenerator { //TODO add pieces like medkit box; scatter paper submerged below
 		
 		private static readonly WeightedRandom<string> debrisProps = new WeightedRandom<string>();
+		private static readonly List<string> alwaysPieces = new List<string>();
 		
 		static VoidDebris() {
 			debrisProps.addEntry("08a95141-7c00-4d55-b582-306fa2e217ed", 100);
@@ -26,16 +27,13 @@ namespace ReikaKalseki.SeaToSea
 			debrisProps.addEntry("314e696f-67bc-4d6c-8ce5-cf9ed7f34746", 100);
 			debrisProps.addEntry("3981a55f-0754-466a-8932-6e245b4ef846", 20);
 			debrisProps.addEntry("4322ded1-04ba-44eb-afe5-44b9c4112c64", 80);
-			debrisProps.addEntry("4e8f6009-fc9c-4774-9ddc-27a6b0081dde", 200); //hull panel
-			/*
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);
-			debrisProps.addEntry("", 100);*/
+			debrisProps.addEntry("4e8f6009-fc9c-4774-9ddc-27a6b0081dde", 200); //hull panel TODO rotate to be flat
+			debrisProps.addEntry("f901b968-5b3c-4795-8ded-82db2fa23440", 30);
+						
+			alwaysPieces.Add("c0175cf7-0b6a-4a1d-938f-dad0dbb6fa06"); //medkit
+			alwaysPieces.Add("4f045c69-1539-4c53-b157-767df47c1aa6"); //radio lookalike
+			alwaysPieces.Add("cdade216-3d4d-4adf-901c-3a91fb3b88c4"); //centrifuge
+			alwaysPieces.Add("9f16d82b-11f4-4eeb-aedf-f2fa2bfca8e3"); //fab
 			
 			//paper "32e48451-8e81-428e-9011-baca82e9cd32"
 			
@@ -57,12 +55,38 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> li) {		
-			for (int i = 0; i < 8; i++) {
-				GameObject go = SBUtil.createWorldObject(debrisProps.getRandomEntry());
-				go.transform.position = MathUtil.getRandomVectorAround(position, new Vector3(6, 0, 6));
-				VoidSpikesBiome.checkAndAddWaveBob(go.GetComponent<LargeWorldEntity>(), true);
-				li.Add(go);
+			for (int i = 0; i < 9; i++) {
+				li.Add(generateObjectInRange(6, 0.2F, 6));
 			}
+			foreach (string s in alwaysPieces) {
+				li.Add(generateObjectInRange(9, 0.5F, 9, 0, s)); //TODO rotate these to be on their back
+			}
+			for (int i = 0; i < 14; i++) {
+				li.Add(generateObjectInRange(12, 1, 12));
+			}
+			for (int i = 0; i < 6; i++) {
+				li.Add(generateObjectInRange(4, 3, 4, -2)); //TODO PAPER
+			}
+		}
+		
+		private GameObject generateObjectInRange(float dx, float dy, float dz, double offsetY = 0, string type = null) {
+			GameObject go = SBUtil.createWorldObject(type == null ? debrisProps.getRandomEntry() : type);
+			if (go == null)
+				return go;
+			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz));
+			pos.y = Math.Min(pos.y, position.y)+(float)offsetY;
+			go.transform.position = pos;
+			go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(-15F, 15F), UnityEngine.Random.Range(0, 360F), 0);//UnityEngine.Random.rotationUniform;
+			SBUtil.removeComponent<MedicalCabinet>(go);
+			SBUtil.removeComponent<Fabricator>(go);
+			SBUtil.removeComponent<Centrifuge>(go);
+			SBUtil.removeComponent<Radio>(go);
+			SBUtil.removeComponent<Constructable>(go);
+			PreventDeconstruction prev = go.EnsureComponent<PreventDeconstruction>();
+			prev.enabled = true;
+			prev.inEscapePod = true;
+			VoidSpikesBiome.checkAndAddWaveBob(go, true);
+			return go;
 		}
 	}
 }
