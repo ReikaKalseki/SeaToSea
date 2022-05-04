@@ -141,19 +141,25 @@ namespace ReikaKalseki.SeaToSea
     
     public static void addSignals(SignalDatabase db) {
     	foreach (XMLLocale.LocaleEntry e in signals.getEntries()) {
-    		string id = e.getField<string>("id");
+    		string id = e.getField<string>("id", null);
     		if (string.IsNullOrEmpty(id))
     			throw new Exception("Missing id for signal '"+e.dump()+"'!");
     		Int3 pos = Int3.zero;
     		if (e.hasField("location")) {
-    			pos = e.getField<Int3>("location");
+    			pos = e.getField<Int3>("location", pos);
     		}
     		if (id == "voidpod") {
-    			pos = VoidSpikesBiome.instance.signalLocation.roundToInt3();
+    			pos = VoidSpikesBiome.signalLocation.roundToInt3();
     		}
+    		if (string.IsNullOrEmpty(e.name) || string.IsNullOrEmpty(e.desc)) {
+    			throw new Exception("Missing data for signal '"+id+"'!");
+    		}    	
+    		if (pos == Int3.zero)
+    			throw new Exception("Missing location for signal '"+id+"'!");
+    		Vector3 vec = pos.ToVector3();
     		SignalInfo info = new SignalInfo {
-    			biome = "void", //TODO fetch biome map
-    			batch = SBUtil.getBatch(pos.ToVector3()),
+    			biome = SBUtil.getBiome(vec),
+    			batch = SBUtil.getBatch(vec),
     			position = pos,
     			description = e.desc
     		};
