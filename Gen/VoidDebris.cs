@@ -56,16 +56,16 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> li) {		
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 6; i++) {
 				li.Add(generateObjectInRange(6, 0.1F, 6));
 			}
 			foreach (Prop s in alwaysPieces) {
 				li.Add(generateObjectInRange(9, 0.25F, 9, 0, s));
 			}
-			for (int i = 0; i < 14; i++) {
+			for (int i = 0; i < 10; i++) {
 				li.Add(generateObjectInRange(12, 0.5F, 12));
 			}
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
 		}

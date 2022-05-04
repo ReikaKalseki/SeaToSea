@@ -13,8 +13,10 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class VoidSpikesBiome {
 		
-		public static readonly Vector3 end500m = new Vector3(925, -550, -2050+150);//new Vector3(895, -500, -1995);
-		public static readonly Vector3 end900m = new Vector3(400, -950, -2275-125+150);//new Vector3(457, -900, -2261);
+		private static readonly float EDGE_OFFSET = 150;
+		
+		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
+		public static readonly Vector3 end900m = new Vector3(400, -950, -2275-125);//new Vector3(457, -900, -2261);
 		public static readonly double length = Vector3.Distance(end500m, end900m);
 		
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
@@ -27,8 +29,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly object signal;
 		
-		private VoidSpikesBiome() {		
-			generator = new VoidSpikes((end500m+end900m)/2);
+		private VoidSpikesBiome() {
+			Vector3 off = new Vector3(0, 0, EDGE_OFFSET);
+			generator = new VoidSpikes((end500m+end900m)/2+off);
 	      	generator.count = 72;
 	      	//generator.scaleXZ = 16;
 	      	//generator.scaleY = 6;
@@ -39,6 +42,8 @@ namespace ReikaKalseki.SeaToSea {
 	      	//generator.depthCallback = getSpikeDepth;
 	      	generator.spikeLocationProvider = getSpikeLocation;
 	      	generator.shouldRerollCounts = false;
+	      	
+	      	generator.offset = -off;
 	      		
 			debris = new VoidDebris(signalLocation+Vector3.down*0.2F);
 			

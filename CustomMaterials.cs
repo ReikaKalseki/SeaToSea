@@ -44,8 +44,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Materials {
 			[Material(typeof(BasicCustomOre), "URANIUM")]		MOUNTAIN_CRYSTAL,
-			[Material(typeof(BasicCustomOre), "LITHIUM")]		PLATINUM,
-			[Material(typeof(BasicCustomOre), "RUBY")]			PRESSURE_CRYSTALS,
+			[Material(typeof(BasicCustomOre), "GOLD")]			PLATINUM,
+			[Material(typeof(BasicCustomOre), "TITANIUM")]		PRESSURE_CRYSTALS,
 			[Material(typeof(BasicCustomOre), "KYANITE")]		PHASE_CRYSTAL,		
 		}
 		

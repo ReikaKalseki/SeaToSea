@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea
 		};
 		
 		private static readonly WeightedRandom<VanillaFlora> plantPrefabs = new WeightedRandom<VanillaFlora>();
-		private static readonly WeightedRandom<string> oreChoices = new WeightedRandom<string>();
+		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
 		static VoidSpike() {
 			plantPrefabs.addEntry(VanillaFlora.GABE_FEATHER, 100);
@@ -40,12 +40,12 @@ namespace ReikaKalseki.SeaToSea
 			plantPrefabs.addEntry(VanillaFlora.REGRESS, 10);
 			plantPrefabs.addEntry(VanillaFlora.BRINE_LILY, 50);
 			
-			oreChoices.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 100);
-			oreChoices.addEntry(VanillaResources.QUARTZ.prefab, 100);
-			oreChoices.addEntry(VanillaResources.DIAMOND.prefab, 25);
-			oreChoices.addEntry(VanillaResources.LARGE_DIAMOND.prefab, 5);
-			oreChoices.addEntry(VanillaResources.LARGE_QUARTZ.prefab, 10);
-			oreChoices.addEntry(VanillaResources.URANIUM.prefab, 5);
+			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825), 100);
+			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab), 100);
+			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab), 25);
+			oreChoices.addEntry(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
+			oreChoices.addEntry(new OreType(VanillaResources.LARGE_QUARTZ.prefab), 10);
+			oreChoices.addEntry(new OreType(VanillaResources.URANIUM.prefab), 5);
 		}
 		
 		public static bool isSpike(string pfb) {
@@ -192,12 +192,13 @@ namespace ReikaKalseki.SeaToSea
 					vc.fuzz *= 0.8F;
 				vc.fuzz.y *= 0.25F;
 				vc.validPlantPosCheck = validPlantPosCheck;
+				vc.allowKelp = !hasPod && !hasFloater;
 				//vc.plantCallBackrotation = membrain;
 				vc.generate(plants);
 			}
 		}
 			
-		internal void generateResources() { //TODO these are not collectible for some reason
+		internal void generateResources() {
 			if (oreRichness > 0) {
 				int n = (int)(8*oreRichness);
 				//SBUtil.log("Attempting "+n+" ores.");
@@ -210,9 +211,12 @@ namespace ReikaKalseki.SeaToSea
 					//pos.y += (3.5F-radius);
 					//SBUtil.log("Attempted ore @ "+pos);
 					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
-						string id = oreChoices.getRandomEntry();
-						GameObject go = SBUtil.createWorldObject(id);
-						bool large = id == VanillaResources.LARGE_QUARTZ.prefab || id == VanillaResources.LARGE_DIAMOND.prefab;
+						OreType ore = oreChoices.getRandomEntry();
+						while (pos.y > -ore.maxY) {
+							ore = oreChoices.getRandomEntry();
+						}
+						GameObject go = SBUtil.createWorldObject(ore.prefab);
+						bool large = ore.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab == VanillaResources.LARGE_DIAMOND.prefab;
 						if (large)
 							pos += Vector3.up*0.0F;
 						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
@@ -257,7 +261,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override string ToString() {
-			return position+" , p="+hasPod+" f="+hasFloater+" flora="+hasFlora+" R="+oreRichness+" pr="+plantRate;
+			return base.ToString()+" , p="+hasPod+" f="+hasFloater+" flora="+hasFlora+" R="+oreRichness+" pr="+plantRate;
 		}
 		
 		private class Spike {
@@ -268,6 +272,18 @@ namespace ReikaKalseki.SeaToSea
 			internal Spike(string s, double r) {
 				prefab = s;
 				radius = r;
+			}
+			
+		}
+		
+		private class OreType {
+			
+			internal readonly string prefab;
+			internal readonly double maxY;
+			
+			internal OreType(string s, double depth = 0) {
+				prefab = s;
+				maxY = -depth;
 			}
 			
 		}

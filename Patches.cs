@@ -120,7 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(PDAScanner.ScanTarget))]
 	[HarmonyPatch("Initialize")]
 	public static class FragmentScanHook {
@@ -131,7 +131,7 @@ namespace ReikaKalseki.SeaToSea {
 				int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldarg_1);
 				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "interceptScannerTarget", false, typeof(GameObject), typeof(PDAScanner.ScanTarget).MakeByRefType()));
 				codes.Insert(idx+1, new CodeInstruction(OpCodes.Ldarg_0));
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -143,7 +143,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	*/
 	[HarmonyPatch(typeof(VoidGhostLeviathansSpawner))]
 	[HarmonyPatch("IsVoidBiome")]
 	public static class VoidLeviathanHook {
@@ -246,7 +246,7 @@ namespace ReikaKalseki.SeaToSea {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "SNCameraRoot", "SonarPing", true, new Type[0]);
 				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "pingSeamothSonar", false, typeof(SeaMoth)));
 				codes.Insert(idx+1, new CodeInstruction(OpCodes.Ldarg_0));
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

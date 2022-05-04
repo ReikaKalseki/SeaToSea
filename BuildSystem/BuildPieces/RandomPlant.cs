@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			//SBUtil.log("Attempting "+count+" plants in "+fuzz+" of "+position+".");
 			for (int i = 0; i < count; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
-				VanillaFlora vf = plants.getRandomEntry();
+				VanillaFlora vf = selectPlant(plants.getRandomEntry());
 				//SBUtil.log("Attempted plant "+vf.getName()+" @ "+vec);
 				if (validPlantPosCheck != null && !validPlantPosCheck(vec+Vector3.up*0.2F, vf.getName())) {
 					//SBUtil.log("Intersect caused fail");
@@ -51,6 +51,10 @@ namespace ReikaKalseki.SeaToSea
 				//SBUtil.log("success "+go+" = "+vf.getName()+" @ "+vec);
 				li.Add(go);
 			}
+		}
+		
+		protected virtual VanillaFlora selectPlant(VanillaFlora choice) {
+			return choice;
 		}
 		
 		protected virtual GameObject generatePlant(Vector3 vec, string type) {

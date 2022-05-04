@@ -163,6 +163,7 @@ namespace ReikaKalseki.SeaToSea
     			position = pos,
     			description = e.desc
     		};
+    		SBUtil.log("Injected signal "+id+" @ "+pos+": "+info);
     		db.entries.Add(info);
     	}
     }

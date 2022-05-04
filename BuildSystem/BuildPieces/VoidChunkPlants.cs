@@ -26,6 +26,8 @@ namespace ReikaKalseki.SeaToSea
 	
 		private int mushrooms;
 		
+		public bool allowKelp = true;
+		
 		private List<GameObject> gennedMushrooms = new List<GameObject>();
 		
 		public VoidChunkPlants(Vector3 vec) : base(vec) {
@@ -38,6 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			plants.addEntry(VanillaFlora.MEMBRAIN, 25);
 			plants.addEntry(VanillaFlora.REGRESS, 10);
 			plants.addEntry(VanillaFlora.BRINE_LILY, 50);
+			plants.addEntry(VanillaFlora.BLOOD_KELP, 20);
 			
 			mushrooms = UnityEngine.Random.Range(0, 7); //0-6
 		}
@@ -46,6 +49,12 @@ namespace ReikaKalseki.SeaToSea
 			base.generate(li);
 			
 			li.AddRange(gennedMushrooms);
+		}
+		
+		protected override VanillaFlora selectPlant(VanillaFlora choice) {
+			while (choice == VanillaFlora.BLOOD_KELP && !allowKelp)
+				choice = plants.getRandomEntry();
+			return choice;
 		}
 		
 		protected override GameObject generatePlant(Vector3 vec, string type) {

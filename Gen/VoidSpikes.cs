@@ -11,7 +11,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //TODO 1. RESTRICT GOOD ORE TO DEEP, 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. SPLIT INTO GENS
+	public sealed class VoidSpikes : WorldGenerator { //TODO 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. SPLIT INTO GENS
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -32,6 +32,8 @@ namespace ReikaKalseki.SeaToSea
 		public bool generateLeviathan = true;
 		public int fishCount;
 		public bool shouldRerollCounts = false;
+		
+		public Vector3 offset = Vector3.zero;
 		
 		public Func<Vector3, bool> positionValidity = null;
 		public Func<Vector3, double> depthCallback = null;
@@ -97,7 +99,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			for (int i = 0; i < fishCount; i++) {
-				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
+				Vector3 vec = MathUtil.getRandomVectorAround(position+offset, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
 				if (posIntersectsAnySpikes(vec, "fish") || (positionValidity != null && !positionValidity(vec))) {
 					i--;
 					continue;
@@ -108,7 +110,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			if (generateLeviathan) {
 				GameObject levi = SBUtil.createWorldObject(VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab);
-				levi.transform.position = position;
+				levi.transform.position = position+offset;
 			}
 		}
 		
@@ -122,12 +124,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		private Vector3? getSafePosition() {
 			if (count == 1)
-				return position;
+				return position+offset;
 			Vector3 sc = new Vector3(scaleXZ, scaleY, scaleXZ)*2;
-			Vector3 ret = spikeLocationProvider != null ? spikeLocationProvider() : MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[0], sc));
+			Vector3 ret = spikeLocationProvider != null ? spikeLocationProvider() : MathUtil.getRandomVectorAround(position+offset, Vector3.Scale(spacing[0], sc));
 			int tries = 0;
 			while (tries < 50 && !isValidPosition(ret)) {
-				ret = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[tries/10], sc));
+				ret = MathUtil.getRandomVectorAround(position+offset, Vector3.Scale(spacing[tries/10], sc));
 				tries++;
 			}
 			return tries >= 50 ? (Vector3?)null : ret;
