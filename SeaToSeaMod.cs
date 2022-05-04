@@ -139,7 +139,7 @@ namespace ReikaKalseki.SeaToSea
     	}
     }
     
-    public static void addSignals(SignalDatabase db) {
+    public static void addSignals(SignalDatabase db) {/*
     	foreach (XMLLocale.LocaleEntry e in signals.getEntries()) {
     		string id = e.getField<string>("id", null);
     		if (string.IsNullOrEmpty(id))
@@ -165,7 +165,7 @@ namespace ReikaKalseki.SeaToSea
     		};
     		SBUtil.log("Injected signal "+id+" @ "+pos+": "+info);
     		db.entries.Add(info);
-    	}
+    	}*/
     }
     
     public static bool checkTargetingSkip(bool orig, Transform obj) {

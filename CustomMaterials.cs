@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea
 				XMLLocale.LocaleEntry e = SeaToSeaMod.locale.getEntry(id);
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
 				BasicCustomOre item = (BasicCustomOre)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, template});
+				item.glowIntensity = attr.glow;
 				mappings[m] = item;
 				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
 				item.Patch();	
@@ -43,20 +44,22 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public enum Materials {
-			[Material(typeof(BasicCustomOre), "URANIUM")]		MOUNTAIN_CRYSTAL,
-			[Material(typeof(BasicCustomOre), "GOLD")]			PLATINUM,
-			[Material(typeof(BasicCustomOre), "TITANIUM")]		PRESSURE_CRYSTALS, add illum
-			[Material(typeof(BasicCustomOre), "KYANITE")]		PHASE_CRYSTAL,		
+			[Material(typeof(BasicCustomOre), "URANIUM", 2F)]		MOUNTAIN_CRYSTAL,
+			[Material(typeof(BasicCustomOre), "GOLD")]				PLATINUM,
+			[Material(typeof(BasicCustomOre), "TITANIUM", 1.5F)]	PRESSURE_CRYSTALS,
+			[Material(typeof(BasicCustomOre), "KYANITE", 0.75F)]	PHASE_CRYSTAL,		
 		}
 		
 		public class Material : Attribute {
 			
 			internal readonly Type itemClass;
 			internal readonly string templateName;
+			internal readonly float glow;
 			
-			public Material(Type item, string t) {
+			public Material(Type item, string t, float g = 0) {
 				itemClass = item;
 				templateName = t;
+				glow = g;
 			}
 		}
 	}
