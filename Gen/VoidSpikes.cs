@@ -99,6 +99,7 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < fishCount; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
 				if (posIntersectsAnySpikes(vec, "fish") || (positionValidity != null && !positionValidity(vec))) {
+					i--;
 					continue;
 				}
 				GameObject fish = SBUtil.createWorldObject(fishTypes.getRandomEntry().prefab);

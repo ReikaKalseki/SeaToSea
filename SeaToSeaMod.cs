@@ -167,6 +167,20 @@ namespace ReikaKalseki.SeaToSea
     	}
     }
     
+    public static bool checkTargetingSkip(bool orig, Transform obj) {
+    	if (obj == null || obj.gameObject == null)
+    		return orig;
+    	PrefabIdentifier id = obj.gameObject.GetComponent<PrefabIdentifier>();
+    	if (id == null)
+    		return orig;
+    	if (VoidSpike.isSpike(id.ClassId) && VoidSpikesBiome.instance.isInBiome(obj.position)) {
+    		return true;
+    	}
+    	else {
+    		return orig;
+    	}
+    }
+    
     public static void onDataboxActivate(BlueprintHandTarget c) {
     	//SBUtil.log("original databox unlock being reprogrammed on 'activate' from: "+c.unlockTechType);
     	//SBUtil.log(c.gameObject.ToString());

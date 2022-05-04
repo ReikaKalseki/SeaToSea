@@ -13,8 +13,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class VoidSpikesBiome {
 		
-		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
-		public static readonly Vector3 end900m = new Vector3(400, -950, -2275-125);//new Vector3(457, -900, -2261);
+		public static readonly Vector3 end500m = new Vector3(925, -550, -2050+150);//new Vector3(895, -500, -1995);
+		public static readonly Vector3 end900m = new Vector3(400, -950, -2275-125+150);//new Vector3(457, -900, -2261);
 		public static readonly double length = Vector3.Distance(end500m, end900m);
 		
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
 		
-		private readonly PingType signal;
+		private readonly object signal;
 		
 		private VoidSpikesBiome() {		
 			generator = new VoidSpikes((end500m+end900m)/2);
@@ -35,12 +35,12 @@ namespace ReikaKalseki.SeaToSea {
 	      	generator.generateLeviathan = false;
 	      	generator.generateAux = true;
 	      	generator.fishCount = 1200;
-	      	//generator.positionValidity = isValidSpikeLocation;
+	      	generator.positionValidity = isValidSpikeLocation;
 	      	//generator.depthCallback = getSpikeDepth;
 	      	generator.spikeLocationProvider = getSpikeLocation;
 	      	generator.shouldRerollCounts = false;
 	      		
-			debris = new VoidDebris(signalLocation+Vector3.down*0.1F);
+			debris = new VoidDebris(signalLocation+Vector3.down*0.2F);
 			
 			//signal = PingHandler.RegisterNewPingType("voidpod", SpriteManager.Get(TechType.Signal));
 			//LargeWorld.main.signalDatabase.Add();
@@ -52,9 +52,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private bool isValidSpikeLocation(Vector3 vec) {
-			double dist = MathUtil.getDistanceToLine(vec, end500m, end900m); //NOT WORKING
+			return isInBiome(vec);
+		}
+		
+		public bool isInBiome(Vector3 vec) {
+			double dist = MathUtil.getDistanceToLine(vec, end500m, end900m);
 			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return dist <= 350;
+			return dist <= 240;
 		}
 		
 		private double getSpikeDepth(Vector3 vec) {
@@ -78,7 +82,7 @@ namespace ReikaKalseki.SeaToSea {
 					init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
 					break;
 			}
-			return MathUtil.getRandomVectorAround(init, new Vector3(150, 40, 150));
+			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
 		}
 		
 		public static void checkAndAddWaveBob(SkyApplier c) {
@@ -101,6 +105,11 @@ namespace ReikaKalseki.SeaToSea {
 			b.amplitude = UnityEngine.Random.Range(0.15F, 0.3F);
 			b.speed2Ratio = UnityEngine.Random.Range(2.5F, 3F);
 			b.amplitude2Ratio = UnityEngine.Random.Range(0.05F, 0.1F);
+			if (b.rootPosition.y <= -1.25) {
+				b.amplitude *= 0.25F;
+				b.speed *= 0.5F;
+			}
+				
 		}
 	}
 }

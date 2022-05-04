@@ -343,4 +343,29 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(Targeting))]
+	[HarmonyPatch("Skip")]
+	public static class VoidSpikeTargetingBypass {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				for (int i = codes.Count-1; i >= 0; i--) {
+					if (codes[i].opcode == OpCodes.Ret) {
+						codes.Insert(i, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "checkTargetingSkip", false, typeof(bool), typeof(Transform)));
+						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+					}
+				}
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 }

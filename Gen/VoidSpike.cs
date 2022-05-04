@@ -48,6 +48,13 @@ namespace ReikaKalseki.SeaToSea
 			oreChoices.addEntry(VanillaResources.URANIUM.prefab, 5);
 		}
 		
+		public static bool isSpike(string pfb) {
+			foreach (Spike s in spikes)
+				if (s.prefab == pfb)
+					return true;
+			return false;
+		}
+		
 		private float scale = 1;
 		private Vector3 scaleVec;
 		
