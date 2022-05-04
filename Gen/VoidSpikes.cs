@@ -283,6 +283,7 @@ namespace ReikaKalseki.SeaToSea
 					s.hasPod = false;
 					s.validPlantPosCheck = (vec, n) => !posIntersectsAnySpikes(vec, n, s);
 					s.oreRichness = s0.oreRichness;
+					s.isAux = true;
 					s.plantRate = 1.5;
 					auxSpikes.Add(s);
 					s.generateSpike();

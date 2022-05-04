@@ -40,12 +40,12 @@ namespace ReikaKalseki.SeaToSea
 			plantPrefabs.addEntry(VanillaFlora.REGRESS, 10);
 			plantPrefabs.addEntry(VanillaFlora.BRINE_LILY, 50);
 			
-			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825), 100);
-			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab), 100);
-			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab), 25);
+			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825, 0.2), 100);
+			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
+			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
 			oreChoices.addEntry(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
 			oreChoices.addEntry(new OreType(VanillaResources.LARGE_QUARTZ.prefab), 10);
-			oreChoices.addEntry(new OreType(VanillaResources.URANIUM.prefab), 5);
+			oreChoices.addEntry(new OreType(VanillaResources.URANIUM.prefab, 0, -0.04), 5);
 		}
 		
 		public static bool isSpike(string pfb) {
@@ -67,6 +67,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public int podSizeDecr = 0;
 		public Vector3 podOffset = Vector3.zero;
+		public bool isAux = false;
 		
 		public Func<Vector3, string, bool> validPlantPosCheck = null;
 		
@@ -192,7 +193,7 @@ namespace ReikaKalseki.SeaToSea
 					vc.fuzz *= 0.8F;
 				vc.fuzz.y *= 0.25F;
 				vc.validPlantPosCheck = validPlantPosCheck;
-				vc.allowKelp = !hasPod && !hasFloater;
+				vc.allowKelp = !hasPod && !hasFloater && !isAux;
 				//vc.plantCallBackrotation = membrain;
 				vc.generate(plants);
 			}
@@ -212,13 +213,12 @@ namespace ReikaKalseki.SeaToSea
 					//SBUtil.log("Attempted ore @ "+pos);
 					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
 						OreType ore = oreChoices.getRandomEntry();
-						while (pos.y > -ore.maxY) {
+						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
 						GameObject go = SBUtil.createWorldObject(ore.prefab);
 						bool large = ore.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab == VanillaResources.LARGE_DIAMOND.prefab;
-						if (large)
-							pos += Vector3.up*0.0F;
+						pos += Vector3.up*(float)(ore.objOffset);
 						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);
 						if (!large) {
@@ -280,10 +280,12 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal readonly string prefab;
 			internal readonly double maxY;
+			internal readonly double objOffset;
 			
-			internal OreType(string s, double depth = 0) {
+			internal OreType(string s, double depth = 0, double off = 0) {
 				prefab = s;
 				maxY = -depth;
+				objOffset = off;
 			}
 			
 		}

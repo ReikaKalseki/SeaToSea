@@ -254,21 +254,10 @@ namespace ReikaKalseki.SeaToSea
     	if (UnityEngine.Random.Range(0F, 1F) < 0.92)
     		return;
     	GameObject owner = chunk.gameObject;
-    	GameObject prefab;
-		if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.KYANITE.prefab, out prefab)) { //TODO switch this over
-			if (prefab != null) {
-    			//res.prefabList.Insert(0, pfb);
-    			//SBUtil.writeToChat("Added "+pfb.prefab+" to "+chunk+" @ "+chunk.transform.position);
-    			GameObject placed = UnityEngine.Object.Instantiate(prefab, owner.transform.position, owner.transform.rotation);
-    			UnityEngine.Object.Destroy(owner);
-			}
-			else {
-				SBUtil.writeToChat("Prefab found and placed succeeeded but resulted in null?!");
-			}
-		}
-		else {
-			SBUtil.writeToChat("Prefab found but was null?!");
-		}
+    	GameObject placed = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType.ToString());
+    	placed.transform.position = owner.transform.position+Vector3.up*0.08F;
+    	placed.transform.rotation = owner.transform.rotation;
+    	UnityEngine.Object.Destroy(owner);
     }
     
     public static bool isSpawnableVoid(string biome) {
@@ -300,7 +289,7 @@ namespace ReikaKalseki.SeaToSea
     	if (pinged != null && pinged.getTimeSince() <= 10000)
     		return 0;
     	//TODO check for nearby leviathans?
-    	int maxd = far ? 200 : 900; //TODO rebalance
+    	int maxd = 900;
     	double depth = -sm.transform.position.y;
     	if (depth < maxd)
     		return 1;

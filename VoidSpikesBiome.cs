@@ -74,19 +74,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private Vector3 getSpikeLocation() {
-			Vector3 init = Vector3.zero;
-			switch(UnityEngine.Random.Range(0, 7)) {
-				case 0:
-					init = end500m;
-					break;
-				case 1:
-				case 2:
-					init = end900m;
-					break;
-				default: //3,4,5,6
-					init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
-					break;
-			}
+			Vector3 init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
+			if (UnityEngine.Random.Range(0, 7) == 0)
+				init = end900m;
 			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
 		}
 		

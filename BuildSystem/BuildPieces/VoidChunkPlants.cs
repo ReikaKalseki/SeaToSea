@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			plants.addEntry(VanillaFlora.MEMBRAIN, 25);
 			plants.addEntry(VanillaFlora.REGRESS, 10);
 			plants.addEntry(VanillaFlora.BRINE_LILY, 50);
-			plants.addEntry(VanillaFlora.BLOOD_KELP, 20);
+			plants.addEntry(VanillaFlora.BLOOD_KELP, 10);
 			
 			mushrooms = UnityEngine.Random.Range(0, 7); //0-6
 		}
