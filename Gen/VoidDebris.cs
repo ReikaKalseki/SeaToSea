@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public VoidDebris(Vector3 pos) : base(pos) {
-			
+			spawner = VoidSpikesBiome.spawnEntity;
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -68,16 +68,6 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
-			
-			PingInstance ping = li[0].EnsureComponent<PingInstance>();
-			ping.enabled = true;
-			ping.pingType = PingType.Signal;
-			ping.displayPingInManager = true;
-			ping.origin = li[0].transform;
-			ping.minDist = 24;
-			ping.maxDist = 9999;
-			ping.SetLabel("TEST SIGNAL");
-			ping.SetVisible(true);
 		}
 		
 		private GameObject generateObjectInRange(float dx, float dy, float dz, double offsetY = 0, Prop type = null) {

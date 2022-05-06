@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml;
 
 using SMLHelper.V2.Assets;
@@ -11,7 +12,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //TODO 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. SPLIT INTO GENS
+	public sealed class VoidSpikes : WorldGenerator { //TODO 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. prevent re-runs
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -54,6 +55,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public VoidSpikes(Vector3 pos) : base(pos) {
 			rerollCounts();
+			
+			spawner = VoidSpikesBiome.spawnEntity;
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -81,10 +84,18 @@ namespace ReikaKalseki.SeaToSea
 			fishCount = UnityEngine.Random.Range(40, 61);
 		}
 		
-		public override void generate(List<GameObject> generated) {
-			UnityEngine.Random.InitState(SBUtil.getWorldSeedInt());
-			if (shouldRerollCounts)
-				rerollCounts();
+		public IEnumerable<SpikeCluster> split(int seed) {
+			SBUtil.log("Initializing spike clusters with seed "+seed);
+			UnityEngine.Random.InitState(seed);
+			calculateSpikeClusters();
+			foreach (SpikeCluster s in spikes) {
+				s.fishCount = fishCount/spikes.Count;
+			}
+			fishCount = 0;
+			return new ReadOnlyCollection<SpikeCluster>(spikes);
+		}
+		
+		private void calculateSpikeClusters() {
 			for (int i = 0; i < count; i++) {
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
@@ -94,9 +105,21 @@ namespace ReikaKalseki.SeaToSea
 						vec.y = (float)depthCallback(vec);
 					//SBUtil.log("Re-y spike @ "+vec);
 					SpikeCluster s = new SpikeCluster(vec, generateAux);
+					s.spawner = spawner;
 					spikes.Add(s);
-					s.generate(generated);
 				}
+			}
+		}
+		
+		public override void generate(List<GameObject> generated) {
+			UnityEngine.Random.InitState(SBUtil.getWorldSeedInt());
+			if (shouldRerollCounts)
+				rerollCounts();
+			if (spikes.Count == 0) {
+				calculateSpikeClusters();
+			}
+			foreach (SpikeCluster s in spikes) {
+				s.generate(generated);
 			}
 			for (int i = 0; i < fishCount; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position+offset, Vector3.Scale(spacing[spacing.Length-1], new Vector3(scaleXZ, scaleY, scaleXZ)));
@@ -104,12 +127,12 @@ namespace ReikaKalseki.SeaToSea
 					i--;
 					continue;
 				}
-				GameObject fish = SBUtil.createWorldObject(fishTypes.getRandomEntry().prefab);
+				GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
 				//SBUtil.log("Spawning fish "+fish+" @ "+vec);
 				fish.transform.position = vec;
 			}
 			if (generateLeviathan) {
-				GameObject levi = SBUtil.createWorldObject(VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab);
+				GameObject levi = spawner(VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab);
 				levi.transform.position = position+offset;
 			}
 		}
@@ -153,11 +176,13 @@ namespace ReikaKalseki.SeaToSea
 			return false;
 		}
 		
-		private class SpikeCluster : WorldGenerator {
+		public class SpikeCluster : WorldGenerator {
 		
 			internal int terraceSpikeCount;
 			internal int auxSpikeCount;
 			private bool generateAux;
+			
+			public int fishCount = 0;
 			
 			private VoidSpike centralSpike;
 			private readonly List<VoidSpike> firstRow = new List<VoidSpike>();
@@ -184,6 +209,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			public override void generate(List<GameObject> li) {
 				centralSpike = new VoidSpike(position);
+				centralSpike.spawner = spawner;
 				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
 				centralSpike.oreRichness = 0.2;
 				centralSpike.plantRate = 2.5;
@@ -206,6 +232,7 @@ namespace ReikaKalseki.SeaToSea
 					float sin = (float)Math.Sin(angle);
 					Vector3 pos = new Vector3(position.x+radius*cos, position.y-down, position.z+radius*sin);
 					VoidSpike s = new VoidSpike(pos);
+					s.spawner = spawner;
 					s.hasFloater = false;
 					s.hasFlora = true;
 					s.plantRate = 2;
@@ -229,6 +256,18 @@ namespace ReikaKalseki.SeaToSea
 				}
 				
 				generateDeco(li);
+				
+
+				for (int i = 0; i < fishCount; i++) {
+					Vector3 vec = MathUtil.getRandomVectorAround(position, 60);
+					if (posIntersectsAnySpikes(vec, "fish", null)) {
+						i--;
+						continue;
+					}
+					GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
+					//SBUtil.log("Spawning fish "+fish+" @ "+vec);
+					fish.transform.position = vec;
+				}
 			}
 			
 			private void generateDeco(List<GameObject> li) {
@@ -277,6 +316,7 @@ namespace ReikaKalseki.SeaToSea
 					Vector3 pos = MathUtil.getRandomVectorAround(s0.position-Vector3.up*(down+1), new Vector3(4, down, 4));
 					pos.y = Math.Min(pos.y, s0.position.y-1);
 					VoidSpike s = new VoidSpike(pos);
+					s.spawner = spawner;
 					s.setScale(Math.Min(s.getScale(), 0.875F));
 					s.hasFlora = true;
 					s.hasFloater = false;

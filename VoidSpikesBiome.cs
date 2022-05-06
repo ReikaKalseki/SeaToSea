@@ -13,10 +13,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class VoidSpikesBiome {
 		
-		private static readonly float EDGE_OFFSET = 150;
-		
 		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
-		public static readonly Vector3 end900m = new Vector3(400, -950, -2275-125);//new Vector3(457, -900, -2261);
+		public static readonly Vector3 end900m = new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
 		public static readonly double length = Vector3.Distance(end500m, end900m);
 		
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
@@ -27,37 +25,48 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
 		
-		private readonly object signal;
+		private readonly SignalManager.ModSignal signal;
 		
 		private VoidSpikesBiome() {
-			Vector3 off = new Vector3(0, 0, EDGE_OFFSET);
-			generator = new VoidSpikes((end500m+end900m)/2+off);
-	      	generator.count = 72;
+			generator = new VoidSpikes((end500m+end900m)/2);
+	      	generator.count = 80;
 	      	//generator.scaleXZ = 16;
 	      	//generator.scaleY = 6;
 	      	generator.generateLeviathan = false;
 	      	generator.generateAux = true;
-	      	generator.fishCount = 1200;
+	      	generator.fishCount = generator.count*30;
 	      	generator.positionValidity = isValidSpikeLocation;
 	      	//generator.depthCallback = getSpikeDepth;
 	      	generator.spikeLocationProvider = getSpikeLocation;
 	      	generator.shouldRerollCounts = false;
-	      	
-	      	generator.offset = -off;
 	      		
 			debris = new VoidDebris(signalLocation+Vector3.down*0.2F);
 			
-			//signal = PingHandler.RegisterNewPingType("voidpod", SpriteManager.Get(TechType.Signal));
-			//LargeWorld.main.signalDatabase.Add();
+			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
+			signal.register(TextureManager.getSprite("Textures/Signal"));
 		}
 		
 		public void register() {
-			GenUtil.registerWorldgen(generator);
+			//GenUtil.registerWorldgen(generator);
+			int seed = SBUtil.getInstallSeed();
+			IEnumerable<WorldGenerator> gens = generator.split(seed);
+			foreach (WorldGenerator gen in gens) {
+				GenUtil.registerWorldgen(gen);
+			}
+			
 			GenUtil.registerWorldgen(debris);
 		}
 		
+		public void onWorldStart() {
+			signal.build("a227d6b6-d64c-4bf0-b919-2db02d67d037", signalLocation);
+		}
+		
+		public void activateSignal() {
+			signal.activate();
+		}
+		
 		private bool isValidSpikeLocation(Vector3 vec) {
-			return isInBiome(vec);
+			return isInBiome(vec) && GenUtil.allowableGenBounds.Contains(vec+new Vector3(0, 0, -40)); //safety buffer
 		}
 		
 		public bool isInBiome(Vector3 vec) {
@@ -105,6 +114,15 @@ namespace ReikaKalseki.SeaToSea {
 				b.speed *= 0.5F;
 			}
 				
+		}
+		
+		public static GameObject spawnEntity(string pfb) {
+			GameObject go = SBUtil.createWorldObject(pfb);
+			if (go == null)
+				return go;
+			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
+			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
+			return go;
 		}
 	}
 }

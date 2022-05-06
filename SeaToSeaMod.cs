@@ -98,6 +98,7 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
     }
     
     private static void addItemsAndRecipes() {
@@ -166,6 +167,37 @@ namespace ReikaKalseki.SeaToSea
     		SBUtil.log("Injected signal "+id+" @ "+pos+": "+info);
     		db.entries.Add(info);
     	}*/
+    }
+    
+    private static bool worldLoaded = false;
+    
+    public static void onWorldLoaded() {
+    	worldLoaded = true;
+    	SBUtil.log("Intercepted world load");
+    	VoidSpikesBiome.instance.onWorldStart();
+    }
+    
+    public static void onEntityRegister(CellManager cm, LargeWorldEntity lw) {
+    	if (!worldLoaded) {
+    		onWorldLoaded();
+    	}
+    	if (lw.cellLevel != LargeWorldEntity.CellLevel.Global) {
+    		BatchCells batchCells;
+			Int3 block = cm.streamer.GetBlock(lw.transform.position);
+			Int3 key = block / cm.streamer.blocksPerBatch;
+			if (cm.batch2cells.TryGetValue(key, out batchCells)) {
+	    		try {
+					Int3 u = block % cm.streamer.blocksPerBatch;
+					Int3 cellSize = BatchCells.GetCellSize((int)lw.cellLevel, cm.streamer.blocksPerBatch);
+					Int3 cellId = u / cellSize;
+					batchCells.Get(cellId, (int)lw.cellLevel);
+	    		}
+	    		catch {
+	    			SBUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
+	    			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
+	    		}
+			}
+    	}
     }
     
     public static bool checkTargetingSkip(bool orig, Transform obj) {

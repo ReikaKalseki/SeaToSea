@@ -1,16 +1,13 @@
 <Root>
-  <signal>
-	<id>
-		voidpod
-	</id>
+  <voidpod>
 	<name>
-		Potential surviving lifepod
+		Signal
 	</name>
 	<desc>
-		This is desc
+		Potential Surviving Lifepod
 	</desc>
 	<pda>
-		While the seafloor in this zone is far below what can be detected from the surface, readings indicate a significantly shallower region approximately 1200 meters to the southwest. Depth estimated around 500 meters. This area may harbor aggressive native lifeforms. Caution is advised.
+		This is what it says to prompt you to go there
 	</pda>
-  </signal>
+  </voidpod>
 </Root>

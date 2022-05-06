@@ -68,7 +68,7 @@ namespace ReikaKalseki.SeaToSea
 								else {
 									GenUtil.registerWorldgen(pfb, pfb.getManipulationsCallable());
 								}
-								SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.format());
+								//SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.format());
 							}
 							else if (ot is WorldGenerator) {
 								WorldGenerator gen = (WorldGenerator)ot;

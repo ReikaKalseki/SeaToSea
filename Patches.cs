@@ -1,12 +1,4 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Reika
- * Date: 04/11/2019
- * Time: 11:28 AM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using System.IO;    //For data read/write methods
 using System.Collections;   //Working with Lists and Collections
 using System.Collections.Generic;   //Working with Lists and Collections
@@ -155,7 +147,7 @@ namespace ReikaKalseki.SeaToSea {
 				codes.Add(new CodeInstruction(OpCodes.Ldarg_1));
 				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "isSpawnableVoid", false, typeof(string)));
 				codes.Add(new CodeInstruction(OpCodes.Ret));
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -193,7 +185,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}*/
 				
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -367,5 +359,89 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	/*
+	//[HarmonyPatch(typeof(LargeWorld))]
+	[HarmonyPatch]
+	public static class WorldLoadHook {
+		
+	    public static MethodBase TargetMethod() {
+			//MethodInfo target = typeof(LargeWorld).GetMethod("MountWorldAsync", new Type[]{typeof(string), typeof(string), typeof(LargeWorldStreamer), typeof(WorldStreaming.WorldStreamer), typeof(Voxeland), typeof(IOut<UWE.Result>)});
+	        //return AccessTools.EnumeratorMoveNext((MethodBase)target);
+	        return AccessTools.Method(typeof(LargeWorld).GetNestedType("<MountWorldAsync>d__81", BindingFlags.NonPublic | BindingFlags.Instance), "MoveNext");
+	    }
+		
+	    public static Type TargetType() {
+			 return typeof(LargeWorld);
+	    }
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				//FileLog.Log("WORLDLOAD Codes are "+InstructionHandlers.toString(codes));
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "LargeWorld: Loading world. Frame {0}.");
+				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onWorldLoaded", false, new Type[0]));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				FileLog.Log("WORLDNLOAD Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}*/
+	/*
+	//[HarmonyPatch(typeof(LargeWorld))]
+	[HarmonyPatch]
+	public static class WorldLoadHook2 {
+		
+	    public static MethodBase TargetMethod() {
+			//MethodInfo target = typeof(LargeWorld).GetMethod("MountWorldAsync", new Type[]{typeof(string), typeof(string), typeof(LargeWorldStreamer), typeof(WorldStreaming.WorldStreamer), typeof(Voxeland), typeof(IOut<UWE.Result>)});
+	        //return AccessTools.EnumeratorMoveNext((MethodBase)target);
+	        return AccessTools.Method(typeof(Player).GetNestedType("<Start>d__184", BindingFlags.NonPublic | BindingFlags.Instance), "MoveNext");
+	    }
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				//FileLog.Log("WORLDLOAD Codes are "+InstructionHandlers.toString(codes));
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "TrackTravelStats");
+				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onWorldLoaded", false, new Type[0]));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("WORLD2NLOAD Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	*/
 	
+	[HarmonyPatch(typeof(CellManager))]
+	[HarmonyPatch("RegisterEntity", typeof(LargeWorldEntity))]
+	public static class EntityRegisterBypass {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onEntityRegister", false, typeof(CellManager), typeof(LargeWorldEntity)));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 }

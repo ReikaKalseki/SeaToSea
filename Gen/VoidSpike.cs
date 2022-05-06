@@ -167,21 +167,36 @@ namespace ReikaKalseki.SeaToSea
 			
 		internal void generateSpike() {
 			type = spikes[UnityEngine.Random.Range(0, spikes.Length)];
-			spike = SBUtil.createWorldObject(type.prefab);
+			spike = spawner(type.prefab);
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
 			if (hasFloater) {
-				floater = SBUtil.createWorldObject(FLOATER);
-				floater.transform.position = position+Vector3.up*0.7F*scale;
+				floater = spawner(FLOATER);
+				floater.transform.position = position+Vector3.up*0.55F*scale;
 				floater.transform.localScale = scaleVec*FLOATER_BASE_SCALE;
 				floater.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0F, 360F), 0);
-				floaterLight = SBUtil.createWorldObject(FLOATER_LIGHT);
+				floaterLight = spawner(FLOATER_LIGHT);
 				floaterLight.transform.position = floater.transform.position+Vector3.up*1*scale;
 			}			
 			if (hasPod) {
 				pod = spawnAnchorPod(scale >= 1.75, scale >= 1 && scale <= 1.75, scale <= 1);
 			}
+			//DestroyDetector dd = spike.EnsureComponent<DestroyDetector>();
+			//dd.enabled = true;
+			//dd.pos = spike.transform.position;
+		}
+		
+		class DestroyDetector : MonoBehaviour {
+			
+			internal Vector3 pos;
+			
+			void OnDestroy() {
+				SBUtil.log("Destroying spike @ "+pos);
+				SBUtil.log("Trace "+System.Environment.StackTrace);
+				//throw new Exception("Spike Destroy "+pos);
+			}
+			
 		}
 			
 		internal void generateFlora() {
@@ -194,6 +209,7 @@ namespace ReikaKalseki.SeaToSea
 				vc.fuzz.y *= 0.25F;
 				vc.validPlantPosCheck = validPlantPosCheck;
 				vc.allowKelp = !hasPod && !hasFloater && !isAux;
+				vc.spawner = spawner;
 				//vc.plantCallBackrotation = membrain;
 				vc.generate(plants);
 			}
@@ -216,7 +232,7 @@ namespace ReikaKalseki.SeaToSea
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
-						GameObject go = SBUtil.createWorldObject(ore.prefab);
+						GameObject go = spawner(ore.prefab);
 						bool large = ore.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab == VanillaResources.LARGE_DIAMOND.prefab;
 						pos += Vector3.up*(float)(ore.objOffset);
 						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
@@ -243,7 +259,7 @@ namespace ReikaKalseki.SeaToSea
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];
-			GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
+			GameObject go = spawner(p.getRandomPrefab(true));
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*-0.4F*scale, 0.2F);
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p, go);
