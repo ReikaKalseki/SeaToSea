@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 						
 			alwaysPieces.Add(new Prop("c0175cf7-0b6a-4a1d-938f-dad0dbb6fa06", -90, 90)); //medkit fab
 			alwaysPieces.Add(new Prop("4f045c69-1539-4c53-b157-767df47c1aa6", -90, 90)); //radio lookalike
-			alwaysPieces.Add(new Prop("cdade216-3d4d-4adf-901c-3a91fb3b88c4", -90, 90)); //centrifuge
+			//alwaysPieces.Add(new Prop("cdade216-3d4d-4adf-901c-3a91fb3b88c4", -90, 90)); //centrifuge
 			alwaysPieces.Add(new Prop("9f16d82b-11f4-4eeb-aedf-f2fa2bfca8e3", -90, 90)); //fab
 			
 			papers.Add(new Prop("32e48451-8e81-428e-9011-baca82e9cd32", null));	
@@ -68,6 +68,13 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
+		}
+		
+		public GameObject spawnPDA() {
+			GameObject pda = SBUtil.createWorldObject("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
+			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), VoidSpikesBiome.instance.getPDA());
+			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
+			return pda;
 		}
 		
 		private GameObject generateObjectInRange(float dx, float dy, float dz, double offsetY = 0, Prop type = null) {

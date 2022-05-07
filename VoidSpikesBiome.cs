@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly VoidDebris debris;
 		
 		private SignalManager.ModSignal signal;
+		private PDAManager.PDAPage debrisPDA;
 		
 		private VoidSpikesBiome() {
 			generator = new VoidSpikes((end500m+end900m)/2);
@@ -54,11 +55,22 @@ namespace ReikaKalseki.SeaToSea {
 			GenUtil.registerWorldgen(debris);
 			
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
-			signal.register(TextureManager.getSprite("Textures/Signal"), "AuroraSurvivors");
+			signal.pdaEntry.addSubcategory("AuroraSurvivors");
+			signal.register(TextureManager.getSprite("Textures/Signal"));
+			
+			XMLLocale.LocaleEntry e = SeaToSeaMod.pdas.getEntry("voidpod");
+			debrisPDA = PDAManager.createPage(e);
+			debrisPDA.addSubcategory("AuroraSurvivors");
+			debrisPDA.setVoiceover(SBUtil.getSound(e.getField<string>("audio")));
+			debrisPDA.register();
+		}
+		
+		public PDAManager.PDAPage getPDA() {
+			return debrisPDA;
 		}
 		
 		public void onWorldStart() {
-			signal.build("a227d6b6-d64c-4bf0-b919-2db02d67d037", signalLocation);
+			signal.build(debris.spawnPDA(), signalLocation+Vector3.down*0.3F);
 		}
 		
 		public void activateSignal() {

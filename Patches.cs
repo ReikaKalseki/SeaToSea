@@ -90,7 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}*/
-	
+	/*
 	[HarmonyPatch(typeof(PDAScanner))]
 	[HarmonyPatch("Scan")]
 	public static class FragmentScanCompleteHook {
@@ -112,7 +112,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
+	*/
 	[HarmonyPatch(typeof(PDAScanner.ScanTarget))]
 	[HarmonyPatch("Initialize")]
 	public static class FragmentScanHook {
@@ -135,7 +135,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	*/
+	
 	[HarmonyPatch(typeof(VoidGhostLeviathansSpawner))]
 	[HarmonyPatch("IsVoidBiome")]
 	public static class VoidLeviathanHook {

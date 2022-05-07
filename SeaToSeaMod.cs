@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     public static readonly XMLLocale locale = new XMLLocale("XML/items.xml");
+    public static readonly XMLLocale pdas = new XMLLocale("XML/pda.xml");
     public static readonly XMLLocale signals = new XMLLocale("XML/signals.xml");
     
     private static SeamothVoidStealthModule voidStealth;
@@ -48,6 +49,7 @@ namespace ReikaKalseki.SeaToSea
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
         
         locale.load();
+        pdas.load();
         signals.load();
         
         addItemsAndRecipes();

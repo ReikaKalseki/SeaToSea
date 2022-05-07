@@ -1,15 +1,18 @@
 <Root>
-  <signal>
-	<id>
-		crashvoidpod
-	</id>
-	<text>
+  <voidpod>
+	<name>
+		Unknown Lifepod Crew Log
+	</name>
+	<pda>
 		-pod detached too early, came down in the void-
 		-giant creature rammed the pod-
 		-there's something down to the southwest, not part of the main landmass, "just out of range" and "my thing is good to 500m"; "can't imagine what's down there"-
-	</text>
+	</pda>
+	<category>
+		DownloadedData
+	</category>
 	<audio>
-		C:\null.wav
+		event:/player/story/VO/Ency_JellyPDARoom1Desk
 	</audio>
-  </signal>
+  </voidpod>
 </Root>
