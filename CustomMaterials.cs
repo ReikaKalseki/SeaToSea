@@ -27,8 +27,19 @@ namespace ReikaKalseki.SeaToSea
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
 				BasicCustomOre item = (BasicCustomOre)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, template});
 				item.glowIntensity = attr.glow;
-				if (m == Materials.PRESSURE_CRYSTALS)
-					item.glowType = "EmissionLM";
+				if (m == Materials.PRESSURE_CRYSTALS) {
+					//item.glowType = "EmissionLM";
+					item.renderModify = r => {
+						SBUtil.makeTransparent(r);
+						r.sharedMaterial.SetFloat("_Fresnel", 0.65F);
+						r.sharedMaterial.SetFloat("_Shininess", 15F);
+						r.sharedMaterial.SetFloat("_SpecInt", 18F);
+						r.materials[0].SetFloat("_Fresnel", 0.6F);
+						r.materials[0].SetFloat("_Shininess", 15F);
+						r.materials[0].SetFloat("_SpecInt", 18F);
+						r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+					};
+				}
 				mappings[m] = item;
 				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
 				item.Patch();	
@@ -48,7 +59,7 @@ namespace ReikaKalseki.SeaToSea
 		public enum Materials {
 			[Material(typeof(BasicCustomOre), "URANIUM", 4F)]		MOUNTAIN_CRYSTAL,
 			[Material(typeof(BasicCustomOre), "GOLD")]				PLATINUM,
-			[Material(typeof(BasicCustomOre), "TITANIUM", 1.3F)]		PRESSURE_CRYSTALS,
+			[Material(typeof(BasicCustomOre), "TITANIUM", 1.2F)]	PRESSURE_CRYSTALS,
 			[Material(typeof(BasicCustomOre), "KYANITE", 0.75F)]	PHASE_CRYSTAL,	
 			[Material(typeof(BasicCustomOre), "SILVER")]			IRIDIUM,
 		}
