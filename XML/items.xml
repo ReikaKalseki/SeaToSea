@@ -78,6 +78,17 @@
 			
 		</pda>
 	</PHASE_CRYSTAL>
+	<IRIDIUM>
+		<name>
+			Iridium
+		</name>
+		<desc>
+			An exotic 
+		</desc>
+		<pda>
+			
+		</pda>
+	</IRIDIUM>
 	<enum>
 		<name>
 			

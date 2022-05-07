@@ -7,7 +7,10 @@
 		Potential Surviving Lifepod
 	</desc>
 	<pda>
-		This is what it says to prompt you to go there
+		The PDA content
 	</pda>
+	<prompt>
+		This is what it says to prompt you to go there
+	</prompt>
   </voidpod>
 </Root>

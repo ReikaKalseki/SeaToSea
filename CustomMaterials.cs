@@ -27,6 +27,8 @@ namespace ReikaKalseki.SeaToSea
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
 				BasicCustomOre item = (BasicCustomOre)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, template});
 				item.glowIntensity = attr.glow;
+				if (m == Materials.PRESSURE_CRYSTALS)
+					item.glowType = "EmissionLM";
 				mappings[m] = item;
 				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
 				item.Patch();	
@@ -44,10 +46,11 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public enum Materials {
-			[Material(typeof(BasicCustomOre), "URANIUM", 2F)]		MOUNTAIN_CRYSTAL,
+			[Material(typeof(BasicCustomOre), "URANIUM", 4F)]		MOUNTAIN_CRYSTAL,
 			[Material(typeof(BasicCustomOre), "GOLD")]				PLATINUM,
-			[Material(typeof(BasicCustomOre), "TITANIUM", 1.5F)]	PRESSURE_CRYSTALS,
-			[Material(typeof(BasicCustomOre), "KYANITE", 0.75F)]	PHASE_CRYSTAL,		
+			[Material(typeof(BasicCustomOre), "TITANIUM", 2F)]		PRESSURE_CRYSTALS,
+			[Material(typeof(BasicCustomOre), "KYANITE", 0.75F)]	PHASE_CRYSTAL,	
+			[Material(typeof(BasicCustomOre), "SILVER")]			IRIDIUM,		
 		}
 		
 		public class Material : Attribute {

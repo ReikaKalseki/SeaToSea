@@ -98,7 +98,10 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("sound", SBUtil.playSound);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
     }
     
     private static void addItemsAndRecipes() {
@@ -174,6 +177,7 @@ namespace ReikaKalseki.SeaToSea
     public static void onWorldLoaded() {
     	worldLoaded = true;
     	SBUtil.log("Intercepted world load");
+        
     	VoidSpikesBiome.instance.onWorldStart();
     }
     
