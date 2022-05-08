@@ -36,6 +36,7 @@ namespace ReikaKalseki.SeaToSea
 			alwaysPieces.Add(new Prop("4f045c69-1539-4c53-b157-767df47c1aa6", -90, 90)); //radio lookalike
 			//alwaysPieces.Add(new Prop("cdade216-3d4d-4adf-901c-3a91fb3b88c4", -90, 90)); //centrifuge
 			alwaysPieces.Add(new Prop("9f16d82b-11f4-4eeb-aedf-f2fa2bfca8e3", -90, 90)); //fab
+			alwaysPieces.Add(new Prop("f901b968-5b3c-4795-8ded-82db2fa23440", null)); //"power cyl"
 			
 			papers.Add(new Prop("32e48451-8e81-428e-9011-baca82e9cd32", null));	
 			papers.Add(new Prop("b4ec5044-5519-4743-b61b-92a8b6fe4a32", null));			
@@ -71,7 +72,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public GameObject spawnPDA() {
-			GameObject pda = SBUtil.createWorldObject("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
+			GameObject pda = spawner("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
 			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), VoidSpikesBiome.instance.getPDA());
 			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
 			return pda;
@@ -87,7 +88,7 @@ namespace ReikaKalseki.SeaToSea
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
 				tilt = UnityEngine.Random.Range(tilt-15F, tilt+15F);
 			}
-			GameObject go = SBUtil.createWorldObject(p.prefab);
+			GameObject go = spawner(p.prefab);
 			if (go == null)
 				return go;
 			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz));

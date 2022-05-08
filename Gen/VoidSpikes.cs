@@ -12,7 +12,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //TODO 2. ADD WRECK WITH MODIFICATION STATION FRAGMENTS 3. prevent re-runs
+	public sealed class VoidSpikes : WorldGenerator { //TODO 3. prevent re-runs 2. OFFSET COLLISION OF SPIKE DOWN ~0.8m
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -187,11 +187,17 @@ namespace ReikaKalseki.SeaToSea
 			private VoidSpike centralSpike;
 			private readonly List<VoidSpike> firstRow = new List<VoidSpike>();
 			private readonly List<VoidSpike> auxSpikes = new List<VoidSpike>();
+			
+			private float centralScale;
+			
+			public Action<List<GameObject>> additionalGen = null;
 						
 			internal SpikeCluster(Vector3 vec, bool aux) : base(vec) {
 				terraceSpikeCount = UnityEngine.Random.Range(4, 8);
 				auxSpikeCount = UnityEngine.Random.Range(3, 9);
 				generateAux = aux;
+				
+				centralScale = UnityEngine.Random.Range(1.8F, 2.5F);
 			}
 			
 			public override void loadFromXML(XmlElement e) {
@@ -207,13 +213,17 @@ namespace ReikaKalseki.SeaToSea
 				e.addProperty("auxSpikeCount", auxSpikeCount);
 			}
 			
+			public Vector3 getRootLocation() {
+				return position+Vector3.up*0.5F*centralScale;
+			}
+			
 			public override void generate(List<GameObject> li) {
 				centralSpike = new VoidSpike(position);
 				centralSpike.spawner = spawner;
-				centralSpike.setScale(Math.Max(centralSpike.getScale(), 1.8F));
+				centralSpike.setScale(centralScale);
 				centralSpike.oreRichness = 0.2;
 				centralSpike.plantRate = 2.5;
-				if (UnityEngine.Random.Range(0, 4) > 0) {
+				if (additionalGen == null && UnityEngine.Random.Range(0, 4) > 0) {
 					centralSpike.hasFlora = false;
 					centralSpike.hasPod = false;
 					centralSpike.hasFloater = true;
@@ -256,7 +266,9 @@ namespace ReikaKalseki.SeaToSea
 				}
 				
 				generateDeco(li);
-				
+				if (additionalGen != null) {
+					additionalGen(li);
+				}
 
 				for (int i = 0; i < fishCount; i++) {
 					Vector3 vec = MathUtil.getRandomVectorAround(position, 60);

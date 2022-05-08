@@ -4,15 +4,120 @@
 		Unknown Lifepod Crew Log
 	</name>
 	<pda>
-		-pod detached too early, came down in the void-
-		-giant creature rammed the pod-
-		-there's something down to the southwest, not part of the main landmass, "just out of range" and "my thing is good to 500m"; "can't imagine what's down there"-
+		I can't tell whether I'm cursed or the luckiest guy alive. On one hand, my pod got me away from the Aurora long before any of the others did. On the other, all that accomplished was landing me all the way out here in the middle of open water. Nothing. As far as the scanner can see, aside from the area the wreck is sitting, this whole region is water that might as well be infinitely deep.
+		
+		Well, it briefly picked up some kind of isolated chunk of land off to the southwest, but its like a kilometer out, and the signal's crap. Given that the sonar says it's rated to a depth of 500 meters, it's gotta be pretty far down. I'll admit I'm kind of curious about what it is, but I'd be an idiot to leave the safety of this lifepod for some-
+		
+		[ghost leviathan screech]
+		
+		What the HELL is-
+		
+		[WHAM]
+		
+		No, it can't be. Not out here! Yeah, I heard those radio calls about sea monsters soon after the ship came down. But I've got nothing like that out here. There isn't even fish for ME to eat, let alone something that would want to eat me. No, that was probably just some debris falling out of orbit or some-
+		
+		[WHAM]
+		
+		[water noises]
+		
+		Great, now I've got to go out and patch the leak. At least I had the foresight to nick the repair tool from the cargo bay on the way to the lifepod, so that's gonna be easy. For once.
+		
+		[lifepod opening noise, another ghost leviathan screech]
 	</pda>
 	<category>
 		DownloadedData
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_JellyPDARoom1Desk
+		event:/player/story/VO/Ency_LifepodCrashZone1
 	</audio>
   </voidpod>
+  <voidspike>
+	<name>
+		Unknown Lifepod Crew Log #2
+	</name>
+	<pda>
+		Well that settles it. I'm screwed.
+		
+		No sooner than I work out that I'm isolated but safe, some monster the size of a train comes out of nowhere and smashes my pod to pieces. I guess I should consider myself lucky that there was enough wreckage for me to pull myself out of the water, and avoid that...thing, so that it just got bored and left. That and the fact that I managed to collect most of my equipment from what was left of the storage locker.
+		
+		There might be enough residual charge left in the fabricator for me to be able to recycle some of the scrap; maybe I can make a seaglide and a couple of air tanks.
+		
+		After that? I have the option of swimming to the Aurora...and all the monsters that picked off the other crew. Or I could go towards that mystery area that might not even exist. And if there's nothing good down there, I won't even make it back to the surface. Or I could stay floating here for eternity as I watch an endless stream of ships get blown out of the sky trying to rescue the one that came before them.
+		
+		I've got lots of options, it's just that all of them suck!
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </voidspike>
+  <treaderpod>
+	<name>
+		Lifepod 15 Crew Log
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </treaderpod>
+  <treadercave>
+	<name>
+		Lifepod 15 Crew Log
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </treadercave>
+  <crashmesa>
+	<name>
+		Lifepod 22 Crew Log
+	</name>
+	<pda>
+		Roooooaaaaarrr
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </crashmesa>
+  <mountaincavehint>
+	<name>
+		Mountain Cave Crew Log
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		DownloadedData/Codes
+	</category>
+  </mountaincavehint>
+  <mountaincave>
+	<name>
+		Mountain Cave Crew Log
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </mountaincave>
 </Root>

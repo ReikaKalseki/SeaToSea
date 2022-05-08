@@ -25,6 +25,10 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
 		
+		private VoidSpikeWreck wreck;
+		
+		private VoidSpikes.SpikeCluster entryPoint;
+		
 		private SignalManager.ModSignal signal;
 		private PDAManager.PDAPage debrisPDA;
 		
@@ -35,7 +39,7 @@ namespace ReikaKalseki.SeaToSea {
 	      	//generator.scaleY = 6;
 	      	generator.generateLeviathan = false;
 	      	generator.generateAux = true;
-	      	generator.fishCount = generator.count*30;
+	      	generator.fishCount = generator.count*20;
 	      	generator.positionValidity = isValidSpikeLocation;
 	      	//generator.depthCallback = getSpikeDepth;
 	      	generator.spikeLocationProvider = getSpikeLocation;
@@ -48,9 +52,15 @@ namespace ReikaKalseki.SeaToSea {
 			//GenUtil.registerWorldgen(generator);
 			int seed = SBUtil.getInstallSeed();
 			IEnumerable<WorldGenerator> gens = generator.split(seed);
-			foreach (WorldGenerator gen in gens) {
+			foreach (VoidSpikes.SpikeCluster gen in gens) {
 				GenUtil.registerWorldgen(gen);
+				if (entryPoint == null || Vector3.Distance(gen.position, end500m) < Vector3.Distance(entryPoint.position, end500m)) {
+					entryPoint = gen;
+				}
 			}
+	      		
+			wreck = new VoidSpikeWreck(entryPoint.getRootLocation()+Vector3.up*0.4F);
+			entryPoint.additionalGen = wreck.generate;
 			
 			GenUtil.registerWorldgen(debris);
 			
@@ -62,6 +72,7 @@ namespace ReikaKalseki.SeaToSea {
 			debrisPDA = PDAManager.createPage(e);
 			debrisPDA.addSubcategory("AuroraSurvivors");
 			debrisPDA.setVoiceover(SBUtil.getSound(e.getField<string>("audio")));
+			//debrisPDA.setHeaderImage(TextureManager.getTexture("Textures/Resources/Platinum_MainTex.png"));
 			debrisPDA.register();
 		}
 		

@@ -13,4 +13,18 @@
 		This is what it says to prompt you to go there
 	</prompt>
   </voidpod>
+  <voidspike>
+	<name>
+		Signal
+	</name>
+	<desc>
+		Dropped PDA
+	</desc>
+	<pda>
+		The PDA content
+	</pda>
+	<prompt>
+		This is what it says to prompt you to go there
+	</prompt>
+  </voidspike>
 </Root>
