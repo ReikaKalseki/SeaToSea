@@ -171,6 +171,7 @@ namespace ReikaKalseki.SeaToSea
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
+			SBUtil.offsetColliders(spike, Vector3.down*0.5F);
 			if (hasFloater) {
 				floater = spawner(FLOATER);
 				floater.transform.position = position+Vector3.up*0.55F*scale;

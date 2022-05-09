@@ -40,11 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			internal bool isSelected;
 			
 			static PlacedObject() {
-				registerType(TAGNAME, e => {
-					CustomPrefab pfb = new CustomPrefab(e.getProperty("prefab"));
-					pfb.loadFromXML(e);
-					return PlacedObject.fromXML(e, pfb);
-				});
+				registerType(TAGNAME, e => {return PlacedObject.fromXML(e, false);});
 			}
 		
 			public override string getTagName() {
@@ -233,39 +229,20 @@ namespace ReikaKalseki.SeaToSea
 					replaceObject(name);
 			}
 			
-			public static PlacedObject fromXML(XmlElement e, CustomPrefab pfb) {
-				PlacedObject b = createPrefab(pfb.prefabName);
+			public static PlacedObject fromXML(XmlElement e, bool readXML = false) {
+				CustomPrefab pfb = new CustomPrefab("");
+				pfb.loadFromXML(e);
+				SBUtil.log("Building placed object from custom prefab "+pfb+" > "+e.format());
+				PlacedObject b = createPrefab(pfb.prefabName);/*
 				if (b != null) {
-					b.setPosition(pfb.position);
-					b.rotation = pfb.rotation;
-					b.obj.transform.rotation = b.rotation;
-					b.fx.transform.rotation = b.rotation;
-					b.obj.transform.localScale = b.scale;
-					if (b.tech == TechType.None && pfb.tech != TechType.None)
-						b.tech = pfb.tech;
-					b.manipulations.AddRange(pfb.manipulations);
-					//SBUtil.writeToChat("S"+b.prefabName);
-					if (pfb.isDatabox) {
-						//SBUtil.writeToChat("Reprogramming databox");
-						BlueprintHandTarget bpt = b.obj.EnsureComponent<BlueprintHandTarget>();
-						bpt.unlockTechType = b.tech;
-					}
-					else if (pfb.isCrate) {
-						//SBUtil.writeToChat("Reprogramming crate");
-						SupplyCrate bpt = b.obj.EnsureComponent<SupplyCrate>();
-						SBUtil.setCrateItem(bpt, b.tech);
-					}
-					else if (pfb.isFragment) {
-						//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
-					}
-					foreach (ManipulationBase mb in b.manipulations) {
-						mb.applyToObject(b);
-					}
-					return b;
-				}
-				else {
-					return null;
-				}
+					b.isDatabox = pfb.isDatabox;
+					b.isFragment = pfb.isFragment;
+					b.isCrate = pfb.isCrate;
+					b.isPDA = pfb.isPDA;
+				}*/
+				if (readXML)
+					b.loadFromXML(e);
+				return b;
 			}
 		
 			internal static PlacedObject createPrefab(string id) {

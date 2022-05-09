@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
         DataboxTypingMap.instance.load();
         
         addCommands();
-        
+        addPDAEntries();
         addOreGen();
         /*
         GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
@@ -100,7 +100,7 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("sound", SBUtil.playSound);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SBUtil.playSound);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
@@ -142,6 +142,17 @@ namespace ReikaKalseki.SeaToSea
 	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
 	    		BuildingHandler.instance.manipulateSelected();
 	    	}
+    	}
+    }
+    
+    public static void addPDAEntries() {
+    	foreach (XMLLocale.LocaleEntry e in pdas.getEntries()) {
+			PDAManager.PDAPage page = PDAManager.createPage(e);
+			if (e.hasField("audio"))
+				page.setVoiceover(e.getField<string>("audio"));
+			if (e.hasField("header"))
+				page.setHeaderImage(TextureManager.getTexture(e.getField<string>("header")));
+			page.register();
     	}
     }
     

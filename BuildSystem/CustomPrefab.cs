@@ -35,6 +35,7 @@ namespace ReikaKalseki.SeaToSea
 			public bool isCrate {get; private set;}
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
+			public bool isPDA {get; private set;}
 			
 			internal CustomPrefab(string pfb) : base(pfb) {				
 				
@@ -94,6 +95,12 @@ namespace ReikaKalseki.SeaToSea
 					isDatabox = true;
 					string techn = e.getProperty("tech");
 					tech = SBUtil.getTechType(techn);
+				}
+				else if (prefabName == "pda") {
+					prefabName = "02dbd99a-a279-4678-9be7-a21202862cb7";
+					isPDA = true;
+					string pagen = e.getProperty("page");
+					manipulations.Add(new SetPDAPage(pagen));
 				}
 				//else if (prefabName == "fragment") {
 				//	prefabName = ?;

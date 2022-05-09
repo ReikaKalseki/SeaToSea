@@ -334,7 +334,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(Targeting))]
 	[HarmonyPatch("Skip")]
 	public static class VoidSpikeTargetingBypass {
@@ -358,7 +358,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}
+	}*/
 	/*
 	//[HarmonyPatch(typeof(LargeWorld))]
 	[HarmonyPatch]
