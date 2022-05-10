@@ -334,7 +334,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
+	
 	[HarmonyPatch(typeof(Targeting))]
 	[HarmonyPatch("Skip")]
 	public static class VoidSpikeTargetingBypass {
@@ -358,7 +358,28 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}*/
+	}
+	
+	[HarmonyPatch(typeof(GUIHand))]
+	[HarmonyPatch("UpdateActiveTarget")]
+	public static class VoidSpikeReach {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 2);
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "getReachDistance", false, new string[0]);
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	/*
 	//[HarmonyPatch(typeof(LargeWorld))]
 	[HarmonyPatch]

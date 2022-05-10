@@ -12,7 +12,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //TODO 3. prevent re-runs 2. OFFSET COLLISION OF SPIKE DOWN ~0.8m
+	public sealed class VoidSpikes : WorldGenerator { //TODO 3. prevent re-runs
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -180,7 +180,8 @@ namespace ReikaKalseki.SeaToSea
 		
 			internal int terraceSpikeCount;
 			internal int auxSpikeCount;
-			private bool generateAux;
+			internal bool generateAux;
+			internal bool needsCenterSpace;
 			
 			public int fishCount = 0;
 			
@@ -221,9 +222,10 @@ namespace ReikaKalseki.SeaToSea
 				centralSpike = new VoidSpike(position);
 				centralSpike.spawner = spawner;
 				centralSpike.setScale(centralScale);
-				centralSpike.oreRichness = 0.2;
-				centralSpike.plantRate = 2.5;
-				if (additionalGen == null && UnityEngine.Random.Range(0, 4) > 0) {
+				centralSpike.oreRichness = needsCenterSpace ? 0.1 : 0.2;
+				centralSpike.plantRate = needsCenterSpace ? 1.25 : 2.5;
+				centralSpike.needsCenterSpace = needsCenterSpace;
+				if (!needsCenterSpace && UnityEngine.Random.Range(0, 4) > 0) {
 					centralSpike.hasFlora = false;
 					centralSpike.hasPod = false;
 					centralSpike.hasFloater = true;

@@ -58,7 +58,8 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 	      		
-			wreck = new VoidSpikeWreck(entryPoint.getRootLocation()+Vector3.up*0.15F);
+			wreck = new VoidSpikeWreck(entryPoint.getRootLocation()+Vector3.up*0.1F);
+			entryPoint.needsCenterSpace = true;
 			entryPoint.additionalGen = wreck.generate;
 			
 			GenUtil.registerWorldgen(debris);

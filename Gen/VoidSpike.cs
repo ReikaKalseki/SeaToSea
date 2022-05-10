@@ -68,6 +68,7 @@ namespace ReikaKalseki.SeaToSea
 		public int podSizeDecr = 0;
 		public Vector3 podOffset = Vector3.zero;
 		public bool isAux = false;
+		public bool needsCenterSpace = false;
 		
 		public Func<Vector3, string, bool> validPlantPosCheck = null;
 		
@@ -194,16 +195,30 @@ namespace ReikaKalseki.SeaToSea
 			//bool trigger = false;
 			foreach (Collider c in spike.GetAllComponentsInChildren<Collider>()) {
 				//trigger |= c.isTrigger;
-				UnityEngine.Object.Destroy(c);
+				//SBUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
+				if (c is SphereCollider) {
+					//SBUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
+					((SphereCollider)c).radius = ((SphereCollider)c).radius*0.925F;
+					((SphereCollider)c).center = ((SphereCollider)c).center+Vector3.up*0.25F*scale;
+				}
+				//UnityEngine.Object.Destroy(c);
 			}/*
 			MeshCollider mc = spike.AddComponent<MeshCollider>();
 			mc.enabled = true;
 			mc.convex = true;
 			mc.isTrigger = false;//trigger;
-			*/
-			BoxCollider box = spike.AddComponent<BoxCollider>();
-			box.center = Vector3.zero+Vector3.up*(float)(scale*type.height/2D)*0.975F;
-			box.size = new Vector3((float)type.radius*1.2F, (float)type.height, (float)type.radius*1.2F)*scale;
+			mc.cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices;
+			mc.sharedMesh*/
+			
+			//SBUtil.visualizeColliders(spike);
+			
+			//Bounds render = spike.GetComponentInChildren<Renderer>().bounds;
+			//BoxCollider box = spike.AddComponent<BoxCollider>();
+			//box.center = Vector3.zero+Vector3.up*(float)(scale*type.height/2D)*0.965F;
+			//box.size = new Vector3((float)type.radius*1.2F, (float)type.height, (float)type.radius*1.2F)*scale;
+			
+			//box.center = -(render.center-spike.transform.position);
+			//box.size = render.extents;
 		}
 		
 		class DestroyDetector : MonoBehaviour {
@@ -226,12 +241,20 @@ namespace ReikaKalseki.SeaToSea
 				if (hasPod)
 					vc.fuzz *= 0.8F;
 				vc.fuzz.y *= 0.25F;
-				vc.validPlantPosCheck = validPlantPosCheck;
-				vc.allowKelp = !hasPod && !hasFloater && !isAux;
+				vc.validPlantPosCheck = isValidPlantPos;
+				vc.allowKelp = !hasPod && !hasFloater && !isAux && !needsCenterSpace;
 				vc.spawner = spawner;
 				//vc.plantCallBackrotation = membrain;
 				vc.generate(plants);
 			}
+		}
+		
+		internal bool isValidPlantPos(Vector3 vec, string why) {
+			if (needsCenterSpace && (Vector3.Distance(vec._X0Z(), position._X0Z()) <= 1.5 || why.ToLowerInvariant().Contains("membrain")))
+				return false;
+			if (validPlantPosCheck != null && !validPlantPosCheck(vec, why))
+				return false;
+			return true;
 		}
 			
 		internal void generateResources() {

@@ -217,13 +217,19 @@ namespace ReikaKalseki.SeaToSea
     	}
     }
     
+    public static float getReachDistance() {
+    	return Player.main.GetVehicle() == null && VoidSpikesBiome.instance.isInBiome(Player.main.gameObject.transform.position) ? 3.5F : 2;
+    }
+    
     public static bool checkTargetingSkip(bool orig, Transform obj) {
     	if (obj == null || obj.gameObject == null)
     		return orig;
     	PrefabIdentifier id = obj.gameObject.GetComponent<PrefabIdentifier>();
     	if (id == null)
     		return orig;
+    	//SBUtil.log("Checking targeting skip of "+id);
     	if (VoidSpike.isSpike(id.ClassId) && VoidSpikesBiome.instance.isInBiome(obj.position)) {
+    		//SBUtil.log("Is void spike");
     		return true;
     	}
     	else {
