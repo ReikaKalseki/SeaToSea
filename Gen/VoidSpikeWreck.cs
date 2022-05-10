@@ -15,23 +15,23 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class VoidSpikeWreck : WorldGenerator {
 		
 		private static readonly List<Prop> pieces = new List<Prop>();
-		private static readonly List<string> items = new List<string>();
+		private static readonly List<Prop> items = new List<Prop>();
 		
 		static VoidSpikeWreck() {
-			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", -90, 90)); //max tank
-			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f")); //broken seaglide
-			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b")); //broken terraformer
+			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", null)); //max tank
+			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f", null)); //broken seaglide
+			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", null)); //broken terraformer
 			//pieces.Add(new Prop()); //storage cube
-			pieces.Add(new Prop("12c95e66-fb54-47b3-87f1-8e318394b839"));	//flashlight
-			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298")); //broken stasis rifle
+			pieces.Add(new Prop("12c95e66-fb54-47b3-87f1-8e318394b839", null));	//flashlight
+			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", null)); //broken stasis rifle
 			//pieces.Add(new Prop("d4bfebc0-a5e6-47d3-b4a7-d5e47f614ed6"));	//battery
 			//pieces.Add(new Prop("fde8c0c0-7588-4d0b-b24f-4632315bd86c"));	//pathfinder
-			pieces.Add(new Prop("9ef36033-b60c-4f8b-8c3a-b15035de3116")); //repair tool
-			pieces.Add(new Prop("f4146f7a-d334-404a-abdc-dff98365eb10")); //broken transfuser
+			pieces.Add(new Prop("9ef36033-b60c-4f8b-8c3a-b15035de3116", null)); //repair tool
+			pieces.Add(new Prop("f4146f7a-d334-404a-abdc-dff98365eb10", null)); //broken transfuser
 			
-			items.Add("bc70e8c8-f750-4c8e-81c1-4884fe1af34e"); //first aid
-			items.Add("30373750-1292-4034-9797-387cf576d150"); //nutrient
-			items.Add("22b0ce08-61c9-4442-a83d-ba7fb99f26b0"); //water
+			items.Add(new Prop("bc70e8c8-f750-4c8e-81c1-4884fe1af34e", new float[]{0}, -0.05F)); //first aid
+			items.Add(new Prop("30373750-1292-4034-9797-387cf576d150", new float[]{0}, -0.05F)); //nutrient
+			items.Add(new Prop("22b0ce08-61c9-4442-a83d-ba7fb99f26b0", new float[]{0}, 0.05F)); //water
 		}
 		
 		public VoidSpikeWreck(Vector3 pos) : base(pos) {
@@ -51,15 +51,15 @@ namespace ReikaKalseki.SeaToSea
 			foreach (Prop s in pieces) {
 				li.Add(generateObjectInRange(4.5F, s));
 			}
-			foreach (string s in items) {
-				li.Add(generateObjectInRange(3, s, 0.1F));
-				li.Add(generateObjectInRange(3, s, 0.1F));
+			foreach (Prop s in items) {
+				li.Add(generateObjectInRange(3, s.prefab, s.yOffset, 0));
+				li.Add(generateObjectInRange(3, s.prefab, s.yOffset, 0));
 			}
 			
 			GameObject pda = spawner("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
 			pda.transform.position = position;
 			pda.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
-			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), VoidSpikesBiome.instance.getPDA());
+			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), PDAManager.getPage("voidspike"));
 			li.Add(pda);
 		}
 		
@@ -88,8 +88,11 @@ namespace ReikaKalseki.SeaToSea
 			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);
 			WorldForces wf = go.EnsureComponent<WorldForces>();
 			wf.enabled = true;
+			wf.handleDrag = true;
+			wf.useRigidbody = go.GetComponentInChildren<Rigidbody>();
 			wf.handleGravity = true;
 			wf.underwaterGravity = 1;
+			SBUtil.refillItem(go);
 			return go;
 		}
 		

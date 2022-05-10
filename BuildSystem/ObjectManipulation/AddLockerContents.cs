@@ -38,6 +38,8 @@ namespace ReikaKalseki.SeaToSea
 				int amt = UnityEngine.Random.Range(s.amountMin, 1+s.amountMax);
 				for (int i = 0; i < amt; i++) {
 					GameObject item = SBUtil.createWorldObject(s.prefab);
+					item.SetActive(false);
+					SBUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
 					//UnityEngine.Object.Destroy(item);
 				}

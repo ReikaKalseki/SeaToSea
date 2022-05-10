@@ -18,8 +18,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly float FLOATER_BASE_SCALE = 0.12F;
 		
 		private static readonly Spike[] spikes = new Spike[]{
-			new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880", 3.0),
-			new Spike("f0438971-2761-412c-bc42-df80577de473", 3.3),
+			new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880", 3.0, 16.2),
+			new Spike("f0438971-2761-412c-bc42-df80577de473", 3.3, 24.4),
 		};
 		
 		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
@@ -171,7 +171,7 @@ namespace ReikaKalseki.SeaToSea
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
-			SBUtil.offsetColliders(spike, Vector3.down*0.5F);
+			//SBUtil.offsetColliders(spike, Vector3.down*3.5F);
 			if (hasFloater) {
 				floater = spawner(FLOATER);
 				floater.transform.position = position+Vector3.up*0.55F*scale;
@@ -186,6 +186,24 @@ namespace ReikaKalseki.SeaToSea
 			//DestroyDetector dd = spike.EnsureComponent<DestroyDetector>();
 			//dd.enabled = true;
 			//dd.pos = spike.transform.position;
+			fixColliders();
+		}
+		
+		private void fixColliders() {
+			//SBUtil.log("Spike "+this+" has colliders: ");
+			//bool trigger = false;
+			foreach (Collider c in spike.GetAllComponentsInChildren<Collider>()) {
+				//trigger |= c.isTrigger;
+				UnityEngine.Object.Destroy(c);
+			}/*
+			MeshCollider mc = spike.AddComponent<MeshCollider>();
+			mc.enabled = true;
+			mc.convex = true;
+			mc.isTrigger = false;//trigger;
+			*/
+			BoxCollider box = spike.AddComponent<BoxCollider>();
+			box.center = Vector3.zero+Vector3.up*(float)(scale*type.height/2D)*0.975F;
+			box.size = new Vector3((float)type.radius*1.2F, (float)type.height, (float)type.radius*1.2F)*scale;
 		}
 		
 		class DestroyDetector : MonoBehaviour {
@@ -285,10 +303,12 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal readonly string prefab;
 			internal readonly double radius;
+			internal readonly double height;
 			
-			internal Spike(string s, double r) {
+			internal Spike(string s, double r, double h) {
 				prefab = s;
 				radius = r;
+				height = h;
 			}
 			
 		}

@@ -73,7 +73,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public GameObject spawnPDA() {
 			GameObject pda = spawner("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
-			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), VoidSpikesBiome.instance.getPDA());
+			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), PDAManager.getPage("voidpod"));
 			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
 			return pda;
 		}

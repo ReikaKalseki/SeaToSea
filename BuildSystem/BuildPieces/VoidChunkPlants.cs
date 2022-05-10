@@ -37,7 +37,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			plants.addEntry(VanillaFlora.GABE_FEATHER, 100);
 			plants.addEntry(VanillaFlora.GHOSTWEED, 85);
-			plants.addEntry(VanillaFlora.MEMBRAIN, 25);
+			plants.addEntry(VanillaFlora.MEMBRAIN, 20);
 			plants.addEntry(VanillaFlora.REGRESS, 10);
 			plants.addEntry(VanillaFlora.BRINE_LILY, 50);
 			plants.addEntry(VanillaFlora.BLOOD_KELP, 10);

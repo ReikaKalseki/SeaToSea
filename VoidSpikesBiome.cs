@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 	      		
-			wreck = new VoidSpikeWreck(entryPoint.getRootLocation()+Vector3.up*0.4F);
+			wreck = new VoidSpikeWreck(entryPoint.getRootLocation()+Vector3.up*0.15F);
 			entryPoint.additionalGen = wreck.generate;
 			
 			GenUtil.registerWorldgen(debris);
@@ -66,10 +66,6 @@ namespace ReikaKalseki.SeaToSea {
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
 			signal.pdaEntry.addSubcategory("AuroraSurvivors");
 			signal.register(TextureManager.getSprite("Textures/Signal"));
-		}
-		
-		public PDAManager.PDAPage getPDA() {
-			return PDAManager.getPage("voidpod");
 		}
 		
 		public void onWorldStart() {
