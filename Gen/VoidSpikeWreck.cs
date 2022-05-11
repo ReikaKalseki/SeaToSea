@@ -18,16 +18,16 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly List<Prop> items = new List<Prop>();
 		
 		static VoidSpikeWreck() {
-			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", null, 0.3F)); //max tank
-			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f", null, 0.3F)); //broken seaglide
-			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", null, 0.3F)); //broken terraformer
+			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.2F)); //max tank
+			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
+			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", new float[]{0, 180}, 0.3F)); //broken terraformer
 			//pieces.Add(new Prop()); //storage cube
 			//pieces.Add(new Prop("12c95e66-fb54-47b3-87f1-8e318394b839", null, 0.1F));	//flashlight
-			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", null, 0.3F)); //broken stasis rifle
+			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", new float[]{0, 180}, 0.15F)); //broken stasis rifle
 			//pieces.Add(new Prop("d4bfebc0-a5e6-47d3-b4a7-d5e47f614ed6"));	//battery
 			//pieces.Add(new Prop("fde8c0c0-7588-4d0b-b24f-4632315bd86c"));	//pathfinder
 			//pieces.Add(new Prop("9ef36033-b60c-4f8b-8c3a-b15035de3116", null, 0.4F)); //repair tool
-			pieces.Add(new Prop("f4146f7a-d334-404a-abdc-dff98365eb10", null, 0.3F)); //broken transfuser
+			pieces.Add(new Prop("f4146f7a-d334-404a-abdc-dff98365eb10", new float[]{-90, 90}, 0.2F)); //broken transfuser
 			
 			items.Add(new Prop("bc70e8c8-f750-4c8e-81c1-4884fe1af34e", new float[]{0}, 0.05F)); //first aid
 			items.Add(new Prop("30373750-1292-4034-9797-387cf576d150", new float[]{0}, 0.05F)); //nutrient
@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			GameObject bag = spawner("3616e7f3-5079-443d-85b4-9ad68fcbd924");
 			StorageContainer con = bag.GetComponentInChildren<StorageContainer>();
-			bag.transform.position = MathUtil.getRandomVectorAround(position, 1, 1.5F)+Vector3.up*0.5F;
+			bag.transform.position = MathUtil.getRandomVectorAround(position, 1, 1.5F)+Vector3.up*0.65F;
 			bag.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			foreach (Prop s in items) {
 				//SBUtil.writeToChat("Added "+s);
@@ -69,6 +69,13 @@ namespace ReikaKalseki.SeaToSea
 					//UnityEngine.Object.Destroy(item);
 				}
 			}
+			li.Add(bag);
+			
+			GameObject rock = spawner("91af2ecb-d63c-44f4-b6ad-395cf2c9ef04");
+			bag.transform.position = bag.transform.position+Vector3.down*0.5F;
+			bag.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
+			li.Add(rock);
+			
 			GameObject go = spawner("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
 			go.SetActive(false);
 			SBUtil.refillItem(go);
@@ -90,7 +97,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			else {
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
-				tilt = UnityEngine.Random.Range(tilt-15F, tilt+15F);
+				tilt = UnityEngine.Random.Range(tilt-5F, tilt+5F);
 			}
 			return generateObjectInRange(r, p.prefab, p.yOffset, tilt);
 		}

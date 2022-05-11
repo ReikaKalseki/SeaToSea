@@ -198,7 +198,7 @@ namespace ReikaKalseki.SeaToSea
 				//SBUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
 				if (c is SphereCollider) {
 					//SBUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
-					((SphereCollider)c).radius = ((SphereCollider)c).radius*0.925F;
+					((SphereCollider)c).radius = ((SphereCollider)c).radius*0.95F;
 					((SphereCollider)c).center = ((SphereCollider)c).center+Vector3.up*0.25F*scale;
 				}
 				//UnityEngine.Object.Destroy(c);
