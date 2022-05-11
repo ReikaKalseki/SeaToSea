@@ -30,15 +30,9 @@ namespace ReikaKalseki.SeaToSea
 			VanillaFlora.ANCHOR_POD_LARGE,
 		};
 		
-		private static readonly WeightedRandom<VanillaFlora> plantPrefabs = new WeightedRandom<VanillaFlora>();
 		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
 		static VoidSpike() {
-			plantPrefabs.addEntry(VanillaFlora.GABE_FEATHER, 100);
-			plantPrefabs.addEntry(VanillaFlora.GHOSTWEED, 85);
-			plantPrefabs.addEntry(VanillaFlora.MEMBRAIN, 25);
-			plantPrefabs.addEntry(VanillaFlora.REGRESS, 10);
-			plantPrefabs.addEntry(VanillaFlora.BRINE_LILY, 50);
 			
 			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825, 0.2), 100);
 			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);

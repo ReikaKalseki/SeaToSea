@@ -30,20 +30,28 @@ namespace ReikaKalseki.SeaToSea
 		
 		private List<GameObject> gennedMushrooms = new List<GameObject>();
 		
+		private static readonly Dictionary<VanillaFlora, float[]> depthRanges = new Dictionary<VanillaFlora, float[]>();
+		
 		public VoidChunkPlants(Vector3 vec) : base(vec) {
 			this.fuzz = new Vector3(1.2F, 0.05F, 1.2F);
 			this.count = UnityEngine.Random.Range(1, 4); //1-3
 			this.preferLit = true;
 			
-			plants.addEntry(VanillaFlora.GABE_FEATHER, 100);
-			plants.addEntry(VanillaFlora.GHOSTWEED, 85);
-			plants.addEntry(VanillaFlora.MEMBRAIN, 20);
-			plants.addEntry(VanillaFlora.REGRESS, 10);
-			plants.addEntry(VanillaFlora.BRINE_LILY, 50);
-			plants.addEntry(VanillaFlora.BLOOD_KELP, 10);
-			plants.addEntry(VanillaFlora.VIOLET_BEAU, 20);
+			addPlant(VanillaFlora.GABE_FEATHER, 100, 0, 5000);
+			addPlant(VanillaFlora.GHOSTWEED, 85, 650, 5000);
+			addPlant(VanillaFlora.MEMBRAIN, 20, 0, 800);
+			addPlant(VanillaFlora.REGRESS, 10, 0, 700);
+			addPlant(VanillaFlora.BRINE_LILY, 50, 0, 5000);
+			addPlant(VanillaFlora.AMOEBOID, 10, 750, 5000);
+			addPlant(VanillaFlora.BLOOD_KELP, 10, 0, 5000);
+			addPlant(VanillaFlora.VIOLET_BEAU, 20, 0, 600);
 			
 			mushrooms = UnityEngine.Random.Range(0, 7); //0-6
+		}
+		
+		private void addPlant(VanillaFlora vf, double wt, float minDepth, float maxDepth) {
+			plants.addEntry(vf, wt);
+			depthRanges[vf] = new float[]{minDepth, maxDepth};
 		}
 		
 		public override void generate(List<GameObject> li) {
@@ -53,9 +61,15 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected override VanillaFlora selectPlant(VanillaFlora choice) {
-			while (choice == VanillaFlora.BLOOD_KELP && !allowKelp)
+			while (!isPlantAllowed(choice))
 				choice = plants.getRandomEntry();
 			return choice;
+		}
+		
+		private bool isPlantAllowed(VanillaFlora vf) {
+			if (vf == VanillaFlora.BLOOD_KELP && !allowKelp)
+				return false;
+			return true;
 		}
 		
 		protected override GameObject generatePlant(Vector3 vec, string type) {
