@@ -225,7 +225,15 @@ namespace ReikaKalseki.SeaToSea
 				centralSpike.oreRichness = needsCenterSpace ? 0.1 : 0.2;
 				centralSpike.plantRate = needsCenterSpace ? 1.25 : 2.5;
 				centralSpike.needsCenterSpace = needsCenterSpace;
-				if (!needsCenterSpace && UnityEngine.Random.Range(0, 4) > 0) {
+				if (needsCenterSpace) {
+					centralSpike.hasFlora = false;
+					centralSpike.hasPod = true;
+					centralSpike.podSizeDecr = -2;
+					centralSpike.hasFloater = false;
+					centralScale = Math.Max(centralScale, 2);
+					centralSpike.setScale(centralScale);
+				}
+				else if (UnityEngine.Random.Range(0, 4) > 0) {
 					centralSpike.hasFlora = false;
 					centralSpike.hasPod = false;
 					centralSpike.hasFloater = true;

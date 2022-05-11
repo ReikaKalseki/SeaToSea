@@ -298,6 +298,11 @@ namespace ReikaKalseki.SeaToSea
 				}
 				allowLargeSize = false;
 			}
+			else if (podSizeDecr < 0) {
+				allowLargeSize = true;
+				allowMediumSize = podSizeDecr >= -1;
+				allowSmallSize = false;
+			}
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];

@@ -24,17 +24,25 @@ namespace ReikaKalseki.SeaToSea
 {		
 	internal class RemoveMachinesFromTreaderProp : ManipulationBase {
 		
+		private static List<string> objects = new List<string>();
+		
 		static RemoveMachinesFromTreaderProp() {
-			
+			objects.Add("BaseCell/Coral");
+			objects.Add("BaseCell/Decals");
+			objects.Add("Fabricator");
+			objects.Add("Workbench");
+			objects.Add("Bench");
 		}
 		
 		internal override void applyToObject(GameObject go) {
-			Transform t = go.transform.Find("BaseCell/Coral");
-		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
-		 	t = go.transform.Find("BaseCell/Decals");
-		 	if (t != null)
-		 		UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+			foreach (string s in objects) {
+				Transform t = go.transform.Find(s);
+			 	if (t != null)
+					UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+				t = go.transform.Find(s+"(Clone)");
+			 	if (t != null)
+					UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+			}
 		}
 		
 		internal override void applyToObject(PlacedObject go) {

@@ -18,12 +18,12 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly List<Prop> items = new List<Prop>();
 		
 		static VoidSpikeWreck() {
-			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.2F)); //max tank
+			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
 			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
-			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", new float[]{0, 180}, 0.3F)); //broken terraformer
+			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", new float[]{0, 180}, 0.25F)); //broken terraformer
 			//pieces.Add(new Prop()); //storage cube
 			//pieces.Add(new Prop("12c95e66-fb54-47b3-87f1-8e318394b839", null, 0.1F));	//flashlight
-			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", new float[]{0, 180}, 0.15F)); //broken stasis rifle
+			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", new float[]{0, 180}, 0.2F)); //broken stasis rifle
 			//pieces.Add(new Prop("d4bfebc0-a5e6-47d3-b4a7-d5e47f614ed6"));	//battery
 			//pieces.Add(new Prop("fde8c0c0-7588-4d0b-b24f-4632315bd86c"));	//pathfinder
 			//pieces.Add(new Prop("9ef36033-b60c-4f8b-8c3a-b15035de3116", null, 0.4F)); //repair tool
@@ -49,15 +49,25 @@ namespace ReikaKalseki.SeaToSea
 		public override void generate(List<GameObject> li) {
 			SBUtil.log("Generating void spike deep debris @ "+position);
 			
+			GameObject platform = spawner("255ed3c3-1973-40c0-9917-d16dd9a7018d");
+			platform.transform.position = position+Vector3.down*0.1F;
+			platform.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
+			platform.transform.localScale = Vector3.one*0.72F;
+			new CleanupDegasiProp().applyToObject(platform);
+			li.Add(platform);
+			
+			Vector3 refPos = platform.transform.position+Vector3.up*0.85F;
+			refPos = MathUtil.getRandomVectorAround(refPos, new Vector3(0.5F, 0, 0.5F));
+			
 			GameObject pda = spawner("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
-			pda.transform.position = position;
+			pda.transform.position = refPos+Vector3.up*0.2F;
 			pda.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), PDAManager.getPage("voidspike"));
 			li.Add(pda);
 			
 			GameObject bag = spawner("3616e7f3-5079-443d-85b4-9ad68fcbd924");
 			StorageContainer con = bag.GetComponentInChildren<StorageContainer>();
-			bag.transform.position = MathUtil.getRandomVectorAround(position, 1, 1.5F)+Vector3.up*0.65F;
+			bag.transform.position = MathUtil.getRandomVectorAround(refPos, 1, 1.5F)+Vector3.up*0.15F;
 			bag.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			foreach (Prop s in items) {
 				//SBUtil.writeToChat("Added "+s);
@@ -71,11 +81,6 @@ namespace ReikaKalseki.SeaToSea
 			}
 			li.Add(bag);
 			
-			GameObject rock = spawner("91af2ecb-d63c-44f4-b6ad-395cf2c9ef04");
-			bag.transform.position = bag.transform.position+Vector3.down*0.5F;
-			bag.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
-			li.Add(rock);
-			
 			GameObject go = spawner("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
 			go.SetActive(false);
 			SBUtil.refillItem(go);
@@ -86,11 +91,11 @@ namespace ReikaKalseki.SeaToSea
 			con.container.AddItem(go.GetComponent<Pickupable>());
 			
 			foreach (Prop s in pieces) {
-				li.Add(generateObjectInRange(3.5F, s));
+				li.Add(generateObjectInRange(refPos, 3.5F, s));
 			}
 		}
 		
-		private GameObject generateObjectInRange(float r, Prop p) {
+		private GameObject generateObjectInRange(Vector3 refPos, float r, Prop p) {
 			float tilt = 0;
 			if (p.freeAngle) {
 				tilt = UnityEngine.Random.Range(0, 360F);
@@ -99,17 +104,17 @@ namespace ReikaKalseki.SeaToSea
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
 				tilt = UnityEngine.Random.Range(tilt-5F, tilt+5F);
 			}
-			return generateObjectInRange(r, p.prefab, p.yOffset, tilt);
+			return generateObjectInRange(refPos, r, p.prefab, p.yOffset, tilt);
 		}
 		
-		private GameObject generateObjectInRange(float r, string pfb, float y = 0, float tilt = 0) {
+		private GameObject generateObjectInRange(Vector3 refPos, float r, string pfb, float y = 0, float tilt = 0) {
 			GameObject go = spawner(pfb);
 			if (go == null)
 				return go;
 			float ang = UnityEngine.Random.Range(0, 360F);
 			float cos = (float)Math.Cos(ang*Math.PI/180D);
 			float sin = (float)Math.Sin(ang*Math.PI/180D);
-			Vector3 pos = position+UnityEngine.Random.Range(1.5F, r)*new Vector3(cos, 0, sin);
+			Vector3 pos = refPos+UnityEngine.Random.Range(1.5F, r)*new Vector3(cos, 0, sin);
 			pos.y = pos.y+(float)y;
 			go.transform.position = pos;
 			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);/*
