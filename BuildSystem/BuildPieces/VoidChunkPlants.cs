@@ -34,13 +34,13 @@ namespace ReikaKalseki.SeaToSea
 		
 		static VoidChunkPlants() {
 			addPlantType(new VoidPlant(VanillaFlora.GABE_FEATHER, 100));
-			addPlantType(new VoidPlant(VanillaFlora.GHOSTWEED, 650, 5000, 700, 900, 50, 85));
-			addPlantType(new VoidPlant(VanillaFlora.MEMBRAIN, 0, 800, 20));
+			addPlantType(new VoidPlant(VanillaFlora.GHOSTWEED, 650, 5000, 700, 900, 50, 90));
+			addPlantType(new VoidPlant(VanillaFlora.MEMBRAIN, 0, 800, 0, 800, 10, 20));
 			addPlantType(new VoidPlant(VanillaFlora.REGRESS, 0, 700, 500, 700, 30, 10));
 			addPlantType(new VoidPlant(VanillaFlora.BRINE_LILY, 50));
-			addPlantType(new VoidPlant(VanillaFlora.AMOEBOID, 750, 5000, 10));
-			addPlantType(new VoidPlant(VanillaFlora.BLOOD_KELP, 10));
-			addPlantType(new VoidPlant(VanillaFlora.VIOLET_BEAU, 0, 600, 500, 600, 20, 5));
+			addPlantType(new VoidPlant(VanillaFlora.AMOEBOID, 750, 5000, 750, 1000, 0, 15));
+			addPlantType(new VoidPlant(VanillaFlora.BLOOD_KELP, 15));
+			addPlantType(new VoidPlant(VanillaFlora.VIOLET_BEAU, 0, 600, 500, 600, 30, 10));
 			/*
 			List<VoidPlant> li = new List<VoidPlant>(plantTypes.Values);
 			List<string> csv = new List<string>();
@@ -104,7 +104,7 @@ namespace ReikaKalseki.SeaToSea
 			if (vf == VanillaFlora.BLOOD_KELP && !allowKelp)
 				return false;
 			VoidPlant vp = plantTypes[vf];
-			if (position.y < vp.minDepth || position.y > vp.maxDepth)
+			if (-position.y < vp.minDepth || -position.y > vp.maxDepth)
 				return false;
 			return true;
 		}
