@@ -32,6 +32,7 @@ namespace ReikaKalseki.SeaToSea
 			[SerializeField]
 			internal readonly List<ManipulationBase> manipulations = new List<ManipulationBase>();
 			
+			public bool isBasePiece {get; private set;}
 			public bool isCrate {get; private set;}
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
@@ -83,6 +84,9 @@ namespace ReikaKalseki.SeaToSea
 				}
 				else if (prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
 					prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
+				}
+				else if (prefabName.StartsWith("base_", StringComparison.InvariantCultureIgnoreCase)) {
+					isBasePiece = true;
 				}
 				else if (prefabName == "crate") {
 					prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";

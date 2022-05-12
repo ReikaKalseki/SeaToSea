@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
 			signal.pdaEntry.addSubcategory("AuroraSurvivors");
-			signal.register(TextureManager.getSprite("Textures/Signal"));
+			signal.register();
 		}
 		
 		public void onWorldStart() {

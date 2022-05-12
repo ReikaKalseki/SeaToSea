@@ -109,7 +109,7 @@ namespace ReikaKalseki.SeaToSea
 						List<PlacedObject> added = new List<PlacedObject>();
 						foreach (PlacedObject p in new List<PlacedObject>(items.Values)) {
 							if (p.isSelected) {
-								PlacedObject b = PlacedObject.createPrefab(p.prefabName);
+								PlacedObject b = PlacedObject.createNewObject(p);
 								items[b.referenceID] = b;
 								b.obj.transform.SetPositionAndRotation(hit.point, hit.transform.rotation);
 								lastPlaced = b;
@@ -415,7 +415,7 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 forward = transform.forward;
 			Vector3 pos = position+(forward.normalized*7.5F);
 			string id = getPrefabKeyFromID(arg);
-			PlacedObject b = PlacedObject.createPrefab(id);
+			PlacedObject b = PlacedObject.createNewObject(id);
 			if (b != null) {
 				items[b.referenceID] = b;
 				b.obj.transform.SetPositionAndRotation(pos, Quaternion.identity);

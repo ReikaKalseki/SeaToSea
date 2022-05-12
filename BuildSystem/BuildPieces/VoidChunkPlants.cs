@@ -111,7 +111,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		protected override GameObject generatePlant(Vector3 vec, string type) {
 			GameObject go = base.generatePlant(vec, type);
-			if (!VanillaFlora.BRINE_LILY.includes(type)) {
+			if (!VanillaFlora.BLOOD_KELP.includes(type) && !VanillaFlora.AMOEBOID.includes(type) && !VanillaFlora.BRINE_LILY.includes(type)) {
 				for (int i = 0; i < mushrooms; i++) {
 					Vector3 vec2 = new Vector3(vec.x+UnityEngine.Random.Range(-1F, 1F), vec.y, vec.z+UnityEngine.Random.Range(-1F, 1F));
 					int tries = 0;

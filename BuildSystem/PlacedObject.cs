@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea
 			internal bool isSelected;
 			
 			static PlacedObject() {
-				registerType(TAGNAME, e => {return PlacedObject.fromXML(e, false);});
+				registerType(TAGNAME, e => PlacedObject.fromXML(e, false));
 			}
 		
 			public override string getTagName() {
@@ -229,28 +229,30 @@ namespace ReikaKalseki.SeaToSea
 					replaceObject(name);
 			}
 			
-			public static PlacedObject fromXML(XmlElement e, bool readXML = false) {
+			public static PlacedObject fromXML(XmlElement e, bool readXML = true) {
 				CustomPrefab pfb = new CustomPrefab("");
 				pfb.loadFromXML(e);
 				SBUtil.log("Building placed object from custom prefab "+pfb+" > "+e.format());
-				PlacedObject b = createPrefab(pfb.prefabName);/*
-				if (b != null) {
-					b.isDatabox = pfb.isDatabox;
-					b.isFragment = pfb.isFragment;
-					b.isCrate = pfb.isCrate;
-					b.isPDA = pfb.isPDA;
-				}*/
+				PlacedObject b = createNewObject(pfb);
 				if (readXML)
 					b.loadFromXML(e);
 				return b;
 			}
+			
+			internal static PlacedObject createNewObject(string id) {
+				return createNewObject(id, false);
+			}
 		
-			internal static PlacedObject createPrefab(string id) {
+			internal static PlacedObject createNewObject(CustomPrefab pfb) {
+				return createNewObject(pfb.prefabName, pfb.isBasePiece);
+			}
+			
+			private static PlacedObject createNewObject(string id, bool basePiece) {
 				if (id == null) {
 					SBUtil.writeToChat("Prefab not placed; ID was null");
 					return null;
 				}
-				GameObject go = SBUtil.createWorldObject(id);
+				GameObject go = basePiece ? SBUtil.getBasePiece(id) : SBUtil.createWorldObject(id);
 				if (go != null) {
 					BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
 					PlacedObject ret = new PlacedObject(go, id);
