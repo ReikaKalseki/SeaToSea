@@ -124,12 +124,7 @@ namespace ReikaKalseki.SeaToSea
 			wf.useRigidbody = go.GetComponentInChildren<Rigidbody>();
 			wf.handleGravity = true;
 			wf.underwaterGravity = 1;*/
-			foreach (WorldForces wf in go.GetComponentsInChildren<WorldForces>()) {
-				//UnityEngine.Object.Destroy(wf);
-				wf.handleDrag = wf.handleGravity = false;
-				wf.underwaterGravity = wf.aboveWaterGravity = 0;
-				wf.aboveWaterDrag = wf.underwaterDrag = 0;
-			}
+			SBUtil.applyGravity(go);
 			Rigidbody b = go.GetComponentInChildren<Rigidbody>();
 			//b.detectCollisions = false;
 			b.constraints = RigidbodyConstraints.FreezeAll;

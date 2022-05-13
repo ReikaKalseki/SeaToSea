@@ -115,18 +115,8 @@ namespace ReikaKalseki.SeaToSea
 				go.transform.position = pos;
 				go.transform.rotation = UnityEngine.Random.rotationUniform;
 				rocks.Add(go);
-				
-			WorldForces wf = go.EnsureComponent<WorldForces>();
-			wf.enabled = true;
-			wf.handleGravity = true;
-			Rigidbody b = go.EnsureComponent<Rigidbody>();
-			b.mass = 20;
-			b.useGravity = true;
-			b.position = go.transform.position;
-			b.centerOfMass = b.position;
-			b.detectCollisions = true;
-			Collider c = go.EnsureComponent<Collider>();
-			c.enabled = true;
+					
+				SBUtil.applyGravity(go);
 			}
 			
 			int genned = 0;

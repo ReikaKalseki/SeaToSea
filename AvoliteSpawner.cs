@@ -64,18 +64,18 @@ namespace ReikaKalseki.SeaToSea {
 				GameObject box = spawnBox();
 				if (box != null) {
 					SBUtil.setCrateItem(box.EnsureComponent<SupplyCrate>(), generateRandomItem(true));
-					ensureGravity(box);
+					SBUtil.applyGravity(box);
 				}
 			}
 			for (int i = 0; i < looseCount; i++) {
 				Vector3 pos = getRandomPosition();
 				GameObject go = SBUtil.dropItem(pos, generateRandomItem(false));
-				ensureGravity(go);
+				SBUtil.applyGravity(go);
 			}
 			while (gennedAvolite < 3) {
 				Vector3 pos = getRandomPosition();
 				GameObject go = SBUtil.dropItem(pos, avolite);
-				ensureGravity(go);
+				SBUtil.applyGravity(go);
 				gennedAvolite++;
 			}
 			for (int i = 0; i < scrapCount; i++) {
@@ -96,7 +96,7 @@ namespace ReikaKalseki.SeaToSea {
 						break;
 				}
 				GameObject go = SBUtil.createWorldObject(mtl.prefab);
-				ensureGravity(go);
+				SBUtil.applyGravity(go);
 				go.transform.position = pos;
 				go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			}
@@ -119,13 +119,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Vector3 getRandomPosition() {
 			return Vector3.zero; //TODO
-		}
-		
-		private void ensureGravity(GameObject go) {
-			WorldForces wf = go.EnsureComponent<WorldForces>();
-			wf.enabled = true;
-			wf.handleGravity = true;
-			wf.underwaterGravity = 1;
 		}
 	}
 	

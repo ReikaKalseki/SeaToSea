@@ -40,13 +40,13 @@
 			A luminous gemstone with exquisite optical properties and electromagnetic conductivity.
 		</desc>
 		<pda>
-			Found exclusively around certain thermal vents, these exotic crystals, despite having a similar molecular structure to common quartz, have electron distributions more commonly seen in metallic elements.
+			Found exclusively around certain thermal vents, these exotic crystals, despite having a similar gross molecular structure to common quartz, have electron distributions more commonly seen in metallic elements.
 			
-			The light emitted by these deposits originates from the slow decomposition of chemical compounds loosely bound in its silica substrate. This arrangement is fairly unstable, which has two main effects:
-			-This material can only form under very particular circumstances, specifically where superheated, mineral-rich water is injected into cold water, in the absence of dense flora which would absorb the minerals before they can recrystallize.
-			-Careless handling of these crystals can result in violent fracturing, which destroys their normal crystal structure and releases a large quantity of energy.
+			This material can only form under very particular circumstances, specifically where superheated, mineral-rich water is injected into cold water, in the absence of dense flora which would absorb the minerals before they can recrystallize. During this recrystallization process, many of the material's electrons are temporarily trapped within the crystal structure in a higher energy state.
 			
-			This free movement and 
+			The light emitted by these deposits originates from those electrons the crystal structure dropping back into the ground state, releasing a photon in the process. While they remain energized, these electrons imbue the crystal structure with both high electrical and magnetic conductivity, allowing it to channel and reflect fields of the same.
+			
+			This arrangement also makes the crystal fairly unstable; Careless handling can result in violent fracturing, which destroys the aforementioned structure and releases a large quantity of energy.
 		</pda>
 	</VENT_CRYSTAL>
 	<PLATINUM>
@@ -57,7 +57,7 @@
 			A dense, valuable, rare metal with extreme resistance to corrosion. In addition to being useful for creating alloys, it is also useful as a chemical catalyst with organic compounds.
 		</desc>
 		<pda>
-			
+			Rarer and more valuable even than gold, platinum is a transition metal whose chief property is its extremely low chemical reactivity. This makes it all but impervious to corrosion, and allows it to mediate many chemical reactions without being consumed itself. In particular it is well-suited to rearranging the components of organic molecules.
 		</pda>
 	</PLATINUM>
 	<PRESSURE_CRYSTALS>
@@ -66,10 +66,13 @@
 		</name>
 		<desc>
 			Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium.
-			Potentially able to be alloyed into other materials for increased compressive strength.
 		</desc>
 		<pda>
+			In the deepest layers of the open ocean, where mineral-rich water expelled from thermal vents collects due to its greater density relative to ordinary seawater, the extreme pressure can force these minerals back out of solution.
 			
+			Abyssoclase is one such mineral, formed when a small seed crystal - possibly quartz, diamond, or sulfur - is coated with successive layers of silcia deposits rich in Tellurium and other rare elements.
+			
+			These deposits, due to the nature of the environment in which they form, are extremely dense, hard, and resistant to compressive forces. If integrated into another substrate, they can massively increase that material's mechanical strength.
 		</pda>
 	</PRESSURE_CRYSTALS>
 	<PHASE_CRYSTAL>

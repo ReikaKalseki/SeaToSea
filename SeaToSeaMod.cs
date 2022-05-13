@@ -93,15 +93,19 @@ namespace ReikaKalseki.SeaToSea
     	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 2.5F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 2.5F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 1.5F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 3F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 1.5F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 0.75F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.25F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 2F);
     	
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.DrillableMagnetite), BiomeType.UnderwaterIslands_Geyser, 0.2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Diamond), BiomeType.UnderwaterIslands_Geyser, 1F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_ValleyFloor, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_ValleyFloor, 1F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.DrillableQuartz), BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
     	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 1F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
