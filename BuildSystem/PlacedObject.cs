@@ -240,7 +240,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			internal static PlacedObject createNewObject(string id) {
-				return createNewObject(id, false);
+				return createNewObject(id, id.StartsWith("base_", StringComparison.InvariantCultureIgnoreCase));
 			}
 		
 			internal static PlacedObject createNewObject(CustomPrefab pfb) {

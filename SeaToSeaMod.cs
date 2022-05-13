@@ -84,17 +84,21 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addOreGen() {
-    	BasicCustomOre mountainCaveResource = CustomMaterials.getItem(CustomMaterials.Materials.MOUNTAIN_CRYSTAL);
-    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveFloor, 1, 0.1F);
-    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveWall, 1, 0.1F);
-    	mountainCaveResource.registerWorldgen(BiomeType.Mountains_CaveCeiling, 1, 0.1F);
+    	BasicCustomOre vent = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL);
+    	vent.registerWorldgen(BiomeType.Dunes_ThermalVent, 1, 3F);
+    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 5F);
+    	vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
+    	vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
     	irid.registerWorldgen(BiomeType.Dunes_Crater_Rock, 1, 7.5F);
     	irid.registerWorldgen(BiomeType.Dunes_Crater_Sand, 1, 2.5F);
     	
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 12F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_Geyser, 6F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 3F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_Geyser, 3F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Diamond), BiomeType.UnderwaterIslands_Geyser, 1F, 1);
+    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 2F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.Dunes_ThermalVent, 2F, 1);
@@ -126,7 +130,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
-        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.MOUNTAIN_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         
         CraftingItems.addAll();
         

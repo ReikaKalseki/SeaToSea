@@ -34,13 +34,17 @@ namespace ReikaKalseki.SeaToSea
 			swaps[from] = to;
 		}
 		
+		protected virtual Texture2D getTexture(string name, string texType) {
+			return TextureManager.getTexture("Textures/"+name);
+		}
+		
 		internal override void applyToObject(GameObject go) {
 		 	foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 			 	foreach (Material m in r.materials) {
 					if (m.mainTexture != null) {
 						string put = swaps.ContainsKey(m.mainTexture.name) ? swaps[m.mainTexture.name] : null;
 				 		if (put != null) {
-				 			Texture2D tex2 = TextureManager.getTexture("Textures/"+put);
+				 			Texture2D tex2 = getTexture(put, "main");
 			 				if (tex2 != null)
 				 				m.mainTexture = tex2;
 			 				else
@@ -54,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
 			 				string put = swaps.ContainsKey(file) ? swaps[file] : null;
 			 				//SBUtil.writeToChat(n+" > "+file+" > "+put);
 			 				if (put != null) {
-			 					Texture2D tex2 = TextureManager.getTexture("Textures/"+put);
+			 					Texture2D tex2 = getTexture(put, n);
 			 					//SBUtil.writeToChat(">>"+tex2);
 			 					if (tex2 != null)
 			 						m.SetTexture(n, tex2);
