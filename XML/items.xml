@@ -32,23 +32,29 @@
 			
 		</pda>
 	</HullPlating>
-	<MOUNTAIN_CRYSTAL>
+	<VENT_CRYSTAL>
 		<name>
 			Azurite
 		</name>
 		<desc>
-			A gemstone with exquisite optical properties and electromagnetic conductivity.
+			A luminous gemstone with exquisite optical properties and electromagnetic conductivity.
 		</desc>
 		<pda>
+			Found exclusively around certain thermal vents, these exotic crystals, despite having a similar molecular structure to common quartz, have electron distributions more commonly seen in metallic elements.
 			
+			The light emitted by these deposits originates from the slow decomposition of chemical compounds loosely bound in its silica substrate. This arrangement is fairly unstable, which has two main effects:
+			-This material can only form under very particular circumstances, specifically where superheated, mineral-rich water is injected into cold water, in the absence of dense flora which would absorb the minerals before they can recrystallize.
+			-Careless handling of these crystals can result in violent fracturing, which destroys their normal crystal structure and releases a large quantity of energy.
+			
+			This free movement and 
 		</pda>
-	</MOUNTAIN_CRYSTAL>
+	</VENT_CRYSTAL>
 	<PLATINUM>
 		<name>
 			Platinum
 		</name>
 		<desc>
-			A dense, valuable, ultra-rare metal with extreme resistance to corrosion. Also useful as a chemical catalyst.
+			A dense, valuable, rare metal with extreme resistance to corrosion. In addition to being useful for creating alloys, it is also useful as a chemical catalyst with organic compounds.
 		</desc>
 		<pda>
 			

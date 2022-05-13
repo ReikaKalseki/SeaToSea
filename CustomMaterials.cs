@@ -41,8 +41,8 @@ namespace ReikaKalseki.SeaToSea
 					};
 				}
 				mappings[m] = item;
-				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
 				item.Patch();	
+				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
 				SBUtil.log(" > "+item);
 			}
 		}
@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public enum Materials {
-			[Material(typeof(BasicCustomOre), "URANIUM", 4F)]		VENT_CRYSTAL,
+			[Material(typeof(BasicCustomOre), "URANIUM", 4F)]		VENT_CRYSTAL, //forms when superheated water is injected into cold water
 			[Material(typeof(BasicCustomOre), "GOLD")]				PLATINUM,
 			[Material(typeof(BasicCustomOre), "TITANIUM", 1.2F)]	PRESSURE_CRYSTALS,
 			[Material(typeof(BasicCustomOre), "KYANITE", 0.75F)]	PHASE_CRYSTAL,	

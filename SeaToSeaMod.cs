@@ -86,19 +86,23 @@ namespace ReikaKalseki.SeaToSea
     private static void addOreGen() {
     	BasicCustomOre vent = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL);
     	vent.registerWorldgen(BiomeType.Dunes_ThermalVent, 1, 3F);
-    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 5F);
-    	vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
-    	vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
+    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 2F);
+    	//vent.registerWorldgen(BiomeType.JellyshroomCaves_Geyser, 1, 0.5F);
+    	//vent.registerWorldgen(BiomeType.KooshZone_Geyser, 1, 1F);
+    	//vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
+    	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
-    	irid.registerWorldgen(BiomeType.Dunes_Crater_Rock, 1, 7.5F);
-    	irid.registerWorldgen(BiomeType.Dunes_Crater_Sand, 1, 2.5F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 2.5F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 2.5F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 1.5F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 3F);
     	
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 3F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_Geyser, 3F, 1);
+    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Diamond), BiomeType.UnderwaterIslands_Geyser, 1F, 1);
-    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 2F);
+    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 1F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.Dunes_ThermalVent, 2F, 1);
