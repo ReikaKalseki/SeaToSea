@@ -22,58 +22,32 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
-	internal class CleanupDegasiProp : ManipulationBase {
-		
-		private static readonly Dictionary<string, string> textureSwaps = new Dictionary<string, string>();
-		
-		static CleanupDegasiProp() {
-			textureSwaps["Base_abandoned_Foundation_Platform_01"] = "Base_Foundation_Platform_01";
-			textureSwaps["Base_abandoned_Foundation_Platform_01_normal"] = "Base_Foundation_Platform_01_normal";
-			textureSwaps["Base_abandoned_Foundation_Platform_01_illum"] = "Base_Foundation_Platform_01_illum";
+	internal class CleanupDegasiProp : SwapTexture {
+				
+		public CleanupDegasiProp() {
+			init();
 		}
 		
 		internal override void applyToObject(GameObject go) {
+			base.applyToObject(go);
 			Transform t = go.transform.Find("BaseCell/Coral");
 		 	if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
 		 	t = go.transform.Find("BaseCell/Decals");
 		 	if (t != null)
 		 		UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
-		 	foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
-			 	foreach (Material m in r.materials) {
-					string put = textureSwaps.ContainsKey(m.mainTexture.name) ? textureSwaps[m.mainTexture.name] : null;
-			 		if (put != null) {
-			 			Texture2D tex2 = TextureManager.getTexture("Textures/"+put);
-			 			m.mainTexture = tex2;
-			 		}
-			 		foreach (string n in m.GetTexturePropertyNames()) {
-			 			Texture tex = m.GetTexture(n);
-			 			if (tex is Texture2D) {
-			 				string file = tex.name;
-			 				put = textureSwaps.ContainsKey(file) ? textureSwaps[file] : null;
-			 				//SBUtil.writeToChat(n+" > "+file+" > "+put);
-			 				if (put != null) {
-			 					Texture2D tex2 = TextureManager.getTexture("Textures/"+put);
-			 					//SBUtil.writeToChat(">>"+tex2);
-			 					m.SetTexture(n, tex2);
-			 				}
-			 			}
-			 		}
-			 	}
-			 	r.UpdateGIMaterials();
-		 	}
 		}
 		
-		internal override void applyToObject(PlacedObject go) {
-			applyToObject(go.obj);
+		private void init() {
+			addSwap("Base_abandoned_Foundation_Platform_01" ,"Base_Foundation_Platform_01");
+			addSwap("Base_abandoned_Foundation_Platform_01_normal", "Base_Foundation_Platform_01_normal");
+			addSwap("Base_abandoned_Foundation_Platform_01_illum", "Base_Foundation_Platform_01_illum");
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
+			base.loadFromXML(e);
 			
-		}
-		
-		internal override void saveToXML(XmlElement e) {
-			
+			init();
 		}
 		
 	}

@@ -27,11 +27,11 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly string textureSeek = "life_pod_exterior_decals_";
 		private static readonly string newTexBase = "lifepod_numbering_";
 		
+		private int targetNumber; 
+		
 		static ChangePodNumber() {
 			
 		}
-		
-		private int targetNumber; 
 		
 		internal override void applyToObject(GameObject go) {
 		 	foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
@@ -41,13 +41,19 @@ namespace ReikaKalseki.SeaToSea
 			 			if (tex is Texture2D) {
 			 				string file = tex.name;
 			 				if (file.Contains(textureSeek)) {
-			 					Texture2D tex2 = TextureManager.getTexture("Textures/"+newTexBase+"_"+targetNumber);
+			 					string path = "Textures/"+newTexBase+targetNumber;
+			 					Texture2D tex2 = TextureManager.getTexture(path);
+			 					if (tex2 == null) {
+			 						SBUtil.writeToChat("Could not find desired pod number texture @ "+path);
+			 						continue;
+			 					}
+			 					//SBUtil.writeToChat("Replacing tex @ "+n+" >> "+file+" > "+tex2.name);
 			 					m.SetTexture(n, tex2);
 			 				}
 			 			}
 			 		}
 			 	}
-			 	r.UpdateGIMaterials();
+			 	//r.UpdateGIMaterials();
 		 	}
 		}
 		
