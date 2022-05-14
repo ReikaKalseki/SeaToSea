@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly Dictionary<Vector3, TechType> boxes = new Dictionary<Vector3, TechType>();
 		private readonly Dictionary<Vector3, string> looseItems = new Dictionary<Vector3, string>();
+		private readonly Dictionary<TechType, SunbeamSpawnPlaceholder> prefabs = new Dictionary<TechType, SunbeamSpawnPlaceholder>();
 		
 		//private int boxCount = UnityEngine.Random.Range(8, 14); //8-13
 		private int looseCount = UnityEngine.Random.Range(18, 31); //18-30
@@ -55,8 +56,17 @@ namespace ReikaKalseki.SeaToSea {
 			addItem(TechType.CopperWire, 150, false, true);
 			
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("sunbeamdrops"));
-			signal.pdaEntry.addSubcategory("Sunbeam");
-			signal.register();
+			signal.pdaEntry.addSubcategory("Sunbeam");		
+		}
+		
+		public void register() {
+			signal.register();	
+			
+			foreach (SunbeamSpawnPlaceholder sb in prefabs.Values) {
+				sb.Patch();
+				GenUtil.registerOreWorldgen(sb, false, BiomeType.Mountains_Rock, 1, 1F);
+				GenUtil.registerOreWorldgen(sb, false, BiomeType.Mountains_Sand, 1, 1F);
+			}
 		}
 		
 		private void activateSignal(GameObject tie) {
@@ -69,8 +79,18 @@ namespace ReikaKalseki.SeaToSea {
 				itemChoicesBox.addEntry(item, wt);
 			if (loose || true)
 				itemChoicesLoose.addEntry(item, wt);
+			
+			if (!prefabs.ContainsKey(item)) {
+				SunbeamSpawnPlaceholder sb = new SunbeamSpawnPlaceholder(item);
+				prefabs[item] = sb;
+			}
 		}
 		
+		public string getPlaceholderSpawnID(TechType tech) {
+			return prefabs[tech].ClassID;
+		}
+		
+		[Obsolete]
 		public void doSpawn() {
 			GameObject tie = null;
 			
@@ -174,6 +194,69 @@ namespace ReikaKalseki.SeaToSea {
 			void destroy() {
 				instance.signal.deactivate();
 				UnityEngine.Object.Destroy(gameObject);
+			}
+			
+		}
+		
+		class AvoSpawnTrigger : MonoBehaviour {
+			
+			internal TechType itemToSpawn;
+			
+			void Start() {
+				
+			}
+			
+			void Update() {
+				if (Story.StoryGoalManager.main.IsGoalComplete("SunbeamCheckPlayerRange")) {
+					Player p = Player.main;
+					if (p != null && p.isActiveAndEnabled) {
+						if (Vector3.Distance(p.transform.position, gameObject.transform.position) <= 32) {
+							convert();
+						}
+					}
+				}
+			}
+			
+			private void convert() {
+				GameObject drop = SBUtil.dropItem(gameObject.transform.position+Vector3.up*0.5F, itemToSpawn);
+				SBUtil.applyGravity(drop);
+				drop.transform.rotation = UnityEngine.Random.rotationUniform;
+				UnityEngine.Object.Destroy(gameObject);
+				SBUtil.writeToChat("Converted to "+itemToSpawn+" @ "+drop.transform.position);
+			}
+			
+		}
+		
+		public sealed class SunbeamSpawnPlaceholder : Spawnable {
+			
+			private readonly TechType itemToSpawn;
+			
+			internal SunbeamSpawnPlaceholder(TechType spawn) : base("sb_spawn_hook_"+spawn, "sb_spawn_hook_"+spawn, "") {
+				itemToSpawn = spawn;
+			}
+			
+			public override GameObject GetGameObject() {
+				GameObject prefab;
+				if (UWE.PrefabDatabase.TryGetPrefab(VanillaResources.SALT.prefab, out prefab)) {
+					GameObject world = UnityEngine.Object.Instantiate(prefab);
+					world.SetActive(false);
+					foreach (Component c in world.GetComponentsInChildren<Component>()) {
+						if (c is Transform || c is Renderer || c is Rigidbody)
+							continue;
+						UnityEngine.Object.Destroy(c);
+					}
+					Renderer r = world.GetComponentInChildren<Renderer>();
+					r.enabled = false;
+					if (itemToSpawn == TechType.None) {
+						SBUtil.log("Cannot delegate spawn of none!");
+					}
+					world.EnsureComponent<AvoSpawnTrigger>().itemToSpawn = itemToSpawn == TechType.None ? TechType.BloodOil : itemToSpawn;
+					return world;
+				}
+				else {
+					SBUtil.writeToChat("Could not fetch template GO for "+this);
+					return null;
+				}
 			}
 			
 		}
