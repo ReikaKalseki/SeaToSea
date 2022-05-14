@@ -22,16 +22,19 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly TechType avolite = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType;
 		
-		//private readonly Vector3 eventCenter = new Vector3(?);
-		//private readonly Vector3 eventUITargetLocation = new Vector3(?);
-		//private readonly Vector3 mountainCenter = new Vector3(?);
+		private readonly Vector3 eventCenter = new Vector3(215, 425.6F, 2623.6F);
+		private readonly Vector3 eventUITargetLocation = new Vector3(297.2F, 3.5F, 1101);
+		private readonly Vector3 mountainCenter = new Vector3(356.3F, 29F, 1039.4F);
+		private readonly Vector3 biomeCenter = new Vector3(966, 0, 1336);
 		
 		private readonly Dictionary<Vector3, TechType> boxes = new Dictionary<Vector3, TechType>();
 		private readonly Dictionary<Vector3, string> looseItems = new Dictionary<Vector3, string>();
 		
-		private int boxCount = UnityEngine.Random.Range(8, 14); //8-13
+		//private int boxCount = UnityEngine.Random.Range(8, 14); //8-13
 		private int looseCount = UnityEngine.Random.Range(18, 31); //18-30
-		private int scrapCount = UnityEngine.Random.Range(25, 41); //25-40
+		private int scrapCount = UnityEngine.Random.Range(45, 71); //45-70
+		
+		private SignalManager.ModSignal signal;
 		
 		private int gennedAvolite;
 		
@@ -39,46 +42,57 @@ namespace ReikaKalseki.SeaToSea {
 			addItem(TechType.NutrientBlock, 250, true, false);
 			addItem(TechType.DisinfectedWater, 200, true, false);
 			addItem(TechType.Battery, 40, true, false);
-			addItem(TechType.Beacon, 40, true, false);
+			//addItem(TechType.Beacon, 40, true, false);
 			
 			addItem(TechType.PowerCell, 15, true, true);
 			addItem(TechType.FireExtinguisher, 25, true, true);
-			addItem(avolite, 20, true, true);
+			//addItem(avolite, 20, true, true);
 			
 			addItem(TechType.EnameledGlass, 100, false, true);
 			addItem(TechType.Titanium, 150, false, true);
 			addItem(TechType.ComputerChip, 50, false, true);
 			addItem(TechType.WiringKit, 75, false, true);
 			addItem(TechType.CopperWire, 150, false, true);
+			
+			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("sunbeamdrops"));
+			signal.pdaEntry.addSubcategory("Sunbeam");
+			signal.register();
+		}
+		
+		private void activateSignal(GameObject tie) {
+			signal.build(tie, tie.transform.position);
+			signal.activate();
 		}
 		
 		private void addItem(TechType item, double wt, bool box, bool loose) {
-			if (box)
+			if (box && false)
 				itemChoicesBox.addEntry(item, wt);
-			if (loose)
+			if (loose || true)
 				itemChoicesLoose.addEntry(item, wt);
 		}
 		
 		public void doSpawn() {
-			for (int i = 0; i < boxCount; i++) {
+			GameObject tie = null;
+			
+			for (int i = 0; i < 0/*boxCount*/; i++) {
 				GameObject box = spawnBox();
 				if (box != null) {
 					SBUtil.setCrateItem(box.EnsureComponent<SupplyCrate>(), generateRandomItem(true));
-					SBUtil.applyGravity(box);
+					applyPhysics(box);
 				}
 			}
 			for (int i = 0; i < looseCount; i++) {
 				Vector3 pos = getRandomPosition();
 				GameObject go = SBUtil.dropItem(pos, generateRandomItem(false));
-				SBUtil.applyGravity(go);
+				applyPhysics(go);
 			}
-			while (gennedAvolite < 3) {
+			while (gennedAvolite < 6) {
 				Vector3 pos = getRandomPosition();
 				GameObject go = SBUtil.dropItem(pos, avolite);
-				SBUtil.applyGravity(go);
+				applyPhysics(go);
 				gennedAvolite++;
 			}
-			for (int i = 0; i < scrapCount; i++) {
+			for (int i = 0; i < scrapCount+1; i++) {
 				Vector3 pos = getRandomPosition();
 				VanillaResources mtl = null;
 				switch(UnityEngine.Random.Range(0, 4)) {
@@ -96,10 +110,30 @@ namespace ReikaKalseki.SeaToSea {
 						break;
 				}
 				GameObject go = SBUtil.createWorldObject(mtl.prefab);
-				SBUtil.applyGravity(go);
+				applyPhysics(go);
 				go.transform.position = pos;
 				go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
+				tie = go;
 			}
+			
+			activateSignal(tie);
+			tie.transform.position = getRandomPosition(0);
+			applyPhysics(tie, 0);
+			
+			tie.EnsureComponent<DebrisSignal>().Invoke("destroy", 30);
+			
+			PDAManager.getPage("sunbeamdebrishint").unlock();
+		}
+		
+		private void applyPhysics(GameObject go, int fuzz = 200) {
+			//go.transform.position = MathUtil.getRandomVectorAround(eventUITargetLocation+Vector3.up*200, 9);//go.transform.position+dist*0.1F;
+			Vector3 target = MathUtil.getRandomVectorAround(biomeCenter, fuzz);//MathUtil.getRandomVectorAround(mountainCenter+new Vector3(150, 0, 150), new Vector3(150, 30, 150));
+			Vector3 dist = (target-go.transform.position)._X0Z();
+			SBUtil.applyGravity(go);
+			go.transform.rotation = UnityEngine.Random.rotationUniform;
+			go.GetComponent<Rigidbody>().velocity = dist*0.04F;
+			go.GetComponent<WorldForces>().aboveWaterGravity *= 0.5F;
+			go.GetComponent<WorldForces>().underwaterDrag = 1.5F;
 		}
 		
 		private GameObject spawnBox() {
@@ -117,8 +151,31 @@ namespace ReikaKalseki.SeaToSea {
 			return ret;
 		}
 		
-		private Vector3 getRandomPosition() {
-			return Vector3.zero; //TODO
+		private Vector3 getRandomPosition(int fuzz = 20) {
+			Vector3 vec = eventCenter*0.5F+eventUITargetLocation*0.5F;
+			vec.y = eventCenter.y;
+			return MathUtil.getRandomVectorAround(vec, fuzz);
+		}
+		
+		public class TriggerCallback : MonoBehaviour {
+			
+			void trigger() {
+				instance.doSpawn();
+			}
+			
+		}
+		
+		class DebrisSignal : MonoBehaviour {
+			
+			void Start() {
+				
+			}
+			
+			void destroy() {
+				instance.signal.deactivate();
+				UnityEngine.Object.Destroy(gameObject);
+			}
+			
 		}
 	}
 	

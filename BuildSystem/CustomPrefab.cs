@@ -85,6 +85,9 @@ namespace ReikaKalseki.SeaToSea
 				else if (prefabName.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
 					prefabName = ((VanillaCreatures)typeof(VanillaCreatures).GetField(prefabName.Substring(6).ToUpper()).GetValue(null)).prefab;
 				}
+				else if (prefabName.StartsWith("flora_", StringComparison.InvariantCultureIgnoreCase)) {
+					prefabName = VanillaFlora.getByName(prefabName.Substring(6)).getRandomPrefab(false);
+				}
 				else if (prefabName.StartsWith("base_", StringComparison.InvariantCultureIgnoreCase)) {
 					isBasePiece = true;
 				}

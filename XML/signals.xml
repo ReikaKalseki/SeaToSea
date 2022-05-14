@@ -13,18 +13,18 @@
 		This is what it says to prompt you to go there
 	</prompt>
   </voidpod>
-  <voidspike>
+  <sunbeamdrops>
 	<name>
-		Signal
+		Debris
 	</name>
 	<desc>
-		Dropped PDA
+		Sunbeam Debris
 	</desc>
 	<pda>
-		The PDA content
+		pdaaaaaaaa
 	</pda>
 	<prompt>
 		This is what it says to prompt you to go there
 	</prompt>
-  </voidspike>
+  </sunbeamdrops>
 </Root>
