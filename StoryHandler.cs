@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea
 		public void NotifyGoalComplete(string key) {
 			switch(key) {
 				case "SunbeamCheckPlayerRange":
-					//Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
+					Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
 				break;
 			}
 		}

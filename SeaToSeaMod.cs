@@ -66,7 +66,6 @@ namespace ReikaKalseki.SeaToSea
         */
        
 		VoidSpikesBiome.instance.register();
-		AvoliteSpawner.instance.register();
        
         /*
         for (int i = 0; i < 12; i++) {
