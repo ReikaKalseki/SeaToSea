@@ -66,6 +66,7 @@ namespace ReikaKalseki.SeaToSea
         */
        
 		VoidSpikesBiome.instance.register();
+		//AvoliteSpawner.instance.register();
        
         /*
         for (int i = 0; i < 12; i++) {
@@ -86,7 +87,7 @@ namespace ReikaKalseki.SeaToSea
     private static void addOreGen() {
     	BasicCustomOre vent = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL);
     	vent.registerWorldgen(BiomeType.Dunes_ThermalVent, 1, 3F);
-    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 2F);
+    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 1.2F);
     	//vent.registerWorldgen(BiomeType.JellyshroomCaves_Geyser, 1, 0.5F);
     	//vent.registerWorldgen(BiomeType.KooshZone_Geyser, 1, 1F);
     	//vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
@@ -106,7 +107,7 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_ValleyFloor, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_ValleyFloor, 1F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.DrillableQuartz), BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
-    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 1F);
+    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.5F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.Dunes_ThermalVent, 2F, 1);
@@ -383,6 +384,22 @@ namespace ReikaKalseki.SeaToSea
     
     public static void onStoryGoalCompleted(string key) {
     	StoryHandler.instance.NotifyGoalComplete(key);
+    }
+    
+    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {
+    	ClipMapManager.LevelSettings baseline = values.levels[0];
+    	
+    	for (int i = 1; i < values.levels.Length-2; i++) {
+            ClipMapManager.LevelSettings lvl = values.levels[i];
+
+            if (lvl.entities) {
+                //lvl.downsamples = baseline.downsamples;
+                lvl.colliders = true;
+                //lvl.grass = true;
+                //lvl.grassSettings = baseline.grassSettings;
+            }
+    	}
+    	return values;
     }
     
     public static void updateCrushDamage(float val) {
