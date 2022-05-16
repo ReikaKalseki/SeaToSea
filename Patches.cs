@@ -486,4 +486,70 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
+	[HarmonyPatch(typeof(Player))]
+	[HarmonyPatch("Update")]
+	public static class PlayerTick {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "tickPlayer", false, typeof(Player)));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(LargeWorldEntity))]
+	[HarmonyPatch("Start")]
+	public static class AllObjectSpawnCallback {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onEntitySpawn", false, typeof(LargeWorldEntity)));
+				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	/*
+	[HarmonyPatch(typeof(Player))]
+	[HarmonyPatch("GetOxygenPerBreath")]
+	public static class PlayerO2Use {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_1));
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_2));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "getPlayerO2Use", false, typeof(Player), typeof(float), typeof(int)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}*/
 }

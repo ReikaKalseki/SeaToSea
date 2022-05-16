@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea
     
     private static SeamothVoidStealthModule voidStealth;
     private static SeamothDepthModule depth1300;
+    
+    private static AlkaliPlant alkali;
 
     [QModPatch]
     public static void Load()
@@ -57,6 +59,8 @@ namespace ReikaKalseki.SeaToSea
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
+        addFlora();
+        
         addCommands();
         addPDAEntries();
         addOreGen();
@@ -82,6 +86,17 @@ namespace ReikaKalseki.SeaToSea
         }*/
         
         //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
+    }
+    
+    private static void addFlora() {
+		alkali = new AlkaliPlant();
+		alkali.Patch();	
+		alkali.addPDAEntry(locale.getEntry(alkali.ClassID).pda, 3);
+		SBUtil.log(" > "+alkali);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.KooshZone_CaveFloor, 1, 2F);
     }
     
     private static void addOreGen() {
@@ -218,6 +233,45 @@ namespace ReikaKalseki.SeaToSea
     	SBUtil.log("Intercepted world load");
         
     	VoidSpikesBiome.instance.onWorldStart();
+    }
+    
+    public static void onEntitySpawn(LargeWorldEntity p) {
+    	TechTag tag = p.GetComponent<TechTag>();
+    	if (tag != null && tag.type == TechType.PrecursorKey_Purple) {
+    		GameObject repl = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(TechType.PrecursorKey_PurpleFragment));
+    		repl.transform.position = p.gameObject.transform.position;
+    		repl.transform.rotation = p.gameObject.transform.rotation;
+    		UnityEngine.Object.Destroy(p.gameObject);
+    	}
+    }
+    
+    public static void tickPlayer(Player ep) {
+    	/*
+    	if (ep.GetVehicle() == null && ep.gameObject.transform.position.y < -500 && !ep.CanBreathe() && Inventory.main.equipment.GetCount(TechType.Rebreather) == 0) {
+    		
+    	}*/
+    }
+    
+    public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
+		if (!GameModeUtils.RequiresOxygen())
+			return 0;
+		float num = 1;
+		if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting) {
+			bool hasRebreatherV2 = Inventory.main.equipment.GetCount(TechType.RadiationHelmet) != 0;
+			bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetCount(TechType.Rebreather) != 0;
+			if (!hasRebreather) {
+				if (depthClass == 2) {
+					num = 1.5F;
+				}
+				else if (depthClass == 3) {
+					num = 2;
+				}
+			}			
+			if (depthClass >= 3 && !hasRebreatherV2 && ep.gameObject.transform.position.y < -500) {
+				num = 30;
+			}
+		}
+		return breathingInterval * num;
     }
     
     public static void onEntityRegister(CellManager cm, LargeWorldEntity lw) {

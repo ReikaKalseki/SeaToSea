@@ -4,7 +4,7 @@
 		Unknown Lifepod Crew Log
 	</name>
 	<pda>
-		I can't tell whether I'm cursed or the luckiest guy alive. On one hand, my pod got me away from the Aurora long before any of the others did. On the other, all that accomplished was landing me all the way out here in the middle of open water. Nothing. As far as the scanner can see, aside from the area the wreck is sitting, this whole region is water that might as well be infinitely deep.
+		I can't tell whether I'm cursed or the luckiest guy alive. On one hand, I saw what was coming and got to the pods before anyone else. I even got the pod all to myself by popping it off the Aurora before anyone else could get near. On the other hand, doing that landed me all the way out here in the middle of open water. The Aurora, and by proxy any hope of rescue, is miles away. Meanwhile, around me? Nothing. As far as the scanner can see, aside from the area the wreck is sitting, this whole region is water that might as well be infinitely deep.
 		
 		Well, it briefly picked up some kind of isolated chunk of land off to the southwest, but its like a kilometer out, and the signal's crap. Given that the sonar says it's rated to a depth of 500 meters, it's gotta be pretty far down. I'll admit I'm kind of curious about what it is, but I'd be an idiot to leave the safety of this lifepod for some-
 		
@@ -151,16 +151,34 @@
 	<header>
 	</header>
   </mountaincavehint>
-  <mountainpod>
+  <mountainpodearly>
 	<name>
-		Mountain Lifepod Crew Log
+		Mountain Lifepod Crew Log #1
 	</name>
 	<pda>
-		So, imagine this. My pod detaches from the ship, comes down picture perfect. Lands upright, everything working as advertised. I'm gonna make it out of here! I just gotta stay put, ration my supplies a bit, and wait for rescue.
+		[splashdown]
 		
-		That was three days ago. I'm starving, I'm tired, I have a bruise the size of a grapefruit, and I'm COMPLETELY fed up at this point. Turns out not everything was working right; my radio's picking up nothing but deep garbled nonsense about 'tracking subjects'. So I bet that nothing I send is making it out either.
+		Voice 1: [calm] Seems everything's working exactly as advertised. Soft...ish landing, upright and afloat; power's on; the fab works.
 		
-		Guess that's it, then. Whatever is out there, I'm gonna just have to take my chances with it.
+		Voice 2: [unimpressed] For now.
+		
+		Voice 1: [exasperated] Right. I forgot, one of the fundamental laws of nature is that when things are working perfectly it's just trying to lull you into a false sense of security before it all goes tits-up.
+		
+		Voice 2: [fed up] That's exactly how I'd say things have gone so far! Perfectly! What a GREAT way to describe the ship falling out of orbit and stranding us all here!
+		
+		Voice 1: Look, the ship isn't far away, and I know we'd have sent out a distress call. Rescue's probably already on its way. We just have to stay calm, stay put, and everything will turn out fine.
+		
+		Voice 2: Until we run out of food and water because there's four of us in a pod designed for two.
+		
+		Voice 1: So we ration our supplies a bit. Worst comes to worst, there's probably something in the water to sustain us, at least for the few days we need.
+		
+		Voice 2: So that's your plan, then? Just stay floating in this metal box until we either get plucked out of the water by rescue or run out of supplies?
+		
+		Voice 1: I like the sound of it. Perhaps it's a bit too well-thought out for you? Maybe you'd prefer something a bit more deranged, like venturing off into the unknown?
+		
+		Voice 2: If I do, I won't be letting you come with me.
+		
+		Voice 1: [pleased/exasperated] Best news I've had all day.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -168,21 +186,41 @@
 	<audio>
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
-  </mountainpod>
+  </mountainpodearly>
+  <mountainpodlate>
+	<name>
+		Mountain Lifepod Crew Log #2
+	</name>
+	<pda>
+		Voice 1: [sounding very defeated]
+		
+		[heavy breathing for a few seconds]
+		
+		...It's...it's been three days. I'm starving, I'm tired, I have a bruise the size of a grapefruit, and...I'll be honest. I'm COMPLETELY fed up at this point. I've had it with this damned planet. We didn't even make it a single day before some kind of beast tore the flotation system right off the pod and sent us to the seafloor. Ripped a pretty big hole in the hull, too.
+		
+		The others took off. Made a couple of seaglides and headed west. They swore they saw land on the way down, but I know the grim truth; this planet's nothing but an ocean. I wonder how long they spent searching for a mirage before they met a good reminder they should have stayed back here.
+		
+		The water fried the radio, too: since we went under, the only sounds it's been making are deep garbled nonsense about 'tracking subjects'. So I've got to survive on my own until rescue gets here......If it gets here.
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </mountainpodlate>
   <mountaincave>
 	<name>
 		Mountain Cave Crew Log
 	</name>
 	<pda>
-		Surviving out here has been...well, not EASY, but it hasn't been that hard, either. Food and water have been pretty trivial - though those squishy pink fish are getting rarer than I'd like - and there's lots of materials to be had. I even managed to grab some crates full of supplies and tools from the wreck up top.
+		Voice 1: Surviving out here hasn't been easy, but it hasn't been quite as bad as I'd feared. Food and water have been pretty trivial - though those squishy pink fish are getting rarer than I'd like - and there's lots of materials to be had. I even managed to grab some crates full of supplies and tools from the wreck up top.
 		
-		Unfortunately, there's a downside to this place; the whole region is crawling with sea monsters. One of em smashed my seamoth the moment I took it for a test drive. I made it out, but only barely.
+		Unfortunately, that's where the good news ends: the whole region is crawling with more of those monsters that destroyed the lifepod. One of 'em smashed my seamoth the moment I took it for a test drive. I made it out, but only barely. They do tend to keep to the open areas, at least, so I've so far been able to avoid them by holing up here in the cave, but I can't do that forever.
 		
-		On the plus side, they tend to keep to the open areas, so I've so far been able to avoid them by holing up here in the cave, but I can't do that forever.
-		
-		Now, I'm not COMPLETELY out of ideas. I've got this blueprint for some kind of acoustic cloaking module maybe it'll help me evade detection from those things. To make it, though, I'll need a lot of exotic refractory crystals. The good news? I've already found some around some thermal vents to the west, and three more around the one right here in this cave. Bad news? Three's not enough...I need like ten times that, maybe more.
+		Now, I'm not COMPLETELY out of ideas. I've got this blueprint for some kind of acoustic cloaking module; maybe it'll help me evade detection from those things. To make it, though, I'll need a lot of exotic refractory crystals. The good news? I've already found some by the thermal vents to the west, and three more around the one right here in this cave. Bad news? Three's not enough...I need like ten times that, maybe more.
 
-		Soooo...sooner or later I'm gonna have to risk it and go outside to look for more. I'm not looking forward to that - this area hasn't had all that much of them, maybe because the mountains around here channel the currents through the vent areas and disturb whatever conditions those crystals need to form. I can't imagine where else I'd look, though; I haven't seen anywhere that's got similar levels of geothermal activity anywhere near here.
+		Soooo...sooner or later I'm gonna have to risk it and go grab the ones off the vents outside and then look for more. This area hasn't had all that many, though. Maybe the mountains around here channel the currents through the vent areas and disturb whatever conditions those crystals need to form? I can't imagine where else I'd look; I haven't seen anywhere that's got similar levels of geothermal activity anywhere near here. Maybe I should check that other cave system to the west. Unfortunately it's got one of those leviathans patrolling the entrance, so I haven't had the courage to do that yet.
 		
 		But...god, if this works, I can make a new seamoth, and slip right past these blasted giants and head to the Aurora to wait for rescue. If it doesn't......
 	</pda>
@@ -193,6 +231,24 @@
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </mountaincave>
+  <islandcave>
+	<name>
+		Mountain Island Cave Crew Log
+	</name>
+	<pda>
+		Voice 2 [traumatized]: Maybe [Voice1] was right. We barely made it half a kilometer before whatever killed the pod took chase after us. Of the three of us, I'm the only one who escaped.....only in the barest sense, given that I can still hear it every minute of every day I'm in here.
+		
+		Those days are coming to an end, now, though, as I'm out of food, and besides, even if rescue does come, they'll never find me in here.
+		
+		When I do work up the courage to leave, I should at least look around for another exit...I'm not going near that monster again.
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </islandcave>
   <bloodtrench>
 	<name>
 		Lifepod 14 Crew Log

@@ -98,6 +98,21 @@
 			
 		</pda>
 	</IRIDIUM>
+	<ALKALI_PLANT>
+		<name>
+			Alkali Vines
+		</name>
+		<desc>
+			A rare plant only found in certain ecological niches with high mineral content and low exposure to light.
+			
+			This plant is comprised of a fibrous tube filled with a strongly alkaline gel. The primary purpose of this may be to deter creatures from eating the stems, or it may help the conduction of the plant's biochemical processes.
+			
+			Assessment: Inedible but possibly useful from a chemistry standpoint
+		</desc>
+		<pda>
+			
+		</pda>
+	</ALKALI_PLANT>
 	<enum>
 		<name>
 			
