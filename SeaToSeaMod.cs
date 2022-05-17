@@ -26,6 +26,8 @@ namespace ReikaKalseki.SeaToSea
     private static SeamothDepthModule depth1300;
     
     private static AlkaliPlant alkali;
+    
+    private static Bioprocessor processor;
 
     [QModPatch]
     public static void Load()
@@ -60,6 +62,9 @@ namespace ReikaKalseki.SeaToSea
         DataboxTypingMap.instance.load();
         
         addFlora();
+        processor = new Bioprocessor();
+        processor.Patch();
+        SBUtil.log("Registered custom machine "+processor);
         
         addCommands();
         addPDAEntries();
@@ -94,8 +99,8 @@ namespace ReikaKalseki.SeaToSea
 		alkali.addPDAEntry(locale.getEntry(alkali.ClassID).pda, 3);
 		SBUtil.log(" > "+alkali);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
+		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
+		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.KooshZone_CaveFloor, 1, 2F);
     }
     
@@ -165,6 +170,12 @@ namespace ReikaKalseki.SeaToSea
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
         //depth1300.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         depth1300.Patch();
+        /*
+        CraftData.itemSizes[TechType.AcidMushroom] = new Vector2int(1, 2);
+        CraftData.itemSizes[TechType.HydrochloricAcid] = new Vector2int(2, 2);
+        RecipeUtil.modifyIngredients(TechType.HydrochloricAcid, i => i.amount = 12);
+        */
+       RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
     }
     
     public static void onTick(DayNightCycle cyc) {
@@ -234,7 +245,7 @@ namespace ReikaKalseki.SeaToSea
         
     	VoidSpikesBiome.instance.onWorldStart();
     }
-    
+    /*
     public static void onEntitySpawn(LargeWorldEntity p) {
     	TechTag tag = p.GetComponent<TechTag>();
     	if (tag != null && tag.type == TechType.PrecursorKey_Purple) {
@@ -244,7 +255,7 @@ namespace ReikaKalseki.SeaToSea
     		UnityEngine.Object.Destroy(p.gameObject);
     	}
     }
-    
+    */
     public static void tickPlayer(Player ep) {
     	/*
     	if (ep.GetVehicle() == null && ep.gameObject.transform.position.y < -500 && !ep.CanBreathe() && Inventory.main.equipment.GetCount(TechType.Rebreather) == 0) {

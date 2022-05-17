@@ -170,6 +170,10 @@
 		
 		Voice 2: Until we run out of food and water because there's four of us in a pod designed for two.
 		
+		Voice 3: Hello!
+		
+		Voice 2: Thanks, [voice 2], very helpful.
+		
 		Voice 1: So we ration our supplies a bit. Worst comes to worst, there's probably something in the water to sustain us, at least for the few days we need.
 		
 		Voice 2: So that's your plan, then? Just stay floating in this metal box until we either get plucked out of the water by rescue or run out of supplies?
@@ -231,16 +235,56 @@
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </mountaincave>
+  <islandpda>
+	<name>
+		Mountain Island Crew Log
+	</name>
+	<pda>
+		Voice 2: There IS land here. Just...not very much of it. Certainly not enough to support three people. Not when it's mostly a spire of rock surrounded by sand.
+		
+		Voice 3: And the-
+		
+		Voice 2: OK, yes, there's also some giant probably-alien building, too. But I don't think that we'd find much to eat in there either.
+		
+		Voice 3: No, but it could-
+		
+		Voice 2 [pissed off] Not that it matters, anyway. Not when we're locked out after SOMEONE dropped the mystery tablet twenty feet from the door. That thing is probably centuries old, survived out here who knows how long, and then you fumbled it. Onto a rock no less.
+		
+		Voice 3: I said I was sorry...
+		
+		Voice 2: Why don't you make yourself more useful, perhaps go see if that cave over there has anything for us? To eat, perhaps?
+		
+		Voice 3: What about-
+		
+		Voice 2: I know you already - so bravely - tested the ediblility of those trees, but they won't last a week if all three of us start eating them, especially when they're mostly water and you kill it taking enough of it to fill yourself. So...you. Cave. Find stuff.
+		
+		Voice 3: [pause] Okaayyyyy...
+		
+		Voice 2: [distant] And don't come back until you find something!
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </islandpda>
   <islandcave>
 	<name>
 		Mountain Island Cave Crew Log
 	</name>
 	<pda>
-		Voice 2 [traumatized]: Maybe [Voice1] was right. We barely made it half a kilometer before whatever killed the pod took chase after us. Of the three of us, I'm the only one who escaped.....only in the barest sense, given that I can still hear it every minute of every day I'm in here.
+		Voice 2 [traumatized]: What good is being right when the only thing it changes is how you die?
 		
-		Those days are coming to an end, now, though, as I'm out of food, and besides, even if rescue does come, they'll never find me in here.
+		[Voice3 Name] did find something in the caves after all. Unfortunately, as usual for him, it was completely useless to us. Some kind of ring of more of that alien metal. Could be a statue for all I care.
 		
-		When I do work up the courage to leave, I should at least look around for another exit...I'm not going near that monster again.
+		We also found some more of those tablets, but I'm not touching them. Not after what it did to the other two. I'm sure they're cursed, along with rest of this alien trash. Hell, maybe we have that to thank for what happened to the ship, too. Maybe this whole damn planet's some kind of prison and those things are tracking devices that bring torment on anyone who's touched one.
+
+		Exhibit A: We've come out of this cave for fish on several occasions, and it's never come to anything. Buuuuuuut, after [Voice3] and [othername] dug up another tablet - and not just another one of those purple ones, either; this one was red as blood - on our very next trip out, we ended up face to face with the thing I'm sure killed the pod. Giant ugly beast, probably a hundred feet long. Four black eyes and a mouth big enough to swallow someone whole. I'm not just guessing, either - it grabbed [voice3] with its jaws before any of us had a chance to react.
+		
+		The monster took chase after the other two of us. When we made it back to the cave it wasn't "we" at all - I'm the only one who escaped.....only in the barest sense too, given that I can still hear that thing every minute of every day I'm in here.
+		
+		Maybe it senses the tablet, which they left right next to our little cache. I'll probably have to get rid of it, but I've gotta find another way out of this cave first. I'm not going near the old exit ever again, especially holding that thing. But as soon as I do find a way into some deeper water - the deeper the better - down that thing goes.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors

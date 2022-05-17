@@ -507,7 +507,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(LargeWorldEntity))]
 	[HarmonyPatch("Start")]
 	public static class AllObjectSpawnCallback {
@@ -527,7 +527,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}
+	}*/
 	/*
 	[HarmonyPatch(typeof(Player))]
 	[HarmonyPatch("GetOxygenPerBreath")]
