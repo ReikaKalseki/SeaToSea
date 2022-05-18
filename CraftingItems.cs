@@ -26,6 +26,12 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
 				}
+				if (m == Items.Chlorine || m == Items.Luminol) {
+					item.unlockRequirement = SeaToSeaMod.processor.TechType;
+				}
+				if (m == Items.Luminol) {
+					item.glowIntensity = 2;
+				}
 				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
 				item.Patch();	
 			}
@@ -40,10 +46,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Items {
 			[Item(typeof(BasicCraftingItem), true, TechType.AramidFibers, "WorldEntities/Natural/aerogel")]HoneycombComposite,
-			[Item(typeof(BasicCraftingItem), true, TechType.Diamond, "WorldEntities/Natural/Lubricant")]CrystalLens, //was EnameledGlass
-			[Item(typeof(BasicCraftingItem), true, TechType.PlasteelIngot, "WorldEntities/Natural/Magnesium")]HullPlating, //was WiringKit
-			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/polyaniline")]Sealant,
+			[Item(typeof(BasicCraftingItem), true, TechType.Diamond, "WorldEntities/Natural/EnameledGlass")]CrystalLens,
+			[Item(typeof(BasicCraftingItem), true, TechType.PlasteelIngot, "WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
+			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/aramidfibers")]SealFabric,
+			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/polyaniline")]Chlorine,
+			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/polyaniline")]Luminol,
 		}
 		
 		private static Item getAttr(Items key) {

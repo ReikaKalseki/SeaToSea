@@ -30,7 +30,7 @@ namespace ReikaKalseki.SeaToSea
     
     public static AlkaliPlant alkali;
     
-    private static Bioprocessor processor;
+    public static Bioprocessor processor;
 
     [QModPatch]
     public static void Load()
@@ -185,8 +185,6 @@ namespace ReikaKalseki.SeaToSea
 		RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
 		RecipeUtil.removeRecipe(TechType.Benzene);
 		
-		RecipeUtil.dumpCraftTree(CraftTree.Type.Fabricator);
-		
         sealSuit = new SealedSuit();
         sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType, 5);
         sealSuit.Patch();
@@ -196,7 +194,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("battery"), 1000);
-        t2Battery.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
+        t2Battery.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Magnetite, 5);
 		t2Battery.Patch();
     }
     

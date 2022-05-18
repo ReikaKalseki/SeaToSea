@@ -32,12 +32,12 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
-			if (Player.main != null) { //TODO check last damage time
+			if (Player.main != null) {
 				GameObject ep = Player.main.gameObject;
 				double distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 				if (distsq < 64) {
 					if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 || Inventory.main.equipment.GetCount(TechType.SwimChargeFins) != 0) {
-						ep.GetComponentInParent<LiveMixin>().TakeDamage(0.1F, ep.transform.position, DamageType.Electrical, ep); //TODO make use time elapsed
+						ep.GetComponentInParent<LiveMixin>().TakeDamage(1, ep.transform.position, DamageType.Electrical, ep);
 					}
 				}
 			}

@@ -43,7 +43,7 @@
 			
 		</pda>
 	</Sealant>
-	<SealedFabric>
+	<SealFabric>
 		<name>
 			Sealed Fabric
 		</name>
@@ -53,7 +53,7 @@
 		<pda>
 			
 		</pda>
-	</SealedFabric>
+	</SealFabric>
 	<SealedSuit>
 		<name>
 			Electrochemical Suit
