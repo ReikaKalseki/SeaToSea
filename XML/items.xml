@@ -32,6 +32,52 @@
 			
 		</pda>
 	</HullPlating>
+	<Sealant>
+		<name>
+			Sealant
+		</name>
+		<desc>
+			A thick goo useful for impregnating other materials to induce impermeability.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Sealant>
+	<SealedFabric>
+		<name>
+			Sealed Fabric
+		</name>
+		<desc>
+			Fabric woven together and thoroughly saturated with sealing compounds.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SealedFabric>
+	<SealedSuit>
+		<name>
+			Electrochemical Suit
+		</name>
+		<desc>
+			A suit made of molecularly impenetrable fabric.
+			Stops almost all electrical and chemical penetration, but does little against radiation or thermal hazards.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SealedSuit>
+	<RebreatherV2>
+		<name>
+			Rebreather Mk2
+		</name>
+		<desc>
+			A rebreather with advanced gas delivery control, higher circulation pressures, and improved seals.
+			Better suited for extreme diving depths than basic models.
+		</desc>
+		<pda>
+			
+		</pda>
+	</RebreatherV2>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite
@@ -113,6 +159,18 @@
 			
 		</pda>
 	</ALKALI_PLANT>
+	<SeamothVoidStealth>
+		<name>
+			Acoustic Suppression Module
+		</name>
+		<desc>
+			Greatly reduces the detectability of basic seamoth systems to passive listeners.
+			Will not affect active echolocators, or creatures at close range.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeamothVoidStealth>
 	<enum>
 		<name>
 			

@@ -507,6 +507,28 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
+	[HarmonyPatch(typeof(Pickupable))]
+	[HarmonyPatch("Pickup")]
+	public static class OnPlayerPickup {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "Pickupable", "PlayPickupSound", true, new Type[0]);
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "onItemPickedUp", false, typeof(Pickupable)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	/*
 	[HarmonyPatch(typeof(LargeWorldEntity))]
 	[HarmonyPatch("Start")]

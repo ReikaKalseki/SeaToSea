@@ -22,10 +22,13 @@ namespace ReikaKalseki.SeaToSea
     public static readonly XMLLocale pdas = new XMLLocale("XML/pda.xml");
     public static readonly XMLLocale signals = new XMLLocale("XML/signals.xml");
     
-    private static SeamothVoidStealthModule voidStealth;
-    private static SeamothDepthModule depth1300;
+    public static SeamothVoidStealthModule voidStealth;
+    public static SeamothDepthModule depth1300;
+    public static CustomEquipable sealSuit;
+    public static CustomEquipable rebreatherV2;
+    public static CustomBattery t2Battery;
     
-    private static AlkaliPlant alkali;
+    public static AlkaliPlant alkali;
     
     private static Bioprocessor processor;
 
@@ -56,12 +59,12 @@ namespace ReikaKalseki.SeaToSea
         pdas.load();
         signals.load();
         
+        addFlora();
         addItemsAndRecipes();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
-        addFlora();
         processor = new Bioprocessor();
         processor.Patch();
         SBUtil.log("Registered custom machine "+processor);
@@ -161,6 +164,10 @@ namespace ReikaKalseki.SeaToSea
         lens.craftingTime = 20;
         lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         
+        BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
+        sealedFabric.craftingTime = 4;
+        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 3).addIngredient(TechType.AramidFibers, 2).addIngredient(TechType.StalkerTooth, 1);
+        
         CraftingItems.addAll();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -175,7 +182,22 @@ namespace ReikaKalseki.SeaToSea
         CraftData.itemSizes[TechType.HydrochloricAcid] = new Vector2int(2, 2);
         RecipeUtil.modifyIngredients(TechType.HydrochloricAcid, i => i.amount = 12);
         */
-       RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
+		RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
+		RecipeUtil.removeRecipe(TechType.Benzene);
+		
+		RecipeUtil.dumpCraftTree(CraftTree.Type.Fabricator);
+		
+        sealSuit = new SealedSuit();
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType, 5);
+        sealSuit.Patch();
+		
+        rebreatherV2 = new RebreatherV2();
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6).addIngredient(TechType.Polyaniline, 2).addIngredient(TechType.Rebreather, 1);
+        rebreatherV2.Patch();
+		
+		t2Battery = new CustomBattery(locale.getEntry("battery"), 1000);
+        t2Battery.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
+		t2Battery.Patch();
     }
     
     public static void onTick(DayNightCycle cyc) {
@@ -262,13 +284,13 @@ namespace ReikaKalseki.SeaToSea
     		
     	}*/
     }
-    
+    /*
     public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
 		if (!GameModeUtils.RequiresOxygen())
 			return 0;
 		float num = 1;
 		if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting) {
-			bool hasRebreatherV2 = Inventory.main.equipment.GetCount(TechType.RadiationHelmet) != 0;
+			bool hasRebreatherV2 = Inventory.main.equipment.GetCount(rebreatherV2.TechType) != 0;
 			bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetCount(TechType.Rebreather) != 0;
 			if (!hasRebreather) {
 				if (depthClass == 2) {
@@ -283,6 +305,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		return breathingInterval * num;
+    }*/
+    
+    public static void onItemPickedUp(Pickupable p) {
+    	if (p.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
+			if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 || Inventory.main.equipment.GetCount(TechType.SwimChargeFins) != 0) {
+				Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
+			}
+    	}
     }
     
     public static void onEntityRegister(CellManager cm, LargeWorldEntity lw) {

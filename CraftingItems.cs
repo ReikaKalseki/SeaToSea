@@ -19,10 +19,13 @@ namespace ReikaKalseki.SeaToSea
 				SBUtil.log("Constructing crafting item "+id);
 				Item attr = getAttr(m);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.locale.getEntry(id);
-				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc});
+				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, attr.template});
 				mappings[m] = item;
 				item.isAdvanced = attr.isAdvanced;
 				item.unlockRequirement = attr.dependency;
+				if (m == Items.Sealant || m == Items.SealFabric) {
+					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
+				}
 				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
 				item.Patch();	
 			}
@@ -36,9 +39,11 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public enum Items {
-			[Item(typeof(BasicCraftingItem), true, TechType.AramidFibers)]HoneycombComposite,
-			[Item(typeof(BasicCraftingItem), true, TechType.Diamond)]CrystalLens,
-			[Item(typeof(BasicCraftingItem), true, TechType.PlasteelIngot)]HullPlating,
+			[Item(typeof(BasicCraftingItem), true, TechType.AramidFibers, "WorldEntities/Natural/aerogel")]HoneycombComposite,
+			[Item(typeof(BasicCraftingItem), true, TechType.Diamond, "WorldEntities/Natural/Lubricant")]CrystalLens, //was EnameledGlass
+			[Item(typeof(BasicCraftingItem), true, TechType.PlasteelIngot, "WorldEntities/Natural/Magnesium")]HullPlating, //was WiringKit
+			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/polyaniline")]Sealant,
+			[Item(typeof(BasicCraftingItem), true, TechType.None, "WorldEntities/Natural/aramidfibers")]SealFabric,
 		}
 		
 		private static Item getAttr(Items key) {
@@ -53,14 +58,15 @@ namespace ReikaKalseki.SeaToSea
 		public class Item : Attribute {
 			
 			public readonly bool isAdvanced;
-			public readonly TechType dependency;
-			
+			public readonly TechType dependency;			
 			internal readonly Type itemClass;
+			public readonly string template;
 			
-			public Item(Type item, bool adv, TechType dep) {
+			public Item(Type item, bool adv, TechType dep, string temp) {
 				itemClass = item;
 				dependency = dep;
 				isAdvanced = adv;
+				template = temp;
 			}
 		}
 	}

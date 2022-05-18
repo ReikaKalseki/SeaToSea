@@ -15,12 +15,20 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class Bioprocessor : CustomMachine {
 		
-		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", Base.Piece.RoomBioReactor) {
-			
+		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
+			addIngredient(TechType.TitaniumIngot, 1);
+			addIngredient(TechType.Magnetite, 12);
+			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+			addIngredient(TechType.CopperWire, 1);
+			addIngredient(TechType.Glass, 3);
 		}
 		
 		protected override void onTick(GameObject go) {
 			SBUtil.writeToChat("I am ticking @ "+go.transform.position);
+		}
+		
+		protected override void prepareGameObject(GameObject go, Renderer r) {
+			UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
 		}
 		
 	}
