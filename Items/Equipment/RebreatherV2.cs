@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class RebreatherV2 : CustomEquipable {
 		
-		public RebreatherV2() : base(SeaToSeaMod.locale.getEntry("RebreatherV2")) {
+		public RebreatherV2() : base(SeaToSeaMod.locale.getEntry("RebreatherV2"), "WorldEntities/Natural/rebreather") {
 			
 		}
 
@@ -26,10 +26,6 @@ namespace ReikaKalseki.SeaToSea
 			get {
 				return EquipmentType.Head;
 			}
-		}
-		
-		protected override sealed string getTemplatePrefab() {
-			return "WorldEntities/Natural/rebreather";
 		}
 	}
 }

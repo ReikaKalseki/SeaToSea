@@ -19,7 +19,8 @@ namespace ReikaKalseki.SeaToSea {
 			glowIntensity = 2;
 		}
 		
-		protected override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			base.prepareGameObject(go, r);
 			go.EnsureComponent<AlkaliPlantTag>();
 			go.transform.localScale = Vector3.one*2;
 		}

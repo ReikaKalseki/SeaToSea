@@ -68,11 +68,11 @@
 	</SealedSuit>
 	<RebreatherV2>
 		<name>
-			Rebreather Mk2
+			Liquid Breathing System
 		</name>
 		<desc>
-			A rebreather with advanced gas delivery control, higher circulation pressures, and improved seals.
-			Better suited for extreme diving depths than basic models.
+			A breathing apparatus that uses an oxygen-saturated perfluorocarbon liquid instead of air.
+			Allows for respiration at extreme depths and pressures without risk of barotrauma or toxicity from gas mixtures.
 		</desc>
 		<pda>
 			

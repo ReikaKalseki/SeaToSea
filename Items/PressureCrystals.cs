@@ -19,7 +19,8 @@ namespace ReikaKalseki.SeaToSea {
 			collectSound = "event:/loot/pickup_quartz";
 		}
 		
-		protected override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			base.prepareGameObject(go, r);
 			SBUtil.makeTransparent(r);
 			r.sharedMaterial.SetFloat("_Fresnel", 0.65F);
 			r.sharedMaterial.SetFloat("_Shininess", 15F);

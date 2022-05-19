@@ -27,8 +27,9 @@ namespace ReikaKalseki.SeaToSea {
 			SBUtil.writeToChat("I am ticking @ "+go.transform.position);
 		}
 		
-		protected override void prepareGameObject(GameObject go, Renderer r) {
-			UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			base.prepareGameObject(go, r);
+			//UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
 		}
 		
 	}

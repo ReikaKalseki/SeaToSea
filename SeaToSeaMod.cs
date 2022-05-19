@@ -59,15 +59,15 @@ namespace ReikaKalseki.SeaToSea
         pdas.load();
         signals.load();
         
+        processor = new Bioprocessor();
+        processor.Patch();
+        SBUtil.log("Registered custom machine "+processor);
+        
         addFlora();
         addItemsAndRecipes();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
-        
-        processor = new Bioprocessor();
-        processor.Patch();
-        SBUtil.log("Registered custom machine "+processor);
         
         addCommands();
         addPDAEntries();
@@ -162,11 +162,11 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
-        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
         
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
-        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 3).addIngredient(TechType.AramidFibers, 2).addIngredient(TechType.StalkerTooth, 1);
+        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 3).addIngredient(TechType.AramidFibers, 2).addIngredient(TechType.StalkerTooth, 1);
         
         CraftingItems.addAll();
         
@@ -186,15 +186,15 @@ namespace ReikaKalseki.SeaToSea
 		RecipeUtil.removeRecipe(TechType.Benzene);
 		
         sealSuit = new SealedSuit();
-        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType, 5);
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 5);
         sealSuit.Patch();
 		
         rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6).addIngredient(TechType.Polyaniline, 2).addIngredient(TechType.Rebreather, 1);
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Polyaniline, 2).addIngredient(TechType.Rebreather, 1);
         rebreatherV2.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("battery"), 1000);
-        t2Battery.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Magnetite, 5);
+        t2Battery.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 2).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Magnetite, 5);
 		t2Battery.Patch();
     }
     

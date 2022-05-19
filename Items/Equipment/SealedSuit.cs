@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class SealedSuit : CustomEquipable {
 		
-		public SealedSuit() : base(SeaToSeaMod.locale.getEntry("SealedSuit")) {
+		public SealedSuit() : base(SeaToSeaMod.locale.getEntry("SealedSuit"), "WorldEntities/Tools/Stillsuit") {
 			
 		}
 
@@ -26,10 +26,6 @@ namespace ReikaKalseki.SeaToSea
 			get {
 				return EquipmentType.Body;
 			}
-		}
-		
-		protected override sealed string getTemplatePrefab() {
-			return "WorldEntities/Tools/Stillsuit";
 		}
 	}
 }
