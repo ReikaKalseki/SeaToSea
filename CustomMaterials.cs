@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		private static Material getMaterial(Materials key) {
+		public static Material getMaterial(Materials key) {
 			FieldInfo info = typeof(Materials).GetField(Enum.GetName(typeof(Materials), key));
 			return (Material)Attribute.GetCustomAttribute(info, typeof(Material));
 		}

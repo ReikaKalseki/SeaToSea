@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
-			//UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
+			UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
 		}
 		
 	}

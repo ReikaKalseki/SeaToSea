@@ -162,11 +162,16 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
-        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 30).addIngredient(TechType.Diamond, 3).addIngredient(TechType.Magnetite, 1);
+        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 45).addIngredient(TechType.Diamond, 9).addIngredient(TechType.Magnetite, 24);
         
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
-        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 3).addIngredient(TechType.AramidFibers, 2).addIngredient(TechType.StalkerTooth, 1);
+        sealedFabric.numberCrafted = 2;
+        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5).addIngredient(TechType.AramidFibers, 3).addIngredient(TechType.StalkerTooth, 1).addIngredient(TechType.Silicone, 2);
+        
+        BasicCraftingItem armor = CraftingItems.getItem(CraftingItems.Items.HullPlating);
+        armor.craftingTime = 9;
+        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 5).addIngredient(comb, 1);
         
         CraftingItems.addAll();
         
@@ -186,16 +191,16 @@ namespace ReikaKalseki.SeaToSea
 		RecipeUtil.removeRecipe(TechType.Benzene);
 		
         sealSuit = new SealedSuit();
-        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 5);
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6);
         sealSuit.Patch();
 		
-        rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Polyaniline, 2).addIngredient(TechType.Rebreather, 1);
-        rebreatherV2.Patch();
-		
-		t2Battery = new CustomBattery(locale.getEntry("battery"), 1000);
+		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
         t2Battery.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 2).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Magnetite, 5);
 		t2Battery.Patch();
+		
+        rebreatherV2 = new RebreatherV2();
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
+        rebreatherV2.Patch();
     }
     
     public static void onTick(DayNightCycle cyc) {

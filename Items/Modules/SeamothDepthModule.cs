@@ -37,10 +37,5 @@ namespace ReikaKalseki.SeaToSea
 				return QuickSlotType.Passive;
 			}
 		}
-		
-		protected override Atlas.Sprite GetItemSprite()
-		{
-			return SpriteManager.Get(TechType.VehicleHullModule3);
-		}
 	}
 }

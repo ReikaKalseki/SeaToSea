@@ -33,7 +33,6 @@ namespace ReikaKalseki.SeaToSea
 					item.glowIntensity = 2;
 				}
 				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
-				item.Patch();	
 			}
 		}
 		

@@ -171,6 +171,17 @@
 			
 		</pda>
 	</SeamothVoidStealth>
+	<t2battery>
+		<name>
+			Advanced Battery
+		</name>
+		<desc>
+			A better battery, with significantly greater storage density. Its material construction precludes being adapted into a vehicular power cell.
+		</desc>
+		<pda>
+			
+		</pda>
+	</t2battery>
 	<enum>
 		<name>
 			
