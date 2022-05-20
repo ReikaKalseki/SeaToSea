@@ -13,9 +13,11 @@ using SMLHelper.V2.Utility;
 namespace ReikaKalseki.SeaToSea
 {
   [QModCore]
-  public class SeaToSeaMod
+  public static class SeaToSeaMod
   {
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
+    
+    public static readonly float ENVIRO_RATE_SCALAR = 4;
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     public static readonly XMLLocale locale = new XMLLocale("XML/items.xml");
@@ -201,6 +203,8 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2 = new RebreatherV2();
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
+        
+        RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
     }
     
     public static void onTick(DayNightCycle cyc) {
@@ -285,8 +289,158 @@ namespace ReikaKalseki.SeaToSea
     	/*
     	if (ep.GetVehicle() == null && ep.gameObject.transform.position.y < -500 && !ep.CanBreathe() && Inventory.main.equipment.GetCount(TechType.Rebreather) == 0) {
     		
+    	}*//*
+    	Vehicle v = ep.GetVehicle();
+    	if (v == null && ep.currentSub == null) {
+    		float y = -ep.gameObject.transform.position.y;
+    		float ymin = 500;
+    		if (y > ymin) {
+    			float ymax = 600;
+    			float f = y >= ymax ? 1 : (y-ymin)/(ymax-ymin);
+    			LiveMixin live = ep.gameObject.GetComponentInParent<LiveMixin>();
+    			if (live != null && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
+    				ep.GetComponentInParent<LiveMixin>().TakeDamage(3*f, ep.transform.position, DamageType.Pressure, ep.gameObject); //TODO make use time elapsed
+    			}
+    		}
+    	}
+    	else if (v != null || (ep.currentSub != null && ep.currentSub.isCyclops)) {
+    		string biome = ep.GetBiomeString();
+    		float amt = -1;
+    		switch(biome) {
+    			
+    		}
+    		if (amt > 0) {
+    			if (v != null)
+    				v.ConsumeEnergy(amt);
+    			else
+    				ep.currentSub.power?;
+    		}
     	}*/
     }
+   
+	public static void doEnvironmentalDamage(TemperatureDamage dmg) { //TODO rebalance
+   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
+   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()))
+   			return;
+		float temperature = dmg.GetTemperature();
+		float f = 1;
+		float f0 = 1;
+    	if (dmg.player) {
+    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
+    		string biome = dmg.player.GetBiomeString();
+    		//SBUtil.writeToChat(biome+" HH# "+dmg.gameObject);
+    		switch(biome) {
+    			case "ILZCorridor":
+    				temperature = 90;
+    				f = 8;
+    				break;
+    			case "ILZChamber":
+    				temperature = 120;
+    				f = 10;
+    				break;
+    			case "LavaPit":
+    				temperature = 140;
+    				f = 12;
+    				break;
+    			case "LavaFalls":
+    				temperature = 160;
+    				f = 15;
+    				break;
+    			case "LavaLakes":
+    				temperature = 240;
+    				f = 18;
+    				break;
+    			case "ilzLava":
+    				temperature = 1200;
+    				f = 24;
+    				break;
+    			default:
+    				break;
+    		}
+		}
+		if (temperature >= dmg.minDamageTemperature) {
+			float num = temperature / dmg.minDamageTemperature;
+			num *= dmg.baseDamagePerSecond;
+			dmg.liveMixin.TakeDamage(num*f*f0/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Heat, null);
+		}
+    	if (dmg.player) {
+	    	float y = -dmg.player.gameObject.transform.position.y;
+	    	float ymin = 500;
+    		if (y > ymin && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
+    			float ymax = 600;
+    			float f2 = y >= ymax ? 1 : (y-ymin)/(ymax-ymin);
+    			dmg.liveMixin.TakeDamage(30*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+    		}
+	    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
+	    		string biome = dmg.player.GetBiomeString();
+	    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
+	    		float amt = -1;
+	    		switch(biome) {
+	    			case "LostRiver_BonesField_Corridor":
+	    			case "LostRiver_GhostTree":
+	    			case "LostRiver_Corridor":
+	    				amt = 18;
+	    				break;
+	    			case "LostRiver_Canyon":
+	    				amt = 24;
+	    				break;
+	    			case "LostRiver_BonesField":
+	    			case "LostRiver_Junction":
+	    			//case "LostRiver_TreeCove":
+	    			case "LostRiver_GhostTree_Lower":
+	    				amt = 40;
+	    				break;
+	    			default:
+	    				break;
+	    		}
+	    		if (amt > 0) {
+	    			dmg.liveMixin.TakeDamage(amt/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Poison, null);
+	    		}
+	    	//}
+    	}
+		else {
+    		string biome = Player.main.GetBiomeString();
+    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
+    		if (!v.docked) {
+	    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
+	    		float amt = -1;
+	    		switch(biome) {
+	    			case "LostRiver_BonesField_Corridor":
+	    			case "LostRiver_BonesField":
+	    			case "LostRiver_Junction":
+	    			case "LostRiver_TreeCove":
+	    			case "LostRiver_Corridor":
+	    			case "LostRiver_GhostTree_Lower":
+	    			case "LostRiver_GhostTree":
+	    				amt = 2;
+	    				break;
+	    			case "LostRiver_Canyon":
+	    				amt = 5;
+	    				break;
+	    			default:
+	    				break;
+	    		}
+	    		if (v.playerSits)
+	    			amt *= 2;
+	    		if (amt > 0) { //TODO trigger PDA prompt and entry, like void
+	    			v.ConsumeEnergy(amt/ENVIRO_RATE_SCALAR);
+	    		}
+    		}
+		}
+ 	}
+   
+	public static float CalculateDamage(float damage, DamageType type, GameObject target, GameObject dealer) {
+   		Player p = target.GetComponentInParent<Player>();
+   		if (p != null && Inventory.main.equipment.GetCount(sealSuit.TechType) != 0) {
+   			if (type == DamageType.Poison || type == DamageType.Acid || type == DamageType.Electrical) {
+   				damage *= 0.2F;
+   				damage -= 10;
+   				if (damage < 0)
+   					damage = 0;
+   			}
+   		}
+   		return damage;
+	}
     /*
     public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
 		if (!GameModeUtils.RequiresOxygen())
