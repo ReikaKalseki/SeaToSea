@@ -79,6 +79,8 @@ namespace ReikaKalseki.SeaToSea
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
         */
        
+		DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
+       
 		VoidSpikesBiome.instance.register();
 		//AvoliteSpawner.instance.register();
        
@@ -232,7 +234,7 @@ namespace ReikaKalseki.SeaToSea
 			if (e.hasField("audio"))
 				page.setVoiceover(e.getField<string>("audio"));
 			if (e.hasField("header"))
-				page.setHeaderImage(TextureManager.getTexture(e.getField<string>("header")));
+				page.setHeaderImage(TextureManager.getTexture("Textures/PDA/"+e.getField<string>("header")));
 			page.register();
     	}
     }
@@ -325,9 +327,9 @@ namespace ReikaKalseki.SeaToSea
 		float temperature = dmg.GetTemperature();
 		float f = 1;
 		float f0 = 1;
+    	string biome = Player.main.GetBiomeString();
     	if (dmg.player) {
     		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
-    		string biome = dmg.player.GetBiomeString();
     		//SBUtil.writeToChat(biome+" HH# "+dmg.gameObject);
     		switch(biome) {
     			case "ILZCorridor":
@@ -372,23 +374,22 @@ namespace ReikaKalseki.SeaToSea
     			dmg.liveMixin.TakeDamage(30*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
     		}
 	    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
-	    		string biome = dmg.player.GetBiomeString();
 	    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
 	    		float amt = -1;
 	    		switch(biome) {
 	    			case "LostRiver_BonesField_Corridor":
 	    			case "LostRiver_GhostTree":
 	    			case "LostRiver_Corridor":
-	    				amt = 18;
+	    				amt = 8;
 	    				break;
 	    			case "LostRiver_Canyon":
-	    				amt = 24;
+	    				amt = 10;
 	    				break;
 	    			case "LostRiver_BonesField":
 	    			case "LostRiver_Junction":
 	    			//case "LostRiver_TreeCove":
 	    			case "LostRiver_GhostTree_Lower":
-	    				amt = 40;
+	    				amt = 15;
 	    				break;
 	    			default:
 	    				break;
@@ -398,38 +399,50 @@ namespace ReikaKalseki.SeaToSea
 	    		}
 	    	//}
     	}
-		else {
-    		string biome = Player.main.GetBiomeString();
+	   	float leak = -1;
+	   	switch(biome) {
+	   		case "LostRiver_BonesField_Corridor":
+	   		case "LostRiver_BonesField":
+	   		case "LostRiver_Junction":
+	   		case "LostRiver_TreeCove":
+	   		case "LostRiver_Corridor":
+	   		case "LostRiver_GhostTree_Lower":
+	   		case "LostRiver_GhostTree":
+	   			leak = 1F;
+	   			break;
+	   		case "LostRiver_Canyon":
+	   			leak = 1.75F;
+	   			break;
+	   		default:
+	   			break;
+	   	}
+	   	if (leak > 0) {
     		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
-    		if (!v.docked) {
-	    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-	    		float amt = -1;
-	    		switch(biome) {
-	    			case "LostRiver_BonesField_Corridor":
-	    			case "LostRiver_BonesField":
-	    			case "LostRiver_Junction":
-	    			case "LostRiver_TreeCove":
-	    			case "LostRiver_Corridor":
-	    			case "LostRiver_GhostTree_Lower":
-	    			case "LostRiver_GhostTree":
-	    				amt = 2;
-	    				break;
-	    			case "LostRiver_Canyon":
-	    				amt = 5;
-	    				break;
-	    			default:
-	    				break;
-	    		}
-	    		if (v.playerSits)
-	    			amt *= 2;
-	    		if (amt > 0) { //TODO trigger PDA prompt and entry, like void
-	    			v.ConsumeEnergy(amt/ENVIRO_RATE_SCALAR);
-	    		}
+	    	if (v != null && !v.docked) {
+		    	//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
+		    	if (v.playerSits)
+		    		leak *= 2;
+		    	AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
+		    	if (acid != null && acid.numTriggers > 0)
+		    		leak *= 8;-
+		    	int trash;
+		    	v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
+		   	}
+    		foreach (InventoryItem item in Inventory.main.container) {
+    			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell) {
+    				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
+    				//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
+    				if (b != null && b.capacity > 100) {
+    					b.charge = Math.Max(b.charge-leak, 0);-
+    					SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
+    				}
+    			}
     		}
+	   		PDAManager.getPage("lostrivershortcircuit").unlock();
 		}
  	}
    
-	public static float CalculateDamage(float damage, DamageType type, GameObject target, GameObject dealer) {
+	public static float recalculateDamage(float damage, DamageType type, GameObject target, GameObject dealer) {
    		Player p = target.GetComponentInParent<Player>();
    		if (p != null && Inventory.main.equipment.GetCount(sealSuit.TechType) != 0) {
    			if (type == DamageType.Poison || type == DamageType.Acid || type == DamageType.Electrical) {
@@ -440,6 +453,18 @@ namespace ReikaKalseki.SeaToSea
    			}
    		}
    		return damage;
+	}
+   
+   	public static float getVehicleRechargeAmount(Vehicle v) {
+   		float baseline = 0.0025F;
+   		GameObject parent = v.gameObject.transform.parent != null ? v.gameObject.transform.parent.gameObject : null;
+   		if (parent != null) {
+   			BaseRoot b = parent.GetComponent<BaseRoot>();
+   			if (b != null && b.isBase && b.currPowerRating > 0) {
+   				baseline *= 4;
+   			}
+   		}
+   		return baseline;
 	}
     /*
     public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {

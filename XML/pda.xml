@@ -129,8 +129,6 @@
 	<category>
 		DownloadedData/Codes
 	</category>
-	<header>
-	</header>
   </sunbeamdebrishint>
   <mountaincavehint>
 	<name>
@@ -341,4 +339,22 @@
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </bloodtrench>
+  <lostrivershortcircuit>
+	<name>
+		Hypersalinated Water
+	</name>
+	<pda>
+		Due to the multiple upward-facing openings, water with extremely high salt and other mineral content - which is denser than the more pure water above - collects in this cave system. This high concentration of free ions makes the water remarkably conductive, to the point where electrical charge can rapidly leak from areas where it is concentrated - such as electrical storage units - to the environment if they are exposed to the water. 
+		
+		This effect is most pronounced while inside the caustic brine, but sufficient ion diffusion occurs for leakage to still be significant while in clearer water.
+		
+		No known means is currently available to inhibit this phenomenon, though it is only of particular importance to vehicles as their power cells are the largest and densest electrical sources in present use.
+	</pda>
+	<category>
+		PlanetaryGeology
+	</category>
+	<header>
+		LostRiverImage
+	</header>
+  </lostrivershortcircuit>
 </Root>

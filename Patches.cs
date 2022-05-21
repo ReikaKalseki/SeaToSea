@@ -631,6 +631,28 @@ namespace ReikaKalseki.SeaToSea {
 				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_3));
 				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_2));
 				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
+				//already present//codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(Vehicle))]
+	[HarmonyPatch("UpdateEnergyRecharge")]
+	public static class VehicleMoonPoolRechargeRate {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, "0.0025");
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "getVehicleRechargeAmount", false, typeof(Vehicle));
 				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
