@@ -399,6 +399,7 @@ namespace ReikaKalseki.SeaToSea
 	   			break;
 	   	}
 	   	if (leak > 0) {
+	   		bool used = false;
     		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
 	    	if (v != null && !v.docked) {
 		    	//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
@@ -409,6 +410,7 @@ namespace ReikaKalseki.SeaToSea
 		    		leak *= 8;
 		    	int trash;
 		    	v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
+		    	used = true;
 		   	}
     		foreach (InventoryItem item in Inventory.main.container) {
     			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell) {
@@ -417,10 +419,12 @@ namespace ReikaKalseki.SeaToSea
     				if (b != null && b.capacity > 100) {
     					b.charge = Math.Max(b.charge-leak*0.1F, 0);
     					//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
+		    			//used = true;
     				}
     			}
     		}
-	   		PDAManager.getPage("lostrivershortcircuit").unlock();
+    		if (used)
+	   			PDAManager.getPage("lostrivershortcircuit").unlock();
 		}
  	}
    
@@ -533,13 +537,16 @@ namespace ReikaKalseki.SeaToSea
 		else {*/
 			foreach (EnviroAlert ee in warn.alerts) {
    				//SBUtil.writeToChat(ee+" : "+ee.isActive());
-   				if (!ee.alertCooldown && ee.alert && !ee.wasActiveLastTick && ee.isActive()) {
+   				if (!ee.alertCooldown && ee.alert != null && ee.alert.text != null && !ee.wasActiveLastTick && ee.isActive()) {
 					ee.alertCooldown = true;
 					ee.wasActiveLastTick = true;
-					SBUtil.writeToChat("Firing enviro alert "+ee+" when "+Player.main.GetDepth());
+					//SBUtil.writeToChat("Firing enviro alert "+ee+" when "+Player.main.GetDepth());
 					ee.alert.Play();
 					warn.StartCoroutine(warn.ResetAlertCD(ee));
 				}
+   				else {
+					ee.wasActiveLastTick = false;
+   				}
 			}
 		//}
 		//warn.wasAtDepth = depth;
@@ -554,11 +561,11 @@ namespace ReikaKalseki.SeaToSea
    		}
    		warn.alerts.Clear();
    		warn.alerts.AddRange(li);
-   		EnviroAlert ee = new EnviroAlert(500, "crush pda", "event:/player/story/RadioWarper1");
+   		EnviroAlert ee = new EnviroAlert(warn, 500, "crush pda", "event:/player/story/RadioWarper1");
    		ee.preventiveItem.Clear();
    		ee.preventiveItem.Add(rebreatherV2.TechType);
    		warn.alerts.Add(ee);
-   		ee = new EnviroAlert(p => getLRPoison(p) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
+   		ee = new EnviroAlert(warn, p => getLRPoison(p) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
    		ee.preventiveItem.Clear();
    		ee.preventiveItem.Add(sealSuit.TechType);
    		warn.alerts.Add(ee);
@@ -570,14 +577,14 @@ namespace ReikaKalseki.SeaToSea
 		internal readonly Func<Player, bool> applicability;
    		internal bool wasActiveLastTick = false;
    		
-   		internal EnviroAlert(Func<Player, bool> f, string pda, string snd) {
-   			alert = new PDANotification();
+   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, string snd) {
+   			alert = warn.gameObject.AddComponent<PDANotification>();
    			alert.text = pda;
    			alert.sound = SBUtil.getSound(snd);
    			applicability = f;
    		}
    	
-   		internal EnviroAlert(int depth, string pda, string snd) : this(null, pda, snd) {
+   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, string pda, string snd) : this(warn, null, pda, snd) {
    			alertDepth = depth;
 	   	}
    	
