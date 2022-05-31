@@ -17,12 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {/*
-				int sub = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Sub);
-				List<CodeInstruction> inject = new List<CodeInstruction>();
-				inject.Add(new CodeInstruction(OpCodes.Ldsfld, InstructionHandlers.convertFieldOperand("ReikaKalseki.SeaToSea.C2CHooks", "onRoomFindMachine")));
-				codes.InsertRange(sub+1, inject);
-				*/
+			try {
 				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
 				codes.Insert(1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTick", false, typeof(DayNightCycle)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
@@ -59,55 +54,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
-	[HarmonyPatch(typeof(BlueprintHandTarget))]
-	[HarmonyPatch("UnlockBlueprint")]
-	public static class DataboxUseHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				for (int i = 0; i < codes.Count; i++) {
-					if (codes[i].opcode == OpCodes.Call && ((MethodInfo)codes[i].operand).DeclaringType.Name.Contains("KnownTech") && ((MethodInfo)codes[i].operand).Name == "Add") {
-						codes[i].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxUsed", false, typeof(TechType), typeof(bool), typeof(BlueprintHandTarget));
-						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
-						FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType+" @ "+i);
-						i += 2;
-					}
-				}
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}*/
-	/*
-	[HarmonyPatch(typeof(PDAScanner))]
-	[HarmonyPatch("Scan")]
-	public static class FragmentScanCompleteHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			FileLog.Log(Assembly.GetExecutingAssembly().GetName().Name+": running patch FragmentScanCompleteHook from trace "+System.Environment.StackTrace);
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Stloc_0);
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFragmentScanned", false, typeof(TechType)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	*/
+	
 	[HarmonyPatch(typeof(PDAScanner.ScanTarget))]
 	[HarmonyPatch("Initialize")]
 	public static class FragmentScanHook {
@@ -200,29 +147,7 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
-	/*
-	[HarmonyPatch(typeof(CrushDamage))]
-	[HarmonyPatch("SetExtraCrushDepth")]
-	public static class CrushDamageTracer {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "updateCrushDamage", false, typeof(float)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
-				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	*/
+	
 	[HarmonyPatch(typeof(SeaMoth))]
 	[HarmonyPatch("OnUpgradeModuleUse")]
 	public static class SeamothSonarHook {
@@ -296,27 +221,6 @@ namespace ReikaKalseki.SeaToSea {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
 				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(SkyApplier)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(SignalDatabase))]
-	[HarmonyPatch("Load")]
-	public static class CustomSignalHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "addSignals", false, typeof(SignalDatabase)));
 				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}

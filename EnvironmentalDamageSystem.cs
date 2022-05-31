@@ -20,9 +20,36 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly EnvironmentalDamageSystem instance = new EnvironmentalDamageSystem();
     
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
+    	
+    	private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
+    	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
+    	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
 		
 		private EnvironmentalDamageSystem() {
-			
+    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8);
+    		temperatures["ILZChamber"] = new TemperatureEnvironment(120, 10);
+    		temperatures["LavaPit"] = new TemperatureEnvironment(140, 12);
+    		temperatures["LavaFalls"] = new TemperatureEnvironment(160, 15);
+    		temperatures["LavaLakes"] = new TemperatureEnvironment(240, 18);
+    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24); //in lava
+    		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
+    		
+    		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
+		   	lrLeakage["LostRiver_BonesField"] = 1;
+		   	lrLeakage["LostRiver_Junction"] = 1;
+		   	lrLeakage["LostRiver_TreeCove"] = 1;
+		   	lrLeakage["LostRiver_Corridor"] = 1;
+		   	lrLeakage["LostRiver_GhostTree_Lower"] = 1;
+		   	lrLeakage["LostRiver_GhostTree"] = 1;
+		   	lrLeakage["LostRiver_Canyon"] = 1.75F;
+		   	
+		   	lrPoisonDamage["LostRiver_BonesField_Corridor"] = 8;
+		    lrPoisonDamage["LostRiver_GhostTree"] = 8;
+		    lrPoisonDamage["LostRiver_Corridor"] = 8;
+		    lrPoisonDamage["LostRiver_Canyon"] = 10;
+		    lrPoisonDamage["LostRiver_BonesField"] = 15;
+		    lrPoisonDamage["LostRiver_Junction"] = 15;
+		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
 		}
 		
 		public void tick(TemperatureDamage dmg) {
@@ -35,34 +62,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	string biome = Player.main.GetBiomeString();
 	    	if (dmg.player) {
 	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
-	    		//SBUtil.writeToChat(biome+" HH# "+dmg.gameObject);
-	    		switch(biome) {
-	    			case "ILZCorridor":
-	    				temperature = 90;
-	    				f = 8;
-	    				break;
-	    			case "ILZChamber":
-	    				temperature = 120;
-	    				f = 10;
-	    				break;
-	    			case "LavaPit":
-	    				temperature = 140;
-	    				f = 12;
-	    				break;
-	    			case "LavaFalls":
-	    				temperature = 160;
-	    				f = 15;
-	    				break;
-	    			case "LavaLakes":
-	    				temperature = 240;
-	    				f = 18;
-	    				break;
-	    			case "ilzLava":
-	    				temperature = 1200;
-	    				f = 24;
-	    				break;
-	    			default:
-	    				break;
+	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
+	    		if (te != null) {
+		    		f = te.damageScalar;
+		    		temperature = te.temperature;
 	    		}
 			}
 			if (temperature >= dmg.minDamageTemperature) {
@@ -86,23 +89,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		}
 		    	//}
 	    	}
-		   	float leak = -1;
-		   	switch(biome) {
-		   		case "LostRiver_BonesField_Corridor":
-		   		case "LostRiver_BonesField":
-		   		case "LostRiver_Junction":
-		   		case "LostRiver_TreeCove":
-		   		case "LostRiver_Corridor":
-		   		case "LostRiver_GhostTree_Lower":
-		   		case "LostRiver_GhostTree":
-		   			leak = 1F;
-		   			break;
-		   		case "LostRiver_Canyon":
-		   			leak = 1.75F;
-		   			break;
-		   		default:
-		   			break;
-		   	}
+		   	float leak = lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
 		   	if (leak > 0) {
 		   		bool used = false;
 	    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
@@ -134,21 +121,8 @@ namespace ReikaKalseki.SeaToSea {
 	 	}
    
 		public float getLRPoison(Player p) {
-		    switch(p.GetBiomeString()) {
-		    	case "LostRiver_BonesField_Corridor":
-		    	case "LostRiver_GhostTree":
-		    	case "LostRiver_Corridor":
-		    		return 8;
-		    	case "LostRiver_Canyon":
-		    		return 10;
-		    	case "LostRiver_BonesField":
-		    	case "LostRiver_Junction":
-		    	//case "LostRiver_TreeCove":
-		    	case "LostRiver_GhostTree_Lower":
-		    		return 15;
-		    	default:
-		    		return 0;
-			}
+    		string biome = p.GetBiomeString();
+			return lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
 		}
     	
 		public float getPlayerO2Rate(Player ep) {
@@ -248,6 +222,18 @@ namespace ReikaKalseki.SeaToSea {
 	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
 	   		warn.alerts.Add(ee);
 		}
+	}
+	
+	class TemperatureEnvironment {
+		
+		public readonly float temperature;
+		public readonly float damageScalar;
+		
+		internal TemperatureEnvironment(float t, float dmg) {
+			temperature = t;
+			damageScalar = dmg;
+		}
+		
 	}
    
 	class EnviroAlert : RebreatherDepthWarnings.DepthAlert {

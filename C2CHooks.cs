@@ -38,35 +38,6 @@ namespace ReikaKalseki.SeaToSea {
 		    	}
 	    	}
 	    }
-    
-	    public static void addSignals(SignalDatabase db) {/*
-	    	foreach (XMLLocale.LocaleEntry e in signals.getEntries()) {
-	    		string id = e.getField<string>("id", null);
-	    		if (string.IsNullOrEmpty(id))
-	    			throw new Exception("Missing id for signal '"+e.dump()+"'!");
-	    		Int3 pos = Int3.zero;
-	    		if (e.hasField("location")) {
-	    			pos = e.getField<Int3>("location", pos);
-	    		}
-	    		if (id == "voidpod") {
-	    			pos = VoidSpikesBiome.signalLocation.roundToInt3();
-	    		}
-	    		if (string.IsNullOrEmpty(e.name) || string.IsNullOrEmpty(e.desc)) {
-	    			throw new Exception("Missing data for signal '"+id+"'!");
-	    		}    	
-	    		if (pos == Int3.zero)
-	    			throw new Exception("Missing location for signal '"+id+"'!");
-	    		Vector3 vec = pos.ToVector3();
-	    		SignalInfo info = new SignalInfo {
-	    			biome = SBUtil.getBiome(vec),
-	    			batch = SBUtil.getBatch(vec),
-	    			position = pos,
-	    			description = e.desc
-	    		};
-	    		SBUtil.log("Injected signal "+id+" @ "+pos+": "+info);
-	    		db.entries.Add(info);
-	    	}*/
-	    }
 	    
 	    public static void onWorldLoaded() {
 	    	worldLoaded = true;
@@ -74,48 +45,9 @@ namespace ReikaKalseki.SeaToSea {
 	        
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    }
-	    /*
-	    public static void onEntitySpawn(LargeWorldEntity p) {
-	    	TechTag tag = p.GetComponent<TechTag>();
-	    	if (tag != null && tag.type == TechType.PrecursorKey_Purple) {
-	    		GameObject repl = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(TechType.PrecursorKey_PurpleFragment));
-	    		repl.transform.position = p.gameObject.transform.position;
-	    		repl.transform.rotation = p.gameObject.transform.rotation;
-	    		UnityEngine.Object.Destroy(p.gameObject);
-	    	}
-	    }
-	    */
+	    
 	    public static void tickPlayer(Player ep) {
-	    	/*
-	    	if (ep.GetVehicle() == null && ep.gameObject.transform.position.y < -500 && !ep.CanBreathe() && Inventory.main.equipment.GetCount(TechType.Rebreather) == 0) {
-	    		
-	    	}*//*
-	    	Vehicle v = ep.GetVehicle();
-	    	if (v == null && ep.currentSub == null) {
-	    		float y = -ep.gameObject.transform.position.y;
-	    		float ymin = 500;
-	    		if (y > ymin) {
-	    			float ymax = 600;
-	    			float f = y >= ymax ? 1 : (y-ymin)/(ymax-ymin);
-	    			LiveMixin live = ep.gameObject.GetComponentInParent<LiveMixin>();
-	    			if (live != null && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
-	    				ep.GetComponentInParent<LiveMixin>().TakeDamage(3*f, ep.transform.position, DamageType.Pressure, ep.gameObject); //TO DO make use time elapsed
-	    			}
-	    		}
-	    	}
-	    	else if (v != null || (ep.currentSub != null && ep.currentSub.isCyclops)) {
-	    		string biome = ep.GetBiomeString();
-	    		float amt = -1;
-	    		switch(biome) {
-	    			
-	    		}
-	    		if (amt > 0) {
-	    			if (v != null)
-	    				v.ConsumeEnergy(amt);
-	    			else
-	    				ep.currentSub.power?;
-	    		}
-	    	}*/
+	    	
 	    }
 	   
 		public static void doEnvironmentalDamage(TemperatureDamage dmg) {
@@ -212,13 +144,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
     
-	    public static void onDataboxActivate(BlueprintHandTarget c) {
-	    	//SBUtil.log("original databox unlock being reprogrammed on 'activate' from: "+c.unlockTechType);
-	    	//SBUtil.log(c.gameObject.ToString());
-	    	//SBUtil.log(c.gameObject.transform.ToString());
-	    	//SBUtil.log(c.gameObject.transform.position.ToString());
-	    	//SBUtil.log(c.gameObject.transform.eulerAngles.ToString());
-	    	
+	    public static void onDataboxActivate(BlueprintHandTarget c) {	    	
 	    	TechType over = DataboxTypingMap.instance.getOverride(c);
 	    	if (over != TechType.None) {
 	    		SBUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
@@ -233,50 +159,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		SBUtil.setCrateItem(c, over);
 	    	}
 	    }
-	    /*
-	    public static bool onDataboxUsed(TechType recipe, bool verb, BlueprintHandTarget c) {
-	    	bool flag = KnownTech.Add(recipe, verb);
-	    	SBUtil.log("Used databox: "+recipe);
-	    	SBUtil.writeToChat(c.gameObject.ToString());
-	    	SBUtil.writeToChat(c.gameObject.transform.position.ToString());
-	    	SBUtil.writeToChat(c.gameObject.transform.eulerAngles.ToString());
-	    	return flag;
-	    }*/
 	    
 	    public static GameObject interceptScannerTarget(GameObject original, ref PDAScanner.ScanTarget tgt) { //the GO is the collider, NOT the parent
-	    	/*
-	    	if (original != null) {
-	    		GameObject root = original.transform.parent.gameObject;
-	    		ResourceTracker res = root.GetComponent<ResourceTracker>();
-	    		if (res != null && Enum.GetName(typeof(TechType), res.techType).Contains("Fragment")) { //FIXME "== Fragment" does not catch seamoth ("SeamothFragment") and deco fragments (direct name, eg BarTable or StarshipChair [those also have null res])
-	    			//SBUtil.dumpObjectData(original);
-	    			TechTag tag = root.GetComponent<TechTag>();
-	    			if (tag != null) {
-	    				SBUtil.log("frag: "+tag.type);
-				    	RaycastHit[] hit = UnityEngine.Physics.SphereCastAll(root.transform.position, 32, new Vector3(1, 0, 0), 32);
-				    	if (hit.Length > 0) {
-				    		SBUtil.log("found "+hit.Length);
-				    		foreach (RaycastHit r in hit) {
-				    			GameObject go = r.transform.gameObject;
-				    			if (go != null && go.GetComponent<LargeWorldEntity>() != null) {
-				    				//SBUtil.dumpObjectData(go);
-				    				if (go.GetComponent<ResourceTracker>() != null && go.GetComponent<Pickupable>() != null && go.GetComponent<ResourceTracker>().techType == TechType.Fragment && go.GetComponent<Pickupable>().GetTechType() != tag.type) {
-					    				SBUtil.log("becomes: "+go);
-					    				//go.transform.position.y += 2;
-					    				return go;
-					    			}
-				    			}
-				    		}
-				    	}
-	    			}
-	    		}
-	    	}*/
-	    	return original;
-	    }
-	    
-	    public static TechType onFragmentScanned(TechType original) {
-	    	PDAScanner.ScanTarget tgt = PDAScanner.scanTarget;
-	    	SBUtil.log("Scanned fragment: "+original);
 	    	return original;
 	    }
 	    
@@ -330,15 +214,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	return 1D-frac;
 	    }
-    
-	    private class SonarPinged : MonoBehaviour {
-	    	
-	    	internal long lastPing;
-	    	
-	    	internal long getTimeSince() {
-	    		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-lastPing;
-	    	}
-	    }
 	    
 	    public static void onStoryGoalCompleted(string key) {
 	    	StoryHandler.instance.NotifyGoalComplete(key);
@@ -368,89 +243,20 @@ namespace ReikaKalseki.SeaToSea {
 					sm.crushDamage.SetExtraCrushDepth(SeaToSeaMod.depth1300.depthBonus);
 				}
 			}
-	    	/*
-			if (slotID >= 0 && slotID < sm.storageInputs.Length) {
-				sm.storageInputs[slotID].SetEnabled(added && techType == TechType.VehicleStorageModule);
-				GameObject gameObject = sm.torpedoSilos[slotID];
-				if (gameObject != null)
-				{
-					gameObject.SetActive(added && techType == TechType.SeamothTorpedoModule);
-				}
-			}
-	    	switch (techType) {
-	    		case TechType.SeamothSolarCharge:
-	    			break;
-	    		case TechType.SeamothReinforcementModule:
-	    			break;
-	    		case TechType.VehicleHullModule1:
-	    			break;
-	    		case TechType.VehicleHullModule2:
-	    			break;
-	    		case TechType.VehicleHullModule3:
-	    			break;
-	    	}
-			int count = sm.modules.GetCount(techType);
-			if (techType != TechType.SeamothReinforcementModule)
-			{
-				if (techType != TechType.SeamothSolarCharge)
-				{
-					if (techType - TechType.VehicleHullModule1 <= 2)
-					{
-						goto IL_7D;
-					}
-					sm.OnUpgradeModuleChange(slotID, techType, added);
-				}
-				else
-				{
-					sm.CancelInvoke("UpdateSolarRecharge");
-					if (count > 0)
-					{
-						sm.InvokeRepeating("UpdateSolarRecharge", 1f, 1f);
-						return;
-					}
-				}
-				return;
-			}
-			IL_7D:
-			Dictionary<TechType, float> dictionary = new Dictionary<TechType, float>
-			{
-				{
-					TechType.SeamothReinforcementModule,
-					800f
-				},
-				{
-					TechType.VehicleHullModule1,
-					100f
-				},
-				{
-					TechType.VehicleHullModule2,
-					300f
-				},
-				{
-					TechType.VehicleHullModule3,
-					700f
-				}
-			};
-			float num = 0f;
-			for (int i = 0; i < sm.slotIDs.Length; i++)
-			{
-				string slot = sm.slotIDs[i];
-				TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
-				if (dictionary.ContainsKey(techTypeInSlot))
-				{
-					float num2 = dictionary[techTypeInSlot];
-					if (num2 > num)
-					{
-						num = num2;
-					}
-				}
-			}
-			sm.crushDamage.SetExtraCrushDepth(num);*/
 	    }
 	    
 	    public static void pingSeamothSonar(SeaMoth sm) {
 	    	SonarPinged ping = sm.gameObject.EnsureComponent<SonarPinged>();
 	    	ping.lastPing = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+	    }
+    
+	    private class SonarPinged : MonoBehaviour {
+	    	
+	    	internal long lastPing;
+	    	
+	    	internal long getTimeSince() {
+	    		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-lastPing;
+	    	}
 	    }
 	}
 }

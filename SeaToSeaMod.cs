@@ -162,9 +162,13 @@ namespace ReikaKalseki.SeaToSea
         comb.craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
         
+        BasicCraftingItem gem = CraftingItems.getItem(CraftingItems.Items.DenseAzurite);
+        gem.craftingTime = 4;
+        gem.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 9).addIngredient(TechType.Diamond, 1).addIngredient(TechType.Magnetite, 5);
+        
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
-        lens.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 45).addIngredient(TechType.Diamond, 9).addIngredient(TechType.Magnetite, 24);
+        lens.addIngredient(gem.TechType, 5).addIngredient(TechType.TitaniumIngot, 2).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.FiberMesh, 4);
         
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
@@ -205,6 +209,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.Patch();
         
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
+        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 2);
     }
     
     public static void addPDAEntries() {
