@@ -550,7 +550,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}*/
-	/*
+	
 	[HarmonyPatch(typeof(Player))]
 	[HarmonyPatch("GetOxygenPerBreath")]
 	public static class PlayerO2Use {
@@ -573,7 +573,29 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}*/
+	}
+	
+	[HarmonyPatch(typeof(RebreatherDepthWarnings))]
+	[HarmonyPatch("Update")]
+	public static class PlayerEnviroWarnings {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.SeaToSeaMod", "tickPlayerEnviroAlerts", false, typeof(RebreatherDepthWarnings)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	
 	[HarmonyPatch(typeof(TemperatureDamage))]
 	[HarmonyPatch("Start")]

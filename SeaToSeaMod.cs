@@ -79,7 +79,7 @@ namespace ReikaKalseki.SeaToSea
         spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
         */
        
-		DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
+		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
        
 		VoidSpikesBiome.instance.register();
 		//AvoliteSpawner.instance.register();
@@ -301,7 +301,7 @@ namespace ReikaKalseki.SeaToSea
     			float f = y >= ymax ? 1 : (y-ymin)/(ymax-ymin);
     			LiveMixin live = ep.gameObject.GetComponentInParent<LiveMixin>();
     			if (live != null && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
-    				ep.GetComponentInParent<LiveMixin>().TakeDamage(3*f, ep.transform.position, DamageType.Pressure, ep.gameObject); //TODO make use time elapsed
+    				ep.GetComponentInParent<LiveMixin>().TakeDamage(3*f, ep.transform.position, DamageType.Pressure, ep.gameObject); //TO DO make use time elapsed
     			}
     		}
     	}
@@ -320,7 +320,7 @@ namespace ReikaKalseki.SeaToSea
     	}*/
     }
    
-	public static void doEnvironmentalDamage(TemperatureDamage dmg) { //TODO rebalance
+	public static void doEnvironmentalDamage(TemperatureDamage dmg) {
    		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
    		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()))
    			return;
@@ -366,34 +366,16 @@ namespace ReikaKalseki.SeaToSea
 			dmg.liveMixin.TakeDamage(num*f*f0/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Heat, null);
 		}
     	if (dmg.player) {
-	    	float y = -dmg.player.gameObject.transform.position.y;
+	    	float depth = dmg.player.GetDepth();
 	    	float ymin = 500;
-    		if (y > ymin && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
+    		if (depth > ymin && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0) {
     			float ymax = 600;
-    			float f2 = y >= ymax ? 1 : (y-ymin)/(ymax-ymin);
-    			dmg.liveMixin.TakeDamage(30*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+    			float f2 = depth >= ymax ? 1 : (depth-ymin)/(ymax-ymin);
+    			dmg.liveMixin.TakeDamage(30*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
     		}
 	    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
 	    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-	    		float amt = -1;
-	    		switch(biome) {
-	    			case "LostRiver_BonesField_Corridor":
-	    			case "LostRiver_GhostTree":
-	    			case "LostRiver_Corridor":
-	    				amt = 8;
-	    				break;
-	    			case "LostRiver_Canyon":
-	    				amt = 10;
-	    				break;
-	    			case "LostRiver_BonesField":
-	    			case "LostRiver_Junction":
-	    			//case "LostRiver_TreeCove":
-	    			case "LostRiver_GhostTree_Lower":
-	    				amt = 15;
-	    				break;
-	    			default:
-	    				break;
-	    		}
+	    		float amt = getLRPoison(dmg.player);
 	    		if (amt > 0) {
 	    			dmg.liveMixin.TakeDamage(amt/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Poison, null);
 	    		}
@@ -424,7 +406,7 @@ namespace ReikaKalseki.SeaToSea
 		    		leak *= 2;
 		    	AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
 		    	if (acid != null && acid.numTriggers > 0)
-		    		leak *= 8;-
+		    		leak *= 8;
 		    	int trash;
 		    	v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
 		   	}
@@ -433,8 +415,8 @@ namespace ReikaKalseki.SeaToSea
     				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
     				//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
     				if (b != null && b.capacity > 100) {
-    					b.charge = Math.Max(b.charge-leak, 0);-
-    					SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
+    					b.charge = Math.Max(b.charge-leak*0.1F, 0);
+    					//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
     				}
     			}
     		}
@@ -442,7 +424,27 @@ namespace ReikaKalseki.SeaToSea
 		}
  	}
    
+	public static float getLRPoison(Player p) {
+	    switch(p.GetBiomeString()) {
+	    	case "LostRiver_BonesField_Corridor":
+	    	case "LostRiver_GhostTree":
+	    	case "LostRiver_Corridor":
+	    		return 8;
+	    	case "LostRiver_Canyon":
+	    		return 10;
+	    	case "LostRiver_BonesField":
+	    	case "LostRiver_Junction":
+	    	//case "LostRiver_TreeCove":
+	    	case "LostRiver_GhostTree_Lower":
+	    		return 15;
+	    	default:
+	    		return 0;
+		}
+	}
+   
 	public static float recalculateDamage(float damage, DamageType type, GameObject target, GameObject dealer) {
+   		if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
+   			return 0;
    		Player p = target.GetComponentInParent<Player>();
    		if (p != null && Inventory.main.equipment.GetCount(sealSuit.TechType) != 0) {
    			if (type == DamageType.Poison || type == DamageType.Acid || type == DamageType.Electrical) {
@@ -466,7 +468,7 @@ namespace ReikaKalseki.SeaToSea
    		}
    		return baseline;
 	}
-    /*
+    
     public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
 		if (!GameModeUtils.RequiresOxygen())
 			return 0;
@@ -482,12 +484,79 @@ namespace ReikaKalseki.SeaToSea
 					num = 2;
 				}
 			}			
-			if (depthClass >= 3 && !hasRebreatherV2 && ep.gameObject.transform.position.y < -500) {
-				num = 30;
+			if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 500) {
+				num = 10;
 			}
 		}
 		return breathingInterval * num;
-    }*/
+    }
+   
+	public static void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
+   		if (!(warn.alerts[0] is EnviroAlert))
+   			upgradeAlertSystem(warn);
+   		
+		if (!Player.main.IsUnderwater()) {
+			return;
+		}
+		float depth = Player.main.GetDepth();
+		
+		bool hasRebreatherV2 = Inventory.main.equipment.GetCount(rebreatherV2.TechType) != 0;
+		bool hasRebreatherV1 = Inventory.main.equipment.GetCount(TechType.Rebreather) != 0;
+		if (hasRebreatherV2) {
+			
+		}
+		else if (hasRebreatherV1) {
+			
+		}
+		else {
+			foreach (RebreatherDepthWarnings.DepthAlert depthAlert in warn.alerts) {
+				if (!depthAlert.alertCooldown && depth >= depthAlert.alertDepth && warn.wasAtDepth < depthAlert.alertDepth && depthAlert.alert) {
+					depthAlert.alertCooldown = true;
+					depthAlert.alert.Play();
+					warn.StartCoroutine(warn.ResetAlertCD(depthAlert));
+				}
+			}
+		}
+		warn.wasAtDepth = depth;
+	}
+   
+	public static void upgradeAlertSystem(RebreatherDepthWarnings warn) {
+   		List<EnviroAlert> li = new List<EnviroAlert>();
+   		foreach (RebreatherDepthWarnings.DepthAlert a in warn.alerts) {
+   			EnviroAlert e = new EnviroAlert(a);
+   			li.Add(e);
+   		}
+   		warn.alerts.Clear();
+   		warn.alerts.AddRange(li);
+   		warn.alerts.Add(new EnviroAlert(500, "crush", "event:/player/story/RadioWarper1"));
+   		EnviroAlert ee = new EnviroAlert("gas", "event:/player/story/Goal_BiomeBloodKelp");
+   		ee.applicability = p => getLRPoison(p) > 0;
+   		warn.alerts.Add(ee);
+	}
+   
+	class EnviroAlert : RebreatherDepthWarnings.DepthAlert {
+		
+   		internal Func<Player, bool> applicability = p => p.GetDepth() >= alertDepth;
+   		
+   		internal EnviroAlert(string pda, string snd) {
+   			//this.alert = new PDANotification();
+   		}
+   	
+   		internal EnviroAlert(int depth, string pda, string snd) : this(pda, snd) {
+   			alertDepth = depth;
+	   	}
+   	
+	   	internal EnviroAlert(RebreatherDepthWarnings.DepthAlert from) {
+   			this.alertDepth = from.alertDepth;
+   			this.alert = from.alert;
+   			this.alertCooldown = from.alertCooldown;
+	   	}
+   	
+	}
+   
+	public static bool hasNoGasMask() {
+   		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;
+	}
     
     public static void onItemPickedUp(Pickupable p) {
     	if (p.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
@@ -679,16 +748,10 @@ namespace ReikaKalseki.SeaToSea
     	return values;
     }
     
-    public static void updateCrushDamage(float val) {
-    	SBUtil.log(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+": update crush to "+val+" from trace "+System.Environment.StackTrace);
-    	SBUtil.writeToChat("update crush to "+val);
-    }
-    
     public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
 		for (int i = 0; i < sm.slotIDs.Length; i++) {
 			string slot = sm.slotIDs[i];
 			TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
-    		SBUtil.writeToChat(i+": "+techTypeInSlot);
 			if (techTypeInSlot == depth1300.TechType) {
 				sm.crushDamage.SetExtraCrushDepth(depth1300.depthBonus);
 			}

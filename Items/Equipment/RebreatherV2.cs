@@ -15,6 +15,13 @@ namespace ReikaKalseki.SeaToSea
 		public RebreatherV2() : base(SeaToSeaMod.locale.getEntry("RebreatherV2"), "WorldEntities/Natural/rebreather") {
 			
 		}
+		
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			PDANotification pda = go.EnsureComponent<PDANotification>();
+			pda.enabled = true;
+			pda.text = "I am some PDA text";
+			pda.sound = SBUtil.getSound("event:/player/story/Goal_BiomeSparseReef");
+		}
 
 		public override TechType RequiredForUnlock {
 			get {

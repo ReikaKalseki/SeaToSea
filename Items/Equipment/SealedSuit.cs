@@ -15,6 +15,15 @@ namespace ReikaKalseki.SeaToSea
 		public SealedSuit() : base(SeaToSeaMod.locale.getEntry("SealedSuit"), "WorldEntities/Tools/Stillsuit") {
 			
 		}
+		
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			UnityEngine.Object.Destroy(go.GetComponent<Stillsuit>());
+			foreach (PDANotification pda in go.GetComponents<PDANotification>()) {
+				SBUtil.writeToChat(pda.text);
+				UnityEngine.Object.Destroy(pda);
+			}
+			SBUtil.writeToChat(string.Join(", ", (object[])go.GetComponents<PDANotification>()));
+		}
 
 		public override TechType RequiredForUnlock {
 			get {
