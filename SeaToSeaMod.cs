@@ -468,6 +468,28 @@ namespace ReikaKalseki.SeaToSea
    		}
    		return baseline;
 	}
+   
+	public static float getPlayerO2Rate(Player ep) {
+		Player.Mode mode = ep.mode;
+		if (mode != Player.Mode.Normal && mode - Player.Mode.Piloting <= 1) {
+			return 3f;
+		}
+		if (Inventory.Get().equipment.GetCount(rebreatherV2.TechType) > 0) {
+			return 3f;
+		}
+		if (Inventory.Get().equipment.GetCount(TechType.Rebreather) > 0 && ep.GetDepth() < 500) {
+			return 3f;
+		}
+		switch (ep.GetDepthClass()) {
+			case Ocean.DepthClass.Safe:
+				return 3f;
+			case Ocean.DepthClass.Unsafe:
+				return 2.25f;
+			case Ocean.DepthClass.Crush:
+				return 1.5f;
+		}
+		return 99999f;
+	}
     
     public static float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
 		if (!GameModeUtils.RequiresOxygen())
@@ -485,7 +507,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}			
 			if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 500) {
-				num = 10;
+				num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-500)/10F);
 			}
 		}
 		return breathingInterval * num;
@@ -497,7 +519,7 @@ namespace ReikaKalseki.SeaToSea
    		
 		if (!Player.main.IsUnderwater()) {
 			return;
-		}
+		}/*
 		float depth = Player.main.GetDepth();
 		
 		bool hasRebreatherV2 = Inventory.main.equipment.GetCount(rebreatherV2.TechType) != 0;
@@ -508,41 +530,54 @@ namespace ReikaKalseki.SeaToSea
 		else if (hasRebreatherV1) {
 			
 		}
-		else {
-			foreach (RebreatherDepthWarnings.DepthAlert depthAlert in warn.alerts) {
-				if (!depthAlert.alertCooldown && depth >= depthAlert.alertDepth && warn.wasAtDepth < depthAlert.alertDepth && depthAlert.alert) {
-					depthAlert.alertCooldown = true;
-					depthAlert.alert.Play();
-					warn.StartCoroutine(warn.ResetAlertCD(depthAlert));
+		else {*/
+			foreach (EnviroAlert ee in warn.alerts) {
+   				//SBUtil.writeToChat(ee+" : "+ee.isActive());
+   				if (!ee.alertCooldown && ee.alert && !ee.wasActiveLastTick && ee.isActive()) {
+					ee.alertCooldown = true;
+					ee.wasActiveLastTick = true;
+					SBUtil.writeToChat("Firing enviro alert "+ee+" when "+Player.main.GetDepth());
+					ee.alert.Play();
+					warn.StartCoroutine(warn.ResetAlertCD(ee));
 				}
 			}
-		}
-		warn.wasAtDepth = depth;
+		//}
+		//warn.wasAtDepth = depth;
 	}
    
 	public static void upgradeAlertSystem(RebreatherDepthWarnings warn) {
    		List<EnviroAlert> li = new List<EnviroAlert>();
    		foreach (RebreatherDepthWarnings.DepthAlert a in warn.alerts) {
    			EnviroAlert e = new EnviroAlert(a);
+   			e.preventiveItem.Add(rebreatherV2.TechType);
    			li.Add(e);
    		}
    		warn.alerts.Clear();
    		warn.alerts.AddRange(li);
-   		warn.alerts.Add(new EnviroAlert(500, "crush", "event:/player/story/RadioWarper1"));
-   		EnviroAlert ee = new EnviroAlert("gas", "event:/player/story/Goal_BiomeBloodKelp");
-   		ee.applicability = p => getLRPoison(p) > 0;
+   		EnviroAlert ee = new EnviroAlert(500, "crush pda", "event:/player/story/RadioWarper1");
+   		ee.preventiveItem.Clear();
+   		ee.preventiveItem.Add(rebreatherV2.TechType);
+   		warn.alerts.Add(ee);
+   		ee = new EnviroAlert(p => getLRPoison(p) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
+   		ee.preventiveItem.Clear();
+   		ee.preventiveItem.Add(sealSuit.TechType);
    		warn.alerts.Add(ee);
 	}
    
 	class EnviroAlert : RebreatherDepthWarnings.DepthAlert {
 		
-   		internal Func<Player, bool> applicability = p => p.GetDepth() >= alertDepth;
+   		internal List<TechType> preventiveItem = new List<TechType>(){TechType.Rebreather};
+		internal readonly Func<Player, bool> applicability;
+   		internal bool wasActiveLastTick = false;
    		
-   		internal EnviroAlert(string pda, string snd) {
-   			//this.alert = new PDANotification();
+   		internal EnviroAlert(Func<Player, bool> f, string pda, string snd) {
+   			alert = new PDANotification();
+   			alert.text = pda;
+   			alert.sound = SBUtil.getSound(snd);
+   			applicability = f;
    		}
    	
-   		internal EnviroAlert(int depth, string pda, string snd) : this(pda, snd) {
+   		internal EnviroAlert(int depth, string pda, string snd) : this(null, pda, snd) {
    			alertDepth = depth;
 	   	}
    	
@@ -551,6 +586,22 @@ namespace ReikaKalseki.SeaToSea
    			this.alert = from.alert;
    			this.alertCooldown = from.alertCooldown;
 	   	}
+   		
+   		internal bool isActive() {
+   			Player p = Player.main;
+   			bool valid = applicability != null ? applicability(p) : p.GetDepth() >= alertDepth;
+   			if (!valid)
+   				return false;
+   			foreach (TechType prevent in preventiveItem) {
+   				if (Inventory.main.equipment.GetCount(prevent) != 0)
+   					return false;
+   			}
+   			return true;
+   		}
+   		
+		public override string ToString() {
+			return this.alert.text+" @ "+this.alertDepth;
+		}
    	
 	}
    
