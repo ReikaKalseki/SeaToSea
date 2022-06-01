@@ -213,6 +213,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
+        RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 4);
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
         RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);

@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class Bioprocessor : CustomMachine {
+	public class Bioprocessor : CustomMachine { //TODO make this consume salt to operate
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
 			addIngredient(TechType.TitaniumIngot, 1);
@@ -25,6 +25,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		protected override void onTick(GameObject go) {
 			SBUtil.writeToChat("I am ticking @ "+go.transform.position);
+			
+			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+			IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
+			if (salt != null && salt.Count >= 4) {
+				for (int i = 0; i < 4; i++) {
+					con.container.RemoveItem(salt[i], true, true);
+				}
+			}
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
