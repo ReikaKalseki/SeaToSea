@@ -13,7 +13,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class SealedSuit : CustomEquipable {
 		
 		public SealedSuit() : base(SeaToSeaMod.locale.getEntry("SealedSuit"), "WorldEntities/Tools/ReinforcedDiveSuit") {
-			
+			isArmor = true;
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {

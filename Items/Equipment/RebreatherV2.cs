@@ -13,7 +13,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class RebreatherV2 : CustomEquipable {
 		
 		public RebreatherV2() : base(SeaToSeaMod.locale.getEntry("RebreatherV2"), "WorldEntities/Natural/rebreather") {
-			
+			isArmor = true;
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {

@@ -23,6 +23,7 @@ namespace ReikaKalseki.SeaToSea
     public static readonly XMLLocale signals = new XMLLocale("XML/signals.xml");
     
     public static SeamothVoidStealthModule voidStealth;
+    public static CyclopsHeatModule cyclopsHeat;
     public static SeamothDepthModule depth1300;
     public static CustomEquipable sealSuit;
     public static CustomEquipable rebreatherV2;
@@ -168,7 +169,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
-        lens.addIngredient(gem.TechType, 5).addIngredient(TechType.TitaniumIngot, 2).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.FiberMesh, 4);
+        lens.addIngredient(gem, 5).addIngredient(TechType.TitaniumIngot, 2).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.FiberMesh, 4);
         
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
@@ -186,8 +187,12 @@ namespace ReikaKalseki.SeaToSea
         voidStealth.Patch();
         
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
-        //depth1300.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
+        depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 4).addIngredient(TechType.Nickel, 6);
         depth1300.Patch();
+        
+        cyclopsHeat = new CyclopsHeatModule();
+        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 12).addIngredient(alkali.TechType, 4);
+        cyclopsHeat.Patch();
         /*
         CraftData.itemSizes[TechType.AcidMushroom] = new Vector2int(1, 2);
         CraftData.itemSizes[TechType.HydrochloricAcid] = new Vector2int(2, 2);
@@ -201,7 +206,7 @@ namespace ReikaKalseki.SeaToSea
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
-        t2Battery.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 2).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Magnetite, 5);
+        t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
@@ -209,7 +214,19 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.Patch();
         
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
-        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 2);
+        RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
+        RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);
+        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
+        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
+        RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
+        RecipeUtil.addIngredient(TechType.Cyclops, TechType.Nickel, 6);
+        RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
+        RecipeUtil.addIngredient(TechType.LaserCutter, TechType.AluminumOxide, 2);
+        RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
+        RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
     }
     
     public static void addPDAEntries() {

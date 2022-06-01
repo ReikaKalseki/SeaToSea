@@ -10,6 +10,17 @@
 			
 		</pda>
 	</HoneycombComposite>
+	<DenseAzurite>
+		<name>
+			Shaped Azurite
+		</name>
+		<desc>
+			A more densely packed and energetically useful form of Azurite.
+		</desc>
+		<pda>
+			
+		</pda>
+	</DenseAzurite>
 	<CrystalLens>
 		<name>
 			Refractive Lens
@@ -138,7 +149,7 @@
 			Iridium
 		</name>
 		<desc>
-			An exotic 
+			An exotic and dense metal not typically found in most geologic strata.
 		</desc>
 		<pda>
 			
@@ -182,6 +193,17 @@
 			
 		</pda>
 	</t2battery>
+	<CyclopsHeat>
+		<name>
+			Cyclops Heat Dissipation Module
+		</name>
+		<desc>
+			Provides the ability for the cyclops to shed excess heat in superheated environments, preventing serious overheating and fire.
+		</desc>
+		<pda>
+			
+		</pda>
+	</CyclopsHeat>
 	<enum>
 		<name>
 			
