@@ -17,6 +17,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
 		
+		internal static readonly float POWER_COST = 1.5F;
+		
 		public static void addRecipes() {
 			addRecipe(TechType.AcidMushroom, TechType.HydrochloricAcid, 6, 20, 2);
 			addRecipe(TechType.BloodOil, TechType.Benzene, 4);
@@ -59,44 +61,56 @@ namespace ReikaKalseki.SeaToSea {
 		protected override void updateEntity(GameObject go) {
 			SBUtil.writeToChat("I am ticking @ "+go.transform.position);
 			
-			if (currentOperation != null) {
-				float time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/1000F;
-				if (time >= nextSaltTime) {
-					StorageContainer con = go.GetComponentInChildren<StorageContainer>();
-					IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
-					if (salt != null && salt.Count >= 1) {
-						con.container.RemoveItem(salt[0].item);
-						saltRequired--;
-					}
-					else {
-						setRecipe(null);
-					}
-					nextSaltTime = time+currentOperation.secondsPerSalt;
-					if (saltRequired <= 0) {
-						IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
-						if (ing != null && ing.Count >= currentOperation.inputCount) {
-							for (int i = 0; i < currentOperation.inputCount; i++)
-								con.container.RemoveItem(ing[i].item);
-							for (int i = 0; i < currentOperation.outputCount; i++) {
-								GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem));
-								item.SetActive(false);
-								con.container.AddItem(item.GetComponent<Pickupable>());
-							}
+			if (consumePower()) {
+				if (currentOperation != null) {
+					float time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/1000F;
+					if (time >= nextSaltTime) {
+						StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+						IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
+						if (salt != null && salt.Count >= 1) {
+							con.container.RemoveItem(salt[0].item);
+							saltRequired--;
 						}
 						else {
 							setRecipe(null);
+						}
+						nextSaltTime = time+currentOperation.secondsPerSalt;
+						if (saltRequired <= 0) {
+							IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
+							if (ing != null && ing.Count >= currentOperation.inputCount) {
+								for (int i = 0; i < currentOperation.inputCount; i++)
+									con.container.RemoveItem(ing[i].item);
+								for (int i = 0; i < currentOperation.outputCount; i++) {
+									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem));
+									item.SetActive(false);
+									con.container.AddItem(item.GetComponent<Pickupable>());
+								}
+							}
+							else {
+								setRecipe(null);
+							}
+						}
+					}
+				}
+				else {
+					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
+						if (canRunRecipe(r)) {
+							setRecipe(r);
+							break;
 						}
 					}
 				}
 			}
 			else {
-				foreach (BioRecipe r in Bioprocessor.recipes.Values) {
-					if (canRunRecipe(r)) {
-						setRecipe(r);
-						break;
-					}
-				}
+				setRecipe(null);
 			}
+		}
+		
+		private bool consumePower() {
+			SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
+			float receive;
+			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST, out receive);
+			return Mathf.Approximately(Bioprocessor.POWER_COST, receive);
 		}
 		
 		private bool canRunRecipe(BioRecipe r) {

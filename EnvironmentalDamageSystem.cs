@@ -26,12 +26,13 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
 		
 		private EnvironmentalDamageSystem() {
-    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40);
-    		temperatures["ILZChamber"] = new TemperatureEnvironment(120, 10, 10);
-    		temperatures["LavaPit"] = new TemperatureEnvironment(140, 12, 8);
-    		temperatures["LavaFalls"] = new TemperatureEnvironment(160, 15, 5);
-    		temperatures["LavaLakes"] = new TemperatureEnvironment(240, 18, 2);
-    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0); //in lava
+    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40, 9);
+    		temperatures["ILZCorridorDeep"] = new TemperatureEnvironment(120, 9, 20, 12);
+    		temperatures["ILZChamber"] = new TemperatureEnvironment(150, 10, 10, 15);
+    		temperatures["LavaPit"] = new TemperatureEnvironment(180, 12, 8, 20);
+    		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 5, 25);
+    		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 2, 40);
+    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0, 100); //in lava
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
@@ -52,14 +53,14 @@ namespace ReikaKalseki.SeaToSea {
 		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
 		}
 		
-		public void tick(TemperatureDamage dmg) {
+		public void tickTemperatureDamages(TemperatureDamage dmg) {
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
 	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()))
 	   			return;
 			float temperature = dmg.GetTemperature();
 			float f = 1;
 			float f0 = 1;
-			string biome = LargeWorld.main.GetBiome(dmg.gameObject.transform.position);//Player.main.GetBiomeString();
+			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 	    	if (dmg.player) {
 	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
@@ -89,7 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		}
 		    	//}
 	    	}
-		   	float leak = lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
+			float leak = getLRPowerLeakage(biome);
 		   	if (leak > 0) {
 		   		bool used = false;
 	    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
@@ -120,8 +121,59 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	 	}
     	
+    	public void tickCyclopsDamage(CrushDamage dmg) {
+			if (!dmg.gameObject.activeInHierarchy || !dmg.enabled) {
+				return;
+			}
+			if (dmg.GetCanTakeCrushDamage() && dmg.GetDepth() > dmg.crushDepth) {
+				dmg.liveMixin.TakeDamage(dmg.damagePerCrush, dmg.transform.position, DamageType.Pressure, null);
+				if (dmg.soundOnDamage) {
+					dmg.soundOnDamage.Play();
+				}
+			}
+	    	SubRoot sub = dmg.gameObject.GetComponentInParent<SubRoot>();
+	    	if (sub != null && sub.isCyclops) {
+	    		TemperatureEnvironment temp = getLavaHeatDamage(dmg.gameObject);
+	    		SBUtil.writeToChat("heat: "+temp);
+	    		if (temp != null) {
+	    			Equipment modules = sub.upgradeConsole != null ? sub.upgradeConsole.modules : null;
+	    			bool immune = false;
+	    			if (modules != null) {
+		    			foreach (string slot in SubRoot.slotNames) {
+							TechType techTypeInSlot = modules.GetTechTypeInSlot(slot);
+							if (techTypeInSlot == SeaToSeaMod.cyclopsHeat.TechType)
+								immune = true;
+						}
+	    			}
+	    			SBUtil.writeToChat("immune: "+immune);
+	    			if (!immune) {
+						dmg.liveMixin.TakeDamage(dmg.damagePerCrush*temp.damageScalar*0.15F, dmg.transform.position, DamageType.Heat, null);
+						if (dmg.soundOnDamage) {
+							dmg.soundOnDamage.Play();
+						}
+						if (temp.cyclopsFireChance <= 0 || UnityEngine.Random.Range(0, temp.cyclopsFireChance) == 0) {
+							CyclopsRooms key = (CyclopsRooms)UnityEngine.Random.Range(0, Enum.GetNames(typeof(CyclopsRooms)).Length);
+							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
+							fire.CreateFire(fire.roomFires[key]);
+						}
+	    			}
+	    		}
+		    	float leak = getLRPowerLeakage(dmg.gameObject);
+		    	SBUtil.writeToChat("leak "+leak);
+			   	if (leak > 0) {
+	    			SubControl con = dmg.gameObject.GetComponentInParent<SubControl>();
+				    if (con.cyclopsMotorMode.engineOn)
+				    	leak *= 1.25F;
+				    if (con.appliedThrottle)
+				    	leak *= 1.5F;
+				    float trash;
+				    sub.powerRelay.ConsumeEnergy(leak*3, out trash);
+				}
+	    	}
+    	}
+    	
     	public TemperatureEnvironment getLavaHeatDamage(GameObject go) {
-    		return getLavaHeatDamage(LargeWorld.main.GetBiome(go.transform.position));//p.GetBiomeString());
+    		return getLavaHeatDamage(getBiome(go));//p.GetBiomeString());
     	}
    
 		public TemperatureEnvironment getLavaHeatDamage(string biome) {
@@ -129,12 +181,27 @@ namespace ReikaKalseki.SeaToSea {
 		}
     	
     	public float getLRPoison(GameObject go) {
-    		return getLRPoison(LargeWorld.main.GetBiome(go.transform.position));//p.GetBiomeString());
+    		return getLRPoison(getBiome(go));//p.GetBiomeString());
     	}
    
 		public float getLRPoison(string biome) {
 			return lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
 		}
+    	
+    	public float getLRPowerLeakage(GameObject go) {
+    		return getLRPowerLeakage(getBiome(go));//p.GetBiomeString());
+    	}
+   
+		public float getLRPowerLeakage(string biome) {
+    		return lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
+		}
+    	
+    	public string getBiome(GameObject go) {
+    		string ret = LargeWorld.main.GetBiome(go.transform.position);
+    		if (ret == "ILZCorridor" && go.transform.position.y < -1175)
+    			ret = "ILZCorridorDeep";
+    		return ret;
+    	}
     	
 		public float getPlayerO2Rate(Player ep) {
 			Player.Mode mode = ep.mode;
@@ -239,13 +306,21 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public readonly float temperature;
 		public readonly float damageScalar;
+		public readonly float damageScalarCyclops;
 		public readonly int cyclopsFireChance;
 		
-		internal TemperatureEnvironment(float t, float dmg, int cf) {
+		internal TemperatureEnvironment(float t, float dmg, int cf, float dmgC) {
 			temperature = t;
 			damageScalar = dmg;
 			cyclopsFireChance = cf;
+			damageScalarCyclops = dmgC;
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[TemperatureEnvironment Temperature={0}, DamageScalar={1}, CyclopsFireChance={2}]", temperature, damageScalar, cyclopsFireChance);
+		}
+ 
 		
 	}
    
