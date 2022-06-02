@@ -125,14 +125,22 @@ namespace ReikaKalseki.SeaToSea
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.25F);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 2F);
     	
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.DrillableMagnetite), BiomeType.UnderwaterIslands_Geyser, 0.2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_Geyser, 2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Diamond), BiomeType.UnderwaterIslands_Geyser, 1F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Quartz), BiomeType.UnderwaterIslands_ValleyFloor, 2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Lithium), BiomeType.UnderwaterIslands_ValleyFloor, 1F, 1);
-    	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.DrillableQuartz), BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LITHIUM.prefab, BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_Geyser, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.DIAMOND.prefab, BiomeType.UnderwaterIslands_Geyser, 1F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LITHIUM.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 1F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
+    	
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverCorridor_LakeFloor, 0.2F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverJunction_LakeFloor, 0.2F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_Corridor_Stream, 0.2F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_Lake_Floor, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_LakePit_Floor, 0.4F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_LakePit_Wall, 0.2F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.SkeletonCave_Lake_Floor, 0.2F, 1);
     	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.5F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
@@ -202,7 +210,7 @@ namespace ReikaKalseki.SeaToSea
 		RecipeUtil.removeRecipe(TechType.Benzene);
 		
         sealSuit = new SealedSuit();
-        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6);
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 3);
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
@@ -217,6 +225,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
         RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);
+        RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
@@ -228,6 +237,17 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        
+        RecipeUtil.addRecipe(TechType.PrecursorKey_Red);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
+       // CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+       	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
+        CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
+        
+        Bioprocessor.addRecipes();
     }
     
     public static void addPDAEntries() {

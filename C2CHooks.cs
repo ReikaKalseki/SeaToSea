@@ -175,21 +175,21 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onResourceSpawn(ResourceTracker p) {
-	    	if (p.techType == TechType.Sulphur) {
+	    	if (p.pickupable != null && p.pickupable.GetTechType() == TechType.Sulphur) {
 		    	GameObject go = p.gameObject;
 		    	WeightedRandom<TechType> wr = new WeightedRandom<TechType>();
-		    	wr.addEntry(TechType.Lithium, 50);
+		    	wr.addEntry(TechType.Lithium, 75);
 		    	wr.addEntry(TechType.Diamond, 50);
 		    	wr.addEntry(TechType.Lead, 20);
 		    	wr.addEntry(TechType.Salt, 10);
 		    	if (go.transform.position.y < -900) {
-		    		wr.addEntry(TechType.Nickel, 150);
+		    		wr.addEntry(TechType.Nickel, 160);
 		    		wr.addEntry(TechType.Magnetite, 30);
 		    	}
 		    	if (go.transform.position.y < -1200)
-		    		wr.addEntry(TechType.Kyanite, 250);
+		    		wr.addEntry(TechType.Kyanite, 500);
 		    	TechType tech = wr.getRandomEntry();
-		    	SBUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
+		    	//SBUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
 		    	SBUtil.convertResourceChunk(go, tech);
 	    	}
 	    }

@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
 		
-		static Bioprocessor() {
+		public static void addRecipes() {
 			addRecipe(TechType.AcidMushroom, TechType.HydrochloricAcid, 6, 20).inputCount = 2;
 			addRecipe(TechType.BloodOil, TechType.Benzene).inputCount = 4;
 			addRecipe(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30).outputCount = 2;
@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 					StorageContainer con = go.GetComponentInChildren<StorageContainer>();
 					IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
 					if (salt != null && salt.Count >= 1) {
-						con.container.RemoveItem(salt[0], true, true);
+						con.container.RemoveItem(salt[0].item);
 						saltRequired--;
 					}
 					else {
@@ -75,7 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 						IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
 						if (ing != null && ing.Count >= currentOperation.inputCount) {
 							for (int i = 0; i < currentOperation.inputCount; i++)
-								con.container.RemoveItem(ing[i], true, true);
+								con.container.RemoveItem(ing[i].item);
 							for (int i = 0; i < currentOperation.outputCount; i++) {
 								GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem));
 								item.SetActive(false);

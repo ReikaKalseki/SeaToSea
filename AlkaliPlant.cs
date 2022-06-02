@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class AlkaliPlant : BasicCustomPlant {
+	public class AlkaliPlant : BasicCustomPlant { //FIXME not knifable
 		
 		public AlkaliPlant() : base(SeaToSeaMod.locale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT) {
 			glowIntensity = 2;
