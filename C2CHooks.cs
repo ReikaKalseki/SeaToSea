@@ -193,6 +193,44 @@ namespace ReikaKalseki.SeaToSea {
 		    	SBUtil.convertResourceChunk(go, tech);
 	    	}
 	    }
+	    
+	    public static void doEnviroVehicleDamage(CrushDamage dmg) {
+			if (!dmg.gameObject.activeInHierarchy || !dmg.enabled) {
+				return;
+			}
+			if (dmg.GetCanTakeCrushDamage() && dmg.GetDepth() > dmg.crushDepth) {
+				dmg.liveMixin.TakeDamage(dmg.damagePerCrush, dmg.transform.position, DamageType.Pressure, null);
+				if (dmg.soundOnDamage) {
+					dmg.soundOnDamage.Play();
+				}
+			}
+	    	SubRoot sub = dmg.gameObject.GetComponentInParent<SubRoot>();
+	    	if (sub != null && sub.isCyclops) {
+	    		TemperatureEnvironment temp = EnvironmentalDamageSystem.instance.getLavaHeatDamage(dmg.gameObject);
+	    		if (temp != null) {
+	    			Equipment modules = sub.upgradeConsole != null ? sub.upgradeConsole.modules : null;
+	    			bool immune = false;
+	    			if (modules != null) {
+		    			foreach (string slot in SubRoot.slotNames) {
+							TechType techTypeInSlot = modules.GetTechTypeInSlot(slot);
+							if (techTypeInSlot == SeaToSeaMod.cyclopsHeat.TechType)
+								immune = true;
+						}
+	    			}
+	    			if (!immune) {
+						dmg.liveMixin.TakeDamage(dmg.damagePerCrush*temp.damageScalar*3, dmg.transform.position, DamageType.Heat, null);
+						if (dmg.soundOnDamage) {
+							dmg.soundOnDamage.Play();
+						}
+						if (temp.cyclopsFireChance <= 0 || UnityEngine.Random.Range(0, temp.cyclopsFireChance) == 0) {
+							CyclopsRooms key = (CyclopsRooms)UnityEngine.Random.Range(0, Enum.GetNames(typeof(CyclopsRooms)).Length);
+							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
+							fire.CreateFire(fire.roomFires[key]);
+						}
+	    			}
+	    		}
+	    	}
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;

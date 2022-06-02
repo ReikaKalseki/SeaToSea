@@ -13,4 +13,18 @@
 		This is what it says to prompt you to go there
 	</prompt>
   </voidpod>
+  <treaderpod>
+	<name>
+		Signal
+	</name>
+	<desc>
+		Lifepod 9
+	</desc>
+	<pda>
+		The PDA content
+	</pda>
+	<prompt>
+		This is what it says to prompt you to go there
+	</prompt>
+  </treaderpod>
 </Root>

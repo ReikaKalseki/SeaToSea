@@ -26,12 +26,12 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
 		
 		private EnvironmentalDamageSystem() {
-    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8);
-    		temperatures["ILZChamber"] = new TemperatureEnvironment(120, 10);
-    		temperatures["LavaPit"] = new TemperatureEnvironment(140, 12);
-    		temperatures["LavaFalls"] = new TemperatureEnvironment(160, 15);
-    		temperatures["LavaLakes"] = new TemperatureEnvironment(240, 18);
-    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24); //in lava
+    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40);
+    		temperatures["ILZChamber"] = new TemperatureEnvironment(120, 10, 10);
+    		temperatures["LavaPit"] = new TemperatureEnvironment(140, 12, 8);
+    		temperatures["LavaFalls"] = new TemperatureEnvironment(160, 15, 5);
+    		temperatures["LavaLakes"] = new TemperatureEnvironment(240, 18, 2);
+    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0); //in lava
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
@@ -59,7 +59,7 @@ namespace ReikaKalseki.SeaToSea {
 			float temperature = dmg.GetTemperature();
 			float f = 1;
 			float f0 = 1;
-	    	string biome = Player.main.GetBiomeString();
+			string biome = LargeWorld.main.GetBiome(dmg.gameObject.transform.position);//Player.main.GetBiomeString();
 	    	if (dmg.player) {
 	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
@@ -83,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 		    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
 		    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-		    		float amt = getLRPoison(dmg.player);
+		    		float amt = getLRPoison(biome);
 		    		if (amt > 0) {
 		    			dmg.liveMixin.TakeDamage(amt/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Poison, null);
 		    		}
@@ -119,9 +119,20 @@ namespace ReikaKalseki.SeaToSea {
 		   			PDAManager.getPage("lostrivershortcircuit").unlock();
 			}
 	 	}
+    	
+    	public TemperatureEnvironment getLavaHeatDamage(GameObject go) {
+    		return getLavaHeatDamage(LargeWorld.main.GetBiome(go.transform.position));//p.GetBiomeString());
+    	}
    
-		public float getLRPoison(Player p) {
-    		string biome = p.GetBiomeString();
+		public TemperatureEnvironment getLavaHeatDamage(string biome) {
+			return temperatures.ContainsKey(biome) ? temperatures[biome] : null;
+		}
+    	
+    	public float getLRPoison(GameObject go) {
+    		return getLRPoison(LargeWorld.main.GetBiome(go.transform.position));//p.GetBiomeString());
+    	}
+   
+		public float getLRPoison(string biome) {
 			return lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
 		}
     	
@@ -217,21 +228,23 @@ namespace ReikaKalseki.SeaToSea {
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.rebreatherV2.TechType);
 	   		warn.alerts.Add(ee);
-	   		ee = new EnviroAlert(warn, p => getLRPoison(p) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
+	   		ee = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
 	   		warn.alerts.Add(ee);
 		}
 	}
 	
-	class TemperatureEnvironment {
+	public class TemperatureEnvironment {
 		
 		public readonly float temperature;
 		public readonly float damageScalar;
+		public readonly int cyclopsFireChance;
 		
-		internal TemperatureEnvironment(float t, float dmg) {
+		internal TemperatureEnvironment(float t, float dmg, int cf) {
 			temperature = t;
 			damageScalar = dmg;
+			cyclopsFireChance = cf;
 		}
 		
 	}

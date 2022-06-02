@@ -18,20 +18,21 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
 		
 		public static void addRecipes() {
-			addRecipe(TechType.AcidMushroom, TechType.HydrochloricAcid, 6, 20).inputCount = 2;
-			addRecipe(TechType.BloodOil, TechType.Benzene).inputCount = 4;
-			addRecipe(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30).outputCount = 2;
-			BioRecipe r = addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15);
-			r.inputCount = 3;
-			r.outputCount = 2;
-			r = addRecipe(TechType.JellyPlantSeed, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90);
-			r.inputCount = 4;
+			addRecipe(TechType.AcidMushroom, TechType.HydrochloricAcid, 6, 20, 2);
+			addRecipe(TechType.BloodOil, TechType.Benzene, 4);
+			addRecipe(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 1, 2);
+			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 3, 2);
+			addRecipe(TechType.JellyPlantSeed, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 4);
 		}
 		
-		private static BioRecipe addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45) {
+		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
 			BioRecipe r = new BioRecipe(salt, secs, inp, o);
 			recipes[r.inputItem] = r;
-			return r;
+			RecipeUtil.addRecipe(o);
+			RecipeUtil.addIngredient(o, TechType.Salt, salt);
+			RecipeUtil.addIngredient(o, inp, inamt);
+			r.inputCount = inamt;
+			r.outputCount = outamt;
 		}
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {

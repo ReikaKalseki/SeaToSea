@@ -130,6 +130,25 @@
 		DownloadedData/Codes
 	</category>
   </sunbeamdebrishint>
+  <crashmesahint>
+	<name>
+		Lifepod 10 transmission origin
+	</name>
+	<pda>
+		A distress signal from lifepod 10 contained invalid location data.
+		
+		Reported:
+		-Lifepod sunk in a desolate sandy region with minimal vegetation
+		-Significant depth at lifepod location
+		-Several large fauna detected.
+		-Origin south of the Aurora
+	</pda>
+	<category>
+		DownloadedData/Codes
+	</category>
+	<header>
+	</header>
+  </crashmesahint>
   <mountaincavehint>
 	<name>
 		Unknown lifepod transmission origin
