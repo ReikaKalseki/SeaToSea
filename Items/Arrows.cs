@@ -13,10 +13,10 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class Bioprocessed : BasicCraftingItem {
+	public class Arrow : BasicCraftingItem {
 		
-		public Bioprocessed(string id, string name, string desc, string template) : base(id, name, desc, template) {
-			
+		public Arrow(string id, string name, string desc, string template) : base(id, name, desc, template) {
+			sprite = TextureManager.getSprite("Textures/Items/"+id);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
@@ -26,6 +26,18 @@ namespace ReikaKalseki.SeaToSea {
 		public override CraftTree.Type FabricatorType {
 			get {
 				return CraftTree.Type.None;
+			}
+		}
+
+		public sealed override TechGroup GroupForPDA {
+			get {
+				return TechGroup.Uncategorized;
+			}
+		}
+
+		public override TechCategory CategoryForPDA {
+			get {
+				return TechCategory.Misc;
 			}
 		}
 		

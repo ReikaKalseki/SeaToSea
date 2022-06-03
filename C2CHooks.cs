@@ -197,6 +197,13 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void doEnviroVehicleDamage(CrushDamage dmg) {
 	    	EnvironmentalDamageSystem.instance.tickCyclopsDamage(dmg);
 	    }
+	    
+	    public static float getWaterTemperature(float ret, WaterTemperatureSimulation sim, Vector3 pos) {
+	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(EnvironmentalDamageSystem.instance.getBiome(pos));
+	    	if (poison > 0)
+	    		ret = Mathf.Max(4, ret-poison*1.75F);
+	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;

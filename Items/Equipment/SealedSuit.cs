@@ -15,6 +15,10 @@ namespace ReikaKalseki.SeaToSea
 		public SealedSuit() : base(SeaToSeaMod.locale.getEntry("SealedSuit"), "WorldEntities/Tools/ReinforcedDiveSuit") {
 			isArmor = true;
 		}
+
+		public override Vector2int SizeInInventory {
+			get {return new Vector2int(2, 2);}
+		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			

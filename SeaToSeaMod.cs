@@ -148,6 +148,15 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.Mountains_ThermalVent, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.GrandReef_ThermalVent, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.DeepGrandReef_ThermalVent, 2F, 1);*/
+    	
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_CaveSpecial, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_CaveSpecial, 4F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_CaveFloor, 0.75F, 1);
+    	
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.CrashZone_Sand, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.CrashZone_Sand, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.CrashZone_Sand, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.CrashZone_Sand, 1.5F, 1);
     }
     
     private static void addCommands() {
@@ -214,14 +223,14 @@ namespace ReikaKalseki.SeaToSea
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
-        t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
+        t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
-        RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 4);
+        RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
         RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);
@@ -239,14 +248,20 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
+        //RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {i.amount *= 2; return false;});
+        //RecipeUtil.getRecipe(TechType.EnameledGlass).craftAmount *= 2;
+        RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Lead, 2);
+        RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
+        RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
+        
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
-       // CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+        CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
        	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
-        
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         
         Bioprocessor.addRecipes();

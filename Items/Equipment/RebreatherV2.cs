@@ -15,6 +15,10 @@ namespace ReikaKalseki.SeaToSea
 		public RebreatherV2() : base(SeaToSeaMod.locale.getEntry("RebreatherV2"), "WorldEntities/Natural/rebreather") {
 			isArmor = true;
 		}
+
+		public override Vector2int SizeInInventory {
+			get {return new Vector2int(2, 3);}
+		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			PDANotification pda = go.EnsureComponent<PDANotification>();

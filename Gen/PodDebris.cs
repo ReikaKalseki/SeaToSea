@@ -76,8 +76,9 @@ namespace ReikaKalseki.SeaToSea
 			SBUtil.removeComponent<Radio>(go);
 			SBUtil.removeComponent<Constructable>(go);
 			PreventDeconstruction prev = go.EnsureComponent<PreventDeconstruction>();
-			if (!papers.Contains(p))
+			if (!papers.Contains(p)) {
 				SBUtil.applyGravity(go);
+			}
 			prev.enabled = true;
 			prev.inEscapePod = true;
 			return go;

@@ -65,6 +65,28 @@
 			
 		</pda>
 	</SealFabric>
+	<Chlorine>
+		<name>
+			Chlorine
+		</name>
+		<desc>
+			A highly poisonous gas which dissolves easily in water. Good for killing microorganisms.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Chlorine>
+	<Luminol>
+		<name>
+			Luminol
+		</name>
+		<desc>
+			A luminous blue liquid.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Luminol>
 	<SealedSuit>
 		<name>
 			Electrochemical Suit
@@ -152,7 +174,7 @@
 			An exotic and dense metal not typically found in most geologic strata.
 		</desc>
 		<pda>
-			
+			Iridium is not typically present in detectable quantities in planetary crusts, instead often only being found in meteorite deposits. High concentrations of this rare and dense metal are often indicators that the area is geologically linked with such an impactor.
 		</pda>
 	</IRIDIUM>
 	<ALKALI_PLANT>
@@ -160,14 +182,14 @@
 			Alkali Vines
 		</name>
 		<desc>
-			A rare plant only found in certain ecological niches with high mineral content and low exposure to light.
-			
-			This plant is comprised of a fibrous tube filled with a strongly alkaline gel. The primary purpose of this may be to deter creatures from eating the stems, or it may help the conduction of the plant's biochemical processes.
-			
-			Assessment: Inedible but possibly useful from a chemistry standpoint
+			A plant with alkaline gel filling its structure.
 		</desc>
 		<pda>
+			This plant is fairly rare, found only in certain ecological niches with high mineral content and low exposure to light.
 			
+			The main body of the plant is comprised of a fibrous tube filled with a strongly alkaline gel. The primary purpose of this may be to deter creatures from eating the stems, or it may help the conduction of the plant's biochemical processes.
+			
+			Assessment: Inedible but possibly useful from a chemistry standpoint
 		</pda>
 	</ALKALI_PLANT>
 	<SeamothVoidStealth>

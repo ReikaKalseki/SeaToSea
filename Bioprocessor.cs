@@ -17,22 +17,32 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
 		
+		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
+		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
+		
 		internal static readonly float POWER_COST = 1.5F;
 		
+		static Bioprocessor() {
+			leftArrow.Patch();
+			rightArrow.Patch();
+		}
+		
 		public static void addRecipes() {
-			addRecipe(TechType.AcidMushroom, TechType.HydrochloricAcid, 6, 20, 2);
-			addRecipe(TechType.BloodOil, TechType.Benzene, 4);
-			addRecipe(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 1, 2);
+			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 6);
+			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 4);
+			addRecipe(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 5);
 			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 3, 2);
-			addRecipe(TechType.JellyPlantSeed, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 4);
+			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
 		}
 		
 		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
 			BioRecipe r = new BioRecipe(salt, secs, inp, o);
 			recipes[r.inputItem] = r;
 			RecipeUtil.addRecipe(o);
-			RecipeUtil.addIngredient(o, TechType.Salt, salt);
+			RecipeUtil.addIngredient(o, SeaToSeaMod.processor.TechType, 1);
+			RecipeUtil.addIngredient(o, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(o, inp, inamt);
+			RecipeUtil.addIngredient(o, TechType.Salt, salt);
 			r.inputCount = inamt;
 			r.outputCount = outamt;
 		}
@@ -40,10 +50,18 @@ namespace ReikaKalseki.SeaToSea {
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
 			addIngredient(TechType.TitaniumIngot, 1);
 			addIngredient(TechType.Magnetite, 12);
-			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6);
 			addIngredient(TechType.CopperWire, 1);
 			addIngredient(TechType.Glass, 3);
 		}
+
+		public override bool UnlockedAtStart {
+			get {
+				return false;
+			}
+		}
+		
+		//protected OrientedBounds[] GetBounds { get; }
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);

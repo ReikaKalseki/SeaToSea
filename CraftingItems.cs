@@ -26,9 +26,6 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
 				}
-				if (m == Items.Chlorine || m == Items.Luminol) {
-					item.unlockRequirement = SeaToSeaMod.processor.TechType;
-				}
 				if (m == Items.Luminol) {
 					item.glowIntensity = 2;
 				}
@@ -48,10 +45,10 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
 			[Item(typeof(BasicCraftingItem),	true, TechType.PlasteelIngot,	"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
-			[Item(typeof(Sealant), 				true, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
+			[Item(typeof(Bioprocessed), 		true, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
-			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/polyaniline")]Chlorine,
-			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(Bioprocessed),			true, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
+			[Item(typeof(Bioprocessed),			true, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
 		}
 		
 		private static Item getAttr(Items key) {

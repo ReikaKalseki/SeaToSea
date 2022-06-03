@@ -134,7 +134,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	SubRoot sub = dmg.gameObject.GetComponentInParent<SubRoot>();
 	    	if (sub != null && sub.isCyclops) {
 	    		TemperatureEnvironment temp = getLavaHeatDamage(dmg.gameObject);
-	    		SBUtil.writeToChat("heat: "+temp);
+	    		//SBUtil.writeToChat("heat: "+temp);
 	    		if (temp != null) {
 	    			Equipment modules = sub.upgradeConsole != null ? sub.upgradeConsole.modules : null;
 	    			bool immune = false;
@@ -145,7 +145,7 @@ namespace ReikaKalseki.SeaToSea {
 								immune = true;
 						}
 	    			}
-	    			SBUtil.writeToChat("immune: "+immune);
+	    			//SBUtil.writeToChat("immune: "+immune);
 	    			if (!immune) {
 						dmg.liveMixin.TakeDamage(dmg.damagePerCrush*temp.damageScalar*0.15F, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.soundOnDamage) {
@@ -159,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
 	    		}
 		    	float leak = getLRPowerLeakage(dmg.gameObject);
-		    	SBUtil.writeToChat("leak "+leak);
+		    	//SBUtil.writeToChat("leak "+leak);
 			   	if (leak > 0) {
 	    			SubControl con = dmg.gameObject.GetComponentInParent<SubControl>();
 				    if (con.cyclopsMotorMode.engineOn)
@@ -167,7 +167,7 @@ namespace ReikaKalseki.SeaToSea {
 				    if (con.appliedThrottle)
 				    	leak *= 1.5F;
 				    float trash;
-				    sub.powerRelay.ConsumeEnergy(leak*3, out trash);
+				    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
 				}
 	    	}
     	}
@@ -177,7 +177,7 @@ namespace ReikaKalseki.SeaToSea {
     	}
    
 		public TemperatureEnvironment getLavaHeatDamage(string biome) {
-			return temperatures.ContainsKey(biome) ? temperatures[biome] : null;
+			return biome != null && temperatures.ContainsKey(biome) ? temperatures[biome] : null;
 		}
     	
     	public float getLRPoison(GameObject go) {
@@ -185,7 +185,7 @@ namespace ReikaKalseki.SeaToSea {
     	}
    
 		public float getLRPoison(string biome) {
-			return lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
+			return biome != null && lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
 		}
     	
     	public float getLRPowerLeakage(GameObject go) {
@@ -193,13 +193,27 @@ namespace ReikaKalseki.SeaToSea {
     	}
    
 		public float getLRPowerLeakage(string biome) {
-    		return lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
+    		return biome != null && lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
 		}
     	
     	public string getBiome(GameObject go) {
-    		string ret = LargeWorld.main.GetBiome(go.transform.position);
-    		if (ret == "ILZCorridor" && go.transform.position.y < -1175)
+    		return getBiome(go.transform.position);
+    	}
+    	
+    	public string getBiome(Vector3 pos) {
+    		string ret = LargeWorld.main.GetBiome(pos);
+    		if (ret == "ILZCorridor" && pos.y < -1175)
     			ret = "ILZCorridorDeep";
+    		return ret;
+    	}
+    	
+    	public float getWaterTemperature(Vector3 pos) {
+    		string biome = getBiome(pos);
+    		TemperatureEnvironment temp = getLavaHeatDamage(biome);
+    		float ret = temp != null ? temp.temperature : -1000;
+    		if (biome == "ILZCorridor" && pos.y <= -1100 && pos.y >= -1175) {
+    			ret = (float)MathUtil.linterpolate(-pos.y, 1100, 1175, temperatures["ILZCorridor"].temperature, temperatures["ILZCorridorDeep"].temperature);
+    		}
     		return ret;
     	}
     	
