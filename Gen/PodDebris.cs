@@ -15,6 +15,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class PodDebris : WorldGenerator {
 		
 		private static readonly WeightedRandom<Prop> debrisProps = new WeightedRandom<Prop>();
+		private static readonly List<Prop> alwaysPieces = new List<Prop>();
 		private static readonly List<Prop> papers = new List<Prop>();
 		
 		static PodDebris() {
@@ -30,6 +31,12 @@ namespace ReikaKalseki.SeaToSea
 			debrisProps.addEntry(new Prop("4e8f6009-fc9c-4774-9ddc-27a6b0081dde", -90, 90), 200); //hull panel
 			debrisProps.addEntry(new Prop("f901b968-5b3c-4795-8ded-82db2fa23440", null), 30); //"power cyl"
 			debrisProps.addEntry(new Prop("3616e7f3-5079-443d-85b4-9ad68fcbd924", null), 20); //bag
+						
+			alwaysPieces.Add(new Prop("c0175cf7-0b6a-4a1d-938f-dad0dbb6fa06", -90, 90)); //medkit fab
+			alwaysPieces.Add(new Prop("4f045c69-1539-4c53-b157-767df47c1aa6", -90, 90)); //radio lookalike
+			//alwaysPieces.Add(new Prop("cdade216-3d4d-4adf-901c-3a91fb3b88c4", -90, 90)); //centrifuge
+			alwaysPieces.Add(new Prop("9f16d82b-11f4-4eeb-aedf-f2fa2bfca8e3", -90, 90)); //fab
+			alwaysPieces.Add(new Prop("f901b968-5b3c-4795-8ded-82db2fa23440", null)); //"power cyl"
 			
 			papers.Add(new Prop("32e48451-8e81-428e-9011-baca82e9cd32", null));	
 			papers.Add(new Prop("b4ec5044-5519-4743-b61b-92a8b6fe4a32", null));			
@@ -37,26 +44,42 @@ namespace ReikaKalseki.SeaToSea
 			//big platform 5a6279e2-fab9-48c9-bcb3-fdeb02fd4ce2
 		}
 		
+		private bool generateRecognizablePieces = false;
+		private int paperCount = 6;
+		private float debrisAmount = 1;
+		private float debrisScale = 0.5F;
+		
 		public PodDebris(Vector3 pos) : base(pos) {
 			
 		}
 		
 		public override void loadFromXML(XmlElement e) {
-			
+			paperCount = e.getInt("paperCount", paperCount);
+			generateRecognizablePieces = e.getBoolean("generateRecognizablePieces");
+			debrisAmount = (float)e.getFloat("debrisAmount", debrisAmount);
+			debrisScale = (float)e.getFloat("debrisScale", debrisScale);
 		}
 		
 		public override void saveToXML(XmlElement e) {
-			
+			e.addProperty("paperCount", paperCount);
+			e.addProperty("generateRecognizablePieces", generateRecognizablePieces);
+			e.addProperty("debrisAmount", debrisAmount);
+			e.addProperty("debrisScale", debrisScale);
 		}
 		
 		public override void generate(List<GameObject> li) {		
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 6*debrisAmount; i++) {
 				li.Add(generateObjectInRange(9, 0, 9));
 			}
-			for (int i = 0; i < 12; i++) {
+			if (generateRecognizablePieces) {
+				foreach (Prop s in alwaysPieces) {
+					li.Add(generateObjectInRange(15, 0, 15, 0, s));
+				}
+			}
+			for (int i = 0; i < 12*debrisAmount; i++) {
 				li.Add(generateObjectInRange(24, 0, 24));
 			}
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < paperCount; i++) {
 				li.Add(generateObjectInRange(4, 2, 4, 2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
 		}
@@ -70,17 +93,19 @@ namespace ReikaKalseki.SeaToSea
 			pos.y = Math.Min(pos.y, position.y)+(float)offsetY;
 			go.transform.position = pos;
 			go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 360F), UnityEngine.Random.Range(0, 360F), 0);
+			if (type == null)
+				go.transform.localScale = Vector3.one*debrisScale;
 			SBUtil.removeComponent<MedicalCabinet>(go);
 			SBUtil.removeComponent<Fabricator>(go);
 			SBUtil.removeComponent<Centrifuge>(go);
 			SBUtil.removeComponent<Radio>(go);
 			SBUtil.removeComponent<Constructable>(go);
 			PreventDeconstruction prev = go.EnsureComponent<PreventDeconstruction>();
+			prev.enabled = true;
+			prev.inEscapePod = true;
 			if (!papers.Contains(p)) {
 				SBUtil.applyGravity(go);
 			}
-			prev.enabled = true;
-			prev.inEscapePod = true;
 			return go;
 		}
 		

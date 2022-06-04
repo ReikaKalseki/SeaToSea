@@ -680,4 +680,25 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
+	
+	[HarmonyPatch(typeof(WorldForcesManager))]
+	[HarmonyPatch("FixedUpdate")]
+	public static class CleanupWorldForcesManager {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "WorldForces", "DoFixedUpdate", true, new Type[0]);
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickWorldForces", false, typeof(WorldForces));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 }

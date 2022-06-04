@@ -204,6 +204,15 @@ namespace ReikaKalseki.SeaToSea {
 	    		ret = Mathf.Max(4, ret-poison*1.75F);
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
+	    
+	    public static void tickWorldForces(WorldForces wf) {
+	    	if (wf == null || wf.gameObject == null || !wf.gameObject.activeInHierarchy || !wf.enabled) {
+	    		//WorldForcesManager.instance.RemoveWorldForces(wf);
+	    		//SBUtil.log("Disabling invalid WF tick in "+wf);
+	    		return;
+	    	}
+	    	wf.DoFixedUpdate();
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;
