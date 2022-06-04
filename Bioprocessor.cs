@@ -20,7 +20,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
 		
-		internal static readonly float POWER_COST = 1.5F;
+		internal static readonly float POWER_COST_IDLE = 6.0F; //per second; was 1.5 then 2.5
+		internal static readonly float POWER_COST_ACTIVE = 32.0F; //per second
 		
 		static Bioprocessor() {
 			leftArrow.Patch();
@@ -65,7 +66,23 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
-			UnityEngine.Object.Destroy(go.GetComponent<Aquarium>());
+			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
+				UnityEngine.Object.Destroy(a);
+			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+			con.enabled = true;
+			con.height = 6;
+			con.width = 6;
+			con.hoverText = "Use Bioprocessor";
+			con.storageLabel = "BIOPROCESSOR";
+			Transform t = go.transform.Find("model/Coral");
+		 	if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);/*
+			t = go.transform.Find("bioprocessor(Clone)/model/Coral");
+		 	if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);
+			t = go.transform.Find("bioprocessor/model/Coral");
+		 	if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);*/
 		}
 		
 	}
@@ -74,15 +91,22 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private BioRecipe currentOperation;
 		private int saltRequired;
-		private float nextSaltTime;
+		private float nextSaltTimeRemaining;
 		
-		protected override void updateEntity(GameObject go) {
-			SBUtil.writeToChat("I am ticking @ "+go.transform.position);
+		void Start() {
+			SeaToSeaMod.processor.prepareGameObject(gameObject, gameObject.GetComponentInChildren<Renderer>());
+		}
+		
+		protected override void updateEntity(GameObject go, float seconds) {
+			//SBUtil.writeToChat("I am ticking @ "+go.transform.position);
+			if (seconds <= 0)
+				return;
 			
-			if (consumePower()) {
+			if (consumePower(seconds)) {
 				if (currentOperation != null) {
-					float time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/1000F;
-					if (time >= nextSaltTime) {
+					nextSaltTimeRemaining -= seconds;
+					//SBUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
+					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
 						StorageContainer con = go.GetComponentInChildren<StorageContainer>();
 						IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
 						if (salt != null && salt.Count >= 1) {
@@ -92,12 +116,14 @@ namespace ReikaKalseki.SeaToSea {
 						else {
 							setRecipe(null);
 						}
-						nextSaltTime = time+currentOperation.secondsPerSalt;
+						nextSaltTimeRemaining = currentOperation.secondsPerSalt;
 						if (saltRequired <= 0) {
+							//SBUtil.writeToChat("try craft");
 							IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
 							if (ing != null && ing.Count >= currentOperation.inputCount) {
+								//SBUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
-									con.container.RemoveItem(ing[i].item);
+									con.container.RemoveItem(ing[0].item); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
 									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem));
 									item.SetActive(false);
@@ -111,8 +137,10 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 				else {
+					//SBUtil.writeToChat("Looking for recipe");
 					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
 						if (canRunRecipe(r)) {
+							SBUtil.writeToChat("Found "+r);
 							setRecipe(r);
 							break;
 						}
@@ -121,19 +149,25 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {
 				setRecipe(null);
+				SBUtil.writeToChat("Insufficient power");
 			}
 		}
 		
-		private bool consumePower() {
+		private bool consumePower(float sc = 1) {
 			SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
+			if (sub == null)
+				return false;
 			float receive;
-			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST, out receive);
-			return Mathf.Approximately(Bioprocessor.POWER_COST, receive);
+			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST_IDLE*sc, out receive);
+			receive += 0.0001F;
+			if (receive < Bioprocessor.POWER_COST_IDLE*sc)
+				SBUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
+			return receive >= Bioprocessor.POWER_COST_IDLE*sc;//Mathf.Approximately(Bioprocessor.POWER_COST*sc, receive);
 		}
 		
 		private bool canRunRecipe(BioRecipe r) {
 			StorageContainer con = gameObject.GetComponentInChildren<StorageContainer>();
-			IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
+			IList<InventoryItem> ing = con.container.GetItems(r.inputItem);
 			IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
 			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;
 		}
@@ -141,7 +175,7 @@ namespace ReikaKalseki.SeaToSea {
 		private void setRecipe(BioRecipe r) {
 			currentOperation = r;
 			saltRequired = r != null ? r.saltCount : -1;
-			nextSaltTime = r != null ? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/1000F+r.secondsPerSalt : -1;
+			nextSaltTimeRemaining = r != null ? r.secondsPerSalt : -1;
 		}
 		
 	}
@@ -165,6 +199,12 @@ namespace ReikaKalseki.SeaToSea {
 			processTime = t;
 			secondsPerSalt = processTime/(float)saltCount;
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[BioRecipe InputItem={0}, OutputItem={1}, SaltCount={2}, ProcessTime={3}, SecondsPerSalt={4}, InputCount={5}, OutputCount={6}]", inputItem, outputItem, saltCount, processTime, secondsPerSalt, inputCount, outputCount);
+		}
+
 		
 	}
 }
