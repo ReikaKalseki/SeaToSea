@@ -264,6 +264,7 @@ namespace ReikaKalseki.SeaToSea
        	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
+        
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         
         Bioprocessor.addRecipes();

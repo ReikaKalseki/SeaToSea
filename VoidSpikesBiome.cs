@@ -13,7 +13,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class VoidSpikesBiome {
 		
-		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
+		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995); //TODO add pda prompt when get near
 		public static readonly Vector3 end900m = new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
 		public static readonly double length = Vector3.Distance(end500m, end900m);
 		

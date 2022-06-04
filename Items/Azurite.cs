@@ -28,26 +28,31 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class AzuriteTag : MonoBehaviour {
 		
+		private float lastTime;
+		
 		void Start() {
     		
 		}
 		
 		void Update() {
+			float time = DayNightCycle.main.timePassedAsFloat;
+			float dT = time-lastTime;
 			Renderer r = gameObject.GetComponentInChildren<Renderer>();
 			double phase = gameObject.GetHashCode();
 			double sp = 1+0.4*Math.Cos(gameObject.transform.position.magnitude); //was 0.75 and 0.25
-			double tick = (sp*DayNightCycle.main.timePassedAsDouble+phase)%(200*Math.PI);
+			double tick = (sp*time+phase)%(200*Math.PI);
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*(float)Math.Sin(tick)+0.4F*(float)Math.Sin(tick*4.63-289.2);
 			SBUtil.setEmissivity(r, f, "GlowStrength");
-			if (Player.main != null) { //TODO check last damage time
+			if (dT > 0 && Player.main != null) {
 				GameObject ep = Player.main.gameObject;
 				double distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 				if (distsq < 64) {
-					if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 || Inventory.main.equipment.GetCount(TechType.SwimChargeFins) != 0) {
-						ep.GetComponentInParent<LiveMixin>().TakeDamage(0.1F, ep.transform.position, DamageType.Electrical, ep); //TODO make use time elapsed
+					if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0) {
+						ep.GetComponentInParent<LiveMixin>().TakeDamage(2.5F*dT*(float)Math.Min(1, 1-distsq/64), ep.transform.position, DamageType.Electrical, ep);
 					}
 				}
 			}
+			lastTime = time;
 		}
 		
 	}
