@@ -199,16 +199,17 @@ namespace ReikaKalseki.SeaToSea
 				
 				if (isDatabox) {
 					//SBUtil.writeToChat("Reprogramming databox");
-					BlueprintHandTarget bpt = obj.EnsureComponent<BlueprintHandTarget>();
-					bpt.unlockTechType = tech;
+					//SBUtil.setDatabox(obj.EnsureComponent<BlueprintHandTarget>(), tech);
 				}
 				else if (isCrate) {
 					//SBUtil.writeToChat("Reprogramming crate");
-					SupplyCrate bpt = obj.EnsureComponent<SupplyCrate>();
-					SBUtil.setCrateItem(bpt, tech);
+					//SBUtil.setCrateItem(obj.EnsureComponent<SupplyCrate>(), tech);
 				}
 				else if (isFragment) {
 					//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
+				}
+				else if (isPDA) {
+					//SBUtil.setPDAPage(obj.EnsureComponent<StoryHandTarget>(), page);
 				}
 				
 				foreach (ManipulationBase mb in manipulations) {

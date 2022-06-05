@@ -59,10 +59,9 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 refPos = platform.transform.position+Vector3.up*0.85F;
 			refPos = MathUtil.getRandomVectorAround(refPos, new Vector3(0.5F, 0, 0.5F));
 			
-			GameObject pda = spawner("0f1dd54e-b36e-40ca-aa85-d01df1e3e426");
+			GameObject pda = spawner(PDAManager.getPage("voidspike").getPDAClassID());
 			pda.transform.position = refPos+Vector3.up*0.2F;
 			pda.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
-			SBUtil.setPDAPage(pda.EnsureComponent<StoryHandTarget>(), PDAManager.getPage("voidspike"));
 			li.Add(pda);
 			
 			GameObject bag = spawner("3616e7f3-5079-443d-85b4-9ad68fcbd924");

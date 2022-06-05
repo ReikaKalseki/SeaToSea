@@ -22,6 +22,7 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {		
+	[Obsolete]
 	internal class SetPDAPage : ManipulationBase {
 		
 		private string pageID;

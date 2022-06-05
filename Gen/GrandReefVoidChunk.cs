@@ -11,6 +11,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
+	[Obsolete]
 	public sealed class GrandReefVoidChunk : WorldGenerator {
 		
 		private static readonly string TERRAIN_CHUNK = "a474e5fa-1552-4cea-abdb-945f85ed4b1a";

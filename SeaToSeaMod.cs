@@ -32,6 +32,8 @@ namespace ReikaKalseki.SeaToSea
     public static AlkaliPlant alkali;
     
     public static Bioprocessor processor;
+    
+    public static SignalManager.ModSignal treaderSignal;
 
     [QModPatch]
     public static void Load()
@@ -66,37 +68,22 @@ namespace ReikaKalseki.SeaToSea
         
         addFlora();
         addItemsAndRecipes();
+        addPDAEntries();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
         
         addCommands();
-        addPDAEntries();
         addOreGen();
-        /*
-        GenUtil.registerWorldgen("00037e80-3037-48cf-b769-dc97c761e5f6", new Vector3(622.7F, -250.0F, -1122F), new Vector3(0, 32, 0)); //lifepod 13 (khasar)
-        spawnDatabox(TechType.SwimChargeFins, new Vector3(622.7F, -249.3F, -1122F));
-        */
+			
+		treaderSignal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("treaderpod"));
+		treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
+		treaderSignal.register();
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
        
 		VoidSpikesBiome.instance.register();
 		//AvoliteSpawner.instance.register();
-       
-        /*
-        for (int i = 0; i < 12; i++) {
-        	double r = UnityEngine.Random.Range(1.5F, 12);
-        	double ang = UnityEngine.Random.Range(0, 360F);
-        	double cos = Math.Cos(ang*Math.PI/180D);
-        	double sin = Math.Sin(ang*Math.PI/180D);
-        	double rx = r*cos;
-        	double rz = r*sin;
-        	bool big = UnityEngine.Random.Range(0, 1F) < 0.2;
-        	Vector3 pos2 = new Vector3((float)(pos.x+rx), pos.y, (float)(pos.z+rz));
-        	GenUtil.registerWorldgen(big ? VanillaResources.LARGE_KYANITE.prefab : VanillaResources.KYANITE.prefab, pos2);
-        }*/
-        
-        //GenUtil.registerWorldgen(VanillaResources.LARGE_DIAMOND.prefab, new Vector3(-1496, -325, -714), new Vector3(120, 60, 45));
     }
     
     private static void addFlora() {
@@ -254,6 +241,10 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.PlasteelIngot);
+        RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Nickel, 4);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 1);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);

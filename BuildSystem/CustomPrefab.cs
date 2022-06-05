@@ -92,22 +92,22 @@ namespace ReikaKalseki.SeaToSea
 					isBasePiece = true;
 				}
 				else if (prefabName == "crate") {
-					prefabName = "15a3e67b-0c76-4e8d-889e-66bc54213dac";
 					isCrate = true;
 					string techn = e.getProperty("item");
 					tech = SBUtil.getTechType(techn);
+					prefabName = GenUtil.getOrCreateCrate(tech);
 				}
 				else if (prefabName == "databox") {
-					prefabName = "1b8e6f01-e5f0-4ab7-8ba9-b2b909ce68d6";
 					isDatabox = true;
 					string techn = e.getProperty("tech");
 					tech = SBUtil.getTechType(techn);
+					prefabName = GenUtil.getOrCreateDatabox(tech);
 				}
 				else if (prefabName == "pda") {
-					prefabName = "02dbd99a-a279-4678-9be7-a21202862cb7";
 					isPDA = true;
 					string pagen = e.getProperty("page");
-					manipulations.Add(new SetPDAPage(pagen));
+					PDAManager.PDAPage page = PDAManager.getPage(pagen);
+					prefabName = page.getPDAClassID();
 				}
 				//else if (prefabName == "fragment") {
 				//	prefabName = ?;

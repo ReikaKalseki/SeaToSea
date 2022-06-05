@@ -214,18 +214,6 @@ namespace ReikaKalseki.SeaToSea
 			//box.center = -(render.center-spike.transform.position);
 			//box.size = render.extents;
 		}
-		
-		class DestroyDetector : MonoBehaviour {
-			
-			internal Vector3 pos;
-			
-			void OnDestroy() {
-				SBUtil.log("Destroying spike @ "+pos);
-				SBUtil.log("Trace "+System.Environment.StackTrace);
-				//throw new Exception("Spike Destroy "+pos);
-			}
-			
-		}
 			
 		internal void generateFlora() {
 			if (hasFlora) {
