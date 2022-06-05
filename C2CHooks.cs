@@ -213,6 +213,21 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	wf.DoFixedUpdate();
 	    }
+	    
+	    public static void onPrecursorDoorSpawn(PrecursorKeyTerminal pk) {
+	    	GameObject parent = pk.transform.parent.gameObject;
+	    	PrefabIdentifier pi = parent.GetComponent<PrefabIdentifier>();
+	    	switch(pi.classId) {
+	    		case "0524596f-7f14-4bc2-a784-621fdb23971f":
+	    		case "47027cf0-dca8-4040-94bd-7e20ae1ca086":
+	    			pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_White;
+	    			break;
+	    		case "fdb2bcbb-288a-40b6-bd7a-5585445eb43f":
+	    			bool gate = Math.Abs(parent.transform.position.y+803.8) < 0.25;
+	    			pk.acceptKeyType = gate ? PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Red : PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Orange;
+	    			break;
+	    	}
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;

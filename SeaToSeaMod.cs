@@ -241,12 +241,16 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
         RecipeUtil.addIngredient(TechType.Cyclops, TechType.Nickel, 6);
+        RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
+        RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
         RecipeUtil.addIngredient(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
@@ -260,10 +264,20 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
-        CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+        //CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
        	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
-        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
+        SBUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
+        
+        RecipeUtil.addRecipe(TechType.PrecursorKey_White);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
+        //CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+       	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_White, new string[]{"Personal", "Equipment"});
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
+        SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         

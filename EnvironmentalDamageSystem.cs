@@ -33,6 +33,7 @@ namespace ReikaKalseki.SeaToSea {
     		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 5, 25);
     		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 2, 40);
     		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0, 100); //in lava
+    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 4, 20); //TODO detect lava castle
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;

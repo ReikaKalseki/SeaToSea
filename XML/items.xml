@@ -226,6 +226,38 @@
 			
 		</pda>
 	</CyclopsHeat>
+	<redkey>
+		<name>
+			Red Tablet
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			This device is dominated by an illuminated red symbol resembling an 'R'.
+			
+			Like other similar tablets, it presumably grants access to restricted spaces, with the special nature of this tablet - both its rarity and its seeming authority - probably indicating a similarly exclusive location, perhaps one only normally granting access to a select few.
+		</pda>
+		<category>
+			DownloadedData/Precursor/Scan
+		</category>
+	</redkey>
+	<whitekey>
+		<name>
+			White Tablet
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			This device glows brightly with a lit white symbol resembling a mushroom.
+			
+			This tablet unlocks gates in an unknown location.
+		</pda>
+		<category>
+			DownloadedData/Precursor/Scan
+		</category>
+	</whitekey>
 	<enum>
 		<name>
 			

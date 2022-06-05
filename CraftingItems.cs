@@ -49,6 +49,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(Bioprocessed),			true, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(Bioprocessed),			true, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(Bioprocessed),			true, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
 		}
 		
 		private static Item getAttr(Items key) {
