@@ -87,6 +87,17 @@
 			
 		</pda>
 	</Luminol>
+	<SmartPolymer>
+		<name>
+			Smart Polymer
+		</name>
+		<desc>
+			A flexible plastic material that remembers its original shape and returns to it when stress is released.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SmartPolymer>
 	<SealedSuit>
 		<name>
 			Electrochemical Suit

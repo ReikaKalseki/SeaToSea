@@ -210,7 +210,7 @@ namespace ReikaKalseki.SeaToSea
         depth1300.Patch();
         
         cyclopsHeat = new CyclopsHeatModule();
-        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 12).addIngredient(alkali.TechType, 4);
+        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
         cyclopsHeat.Patch();
         /*
         CraftData.itemSizes[TechType.AcidMushroom] = new Vector2int(1, 2);
@@ -242,9 +242,13 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
         RecipeUtil.addIngredient(TechType.Cyclops, TechType.Nickel, 6);
         RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
         RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
-        RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.addIngredient(TechType.ExoHullModule1, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.addIngredient(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
         RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
+        RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
+        RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Titanium);
         RecipeUtil.addIngredient(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);

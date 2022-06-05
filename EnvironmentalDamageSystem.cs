@@ -58,6 +58,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
 	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()))
 	   			return;
+	   		//SBUtil.writeToChat("not skipped");
 			float temperature = dmg.GetTemperature();
 			float f = 1;
 			float f0 = 1;

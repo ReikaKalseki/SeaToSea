@@ -77,13 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 			con.storageLabel = "BIOPROCESSOR";
 			Transform t = go.transform.Find("model/Coral");
 		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);/*
-			t = go.transform.Find("bioprocessor(Clone)/model/Coral");
-		 	if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);
-			t = go.transform.Find("bioprocessor/model/Coral");
-		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);*/
 		}
 		
 	}
@@ -167,6 +161,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private bool canRunRecipe(BioRecipe r) {
+			if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
+				return false;
 			StorageContainer con = gameObject.GetComponentInChildren<StorageContainer>();
 			IList<InventoryItem> ing = con.container.GetItems(r.inputItem);
 			IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);

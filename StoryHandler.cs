@@ -21,6 +21,9 @@ namespace ReikaKalseki.SeaToSea
 				case "SunbeamCheckPlayerRange":
 					Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
 				break;
+				case "drfwarperheat":
+					KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);
+				break;
 			}
 		}
 	}

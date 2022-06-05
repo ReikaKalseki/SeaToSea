@@ -376,4 +376,19 @@
 		LostRiverImage
 	</header>
   </lostrivershortcircuit>
+  <drfwarperheat>
+	<name>
+		Heat Expulsion Technology
+	</name>
+	<pda>
+		The need for warpers to operate in superheated environments necessitated new technological advances with regard to submerged objects being able to expel heat to their environment, even when said environment is at a higher temperature.
+		
+		This is generally considered impossible by human physics, being in violation of the second law of thermodyanmics. However, the precursors have clearly overcome this barrier, as these entities are able to function in waters exceeding 300 degrees in temperature, well above that which would destroy even highly augmented organic tissue.
+		
+		How this technology works is not understood, but it can still be adapted for other purposes, such as similar heat expulsion from submersibles.
+	</pda>
+	<category>
+		DownloadedData/Precursor/Terminal
+	</category>
+  </drfwarperheat>
 </Root>
