@@ -119,7 +119,7 @@ namespace ReikaKalseki.SeaToSea
 				if (tech == TechType.None && tech2 != null && tech2 != "None") {
 					tech = SBUtil.getTechType(tech2);
 				}
-				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations);
+				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations); //FIXME THESE MANIPULATIONS ARE NOT BEING RERUN on reload 
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 				if (li.Count == 1) {
 					loadManipulations(li[0], manipulations);

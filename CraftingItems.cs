@@ -26,6 +26,9 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
 				}
+				if (m == Items.DenseAzurite) {
+					item.unlockRequirement = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
+				}
 				if (m == Items.Luminol) {
 					item.glowIntensity = 2;
 				}

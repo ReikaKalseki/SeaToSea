@@ -4,14 +4,14 @@
 		Signal
 	</name>
 	<desc>
-		Potential Surviving Lifepod
+		Potential Surviving Lifepod (0m) - Unknown environment and passenger
 	</desc>
 	<pda>
 		The PDA content
 	</pda>
-	<prompt>
+	<radio>
 		This is what it says to prompt you to go there
-	</prompt>
+	</radio>
   </voidpod>
   <treaderpod>
 	<name>
@@ -23,8 +23,8 @@
 	<pda>
 		The PDA content
 	</pda>
-	<prompt>
+	<radio>
 		This is what it says to prompt you to go there
-	</prompt>
+	</radio>
   </treaderpod>
 </Root>

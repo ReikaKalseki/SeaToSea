@@ -66,6 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
 			signal.pdaEntry.addSubcategory("AuroraSurvivors");
+			signal.addRadioTrigger();
 			signal.register();
 		}
 		
@@ -76,6 +77,10 @@ namespace ReikaKalseki.SeaToSea {
 		public void activateSignal() {
 			SBUtil.log("Activating void signal");
 			signal.activate();
+		}
+		
+		public string getSignalKey() {
+			return signal.getRadioStoryKey();
 		}
 		
 		private bool isValidSpikeLocation(Vector3 vec) {

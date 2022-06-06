@@ -17,6 +17,14 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void NotifyGoalComplete(string key) {
+			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
+				if (key.Contains(SeaToSeaMod.treaderSignal.getRadioStoryKey())) {
+					SeaToSeaMod.treaderSignal.activate();
+				}
+				else if (key.Contains(VoidSpikesBiome.instance.getSignalKey())) {
+					VoidSpikesBiome.instance.activateSignal();
+				}
+			}
 			switch(key) {
 				case "SunbeamCheckPlayerRange":
 					Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);

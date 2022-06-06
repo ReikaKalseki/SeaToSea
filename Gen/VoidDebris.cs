@@ -69,6 +69,7 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
+			spawner(databox);
 		}
 		
 		public GameObject spawnPDA() {
