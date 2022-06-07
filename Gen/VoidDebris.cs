@@ -18,6 +18,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly List<Prop> alwaysPieces = new List<Prop>();
 		private static readonly List<Prop> papers = new List<Prop>();
 		
+		private string databoxPrefab;
+		
 		static VoidDebris() {
 			debrisProps.addEntry(new Prop("08a95141-7c00-4d55-b582-306fa2e217ed"), 100);
 			debrisProps.addEntry(new Prop("0c65ee6e-a84a-4989-a846-19eb53c13071"), 100);
@@ -48,6 +50,10 @@ namespace ReikaKalseki.SeaToSea
 			spawner = VoidSpikesBiome.spawnEntity;
 		}
 		
+		public void init() {
+			databoxPrefab = GenUtil.getOrCreateDatabox(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType);
+		}
+		
 		public override void loadFromXML(XmlElement e) {
 			
 		}
@@ -69,7 +75,12 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, papers[UnityEngine.Random.Range(0, papers.Count)]));
 			}
-			spawner(databox);
+			GameObject go = spawner(databoxPrefab);
+			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.down*3.5F, 1);
+			go.transform.rotation = UnityEngine.Random.rotationUniform;
+			WaveBob b = VoidSpikesBiome.checkAndAddWaveBob(go, true);
+			b.amplitude *= 0.5F;
+			b.speed *= 0.4F;
 		}
 		
 		public GameObject spawnPDA() {

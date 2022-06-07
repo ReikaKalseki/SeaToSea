@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	true, TechType.AramidFibers,	"WorldEntities/Natural/aerogel")]HoneycombComposite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
-			[Item(typeof(BasicCraftingItem),	true, TechType.PlasteelIngot,	"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
+			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
 			[Item(typeof(Bioprocessed), 		true, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(Bioprocessed),			true, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,

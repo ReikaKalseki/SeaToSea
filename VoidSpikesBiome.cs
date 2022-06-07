@@ -66,8 +66,10 @@ namespace ReikaKalseki.SeaToSea {
 			
 			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
 			signal.pdaEntry.addSubcategory("AuroraSurvivors");
-			signal.addRadioTrigger();
+			signal.addRadioTrigger(1200);
 			signal.register();
+			
+			debris.init();
 		}
 		
 		public void onWorldStart() {
@@ -77,6 +79,10 @@ namespace ReikaKalseki.SeaToSea {
 		public void activateSignal() {
 			SBUtil.log("Activating void signal");
 			signal.activate();
+		}
+		
+		public void fireRadio() {
+			signal.fireRadio();
 		}
 		
 		public string getSignalKey() {
@@ -111,15 +117,15 @@ namespace ReikaKalseki.SeaToSea {
 			checkAndAddWaveBob(c.gameObject, false);
 		}
 		
-		public static void checkAndAddWaveBob(GameObject go, bool force) {
+		internal static WaveBob checkAndAddWaveBob(GameObject go, bool force) {
 			if (!force) {
 				double dist = Vector3.Distance(go.transform.position, signalLocation);
 				if (dist > 18)
-					return;
+					return null;
 				if (go.GetComponentInParent<Creature>() != null || go.GetComponentInParent<Player>() != null)
-					return;
+					return null;
 				if (go.GetComponentInParent<Vehicle>() != null)
-					return;
+					return null;
 			}
 			WaveBob b = go.EnsureComponent<WaveBob>();
 			b.rootPosition = go.transform.position;
@@ -131,7 +137,7 @@ namespace ReikaKalseki.SeaToSea {
 				b.amplitude *= 0.25F;
 				b.speed *= 0.5F;
 			}
-				
+			return b;
 		}
 		
 		public static GameObject spawnEntity(string pfb) {

@@ -26,6 +26,17 @@
 	<category>
 		DownloadedData/Codes
 	</category>
+	<radio>
+		[quiet] This is lifepod 10. We're RIGHT NEXT to one of those awful monsters. We-
+		
+		[other voice, whispering] Shut up, it'll hear us!
+		
+		[first person, whispering, offmic] If we don't send out a distress we'll never make it out of here! Hear us or not, sooner or later it'll get curious and find its way in!
+		
+		[quiet but not whispering] We came down behind the aurora, just barely missed the deep water. Bring the big guns...you'll need them.
+		
+		[second person] What guns? Didn't you hear about what happened on obrax- [cut off]
+	</radio>
 	<header>
 	</header>
   </crashmesahint>
@@ -50,7 +61,7 @@
   </mountaincavehint>
   <voidpod>
 	<name>
-		Unknown Lifepod Crew Log
+		Lifepod 15 Crew Log
 	</name>
 	<pda>
 		I can't tell whether I'm cursed or the luckiest guy alive. On one hand, I saw what was coming and got to the pods before anyone else. I even got the pod all to myself by popping it off the Aurora before anyone else could get near. On the other hand, doing that landed me all the way out here in the middle of open water. The Aurora, and by proxy any hope of rescue, is miles away. Meanwhile, around me? Nothing. As far as the scanner can see, aside from the area the wreck is sitting, this whole region is water that might as well be infinitely deep.
@@ -82,7 +93,7 @@
   </voidpod>
   <voidspike>
 	<name>
-		Unknown Lifepod Crew Log #2
+		Lifepod 15 Crew Log #2
 	</name>
 	<pda>
 		Well that settles it. I'm screwed.
@@ -189,7 +200,7 @@
 		
 		Voice 3: Hello!
 		
-		Voice 2: Thanks, [voice 2], very helpful.
+		Voice 2: Thanks, [voice 3], very helpful.
 		
 		Voice 1: So we ration our supplies a bit. Worst comes to worst, there's probably something in the water to sustain us, at least for the few days we need.
 		

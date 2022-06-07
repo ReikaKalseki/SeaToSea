@@ -34,6 +34,9 @@ namespace ReikaKalseki.SeaToSea
     public static Bioprocessor processor;
     
     public static SignalManager.ModSignal treaderSignal;
+    
+    public static Story.StoryGoal crashMesaRadio;
+    //public static Story.StoryGoal mountainPodRadio;
 
     [QModPatch]
     public static void Load()
@@ -80,11 +83,21 @@ namespace ReikaKalseki.SeaToSea
 		treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
 		treaderSignal.addRadioTrigger();
 		treaderSignal.register();
+		
+		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", pdas.getEntry("crashmesahint").getField<string>("radio"), 600);
+		
+		KnownTech.onAdd += onTechUnlocked;
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
        
 		VoidSpikesBiome.instance.register();
 		//AvoliteSpawner.instance.register();
+    }
+    
+    private static void onTechUnlocked(TechType tech, bool vb) {
+    	if (tech == TechType.PrecursorKey_Orange) {
+    		VoidSpikesBiome.instance.fireRadio();
+    	}
     }
     
     private static void addFlora() {
@@ -213,7 +226,7 @@ namespace ReikaKalseki.SeaToSea
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
-		t2Battery.unlockRequirement = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
+		t2Battery.unlockRequirement = TechType.Kyanite;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
         t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
 		

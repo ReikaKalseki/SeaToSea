@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
-	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, 12000) == 0) {
+	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, 80000) == 0) {
 				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.treaderSignal.getRadioStoryKey())) {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
