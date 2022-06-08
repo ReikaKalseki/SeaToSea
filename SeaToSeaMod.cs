@@ -33,8 +33,6 @@ namespace ReikaKalseki.SeaToSea
     
     public static Bioprocessor processor;
     
-    public static KharaaFog fog;
-    
     public static SignalManager.ModSignal treaderSignal;
     
     public static Story.StoryGoal crashMesaRadio;
@@ -70,9 +68,6 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SBUtil.log("Registered custom machine "+processor);
-        
-        fog = new KharaaFog();
-        fog.Patch();
         
         addFlora();
         addItemsAndRecipes();
@@ -273,6 +268,12 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Lead, 2);
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
+        
+        RecipeUtil.addIngredient(TechType.Bleach, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1);
+        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.Bleach, 2);
+        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.AdvancedWiringKit, 1);
+        RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
+        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);

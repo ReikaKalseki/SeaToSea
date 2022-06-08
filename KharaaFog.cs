@@ -15,6 +15,7 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
+	[Obsolete]
 	public class KharaaFog : Spawnable {
 	        
 	    internal KharaaFog() : base("kharaafog", "", "") {
