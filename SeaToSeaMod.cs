@@ -33,6 +33,8 @@ namespace ReikaKalseki.SeaToSea
     
     public static Bioprocessor processor;
     
+    public static KharaaFog fog;
+    
     public static SignalManager.ModSignal treaderSignal;
     
     public static Story.StoryGoal crashMesaRadio;
@@ -68,6 +70,9 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SBUtil.log("Registered custom machine "+processor);
+        
+        fog = new KharaaFog();
+        fog.Patch();
         
         addFlora();
         addItemsAndRecipes();
@@ -261,7 +266,6 @@ namespace ReikaKalseki.SeaToSea
         //RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 1);
         
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
         //RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {i.amount *= 2; return false;});
@@ -290,6 +294,12 @@ namespace ReikaKalseki.SeaToSea
         SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
+        
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 5);
         
         Bioprocessor.addRecipes();
     }

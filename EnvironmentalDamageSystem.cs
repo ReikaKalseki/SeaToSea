@@ -21,12 +21,12 @@ namespace ReikaKalseki.SeaToSea {
     
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
     	
+    	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
+    	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
+    	
     	private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
     	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
-    	
-    	private readonly Vector3 lavaCastleCenter = Vector3.zero; //TODO
-    	private readonly double lavaCastleRadius = 0; //TODO
 		
 		private EnvironmentalDamageSystem() {
     		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40, 9);
@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea {
     		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 5, 25);
     		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 2, 40);
     		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0, 100); //in lava
-    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 4, 20); //TODO detect lava castle
+    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 4, 20);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
@@ -66,6 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			float f = 1;
 			float f0 = 1;
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
+			//SBUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
 	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
