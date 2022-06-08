@@ -24,6 +24,9 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
     	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
+    	
+    	private readonly Vector3 lavaCastleCenter = Vector3.zero; //TODO
+    	private readonly double lavaCastleRadius = 0; //TODO
 		
 		private EnvironmentalDamageSystem() {
     		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40, 9);
@@ -206,6 +209,8 @@ namespace ReikaKalseki.SeaToSea {
     		string ret = LargeWorld.main.GetBiome(pos);
     		if (ret == "ILZCorridor" && pos.y < -1175)
     			ret = "ILZCorridorDeep";
+    		if (ret == "ILZChamber" && Vector3.Distance(lavaCastleCenter, pos) <= lavaCastleRadius)
+    			ret = "LavaCastle";
     		return ret;
     	}
     	

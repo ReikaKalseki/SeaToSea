@@ -106,8 +106,8 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			//TODO ensure no floating pods
-			//TODO add underside rocks, mineral
+			//TO DO ensure no floating pods
+			//TO DO add underside rocks, mineral
 			
 			double rockYAvg = position.y+24.5;
 			for (int i = 0; i < 30; i++) {

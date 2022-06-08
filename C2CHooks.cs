@@ -261,17 +261,20 @@ namespace ReikaKalseki.SeaToSea {
 	    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
 	    	if (pinged != null && pinged.getTimeSince() <= 10000)
 	    		return 0;
-	    	//TODO check for nearby leviathans?
-	    	int maxd = 900;
+	    	double minDist = double.PositiveInfinity;
+	    	foreach (GameObject go in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
+	    		float dist = Vector3.Distance(go.transform.position, sm.transform.position);
+	    		minDist = Math.Min(dist, minDist);
+	    	}
+	    	double frac2 = double.IsPositiveInfinity(minDist) ? 0 : Math.Max(0, (120-minDist)/120D);
+	    	int maxd = 800;
 	    	double depth = -sm.transform.position.y;
 	    	if (depth < maxd)
 	    		return 1;
 	    	double over = depth-maxd;
-	    	double frac = over/(far ? 90D : 120D);
-	    	if (frac > 0 && sm.lightsActive) {
-	    		frac *= 1.2;
-	    	}
-	    	return 1D-frac;
+	    	double fade = sm.lightsActive ? 100 : 200;
+	    	double frac = Math.Min(1, over/fade);
+	    	return 1D-Math.Max(frac, frac2);
 	    }
 	    
 	    public static void onStoryGoalCompleted(string key) {
