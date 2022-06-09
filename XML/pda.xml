@@ -176,7 +176,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/reaper.wav
 	</audio>
   </crashmesa>
   <mountainpodearly>

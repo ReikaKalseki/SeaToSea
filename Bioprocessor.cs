@@ -20,8 +20,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
 		
-		internal static readonly float POWER_COST_IDLE = 6.0F; //per second; was 1.5 then 2.5
-		internal static readonly float POWER_COST_ACTIVE = 32.0F; //per second
+		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
+		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
 		
 		static Bioprocessor() {
 			leftArrow.Patch();
@@ -135,7 +135,7 @@ namespace ReikaKalseki.SeaToSea {
 					//SBUtil.writeToChat("Looking for recipe");
 					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
 						if (canRunRecipe(r)) {
-							SBUtil.writeToChat("Found "+r);
+							//SBUtil.writeToChat("Found "+r);
 							setRecipe(r);
 							break;
 						}
@@ -144,7 +144,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {
 				setRecipe(null);
-				SBUtil.writeToChat("Insufficient power");
+				//SBUtil.writeToChat("Insufficient power");
 			}
 		}
 		
@@ -155,8 +155,8 @@ namespace ReikaKalseki.SeaToSea {
 			float receive;
 			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST_IDLE*sc, out receive);
 			receive += 0.0001F;
-			if (receive < Bioprocessor.POWER_COST_IDLE*sc)
-				SBUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
+			//if (receive < Bioprocessor.POWER_COST_IDLE*sc)
+			//	SBUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
 			return receive >= Bioprocessor.POWER_COST_IDLE*sc;//Mathf.Approximately(Bioprocessor.POWER_COST*sc, receive);
 		}
 		
