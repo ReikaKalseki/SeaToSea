@@ -232,6 +232,16 @@ namespace ReikaKalseki.SeaToSea {
 	    			break;
 	    	}
 	    }
+	    
+	    public static void OnSkyApplierSpawn(SkyApplier pk) {
+	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
+	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {
+	    		GameObject go = SBUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
+	    		go.transform.position = pi.gameObject.transform.position;
+	    		go.transform.rotation = pi.gameObject.transform.rotation;
+	    		UnityEngine.Object.Destroy(pi.gameObject);
+	    	}
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;

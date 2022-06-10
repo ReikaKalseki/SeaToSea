@@ -37,6 +37,11 @@ namespace ReikaKalseki.SeaToSea
     
     public static Story.StoryGoal crashMesaRadio;
     //public static Story.StoryGoal mountainPodRadio;
+    
+    public static BrokenTablet brokenRedTablet;
+    public static BrokenTablet brokenWhiteTablet;
+    public static BrokenTablet brokenOrangeTablet;
+    public static BrokenTablet brokenBlueTablet;
 
     [QModPatch]
     public static void Load()
@@ -68,6 +73,15 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SBUtil.log("Registered custom machine "+processor);
+        
+	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
+	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
+	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
+	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
+	    brokenRedTablet.Patch();
+	    brokenWhiteTablet.Patch();
+	    brokenOrangeTablet.Patch();
+	    brokenBlueTablet.Patch();
         
         addFlora();
         addItemsAndRecipes();
@@ -172,10 +186,10 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SBUtil.playSound);
+        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SBUtil.playSound);
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
+        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
+       // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
     }
     
     private static void addItemsAndRecipes() {
@@ -279,20 +293,25 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
-        //CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+        CraftDataHandler.AddToGroup(TechGroup.Personal, TechCategory.Equipment, TechType.PrecursorKey_Red);
        	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
-        SBUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
+        //SBUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
-        //CraftDataHandler.AddToGroup(TechGroup.Resources, TechCategory.Equipment, TechType.PrecursorKey_Red);
+        CraftDataHandler.AddToGroup(TechGroup.Personal, TechCategory.Equipment, TechType.PrecursorKey_White);
        	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_White, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
-        SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
+        //SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
+        
+        brokenBlueTablet.register();
+        brokenRedTablet.register();
+        brokenWhiteTablet.register();
+        brokenOrangeTablet.register();
         
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         
