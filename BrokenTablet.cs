@@ -30,6 +30,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void register() {
 			Patch();
+			GameObject tabPfb = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
+	    	VFXFabricating fab = tabPfb.transform.Find("Model").gameObject.EnsureComponent<VFXFabricating>();
+	    	fab.localMaxY = 0.1F;
+	    	fab.localMinY = -0.1F;
         	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){tablet});
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
 			e.key = TechType;
@@ -44,35 +48,29 @@ namespace ReikaKalseki.SeaToSea {
 		}
 			
 	    public override GameObject GetGameObject() {
-			GameObject tabRef = null;
-			if (UWE.PrefabDatabase.TryGetPrefab(CraftData.GetClassIdForTechType(tablet), out tabRef)) {
-				GameObject world = SBUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", true, false);
-				if (world != null) {
-					world.SetActive(false);
-					world.EnsureComponent<TechTag>().type = TechType;
-					world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
-					Material m1a = tabRef.GetComponentInChildren<Renderer>().materials[1];
-					foreach (Renderer r in world.GetComponentsInChildren<Renderer>()) {
-						int idx = 0;
-						Material m1b = r.materials[1];
-						foreach (Material m in r.materials) {
-							foreach (string tex in m.GetTexturePropertyNames()) {
-								m1b.SetTexture(tex, m1a.GetTexture(tex));
-								m1b.SetTextureOffset(tex, m1a.GetTextureOffset(tex));
-								m1b.SetTextureScale(tex, m1a.GetTextureScale(tex));
-							}
-							idx++;
+			GameObject tabRef = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
+			GameObject world = SBUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", true, false);
+			if (world != null) {
+				world.SetActive(false);
+				world.EnsureComponent<TechTag>().type = TechType;
+				world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+				Material m1a = tabRef.GetComponentInChildren<Renderer>().materials[1];
+				foreach (Renderer r in world.GetComponentsInChildren<Renderer>()) {
+					int idx = 0;
+					Material m1b = r.materials[1];
+					foreach (Material m in r.materials) {
+						foreach (string tex in m.GetTexturePropertyNames()) {
+							m1b.SetTexture(tex, m1a.GetTexture(tex));
+							m1b.SetTextureOffset(tex, m1a.GetTextureOffset(tex));
+							m1b.SetTextureScale(tex, m1a.GetTextureScale(tex));
 						}
+						idx++;
 					}
-					return world;
 				}
-				else {
-					SBUtil.writeToChat("Could not fetch template GO for "+this);
-					return null;
-				}
+				return world;
 			}
 			else {
-				SBUtil.writeToChat("Could not fetch tablet GO for "+this);
+				SBUtil.writeToChat("Could not fetch template GO for "+this);
 				return null;
 			}
 	    }

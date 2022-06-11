@@ -23,27 +23,21 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 			
 	    public override GameObject GetGameObject() {
-			GameObject podRef = null;
-			if (UWE.PrefabDatabase.TryGetPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782", out podRef)) { //gaspod
-				GasPod pod = podRef.GetComponent<GasPod>();
-				GameObject fog = pod.gasEffectPrefab;
-				GameObject world = UnityEngine.Object.Instantiate(fog);
-				world.SetActive(false);
-				world.EnsureComponent<TechTag>().type = TechType;
-				world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
-				SphereCollider sc = world.AddComponent<SphereCollider>();
-				sc.radius = 7.5F;
-				sc.isTrigger = true;
-				KharaaFogComponent kc = world.EnsureComponent<KharaaFogComponent>();
-				kc.sphere = sc;
-				kc.tracker = world.GetComponent<UWE.TriggerStayTracker>();
-				Renderer r = world.GetComponentInChildren<Renderer>();
-				return world;
-			}
-			else {
-				SBUtil.writeToChat("Could not fetch template GO for "+this);
-				return null;
-			}
+			GameObject podRef = SBUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782");
+			GasPod pod = podRef.GetComponent<GasPod>();
+			GameObject fog = pod.gasEffectPrefab;
+			GameObject world = UnityEngine.Object.Instantiate(fog);
+			world.SetActive(false);
+			world.EnsureComponent<TechTag>().type = TechType;
+			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			SphereCollider sc = world.AddComponent<SphereCollider>();
+			sc.radius = 7.5F;
+			sc.isTrigger = true;
+			KharaaFogComponent kc = world.EnsureComponent<KharaaFogComponent>();
+			kc.sphere = sc;
+			kc.tracker = world.GetComponent<UWE.TriggerStayTracker>();
+			Renderer r = world.GetComponentInChildren<Renderer>();
+			return world;
 	    }
 			
 	}

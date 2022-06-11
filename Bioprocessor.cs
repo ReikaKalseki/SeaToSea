@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
 			BioRecipe r = new BioRecipe(salt, secs, inp, o);
 			recipes[r.inputItem] = r;
-			RecipeUtil.addRecipe(o);
+			RecipeUtil.addRecipe(o, TechGroup.Uncategorized, TechCategory.Misc, 1, CraftTree.Type.None);
 			RecipeUtil.addIngredient(o, SeaToSeaMod.processor.TechType, 1);
 			RecipeUtil.addIngredient(o, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(o, inp, inamt);

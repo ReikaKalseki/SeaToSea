@@ -289,24 +289,29 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_Red);
+        RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
-        CraftDataHandler.AddToGroup(TechGroup.Personal, TechCategory.Equipment, TechType.PrecursorKey_Red);
-       	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Red, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
         //SBUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_White);
+        RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
-        CraftDataHandler.AddToGroup(TechGroup.Personal, TechCategory.Equipment, TechType.PrecursorKey_White);
-       	CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_White, new string[]{"Personal", "Equipment"});
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
         //SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
+        
+        RecipeUtil.modifyIngredients(TechType.BaseReinforcement, i => true);
+        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);
+        RecipeUtil.addIngredient(TechType.BaseReinforcement, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1);
+        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.Lead, 2);
+        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.FiberMesh, 1);
+        Base.FaceHullStrength[Base.FaceType.Reinforcement] = 25; //from 7
+        Base.FaceHullStrength[Base.FaceType.BulkheadClosed] = 4; //from 3
+        Base.CellHullStrength[Base.CellType.Foundation] = 5; //from 2
         
         brokenBlueTablet.register();
         brokenRedTablet.register();

@@ -27,6 +27,7 @@
 		DownloadedData/Codes
 	</category>
 	<radio>
+		[distant reaper calls faintly audible throughout]
 		[quiet] This is lifepod 10. We're RIGHT NEXT to one of those awful monsters. We-
 		
 		[other voice, whispering] Shut up, it'll hear us!
@@ -176,7 +177,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/reaper.wav
+		Sounds/reaper.ogg
 	</audio>
   </crashmesa>
   <mountainpodearly>

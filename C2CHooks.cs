@@ -233,6 +233,31 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void OnInspectableSpawn(InspectOnFirstPickup pk) {/*
+	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
+	    	if (pi != null && (pi.ClassId == "7d19f47b-6ec6-4a25-9b28-b3fd7f5661b7" || pi.ClassId == "066e533d-f854-435d-82c6-b28ba59858e0")) {
+	    		VFXFabricating fab = pi.gameObject.transform.Find("Model").gameObject.EnsureComponent<VFXFabricating>();
+	    		fab.localMaxY = 0.1F;
+	    		fab.localMinY = -0.1F;
+	    	}*/
+	    }
+	    
+	    public static GameObject getCrafterGhostModel(GameObject ret, TechType tech) {
+	    	SBUtil.log("Crafterghost for "+tech+": "+ret);
+	    	if (tech == TechType.PrecursorKey_Red || tech == TechType.PrecursorKey_White) {
+	    		ret = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tech));
+	    		ret = UnityEngine.Object.Instantiate(ret);
+	    		ret = ret.transform.Find("Model").gameObject;
+	    		VFXFabricating fab = ret.EnsureComponent<VFXFabricating>();
+		    	fab.localMaxY = 0.1F;
+		    	fab.localMinY = -0.1F;
+		    	fab.enabled = true;
+		    	fab.gameObject.SetActive(true);
+	    	}
+	    	SBUtil.dumpObjectData(ret);
+	    	return ret;
+	    }
+	    
 	    public static void OnSkyApplierSpawn(SkyApplier pk) {
 	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
 	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {

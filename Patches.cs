@@ -722,7 +722,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
+	
 	[HarmonyPatch(typeof(InspectOnFirstPickup))]
 	[HarmonyPatch("Start")]
 	public static class InspectableSpawnHook {
@@ -742,7 +742,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}*/
+	}
 	
 	[HarmonyPatch(typeof(SkyApplier))]
 	[HarmonyPatch("Start")]
@@ -762,6 +762,35 @@ namespace ReikaKalseki.SeaToSea {
 				FileLog.Log(e.ToString());
 			}
 			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(CrafterGhostModel), "GetGhostModel", new Type[]{typeof(TechType)})]
+	public static class CrafterGhostModelOverride {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {				
+				for (int i = codes.Count-1; i >= 0; i--) {
+					if (codes[i].opcode == OpCodes.Ret) {
+						injectHook(codes, i);
+					}
+				}
+				//FileLog.Log("CRAFTGHOST Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	
+		private static void injectHook(List<CodeInstruction> codes, int idx) {
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getCrafterGhostModel", false, typeof(GameObject), typeof(TechType)));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
 }
