@@ -65,7 +65,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		//protected OrientedBounds[] GetBounds { get; }
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer r) { //TODO add screen to the "unpiped" part
 			base.prepareGameObject(go, r);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);
@@ -85,8 +85,7 @@ namespace ReikaKalseki.SeaToSea {
 			cc.radius = 1.5F;
 			cc.center = new Vector3(0, 0.5F, 0);
 		 	GameObject mdl = SBUtil.setModel(go, "model", SBUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
-		 	Vector3 vec = mdl.transform.localPosition;
-		 	vec.y = 1.41F; //was 1
+		 	Vector3 vec = new Vector3(0, 1.41F, 0);//mdl.transform.localPosition; //was 1
 		 	mdl.transform.localPosition = vec;
 		 	mdl.transform.localScale = new Vector3(1, 0.75F, 1); //was 0.625
 		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
@@ -117,25 +116,38 @@ namespace ReikaKalseki.SeaToSea {
 		private int saltRequired;
 		private float nextSaltTimeRemaining;
 		
+		private static readonly Color offlineColor = new Color(0.1F, 0.1F, 0.1F);
+		private static readonly Color noRecipeColor = new Color(1, 0, 0);
+		private static readonly Color recipeStalledColor = new Color(1, 1, 0);
+		private static readonly Color workingColor = new Color(0, 1, 0);
+		private static readonly Color completeColor = new Color(0.25F, 0.7F, 1);
+		
+		private float lastColorChange = -1;
+		private float colorCooldown = -1;
+		private Color emissiveColor = offlineColor;
+		
 		void Start() {
 			SeaToSeaMod.processor.prepareGameObject(gameObject, gameObject.GetComponentInChildren<Renderer>());
 		}
 		
-		protected override void updateEntity(GameObject go, float seconds) {
+		protected override void updateEntity(float seconds) {
 			//SBUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
 			
 			if (consumePower(seconds)) {
+				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
+					setEmissiveColor(recipeStalledColor);
 					nextSaltTimeRemaining -= seconds;
 					//SBUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
 					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
-						StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+						StorageContainer con = gameObject.GetComponentInChildren<StorageContainer>();
 						IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
 						if (salt != null && salt.Count >= 1) {
 							con.container.RemoveItem(salt[0].item);
 							saltRequired--;
+							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
 						else {
 							setRecipe(null);
@@ -149,9 +161,10 @@ namespace ReikaKalseki.SeaToSea {
 								for (int i = 0; i < currentOperation.inputCount; i++)
 									con.container.RemoveItem(ing[0].item); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
-									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem));
+									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
 									con.container.AddItem(item.GetComponent<Pickupable>());
+									setEmissiveColor(completeColor, 4);
 								}
 							}
 							else {
@@ -174,7 +187,19 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				setRecipe(null);
 				//SBUtil.writeToChat("Insufficient power");
+				setEmissiveColor(offlineColor);
 			}
+		}
+		
+		private void setEmissiveColor(Color c, float cooldown = -1) {
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastColorChange < colorCooldown && cooldown < colorCooldown)
+				return;
+			emissiveColor = c;
+			colorCooldown = cooldown;
+			Material m = gameObject.GetComponentInChildren<Renderer>().materials[0];
+			m.SetColor("_GlowColor", emissiveColor);
+			lastColorChange = time;
 		}
 		
 		private bool consumePower(float sc = 1) {
@@ -202,6 +227,7 @@ namespace ReikaKalseki.SeaToSea {
 			currentOperation = r;
 			saltRequired = r != null ? r.saltCount : -1;
 			nextSaltTimeRemaining = r != null ? r.secondsPerSalt : -1;
+			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 		}
 		
 	}
