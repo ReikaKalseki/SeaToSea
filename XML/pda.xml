@@ -89,7 +89,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone1
+		Sounds/voidpod-bcg.wav
 	</audio>
   </voidpod>
   <voidspike>
@@ -141,7 +141,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/treaderpod-bcg.wav
 	</audio>
   </treaderpod>
   <treadercave>

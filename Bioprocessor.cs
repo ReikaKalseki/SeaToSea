@@ -67,6 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
+			UnityEngine.Object.Destroy(go.transform.Find("Bubbles").gameObject);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
@@ -75,9 +76,15 @@ namespace ReikaKalseki.SeaToSea {
 			con.width = 6;
 			con.hoverText = "Use Bioprocessor";
 			con.storageLabel = "BIOPROCESSOR";
-			Transform t = go.transform.Find("model/Coral");
-		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);
+		 	GameObject mdl = SBUtil.setModel(go, "model", SBUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
+		 	Vector3 vec = mdl.transform.localPosition;
+		 	vec.y = -0.5F;
+		 	mdl.transform.localPosition = vec;
+		 	mdl.transform.localScale = new Vector3(1, 0.625F, 1);
+		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
+		 	mdl.transform.localEulerAngles = new Vector3(0, 90, 0);
+			r = mdl.GetComponentInChildren<Renderer>();
+			SBUtil.swapToModdedTextures(r, this);
 		}
 		
 	}

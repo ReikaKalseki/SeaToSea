@@ -309,9 +309,10 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.BaseReinforcement, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.Lead, 2);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.FiberMesh, 1);
-        Base.FaceHullStrength[Base.FaceType.Reinforcement] = 25; //from 7
-        Base.FaceHullStrength[Base.FaceType.BulkheadClosed] = 4; //from 3
-        Base.CellHullStrength[Base.CellType.Foundation] = 5; //from 2
+        Base.FaceHullStrength[(int)Base.FaceType.Reinforcement] = 25; //from 7
+        Base.FaceHullStrength[(int)Base.FaceType.BulkheadOpened] = 6; //from 3
+        Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = 6; //from 3
+        Base.CellHullStrength[(int)Base.CellType.Foundation] = 5; //from 2
         
         brokenBlueTablet.register();
         brokenRedTablet.register();
