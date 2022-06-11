@@ -67,24 +67,46 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
-			UnityEngine.Object.Destroy(go.transform.Find("Bubbles").gameObject);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);
+			Transform t = go.transform.Find("Bubbles");
+			if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
 			con.enabled = true;
 			con.height = 6;
 			con.width = 6;
 			con.hoverText = "Use Bioprocessor";
 			con.storageLabel = "BIOPROCESSOR";
+		 	foreach (Collider c in go.GetComponentsInChildren<Collider>()) {
+				UnityEngine.Object.Destroy(c);
+		 	}
+			SphereCollider cc = go.AddComponent<SphereCollider>();
+			cc.radius = 1.5F;
+			cc.center = new Vector3(0, 0.5F, 0);
 		 	GameObject mdl = SBUtil.setModel(go, "model", SBUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
 		 	Vector3 vec = mdl.transform.localPosition;
-		 	vec.y = -0.5F;
+		 	vec.y = 1.41F; //was 1
 		 	mdl.transform.localPosition = vec;
-		 	mdl.transform.localScale = new Vector3(1, 0.625F, 1);
+		 	mdl.transform.localScale = new Vector3(1, 0.75F, 1); //was 0.625
 		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
 		 	mdl.transform.localEulerAngles = new Vector3(0, 90, 0);
 			r = mdl.GetComponentInChildren<Renderer>();
+			//SBUtil.dumpTextures(r);
 			SBUtil.swapToModdedTextures(r, this);
+			SBUtil.setEmissivity(r, 2, "GlowStrength");
+			r.materials[0].EnableKeyword("MARMO_EMISSION");
+			r.sharedMaterial.EnableKeyword("MARMO_EMISSION");
+			r.materials[0].SetFloat("_Shininess", 8);
+			r.materials[0].SetFloat("_Fresnel", 0.4F);
+			go.GetComponent<Constructable>().model = mdl;
+			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.5F, 0.5F, 1.5F);
+			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(0, 0.5F, 0);
+			SkyApplier sky = go.EnsureComponent<SkyApplier>();
+			sky.renderers = go.GetComponentsInChildren<Renderer>();
+			t = go.transform.Find("SubDamageSounds");
+			if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);
 		}
 		
 	}

@@ -90,6 +90,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		public void dumpTextures() {
+			foreach (PlacedObject go in items.Values) {
+				if (go.isSelected) {
+					SBUtil.dumpTextures(go.obj.GetComponentInChildren<Renderer>());
+				}
+			}
+		}
+		
 		internal static int genID(GameObject go) {
 			if (go.transform.root != null && go.transform.root.gameObject != null)
 				return go.transform.root.gameObject.GetInstanceID();
