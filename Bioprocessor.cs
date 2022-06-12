@@ -133,6 +133,9 @@ namespace ReikaKalseki.SeaToSea {
 					con2.Resize(6, 6);
 					lgc.storage = con2;
 					terminal.SetActive(true);
+					BoxCollider box = terminal.EnsureComponent<BoxCollider>();
+					box.center = new Vector3(0, 0.5F, 0);
+					box.size = new Vector3(0.25F, 0.75F, 0.25F);
 					try {
 						UnityEngine.Object.Destroy(con);
 						UnityEngine.Object.Destroy(storageT.gameObject);
@@ -172,6 +175,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		protected override void updateEntity(float seconds) {
+			foreach (SkyApplier sky in gameObject.GetComponentsInChildren<SkyApplier>()) {				
+				sky.renderers = gameObject.GetComponentsInChildren<Renderer>();
+			}
 			if (storage == null)
 				storage = gameObject.transform.Find("ControlPanel").GetComponent<StorageContainer>();
 			if (storage == null) {
