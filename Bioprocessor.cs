@@ -23,6 +23,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
 		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
 		
+		internal static readonly string TERMINAL_GO_NAME = "ControlPanel";
+		
 		static Bioprocessor() {
 			leftArrow.Patch();
 			rightArrow.Patch();
@@ -98,55 +100,66 @@ namespace ReikaKalseki.SeaToSea {
 			r.sharedMaterial.EnableKeyword("MARMO_EMISSION");
 			r.materials[0].SetFloat("_Shininess", 8);
 			r.materials[0].SetFloat("_Fresnel", 0.4F);
+			lgc.mainRenderer = r;
 			go.GetComponent<Constructable>().model = mdl;
 			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.5F, 0.5F, 1.5F);
 			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(0, 0.5F, 0);
-			SkyApplier sky = go.EnsureComponent<SkyApplier>();
-			sky.renderers = go.GetComponentsInChildren<Renderer>();
+			go.EnsureComponent<SkyApplier>();
+			SkyApplier[] skies = go.GetComponentsInChildren<SkyApplier>();
+			foreach (SkyApplier sky in skies)
+				sky.renderers = go.GetComponentsInChildren<Renderer>();
 			t = go.transform.Find("SubDamageSounds");
 			if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);
-			GameObject terminal = null;
-			if (go.transform.Find("ControlPanel") == null) {
-				terminal = SBUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
-				terminal.name = "ControlPanel";
+			Transform termT = go.transform.Find(TERMINAL_GO_NAME);
+			if (termT == null) {
+				GameObject terminal = SBUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
+				termT = terminal.transform;
+				terminal.name = TERMINAL_GO_NAME;
 				terminal.SetActive(false);
-				terminal.transform.localPosition = new Vector3(-1.1F, 0, 0);
-				terminal.transform.localEulerAngles = new Vector3(0, -90, 0);
+				termT.localPosition = new Vector3(-1.1F, 0, 0);
+				termT.localEulerAngles = new Vector3(0, -90, 0);
 				StorageContainer con2 = terminal.EnsureComponent<StorageContainer>();
 				con2.hoverText = "Use Bioprocessor";
 				con2.storageLabel = "BIOPROCESSOR";
-				terminal.transform.parent = go.transform;
+				termT.parent = go.transform;
 			}
 			SBUtil.log("bioproc storage reroot: ");
 			Transform storageT = go.transform.Find("StorageRoot");
-			if (storageT != null && terminal != null) {
+			if (storageT != null && termT != null) {
 				GameObject newRoot = UnityEngine.Object.Instantiate(storageT.gameObject);
 				ChildObjectIdentifier coi = newRoot.EnsureComponent<ChildObjectIdentifier>();
 				coi.classId = ClassID+"_storage";
-				if (terminal != null) {
-					StorageContainer con2 = terminal.EnsureComponent<StorageContainer>();
-					newRoot.transform.parent = terminal.transform;
-					con2.storageRoot = coi;
-					con2.prefabRoot = go;
-					con2.enabled = true;
-					con2.Resize(6, 6);
-					lgc.storage = con2;
-					terminal.SetActive(true);
-					BoxCollider box = terminal.EnsureComponent<BoxCollider>();
-					box.center = new Vector3(0, 0.5F, 0);
-					box.size = new Vector3(0.25F, 0.75F, 0.25F);
-					try {
-						UnityEngine.Object.Destroy(con);
-						UnityEngine.Object.Destroy(storageT.gameObject);
-					}
-					catch (Exception e) {
-						SBUtil.log("Error destroying old bioproc storage!");
-						SBUtil.log(e.ToString());
-					}
+				StorageContainer con2 = termT.gameObject.EnsureComponent<StorageContainer>();
+				newRoot.transform.parent = termT;
+				con2.storageRoot = coi;
+				con2.prefabRoot = go;
+				con2.enabled = true;
+				con2.Resize(6, 6);
+				lgc.storage = con2;
+				termT.gameObject.SetActive(true);
+				try {
+					UnityEngine.Object.Destroy(con);
+					UnityEngine.Object.Destroy(storageT.gameObject);
+				}
+				catch (Exception e) {
+					SBUtil.log("Error destroying old bioproc storage!");
+					SBUtil.log(e.ToString());
 				}
 			}
-			sky.renderers = go.GetComponentsInChildren<Renderer>();
+			foreach (SkyApplier sky in skies) {
+				sky.renderers = go.GetComponentsInChildren<Renderer>();
+				sky.enabled = true;
+				sky.RefreshDirtySky();
+				sky.ApplySkybox();
+			}
+			setTerminalBox(go);
+		}
+		
+		internal static void setTerminalBox(GameObject go) {
+			BoxCollider box = go.transform.Find(TERMINAL_GO_NAME).gameObject.EnsureComponent<BoxCollider>();
+			box.center = new Vector3(0, 0.5F, 0);
+			box.size = new Vector3(0.5F, 1.5F, 0.5F);
 		}
 		
 	}
@@ -168,18 +181,19 @@ namespace ReikaKalseki.SeaToSea {
 		private Color emissiveColor;
 		
 		internal StorageContainer storage;
+		internal Renderer mainRenderer;
 		
 		void Start() {
 			SBUtil.log("Reinitializing bioproc");
 			SeaToSeaMod.processor.initializeMachine(gameObject);
+			setEmissiveColor(new Color(0, 0, 1));
 		}
 		
 		protected override void updateEntity(float seconds) {
-			foreach (SkyApplier sky in gameObject.GetComponentsInChildren<SkyApplier>()) {				
-				sky.renderers = gameObject.GetComponentsInChildren<Renderer>();
-			}
 			if (storage == null)
-				storage = gameObject.transform.Find("ControlPanel").GetComponent<StorageContainer>();
+				storage = gameObject.transform.Find(Bioprocessor.TERMINAL_GO_NAME).GetComponent<StorageContainer>();
+			if (mainRenderer == null)
+				mainRenderer = gameObject.transform.Find("model").GetComponent<Renderer>();
 			if (storage == null) {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;
@@ -187,6 +201,7 @@ namespace ReikaKalseki.SeaToSea {
 			//SBUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
+			Bioprocessor.setTerminalBox(gameObject);
 			
 			if (consumePower(seconds)) {
 				setEmissiveColor(noRecipeColor);
@@ -216,7 +231,9 @@ namespace ReikaKalseki.SeaToSea {
 									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
 									storage.container.AddItem(item.GetComponent<Pickupable>());
+									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
+									setRecipe(null);
 								}
 							}
 							else {
@@ -244,12 +261,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void setEmissiveColor(Color c, float cooldown = -1) {
+			if (mainRenderer == null)
+				return;
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time-lastColorChange < colorCooldown && cooldown < colorCooldown)
 				return;
 			emissiveColor = c;
 			colorCooldown = cooldown;
-			Material m = gameObject.GetComponentInChildren<Renderer>().materials[0];
+			Material m = mainRenderer.materials[0];
 			m.SetColor("_GlowColor", emissiveColor);
 			lastColorChange = time;
 		}
