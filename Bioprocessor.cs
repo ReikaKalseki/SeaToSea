@@ -65,32 +65,32 @@ namespace ReikaKalseki.SeaToSea {
 		
 		//protected OrientedBounds[] GetBounds { get; }
 		
-		public override void prepareGameObject(GameObject go, Renderer r) { //TODO add screen to the "unpiped" part
-			base.prepareGameObject(go, r);
+		public override void initializeMachine(GameObject go) {
+			base.initializeMachine(go);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);
 			Transform t = go.transform.Find("Bubbles");
 			if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
-			con.enabled = true;
-			con.height = 6;
-			con.width = 6;
-			con.hoverText = "Use Bioprocessor";
-			con.storageLabel = "BIOPROCESSOR";
+			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
+			lgc.storage = con;
 		 	foreach (Collider c in go.GetComponentsInChildren<Collider>()) {
 				UnityEngine.Object.Destroy(c);
 		 	}
 			SphereCollider cc = go.AddComponent<SphereCollider>();
-			cc.radius = 1.5F;
-			cc.center = new Vector3(0, 0.5F, 0);
+			cc.radius = 1.2F;
+			cc.center = new Vector3(0, 0.25F, 0);
+			cc = go.AddComponent<SphereCollider>();
+			cc.radius = 1.2F;
+			cc.center = new Vector3(0, 1F, 0);
 		 	GameObject mdl = SBUtil.setModel(go, "model", SBUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
 		 	Vector3 vec = new Vector3(0, 1.41F, 0);//mdl.transform.localPosition; //was 1
 		 	mdl.transform.localPosition = vec;
 		 	mdl.transform.localScale = new Vector3(1, 0.75F, 1); //was 0.625
 		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
 		 	mdl.transform.localEulerAngles = new Vector3(0, 90, 0);
-			r = mdl.GetComponentInChildren<Renderer>();
+			Renderer r = mdl.GetComponentInChildren<Renderer>();
 			//SBUtil.dumpTextures(r);
 			SBUtil.swapToModdedTextures(r, this);
 			SBUtil.setEmissivity(r, 2, "GlowStrength");
@@ -106,6 +106,44 @@ namespace ReikaKalseki.SeaToSea {
 			t = go.transform.Find("SubDamageSounds");
 			if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);
+			GameObject terminal = null;
+			if (go.transform.Find("ControlPanel") == null) {
+				terminal = SBUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
+				terminal.name = "ControlPanel";
+				terminal.SetActive(false);
+				terminal.transform.localPosition = new Vector3(-1.1F, 0, 0);
+				terminal.transform.localEulerAngles = new Vector3(0, -90, 0);
+				StorageContainer con2 = terminal.EnsureComponent<StorageContainer>();
+				con2.hoverText = "Use Bioprocessor";
+				con2.storageLabel = "BIOPROCESSOR";
+				terminal.transform.parent = go.transform;
+			}
+			SBUtil.log("bioproc storage reroot: ");
+			Transform storageT = go.transform.Find("StorageRoot");
+			if (storageT != null && terminal != null) {
+				GameObject newRoot = UnityEngine.Object.Instantiate(storageT.gameObject);
+				ChildObjectIdentifier coi = newRoot.EnsureComponent<ChildObjectIdentifier>();
+				coi.classId = ClassID+"_storage";
+				if (terminal != null) {
+					StorageContainer con2 = terminal.EnsureComponent<StorageContainer>();
+					newRoot.transform.parent = terminal.transform;
+					con2.storageRoot = coi;
+					con2.prefabRoot = go;
+					con2.enabled = true;
+					con2.Resize(6, 6);
+					lgc.storage = con2;
+					terminal.SetActive(true);
+					try {
+						UnityEngine.Object.Destroy(con);
+						UnityEngine.Object.Destroy(storageT.gameObject);
+					}
+					catch (Exception e) {
+						SBUtil.log("Error destroying old bioproc storage!");
+						SBUtil.log(e.ToString());
+					}
+				}
+			}
+			sky.renderers = go.GetComponentsInChildren<Renderer>();
 		}
 		
 	}
@@ -124,13 +162,22 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float lastColorChange = -1;
 		private float colorCooldown = -1;
-		private Color emissiveColor = offlineColor;
+		private Color emissiveColor;
+		
+		internal StorageContainer storage;
 		
 		void Start() {
-			SeaToSeaMod.processor.prepareGameObject(gameObject, gameObject.GetComponentInChildren<Renderer>());
+			SBUtil.log("Reinitializing bioproc");
+			SeaToSeaMod.processor.initializeMachine(gameObject);
 		}
 		
 		protected override void updateEntity(float seconds) {
+			if (storage == null)
+				storage = gameObject.transform.Find("ControlPanel").GetComponent<StorageContainer>();
+			if (storage == null) {
+				setEmissiveColor(new Color(1, 0, 1)); //error
+				return;
+			}
 			//SBUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
@@ -142,10 +189,9 @@ namespace ReikaKalseki.SeaToSea {
 					nextSaltTimeRemaining -= seconds;
 					//SBUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
 					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
-						StorageContainer con = gameObject.GetComponentInChildren<StorageContainer>();
-						IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
+						IList<InventoryItem> salt = storage.container.GetItems(TechType.Salt);
 						if (salt != null && salt.Count >= 1) {
-							con.container.RemoveItem(salt[0].item);
+							storage.container.RemoveItem(salt[0].item);
 							saltRequired--;
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
@@ -155,15 +201,15 @@ namespace ReikaKalseki.SeaToSea {
 						nextSaltTimeRemaining = currentOperation.secondsPerSalt;
 						if (saltRequired <= 0) {
 							//SBUtil.writeToChat("try craft");
-							IList<InventoryItem> ing = con.container.GetItems(currentOperation.inputItem);
+							IList<InventoryItem> ing = storage.container.GetItems(currentOperation.inputItem);
 							if (ing != null && ing.Count >= currentOperation.inputCount) {
 								//SBUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
-									con.container.RemoveItem(ing[0].item); //list is updated in realtime
+									storage.container.RemoveItem(ing[0].item); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
 									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
-									con.container.AddItem(item.GetComponent<Pickupable>());
+									storage.container.AddItem(item.GetComponent<Pickupable>());
 									setEmissiveColor(completeColor, 4);
 								}
 							}
@@ -217,9 +263,8 @@ namespace ReikaKalseki.SeaToSea {
 		private bool canRunRecipe(BioRecipe r) {
 			if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
 				return false;
-			StorageContainer con = gameObject.GetComponentInChildren<StorageContainer>();
-			IList<InventoryItem> ing = con.container.GetItems(r.inputItem);
-			IList<InventoryItem> salt = con.container.GetItems(TechType.Salt);
+			IList<InventoryItem> ing = storage.container.GetItems(r.inputItem);
+			IList<InventoryItem> salt = storage.container.GetItems(TechType.Salt);
 			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;
 		}
 		
