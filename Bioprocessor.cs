@@ -245,9 +245,9 @@ namespace ReikaKalseki.SeaToSea {
 							}
 						}
 					}
-					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 0.5) {
+					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 1.0) {
 						lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
-						SBUtil.playSoundAt(SBUtil.getSound("event:/sub/base/bioreactor_working_loop"), gameObject.transform.position);
+						SBUtil.playSoundAt(SBUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 					}
 				}
 				else {
@@ -304,7 +304,7 @@ namespace ReikaKalseki.SeaToSea {
 		private void setRecipe(BioRecipe r) {
 			currentOperation = r;
 			saltRequired = r != null ? r.saltCount : -1;
-			nextSaltTimeRemaining = r != null ? r.secondsPerSalt : -1;
+			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			SBUtil.playSoundAt(SBUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 		}
