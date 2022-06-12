@@ -180,6 +180,8 @@ namespace ReikaKalseki.SeaToSea {
 		private float colorCooldown = -1;
 		private Color emissiveColor;
 		
+		private float lastWorkingSound = -1;
+		
 		internal StorageContainer storage;
 		internal Renderer mainRenderer;
 		
@@ -214,6 +216,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (salt != null && salt.Count >= 1) {
 							storage.container.RemoveItem(salt[0].item);
 							saltRequired--;
+							SBUtil.playSoundAt(SBUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
 						else {
@@ -233,6 +236,7 @@ namespace ReikaKalseki.SeaToSea {
 									storage.container.AddItem(item.GetComponent<Pickupable>());
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
+									SBUtil.playSoundAt(SBUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
 									setRecipe(null);
 								}
 							}
@@ -240,6 +244,10 @@ namespace ReikaKalseki.SeaToSea {
 								setRecipe(null);
 							}
 						}
+					}
+					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 0.5) {
+						lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
+						SBUtil.playSoundAt(SBUtil.getSound("event:/sub/base/bioreactor_working_loop"), gameObject.transform.position);
 					}
 				}
 				else {
@@ -298,6 +306,7 @@ namespace ReikaKalseki.SeaToSea {
 			saltRequired = r != null ? r.saltCount : -1;
 			nextSaltTimeRemaining = r != null ? r.secondsPerSalt : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
+			SBUtil.playSoundAt(SBUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 		}
 		
 	}
