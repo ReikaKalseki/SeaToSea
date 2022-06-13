@@ -273,7 +273,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
 	   		
-			if (!Player.main.IsUnderwater()) {
+	   		if (!Player.main.IsUnderwater()/* || Player.main.liveMixin == null || !Player.main.liveMixin.enabled || Player.main.liveMixin.invincible*/) {
 				return;
 			}/*
 			float depth = Player.main.GetDepth();
@@ -313,11 +313,11 @@ namespace ReikaKalseki.SeaToSea {
 	   		}
 	   		warn.alerts.Clear();
 	   		warn.alerts.AddRange(li);
-	   		EnviroAlert ee = new EnviroAlert(warn, 500, "crush pda", "event:/player/story/RadioWarper1");
+	   		EnviroAlert ee = new EnviroAlert(warn, 500, SeaToSeaMod.miscLocale.getEntry("deepair"));
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.rebreatherV2.TechType);
 	   		warn.alerts.Add(ee);
-	   		ee = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, "gas LR", "event:/player/story/Goal_BiomeBloodKelp");
+	   		ee = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
 	   		warn.alerts.Add(ee);
@@ -352,14 +352,22 @@ namespace ReikaKalseki.SeaToSea {
 		internal readonly Func<Player, bool> applicability;
    		internal bool wasActiveLastTick = false;
    		
-   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, string snd) {
+   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, FMODAsset snd) {
    			alert = warn.gameObject.AddComponent<PDANotification>();
    			alert.text = pda;
-   			alert.sound = SBUtil.getSound(snd);
+   			alert.sound = snd;
    			applicability = f;
    		}
+   		
+   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, XMLLocale.LocaleEntry e) : this(warn, f, e.desc, SoundManager.registerSound("enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
+   			
+   		}
+   		
+   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, XMLLocale.LocaleEntry e) : this(warn, depth, e.desc, SoundManager.registerSound("enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
+   			
+   		}
    	
-   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, string pda, string snd) : this(warn, null, pda, snd) {
+   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, string pda, FMODAsset snd) : this(warn, null, pda, snd) {
    			alertDepth = depth;
 	   	}
    	
@@ -371,7 +379,7 @@ namespace ReikaKalseki.SeaToSea {
    		
    		internal bool isActive() {
    			Player p = Player.main;
-   			bool valid = applicability != null ? applicability(p) : p.GetDepth() >= alertDepth;
+   			bool valid = applicability != null ? applicability(p) : p.GetDepth() >= alertDepth && GameModeUtils.RequiresOxygen();
    			if (!valid)
    				return false;
    			foreach (TechType prevent in preventiveItem) {
@@ -382,7 +390,7 @@ namespace ReikaKalseki.SeaToSea {
    		}
    		
 		public override string ToString() {
-			return this.alert.text+" @ "+this.alertDepth;
+			return alert.text+" @ "+alertDepth+"/"+applicability;
 		}
    	
 	}

@@ -1,0 +1,24 @@
+<Root>
+  <deepair>
+	<name>
+		
+	</name>
+	<desc>
+		Warning: Passing 500 meters. Gaseous respiration ineffective.
+	</desc>
+	<pda>
+		Sounds/500mwarn.ogg
+	</pda>
+  </deepair>
+  <lrpoison>
+	<name>
+		
+	</name>
+	<desc>
+		Warning: Entering toxic environment. A more impermeable suit is recommended to prevent rapid incapacitation.
+	</desc>
+	<pda>
+		Sounds/lrpoisonwarn.ogg
+	</pda>
+  </lrpoison>
+</Root>

@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea
 				string id = Enum.GetName(typeof(Materials), m);
 				SBUtil.log("Registering material "+id);
 				Material attr = getMaterial(m);
-				XMLLocale.LocaleEntry e = SeaToSeaMod.locale.getEntry(id);
+				XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(id);
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
 				BasicCustomOre item = (BasicCustomOre)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, template});
 				item.glowIntensity = attr.glow;

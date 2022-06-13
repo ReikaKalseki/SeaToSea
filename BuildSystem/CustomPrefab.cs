@@ -15,10 +15,14 @@ using UnityEngine.Serialization;
 using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
+using SMLHelper.V2.Assets;
+
+using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {		
@@ -26,6 +30,8 @@ namespace ReikaKalseki.SeaToSea
 		internal class CustomPrefab : PositionedPrefab {
 		
 			public static readonly string TAGNAME = "customprefab";
+			
+			private static readonly Dictionary<string, ModifiedObjectPrefab> prefabCache = new Dictionary<string, ModifiedObjectPrefab>();
 			
 			[SerializeField]
 			internal TechType tech = TechType.None;
@@ -37,6 +43,8 @@ namespace ReikaKalseki.SeaToSea
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
 			public bool isPDA {get; private set;}
+			
+			public ModifiedObjectPrefab customPrefab {get; private set;}
 			
 			internal CustomPrefab(string pfb) : base(pfb) {				
 				
@@ -119,11 +127,40 @@ namespace ReikaKalseki.SeaToSea
 				if (tech == TechType.None && tech2 != null && tech2 != "None") {
 					tech = SBUtil.getTechType(tech2);
 				}
-				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations); //FIXME THESE MANIPULATIONS ARE NOT BEING RERUN on reload 
+				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations); 
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 				if (li.Count == 1) {
 					loadManipulations(li[0], manipulations);
 				}
+				if (manipulations.Count > 0) {
+					bool needReapply = false;
+					foreach (ManipulationBase mb in manipulations) {
+						if (mb.needsReapplication()) {
+							needReapply = true;
+							break;
+						}
+					}
+					if (needReapply) {
+						string xmlKey = prefabName+"##"+System.Security.SecurityElement.Escape(li[0].InnerXml);
+						customPrefab = getOrCreateModPrefab(xmlKey);
+						prefabName = customPrefab.ClassID;
+						tech = customPrefab.TechType;
+					}
+				}
+			}
+			
+			private ModifiedObjectPrefab getOrCreateModPrefab(string key) {
+				ModifiedObjectPrefab pfb = prefabCache.ContainsKey(key) ? prefabCache[key] : null;
+				if (pfb == null) {
+					pfb = new ModifiedObjectPrefab(key, prefabName, manipulations);
+					prefabCache[key] = pfb;
+					pfb.Patch();
+					SBUtil.log("Created customprefab GO template: "+key+" > "+pfb);
+				}
+				else {
+					SBUtil.log("Using already-generated prefab for GO template: "+key+" > "+pfb);
+				}
+				return pfb;
 			}
 			
 			public static void loadManipulations(XmlNodeList es, List<ManipulationBase> li) {
@@ -164,6 +201,32 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 			}
+			
+		}
+		
+		class ModifiedObjectPrefab : GenUtil.CustomPrefabImpl {
+		
+			private readonly List<ManipulationBase> mods = new List<ManipulationBase>();
+	        
+			internal ModifiedObjectPrefab(string key, string template, List<ManipulationBase> li) : base(key, template) {
+				mods = li;
+	        }
+			
+			public override sealed void prepareGameObject(GameObject go, Renderer r) {
+				foreach (ManipulationBase mb in mods) {
+					mb.applyToObject(go);
+				}
+			}
+			
+			public override string ToString()
+			{
+				return "Modified "+baseTemplate.prefab+getString(mods);
+			}
+			
+			private static string getString(List<ManipulationBase> li) {
+				return " x"+li.Count+"="+string.Join("/", li.Select(mb => mb.GetType().Name));
+			}
+ 
 			
 		}
 }

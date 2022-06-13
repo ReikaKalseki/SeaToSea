@@ -25,12 +25,20 @@ namespace ReikaKalseki.SeaToSea
 	internal sealed class AddChild : ManipulationBase {
 		
 		private string id;
+		private string objName;
 		private Vector3 relativePos;
 		
 		internal override void applyToObject(GameObject go) {
+			if (!string.IsNullOrEmpty(objName)) {
+				Transform has = go.transform.Find(objName);
+				if (has != null)
+					return;
+			}
 			GameObject add = SBUtil.createWorldObject(id);
 			add.transform.parent = go.transform;
 			add.transform.localPosition = relativePos;
+			if (!string.IsNullOrEmpty(objName))
+				add.name = objName;
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
@@ -41,11 +49,18 @@ namespace ReikaKalseki.SeaToSea
 			id = e.getProperty("prefab");
 			Vector3? vec = e.getVector("position", true);
 			relativePos = vec != null && vec.HasValue ? vec.Value : Vector3.zero;
+			objName = e.getProperty("name", true);
 		}
 		
 		internal override void saveToXML(XmlElement e) {
 			e.addProperty("prefab", id);
 			e.addProperty("position", relativePos);
+			if (!string.IsNullOrEmpty(objName))
+				e.addProperty("name", objName);
+		}
+		
+		public override bool needsReapplication() {
+			return false;
 		}
 		
 	}

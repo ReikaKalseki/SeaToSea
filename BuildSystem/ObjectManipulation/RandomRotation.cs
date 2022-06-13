@@ -72,5 +72,9 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("z", randomZ);
 		}
 		
+		public override bool needsReapplication() {
+			return false;
+		}
+		
 	}
 }

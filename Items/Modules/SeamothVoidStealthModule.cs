@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class SeamothVoidStealthModule : SeamothModule {
 				
-		public SeamothVoidStealthModule() : base(SeaToSeaMod.locale.getEntry("SeamothVoidStealth")) {
+		public SeamothVoidStealthModule() : base(SeaToSeaMod.itemLocale.getEntry("SeamothVoidStealth")) {
 			
 		}
 

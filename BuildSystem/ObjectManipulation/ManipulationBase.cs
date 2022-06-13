@@ -37,5 +37,9 @@ namespace ReikaKalseki.SeaToSea
 			return this.GetType()+" : "+e.format();
 		}
 		
+		public virtual bool needsReapplication() {
+			return true;
+		}
+		
 	}
 }

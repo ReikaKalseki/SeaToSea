@@ -14,24 +14,24 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class VoidSpikeWreck : WorldGenerator {
 		
-		private static readonly List<Prop> pieces = new List<Prop>();
-		private static readonly List<Prop> items = new List<Prop>();
+		private static readonly List<VoidWreckProp> pieces = new List<VoidWreckProp>();
+		private static readonly List<VoidWreckProp> items = new List<VoidWreckProp>();
 		
 		static VoidSpikeWreck() {
-			pieces.Add(new Prop("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
-			pieces.Add(new Prop("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
-			pieces.Add(new Prop("0cb9b6b4-5f39-49f2-821e-6490829dad4b", new float[]{0, 180}, 0.25F)); //broken terraformer
+			pieces.Add(new VoidWreckProp("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
+			pieces.Add(new VoidWreckProp("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
+			pieces.Add(new VoidWreckProp("0cb9b6b4-5f39-49f2-821e-6490829dad4b", new float[]{0, 180}, 0.25F)); //broken terraformer
 			//pieces.Add(new Prop()); //storage cube
 			//pieces.Add(new Prop("12c95e66-fb54-47b3-87f1-8e318394b839", null, 0.1F));	//flashlight
-			pieces.Add(new Prop("7c1aa35f-759e-4861-a871-f58843698298", new float[]{0, 180}, 0.2F)); //broken stasis rifle
+			pieces.Add(new VoidWreckProp("7c1aa35f-759e-4861-a871-f58843698298", new float[]{0, 180}, 0.2F)); //broken stasis rifle
 			//pieces.Add(new Prop("d4bfebc0-a5e6-47d3-b4a7-d5e47f614ed6"));	//battery
 			//pieces.Add(new Prop("fde8c0c0-7588-4d0b-b24f-4632315bd86c"));	//pathfinder
 			//pieces.Add(new Prop("9ef36033-b60c-4f8b-8c3a-b15035de3116", null, 0.4F)); //repair tool
-			pieces.Add(new Prop("f4146f7a-d334-404a-abdc-dff98365eb10", new float[]{-90, 90}, 0.2F)); //broken transfuser
+			pieces.Add(new VoidWreckProp("f4146f7a-d334-404a-abdc-dff98365eb10", new float[]{-90, 90}, 0.2F)); //broken transfuser
 			
-			items.Add(new Prop("bc70e8c8-f750-4c8e-81c1-4884fe1af34e", new float[]{0}, 0.05F)); //first aid
-			items.Add(new Prop("30373750-1292-4034-9797-387cf576d150", new float[]{0}, 0.05F)); //nutrient
-			items.Add(new Prop("22b0ce08-61c9-4442-a83d-ba7fb99f26b0", new float[]{0}, 0.15F)); //water
+			items.Add(new VoidWreckProp("bc70e8c8-f750-4c8e-81c1-4884fe1af34e", new float[]{0}, 0.05F)); //first aid
+			items.Add(new VoidWreckProp("30373750-1292-4034-9797-387cf576d150", new float[]{0}, 0.05F)); //nutrient
+			items.Add(new VoidWreckProp("22b0ce08-61c9-4442-a83d-ba7fb99f26b0", new float[]{0}, 0.15F)); //water
 		}
 		
 		public VoidSpikeWreck(Vector3 pos) : base(pos) {
@@ -49,11 +49,10 @@ namespace ReikaKalseki.SeaToSea
 		public override void generate(List<GameObject> li) {
 			SBUtil.log("Generating void spike deep debris @ "+position);
 			
-			GameObject platform = spawner("255ed3c3-1973-40c0-9917-d16dd9a7018d");
+			GameObject platform = spawner("255ed3c3-1973-40c0-9917-d16dd9a7018d##&lt;CleanupDegasiProp&gt;&lt;/CleanupDegasiProp&gt;"); //degasi-cleaned platform
 			platform.transform.position = position+Vector3.down*0.1F;
 			platform.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			platform.transform.localScale = Vector3.one*0.72F;
-			new CleanupDegasiProp().applyToObject(platform);
 			li.Add(platform);
 			
 			Vector3 refPos = platform.transform.position+Vector3.up*0.85F;
@@ -71,7 +70,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (Prop s in items) {
 				//SBUtil.writeToChat("Added "+s);
 				for (int i = 0; i < 2; i++) {
-					GameObject item = spawner(s.prefab);
+					GameObject item = spawner(s.prefabGravity.ClassID);
 					item.SetActive(false);
 					SBUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
@@ -89,12 +88,12 @@ namespace ReikaKalseki.SeaToSea
 			SBUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
 			
-			foreach (Prop s in pieces) {
+			foreach (VoidWreckProp s in pieces) {
 				li.Add(generateObjectInRange(refPos, 3.5F, s));
 			}
 		}
 		
-		private GameObject generateObjectInRange(Vector3 refPos, float r, Prop p) {
+		private GameObject generateObjectInRange(Vector3 refPos, float r, VoidWreckProp p) {
 			float tilt = 0;
 			if (p.freeAngle) {
 				tilt = UnityEngine.Random.Range(0, 360F);
@@ -103,7 +102,7 @@ namespace ReikaKalseki.SeaToSea
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
 				tilt = UnityEngine.Random.Range(tilt-5F, tilt+5F);
 			}
-			return generateObjectInRange(refPos, r, p.prefab, p.yOffset, tilt);
+			return generateObjectInRange(refPos, r, p.prefabGravity.ClassID, p.yOffset, tilt);
 		}
 		
 		private GameObject generateObjectInRange(Vector3 refPos, float r, string pfb, float y = 0, float tilt = 0) {
@@ -116,41 +115,26 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 pos = refPos+UnityEngine.Random.Range(1.5F, r)*new Vector3(cos, 0, sin);
 			pos.y = pos.y+(float)y;
 			go.transform.position = pos;
-			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);/*
-			WorldForces wf = go.EnsureComponent<WorldForces>();
-			wf.enabled = true;
-			wf.handleDrag = true;
-			wf.useRigidbody = go.GetComponentInChildren<Rigidbody>();
-			wf.handleGravity = true;
-			wf.underwaterGravity = 1;*/
+			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);
 			SBUtil.applyGravity(go);
-			Rigidbody b = go.GetComponentInChildren<Rigidbody>();
-			//b.detectCollisions = false;
-			b.constraints = RigidbodyConstraints.FreezeAll;
 			SBUtil.refillItem(go);
 			return go;
 		}
 		
-		private class Prop {
+		private class VoidWreckProp : Prop {
 			
-			internal readonly string prefab;
-			internal readonly float[] baseAngles;
-			internal readonly bool freeAngle;
 			internal readonly float yOffset;
 			
-			internal Prop(string pfb, float ang1, float ang2) : this(pfb, new float[]{ang1, ang2}) {
+			internal VoidWreckProp(string pfb, float ang1, float ang2) : this(pfb, new float[]{ang1, ang2}) {
 				
 			}
 			
-			internal Prop(string pfb, float ang = 0) : this(pfb, new float[]{ang}) {
+			internal VoidWreckProp(string pfb, float ang = 0) : this(pfb, new float[]{ang}) {
 				
 			}
 			
-			internal Prop(string pfb, float[] ang, float y = 0) {
-				prefab = pfb;
+			internal VoidWreckProp(string pfb, float[] ang, float y = 0) : base(pfb, ang) {
 				yOffset = y;
-				baseAngles = ang;
-				freeAngle = baseAngles == null || baseAngles.Length == 0;
 			}
 			
 		}

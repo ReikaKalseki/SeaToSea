@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class CyclopsHeatModule : CyclopsModule {
 				
-		public CyclopsHeatModule() : base(SeaToSeaMod.locale.getEntry("CyclopsHeat")) {
+		public CyclopsHeatModule() : base(SeaToSeaMod.itemLocale.getEntry("CyclopsHeat")) {
 			
 		}
 

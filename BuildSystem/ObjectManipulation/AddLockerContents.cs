@@ -33,6 +33,7 @@ namespace ReikaKalseki.SeaToSea
 		internal override void applyToObject(GameObject go) {
 			//SBUtil.log("adding items to "+go.transform.position+" from trace "+System.Environment.StackTrace);
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+			con.ResetContainer();
 			foreach (Item s in items) {
 				//SBUtil.writeToChat("Added "+s);
 				int amt = UnityEngine.Random.Range(s.amountMin, 1+s.amountMax);
@@ -87,6 +88,10 @@ namespace ReikaKalseki.SeaToSea
 				e2.addProperty("max", s.amountMax);
 				e.AppendChild(e2);
 			}
+		}
+		
+		public override bool needsReapplication() {
+			return false;
 		}
 		
 		private class Item {

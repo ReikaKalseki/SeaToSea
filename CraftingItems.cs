@@ -18,7 +18,7 @@ namespace ReikaKalseki.SeaToSea
 				string id = Enum.GetName(typeof(Items), m);
 				SBUtil.log("Constructing crafting item "+id);
 				Item attr = getAttr(m);
-				XMLLocale.LocaleEntry e = SeaToSeaMod.locale.getEntry(id);
+				XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(id);
 				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, attr.template});
 				mappings[m] = item;
 				item.isAdvanced = attr.isAdvanced;

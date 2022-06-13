@@ -50,5 +50,9 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("z", range.z);
 		}
 		
+		public override bool needsReapplication() {
+			return false;
+		}
+		
 	}
 }

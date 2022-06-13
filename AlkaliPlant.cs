@@ -15,7 +15,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class AlkaliPlant : BasicCustomPlant {
 		
-		public AlkaliPlant() : base(SeaToSeaMod.locale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT) {
+		public AlkaliPlant() : base(SeaToSeaMod.itemLocale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT) {
 			glowIntensity = 2;
 		}
 		

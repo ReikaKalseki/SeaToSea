@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			GenUtil.registerWorldgen(debris);
 			
-			signal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("voidpod"));
+			signal = SignalManager.createSignal(SeaToSeaMod.signalLocale.getEntry("voidpod"));
 			signal.pdaEntry.addSubcategory("AuroraSurvivors");
 			signal.addRadioTrigger(1200);
 			signal.register();
@@ -136,6 +136,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (b.rootPosition.y <= -1.25) {
 				b.amplitude *= 0.25F;
 				b.speed *= 0.5F;
+			}
+			if (go.GetComponentInChildren<BlueprintHandTarget>() != null) {
+				b.amplitude *= 0.5F;
+				b.speed *= 0.4F;
 			}
 			return b;
 		}

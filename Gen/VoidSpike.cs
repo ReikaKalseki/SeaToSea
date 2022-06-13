@@ -184,7 +184,7 @@ namespace ReikaKalseki.SeaToSea
 			fixColliders();
 		}
 		
-		private void fixColliders() {
+		private void fixColliders() { //FIXME this gets reverted on reactivation like other object manipulations
 			//SBUtil.log("Spike "+this+" has colliders: ");
 			//bool trigger = false;
 			foreach (Collider c in spike.GetAllComponentsInChildren<Collider>()) {

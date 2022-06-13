@@ -18,9 +18,10 @@ namespace ReikaKalseki.SeaToSea
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
-    public static readonly XMLLocale locale = new XMLLocale("XML/items.xml");
-    public static readonly XMLLocale pdas = new XMLLocale("XML/pda.xml");
-    public static readonly XMLLocale signals = new XMLLocale("XML/signals.xml");
+    public static readonly XMLLocale itemLocale = new XMLLocale("XML/items.xml");
+    public static readonly XMLLocale pdaLocale = new XMLLocale("XML/pda.xml");
+    public static readonly XMLLocale signalLocale = new XMLLocale("XML/signals.xml");
+    public static readonly XMLLocale miscLocale = new XMLLocale("XML/misc.xml");
     
     public static SeamothVoidStealthModule voidStealth;
     public static CyclopsHeatModule cyclopsHeat;
@@ -66,9 +67,10 @@ namespace ReikaKalseki.SeaToSea
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(PlacedObject).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
         
-        locale.load();
-        pdas.load();
-        signals.load();
+        itemLocale.load();
+        pdaLocale.load();
+        signalLocale.load();
+        miscLocale.load();
         
         processor = new Bioprocessor();
         processor.Patch();
@@ -93,12 +95,12 @@ namespace ReikaKalseki.SeaToSea
         addCommands();
         addOreGen();
 			
-		treaderSignal = SignalManager.createSignal(SeaToSeaMod.signals.getEntry("treaderpod"));
+		treaderSignal = SignalManager.createSignal(SeaToSeaMod.signalLocale.getEntry("treaderpod"));
 		treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
 		treaderSignal.addRadioTrigger();
 		treaderSignal.register();
 		
-		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", pdas.getEntry("crashmesahint").getField<string>("radio"), 600);
+		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", pdaLocale.getEntry("crashmesahint").getField<string>("radio"), 600);
 		
 		KnownTech.onAdd += onTechUnlocked;
        
@@ -117,7 +119,7 @@ namespace ReikaKalseki.SeaToSea
     private static void addFlora() {
 		alkali = new AlkaliPlant();
 		alkali.Patch();	
-		alkali.addPDAEntry(locale.getEntry(alkali.ClassID).pda, 3);
+		alkali.addPDAEntry(itemLocale.getEntry(alkali.ClassID).pda, 3);
 		SBUtil.log(" > "+alkali);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
@@ -240,7 +242,7 @@ namespace ReikaKalseki.SeaToSea
         sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 3);
         sealSuit.Patch();
 		
-		t2Battery = new CustomBattery(locale.getEntry("t2battery"), 500);
+		t2Battery = new CustomBattery(itemLocale.getEntry("t2battery"), 500);
 		t2Battery.unlockRequirement = TechType.Kyanite;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
         t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
@@ -332,7 +334,7 @@ namespace ReikaKalseki.SeaToSea
     }
     
     public static void addPDAEntries() {
-    	foreach (XMLLocale.LocaleEntry e in pdas.getEntries()) {
+    	foreach (XMLLocale.LocaleEntry e in pdaLocale.getEntries()) {
 			PDAManager.PDAPage page = PDAManager.createPage(e);
 			if (e.hasField("audio"))
 				page.setVoiceover(e.getField<string>("audio"));
