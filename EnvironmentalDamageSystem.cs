@@ -212,6 +212,8 @@ namespace ReikaKalseki.SeaToSea {
     			ret = "ILZCorridorDeep";
     		if (ret == "ILZChamber" && Vector3.Distance(lavaCastleCenter, pos) <= lavaCastleRadius)
     			ret = "LavaCastle";
+    		if (string.IsNullOrEmpty(ret))
+    			ret = "void";
     		return ret;
     	}
     	

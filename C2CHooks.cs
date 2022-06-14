@@ -52,6 +52,11 @@ namespace ReikaKalseki.SeaToSea {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
 	    	}
+	    	if (UnityEngine.Random.Range(0, 20) == 0 && Vector3.Distance(ep.transform.position, VoidSpikesBiome.end500m) <= 30) {
+				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
+	    			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
+	    		}
+	    	}
 	    }
 	   
 		public static void doEnvironmentalDamage(TemperatureDamage dmg) {

@@ -21,4 +21,15 @@
 		Sounds/lrpoisonwarn.ogg
 	</pda>
   </lrpoison>
+  <voidspikeenter>
+	<name>
+		
+	</name>
+	<desc>
+		Short-range scans show an abundance of suspended land masses in the region below. Detecting unknown mineral deposits.
+	</desc>
+	<pda>
+		Sounds/voidspike2.ogg
+	</pda>
+  </voidspikeenter>
 </Root>

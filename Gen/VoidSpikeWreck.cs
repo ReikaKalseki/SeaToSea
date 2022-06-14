@@ -70,7 +70,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (Prop s in items) {
 				//SBUtil.writeToChat("Added "+s);
 				for (int i = 0; i < 2; i++) {
-					GameObject item = spawner(s.prefabGravity.ClassID);
+					GameObject item = SBUtil.createWorldObject(s.prefab.baseTemplate.prefab, true, false);//spawner(s.prefab.ClassID);
 					item.SetActive(false);
 					SBUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
@@ -79,11 +79,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			li.Add(bag);
 			
-			GameObject go = spawner("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
+			GameObject go = SBUtil.createWorldObject("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
 			go.SetActive(false);
 			SBUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
-			go = spawner("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
+			go = SBUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
 			go.SetActive(false);
 			SBUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
@@ -102,7 +102,7 @@ namespace ReikaKalseki.SeaToSea
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
 				tilt = UnityEngine.Random.Range(tilt-5F, tilt+5F);
 			}
-			return generateObjectInRange(refPos, r, p.prefabGravity.ClassID, p.yOffset, tilt);
+			return generateObjectInRange(refPos, r, p.prefab.baseTemplate.prefab.StartsWith("e600", StringComparison.InvariantCultureIgnoreCase) ? p.prefab.baseTemplate.prefab : p.prefab.ClassID, p.yOffset, tilt);
 		}
 		
 		private GameObject generateObjectInRange(Vector3 refPos, float r, string pfb, float y = 0, float tilt = 0) {
@@ -116,7 +116,6 @@ namespace ReikaKalseki.SeaToSea
 			pos.y = pos.y+(float)y;
 			go.transform.position = pos;
 			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);
-			SBUtil.applyGravity(go);
 			SBUtil.refillItem(go);
 			return go;
 		}

@@ -37,6 +37,7 @@ namespace ReikaKalseki.SeaToSea
     public static SignalManager.ModSignal treaderSignal;
     
     public static Story.StoryGoal crashMesaRadio;
+    public static Story.StoryGoal voidSpikePDA;
     //public static Story.StoryGoal mountainPodRadio;
     
     public static BrokenTablet brokenRedTablet;
@@ -56,11 +57,11 @@ namespace ReikaKalseki.SeaToSea
         try {
         	harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
         }
-        catch (Exception e) {
+        catch (Exception ex) {
 			FileLog.Log("Caught exception when running patcher!");
-			FileLog.Log(e.Message);
-			FileLog.Log(e.StackTrace);
-			FileLog.Log(e.ToString());
+			FileLog.Log(ex.Message);
+			FileLog.Log(ex.StackTrace);
+			FileLog.Log(ex.ToString());
         }
         
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldGenerator).TypeHandle);
@@ -95,12 +96,17 @@ namespace ReikaKalseki.SeaToSea
         addCommands();
         addOreGen();
 			
-		treaderSignal = SignalManager.createSignal(SeaToSeaMod.signalLocale.getEntry("treaderpod"));
+        XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
+		treaderSignal = SignalManager.createSignal(e);
 		treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
-		treaderSignal.addRadioTrigger();
+		treaderSignal.addRadioTrigger(e.getField<string>("sound"));
 		treaderSignal.register();
 		
-		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", pdaLocale.getEntry("crashmesahint").getField<string>("radio"), 600);
+		e = pdaLocale.getEntry("crashmesahint");
+		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 600);
+		
+		e = miscLocale.getEntry("voidspikeenter");
+		voidSpikePDA = SBUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
 		
 		KnownTech.onAdd += onTechUnlocked;
        

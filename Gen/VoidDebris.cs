@@ -58,6 +58,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public GameObject spawnPDA() {
 			GameObject pda = spawner(PDAManager.getPage("voidpod").getPDAClassID());
+			pda.transform.rotation = UnityEngine.Random.rotationUniform;
 			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
 			return pda;
 		}
@@ -72,7 +73,7 @@ namespace ReikaKalseki.SeaToSea
 				tilt = p.baseAngles[UnityEngine.Random.Range(0, p.baseAngles.Length)];
 				tilt = UnityEngine.Random.Range(tilt-15F, tilt+15F);
 			}
-			GameObject go = spawner(p.prefabNoGravity.ClassID);
+			GameObject go = spawner(p.prefab.ClassID);
 			if (go == null)
 				return go;
 			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz));

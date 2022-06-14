@@ -50,6 +50,8 @@ namespace ReikaKalseki.SeaToSea
 		private float debrisScale = 0.5F;
 		private int scrapCount = 0;
 		
+		private float yBaseline;
+		
 		public PodDebris(Vector3 pos) : base(pos) {
 			
 		}
@@ -60,6 +62,7 @@ namespace ReikaKalseki.SeaToSea
 			debrisAmount = (float)e.getFloat("debrisAmount", debrisAmount);
 			debrisScale = (float)e.getFloat("debrisScale", debrisScale);
 			scrapCount = e.getInt("scrapCount", scrapCount);
+			yBaseline = (float)e.getFloat("yBaseline", double.NaN);
 		}
 		
 		public override void saveToXML(XmlElement e) {
@@ -68,22 +71,23 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("debrisAmount", debrisAmount);
 			e.addProperty("debrisScale", debrisScale);
 			e.addProperty("scrapCount", scrapCount);
+			e.addProperty("yBaseline", yBaseline);
 		}
 		
 		public override void generate(List<GameObject> li) {		
 			for (int i = 0; i < 6*debrisAmount; i++) {
-				li.Add(generateObjectInRange(9, 0, 9));
+				li.Add(generateObjectInRange(9, 0.125F, 9));
 			}
 			if (generateRecognizablePieces) {
 				foreach (Prop s in alwaysPieces) {
-					li.Add(generateObjectInRange(15, 0, 15, 0, s.prefabGravity.ClassID, false));
+					li.Add(generateObjectInRange(15, 0, 15, 0, s.prefab.ClassID, false));
 				}
 			}
 			for (int i = 0; i < 12*debrisAmount; i++) {
-				li.Add(generateObjectInRange(24, 0, 24));
+				li.Add(generateObjectInRange(24, 0.125F, 24));
 			}
 			for (int i = 0; i < paperCount; i++) {
-				li.Add(generateObjectInRange(4, 2, 4, 2, papers[UnityEngine.Random.Range(0, papers.Count)].prefabNoGravity.ClassID, false));
+				li.Add(generateObjectInRange(4, 2, 4, 2, papers[UnityEngine.Random.Range(0, papers.Count)].prefab.ClassID, false));
 			}
 			for (int i = 0; i < scrapCount; i++) {
 				VanillaResources mtl = VanillaResources.SCRAP1;
@@ -102,19 +106,18 @@ namespace ReikaKalseki.SeaToSea
 						break;
 				}
 				GameObject drop = generateObjectInRange(18, 0, 18, 0, mtl.prefab, false);
-				SBUtil.applyGravity(drop);
 				li.Add(drop);
 			}
 		}
 		
-		private GameObject generateObjectInRange(float dx, float dy, float dz, double offsetY = 0, string pfb = null, bool scale = true) {
+		private GameObject generateObjectInRange(float dx, float dy, float dz, float offsetY = 0, string pfb = null, bool scale = true) {
 			if (pfb == null)
-				pfb = debrisProps.getRandomEntry().prefabGravity.ClassID;
+				pfb = debrisProps.getRandomEntry().prefab.ClassID;
 			GameObject go = spawner(pfb);
 			if (go == null)
 				return go;
 			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz));
-			pos.y = Math.Min(pos.y, position.y)+(float)offsetY;
+			pos.y = yBaseline+offsetY+UnityEngine.Random.Range(-dy, dy);
 			go.transform.position = pos;
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
 			if (scale)
@@ -127,8 +130,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly Dictionary<string, Prop> propCache = new Dictionary<string, Prop>();
 		
-		public readonly PropPrefab prefabGravity;
-		public readonly PropPrefab prefabNoGravity;
+		public readonly PropPrefab prefab;
 		internal readonly float[] baseAngles;
 		internal readonly bool freeAngle;
 		
@@ -141,8 +143,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal Prop(string pfb, float[] ang) {
-			prefabNoGravity = new PropPrefab(pfb, false).register();
-			prefabGravity = new PropPrefab(pfb, true).register();
+			prefab = new PropPrefab(pfb, false).register();
+			//prefabGravity = new PropPrefab(pfb, true).register();
 			baseAngles = ang;
 			freeAngle = baseAngles == null || baseAngles.Length == 0;
 			propCache[pfb] = this;
@@ -163,9 +165,9 @@ namespace ReikaKalseki.SeaToSea
 			//	prefabCache[i] = new Dictionary<string, PropPrefab>();
 		}
 			
-		private readonly bool useGravity = false;
+		private readonly bool useGravity;
 	       
-		internal PropPrefab(string template, bool g) : base("voidprop_"+(g ? "g_" : "")+template, template) {
+		internal PropPrefab(string template, bool g) : base("podprop_"+(g ? "g_" : "")+template, template) {
 			useGravity = g;
 	    }
 	
@@ -184,7 +186,15 @@ namespace ReikaKalseki.SeaToSea
 			else {
 				Rigidbody b = go.GetComponentInChildren<Rigidbody>();
 				//b.detectCollisions = false;
-				b.constraints = RigidbodyConstraints.FreezeAll;
+				if (b != null)
+					b.constraints = RigidbodyConstraints.FreezeAll;
+			}
+			Pickupable p = go.GetComponentInChildren<Pickupable>();
+			if (p != null) {
+				TechType tt = CraftData.GetTechType(SBUtil.lookupPrefab(baseTemplate.prefab));
+				SBUtil.log(ClassID+" had PP, TT = "+tt);
+				if (tt != TechType.None)
+					p.SetTechTypeOverride(tt);
 			}
 			//VoidSpikesBiome.checkAndAddWaveBob(go, true);
 		}

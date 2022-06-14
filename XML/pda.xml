@@ -38,6 +38,9 @@
 		
 		[second person] What guns? Didn't you hear about what happened on obrax- [cut off]
 	</radio>
+	<radioSound>
+		Sounds/radio_crashmesa.ogg
+	</radioSound>
 	<header>
 	</header>
   </crashmesahint>
