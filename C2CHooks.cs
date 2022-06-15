@@ -52,7 +52,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
 	    	}
-	    	if (UnityEngine.Random.Range(0, 20) == 0 && Vector3.Distance(ep.transform.position, VoidSpikesBiome.end500m) <= 30) {
+	    	if (UnityEngine.Random.Range(0, 20) == 0 && Vector3.Distance(ep.transform.position, VoidSpikesBiome.end500m) <= 50) {
 				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
 	    			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
 	    		}
@@ -271,6 +271,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.rotation = pi.gameObject.transform.rotation;
 	    		UnityEngine.Object.Destroy(pi.gameObject);
 	    	}
+	    }
+	    
+	    public static void onPingAdd(int id, PingInstance instance, uGUI_Ping entry) {
+	    	SBUtil.log("Ping ID#"+id+" = "+instance.GetType()+"|"+instance.pingType+"|"+instance.GetLabel()+" > "+entry.icon.sprite);
 	    }
     
 	    public static bool isSpawnableVoid(string biome) {

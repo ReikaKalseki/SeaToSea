@@ -44,13 +44,14 @@ namespace ReikaKalseki.SeaToSea
 			//big platform 5a6279e2-fab9-48c9-bcb3-fdeb02fd4ce2
 		}
 		
-		private bool generateRecognizablePieces = false;
-		private int paperCount = 6;
-		private float debrisAmount = 1;
-		private float debrisScale = 0.5F;
-		private int scrapCount = 0;
+		internal bool generateRecognizablePieces = false;
+		internal int paperCount = 6;
+		internal float debrisAmount = 1;
+		internal float debrisScale = 0.5F;
+		internal int scrapCount = 0;
+		internal float areaSpread = 1;
 		
-		private float yBaseline;
+		internal float yBaseline;
 		
 		public PodDebris(Vector3 pos) : base(pos) {
 			
@@ -116,7 +117,7 @@ namespace ReikaKalseki.SeaToSea
 			GameObject go = spawner(pfb);
 			if (go == null)
 				return go;
-			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz));
+			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz)*areaSpread);
 			pos.y = yBaseline+offsetY+UnityEngine.Random.Range(-dy, dy);
 			go.transform.position = pos;
 			go.transform.rotation = UnityEngine.Random.rotationUniform;

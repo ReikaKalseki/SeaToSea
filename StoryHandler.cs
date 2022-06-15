@@ -25,6 +25,10 @@ namespace ReikaKalseki.SeaToSea
 				else if (key.Contains(VoidSpikesBiome.instance.getSignalKey())) {
 					VoidSpikesBiome.instance.activateSignal();
 				}
+				else if (key.Contains(SeaToSeaMod.crashMesaRadio.key)) { //TODO delay this by like 15s
+					SBUtil.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
+					PDAManager.getPage("crashmesahint").unlock(false);
+				}
 			}
 			switch(key) {
 				case "SunbeamCheckPlayerRange":

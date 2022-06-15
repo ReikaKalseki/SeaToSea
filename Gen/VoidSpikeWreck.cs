@@ -117,6 +117,11 @@ namespace ReikaKalseki.SeaToSea
 			go.transform.position = pos;
 			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);
 			SBUtil.refillItem(go);
+			Rigidbody b = go.GetComponentInChildren<Rigidbody>();
+			if (b != null) {
+				b.isKinematic = true;
+				b.constraints = RigidbodyConstraints.FreezeAll;
+			}
 			return go;
 		}
 		
