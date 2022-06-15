@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea
 		internal float debrisScale = 0.5F;
 		internal int scrapCount = 0;
 		internal float areaSpread = 1;
+		internal Vector3? bounds = null;
 		
 		internal float yBaseline;
 		
@@ -118,6 +119,11 @@ namespace ReikaKalseki.SeaToSea
 			if (go == null)
 				return go;
 			Vector3 pos = MathUtil.getRandomVectorAround(position, new Vector3(dx, dy, dz)*areaSpread);
+			if (bounds != null && bounds.HasValue) {
+				pos.x = Math.Max(Math.Min(pos.x, position.x+bounds.Value.x), position.x-bounds.Value.x);
+				pos.y = Math.Max(Math.Min(pos.y, position.y+bounds.Value.y), position.y-bounds.Value.y);
+				pos.z = Math.Max(Math.Min(pos.z, position.z+bounds.Value.z), position.z-bounds.Value.z);
+			}
 			pos.y = yBaseline+offsetY+UnityEngine.Random.Range(-dy, dy);
 			go.transform.position = pos;
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
