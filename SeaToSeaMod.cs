@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
-		treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
+		//treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
 		treaderSignal.addRadioTrigger(e.getField<string>("sound"));
 		treaderSignal.register();
 		

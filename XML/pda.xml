@@ -15,7 +15,7 @@
 		Lifepod 10 transmission origin
 	</name>
 	<pda>
-		A distress signal from lifepod 10 contained invalid location data.
+		A distress signal from lifepod 10 contained invalid location data. Photographic data was also corrupt but could be partially reconstructed.
 		
 		Reported:
 		-Lifepod sunk in a desolate sandy region with minimal vegetation
@@ -42,6 +42,7 @@
 		Sounds/radio_crashmesa.ogg
 	</radioSound>
 	<header>
+		CrashMesaImage
 	</header>
   </crashmesahint>
   <mountaincavehint>

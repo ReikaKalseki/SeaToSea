@@ -259,7 +259,6 @@ namespace ReikaKalseki.SeaToSea {
 		    	fab.enabled = true;
 		    	fab.gameObject.SetActive(true);
 	    	}
-	    	SBUtil.dumpObjectData(ret);
 	    	return ret;
 	    }
 	    
@@ -273,8 +272,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void onPingAdd(int id, PingInstance instance, uGUI_Ping entry) {
-	    	SBUtil.log("Ping ID#"+id+" = "+instance.GetType()+"|"+instance.pingType+"|"+instance.GetLabel()+" > "+entry.icon.sprite);
+	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
+	    	SBUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }
     
 	    public static bool isSpawnableVoid(string biome) {

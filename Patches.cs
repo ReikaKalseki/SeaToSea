@@ -794,9 +794,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(uGUI_Pings))]
-	[HarmonyPatch("OnAdd")]
-	public static class PingAddHook {
+	[HarmonyPatch(typeof(uGUI_PingEntry))]
+	[HarmonyPatch("UpdateLabel")]
+	public static class PingTextHook {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
@@ -818,10 +818,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	
 		private static void injectHook(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPingAdd", false, typeof(int), typeof(PingInstance), typeof(uGUI_Ping)));
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPingAdd", false, typeof(uGUI_PingEntry), typeof(PingType), typeof(string), typeof(string)));
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_2));
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
 }

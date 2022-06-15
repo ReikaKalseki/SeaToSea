@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("voidpod");
 			signal = SignalManager.createSignal(e);
-			signal.pdaEntry.addSubcategory("AuroraSurvivors");
+			//signal.pdaEntry.addSubcategory("AuroraSurvivors");
 			signal.addRadioTrigger(e.getField<string>("sound"), 1200);
 			signal.register();
 			
