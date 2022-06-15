@@ -79,7 +79,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void activateSignal() {
 			SBUtil.log("Activating void signal");
-			signal.activate();
+			signal.activate(20);
 		}
 		
 		public void fireRadio() {

@@ -3,6 +3,8 @@
 using Story;
 
 using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Assets;
+using UnityEngine;
 
 using ReikaKalseki.DIAlterra;
 
@@ -20,14 +22,13 @@ namespace ReikaKalseki.SeaToSea
 			//SBUtil.writeToChat("Story '"+key+"'");
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
 				if (key.Contains(SeaToSeaMod.treaderSignal.getRadioStoryKey())) {
-					SeaToSeaMod.treaderSignal.activate();
+					SeaToSeaMod.treaderSignal.activate(15);
 				}
 				else if (key.Contains(VoidSpikesBiome.instance.getSignalKey())) {
 					VoidSpikesBiome.instance.activateSignal();
 				}
-				else if (key.Contains(SeaToSeaMod.crashMesaRadio.key)) { //TODO delay this by like 15s
-					SBUtil.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
-					PDAManager.getPage("crashmesahint").unlock(false);
+				else if (key.Contains(SeaToSeaMod.crashMesaRadio.key)) {
+					Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("trigger", 15);
 				}
 			}
 			switch(key) {
@@ -43,5 +44,15 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 	}
+	
+	class CrashMesaCallback : MonoBehaviour {
+			
+		void trigger() {
+			SBUtil.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
+			PDAManager.getPage("crashmesahint").unlock(false);
+		}
+		
+	}
+		
 }
 	

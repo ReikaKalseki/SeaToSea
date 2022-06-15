@@ -270,11 +270,11 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.rotation = pi.gameObject.transform.rotation;
 	    		UnityEngine.Object.Destroy(pi.gameObject);
 	    	}
-	    }
+	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SBUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
-	    }
+	    }*/
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;

@@ -793,7 +793,7 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(uGUI_PingEntry))]
 	[HarmonyPatch("UpdateLabel")]
 	public static class PingTextHook {
@@ -824,5 +824,5 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
-	}
+	}*/
 }

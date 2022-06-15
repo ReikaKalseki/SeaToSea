@@ -32,8 +32,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
-		static VoidSpike() {
-			
+		static VoidSpike() {			
 			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825, 0.2), 100);
 			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
 			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
@@ -44,7 +43,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public static bool isSpike(string pfb) {
 			foreach (Spike s in spikes)
-				if (s.prefab == pfb)
+				if (s.prefab.ClassID == pfb)
 					return true;
 			return false;
 		}
@@ -162,7 +161,8 @@ namespace ReikaKalseki.SeaToSea
 			
 		internal void generateSpike() {
 			type = spikes[UnityEngine.Random.Range(0, spikes.Length)];
-			spike = spawner(type.prefab);
+			spike = spawner(type.prefab.ClassID);
+			spike.GetComponent<SpikeHook>().scale = scale;
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
@@ -178,41 +178,6 @@ namespace ReikaKalseki.SeaToSea
 			if (hasPod) {
 				pod = spawnAnchorPod(scale >= 1.75, scale >= 1 && scale <= 1.75, scale <= 1);
 			}
-			//DestroyDetector dd = spike.EnsureComponent<DestroyDetector>();
-			//dd.enabled = true;
-			//dd.pos = spike.transform.position;
-			fixColliders();
-		}
-		
-		private void fixColliders() { //FIXME this gets reverted on reactivation like other object manipulations
-			//SBUtil.log("Spike "+this+" has colliders: ");
-			//bool trigger = false;
-			foreach (Collider c in spike.GetAllComponentsInChildren<Collider>()) {
-				//trigger |= c.isTrigger;
-				//SBUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
-				if (c is SphereCollider) {
-					//SBUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
-					((SphereCollider)c).radius = ((SphereCollider)c).radius*0.95F;
-					((SphereCollider)c).center = ((SphereCollider)c).center+Vector3.up*0.25F*scale;
-				}
-				//UnityEngine.Object.Destroy(c);
-			}/*
-			MeshCollider mc = spike.AddComponent<MeshCollider>();
-			mc.enabled = true;
-			mc.convex = true;
-			mc.isTrigger = false;//trigger;
-			mc.cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices;
-			mc.sharedMesh*/
-			
-			//SBUtil.visualizeColliders(spike);
-			
-			//Bounds render = spike.GetComponentInChildren<Renderer>().bounds;
-			//BoxCollider box = spike.AddComponent<BoxCollider>();
-			//box.center = Vector3.zero+Vector3.up*(float)(scale*type.height/2D)*0.965F;
-			//box.size = new Vector3((float)type.radius*1.2F, (float)type.height, (float)type.radius*1.2F)*scale;
-			
-			//box.center = -(render.center-spike.transform.position);
-			//box.size = render.extents;
 		}
 			
 		internal void generateFlora() {
@@ -311,16 +276,73 @@ namespace ReikaKalseki.SeaToSea
 		
 		private class Spike {
 			
-			internal readonly string prefab;
+			internal readonly SpikePrefab prefab;
 			internal readonly double radius;
 			internal readonly double height;
 			
 			internal Spike(string s, double r, double h) {
-				prefab = s;
+				prefab = new SpikePrefab(s).register();
 				radius = r;
 				height = h;
 			}
 			
+		}
+		
+		public sealed class SpikePrefab : GenUtil.CustomPrefabImpl {
+	       
+			internal SpikePrefab(string template) : base("voidspike_"+template, template) {
+				
+		    }
+	
+			public override void prepareGameObject(GameObject go, Renderer r) {
+				go.EnsureComponent<SpikeHook>();
+			}
+			
+			internal SpikePrefab register() {
+				Patch();
+				return this;
+			}
+		}
+		
+		private class SpikeHook : MonoBehaviour {
+			
+			[ProtoBuf.ProtoMember(1)]
+			internal float scale;
+		  
+			private void Start() {
+				fixColliders();
+			}
+		
+			private void fixColliders() {
+				//SBUtil.log("Spike "+this+" has colliders: ");
+				//bool trigger = false;
+				foreach (Collider c in gameObject.GetAllComponentsInChildren<Collider>()) {
+					//trigger |= c.isTrigger;
+					//SBUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
+					if (c is SphereCollider) {
+						//SBUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
+						((SphereCollider)c).radius = ((SphereCollider)c).radius*0.95F;
+						((SphereCollider)c).center = ((SphereCollider)c).center+Vector3.up*0.25F*scale;
+					}
+					//UnityEngine.Object.Destroy(c);
+				}/*
+				MeshCollider mc = spike.AddComponent<MeshCollider>();
+				mc.enabled = true;
+				mc.convex = true;
+				mc.isTrigger = false;//trigger;
+				mc.cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices;
+				mc.sharedMesh*/
+				
+				//SBUtil.visualizeColliders(spike);
+				
+				//Bounds render = spike.GetComponentInChildren<Renderer>().bounds;
+				//BoxCollider box = spike.AddComponent<BoxCollider>();
+				//box.center = Vector3.zero+Vector3.up*(float)(scale*type.height/2D)*0.965F;
+				//box.size = new Vector3((float)type.radius*1.2F, (float)type.height, (float)type.radius*1.2F)*scale;
+				
+				//box.center = -(render.center-spike.transform.position);
+				//box.size = render.extents;
+			}
 		}
 		
 		private class OreType {
