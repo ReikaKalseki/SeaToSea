@@ -310,6 +310,9 @@ namespace ReikaKalseki.SeaToSea
 			internal float scale;
 		  
 			private void Start() {
+				if (scale <= 0.01)
+					scale = gameObject.transform.localScale.x;
+				//SBUtil.log("Fixing spike colliders @ "+gameObject.transform.position+": "+scale);
 				fixColliders();
 			}
 		

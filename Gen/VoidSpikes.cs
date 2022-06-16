@@ -12,7 +12,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //TODO 3. prevent re-runs
+	public sealed class VoidSpikes : WorldGenerator { //FIXME 3. prevent re-runs
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),

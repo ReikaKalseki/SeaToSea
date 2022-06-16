@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea
 					KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);
 				break;
 				case "AuroraRadiationFixed":
-					StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
+    				VoidSpikesBiome.instance.fireRadio();
 				break;
 			}
 		}

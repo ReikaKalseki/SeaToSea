@@ -104,7 +104,7 @@ namespace ReikaKalseki.SeaToSea
 		treaderSignal.register();
 		
 		e = pdaLocale.getEntry("crashmesahint");
-		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 600);
+		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
 		
 		e = miscLocale.getEntry("voidspikeenter");
 		voidSpikePDA = SBUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
@@ -119,7 +119,7 @@ namespace ReikaKalseki.SeaToSea
     
     private static void onTechUnlocked(TechType tech, bool vb) {
     	if (tech == TechType.PrecursorKey_Orange) {
-    		VoidSpikesBiome.instance.fireRadio();
+    		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
     	}
     }
     
