@@ -247,7 +247,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 1.0) {
 						lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
-						SBUtil.playSoundAt(SBUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
+						//SBUtil.playSoundAt(SBUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 					}
 				}
 				else {

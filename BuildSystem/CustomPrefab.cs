@@ -155,7 +155,18 @@ namespace ReikaKalseki.SeaToSea
 					pfb = new ModifiedObjectPrefab(key, prefabName, manipulations);
 					prefabCache[key] = pfb;
 					pfb.Patch();
-					SBUtil.log("Created customprefab GO template: "+key+" > "+pfb);
+					TechType from = tech != TechType.None ? tech : CraftData.entClassTechTable.GetOrDefault(key, TechType.None);
+					if (from != TechType.None) {
+						KnownTechHandler.Main.SetAnalysisTechEntry(pfb.TechType, new List<TechType>(){from});
+						PDAScanner.EntryData e = new PDAScanner.EntryData();
+						e.key = pfb.TechType;
+						e.blueprint = from;
+						e.destroyAfterScan = false;
+						e.locked = true;
+						e.scanTime = 5;
+						PDAHandler.AddCustomScannerEntry(e);
+					}
+					SBUtil.log("Created customprefab GO template: "+key+" ["+from+"] > "+pfb);
 				}
 				else {
 					SBUtil.log("Using already-generated prefab for GO template: "+key+" > "+pfb);

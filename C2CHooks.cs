@@ -174,8 +174,9 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
-	    	if (UnityEngine.Random.Range(0F, 1F) < 0.92)
+	    	if (UnityEngine.Random.Range(0F, 1F) < 0.93)
 	    		return;
+	    	//TODO check for nearby
 	    	GameObject owner = chunk.gameObject;
 	    	GameObject placed = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType.ToString());
 	    	placed.transform.position = owner.transform.position+Vector3.up*0.08F;

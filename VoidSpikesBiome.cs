@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.IO;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Interfaces;
+using SMLHelper.V2.Json;
+using SMLHelper.V2.Utility;
 
 using UnityEngine;
 using ReikaKalseki.DIAlterra;
@@ -31,9 +35,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private SignalManager.ModSignal signal;
 		
+		public static readonly int CLUSTER_COUNT = 80;
+		
 		private VoidSpikesBiome() {
 			generator = new VoidSpikes((end500m+end900m)/2);
-	      	generator.count = 80;
+	      	generator.count = CLUSTER_COUNT;
 	      	//generator.scaleXZ = 16;
 	      	//generator.scaleY = 6;
 	      	generator.generateLeviathan = false;
@@ -48,11 +54,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void register() {
+			SpikeCache.load();
+			
 			//GenUtil.registerWorldgen(generator);
 			int seed = SBUtil.getInstallSeed();
-			IEnumerable<WorldGenerator> gens = generator.split(seed);
+			IEnumerable<WorldGenerator> gens = generator.split(seed, SpikeCache.data);
 			foreach (VoidSpikes.SpikeCluster gen in gens) {
-				GenUtil.registerWorldgen(gen);
+				if (!SpikeCache.data[gen.genIndex].generated)
+					GenUtil.registerWorldgen(gen);
 				if (entryPoint == null || Vector3.Distance(gen.position, end500m) < Vector3.Distance(entryPoint.position, end500m)) {
 					entryPoint = gen;
 				}
@@ -71,6 +80,8 @@ namespace ReikaKalseki.SeaToSea {
 			signal.register();
 			
 			debris.init();
+			
+			IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
 		}
 		
 		public void onWorldStart() {
@@ -153,5 +164,67 @@ namespace ReikaKalseki.SeaToSea {
 			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 			return go;
 		}
+	}
+		
+	static class SpikeCache {
+		
+		internal static SpikeStatus[] data = new SpikeStatus[VoidSpikesBiome.CLUSTER_COUNT];
+			
+		static SpikeCache() {
+			for (int i = 0; i < data.Length; i++) {
+				data[i] = new SpikeStatus();
+			}
+		}
+		
+		internal static void save() {
+			string path = getSaveFile();
+			XmlDocument doc = new XmlDocument();
+			XmlElement rootnode = doc.CreateElement("Root");
+			doc.AppendChild(rootnode);
+			for (int i = 0; i < data.Length; i++) {
+				XmlElement e = doc.CreateElement("spike");
+				data[i].saveToXML(e);
+				e.addProperty("index", i);
+				doc.DocumentElement.AppendChild(e);
+			}
+			doc.Save(path);
+		}
+		
+		internal static void load() {
+			string path = getSaveFile();
+			if (!File.Exists(path))
+				return;
+			XmlDocument doc = new XmlDocument();
+			doc.Load(path);
+			XmlElement rootnode = doc.DocumentElement;
+			foreach (XmlElement e in rootnode.ChildNodes) {
+				data[e.getInt("index", -1, false)].loadFromXML(e);
+			}
+		}
+		
+		private static string getSaveFile() {
+			string folder = Path.Combine(SaveUtils.GetCurrentSaveDataDir(), "SeaToSea_Data");
+			Directory.CreateDirectory(folder);
+			return Path.Combine(folder, "voidspikes.xml");
+		}
+		
+	}
+	
+	class SpikeStatus {
+		
+		internal bool generated = false;
+		internal Vector3? rootPosition;
+		
+		internal void saveToXML(XmlElement e) {
+			if (rootPosition != null && rootPosition.HasValue)
+				e.addProperty("position", rootPosition.Value);
+			e.addProperty("generated", generated);
+		}
+		
+		internal void loadFromXML(XmlElement e) {
+			generated = e.getBoolean("generated");
+			rootPosition = e.getVector("position", true);
+		}
+		
 	}
 }
