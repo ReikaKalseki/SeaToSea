@@ -33,7 +33,11 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
 		static VoidSpike() {			
-			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString(), 825, 0.2), 100);
+
+		}
+		
+		public static void register() {
+			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).ClassID, 825, 0.2), 150);
 			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
 			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
 			oreChoices.addEntry(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
@@ -224,8 +228,8 @@ namespace ReikaKalseki.SeaToSea
 						GameObject go = spawner(ore.prefab);
 						bool large = ore.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab == VanillaResources.LARGE_DIAMOND.prefab;
 						pos += Vector3.up*(float)(ore.objOffset);
-						go.transform.position = pos;//UnityEngine.Random.rotationUniform;
-						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);
+						go.transform.position = pos;
+						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
 						if (!large) {
 							Pickupable p = go.EnsureComponent<Pickupable>();
 							p.isPickupable = true;

@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
 		public static readonly double gap = Vector3.Distance(end500m, signalLocation);
 		
+		public static readonly int CLUSTER_COUNT = 80;
+		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
 		private readonly VoidSpikes generator;
@@ -34,8 +36,6 @@ namespace ReikaKalseki.SeaToSea {
 		private VoidSpikes.SpikeCluster entryPoint;
 		
 		private SignalManager.ModSignal signal;
-		
-		public static readonly int CLUSTER_COUNT = 80;
 		
 		private VoidSpikesBiome() {
 			generator = new VoidSpikes((end500m+end900m)/2);
@@ -54,14 +54,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void register() {
-			SpikeCache.load();
+			//SpikeCache.load();
 			
 			//GenUtil.registerWorldgen(generator);
 			int seed = SBUtil.getInstallSeed();
-			IEnumerable<WorldGenerator> gens = generator.split(seed, SpikeCache.data);
+			IEnumerable<WorldGenerator> gens = generator.split(seed);
 			foreach (VoidSpikes.SpikeCluster gen in gens) {
-				if (!SpikeCache.data[gen.genIndex].generated)
-					GenUtil.registerWorldgen(gen);
+				GenUtil.registerWorldgen(gen);
 				if (entryPoint == null || Vector3.Distance(gen.position, end500m) < Vector3.Distance(entryPoint.position, end500m)) {
 					entryPoint = gen;
 				}
@@ -81,7 +80,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			debris.init();
 			
-			IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
+			//IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
 		}
 		
 		public void onWorldStart() {
@@ -161,11 +160,11 @@ namespace ReikaKalseki.SeaToSea {
 			if (go == null)
 				return go;
 			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
-			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
+			//lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 			return go;
 		}
 	}
-		
+		/*
 	static class SpikeCache {
 		
 		internal static SpikeStatus[] data = new SpikeStatus[VoidSpikesBiome.CLUSTER_COUNT];
@@ -226,5 +225,5 @@ namespace ReikaKalseki.SeaToSea {
 			rootPosition = e.getVector("position", true);
 		}
 		
-	}
+	}*/
 }

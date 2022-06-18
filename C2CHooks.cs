@@ -133,7 +133,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onEntityRegister(CellManager cm, LargeWorldEntity lw) {
 	    	if (!worldLoaded) {
 	    		onWorldLoaded();
-	    	}
+	    	}/*
 	    	if (lw.cellLevel != LargeWorldEntity.CellLevel.Global) {
 	    		BatchCells batchCells;
 				Int3 block = cm.streamer.GetBlock(lw.transform.position);
@@ -150,7 +150,26 @@ namespace ReikaKalseki.SeaToSea {
 		    			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 		    		}
 				}
-	    	}
+	    	}*/
+	    }
+	    
+	    public static EntityCell getEntityCellForInt3(Array3<EntityCell> data, Int3 raw, BatchCells batch) {
+	    	int n = data.GetLength(0)/2;
+	    	Int3 real = raw+new Int3(n, n, n);
+	    	return data.Get(real);
+	    }
+	    
+	     public static void setEntityCellForInt3(Array3<EntityCell> data, Int3 raw, EntityCell put, BatchCells batch) {
+	    	int n = data.GetLength(0)/2;
+	    	Int3 real = raw+new Int3(n, n, n);
+	    	data.Set(real, put);
+	    }
+	    
+	    public static void initBatchCells(BatchCells b) { //default 10 5 5 5
+			b.cellsTier0 = new Array3<EntityCell>(20);
+			b.cellsTier1 = new Array3<EntityCell>(10);
+			b.cellsTier2 = new Array3<EntityCell>(10);
+			b.cellsTier3 = new Array3<EntityCell>(10);
 	    }
     
 	    public static void onDataboxActivate(BlueprintHandTarget c) {	    	

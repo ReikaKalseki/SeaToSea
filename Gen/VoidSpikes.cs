@@ -12,7 +12,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class VoidSpikes : WorldGenerator { //FIXME 3. prevent re-runs
+	public sealed class VoidSpikes : WorldGenerator {
 			
 		private static readonly Vector3[] spacing = new Vector3[]{
 			new Vector3(16, 8, 16),
@@ -84,30 +84,28 @@ namespace ReikaKalseki.SeaToSea
 			fishCount = UnityEngine.Random.Range(40, 61);
 		}
 		
-		public IEnumerable<SpikeCluster> split(int seed, SpikeStatus[] data) {
-			SBUtil.log("Initializing spike clusters with seed "+seed);
+		public IEnumerable<SpikeCluster> split(int seed) {
+			SBUtil.log("Initializing spike clusters ["+count+"] with seed "+seed);
 			UnityEngine.Random.InitState(seed);
-			calculateSpikeClusters(data);
+			calculateSpikeClusters();
 			foreach (SpikeCluster s in spikes) {
 				s.fishCount = fishCount/spikes.Count;
 			}
+			SBUtil.log("Initialized "+spikes.Count+" spikes");
 			fishCount = 0;
 			return new ReadOnlyCollection<SpikeCluster>(spikes);
 		}
 		
-		private void calculateSpikeClusters(SpikeStatus[] data) {
+		private void calculateSpikeClusters() {
 			for (int i = 0; i < count; i++) {
-				Vector3? pos = data[i].rootPosition;
-				if (pos == null || !pos.HasValue)
-					pos = getSafePosition();
+				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
 					Vector3 vec = pos.Value;
-					data[i].rootPosition = vec;
 					//SBUtil.log("Success, spike @ "+vec);
 					if (depthCallback != null)
 						vec.y = (float)depthCallback(vec);
 					//SBUtil.log("Re-y spike @ "+vec);
-					SpikeCluster s = new SpikeCluster(vec, generateAux, i, data[i]);
+					SpikeCluster s = new SpikeCluster(vec, generateAux);
 					s.spawner = spawner;
 					spikes.Add(s);
 				}
@@ -195,19 +193,13 @@ namespace ReikaKalseki.SeaToSea
 			private float centralScale;
 			
 			public Action<List<GameObject>> additionalGen = null;
-			
-			public readonly int genIndex;
-			private readonly SpikeStatus status;
 						
-			internal SpikeCluster(Vector3 vec, bool aux, int idx, SpikeStatus s) : base(vec) {
+			internal SpikeCluster(Vector3 vec, bool aux) : base(vec) {
 				terraceSpikeCount = UnityEngine.Random.Range(4, 8);
 				auxSpikeCount = UnityEngine.Random.Range(3, 9);
 				generateAux = aux;
 				
 				centralScale = UnityEngine.Random.Range(1.8F, 2.5F);
-				
-				genIndex = idx;
-				status = s;
 			}
 			
 			public override void loadFromXML(XmlElement e) {
@@ -299,7 +291,6 @@ namespace ReikaKalseki.SeaToSea
 					//SBUtil.log("Spawning fish "+fish+" @ "+vec);
 					fish.transform.position = vec;
 				}
-				status.generated = true;
 			}
 			
 			private void generateDeco(List<GameObject> li) {

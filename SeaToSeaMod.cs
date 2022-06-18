@@ -115,6 +115,7 @@ namespace ReikaKalseki.SeaToSea
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
        
 		VoidSpikesBiome.instance.register();
+		VoidSpike.register();
 		//AvoliteSpawner.instance.register();
     }
     
