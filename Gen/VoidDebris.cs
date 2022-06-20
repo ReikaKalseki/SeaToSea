@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void init() {
-			databoxPrefab = GenUtil.getOrCreateDatabox(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType);
+			databoxPrefab = GenUtil.getOrCreateDatabox(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, go => go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch);
 		}
 		
 		public override void loadFromXML(XmlElement e) {
@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public GameObject spawnPDA() {
-			GameObject pda = spawner(PDAManager.getPage("voidpod").getPDAClassID());
+			GameObject pda = spawner(SignalManager.getSignal("voidpod").signalHolder.ClassID);
 			pda.transform.rotation = UnityEngine.Random.rotationUniform;
 			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
 			return pda;

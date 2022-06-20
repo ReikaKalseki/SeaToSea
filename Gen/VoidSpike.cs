@@ -13,30 +13,59 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class VoidSpike : WorldGenerator {
 		
-		private static readonly string FLOATER = "37ea521a-6be4-437c-8ed7-6b453d9218a8";
-		private static readonly string FLOATER_LIGHT = "923a14c0-a7a2-49bd-a6fd-915d661582ee";
-		private static readonly float FLOATER_BASE_SCALE = 0.12F;
-		
-		private static readonly Spike[] spikes = new Spike[]{
-			new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880", 3.0, 16.2),
-			new Spike("f0438971-2761-412c-bc42-df80577de473", 3.3, 24.4),
-		};
-		
-		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
-			VanillaFlora.ANCHOR_POD_SMALL1,
-			VanillaFlora.ANCHOR_POD_SMALL2,
-			VanillaFlora.ANCHOR_POD_MED1,
-			VanillaFlora.ANCHOR_POD_MED2,
-			VanillaFlora.ANCHOR_POD_LARGE,
-		};
-		
 		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
-		static VoidSpike() {			
-
+		private static readonly Dictionary<string, LargeWorldLevelPrefab> prefabCache = new Dictionary<string, LargeWorldLevelPrefab>();
+		
+		private static readonly string FLOATER = createPrefabCopy("37ea521a-6be4-437c-8ed7-6b453d9218a8", LargeWorldEntity.CellLevel.Global).ClassID;
+		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.Global).ClassID;
+		private static readonly float FLOATER_BASE_SCALE = 0.12F;
+		
+		private static readonly Spike[][] spikes = new Spike[][]{
+			createSpikes(true),
+			createSpikes(false),
+		};
+		
+		private static Spike[] createSpikes(bool center) {
+			return new Spike[]{
+				new Spike("282cdcbc-8670-4f9a-ae1d-9d8a09f9e880", 3.0, 16.2, center),
+				new Spike("f0438971-2761-412c-bc42-df80577de473", 3.3, 24.4, center),
+			};
 		}
 		
-		public static void register() {
+		private static List<LargeWorldLevelPrefab> createPrefabCopies(VanillaFlora plant, LargeWorldEntity.CellLevel lvl) {
+			List<LargeWorldLevelPrefab> li = new List<LargeWorldLevelPrefab>();
+			foreach (string pfb in plant.getPrefabs(true, false)) { //lit, unlit
+				li.Add(createPrefabCopy(pfb, lvl));
+			}
+			return li;
+		}
+		
+		private static LargeWorldLevelPrefab createPrefabCopy(string template, LargeWorldEntity.CellLevel lvl) {
+			LargeWorldLevelPrefab get = prefabCache.ContainsKey(template) ? prefabCache[template] : null;
+			if (get == null) {
+				get = new LargeWorldLevelPrefab(template, lvl).registerPrefab();
+				prefabCache[template] = get;
+			}
+			return get;
+		}
+		
+		private static readonly PodPrefab[] podPrefabs = new PodPrefab[]{
+			new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL1),
+			new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL2),
+			new PodPrefab(VanillaFlora.ANCHOR_POD_MED1),
+			new PodPrefab(VanillaFlora.ANCHOR_POD_MED2),
+			new PodPrefab(VanillaFlora.ANCHOR_POD_LARGE),
+		};
+		
+		static VoidSpike() {	
+			foreach (VanillaFlora vf in VoidChunkPlants.getPlants()) {
+				createPrefabCopies(vf, LargeWorldEntity.CellLevel.Batch);
+			}
+			createPrefabCopies(VanillaFlora.DEEP_MUSHROOM, LargeWorldEntity.CellLevel.Batch);
+		}
+		
+		public static void register() {			
 			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).ClassID, 825, 0.2), 150);
 			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
 			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
@@ -46,10 +75,20 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public static bool isSpike(string pfb) {
-			foreach (Spike s in spikes)
-				if (s.prefab.ClassID == pfb)
-					return true;
+			foreach (Spike[] s0 in spikes) {
+				foreach (Spike s in s0)
+					if (s.prefab.ClassID == pfb)
+						return true;
+			}
 			return false;
+		}
+		
+		public static LargeWorldLevelPrefab getRandomFloraPrefab(VanillaFlora vf) {
+			return getPrefab(vf.getRandomPrefab(true));
+		}
+		
+		public static LargeWorldLevelPrefab getPrefab(string s) {
+			return prefabCache[s];
 		}
 		
 		private float scale = 1;
@@ -164,7 +203,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 			
 		internal void generateSpike() {
-			type = spikes[UnityEngine.Random.Range(0, spikes.Length)];
+			type = spikes[UnityEngine.Random.Range(0, spikes.Length)][isAux ? 1 : 0];
 			spike = spawner(type.prefab.ClassID);
 			spike.GetComponent<SpikeHook>().scale = scale;
 			spike.transform.position = position;
@@ -256,11 +295,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
-			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];
-			GameObject go = spawner(p.getRandomPrefab(true));
+			PodPrefab p = podPrefabs[UnityEngine.Random.Range(min, max)];
+			GameObject go = spawner(p.ClassID);
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*-0.4F*scale, 0.2F);
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
-			setPlantHeight(position.y, p, go);
+			setPlantHeight(position.y, p.root, go);
 			return go;
 		}
 		
@@ -284,33 +323,73 @@ namespace ReikaKalseki.SeaToSea
 			internal readonly double radius;
 			internal readonly double height;
 			
-			internal Spike(string s, double r, double h) {
-				prefab = new SpikePrefab(s).register();
+			internal Spike(string s, double r, double h, bool c) {
+				prefab = (SpikePrefab)(new SpikePrefab(s, c).registerPrefab());
 				radius = r;
 				height = h;
 			}
 			
 		}
 		
-		public sealed class SpikePrefab : GenUtil.CustomPrefabImpl {
+		public class LargeWorldLevelPrefab : GenUtil.CustomPrefabImpl {
+			
+			internal readonly LargeWorldEntity.CellLevel level;
 	       
-			internal SpikePrefab(string template) : base("voidspike_"+template, template) {
-				
+			internal LargeWorldLevelPrefab(string template, LargeWorldEntity.CellLevel lvl) : base("void_"+template, template) {
+				level = lvl;
 		    }
 	
 			public override void prepareGameObject(GameObject go, Renderer r) {
-				go.EnsureComponent<SpikeHook>();
+				LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
+				lw.cellLevel = level;
 			}
 			
-			internal SpikePrefab register() {
+			internal LargeWorldLevelPrefab registerPrefab() {
 				Patch();
 				return this;
 			}
 		}
 		
+		public sealed class PodPrefab : LargeWorldLevelPrefab {
+			
+			internal readonly VanillaFlora root;
+	       
+			internal PodPrefab(VanillaFlora template) : base(template.getRandomPrefab(true), LargeWorldEntity.CellLevel.Global) {
+				root = template;
+		    }
+	
+			public override void prepareGameObject(GameObject go, Renderer r) {
+				base.prepareGameObject(go, r);
+			}
+		}
+		
+		public sealed class SpikePrefab : LargeWorldLevelPrefab {
+			
+			internal readonly bool isCenter;
+	       
+			internal SpikePrefab(string template, bool c) : base(template, LargeWorldEntity.CellLevel.Global) {
+				isCenter = c;
+		    }
+	
+			public override void prepareGameObject(GameObject go, Renderer r) {
+				base.prepareGameObject(go, r);
+				go.EnsureComponent<SpikeHook>();
+				if (isCenter) {
+					go.EnsureComponent<SpikeClusterHook>();
+				}
+			}
+		}
+		
+		private class SpikeClusterHook : MonoBehaviour {
+			
+			void Update() { //TODO spawn fish
+				
+			}
+			
+		}
+		
 		private class SpikeHook : MonoBehaviour {
 			
-			[ProtoBuf.ProtoMember(1)]
 			internal float scale;
 		  
 			private void Start() {
@@ -318,6 +397,10 @@ namespace ReikaKalseki.SeaToSea
 					scale = gameObject.transform.localScale.x;
 				//SBUtil.log("Fixing spike colliders @ "+gameObject.transform.position+": "+scale);
 				fixColliders();
+			}
+			
+			void Update() { //TODO spawn ores
+				
 			}
 		
 			private void fixColliders() {

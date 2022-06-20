@@ -48,7 +48,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void tickPlayer(Player ep) {
 	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, 80000) == 0) {
-				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.treaderSignal.getRadioStoryKey())) {
+				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
 	    	}
@@ -139,16 +139,23 @@ namespace ReikaKalseki.SeaToSea {
 				Int3 block = cm.streamer.GetBlock(lw.transform.position);
 				Int3 key = block / cm.streamer.blocksPerBatch;
 				if (cm.batch2cells.TryGetValue(key, out batchCells)) {
-		    		try {
-						Int3 u = block % cm.streamer.blocksPerBatch;
-						Int3 cellSize = BatchCells.GetCellSize((int)lw.cellLevel, cm.streamer.blocksPerBatch);
-						Int3 cellId = u / cellSize;
-						batchCells.Get(cellId, (int)lw.cellLevel);
-		    		}
-		    		catch {
-		    			SBUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
+							Int3 u = block % cm.streamer.blocksPerBatch;
+							Int3 cellSize = BatchCells.GetCellSize((int)lw.cellLevel, cm.streamer.blocksPerBatch);
+							Int3 cellId = u / cellSize;
+							bool flag = cellId.x < 0 || cellId.y < 0 || cellId.z < 0;
+					if (!flag) {
+			    		try {
+							//batchCells.Get(cellId, (int)lw.cellLevel);
+							batchCells.GetCells((int)lw.cellLevel).Get(cellId);
+			    		}
+			    		catch {
+							flag = true;
+			    		}
+					}
+					if (flag) {
+						SBUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
 		    			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
-		    		}
+					}
 				}
 	    	}*/
 	    }

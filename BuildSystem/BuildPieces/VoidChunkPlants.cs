@@ -15,6 +15,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
@@ -74,6 +75,10 @@ namespace ReikaKalseki.SeaToSea
 			plantTypes[vp.plant] = vp;
 		}
 		
+		public static IEnumerable<VanillaFlora> getPlants() {
+			return new ReadOnlyCollection<VanillaFlora>(new List<VanillaFlora>(plantTypes.Keys));
+		}
+		
 		public VoidChunkPlants(Vector3 vec) : base(vec) {
 			this.fuzz = new Vector3(1.2F, 0.05F, 1.2F);
 			this.count = UnityEngine.Random.Range(1, 4); //1-3
@@ -110,7 +115,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected override GameObject generatePlant(Vector3 vec, string type) {
-			GameObject go = base.generatePlant(vec, type);
+			VoidSpike.LargeWorldLevelPrefab prefab = VoidSpike.getPrefab(type);
+			GameObject go = base.generatePlant(vec, prefab.ClassID);
 			if (!VanillaFlora.BLOOD_KELP.includes(type) && !VanillaFlora.AMOEBOID.includes(type) && !VanillaFlora.BRINE_LILY.includes(type)) {
 				for (int i = 0; i < mushrooms; i++) {
 					Vector3 vec2 = new Vector3(vec.x+UnityEngine.Random.Range(-1F, 1F), vec.y, vec.z+UnityEngine.Random.Range(-1F, 1F));
@@ -122,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
 					if (!SBUtil.objectCollidesPosition(go, vec2) && !isColliding(vec2, gennedMushrooms)) {
 						if (validPlantPosCheck != null && !validPlantPosCheck(vec2+Vector3.up*0.2F, "mush"))
 							continue;
-						GameObject go2 = base.generatePlant(vec2, VanillaFlora.DEEP_MUSHROOM.getRandomPrefab(false));
+						GameObject go2 = base.generatePlant(vec2, VoidSpike.getRandomFloraPrefab(VanillaFlora.DEEP_MUSHROOM).ClassID);
 						gennedMushrooms.Add(go2);
 					}
 				}

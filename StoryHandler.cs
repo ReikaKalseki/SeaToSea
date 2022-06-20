@@ -21,8 +21,8 @@ namespace ReikaKalseki.SeaToSea
 		public void NotifyGoalComplete(string key) {
 			//SBUtil.writeToChat("Story '"+key+"'");
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
-				if (key.Contains(SeaToSeaMod.treaderSignal.getRadioStoryKey())) {
-					SeaToSeaMod.treaderSignal.activate(15);
+				if (key.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
+					SeaToSeaMod.treaderSignal.activate(20);
 				}
 				else if (key.Contains(VoidSpikesBiome.instance.getSignalKey())) {
 					VoidSpikesBiome.instance.activateSignal();

@@ -76,7 +76,8 @@ namespace ReikaKalseki.SeaToSea {
 			signal = SignalManager.createSignal(e);
 			//signal.pdaEntry.addSubcategory("AuroraSurvivors");
 			signal.addRadioTrigger(e.getField<string>("sound"), 1200);
-			signal.register();
+			signal.register(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1F);
+			signal.addWorldgen(UnityEngine.Random.rotationUniform);
 			
 			debris.init();
 			
@@ -84,12 +85,12 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void onWorldStart() {
-			signal.build(debris.spawnPDA(), signalLocation+Vector3.down*0.5F);
+			
 		}
 		
 		public void activateSignal() {
 			SBUtil.log("Activating void signal");
-			signal.activate(20);
+			signal.activate(18);
 		}
 		
 		public void fireRadio() {
@@ -97,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public string getSignalKey() {
-			return signal.getRadioStoryKey();
+			return signal.storyGate;
 		}
 		
 		private bool isValidSpikeLocation(Vector3 vec) {
@@ -152,6 +153,10 @@ namespace ReikaKalseki.SeaToSea {
 				b.amplitude *= 0.5F;
 				b.speed *= 0.4F;
 			}
+			
+			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
+			if (lw.cellLevel != LargeWorldEntity.CellLevel.Global)
+				lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
 			return b;
 		}
 		
@@ -159,11 +164,21 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject go = SBUtil.createWorldObject(pfb);
 			if (go == null)
 				return go;
+			//DestroyDetector dd = go.EnsureComponent<DestroyDetector>();
 			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
 			//lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 			return go;
 		}
 	}
+	/*
+	class DestroyDetector : MonoBehaviour {
+		
+		void OnDestroy() {
+			SBUtil.log("Destroying void GO "+gameObject+":");
+			SBUtil.log(System.Environment.StackTrace);
+		}
+		
+	}*/
 		/*
 	static class SpikeCache {
 		

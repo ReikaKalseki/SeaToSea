@@ -102,7 +102,8 @@ namespace ReikaKalseki.SeaToSea
 		treaderSignal = SignalManager.createSignal(e);
 		//treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
 		treaderSignal.addRadioTrigger(e.getField<string>("sound"));
-		treaderSignal.register();
+		treaderSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1239, -360, -1193));
+		treaderSignal.addWorldgen();
 		
 		e = pdaLocale.getEntry("crashmesahint");
 		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
