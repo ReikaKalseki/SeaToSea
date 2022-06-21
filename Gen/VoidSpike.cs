@@ -34,6 +34,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private static List<LargeWorldLevelPrefab> createPrefabCopies(VanillaFlora plant, LargeWorldEntity.CellLevel lvl) {
+			SBUtil.log("Creating void variants of plant "+plant.getName());
 			List<LargeWorldLevelPrefab> li = new List<LargeWorldLevelPrefab>();
 			foreach (string pfb in plant.getPrefabs(true, false)) { //lit, unlit
 				li.Add(createPrefabCopy(pfb, lvl));
@@ -46,16 +47,17 @@ namespace ReikaKalseki.SeaToSea
 			if (get == null) {
 				get = new LargeWorldLevelPrefab(template, lvl).registerPrefab();
 				prefabCache[template] = get;
+				SBUtil.log("Creating void version of "+template);
 			}
 			return get;
 		}
 		
 		private static readonly PodPrefab[] podPrefabs = new PodPrefab[]{
-			new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL1),
-			new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL2),
-			new PodPrefab(VanillaFlora.ANCHOR_POD_MED1),
-			new PodPrefab(VanillaFlora.ANCHOR_POD_MED2),
-			new PodPrefab(VanillaFlora.ANCHOR_POD_LARGE),
+			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL1).registerPrefab(),
+			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL2).registerPrefab(),
+			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_MED1).registerPrefab(),
+			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_MED2).registerPrefab(),
+			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_LARGE).registerPrefab(),
 		};
 		
 		static VoidSpike() {	
@@ -88,6 +90,9 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public static LargeWorldLevelPrefab getPrefab(string s) {
+			if (!prefabCache.ContainsKey(s)) {
+				throw new Exception("Voidspike Prefabs did not contain '"+s+"': contains "+prefabCache.toDebugString());
+			}
 			return prefabCache[s];
 		}
 		
