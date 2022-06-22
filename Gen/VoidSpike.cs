@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (VanillaFlora vf in VoidChunkPlants.getPlants()) {
 				createPrefabCopies(vf, LargeWorldEntity.CellLevel.Batch);
 			}
-			createPrefabCopies(VanillaFlora.DEEP_MUSHROOM, LargeWorldEntity.CellLevel.Batch);
+			createPrefabCopies(VanillaFlora.DEEP_MUSHROOM, LargeWorldEntity.CellLevel.Global);
 		}
 		
 		public static void register() {			
@@ -269,8 +269,8 @@ namespace ReikaKalseki.SeaToSea
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
-						GameObject go = spawner(ore.prefab);
-						bool large = ore.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab == VanillaResources.LARGE_DIAMOND.prefab;
+						GameObject go = spawner(ore.prefab.ClassID);
+						bool large = ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_DIAMOND.prefab;
 						pos += Vector3.up*(float)(ore.objOffset);
 						go.transform.position = pos;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
@@ -368,6 +368,17 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		public sealed class TemporaryOrePrefab : LargeWorldLevelPrefab {
+	       
+			internal TemporaryOrePrefab(string template) : base(template, LargeWorldEntity.CellLevel.Medium) {
+				
+		    }
+	
+			public override void prepareGameObject(GameObject go, Renderer r) {
+				base.prepareGameObject(go, r);
+			}
+		}
+		
 		public sealed class SpikePrefab : LargeWorldLevelPrefab {
 			
 			internal readonly bool isCenter;
@@ -442,12 +453,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		private class OreType {
 			
-			internal readonly string prefab;
+			internal readonly TemporaryOrePrefab prefab;
 			internal readonly double maxY;
 			internal readonly double objOffset;
 			
 			internal OreType(string s, double depth = 0, double off = 0) {
-				prefab = s;
+				prefab = (TemporaryOrePrefab)new TemporaryOrePrefab(s).registerPrefab();
 				maxY = -depth;
 				objOffset = off;
 			}
