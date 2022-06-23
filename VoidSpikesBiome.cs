@@ -15,14 +15,21 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome {
+	public class VoidSpikesBiome { //FIXME: 2. fog 3. return teleport shell 5. surface biome pda prompts(is nonissue, given that this is late game?)
 		
-		public static readonly Vector3 end500m = new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
-		public static readonly Vector3 end900m = new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
+		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
+		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
 		public static readonly double length = Vector3.Distance(end500m, end900m);
 		
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
-		public static readonly double gap = Vector3.Distance(end500m, signalLocation);
+		//public static readonly double gap = Vector3.Distance(end500m, signalLocation);
+		
+		public static readonly Vector3 travel = new Vector3(1, 0, -1).normalized*1500;
+		public static readonly Vector3 teleportTrigger = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
+		public static readonly float teleportTargetDistance = 250;
+		public static readonly float teleportActivationRadius = 250;
+		public static readonly Vector3 teleportTarget = end500m-travel.normalized*teleportTargetDistance;//new Vector3(0, 0, 100); //100m N
+		public static readonly Vector3 teleportBackTarget = teleportTrigger-travel.normalized*(teleportActivationRadius+50);//new Vector3(0, 0, 100); //100m N
 		
 		public static readonly int CLUSTER_COUNT = 80;
 		
@@ -76,8 +83,10 @@ namespace ReikaKalseki.SeaToSea {
 			signal = SignalManager.createSignal(e);
 			//signal.pdaEntry.addSubcategory("AuroraSurvivors");
 			signal.addRadioTrigger(e.getField<string>("sound"), 1200);
-			signal.register(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1F);
+			signal.register("32e48451-8e81-428e-9011-baca82e9cd32", signalLocation);
 			signal.addWorldgen(UnityEngine.Random.rotationUniform);
+			
+			GenUtil.registerWorldgen(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
 			
 			debris.init();
 			
@@ -106,9 +115,20 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isInBiome(Vector3 vec) {
-			double dist = MathUtil.getDistanceToLine(vec, end500m, end900m);
 			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return dist <= 240;
+			return getDistanceToBiome(vec) <= 240;
+		}
+		
+		public bool isOnBiomeEdge(Vector3 vec) {
+			double dist = getDistanceToBiome(vec);
+			//SBUtil.writeToChat(""+dist);
+			float f1 = teleportTargetDistance+25;
+			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
+			return dist >= f1 && dist <= f1+20;
+		}
+		
+		public double getDistanceToBiome(Vector3 vec) {
+			return MathUtil.getDistanceToLineSegment(vec, end500m, end900m);// endcap dist either < L
 		}
 		
 		private double getSpikeDepth(Vector3 vec) {

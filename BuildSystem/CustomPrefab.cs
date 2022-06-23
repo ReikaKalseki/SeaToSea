@@ -103,7 +103,7 @@ namespace ReikaKalseki.SeaToSea
 					isCrate = true;
 					string techn = e.getProperty("item");
 					tech = SBUtil.getTechType(techn);
-					prefabName = GenUtil.getOrCreateCrate(tech);
+					prefabName = GenUtil.getOrCreateCrate(tech, e.getBoolean("sealed"));
 				}
 				else if (prefabName == "databox") {
 					isDatabox = true;

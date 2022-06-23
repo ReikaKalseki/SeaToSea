@@ -17,8 +17,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly Dictionary<string, LargeWorldLevelPrefab> prefabCache = new Dictionary<string, LargeWorldLevelPrefab>();
 		
-		private static readonly string FLOATER = createPrefabCopy("37ea521a-6be4-437c-8ed7-6b453d9218a8", LargeWorldEntity.CellLevel.Global).ClassID;
-		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.Global).ClassID;
+		private static readonly string FLOATER = createPrefabCopy("37ea521a-6be4-437c-8ed7-6b453d9218a8", LargeWorldEntity.CellLevel.Batch).ClassID;
+		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.Batch).ClassID;
 		private static readonly float FLOATER_BASE_SCALE = 0.12F;
 		
 		private static readonly Spike[][] spikes = new Spike[][]{
@@ -269,7 +269,7 @@ namespace ReikaKalseki.SeaToSea
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
-						GameObject go = spawner(ore.prefab.ClassID);
+						GameObject go = spawner(ore.prefab.baseTemplate.prefab);
 						bool large = ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_DIAMOND.prefab;
 						pos += Vector3.up*(float)(ore.objOffset);
 						go.transform.position = pos;
@@ -301,7 +301,7 @@ namespace ReikaKalseki.SeaToSea
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			PodPrefab p = podPrefabs[UnityEngine.Random.Range(min, max)];
-			GameObject go = spawner(p.ClassID);
+			GameObject go = spawner(p.root.getRandomPrefab(true));
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*-0.4F*scale, 0.2F);
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p.root, go);
@@ -383,7 +383,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal readonly bool isCenter;
 	       
-			internal SpikePrefab(string template, bool c) : base(template, LargeWorldEntity.CellLevel.Global) {
+			internal SpikePrefab(string template, bool c) : base(template, LargeWorldEntity.CellLevel.Batch) {
 				isCenter = c;
 		    }
 	

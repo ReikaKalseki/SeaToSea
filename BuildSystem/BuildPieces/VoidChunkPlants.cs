@@ -115,8 +115,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected override GameObject generatePlant(Vector3 vec, string type) {
-			VoidSpike.LargeWorldLevelPrefab prefab = VoidSpike.getPrefab(type);
-			GameObject go = base.generatePlant(vec, prefab.ClassID);
+			//VoidSpike.LargeWorldLevelPrefab prefab = VoidSpike.getPrefab(type);
+			GameObject go = base.generatePlant(vec, type);
 			if (!VanillaFlora.BLOOD_KELP.includes(type) && !VanillaFlora.AMOEBOID.includes(type) && !VanillaFlora.BRINE_LILY.includes(type)) {
 				for (int i = 0; i < mushrooms; i++) {
 					Vector3 vec2 = new Vector3(vec.x+UnityEngine.Random.Range(-1F, 1F), vec.y, vec.z+UnityEngine.Random.Range(-1F, 1F));
@@ -128,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
 					if (!SBUtil.objectCollidesPosition(go, vec2) && !isColliding(vec2, gennedMushrooms)) {
 						if (validPlantPosCheck != null && !validPlantPosCheck(vec2+Vector3.up*0.2F, "mush"))
 							continue;
-						GameObject go2 = base.generatePlant(vec2, VoidSpike.getRandomFloraPrefab(VanillaFlora.DEEP_MUSHROOM).ClassID);
+						GameObject go2 = base.generatePlant(vec2, VanillaFlora.DEEP_MUSHROOM.getRandomPrefab(true));
 						gennedMushrooms.Add(go2);
 					}
 				}
