@@ -56,6 +56,20 @@ namespace ReikaKalseki.SeaToSea {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    	}
 	    }
+	    
+	    public static string getBiomeAt(string orig, Vector3 pos) {
+	    	if (VoidSpikesBiome.instance.isInBiome(pos)) {
+	    		return VoidSpikesBiome.biomeName;
+	    	}
+	    	return orig;
+	    }
+	    
+	    public static bool isPingVisible(PingInstance inst) {
+	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position)) {
+	    		return inst.pingType == PingType.Seamoth;
+	    	}
+	    	return inst.visible;
+	    }
 	   
 		public static void doEnvironmentalDamage(TemperatureDamage dmg) {
 	   		EnvironmentalDamageSystem.instance.tickTemperatureDamages(dmg);

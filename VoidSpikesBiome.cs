@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome { //FIXME: 1. stop render of HUD icons, 2. patch LargeWorld.main.GetBiome(pos) 5. surface biome pda prompts(is nonissue, given that this is late game?)
+	public class VoidSpikesBiome { //FIXME: 4. custom levi 5. surface biome pda prompts(is nonissue, given that this is late game?)
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -24,11 +24,13 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
 		//public static readonly double gap = Vector3.Distance(end500m, signalLocation);
 		
-		private static readonly Vector3 travel = new Vector3(1, 0, -1).normalized*1500;
+		private static readonly Vector3 travel = new Vector3(1, 0, -1).setLength(1500);
 		private static readonly Vector3 voidEndpoint500m = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
 		private static readonly Vector3 voidEndpoint900m = voidEndpoint500m+(end900m-end500m); //3225, -950, -2750
 		
 		public static readonly float biomeVolumeRadius = 250;
+		
+		public static readonly string biomeName = "Void_Spikes";
 		
 		public static readonly int CLUSTER_COUNT = 88;
 		
@@ -102,7 +104,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void addAtmoFX(Vector3 pos) {
-			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(50+biomeVolumeRadius));
+			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
 		}
 		
 		public void tickPlayer(Player ep) {
@@ -157,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public bool isInBiome(Vector3 vec) {
 			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return getDistanceToBiome(vec) <= 240;
+			return getDistanceToBiome(vec) <= biomeVolumeRadius;
 		}
 		
 		public double getDistanceToBiome(Vector3 vec) {
@@ -239,7 +241,7 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fogMaxDistance = 100;
 			vol.fogStartDistance = 20;
 			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
-			vol.overrideBiome = "Void_Spikes";
+			vol.overrideBiome = VoidSpikesBiome.biomeName;
 		}
 	}
 	/*

@@ -18,8 +18,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Insert(1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTick", false, typeof(DayNightCycle)));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTick", false, typeof(DayNightCycle)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 			}
@@ -40,8 +39,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Insert(1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxActivate", false, typeof(BlueprintHandTarget)));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxActivate", false, typeof(BlueprintHandTarget)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 			}
@@ -109,24 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				//codes.Clear();
-				
-				//injectSMModuleHook(codes, 0);
-				
-				
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Ret) {
-						injectSMModuleHook(codes, i);
-					}
-				}
-				
-				/*
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Callvirt && ((MethodInfo)codes[i].operand).Name == "SetExtraCrushDepth") {
-						injectSMModuleHook(codes, i+1);
-					}
-				}*/
-				
+				InstructionHandlers.patchEveryReturnPre(codes, injectSMModuleHook);				
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
@@ -178,8 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTreaderChunkSpawn", false, typeof(SinkingGroundChunk)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTreaderChunkSpawn", false, typeof(SinkingGroundChunk)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -199,8 +179,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStoryGoalCompleted", false, typeof(string)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStoryGoalCompleted", false, typeof(string)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -220,8 +199,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(SkyApplier)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(SkyApplier)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -241,12 +219,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Ret) {
-						codes.Insert(i, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "checkTargetingSkip", false, typeof(bool), typeof(Transform)));
-						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
-					}
-				}
+				InstructionHandlers.patchEveryReturnPre(codes, injectHook);
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -256,6 +229,11 @@ namespace ReikaKalseki.SeaToSea {
 				FileLog.Log(e.ToString());
 			}
 			return codes.AsEnumerable();
+		}
+		
+		private static void injectHook(List<CodeInstruction> codes, int i) {
+			codes.Insert(i, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "checkTargetingSkip", false, typeof(bool), typeof(Transform)));
+			codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
 	
@@ -350,9 +328,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onEntityRegister", false, typeof(CellManager), typeof(LargeWorldEntity)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_1));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onEntityRegister", false, typeof(CellManager), typeof(LargeWorldEntity)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -393,8 +369,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickPlayer", false, typeof(Player)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickPlayer", false, typeof(Player)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -436,8 +411,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onResourceSpawn", false, typeof(ResourceTracker)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onResourceSpawn", false, typeof(ResourceTracker)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -657,12 +631,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {				
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Ret) {
-						injectHook(codes, i);
-					}
-				}
+			try {
+				InstructionHandlers.patchEveryReturnPre(codes, injectHook);
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -709,8 +679,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPrecursorDoorSpawn", false, typeof(PrecursorKeyTerminal)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPrecursorDoorSpawn", false, typeof(PrecursorKeyTerminal)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -730,8 +699,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "OnInspectableSpawn", false, typeof(InspectOnFirstPickup)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "OnInspectableSpawn", false, typeof(InspectOnFirstPickup)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -751,8 +719,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "OnSkyApplierSpawn", false, typeof(SkyApplier)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "OnSkyApplierSpawn", false, typeof(SkyApplier)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -770,13 +737,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {				
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Ret) {
-						injectHook(codes, i);
-					}
-				}
-				//FileLog.Log("CRAFTGHOST Codes are "+InstructionHandlers.toString(codes));
+			try {		
+				InstructionHandlers.patchEveryReturnPre(codes, injectHook);
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -801,11 +763,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {				
-				for (int i = codes.Count-1; i >= 0; i--) {
-					if (codes[i].opcode == OpCodes.Ret) {
-						injectHook(codes, i);
-					}
-				}
+				PatchLib.patchEveryReturnPre(codes, injectHook);
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -913,6 +871,51 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(LargeWorld), "GetBiome", new Type[]{typeof(Vector3)})]
+	public static class BiomeFetchHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {		
+				InstructionHandlers.patchEveryReturnPre(codes, injectHook);
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	
+		private static void injectHook(List<CodeInstruction> codes, int idx) {
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getBiomeAt", false, typeof(string), typeof(Vector3)));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
+		}
+	}
+	
+	[HarmonyPatch(typeof(uGUI_Pings))]
+	[HarmonyPatch("OnWillRenderCanvases")]
+	public static class PingVisibilityHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PingInstance", "visible");
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isPingVisible", false, typeof(PingInstance));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	static class PatchLib {
 	
 		internal static void patchCellGet(List<CodeInstruction> codes) {
@@ -941,14 +944,6 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-		}
-		
-		internal static void patchEveryReturnPre(List<CodeInstruction> codes, List<CodeInstruction> insert) {
-			
-		}
-		
-		internal static void patchInitialHook(List<CodeInstruction> codes, List<CodeInstruction> insert) {
-			
 		}
 		
 	}
