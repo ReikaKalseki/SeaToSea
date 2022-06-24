@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			float f = 1;
 			float f0 = 1;
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
-			//SBUtil.writeToChat(biome+" for "+dmg.gameObject);
+			SBUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
 	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;

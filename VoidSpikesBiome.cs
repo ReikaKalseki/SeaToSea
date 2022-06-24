@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome { //FIXME: 2. fog 3. return teleport shell 5. surface biome pda prompts(is nonissue, given that this is late game?)
+	public class VoidSpikesBiome { //FIXME: 1. stop render of HUD icons, 2. patch LargeWorld.main.GetBiome(pos) 5. surface biome pda prompts(is nonissue, given that this is late game?)
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -33,6 +33,8 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly int CLUSTER_COUNT = 88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
+		
+		private readonly AtmoFX atmoFX = new AtmoFX();
 		
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
@@ -85,11 +87,22 @@ namespace ReikaKalseki.SeaToSea {
 			signal.register("32e48451-8e81-428e-9011-baca82e9cd32", signalLocation);
 			signal.addWorldgen(UnityEngine.Random.rotationUniform);
 			
+			atmoFX.Patch();
+			
 			GenUtil.registerWorldgen(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
+			
+			for (float i = -100; i <= length+100; i += biomeVolumeRadius*0.5F) {
+				addAtmoFX(end500m+(end900m-end500m).normalized*i);
+			}
+			addAtmoFX(end900m);
 			
 			debris.init();
 			
 			//IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
+		}
+		
+		private void addAtmoFX(Vector3 pos) {
+			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(50+biomeVolumeRadius));
 		}
 		
 		public void tickPlayer(Player ep) {
@@ -109,20 +122,20 @@ namespace ReikaKalseki.SeaToSea {
 				float f1 = biomeVolumeRadius+25;
 				if (dist >= f1 && dist <= f1+20) {
 					SBUtil.teleportPlayer(ep, (voidEndpoint500m+(pos-end500m).addLength(50)).setY(pos.y));
-		    		SBUtil.writeToChat("Teleported back");
+		    		SBUtil.log("Teleported player back from biome");
 				}
 				else {
 					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
 					if (dist <= f1+20) {
 						SBUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
-			    		SBUtil.writeToChat("Teleported to biome");
+			    		SBUtil.log("Teleported player to biome");
 					}
 				}
 			}
 		}
 		
 		public void onWorldStart() {
-			
+			//AtmosphereDirector.main.debug = true;
 		}
 		
 		public void activateSignal() {
@@ -208,6 +221,25 @@ namespace ReikaKalseki.SeaToSea {
 			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
 			//lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 			return go;
+		}
+	}
+	
+	class AtmoFX : GenUtil.CustomPrefabImpl {
+	       
+		internal AtmoFX() : base("voidspikeFX", "58b3c65d-1915-497d-b652-f6beba004def") { //blood kelp
+			
+		}
+	
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
+			lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
+			AtmosphereVolume vol = go.EnsureComponent<AtmosphereVolume>();
+			vol.affectsVisuals = true;
+			vol.enabled = true;
+			vol.fogMaxDistance = 100;
+			vol.fogStartDistance = 20;
+			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
+			vol.overrideBiome = "Void_Spikes";
 		}
 	}
 	/*

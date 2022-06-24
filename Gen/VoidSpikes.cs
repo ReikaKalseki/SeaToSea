@@ -138,9 +138,6 @@ namespace ReikaKalseki.SeaToSea
 				levi.transform.position = position+offset;
 				generated.Add(levi);
 			}
-			GameObject atmo = spawner("58b3c65d-1915-497d-b652-f6beba004def");
-			atmo.transform.position = position;
-			generated.Add(atmo);
 		}
 		
 		private bool posIntersectsAnySpikes(Vector3 vec, string why) {
@@ -295,7 +292,14 @@ namespace ReikaKalseki.SeaToSea
 					GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
 					//SBUtil.log("Spawning fish "+fish+" @ "+vec);
 					fish.transform.position = vec;
+					li.Add(fish);
 				}
+/*
+				GameObject atmo = spawner("58b3c65d-1915-497d-b652-f6beba004def");
+				atmo.transform.position = position;
+				atmo.transform.localScale = Vector3.one*75;
+				li.Add(atmo);
+				SBUtil.log("Generated atmo "+atmo+" @ "+atmo.transform.position);*/
 			}
 			
 			private void generateDeco(List<GameObject> li) {
