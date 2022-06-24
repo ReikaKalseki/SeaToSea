@@ -24,14 +24,13 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Vector3 signalLocation = new Vector3(1725, 0, -1250);//new Vector3(1725, 0, -997-100);
 		//public static readonly double gap = Vector3.Distance(end500m, signalLocation);
 		
-		public static readonly Vector3 travel = new Vector3(1, 0, -1).normalized*1500;
-		public static readonly Vector3 teleportTrigger = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
-		public static readonly float teleportTargetDistance = 250;
-		public static readonly float teleportActivationRadius = 250;
-		public static readonly Vector3 teleportTarget = end500m-travel.normalized*teleportTargetDistance;//new Vector3(0, 0, 100); //100m N
-		public static readonly Vector3 teleportBackTarget = teleportTrigger-travel.normalized*(teleportActivationRadius+50);//new Vector3(0, 0, 100); //100m N
+		private static readonly Vector3 travel = new Vector3(1, 0, -1).normalized*1500;
+		private static readonly Vector3 voidEndpoint500m = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
+		private static readonly Vector3 voidEndpoint900m = voidEndpoint500m+(end900m-end500m); //3225, -950, -2750
 		
-		public static readonly int CLUSTER_COUNT = 80;
+		public static readonly float biomeVolumeRadius = 250;
+		
+		public static readonly int CLUSTER_COUNT = 88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
@@ -93,6 +92,35 @@ namespace ReikaKalseki.SeaToSea {
 			//IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
 		}
 		
+		public void tickPlayer(Player ep) {
+			Vector3 pos = ep.transform.position;
+			double dist = getDistanceToBiome(pos);/*
+			if (dist < biomeVolumeRadius+75) {
+				while (AtmosphereDirector.main.priorityQueue.Count > 0)
+					AtmosphereDirector.main.PopSettings(AtmosphereDirector.main.priorityQueue[AtmosphereDirector.main.priorityQueue.Count-1]);
+				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
+			}*/
+		   	if (Vector3.Distance(pos, end500m) <= 100) {
+				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
+		   			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
+		   		}
+		   	}
+			else {
+				float f1 = biomeVolumeRadius+25;
+				if (dist >= f1 && dist <= f1+20) {
+					SBUtil.teleportPlayer(ep, (voidEndpoint500m+(pos-end500m).addLength(50)).setY(pos.y));
+		    		SBUtil.writeToChat("Teleported back");
+				}
+				else {
+					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
+					if (dist <= f1+20) {
+						SBUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
+			    		SBUtil.writeToChat("Teleported to biome");
+					}
+				}
+			}
+		}
+		
 		public void onWorldStart() {
 			
 		}
@@ -117,14 +145,6 @@ namespace ReikaKalseki.SeaToSea {
 		public bool isInBiome(Vector3 vec) {
 			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
 			return getDistanceToBiome(vec) <= 240;
-		}
-		
-		public bool isOnBiomeEdge(Vector3 vec) {
-			double dist = getDistanceToBiome(vec);
-			//SBUtil.writeToChat(""+dist);
-			float f1 = teleportTargetDistance+25;
-			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return dist >= f1 && dist <= f1+20;
 		}
 		
 		public double getDistanceToBiome(Vector3 vec) {

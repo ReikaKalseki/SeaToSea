@@ -52,20 +52,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
 	    	}
-	    	if (UnityEngine.Random.Range(0, 20) == 0 && ep.currentSub == null) {
-		    	if (Vector3.Distance(ep.transform.position, VoidSpikesBiome.end500m) <= 50) {
-					if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
-		    			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
-		    		}
-		    	}
-		    	else if (Vector3.Distance(ep.transform.position, VoidSpikesBiome.teleportTrigger) <= VoidSpikesBiome.teleportActivationRadius && Math.Abs(ep.transform.position.y-VoidSpikesBiome.teleportTrigger.y) <= 75) {
-	    			SBUtil.teleportPlayer(ep, VoidSpikesBiome.teleportTarget.setY(ep.transform.position.y));
-	    			SBUtil.writeToChat("Teleported to biome");
-		    	}
-	    		else if (VoidSpikesBiome.instance.isOnBiomeEdge(ep.transform.position)) {
-	    			SBUtil.teleportPlayer(ep, VoidSpikesBiome.teleportBackTarget.setY(ep.transform.position.y));
-	    			SBUtil.writeToChat("Teleported back");
-	    		}
+	    	if (UnityEngine.Random.Range(0, 10) == 0 && ep.currentSub == null) {
+	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    	}
 	    }
 	   
@@ -317,7 +305,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	Player ep = Player.main;
 	    	bool edge = string.Equals(biome, "void", StringComparison.OrdinalIgnoreCase);
 	    	bool far = string.IsNullOrEmpty(biome);
-	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) <= VoidSpikesBiome.teleportTargetDistance+50)
+	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) <= VoidSpikesBiome.biomeVolumeRadius+25)
 	    		far = true;
 	    	if (!far && !edge)
 	    		return false;
