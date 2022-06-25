@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea
 		public void load() {
 			string xml = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "XML/crates.xml");
 			if (File.Exists(xml)) {
-				SBUtil.log("Loading crate map from XML @ "+xml);
+				SNUtil.log("Loading crate map from XML @ "+xml);
 				XmlDocument doc = new XmlDocument();
 				doc.Load(xml);
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
@@ -40,13 +40,13 @@ namespace ReikaKalseki.SeaToSea
 						addValue(pos, techt);
 					}
 					catch (Exception ex) {
-						SBUtil.log("Could not load element "+e.InnerText);
-						SBUtil.log(ex.ToString());
+						SNUtil.log("Could not load element "+e.InnerText);
+						SNUtil.log(ex.ToString());
 					}
 				}
 			}
 			else {
-				SBUtil.log("Crate XML not found!");
+				SNUtil.log("Crate XML not found!");
 			}
 		}
 		
@@ -60,7 +60,7 @@ namespace ReikaKalseki.SeaToSea
 				data[rnd] = new Dictionary<Vector3, TechType>();
 			}
 			data[rnd][pos] = type;
-			SBUtil.log("Registered crate mapping "+type+" @ "+pos);
+			SNUtil.log("Registered crate mapping "+type+" @ "+pos);
 		}
 		
 		public TechType getOverride(SupplyCrate bpt) {

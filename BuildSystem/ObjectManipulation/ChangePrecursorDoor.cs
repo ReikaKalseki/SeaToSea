@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 			PrecursorKeyTerminal pk = go.GetComponentInChildren<PrecursorKeyTerminal>();
 			if (pk == null) {
 				foreach (Component c in go.GetComponentsInChildren<Component>()) {
-					SBUtil.log("extra Component "+c+"/"+c.GetType()+" in "+c.gameObject);
+					SNUtil.log("extra Component "+c+"/"+c.GetType()+" in "+c.gameObject);
 				}
 			}
 			pk.acceptKeyType = targetType;

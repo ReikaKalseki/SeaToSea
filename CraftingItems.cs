@@ -16,7 +16,7 @@ namespace ReikaKalseki.SeaToSea
 		static CraftingItems() {
 			foreach (Items m in Enum.GetValues(typeof(Items))) {
 				string id = Enum.GetName(typeof(Items), m);
-				SBUtil.log("Constructing crafting item "+id);
+				SNUtil.log("Constructing crafting item "+id);
 				Item attr = getAttr(m);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(id);
 				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, attr.template});
@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea
 		public static void addAll() {
 			foreach (BasicCraftingItem item in mappings.Values) {
 				item.Patch();
-				SBUtil.log("Registered > "+item);
+				SNUtil.log("Registered > "+item);
 			}
 		}
 		

@@ -179,16 +179,16 @@ namespace ReikaKalseki.SeaToSea
 	    }
 	
 		public override void prepareGameObject(GameObject go, Renderer r) {
-			SBUtil.removeComponent<MedicalCabinet>(go);
-			SBUtil.removeComponent<Fabricator>(go);
-			SBUtil.removeComponent<Centrifuge>(go);
-			SBUtil.removeComponent<Radio>(go);
-			SBUtil.removeComponent<Constructable>(go);
+			ObjectUtil.removeComponent<MedicalCabinet>(go);
+			ObjectUtil.removeComponent<Fabricator>(go);
+			ObjectUtil.removeComponent<Centrifuge>(go);
+			ObjectUtil.removeComponent<Radio>(go);
+			ObjectUtil.removeComponent<Constructable>(go);
 			PreventDeconstruction prev = go.EnsureComponent<PreventDeconstruction>();
 			prev.enabled = true;
 			prev.inEscapePod = true;
 			if (useGravity) {
-				SBUtil.applyGravity(go);
+				ObjectUtil.applyGravity(go);
 			}
 			else {
 				Rigidbody b = go.GetComponentInChildren<Rigidbody>();
@@ -198,8 +198,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 			Pickupable p = go.GetComponentInChildren<Pickupable>();
 			if (p != null) {
-				TechType tt = CraftData.GetTechType(SBUtil.lookupPrefab(baseTemplate.prefab));
-				SBUtil.log(ClassID+" had PP, TT = "+tt);
+				TechType tt = CraftData.GetTechType(ObjectUtil.lookupPrefab(baseTemplate.prefab));
+				SNUtil.log(ClassID+" had PP, TT = "+tt);
 				if (tt != TechType.None)
 					p.SetTechTypeOverride(tt);
 			}

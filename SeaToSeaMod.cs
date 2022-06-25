@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea
         Harmony harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
         FileLog.Log("Ran mod register, started harmony (harmony log)");
-        SBUtil.log("Ran mod register, started harmony");
+        SNUtil.log("Ran mod register, started harmony");
         try {
         	harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
         }
@@ -77,7 +77,7 @@ namespace ReikaKalseki.SeaToSea
         
         processor = new Bioprocessor();
         processor.Patch();
-        SBUtil.log("Registered custom machine "+processor);
+        SNUtil.log("Registered custom machine "+processor);
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
@@ -106,10 +106,10 @@ namespace ReikaKalseki.SeaToSea
 		treaderSignal.addWorldgen();
 		
 		e = pdaLocale.getEntry("crashmesahint");
-		crashMesaRadio = SBUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
+		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
 		
 		e = miscLocale.getEntry("voidspikeenter");
-		voidSpikePDA = SBUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
+		voidSpikePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
 		
 		KnownTech.onAdd += onTechUnlocked;
        
@@ -130,7 +130,7 @@ namespace ReikaKalseki.SeaToSea
 		alkali = new AlkaliPlant();
 		alkali.Patch();	
 		alkali.addPDAEntry(itemLocale.getEntry(alkali.ClassID).pda, 3);
-		SBUtil.log(" > "+alkali);
+		SNUtil.log(" > "+alkali);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
@@ -199,7 +199,7 @@ namespace ReikaKalseki.SeaToSea
         BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
         BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
         BuildingHandler.instance.addCommand("bdtex", BuildingHandler.instance.dumpTextures);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SBUtil.playSound);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SNUtil.playSound);
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
@@ -308,14 +308,14 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
-        //SBUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
+        //SNUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
-        //SBUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
+        //SNUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         
         RecipeUtil.modifyIngredients(TechType.BaseReinforcement, i => true);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);

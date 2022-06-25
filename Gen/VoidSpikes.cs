@@ -85,13 +85,13 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public IEnumerable<SpikeCluster> split(int seed) {
-			SBUtil.log("Initializing spike clusters ["+count+"] with seed "+seed);
+			SNUtil.log("Initializing spike clusters ["+count+"] with seed "+seed);
 			UnityEngine.Random.InitState(seed);
 			calculateSpikeClusters();
 			foreach (SpikeCluster s in spikes) {
 				s.fishCount = fishCount/spikes.Count;
 			}
-			SBUtil.log("Initialized "+spikes.Count+" spikes");
+			SNUtil.log("Initialized "+spikes.Count+" spikes");
 			fishCount = 0;
 			return new ReadOnlyCollection<SpikeCluster>(spikes);
 		}
@@ -101,10 +101,10 @@ namespace ReikaKalseki.SeaToSea
 				Vector3? pos = getSafePosition();
 				if (pos != null && pos.HasValue) {
 					Vector3 vec = pos.Value;
-					//SBUtil.log("Success, spike @ "+vec);
+					//SNUtil.log("Success, spike @ "+vec);
 					if (depthCallback != null)
 						vec.y = (float)depthCallback(vec);
-					//SBUtil.log("Re-y spike @ "+vec);
+					//SNUtil.log("Re-y spike @ "+vec);
 					SpikeCluster s = new SpikeCluster(vec, generateAux);
 					s.spawner = spawner;
 					spikes.Add(s);
@@ -113,7 +113,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> generated) {
-			UnityEngine.Random.InitState(SBUtil.getWorldSeedInt());
+			UnityEngine.Random.InitState(SNUtil.getWorldSeedInt());
 			if (shouldRerollCounts)
 				rerollCounts();
 			if (spikes.Count == 0) {
@@ -129,7 +129,7 @@ namespace ReikaKalseki.SeaToSea
 					continue;
 				}
 				GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
-				//SBUtil.log("Spawning fish "+fish+" @ "+vec);
+				//SNUtil.log("Spawning fish "+fish+" @ "+vec);
 				fish.transform.position = vec;
 				generated.Add(fish);
 			}
@@ -290,7 +290,7 @@ namespace ReikaKalseki.SeaToSea
 						continue;
 					}
 					GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
-					//SBUtil.log("Spawning fish "+fish+" @ "+vec);
+					//SNUtil.log("Spawning fish "+fish+" @ "+vec);
 					fish.transform.position = vec;
 					li.Add(fish);
 				}
@@ -299,18 +299,18 @@ namespace ReikaKalseki.SeaToSea
 				atmo.transform.position = position;
 				atmo.transform.localScale = Vector3.one*75;
 				li.Add(atmo);
-				SBUtil.log("Generated atmo "+atmo+" @ "+atmo.transform.position);*/
+				SNUtil.log("Generated atmo "+atmo+" @ "+atmo.transform.position);*/
 			}
 			
 			private void generateDeco(List<GameObject> li) {
-				//SBUtil.log("Decorating central "+centralSpike);
+				//SNUtil.log("Decorating central "+centralSpike);
 				generateDeco(li, centralSpike);
 				foreach (VoidSpike s in firstRow) {
-					//SBUtil.log("Decorating terrace "+s);
+					//SNUtil.log("Decorating terrace "+s);
 					generateDeco(li, s);
 				}
 				foreach (VoidSpike s in auxSpikes) {
-					//SBUtil.log("Decorating aux "+s);
+					//SNUtil.log("Decorating aux "+s);
 					generateDeco(li, s);
 				}
 			}
@@ -323,20 +323,20 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal bool posIntersectsAnySpikes(Vector3 vec, string n, VoidSpike except) {
 				double r = (n == "ore") ? 0 : (n.Contains("membrain") ? 0.3 : 0.15);
-				//SBUtil.log("Checking "+vec+" "+n+" against central "+centralSpike);
+				//SNUtil.log("Checking "+vec+" "+n+" against central "+centralSpike);
 				if (centralSpike.intersects(vec, r))
 					return true;
 				foreach (VoidSpike s in firstRow) {
 					if (s == except)
 						continue;
-					//SBUtil.log("Checking "+vec+" "+n+" against terrace "+s);
+					//SNUtil.log("Checking "+vec+" "+n+" against terrace "+s);
 					if (s.intersects(vec, r))
 						return true;
 				}
 				foreach (VoidSpike s in auxSpikes) {
 					if (s == except)
 						continue;
-					//SBUtil.log("Checking "+vec+" "+n+" against aux "+s);
+					//SNUtil.log("Checking "+vec+" "+n+" against aux "+s);
 					if (s.intersects(vec, r))
 						return true;
 				}

@@ -71,7 +71,7 @@ namespace ReikaKalseki.SeaToSea
 					go.fx.SetActive(go.isSelected);
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not set enabled state of "+go+" due to GO error: "+ex.ToString());
+					SNUtil.writeToChat("Could not set enabled state of "+go+" due to GO error: "+ex.ToString());
 				}
 			}
 			if (on) {
@@ -85,7 +85,7 @@ namespace ReikaKalseki.SeaToSea
 		public void selectedInfo() {
 			foreach (PlacedObject go in items.Values) {
 				if (go.isSelected) {
-					SBUtil.writeToChat(go.ToString());
+					SNUtil.writeToChat(go.ToString());
 				}
 			}
 		}
@@ -93,7 +93,7 @@ namespace ReikaKalseki.SeaToSea
 		public void dumpTextures() {
 			foreach (PlacedObject go in items.Values) {
 				if (go.isSelected) {
-					SBUtil.dumpTextures(go.obj.GetComponentInChildren<Renderer>());
+					RenderUtil.dumpTextures(go.obj.GetComponentInChildren<Renderer>());
 				}
 			}
 		}
@@ -145,10 +145,10 @@ namespace ReikaKalseki.SeaToSea
 			Targeting.GetTarget(Player.main.gameObject, 40, out found, out dist);
 			Targeting.Reset();
 			if (found == null) {
-				SBUtil.writeToChat("Raytrace found nothing.");
+				SNUtil.writeToChat("Raytrace found nothing.");
 			}
 			PlacedObject has = getPlacement(found);
-			//SBUtil.writeToChat("Has is "+has);
+			//SNUtil.writeToChat("Has is "+has);
 			if (has == null) {
 				if (!isCtrl) {
 					clearSelection();
@@ -185,12 +185,12 @@ namespace ReikaKalseki.SeaToSea
 			XmlDocument doc = new XmlDocument();
 			XmlElement rootnode = doc.CreateElement("Root");
 			doc.AppendChild(rootnode);
-			SBUtil.log("=================================");
-			SBUtil.log("Building Handler has "+items.Count+" items: ");
+			SNUtil.log("=================================");
+			SNUtil.log("Building Handler has "+items.Count+" items: ");
 			foreach (PlacedObject go in items.Values) {
 				try {
 					bool use = flag(go);
-					SBUtil.log(go.ToString()+" dump = "+use);
+					SNUtil.log(go.ToString()+" dump = "+use);
 					if (use) {
 						XmlElement e = doc.CreateElement(go.getTagName());
 						go.saveToXML(e);
@@ -201,7 +201,7 @@ namespace ReikaKalseki.SeaToSea
 					throw new Exception(go.ToString(), e);
 				}
 			}
-			SBUtil.log("=================================");
+			SNUtil.log("=================================");
 			doc.Save(path);
 		}
 		
@@ -218,8 +218,8 @@ namespace ReikaKalseki.SeaToSea
 					buildElement(e);
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not load XML block, threw exception: "+e.format()+" -> "+ex.ToString());
-					SBUtil.log(ex.ToString());
+					SNUtil.writeToChat("Could not load XML block, threw exception: "+e.format()+" -> "+ex.ToString());
+					SNUtil.log(ex.ToString());
 				}
 			}
 		}
@@ -237,22 +237,22 @@ namespace ReikaKalseki.SeaToSea
 						PlacedObject b = (PlacedObject)ot;
 						addObject(b);
 						foreach (ManipulationBase mb in globalTransforms) {
-							SBUtil.log("Applying global "+mb+" to "+b);
+							SNUtil.log("Applying global "+mb+" to "+b);
 							mb.applyToObject(b);
-							SBUtil.log("Is now "+b.ToString());
+							SNUtil.log("Is now "+b.ToString());
 						}
 					break;
 					case "generator":
 						WorldGenerator gen = (WorldGenerator)ot;
 						List<GameObject> li = new List<GameObject>();
 						gen.generate(li);
-						SBUtil.writeToChat("Ran generator "+gen+" which produced "+li.Count+" objects");
+						SNUtil.writeToChat("Ran generator "+gen+" which produced "+li.Count+" objects");
 						foreach (GameObject go in li) {
 							if (go == null) {
-								SBUtil.writeToChat("Generator "+gen+" produced a null object!");
+								SNUtil.writeToChat("Generator "+gen+" produced a null object!");
 								continue;
 							}
-							PlacedObject b2 = new PlacedObject(go, SBUtil.getPrefabID(go));
+							PlacedObject b2 = new PlacedObject(go, ObjectUtil.getPrefabID(go));
 							addObject(b2);
 							BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
 							sel.placement = b2;
@@ -263,7 +263,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void addObject(PlacedObject b) {
-			SBUtil.log("Loaded a "+b);
+			SNUtil.log("Loaded a "+b);
 			items[b.referenceID] = b;
 			lastPlaced = b;
 			selectLastPlaced();
@@ -318,7 +318,7 @@ namespace ReikaKalseki.SeaToSea
 				return pre.placement;
 			}
 			else {
-				SBUtil.writeToChat("Game object "+go+" ("+genID(go)+") was not was not placed by the builder system.");
+				SNUtil.writeToChat("Game object "+go+" ("+genID(go)+") was not was not placed by the builder system.");
 				return null;
 			}
 		}
@@ -326,14 +326,14 @@ namespace ReikaKalseki.SeaToSea
 		public void select(GameObject go) {
 			PlacedObject pre = getPlacement(go);
 			if (go != null && pre == null)
-				SBUtil.dumpObjectData(go);
+				ObjectUtil.dumpObjectData(go);
 			if (pre != null) {
 				select(pre);
 			}
 		}
 		
 		private void select(PlacedObject s) {
-			//SBUtil.writeToChat("Selected "+s);
+			//SNUtil.writeToChat("Selected "+s);
 			s.setSelected(true);
 		}
 		
@@ -345,7 +345,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		private void deselect(PlacedObject go) {
-			//SBUtil.writeToChat("Deselected "+go);
+			//SNUtil.writeToChat("Deselected "+go);
 			go.setSelected(false);
 		}
 		
@@ -427,7 +427,7 @@ namespace ReikaKalseki.SeaToSea
 			if (b != null) {
 				items[b.referenceID] = b;
 				b.obj.transform.SetPositionAndRotation(pos, Quaternion.identity);
-				SBUtil.writeToChat("Spawned a "+b);
+				SNUtil.writeToChat("Spawned a "+b);
 				lastPlaced = b;
 				selectLastPlaced();
 			}
@@ -453,7 +453,7 @@ namespace ReikaKalseki.SeaToSea
 					return ((VanillaResources)typeof(VanillaResources).GetField(id.Substring(4).ToUpper()).GetValue(null)).prefab;
 				}
 				catch (Exception ex) {
-					SBUtil.log("Unable to fetch vanilla resource field '"+id+"': "+ex);
+					SNUtil.log("Unable to fetch vanilla resource field '"+id+"': "+ex);
 					return null;
 				}
 			}
@@ -462,7 +462,7 @@ namespace ReikaKalseki.SeaToSea
 					return ((VanillaCreatures)typeof(VanillaCreatures).GetField(id.Substring(6).ToUpper()).GetValue(null)).prefab;
 				}
 				catch (Exception ex) {
-					SBUtil.log("Unable to fetch vanilla creature field '"+id+"': "+ex);
+					SNUtil.log("Unable to fetch vanilla creature field '"+id+"': "+ex);
 					return null;
 				}
 			}

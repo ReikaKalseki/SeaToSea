@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea
 			internal PlacedObject placement;
 			
 			void Start() {
-				SBUtil.log("Initialized builderplaced of "+placement);
+				SNUtil.log("Initialized builderplaced of "+placement);
 			}
 			
 			void Update() {

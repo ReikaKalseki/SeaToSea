@@ -86,16 +86,16 @@ namespace ReikaKalseki.SeaToSea {
 			cc = go.AddComponent<SphereCollider>();
 			cc.radius = 1.2F;
 			cc.center = new Vector3(0, 1F, 0);
-		 	GameObject mdl = SBUtil.setModel(go, "model", SBUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
+		 	GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
 		 	Vector3 vec = new Vector3(0, 1.41F, 0);//mdl.transform.localPosition; //was 1
 		 	mdl.transform.localPosition = vec;
 		 	mdl.transform.localScale = new Vector3(1, 0.75F, 1); //was 0.625
 		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
 		 	mdl.transform.localEulerAngles = new Vector3(0, 90, 0);
 			Renderer r = mdl.GetComponentInChildren<Renderer>();
-			//SBUtil.dumpTextures(r);
-			SBUtil.swapToModdedTextures(r, this);
-			SBUtil.setEmissivity(r, 2, "GlowStrength");
+			//SNUtil.dumpTextures(r);
+			RenderUtil.swapToModdedTextures(r, this);
+			RenderUtil.setEmissivity(r, 2, "GlowStrength");
 			r.materials[0].EnableKeyword("MARMO_EMISSION");
 			r.sharedMaterial.EnableKeyword("MARMO_EMISSION");
 			r.materials[0].SetFloat("_Shininess", 8);
@@ -113,7 +113,7 @@ namespace ReikaKalseki.SeaToSea {
 				UnityEngine.Object.Destroy(t.gameObject);
 			Transform termT = go.transform.Find(TERMINAL_GO_NAME);
 			if (termT == null) {
-				GameObject terminal = SBUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
+				GameObject terminal = ObjectUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
 				termT = terminal.transform;
 				terminal.name = TERMINAL_GO_NAME;
 				terminal.SetActive(false);
@@ -124,7 +124,7 @@ namespace ReikaKalseki.SeaToSea {
 				con2.storageLabel = "BIOPROCESSOR";
 				termT.parent = go.transform;
 			}
-			SBUtil.log("bioproc storage reroot: ");
+			SNUtil.log("bioproc storage reroot: ");
 			Transform storageT = go.transform.Find("StorageRoot");
 			if (storageT != null && termT != null) {
 				GameObject newRoot = UnityEngine.Object.Instantiate(storageT.gameObject);
@@ -143,8 +143,8 @@ namespace ReikaKalseki.SeaToSea {
 					UnityEngine.Object.Destroy(storageT.gameObject);
 				}
 				catch (Exception e) {
-					SBUtil.log("Error destroying old bioproc storage!");
-					SBUtil.log(e.ToString());
+					SNUtil.log("Error destroying old bioproc storage!");
+					SNUtil.log(e.ToString());
 				}
 			}
 			foreach (SkyApplier sky in skies) {
@@ -186,7 +186,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal Renderer mainRenderer;
 		
 		void Start() {
-			SBUtil.log("Reinitializing bioproc");
+			SNUtil.log("Reinitializing bioproc");
 			SeaToSeaMod.processor.initializeMachine(gameObject);
 			setEmissiveColor(new Color(0, 0, 1));
 		}
@@ -200,7 +200,7 @@ namespace ReikaKalseki.SeaToSea {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;
 			}
-			//SBUtil.writeToChat("I am ticking @ "+go.transform.position);
+			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
 			Bioprocessor.setTerminalBox(gameObject);
@@ -210,13 +210,13 @@ namespace ReikaKalseki.SeaToSea {
 				if (currentOperation != null) {
 					setEmissiveColor(recipeStalledColor);
 					nextSaltTimeRemaining -= seconds;
-					//SBUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
+					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
 					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
 						IList<InventoryItem> salt = storage.container.GetItems(TechType.Salt);
 						if (salt != null && salt.Count >= 1) {
 							storage.container.RemoveItem(salt[0].item);
 							saltRequired--;
-							SBUtil.playSoundAt(SBUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
+							SNUtil.playSoundAt(SNUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
 						else {
@@ -224,19 +224,19 @@ namespace ReikaKalseki.SeaToSea {
 						}
 						nextSaltTimeRemaining = currentOperation.secondsPerSalt;
 						if (saltRequired <= 0) {
-							//SBUtil.writeToChat("try craft");
+							//SNUtil.writeToChat("try craft");
 							IList<InventoryItem> ing = storage.container.GetItems(currentOperation.inputItem);
 							if (ing != null && ing.Count >= currentOperation.inputCount) {
-								//SBUtil.writeToChat("success");
+								//SNUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
 									storage.container.RemoveItem(ing[0].item); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
-									GameObject item = SBUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
+									GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
 									storage.container.AddItem(item.GetComponent<Pickupable>());
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
-									SBUtil.playSoundAt(SBUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
+									SNUtil.playSoundAt(SNUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
 									setRecipe(null);
 								}
 							}
@@ -247,14 +247,14 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 1.0) {
 						lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
-						//SBUtil.playSoundAt(SBUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
+						//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 					}
 				}
 				else {
-					//SBUtil.writeToChat("Looking for recipe");
+					//SNUtil.writeToChat("Looking for recipe");
 					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
 						if (canRunRecipe(r)) {
-							//SBUtil.writeToChat("Found "+r);
+							//SNUtil.writeToChat("Found "+r);
 							setRecipe(r);
 							break;
 						}
@@ -263,7 +263,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {
 				setRecipe(null);
-				//SBUtil.writeToChat("Insufficient power");
+				//SNUtil.writeToChat("Insufficient power");
 				setEmissiveColor(offlineColor);
 			}
 		}
@@ -289,7 +289,7 @@ namespace ReikaKalseki.SeaToSea {
 			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST_IDLE*sc, out receive);
 			receive += 0.0001F;
 			//if (receive < Bioprocessor.POWER_COST_IDLE*sc)
-			//	SBUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
+			//	SNUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
 			return receive >= Bioprocessor.POWER_COST_IDLE*sc;//Mathf.Approximately(Bioprocessor.POWER_COST*sc, receive);
 		}
 		
@@ -306,7 +306,7 @@ namespace ReikaKalseki.SeaToSea {
 			saltRequired = r != null ? r.saltCount : -1;
 			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
-			SBUtil.playSoundAt(SBUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
+			SNUtil.playSoundAt(SNUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 		}
 		
 	}

@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal override void applyToObject(GameObject go) {
-			SBUtil.setPDAPage(go.EnsureComponent<StoryHandTarget>(), PDAManager.getPage(pageID));
+			ObjectUtil.setPDAPage(go.EnsureComponent<StoryHandTarget>(), PDAManager.getPage(pageID));
 		}
 		
 		internal override void applyToObject(PlacedObject go) {

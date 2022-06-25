@@ -44,10 +44,10 @@ namespace ReikaKalseki.SeaToSea
 			 					string path = "Textures/"+newTexBase+targetNumber;
 			 					Texture2D tex2 = TextureManager.getTexture(path);
 			 					if (tex2 == null) {
-			 						SBUtil.writeToChat("Could not find desired pod number texture @ "+path);
+			 						SNUtil.writeToChat("Could not find desired pod number texture @ "+path);
 			 						continue;
 			 					}
-			 					//SBUtil.writeToChat("Replacing tex @ "+n+" >> "+file+" > "+tex2.name);
+			 					//SNUtil.writeToChat("Replacing tex @ "+n+" >> "+file+" > "+tex2.name);
 			 					m.SetTexture(n, tex2);
 			 				}
 			 			}

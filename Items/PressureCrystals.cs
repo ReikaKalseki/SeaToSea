@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
-			SBUtil.makeTransparent(r);
+			RenderUtil.makeTransparent(r);
 			r.sharedMaterial.SetFloat("_Fresnel", 0.65F);
 			r.sharedMaterial.SetFloat("_Shininess", 15F);
 			r.sharedMaterial.SetFloat("_SpecInt", 18F);

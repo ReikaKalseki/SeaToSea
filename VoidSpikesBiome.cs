@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 			//SpikeCache.load();
 			
 			//GenUtil.registerWorldgen(generator);
-			int seed = SBUtil.getInstallSeed();
+			int seed = SNUtil.getInstallSeed();
 			IEnumerable<WorldGenerator> gens = generator.split(seed);
 			foreach (VoidSpikes.SpikeCluster gen in gens) {
 				GenUtil.registerWorldgen(gen);
@@ -110,7 +110,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void tickPlayer(Player ep) {
 			Vector3 pos = ep.transform.position;
 			double dist = getDistanceToBiome(pos);
-			//SBUtil.writeToChat("Dist @ "+pos+" = "+dist);
+			//SNUtil.writeToChat("Dist @ "+pos+" = "+dist);
 			/*
 			if (dist < biomeVolumeRadius+75) {
 				while (AtmosphereDirector.main.priorityQueue.Count > 0)
@@ -125,14 +125,14 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				float f1 = biomeVolumeRadius+25;
 				if (dist >= f1 && dist <= f1+20) {
-					SBUtil.teleportPlayer(ep, (voidEndpoint500m+(pos-end500m).addLength(50)).setY(pos.y));
-		    		SBUtil.log("Teleported player back from biome");
+					SNUtil.teleportPlayer(ep, (voidEndpoint500m+(pos-end500m).addLength(50)).setY(pos.y));
+		    		SNUtil.log("Teleported player back from biome");
 				}
 				else {
 					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
 					if (dist <= f1) {
-						SBUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
-			    		SBUtil.log("Teleported player to biome");
+						SNUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
+			    		SNUtil.log("Teleported player to biome");
 					}
 				}
 			}
@@ -143,7 +143,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void activateSignal() {
-			SBUtil.log("Activating void signal");
+			SNUtil.log("Activating void signal");
 			signal.activate(18);
 		}
 		
@@ -160,7 +160,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isInBiome(Vector3 vec) {
-			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
+			//SNUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
 			return getDistanceToBiome(vec) <= biomeVolumeRadius+150;
 		}
 		
@@ -218,7 +218,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static GameObject spawnEntity(string pfb) {
-			GameObject go = SBUtil.createWorldObject(pfb);
+			GameObject go = ObjectUtil.createWorldObject(pfb);
 			if (go == null)
 				return go;
 			//DestroyDetector dd = go.EnsureComponent<DestroyDetector>();
@@ -250,8 +250,8 @@ namespace ReikaKalseki.SeaToSea {
 	class DestroyDetector : MonoBehaviour {
 		
 		void OnDestroy() {
-			SBUtil.log("Destroying void GO "+gameObject+":");
-			SBUtil.log(System.Environment.StackTrace);
+			SNUtil.log("Destroying void GO "+gameObject+":");
+			SNUtil.log(System.Environment.StackTrace);
 		}
 		
 	}*/

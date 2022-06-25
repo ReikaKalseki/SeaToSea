@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 		static CustomMaterials() {
 			foreach (Materials m in Enum.GetValues(typeof(Materials))) {
 				string id = Enum.GetName(typeof(Materials), m);
-				SBUtil.log("Registering material "+id);
+				SNUtil.log("Registering material "+id);
 				Material attr = getMaterial(m);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(id);
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea
 				mappings[m] = item;
 				item.Patch();	
 				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
-				SBUtil.log(" > "+item);
+				SNUtil.log(" > "+item);
 			}
 		}
 		

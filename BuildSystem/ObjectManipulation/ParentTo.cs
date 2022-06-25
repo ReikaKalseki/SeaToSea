@@ -55,7 +55,7 @@ namespace ReikaKalseki.SeaToSea
 		private GameObject findObject(GameObject from) {
 			switch(type) {
 				case SeekType.FindNearTechType:
-					return findNear(from, go => go.GetComponent<TechTag>().type == SBUtil.getTechType(seekID));
+					return findNear(from, go => go.GetComponent<TechTag>().type == SNUtil.getTechType(seekID));
 				case SeekType.FindNearClassID:
 					return findNear(from, go => go.GetComponent<PrefabIdentifier>().classId == seekID);
 				default:

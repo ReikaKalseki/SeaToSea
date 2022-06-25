@@ -48,7 +48,7 @@ namespace ReikaKalseki.SeaToSea
 			 				if (tex2 != null)
 				 				m.mainTexture = tex2;
 			 				else
-			 					SBUtil.writeToChat("Could not find texture "+put);
+			 					SNUtil.writeToChat("Could not find texture "+put);
 				 		}
 					}
 			 		foreach (string n in m.GetTexturePropertyNames()) {
@@ -56,14 +56,14 @@ namespace ReikaKalseki.SeaToSea
 			 			if (tex is Texture2D) {
 			 				string file = tex.name;
 			 				string put = swaps.ContainsKey(file) ? swaps[file] : null;
-			 				//SBUtil.writeToChat(n+" > "+file+" > "+put);
+			 				//SNUtil.writeToChat(n+" > "+file+" > "+put);
 			 				if (put != null) {
 			 					Texture2D tex2 = getTexture(put, n);
-			 					//SBUtil.writeToChat(">>"+tex2);
+			 					//SNUtil.writeToChat(">>"+tex2);
 			 					if (tex2 != null)
 			 						m.SetTexture(n, tex2);
 			 					else
-			 						SBUtil.writeToChat("Could not find texture "+put);
+			 						SNUtil.writeToChat("Could not find texture "+put);
 			 				}
 			 			}
 			 		}

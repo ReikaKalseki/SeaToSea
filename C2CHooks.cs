@@ -41,7 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onWorldLoaded() {
 	    	worldLoaded = true;
-	    	SBUtil.log("Intercepted world load");
+	    	SNUtil.log("Intercepted world load");
 	        
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    }
@@ -132,9 +132,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	PrefabIdentifier id = obj.gameObject.GetComponent<PrefabIdentifier>();
 	    	if (id == null)
 	    		return orig;
-	    	//SBUtil.log("Checking targeting skip of "+id);
+	    	//SNUtil.log("Checking targeting skip of "+id);
 	    	if (VoidSpike.isSpike(id.ClassId) && VoidSpikesBiome.instance.isInBiome(obj.position)) {
-	    		//SBUtil.log("Is void spike");
+	    		//SNUtil.log("Is void spike");
 	    		return true;
 	    	}
 	    	else {
@@ -165,7 +165,7 @@ namespace ReikaKalseki.SeaToSea {
 			    		}
 					}
 					if (flag) {
-						SBUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
+						SNUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
 		    			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 					}
 				}
@@ -194,16 +194,16 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onDataboxActivate(BlueprintHandTarget c) {	    	
 	    	TechType over = DataboxTypingMap.instance.getOverride(c);
 	    	if (over != TechType.None) {
-	    		SBUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
-	    		SBUtil.setDatabox(c, over);
+	    		SNUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
+	    		ObjectUtil.setDatabox(c, over);
 	    	}
 	    }
 	    
 	    public static void onCrateActivate(SupplyCrate c) {    	
 	    	TechType over = CrateFillMap.instance.getOverride(c);
 	    	if (over != TechType.None) {
-	    		SBUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
-	    		SBUtil.setCrateItem(c, over);
+	    		SNUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
+	    		ObjectUtil.setCrateItem(c, over);
 	    	}
 	    }
 	    
@@ -216,7 +216,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		return;
 	    	//TODO check for nearby
 	    	GameObject owner = chunk.gameObject;
-	    	GameObject placed = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType.ToString());
+	    	GameObject placed = ObjectUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType.ToString());
 	    	placed.transform.position = owner.transform.position+Vector3.up*0.08F;
 	    	placed.transform.rotation = owner.transform.rotation;
 	    	UnityEngine.Object.Destroy(owner);
@@ -237,8 +237,8 @@ namespace ReikaKalseki.SeaToSea {
 		    	if (go.transform.position.y < -1200)
 		    		wr.addEntry(TechType.Kyanite, 500);
 		    	TechType tech = wr.getRandomEntry();
-		    	//SBUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
-		    	SBUtil.convertResourceChunk(go, tech);
+		    	//SNUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
+		    	ObjectUtil.convertResourceChunk(go, tech);
 	    	}
 	    }
 	    
@@ -256,7 +256,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void tickWorldForces(WorldForces wf) {
 	    	if (wf == null || wf.gameObject == null || !wf.gameObject.activeInHierarchy || !wf.enabled) {
 	    		//WorldForcesManager.instance.RemoveWorldForces(wf);
-	    		//SBUtil.log("Disabling invalid WF tick in "+wf);
+	    		//SNUtil.log("Disabling invalid WF tick in "+wf);
 	    		return;
 	    	}
 	    	wf.DoFixedUpdate();
@@ -287,9 +287,9 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static GameObject getCrafterGhostModel(GameObject ret, TechType tech) {
-	    	SBUtil.log("Crafterghost for "+tech+": "+ret);
+	    	SNUtil.log("Crafterghost for "+tech+": "+ret);
 	    	if (tech == TechType.PrecursorKey_Red || tech == TechType.PrecursorKey_White) {
-	    		ret = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tech));
+	    		ret = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tech));
 	    		ret = UnityEngine.Object.Instantiate(ret);
 	    		ret = ret.transform.Find("Model").gameObject;
 	    		VFXFabricating fab = ret.EnsureComponent<VFXFabricating>();
@@ -304,7 +304,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void OnSkyApplierSpawn(SkyApplier pk) {
 	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
 	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {
-	    		GameObject go = SBUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
+	    		GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
 	    		go.transform.position = pi.gameObject.transform.position;
 	    		go.transform.rotation = pi.gameObject.transform.rotation;
 	    		UnityEngine.Object.Destroy(pi.gameObject);
@@ -312,7 +312,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
-	    	SBUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
+	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
     
 	    public static bool isSpawnableVoid(string biome) {
@@ -326,16 +326,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (ep.inSeamoth) {
 	    		SeaMoth sm = (SeaMoth)ep.GetVehicle();
 	    		double ch = getAvoidanceChance(ep, sm, edge, far);
-	    		//SBUtil.writeToChat(ch+" @ "+sm.transform.position);
+	    		//SNUtil.writeToChat(ch+" @ "+sm.transform.position);
 	    		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
 		    		foreach (int idx in sm.slotIndexes.Values) {
 		    			InventoryItem ii = sm.GetSlotItem(idx);
 		    			if (ii != null && ii.item.GetTechType() != TechType.None && ii.item.GetTechType() == SeaToSeaMod.voidStealth.TechType) {
-	    					//SBUtil.writeToChat("Avoid");
+	    					//SNUtil.writeToChat("Avoid");
 		    				return false;
 		    			}
 		    		}
-	    			//SBUtil.writeToChat("Tried and failed");
+	    			//SNUtil.writeToChat("Tried and failed");
 	    		}
 	    	}
 	    	return true;

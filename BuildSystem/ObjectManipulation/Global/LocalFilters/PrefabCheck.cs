@@ -27,7 +27,7 @@ namespace ReikaKalseki.SeaToSea
 		private string id;
 		
 		internal override bool apply(GameObject go) {
-			return SBUtil.getPrefabID(go) == id;
+			return ObjectUtil.getPrefabID(go) == id;
 		}
 		
 		internal override void loadFromXML(XmlElement e) {

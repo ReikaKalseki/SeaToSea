@@ -50,7 +50,7 @@ namespace ReikaKalseki.SeaToSea
 		private double maxSinkFraction = 1;
 		
 		internal override void applyToObject(GameObject go) {
-			string id = SBUtil.getPrefabID(go);
+			string id = ObjectUtil.getPrefabID(go);
 			double hoff = 0;
 			if (randomType) {
 				Pod old = prefabs[id];
@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
 				int max = allowLargeSize ? prefabs.Count : (allowMediumSize ? prefabs.Count-1 : 2);
 				Pod p = li[UnityEngine.Random.Range(0, max)];
 				double dh = go.transform.position.y-referenceY;
-				go = SBUtil.replaceObject(go, p.prefab);
+				go = ObjectUtil.replaceObject(go, p.prefab);
 				hoff = p.vineBaseOffset-old.vineBaseOffset;
 			}
 			if (randomHeight) {
@@ -70,7 +70,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			if (Math.Abs(hoff) > 0.01) {
 				go.transform.position = (go.transform.position-new Vector3(0, (float)hoff, 0));
-				SBUtil.writeToChat(id+" > "+hoff);
+				SNUtil.writeToChat(id+" > "+hoff);
 			}
 		}
 		
@@ -94,7 +94,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			if (Math.Abs(hoff) > 0.01) {
 				go.move(0, hoff, 0);
-				SBUtil.writeToChat(go.prefabName+" > "+hoff);
+				SNUtil.writeToChat(go.prefabName+" > "+hoff);
 			}
 		}
 		

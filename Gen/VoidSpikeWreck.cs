@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> li) {
-			SBUtil.log("Generating void spike deep debris @ "+position);
+			SNUtil.log("Generating void spike deep debris @ "+position);
 			
 			GameObject platform = spawner("255ed3c3-1973-40c0-9917-d16dd9a7018d##&lt;CleanupDegasiProp&gt;&lt;/CleanupDegasiProp&gt;"); //degasi-cleaned platform
 			platform.transform.position = position+Vector3.down*0.1F;
@@ -68,24 +68,24 @@ namespace ReikaKalseki.SeaToSea
 			bag.transform.position = MathUtil.getRandomVectorAround(refPos, 1, 1.5F)+Vector3.up*0.15F;
 			bag.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			foreach (Prop s in items) {
-				//SBUtil.writeToChat("Added "+s);
+				//SNUtil.writeToChat("Added "+s);
 				for (int i = 0; i < 2; i++) {
-					GameObject item = SBUtil.createWorldObject(s.prefab.baseTemplate.prefab, true, false);//spawner(s.prefab.ClassID);
+					GameObject item = ObjectUtil.createWorldObject(s.prefab.baseTemplate.prefab, true, false);//spawner(s.prefab.ClassID);
 					item.SetActive(false);
-					SBUtil.refillItem(item);
+					ObjectUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
 					//UnityEngine.Object.Destroy(item);
 				}
 			}
 			li.Add(bag);
 			
-			GameObject go = SBUtil.createWorldObject("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
+			GameObject go = ObjectUtil.createWorldObject("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
 			go.SetActive(false);
-			SBUtil.refillItem(go);
+			ObjectUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
-			go = SBUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
+			go = ObjectUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
 			go.SetActive(false);
-			SBUtil.refillItem(go);
+			ObjectUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
 			
 			foreach (VoidWreckProp s in pieces) {
@@ -116,7 +116,7 @@ namespace ReikaKalseki.SeaToSea
 			pos.y = pos.y+(float)y;
 			go.transform.position = pos;
 			go.transform.rotation = Quaternion.Euler(tilt, UnityEngine.Random.Range(0, 360F), 0);
-			SBUtil.refillItem(go);
+			ObjectUtil.refillItem(go);
 			Rigidbody b = go.GetComponentInChildren<Rigidbody>();
 			if (b != null) {
 				b.isKinematic = true;

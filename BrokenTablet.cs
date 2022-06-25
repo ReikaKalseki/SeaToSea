@@ -30,7 +30,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void register() {
 			Patch();
-			GameObject tabPfb = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
+			GameObject tabPfb = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
 	    	VFXFabricating fab = tabPfb.transform.Find("Model").gameObject.EnsureComponent<VFXFabricating>();
 	    	fab.localMaxY = 0.1F;
 	    	fab.localMinY = -0.1F;
@@ -48,8 +48,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 			
 	    public override GameObject GetGameObject() {
-			GameObject tabRef = SBUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
-			GameObject world = SBUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", true, false);
+			GameObject tabRef = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
+			GameObject world = ObjectUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", true, false);
 			if (world != null) {
 				world.SetActive(false);
 				world.EnsureComponent<TechTag>().type = TechType;
@@ -70,7 +70,7 @@ namespace ReikaKalseki.SeaToSea {
 				return world;
 			}
 			else {
-				SBUtil.writeToChat("Could not fetch template GO for "+this);
+				SNUtil.writeToChat("Could not fetch template GO for "+this);
 				return null;
 			}
 	    }

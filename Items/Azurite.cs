@@ -51,7 +51,7 @@ namespace ReikaKalseki.SeaToSea {
 			double tick = (sp*time+phase)%(200*Math.PI);
 			float lt = (float)Math.Sin(tick)+0.4F*(float)Math.Sin(tick*4.63-289.2);
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*lt;
-			SBUtil.setEmissivity(r, f, "GlowStrength");
+			RenderUtil.setEmissivity(r, f, "GlowStrength");
 			gameObject.GetComponentInChildren<Light>().range = Azurite.BASE_LIGHT_RANGE+0.5F*f;
 			if (dT > 0 && Player.main != null) {
 				GameObject ep = Player.main.gameObject;

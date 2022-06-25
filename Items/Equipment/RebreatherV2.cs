@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea
 			PDANotification pda = go.EnsureComponent<PDANotification>();
 			pda.enabled = true;
 			pda.text = "I am some PDA text";
-			pda.sound = SBUtil.getSound("event:/player/story/Goal_BiomeSparseReef");
+			pda.sound = SNUtil.getSound("event:/player/story/Goal_BiomeSparseReef");
 		}
 
 		public override TechType RequiredForUnlock {

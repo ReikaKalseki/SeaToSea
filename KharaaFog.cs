@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 			
 	    public override GameObject GetGameObject() {
-			GameObject podRef = SBUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782");
+			GameObject podRef = ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782");
 			GasPod pod = podRef.GetComponent<GasPod>();
 			GameObject fog = pod.gasEffectPrefab;
 			GameObject world = UnityEngine.Object.Instantiate(fog);
@@ -56,13 +56,13 @@ namespace ReikaKalseki.SeaToSea {
 			if (timeLastDamageTick + damageInterval <= Time.time) {
 				foreach (GameObject go in tracker.Get()) {
 					if (go) {
-						SBUtil.writeToChat(""+go);
+						SNUtil.writeToChat(""+go);
 						LiveMixin live = gameObject.GetComponent<LiveMixin>();
 						if (live != null && live.IsAlive()) {
 							Player component2 = gameObject.GetComponent<Player>();
 							if (gameObject.GetComponent<Player>() != null || gameObject.GetComponent<Living>() != null) {
 								live.TakeDamage(damagePerSecond * damageInterval, gameObject.transform.position, DamageType.Starve, null);
-								SBUtil.writeToChat(""+(damagePerSecond * damageInterval));
+								SNUtil.writeToChat(""+(damagePerSecond * damageInterval));
 							}
 						}
 					}

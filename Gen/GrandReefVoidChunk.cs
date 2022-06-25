@@ -77,7 +77,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void generate(List<GameObject> generated) {			
-			rock = SBUtil.createWorldObject(TERRAIN_CHUNK);
+			rock = ObjectUtil.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
 			rock.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.up);
@@ -93,11 +93,11 @@ namespace ReikaKalseki.SeaToSea
 				Vector3? pos = getRandomPlantPosition();
 				if (pos != null && pos.HasValue) {
 					Vector3 use = pos.Value;
-					while (!SBUtil.objectCollidesPosition(rock, use) && position.y-use.y < 2) {
+					while (!ObjectUtil.objectCollidesPosition(rock, use) && position.y-use.y < 2) {
 						use.y -= 0.05F;
 					}
 					if (position.y-use.y < 1.9) {
-						GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
+						GameObject go = ObjectUtil.createWorldObject(p.getRandomPrefab(true));
 						go.transform.position = pos.Value;
 						go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 						setPlantHeight(plantYAvg, p, go);
@@ -112,12 +112,12 @@ namespace ReikaKalseki.SeaToSea
 			double rockYAvg = position.y+24.5;
 			for (int i = 0; i < 30; i++) {
 				Vector3 pos = getRandomRockPosition(rockYAvg);
-				GameObject go = SBUtil.createWorldObject(ROCK_CHUNK);
+				GameObject go = ObjectUtil.createWorldObject(ROCK_CHUNK);
 				go.transform.position = pos;
 				go.transform.rotation = UnityEngine.Random.rotationUniform;
 				rocks.Add(go);
 					
-				SBUtil.applyGravity(go);
+				ObjectUtil.applyGravity(go);
 			}
 			
 			int genned = 0;
@@ -129,7 +129,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 				if (!isColliding(pos, rocks)) {
 					pos.y += 0.05F;
-					GameObject go = SBUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
+					GameObject go = ObjectUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType.ToString());
 					go.transform.position = pos;
 					go.transform.rotation = UnityEngine.Random.rotationUniform;
 					genned++;
@@ -173,7 +173,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
 			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(0, max)];
-			GameObject go = SBUtil.createWorldObject(p.getRandomPrefab(true));
+			GameObject go = ObjectUtil.createWorldObject(p.getRandomPrefab(true));
 			go.transform.position = pos.Value;
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 			setPlantHeight(position.y, p, go);
@@ -201,7 +201,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 				tries++;
 			}
-			//SBUtil.log("Found @ "+rand);
+			//SNUtil.log("Found @ "+rand);
 			return rand;
 		}
 		

@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea
 	internal sealed class AddGravity : ManipulationBase {
 		
 		internal override void applyToObject(GameObject go) {/**/
-			SBUtil.applyGravity(go);
+			ObjectUtil.applyGravity(go);
 		}
 		
 		internal override void applyToObject(PlacedObject go) {

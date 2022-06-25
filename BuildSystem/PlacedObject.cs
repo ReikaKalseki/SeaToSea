@@ -51,7 +51,7 @@ namespace ReikaKalseki.SeaToSea
 				if (go == null)
 					throw new Exception("Tried to make a place of a null obj!");
 				if (go.transform == null)
-					SBUtil.log("Place of obj "+go+" has null transform?!");
+					SNUtil.log("Place of obj "+go+" has null transform?!");
 				key(go);				
 				createFX();
 			}
@@ -63,8 +63,8 @@ namespace ReikaKalseki.SeaToSea
 					}
 					if (bubblePrefab == null) {
 						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
-						//if (!SBUtil.getPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
-							SBUtil.writeToChat("Bubbles not loadable!");
+						//if (!SNUtil.getPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
+							SNUtil.writeToChat("Bubbles not loadable!");
 						}
 					}
 					if (bubblePrefab != null) {
@@ -75,11 +75,11 @@ namespace ReikaKalseki.SeaToSea
 							fx.SetActive(false);
 						}
 						else {
-							SBUtil.writeToChat("Bubbles not constructable!");
+							SNUtil.writeToChat("Bubbles not constructable!");
 						}
 					}
 					else {
-						SBUtil.writeToChat("Bubbles not found.");
+						SNUtil.writeToChat("Bubbles not found.");
 					}
 				}
 				catch (Exception e) {
@@ -90,7 +90,7 @@ namespace ReikaKalseki.SeaToSea
 			public sealed override void replaceObject(string pfb) {
 				base.replaceObject(pfb);
 				
-				GameObject put = SBUtil.createWorldObject(pfb);
+				GameObject put = ObjectUtil.createWorldObject(pfb);
 				if (put != null && put.transform != null) {
 					UnityEngine.Object.Destroy(obj);
 					key(put);
@@ -110,15 +110,15 @@ namespace ReikaKalseki.SeaToSea
 			internal void setSelected(bool sel) {
 				isSelected = sel;
 				if (fx == null) {
-					SBUtil.writeToChat("Could not set enabled visual of "+this+" due to null FX GO");
+					SNUtil.writeToChat("Could not set enabled visual of "+this+" due to null FX GO");
 					return;
 				}
 				try {
 					fx.SetActive(isSelected);
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error");
-					SBUtil.log("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error: "+ex.ToString());
+					SNUtil.writeToChat("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error");
+					SNUtil.log("Could not set enabled visual of "+this+" due to FX ("+fx+") GO error: "+ex.ToString());
 				}
 			}
 			
@@ -139,7 +139,7 @@ namespace ReikaKalseki.SeaToSea
 				vec.y += (float)y;
 				vec.z += (float)z;
 				setPosition(vec);
-				//SBUtil.writeToChat(go.obj.transform.position.ToString());
+				//SNUtil.writeToChat(go.obj.transform.position.ToString());
 			}
 			
 			internal void rotateYaw(double ang, Vector3? relTo) {
@@ -167,7 +167,7 @@ namespace ReikaKalseki.SeaToSea
 				else {
 					Vector3 euler = obj.transform.rotation.eulerAngles;
 					setRotation(Quaternion.Euler(euler.x+(float)roll, euler.y+(float)yaw, euler.z+(float)pitch));
-				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				//SNUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 				}
 			}
 			
@@ -175,7 +175,7 @@ namespace ReikaKalseki.SeaToSea
 				obj.transform.rotation = rot;
 				if (fx != null && fx.transform != null)
 					fx.transform.rotation = rot;
-				//SBUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
+				//SNUtil.writeToChat(go.obj.transform.rotation.eulerAngles.ToString());
 				rotation = rot;
 			}
 			
@@ -198,18 +198,18 @@ namespace ReikaKalseki.SeaToSea
 				base.loadFromXML(e);
 				
 				if (isDatabox) {
-					//SBUtil.writeToChat("Reprogramming databox");
-					//SBUtil.setDatabox(obj.EnsureComponent<BlueprintHandTarget>(), tech);
+					//SNUtil.writeToChat("Reprogramming databox");
+					//SNUtil.setDatabox(obj.EnsureComponent<BlueprintHandTarget>(), tech);
 				}
 				else if (isCrate) {
-					//SBUtil.writeToChat("Reprogramming crate");
-					//SBUtil.setCrateItem(obj.EnsureComponent<SupplyCrate>(), tech);
+					//SNUtil.writeToChat("Reprogramming crate");
+					//SNUtil.setCrateItem(obj.EnsureComponent<SupplyCrate>(), tech);
 				}
 				else if (isFragment) {
 					//TechFragment frag = b.obj.EnsureComponent<TechFragment>();
 				}
 				else if (isPDA) {
-					//SBUtil.setPDAPage(obj.EnsureComponent<StoryHandTarget>(), page);
+					//SNUtil.setPDAPage(obj.EnsureComponent<StoryHandTarget>(), page);
 				}
 				
 				foreach (ManipulationBase mb in manipulations) {
@@ -233,7 +233,7 @@ namespace ReikaKalseki.SeaToSea
 			public static PlacedObject fromXML(XmlElement e, bool readXML = true) {
 				CustomPrefab pfb = new CustomPrefab("");
 				pfb.loadFromXML(e);
-				SBUtil.log("Building placed object from custom prefab "+pfb+" > "+e.format());
+				SNUtil.log("Building placed object from custom prefab "+pfb+" > "+e.format());
 				PlacedObject b = createNewObject(pfb);
 				if (readXML)
 					b.loadFromXML(e);
@@ -250,15 +250,15 @@ namespace ReikaKalseki.SeaToSea
 			
 			private static PlacedObject createNewObject(string id, bool basePiece) {
 				if (id == null) {
-					SBUtil.writeToChat("Prefab not placed; ID was null");
+					SNUtil.writeToChat("Prefab not placed; ID was null");
 					return null;
 				}
-				GameObject go = basePiece ? SBUtil.getBasePiece(id) : SBUtil.createWorldObject(id);
+				GameObject go = basePiece ? ObjectUtil.getBasePiece(id) : ObjectUtil.createWorldObject(id);
 				if (go != null) {
 					BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
 					PlacedObject ret = new PlacedObject(go, id);
 					sel.placement = ret;
-					//SBUtil.dumpObjectData(ret.obj);
+					//SNUtil.dumpObjectData(ret.obj);
 					return ret;
 				}
 				return null;

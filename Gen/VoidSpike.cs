@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea
 			if (get == null) {
 				get = new LargeWorldLevelPrefab(template, lvl).registerPrefab();
 				prefabCache[template] = get;
-				SBUtil.log("Creating void version of "+template);
+				SNUtil.log("Creating void version of "+template);
 			}
 			return get;
 		}
@@ -155,7 +155,7 @@ namespace ReikaKalseki.SeaToSea
 			if (spike == null)
 				return false;
 			//vec = vec+Vector3.up*0.4F; //since we *want* the actual pos to slightly intersect
-			return SBUtil.objectCollidesPosition(spike, vec) || isPointWithinBoundingCone(vec, r);
+			return ObjectUtil.objectCollidesPosition(spike, vec) || isPointWithinBoundingCone(vec, r);
 		}
 		
 		private bool isPointWithinBoundingCone(Vector3 vec, double dr) {
@@ -171,7 +171,7 @@ namespace ReikaKalseki.SeaToSea
 				return false;
 			r += dr;
 			double dist = (vec.x-position.x)*(vec.x-position.x)+(vec.z-position.z)*(vec.z-position.z);
-			//SBUtil.log("vec "+vec+" & pos "+position+", "+dist+" of "+r*r+" @ "+d+" > "+(dist <= r*r));
+			//SNUtil.log("vec "+vec+" & pos "+position+", "+dist+" of "+r*r+" @ "+d+" > "+(dist <= r*r));
 			return dist <= r*r;
 		}
 		
@@ -202,7 +202,7 @@ namespace ReikaKalseki.SeaToSea
 			spike.transform.position = position;
 			spike.transform.localScale = scaleVec;
 			spike.transform.rotation = Quaternion.Euler(180, UnityEngine.Random.Range(0F, 360F), 0);
-			//SBUtil.offsetColliders(spike, Vector3.down*3.5F);
+			//SNUtil.offsetColliders(spike, Vector3.down*3.5F);
 			if (hasFloater) {
 				floater = spawner(FLOATER);
 				floater.transform.position = position+Vector3.up*0.55F*scale;
@@ -243,7 +243,7 @@ namespace ReikaKalseki.SeaToSea
 		internal void generateResources() {
 			if (oreRichness > 0) {
 				int n = (int)(8*oreRichness);
-				//SBUtil.log("Attempting "+n+" ores.");
+				//SNUtil.log("Attempting "+n+" ores.");
 				for (int i = 0; i < n; i++) {
 					float radius = UnityEngine.Random.Range(0, (float)(type.radius-0.15))*scale;
 					float angle = UnityEngine.Random.Range(0, 2F*(float)Math.PI);
@@ -251,8 +251,8 @@ namespace ReikaKalseki.SeaToSea
 					float sin = (float)Math.Sin(angle);
 					Vector3 pos = new Vector3(position.x+radius*cos, position.y+0.55F*scale, position.z+radius*sin);
 					//pos.y += (3.5F-radius);
-					//SBUtil.log("Attempted ore @ "+pos);
-					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !SBUtil.objectCollidesPosition(floater, pos))) {
+					//SNUtil.log("Attempted ore @ "+pos);
+					if ((validPlantPosCheck == null || validPlantPosCheck(pos+Vector3.up*0.15F, "ore")) && (floater == null || !ObjectUtil.objectCollidesPosition(floater, pos))) {
 						OreType ore = oreChoices.getRandomEntry();
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
@@ -268,7 +268,7 @@ namespace ReikaKalseki.SeaToSea
 							//p.SetTechTypeOverride();
 						}
 						resources.Add(go);
-						//SBUtil.log("Success "+go+" @ "+pos);
+						//SNUtil.log("Success "+go+" @ "+pos);
 					}
 				}
 			}
@@ -386,7 +386,7 @@ namespace ReikaKalseki.SeaToSea
 			private void Start() {
 				if (scale <= 0.01)
 					scale = gameObject.transform.localScale.x;
-				//SBUtil.log("Fixing spike colliders @ "+gameObject.transform.position+": "+scale);
+				//SNUtil.log("Fixing spike colliders @ "+gameObject.transform.position+": "+scale);
 				fixColliders();
 			}
 			
@@ -395,13 +395,13 @@ namespace ReikaKalseki.SeaToSea
 			}
 		
 			private void fixColliders() {
-				//SBUtil.log("Spike "+this+" has colliders: ");
+				//SNUtil.log("Spike "+this+" has colliders: ");
 				//bool trigger = false;
 				foreach (Collider c in gameObject.GetAllComponentsInChildren<Collider>()) {
 					//trigger |= c.isTrigger;
-					//SBUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
+					//SNUtil.log(c.name+" @ "+c.bounds+" = "+c.GetType());
 					if (c is SphereCollider) {
-						//SBUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
+						//SNUtil.log("R="+((SphereCollider)c).radius+", C="+((SphereCollider)c).center);
 						((SphereCollider)c).radius = ((SphereCollider)c).radius*0.95F;
 						((SphereCollider)c).center = ((SphereCollider)c).center+Vector3.up*0.25F*scale;
 					}
@@ -414,7 +414,7 @@ namespace ReikaKalseki.SeaToSea
 				mc.cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices;
 				mc.sharedMesh*/
 				
-				//SBUtil.visualizeColliders(spike);
+				//SNUtil.visualizeColliders(spike);
 				
 				//Bounds render = spike.GetComponentInChildren<Renderer>().bounds;
 				//BoxCollider box = spike.AddComponent<BoxCollider>();

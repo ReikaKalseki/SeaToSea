@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea
 			string xml = Path.Combine(root, "XML/worldgen.xml");
 			if (Directory.Exists(folder)) {
 				string[] files = Directory.GetFiles(folder, "*.xml", SearchOption.AllDirectories);
-				SBUtil.log("Loading worldgen maps from folder '"+folder+"': "+string.Join(", ", files));
+				SNUtil.log("Loading worldgen maps from folder '"+folder+"': "+string.Join(", ", files));
 				foreach (string file in files) {
 					loadXML(file);
 				}
@@ -31,12 +31,12 @@ namespace ReikaKalseki.SeaToSea
 				loadXML(xml);
 			}
 			else {
-				SBUtil.log("Worldgen XML not found!");
+				SNUtil.log("Worldgen XML not found!");
 			}
 		}
 		
 		private void loadXML(string xml) {
-			SBUtil.log("Loading worldgen map from XML @ "+xml);
+			SNUtil.log("Loading worldgen map from XML @ "+xml);
 			XmlDocument doc = new XmlDocument();
 			doc.Load(xml);
 			foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
@@ -68,12 +68,12 @@ namespace ReikaKalseki.SeaToSea
 								else {
 									GenUtil.registerWorldgen(pfb, pfb.getManipulationsCallable());
 								}
-								//SBUtil.log("Loaded worldgen prefab "+pfb+" for "+e.format());
+								//SNUtil.log("Loaded worldgen prefab "+pfb+" for "+e.format());
 							}
 							else if (ot is WorldGenerator) {
 								WorldGenerator gen = (WorldGenerator)ot;
 								GenUtil.registerWorldgen(gen);
-								SBUtil.log("Loaded worldgenator "+gen+" for "+e.format());
+								SNUtil.log("Loaded worldgenator "+gen+" for "+e.format());
 							}
 							else {
 								throw new Exception("No worldgen loadable for '"+e.Name+"' "+e.format());
@@ -82,8 +82,8 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				catch (Exception ex) {
-					SBUtil.log("Could not load element "+e.format());
-					SBUtil.log(ex.ToString());
+					SNUtil.log("Could not load element "+e.format());
+					SNUtil.log(ex.ToString());
 				}
 			}
 		}

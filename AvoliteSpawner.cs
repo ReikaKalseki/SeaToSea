@@ -60,13 +60,13 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (KeyValuePair<TechType, int> kvp in itemChoices) {
 				for (int i = 0; i < kvp.Value; i++) {
 					Vector3 pos = getRandomPosition();
-					GameObject go = SBUtil.dropItem(pos, kvp.Key);
+					GameObject go = WorldUtil.dropItem(pos, kvp.Key);
 					applyPhysics(go);
 				}
 			}
 			for (int i = 0; i < AVOLITE_COUNT; i++) {
 				Vector3 pos = getRandomPosition();
-				GameObject go = SBUtil.dropItem(pos, avolite);
+				GameObject go = WorldUtil.dropItem(pos, avolite);
 				applyPhysics(go);
 			}
 			for (int i = 0; i < scrapCount; i++) {
@@ -86,7 +86,7 @@ namespace ReikaKalseki.SeaToSea {
 						mtl = VanillaResources.SCRAP4;
 						break;
 				}
-				GameObject go = SBUtil.createWorldObject(mtl.prefab);
+				GameObject go = ObjectUtil.createWorldObject(mtl.prefab);
 				applyPhysics(go);
 				go.transform.position = pos;
 				go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
@@ -99,7 +99,7 @@ namespace ReikaKalseki.SeaToSea {
 			//go.transform.position = MathUtil.getRandomVectorAround(eventUITargetLocation+Vector3.up*200, 9);//go.transform.position+dist*0.1F;
 			//Vector3 target = MathUtil.getRandomVectorAround(biomeCenter, fuzz);//MathUtil.getRandomVectorAround(mountainCenter+new Vector3(150, 0, 150), new Vector3(150, 30, 150));
 			//Vector3 dist = (target-go.transform.position)._X0Z();
-			SBUtil.applyGravity(go);
+			ObjectUtil.applyGravity(go);
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
 			//go.GetComponent<Rigidbody>().velocity = dist*0.04F;
 			go.GetComponent<WorldForces>().aboveWaterGravity *= 0.5F;
@@ -110,7 +110,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private GameObject spawnBox() {
 			Vector3 pos = getRandomPosition();
-			GameObject box = SBUtil.createWorldObject("8c21d402-1767-4266-ada6-b3e40c798e9f"); //powercell
+			GameObject box = ObjectUtil.createWorldObject("8c21d402-1767-4266-ada6-b3e40c798e9f"); //powercell
 			if (box != null)
 				box.transform.position = pos;
 			return box;

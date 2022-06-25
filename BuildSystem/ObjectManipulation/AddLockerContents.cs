@@ -38,9 +38,9 @@ namespace ReikaKalseki.SeaToSea
 				//SBUtil.writeToChat("Added "+s);
 				int amt = UnityEngine.Random.Range(s.amountMin, 1+s.amountMax);
 				for (int i = 0; i < amt; i++) {
-					GameObject item = SBUtil.createWorldObject(s.prefab);
+					GameObject item = ObjectUtil.createWorldObject(s.prefab);
 					item.SetActive(false);
-					SBUtil.refillItem(item);
+					ObjectUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
 					//UnityEngine.Object.Destroy(item);
 				}
@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
 						i = new Item(n);
 						break;
 					case "tech":
-						i = new Item(SBUtil.getTechType(n));
+						i = new Item(SNUtil.getTechType(n));
 						break;
 					case "resource":
 						i = new Item(VanillaResources.getByName(n.ToUpperInvariant()).prefab);

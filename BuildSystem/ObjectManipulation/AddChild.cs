@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 				if (has != null)
 					return;
 			}
-			GameObject add = SBUtil.createWorldObject(id);
+			GameObject add = ObjectUtil.createWorldObject(id);
 			add.transform.parent = go.transform;
 			add.transform.localPosition = relativePos;
 			if (!string.IsNullOrEmpty(objName))

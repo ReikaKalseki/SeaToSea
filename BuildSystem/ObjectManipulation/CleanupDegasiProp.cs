@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea
 		protected override Texture2D getTexture(string name, string texType) {
 			GameObject go = Base.pieces[(int)Base.Piece.Foundation].prefab.gameObject;
 			go = go.transform.Find("models/BaseFoundationPlatform").gameObject;
-			return (Texture2D)SBUtil.extractTexture(go, texType);
+			return (Texture2D)RenderUtil.extractTexture(go, texType);
 		}
 		
 	}

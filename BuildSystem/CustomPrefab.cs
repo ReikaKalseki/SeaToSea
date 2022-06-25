@@ -102,13 +102,13 @@ namespace ReikaKalseki.SeaToSea
 				else if (prefabName == "crate") {
 					isCrate = true;
 					string techn = e.getProperty("item");
-					tech = SBUtil.getTechType(techn);
+					tech = SNUtil.getTechType(techn);
 					prefabName = GenUtil.getOrCreateCrate(tech, e.getBoolean("sealed"));
 				}
 				else if (prefabName == "databox") {
 					isDatabox = true;
 					string techn = e.getProperty("tech");
-					tech = SBUtil.getTechType(techn);
+					tech = SNUtil.getTechType(techn);
 					prefabName = GenUtil.getOrCreateDatabox(tech);
 				}
 				else if (prefabName == "pda") {
@@ -121,11 +121,11 @@ namespace ReikaKalseki.SeaToSea
 				//	prefabName = ?;
 				//	isFragment = true;
 				//	string techn = e.getProperty("type");
-				//	tech = SBUtil.getTechType(techn);
+				//	tech = SNUtil.getTechType(techn);
 				//}
 				string tech2 = e.getProperty("tech", true);
 				if (tech == TechType.None && tech2 != null && tech2 != "None") {
-					tech = SBUtil.getTechType(tech2);
+					tech = SNUtil.getTechType(tech2);
 				}
 				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations); 
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
@@ -166,10 +166,10 @@ namespace ReikaKalseki.SeaToSea
 						e.scanTime = 5;
 						PDAHandler.AddCustomScannerEntry(e);
 					}
-					SBUtil.log("Created customprefab GO template: "+key+" ["+from+"] > "+pfb);
+					SNUtil.log("Created customprefab GO template: "+key+" ["+from+"] > "+pfb);
 				}
 				else {
-					SBUtil.log("Using already-generated prefab for GO template: "+key+" > "+pfb);
+					SNUtil.log("Using already-generated prefab for GO template: "+key+" > "+pfb);
 				}
 				return pfb;
 			}
@@ -208,7 +208,7 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				catch (Exception ex) {
-					SBUtil.writeToChat("Could not rebuild manipulation from XML "+e2.Name+"/"+e2.InnerText+": "+ex);
+					SNUtil.writeToChat("Could not rebuild manipulation from XML "+e2.Name+"/"+e2.InnerText+": "+ex);
 					return null;
 				}
 			}
