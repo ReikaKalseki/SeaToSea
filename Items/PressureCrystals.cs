@@ -30,12 +30,12 @@ namespace ReikaKalseki.SeaToSea {
 			r.materials[0].SetFloat("_SpecInt", 18F);
 			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 			
-			Light l = go.AddComponent<Light>();
+			Light l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;
 			l.color = new UnityEngine.Color(1F, 0.45F, 1F);
 			l.intensity = 0.3F;
 			l.range = 4F;
-			l = go.AddComponent<Light>();
+			l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;
 			l.color = new UnityEngine.Color(1F, 0.45F, 1F);
 			l.intensity = 1.2F;

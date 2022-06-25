@@ -138,6 +138,9 @@
 			
 			This arrangement also makes the crystal fairly unstable; Careless handling can result in violent fracturing, which destroys the aforementioned structure and releases a large quantity of energy.
 		</pda>
+		<header>
+			azurite
+		</header>
 	</VENT_CRYSTAL>
 	<PLATINUM>
 		<name>
@@ -151,6 +154,9 @@
 			
 			The extreme rarity of this metal can be partly attributed to its high density; during planetary formation and meteoric bombardment, it sinks to the core, leaving only traces in the crust. What little is left further settles to the lowest layers of the sediment, only becoming available via excavation or other disturbances to said sediment.
 		</pda>
+		<header>
+			platinum
+		</header>
 	</PLATINUM>
 	<PRESSURE_CRYSTALS>
 		<name>
@@ -166,18 +172,27 @@
 			
 			These deposits, due to the nature of the environment in which they form, are extremely dense, hard, and resistant to compressive forces. If integrated into another substrate, they can massively increase that material's mechanical strength.
 		</pda>
+		<header>
+			voidspike
+		</header>
 	</PRESSURE_CRYSTALS>
 	<PHASE_CRYSTAL>
 		<name>
 			Avolite
 		</name>
 		<desc>
-			An integral part of a phase gate, allowing for the high-level manipulation of space and time.
-			These crystals are not fully understood, but are known to only form in deep space.
+			An integral part of ship drives and phase gates. These crystals are not fully understood, but are known to only form in deep space.
 		</desc>
 		<pda>
+			Avolite is an extremely rare crystal with extraordinary physical properties, the underlying mechanisms of which are very poorly understood, to the point where in eras past its properties would have been ascribed to theological origins and perhaps even formed the basis of primitive religions.
 			
+			This mineral demonstrates behavior analogous to the piezoelectric effect, except on a far larger scale, dragging spacetime itself as it warps when subjected to electromagnetic fields.
+			
+			This ability to manipulate space and time makes these crystals are an integral part of both interstellar propulsion systems and phase gates, and as a result Avolite is one of the most prized minerals in existence.
 		</pda>
+		<header>
+			avolite
+		</header>
 	</PHASE_CRYSTAL>
 	<IRIDIUM>
 		<name>
@@ -189,6 +204,9 @@
 		<pda>
 			Iridium is not typically present in detectable quantities in planetary crusts, instead often only being found in meteorite deposits. High concentrations of this rare and dense metal are often indicators that the area is geologically linked with such an impactor.
 		</pda>
+		<header>
+			iridium
+		</header>
 	</IRIDIUM>
 	<ALKALI_PLANT>
 		<name>

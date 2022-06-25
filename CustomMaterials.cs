@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 				mappings[m] = item;
 				item.Patch();	
-				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2);
+				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2, e.getField<string>("header"));
 				SNUtil.log(" > "+item);
 			}
 		}

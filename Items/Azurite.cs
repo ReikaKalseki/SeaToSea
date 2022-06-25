@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<AzuriteTag>();
 			
-			Light l = go.AddComponent<Light>();
+			Light l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;
 			l.color = new UnityEngine.Color(0F, 0.65F, 1F);
 			l.intensity = 0.9F;

@@ -21,6 +21,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.Batch).ClassID;
 		private static readonly float FLOATER_BASE_SCALE = 0.12F;
 		
+		private static readonly OreSpawner ORE_SPAWNER = new OreSpawner();
+		
 		private static readonly Spike[][] spikes = new Spike[][]{
 			createSpikes(true),
 			createSpikes(false),
@@ -62,6 +64,8 @@ namespace ReikaKalseki.SeaToSea
 			oreChoices.addEntry(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
 			oreChoices.addEntry(new OreType(VanillaResources.LARGE_QUARTZ.prefab), 10);
 			oreChoices.addEntry(new OreType(VanillaResources.URANIUM.prefab, 0, -0.04), 5);
+			
+			ORE_SPAWNER.Patch();
 		}
 		
 		public static bool isSpike(string pfb) {
@@ -257,12 +261,10 @@ namespace ReikaKalseki.SeaToSea
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
-						GameObject go = spawner(ore.ore);
-						bool large = ore.ore == VanillaResources.LARGE_QUARTZ.prefab || ore.ore == VanillaResources.LARGE_DIAMOND.prefab;
-						pos += Vector3.up*(float)(ore.objOffset);
+						GameObject go = spawner(ore.isLarge ? ore.ore : ORE_SPAWNER.ClassID);
 						go.transform.position = pos;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
-						if (!large) {
+						if (!ore.isLarge) {
 							Pickupable p = go.EnsureComponent<Pickupable>();
 							p.isPickupable = true;
 							//p.SetTechTypeOverride();
@@ -343,15 +345,97 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public sealed class TemporaryOrePrefab : GenUtil.CustomPrefabImpl {
-	       
-			internal TemporaryOrePrefab(string template) : base("regenerating_"+template, template) {
+		public sealed class OreSpawner : Spawnable {
+	        
+	        public OreSpawner() : base("voidspike_ore_spawner", "", "") {
 				
-		    }
-	
-			public override void prepareGameObject(GameObject go, Renderer r) {
+	        }
 			
+	        public override sealed GameObject GetGameObject() {
+				GameObject go = new GameObject();
+				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
+				go.EnsureComponent<OreSpawnerController>().speed = UnityEngine.Random.Range(0.5F, 2F);
+				return go;
+	        }
+			
+		}
+		
+		class OreSpawnerController : MonoBehaviour {
+			
+			internal float speed = 0;
+			
+			private Transform currentOre;
+			private float despawnTime = 0;
+			private float nextTime = 0;
+			private float lastSpawnTime;
+			
+			private Renderer[] currentRenderers = null;
+			
+			void Start() {
+				if (speed <= 0.1) {
+					speed = UnityEngine.Random.Range(0.5F, 2F);
+				}
+				currentOre = transform.Find("spawned_ore");
 			}
+			
+			void Update() {
+				float time = DayNightCycle.main.timePassedAsFloat;
+				if (currentOre != null) {
+					float f = (float)MathUtil.linterpolate(time, lastSpawnTime, despawnTime, 0, 1);
+					if (f >= 1) {
+						UnityEngine.Object.Destroy(currentOre.gameObject);
+						currentOre = null;
+						currentRenderers = null;
+					}
+					else {
+						foreach (Renderer r in currentRenderers) {
+							foreach (Material m in r.materials) {
+								m.SetFloat(ShaderPropertyID._Built, 0.75F-f*0.35F);
+							}
+						}
+					}
+				}
+				else if (time >= nextTime) {
+					spawn(time);
+				}
+			}
+			
+			private GameObject spawn(float time) {
+				OreType ore = oreChoices.getRandomEntry();
+				while (ore.isLarge || transform.position.y > ore.maxY) {
+					ore = oreChoices.getRandomEntry();
+				}
+										
+				GameObject go = ObjectUtil.createWorldObject(ore.ore);
+				go.transform.position = gameObject.transform.position+Vector3.up*(float)(ore.objOffset);
+				go.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
+				go.name = "spawned_ore";
+				go.transform.parent = gameObject.transform;
+				
+				currentRenderers = currentOre.gameObject.GetComponentsInChildren<Renderer>();
+				foreach (Renderer r in currentRenderers) {
+					foreach (Material m in r.materials) {
+						m.EnableKeyword("FX_BUILDING");
+						//material2.SetTexture(ShaderPropertyID._EmissiveTex, this._EmissiveTex);
+						m.SetFloat(ShaderPropertyID._Cutoff, 0.5F);
+						m.SetColor(ShaderPropertyID._BorderColor, new Color(0f, 0f, 0f, 1f));
+						m.SetVector(ShaderPropertyID._BuildParams, new Vector4(2f, 0.7f, 3f, -0.5f)); //last arg is speed, +ve is down
+						m.SetFloat(ShaderPropertyID._NoiseStr, 0.25f);
+						m.SetFloat(ShaderPropertyID._NoiseThickness, 0.49f);
+						//m.SetFloat(ShaderPropertyID._BuildLinear, 1f);
+						m.SetFloat(ShaderPropertyID._MyCullVariable, 0f);
+					}
+				}
+				
+				//SNUtil.writeToChat("Spawned @ "+gameObject.transform.position+": "+ore.ore);
+				
+				currentOre = go.transform;
+				despawnTime = time+UnityEngine.Random.Range(15F, 30F)/speed;
+				nextTime = despawnTime+UnityEngine.Random.Range(30F, 90F)/speed;
+				lastSpawnTime = time;
+				return go;
+			}
+			
 		}
 		
 		public sealed class SpikePrefab : LargeWorldLevelPrefab {
@@ -429,15 +513,17 @@ namespace ReikaKalseki.SeaToSea
 		private class OreType {
 			
 			internal readonly string ore;
-			internal readonly TemporaryOrePrefab prefab;
 			internal readonly double maxY;
 			internal readonly double objOffset;
 			
+			internal readonly bool isLarge;
+			
 			internal OreType(string s, double depth = 0, double off = 0) {
 				ore = s;
-				prefab = null;//(TemporaryOrePrefab)new TemporaryOrePrefab(s).registerPrefab();
 				maxY = -depth;
 				objOffset = off;
+				
+				isLarge = s == VanillaResources.LARGE_QUARTZ.prefab || s == VanillaResources.LARGE_DIAMOND.prefab;
 			}
 			
 		}
