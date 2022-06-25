@@ -33,15 +33,6 @@ namespace ReikaKalseki.SeaToSea
 			};
 		}
 		
-		private static List<LargeWorldLevelPrefab> createPrefabCopies(VanillaFlora plant, LargeWorldEntity.CellLevel lvl) {
-			SBUtil.log("Creating void variants of plant "+plant.getName());
-			List<LargeWorldLevelPrefab> li = new List<LargeWorldLevelPrefab>();
-			foreach (string pfb in plant.getPrefabs(true, false)) { //lit, unlit
-				li.Add(createPrefabCopy(pfb, lvl));
-			}
-			return li;
-		}
-		
 		private static LargeWorldLevelPrefab createPrefabCopy(string template, LargeWorldEntity.CellLevel lvl) {
 			LargeWorldLevelPrefab get = prefabCache.ContainsKey(template) ? prefabCache[template] : null;
 			if (get == null) {
@@ -52,19 +43,16 @@ namespace ReikaKalseki.SeaToSea
 			return get;
 		}
 		
-		private static readonly PodPrefab[] podPrefabs = new PodPrefab[]{
-			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL1).registerPrefab(),
-			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_SMALL2).registerPrefab(),
-			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_MED1).registerPrefab(),
-			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_MED2).registerPrefab(),
-			(PodPrefab)new PodPrefab(VanillaFlora.ANCHOR_POD_LARGE).registerPrefab(),
+		private static readonly VanillaFlora[] podPrefabs = new VanillaFlora[]{
+			VanillaFlora.ANCHOR_POD_SMALL1,
+			VanillaFlora.ANCHOR_POD_SMALL2,
+			VanillaFlora.ANCHOR_POD_MED1,
+			VanillaFlora.ANCHOR_POD_MED2,
+			VanillaFlora.ANCHOR_POD_LARGE,
 		};
 		
 		static VoidSpike() {	
-			foreach (VanillaFlora vf in VoidChunkPlants.getPlants()) {
-				createPrefabCopies(vf, LargeWorldEntity.CellLevel.Batch);
-			}
-			createPrefabCopies(VanillaFlora.DEEP_MUSHROOM, LargeWorldEntity.CellLevel.Global);
+		
 		}
 		
 		public static void register() {			
@@ -269,8 +257,8 @@ namespace ReikaKalseki.SeaToSea
 						while (pos.y > ore.maxY) {
 							ore = oreChoices.getRandomEntry();
 						}
-						GameObject go = spawner(ore.prefab.baseTemplate.prefab);
-						bool large = ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_QUARTZ.prefab || ore.prefab.baseTemplate.prefab == VanillaResources.LARGE_DIAMOND.prefab;
+						GameObject go = spawner(ore.ore);
+						bool large = ore.ore == VanillaResources.LARGE_QUARTZ.prefab || ore.ore == VanillaResources.LARGE_DIAMOND.prefab;
 						pos += Vector3.up*(float)(ore.objOffset);
 						go.transform.position = pos;
 						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
@@ -300,11 +288,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			int min = allowSmallSize ? 0 : (allowMediumSize ? 2 : podPrefabs.Length-1);
 			int max = allowLargeSize ? podPrefabs.Length : (allowMediumSize ? podPrefabs.Length-1 : 2);
-			PodPrefab p = podPrefabs[UnityEngine.Random.Range(min, max)];
-			GameObject go = spawner(p.root.getRandomPrefab(true));
+			VanillaFlora p = podPrefabs[UnityEngine.Random.Range(min, max)];
+			GameObject go = spawner(p.getRandomPrefab(true));
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*-0.4F*scale, 0.2F);
 			go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
-			setPlantHeight(position.y, p.root, go);
+			setPlantHeight(position.y, p, go);
 			return go;
 		}
 		
@@ -355,27 +343,14 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public sealed class PodPrefab : LargeWorldLevelPrefab {
-			
-			internal readonly VanillaFlora root;
+		public sealed class TemporaryOrePrefab : GenUtil.CustomPrefabImpl {
 	       
-			internal PodPrefab(VanillaFlora template) : base(template.getRandomPrefab(true), LargeWorldEntity.CellLevel.Global) {
-				root = template;
-		    }
-	
-			public override void prepareGameObject(GameObject go, Renderer r) {
-				base.prepareGameObject(go, r);
-			}
-		}
-		
-		public sealed class TemporaryOrePrefab : LargeWorldLevelPrefab {
-	       
-			internal TemporaryOrePrefab(string template) : base(template, LargeWorldEntity.CellLevel.Medium) {
+			internal TemporaryOrePrefab(string template) : base("regenerating_"+template, template) {
 				
 		    }
 	
 			public override void prepareGameObject(GameObject go, Renderer r) {
-				base.prepareGameObject(go, r);
+			
 			}
 		}
 		
@@ -453,12 +428,14 @@ namespace ReikaKalseki.SeaToSea
 		
 		private class OreType {
 			
+			internal readonly string ore;
 			internal readonly TemporaryOrePrefab prefab;
 			internal readonly double maxY;
 			internal readonly double objOffset;
 			
 			internal OreType(string s, double depth = 0, double off = 0) {
-				prefab = (TemporaryOrePrefab)new TemporaryOrePrefab(s).registerPrefab();
+				ore = s;
+				prefab = null;//(TemporaryOrePrefab)new TemporaryOrePrefab(s).registerPrefab();
 				maxY = -depth;
 				objOffset = off;
 			}

@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome { //FIXME: 4. custom levi 5. surface biome pda prompts(is nonissue, given that this is late game?)
+	public class VoidSpikesBiome { //FIXME: 3. regenning ore 4. custom levi
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly Vector3 voidEndpoint500m = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
 		private static readonly Vector3 voidEndpoint900m = voidEndpoint500m+(end900m-end500m); //3225, -950, -2750
 		
-		public static readonly float biomeVolumeRadius = 250;
+		public static readonly float biomeVolumeRadius = 200;
 		
 		public static readonly string biomeName = "Void_Spikes";
 		
@@ -109,13 +109,15 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void tickPlayer(Player ep) {
 			Vector3 pos = ep.transform.position;
-			double dist = getDistanceToBiome(pos);/*
+			double dist = getDistanceToBiome(pos);
+			//SBUtil.writeToChat("Dist @ "+pos+" = "+dist);
+			/*
 			if (dist < biomeVolumeRadius+75) {
 				while (AtmosphereDirector.main.priorityQueue.Count > 0)
 					AtmosphereDirector.main.PopSettings(AtmosphereDirector.main.priorityQueue[AtmosphereDirector.main.priorityQueue.Count-1]);
 				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
 			}*/
-		   	if (Vector3.Distance(pos, end500m) <= 100) {
+		   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
 				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
 		   			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
 		   		}
@@ -128,7 +130,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else {
 					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
-					if (dist <= f1+20) {
+					if (dist <= f1) {
 						SBUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
 			    		SBUtil.log("Teleported player to biome");
 					}
@@ -159,7 +161,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public bool isInBiome(Vector3 vec) {
 			//SBUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return getDistanceToBiome(vec) <= biomeVolumeRadius;
+			return getDistanceToBiome(vec) <= biomeVolumeRadius+150;
 		}
 		
 		public double getDistanceToBiome(Vector3 vec) {

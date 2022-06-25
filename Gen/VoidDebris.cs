@@ -56,6 +56,7 @@ namespace ReikaKalseki.SeaToSea
 			VoidSpikesBiome.checkAndAddWaveBob(go, true);
 		}
 		
+		[Obsolete]
 		public GameObject spawnPDA() {
 			GameObject pda = spawner(SignalManager.getSignal("voidpod").signalHolder.ClassID);
 			pda.transform.rotation = UnityEngine.Random.rotationUniform;
