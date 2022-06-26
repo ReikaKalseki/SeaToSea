@@ -37,6 +37,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
 		private readonly AtmoFX atmoFX = new AtmoFX();
+		private readonly VoidSpikeLeviathan leviathan = new VoidSpikeLeviathan();
 		
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
@@ -90,8 +91,10 @@ namespace ReikaKalseki.SeaToSea {
 			signal.addWorldgen(UnityEngine.Random.rotationUniform);
 			
 			atmoFX.Patch();
+			leviathan.Patch();
 			
 			GenUtil.registerWorldgen(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
+			GenUtil.registerWorldgen(leviathan.ClassID, end900m, Vector3.zero);
 			
 			for (float i = -100; i <= length+100; i += biomeVolumeRadius*0.5F) {
 				addAtmoFX(end500m+(end900m-end500m).normalized*i);
@@ -245,6 +248,37 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
 			vol.overrideBiome = VoidSpikesBiome.biomeName;
 		}
+	}
+	
+	class VoidSpikeLeviathan : GenUtil.CustomPrefabImpl {
+	       
+		internal VoidSpikeLeviathan() : base("VoidSpikeLeviathan", VanillaCreatures.RIVERPROWLER.prefab) {
+			
+		}
+	
+		public override void prepareGameObject(GameObject go, Renderer r) {
+			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
+			lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
+			
+			SpineEel sp = go.GetComponent<SpineEel>();
+			//sp.liveMixin.maxHealth = 20000;
+			sp.Aggression.Add(50);
+			go.EnsureComponent<VoidLeviAI>();//.loadFrom(sp);
+			//UnityEngine.Object.Destroy(sp);
+			
+		}
+			
+		public override string getTextureFolder() {
+			return "";
+		}
+	}
+		
+	class VoidLeviAI : MonoBehaviour {
+			
+		void Update() {
+			gameObject.transform.localScale = Vector3.one*20;
+		}
+		
 	}
 	/*
 	class DestroyDetector : MonoBehaviour {

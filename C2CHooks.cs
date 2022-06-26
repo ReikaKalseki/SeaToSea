@@ -120,6 +120,11 @@ namespace ReikaKalseki.SeaToSea {
 					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
+	    	foreach (Renderer r in p.gameObject.GetComponentsInChildren<Renderer>()) {
+				foreach (Material m in r.materials) {
+					m.DisableKeyword("FX_BUILDING");
+				}
+			}
 	    }
     
 	    public static float getReachDistance() {
