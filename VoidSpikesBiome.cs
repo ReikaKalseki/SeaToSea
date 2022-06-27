@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome { //FIXME: 3. regenning ore 4. custom levi
+	public class VoidSpikesBiome { //FIXME: 2. signal "sticking" 3. regenning ore 4. custom levi
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -32,12 +32,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly string biomeName = "Void_Spikes";
 		
-		public static readonly int CLUSTER_COUNT = 88;
+		public static readonly int CLUSTER_COUNT = 88*0+1;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
 		private readonly AtmoFX atmoFX = new AtmoFX();
-		private readonly VoidSpikeLeviathan leviathan = new VoidSpikeLeviathan();
 		
 		private readonly VoidSpikes generator;
 		private readonly VoidDebris debris;
@@ -91,10 +90,9 @@ namespace ReikaKalseki.SeaToSea {
 			signal.addWorldgen(UnityEngine.Random.rotationUniform);
 			
 			atmoFX.Patch();
-			leviathan.Patch();
 			
 			GenUtil.registerWorldgen(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
-			GenUtil.registerWorldgen(leviathan.ClassID, end900m, Vector3.zero);
+			//GenUtil.registerWorldgen(leviathan.ClassID, end900m, Vector3.zero);
 			
 			for (float i = -100; i <= length+100; i += biomeVolumeRadius*0.5F) {
 				addAtmoFX(end500m+(end900m-end500m).normalized*i);
@@ -180,9 +178,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Vector3 getSpikeLocation() {
 			Vector3 init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
-			if (UnityEngine.Random.Range(0, 7) == 0)
+			if (UnityEngine.Random.Range(0, 7) >= 0)
 				init = end900m;
 			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
+		}
+		
+		public bool isPlayerInLeviathanZone() {
+			return Vector3.Distance(Player.main.transform.position, end900m) <= biomeVolumeRadius*1.5F;
 		}
 		
 		public static void checkAndAddWaveBob(SkyApplier c) {
@@ -250,105 +252,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	class VoidSpikeLeviathan : GenUtil.CustomPrefabImpl {
-	       
-		internal VoidSpikeLeviathan() : base("VoidSpikeLeviathan", VanillaCreatures.RIVERPROWLER.prefab) {
-			
-		}
-	
-		public override void prepareGameObject(GameObject go, Renderer r) {
-			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
-			lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
-			
-			SpineEel sp = go.GetComponent<SpineEel>();
-			//sp.liveMixin.maxHealth = 20000;
-			sp.Aggression.Add(50);
-			go.EnsureComponent<VoidLeviAI>();//.loadFrom(sp);
-			//UnityEngine.Object.Destroy(sp);
-			
-		}
-			
-		public override string getTextureFolder() {
-			return "";
-		}
-	}
+	public class VoidSpikeLeviathan : MonoBehaviour {
 		
-	class VoidLeviAI : MonoBehaviour {
+		public void init(GameObject go) {
 			
-		void Update() {
-			gameObject.transform.localScale = Vector3.one*20;
 		}
 		
 	}
-	/*
-	class DestroyDetector : MonoBehaviour {
-		
-		void OnDestroy() {
-			SNUtil.log("Destroying void GO "+gameObject+":");
-			SNUtil.log(System.Environment.StackTrace);
-		}
-		
-	}*/
-		/*
-	static class SpikeCache {
-		
-		internal static SpikeStatus[] data = new SpikeStatus[VoidSpikesBiome.CLUSTER_COUNT];
-			
-		static SpikeCache() {
-			for (int i = 0; i < data.Length; i++) {
-				data[i] = new SpikeStatus();
-			}
-		}
-		
-		internal static void save() {
-			string path = getSaveFile();
-			XmlDocument doc = new XmlDocument();
-			XmlElement rootnode = doc.CreateElement("Root");
-			doc.AppendChild(rootnode);
-			for (int i = 0; i < data.Length; i++) {
-				XmlElement e = doc.CreateElement("spike");
-				data[i].saveToXML(e);
-				e.addProperty("index", i);
-				doc.DocumentElement.AppendChild(e);
-			}
-			doc.Save(path);
-		}
-		
-		internal static void load() {
-			string path = getSaveFile();
-			if (!File.Exists(path))
-				return;
-			XmlDocument doc = new XmlDocument();
-			doc.Load(path);
-			XmlElement rootnode = doc.DocumentElement;
-			foreach (XmlElement e in rootnode.ChildNodes) {
-				data[e.getInt("index", -1, false)].loadFromXML(e);
-			}
-		}
-		
-		private static string getSaveFile() {
-			string folder = Path.Combine(SaveUtils.GetCurrentSaveDataDir(), "SeaToSea_Data");
-			Directory.CreateDirectory(folder);
-			return Path.Combine(folder, "voidspikes.xml");
-		}
-		
-	}
-	
-	class SpikeStatus {
-		
-		internal bool generated = false;
-		internal Vector3? rootPosition;
-		
-		internal void saveToXML(XmlElement e) {
-			if (rootPosition != null && rootPosition.HasValue)
-				e.addProperty("position", rootPosition.Value);
-			e.addProperty("generated", generated);
-		}
-		
-		internal void loadFromXML(XmlElement e) {
-			generated = e.getBoolean("generated");
-			rootPosition = e.getVector("position", true);
-		}
-		
-	}*/
 }

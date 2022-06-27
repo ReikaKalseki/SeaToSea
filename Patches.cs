@@ -100,6 +100,54 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(VoidGhostLeviathansSpawner))]
+	[HarmonyPatch("UpdateSpawn")]
+	public static class VoidLeviathanTypeHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "VoidGhostLeviathansSpawner", "ghostLeviathanPrefab")-1;
+				while (!(codes[idx].opcode == OpCodes.Call && ((MethodInfo)codes[idx].operand).Name == "Instantiate"))
+					codes.RemoveAt(idx);
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getVoidLeviathan", false, typeof(VoidGhostLeviathansSpawner), typeof(Vector3));
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_2));
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				//FileLog.Log("levitype Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(GhostLeviatanVoid))]
+	[HarmonyPatch("UpdateVoidBehaviour")]
+	public static class VoidLeviathanBehaviorHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickVoidLeviathan", false, typeof(GhostLeviatanVoid)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	[HarmonyPatch(typeof(SeaMoth))]
 	[HarmonyPatch("OnUpgradeModuleChange")]
 	public static class SeamothModuleHook {
@@ -782,7 +830,7 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
-	}*/
+	}*//*
 	
 	[HarmonyPatch(typeof(BatchCells))]
 	[HarmonyPatch("Add")]
@@ -869,7 +917,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}
+	}*/
 	
 	[HarmonyPatch(typeof(LargeWorld), "GetBiome", new Type[]{typeof(Vector3)})]
 	public static class BiomeFetchHook {
@@ -917,7 +965,7 @@ namespace ReikaKalseki.SeaToSea {
 	}
 	
 	static class PatchLib {
-	
+	/*
 		internal static void patchCellGet(List<CodeInstruction> codes) {
 			for (int i = 0; i < codes.Count; i++) {
 				if (codes[i].opcode == OpCodes.Call) {
@@ -944,7 +992,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-		}
+		}*/
 		
 	}
 }

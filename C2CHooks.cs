@@ -346,6 +346,44 @@ namespace ReikaKalseki.SeaToSea {
 	    	return true;
 	    }
 	    
+	    public static GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
+	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
+			 	GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
+			 	mdl.transform.localPosition = Vector3.zero;
+	    		Renderer r = go.GetComponentInChildren<Renderer>();
+	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLeviathan");
+	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
+	    	}
+	    	return go;
+	    }
+	    
+	    public static void tickVoidLeviathan(GhostLeviatanVoid gv) {
+			Player main = Player.main;
+			VoidGhostLeviathansSpawner main2 = VoidGhostLeviathansSpawner.main;
+			if (!main || Vector3.Distance(main.transform.position, gv.transform.position) > gv.maxDistanceToPlayer) {
+				UnityEngine.Object.Destroy(gv.gameObject);
+				return;
+			}
+			VoidSpikeLeviathan spikeType = gv.gameObject.GetComponentInChildren<VoidSpikeLeviathan>();
+			bool spike = spikeType != null;
+			bool zone = VoidSpikesBiome.instance.isPlayerInLeviathanZone();
+			bool validVoid = spike ? zone : (!zone && main2.IsPlayerInVoid());
+			bool flag = main2 && validVoid;
+			gv.updateBehaviour = flag;
+			gv.AllowCreatureUpdates(gv.updateBehaviour);
+			if (flag || (spike && Vector3.Distance(main.transform.position, gv.transform.position) <= 50)) {
+				gv.Aggression.Add(spike ? 2.5F : 1F);
+				gv.lastTarget.target = main.gameObject;
+			}
+			else {
+				Vector3 a = gv.transform.position - main.transform.position;
+				Vector3 vector = gv.transform.position + a * gv.maxDistanceToPlayer;
+				vector.y = Mathf.Min(vector.y, -50f);
+				gv.swimBehaviour.SwimTo(vector, 30f);
+			}
+	    }
+	    
 	    private static double getAvoidanceChance(Player ep, SeaMoth sm, bool edge, bool far) {
 	    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
 	    	if (pinged != null && pinged.getTimeSince() <= 10000)

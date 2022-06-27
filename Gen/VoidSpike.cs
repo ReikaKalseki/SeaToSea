@@ -351,11 +351,14 @@ namespace ReikaKalseki.SeaToSea
 				
 	        }
 			
-	        public override sealed GameObject GetGameObject() {
+	        public override GameObject GetGameObject() {
 				GameObject go = new GameObject();
 				go.name = "Void Spike Ore Spawner";
+				go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+				go.EnsureComponent<TechTag>().type = TechType;
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
 				go.EnsureComponent<OreSpawnerController>().speed = UnityEngine.Random.Range(0.5F, 2F);
+				SNUtil.writeToChat("Fetching spawner prefab");
 				return go;
 	        }
 			
@@ -368,7 +371,9 @@ namespace ReikaKalseki.SeaToSea
 			private Transform currentOre;
 			private float despawnTime = 0;
 			private float nextTime = 0;
-			private float lastSpawnTime;
+			private float lastSpawnTime = 0;
+			
+			private bool hasSpawned = false;
 			
 			private Renderer[] currentRenderers = null;
 			
@@ -378,23 +383,33 @@ namespace ReikaKalseki.SeaToSea
 			private static readonly float GAP_MAX = 60;
 			
 			void Start() {
+				//SNUtil.writeToChat("Started ore spawner @ "+transform.position);
 				if (speed <= 0.1) {
 					speed = UnityEngine.Random.Range(0.5F, 2F);
 				}
-				setCurrentOre(findOldOre());//transform.Find("spawned_ore");
-				float time = DayNightCycle.main.timePassedAsFloat;
-				lastSpawnTime = time;
-				if (currentOre == null) {
-					nextTime = time+UnityEngine.Random.Range(GAP_MIN, GAP_MAX)/speed;
+				if (currentOre == null || !currentOre.gameObject.activeInHierarchy) {
+					Transform t = findOldOre();
+					SNUtil.writeToChat("Spawner @ "+transform.position+" found: "+(t == null ? "none" : ""+t.gameObject.GetComponentInParent<Pickupable>().GetTechType()));
+					setCurrentOre(t);//transform.Find("spawned_ore");
 				}
-				else {
-					despawnTime = time+UnityEngine.Random.Range(LIFESPAN_MIN, LIFESPAN_MAX)/speed;
+				if (lastSpawnTime <= 0) {
+					float time = DayNightCycle.main.timePassedAsFloat;
+					lastSpawnTime = time;
+					if (currentOre == null) {
+						nextTime = time+UnityEngine.Random.Range(GAP_MIN, GAP_MAX)/speed;
+						if (!hasSpawned)
+							nextTime *= 0.25F;
+					}
+					else {
+						despawnTime = time+UnityEngine.Random.Range(LIFESPAN_MIN, LIFESPAN_MAX)/speed;
+					}
 				}
 			}
 			
 			private Transform findOldOre() {
 				Collider[] near = Physics.OverlapSphere(gameObject.transform.position, 0.05F);
 				foreach (Collider c in near) {
+					SNUtil.writeToChat("Check "+c+" in "+c.gameObject);
 					if (c.gameObject == gameObject)
 						continue;
 					if (c.gameObject.GetComponentInParent<Pickupable>() != null)
@@ -405,6 +420,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			void Update() {
 				float time = DayNightCycle.main.timePassedAsFloat;
+				//SNUtil.writeToChat(time+": ["+currentOre+"] > "+nextTime+"/"+lastSpawnTime+" > "+despawnTime);
 				if (currentOre != null && currentOre.gameObject.activeInHierarchy) {
 					float f = (float)MathUtil.linterpolate(time, lastSpawnTime, despawnTime, 0, 1);
 					if (f >= 1) {
@@ -435,7 +451,7 @@ namespace ReikaKalseki.SeaToSea
 			private void destroyCurrent() {
 				if (currentOre == null)
 					return;
-				SNUtil.writeToChat("Deleted @ "+gameObject.transform.position+": "+currentOre.gameObject.GetComponentInParent<Pickupable>().GetTechType());
+				//SNUtil.writeToChat("Deleted @ "+gameObject.transform.position+": "+currentOre.gameObject.GetComponentInParent<Pickupable>().GetTechType());
 				UnityEngine.Object.Destroy(currentOre.gameObject);
 				currentOre = null;
 				currentRenderers = null;
@@ -469,13 +485,14 @@ namespace ReikaKalseki.SeaToSea
 						m.SetFloat(ShaderPropertyID._MyCullVariable, 0f);
 					}
 				}
-				currentOre.gameObject.EnsureComponent<OreSpawnerReference>().spawner = this;
 				
-				SNUtil.writeToChat("Spawned @ "+gameObject.transform.position+": "+go.GetComponentInChildren<Pickupable>().GetTechType());
+				//SNUtil.writeToChat("Spawned @ "+gameObject.transform.position+": "+go.GetComponentInChildren<Pickupable>().GetTechType());
 				
 				despawnTime = time+UnityEngine.Random.Range(LIFESPAN_MIN, LIFESPAN_MAX)/speed;
 				nextTime = despawnTime+UnityEngine.Random.Range(GAP_MIN, GAP_MAX)/speed;
 				lastSpawnTime = time;
+				
+				hasSpawned = true;
 				return go;
 			}
 			
@@ -485,12 +502,6 @@ namespace ReikaKalseki.SeaToSea
 					t.gameObject.GetComponentInChildren<Pickupable>().pickedUpEvent.AddHandler(this, pp => setCurrentOre(null));
 				}
 			}
-			
-		}
-		
-		class OreSpawnerReference : MonoBehaviour {
-			
-			internal OreSpawnerController spawner;
 			
 		}
 		
@@ -528,10 +539,6 @@ namespace ReikaKalseki.SeaToSea
 					scale = gameObject.transform.localScale.x;
 				//SNUtil.log("Fixing spike colliders @ "+gameObject.transform.position+": "+scale);
 				fixColliders();
-			}
-			
-			void Update() { //TODO spawn ores
-				
 			}
 		
 			private void fixColliders() {
