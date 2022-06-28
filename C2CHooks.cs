@@ -319,8 +319,17 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    private static GameObject voidLeviathan;
+	    
+	    public static void deleteVoidLeviathan() {
+	    	voidLeviathan = null;
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone() && voidLeviathan != null && voidLeviathan.activeInHierarchy) {
+	    		return false;
+	    	}
 	    	Player ep = Player.main;
 	    	bool edge = string.Equals(biome, "void", StringComparison.OrdinalIgnoreCase);
 	    	bool far = string.IsNullOrEmpty(biome);
@@ -349,11 +358,29 @@ namespace ReikaKalseki.SeaToSea {
 	    public static GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
 	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
 	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
-			 	GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
-			 	mdl.transform.localPosition = Vector3.zero;
+			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
+			 	//mdl.transform.localPosition = Vector3.zero;
 	    		Renderer r = go.GetComponentInChildren<Renderer>();
-	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLeviathan");
+	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLeviathan", new Dictionary<int, string>(){{1, ""}});
+	    		r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
+	    		
+	    		FMODAsset bite = SeaToSeaMod.voidspikeLeviBite;
+	    		FMOD_StudioEventEmitter std = go.GetComponent<FMOD_StudioEventEmitter>();
+	    		std.asset = bite;
+	    		std.path = bite.path;
+	    		
+	    		FMODAsset chg = SeaToSeaMod.voidspikeLeviRoar;
+	    		FMOD_CustomEmitter cus = go.GetComponent<FMOD_CustomEmitter>();
+	    		cus.asset = chg;
+	    		
+	    		FMODAsset idle = SeaToSeaMod.voidspikeLeviAmbient;
+	    		FMOD_CustomLoopingEmitter loop = go.GetComponent<FMOD_CustomLoopingEmitter>();
+	    		loop.asset = idle;
+	    		FMOD_CustomLoopingEmitterWithCallback loop2 = go.GetComponent<FMOD_CustomLoopingEmitterWithCallback>();
+	    		loop2.asset = idle;
+	    		
+	    		voidLeviathan = go;
 	    	}
 	    	return go;
 	    }
@@ -363,6 +390,8 @@ namespace ReikaKalseki.SeaToSea {
 			VoidGhostLeviathansSpawner main2 = VoidGhostLeviathansSpawner.main;
 			if (!main || Vector3.Distance(main.transform.position, gv.transform.position) > gv.maxDistanceToPlayer) {
 				UnityEngine.Object.Destroy(gv.gameObject);
+				if (gv.gameObject == voidLeviathan)
+					voidLeviathan = null;
 				return;
 			}
 			VoidSpikeLeviathan spikeType = gv.gameObject.GetComponentInChildren<VoidSpikeLeviathan>();
@@ -372,6 +401,9 @@ namespace ReikaKalseki.SeaToSea {
 			bool flag = main2 && validVoid;
 			gv.updateBehaviour = flag;
 			gv.AllowCreatureUpdates(gv.updateBehaviour);
+			if (spike && UnityEngine.Random.Range(0, 100) == 0) {
+				SNUtil.playSoundAt(SeaToSeaMod.voidspikeLeviFX, gv.gameObject.transform.position);
+			}
 			if (flag || (spike && Vector3.Distance(main.transform.position, gv.transform.position) <= 50)) {
 				gv.Aggression.Add(spike ? 2.5F : 1F);
 				gv.lastTarget.target = main.gameObject;

@@ -44,6 +44,11 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenWhiteTablet;
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
+    
+    public static FMODAsset voidspikeLeviRoar;
+    public static FMODAsset voidspikeLeviBite;
+    public static FMODAsset voidspikeLeviFX;
+    public static FMODAsset voidspikeLeviAmbient;
 
     [QModPatch]
     public static void Load()
@@ -87,6 +92,11 @@ namespace ReikaKalseki.SeaToSea
 	    brokenWhiteTablet.Patch();
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
+	    
+	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
+	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
+	    voidspikeLeviAmbient = SoundManager.registerSound("voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
+	    voidspikeLeviBite = SoundManager.registerSound("voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
         addFlora();
         addItemsAndRecipes();

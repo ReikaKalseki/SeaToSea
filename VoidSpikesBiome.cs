@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly string biomeName = "Void_Spikes";
 		
-		public static readonly int CLUSTER_COUNT = 88*0+1;
+		public static readonly int CLUSTER_COUNT = 88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
@@ -178,7 +178,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Vector3 getSpikeLocation() {
 			Vector3 init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
-			if (UnityEngine.Random.Range(0, 7) >= 0)
+			if (UnityEngine.Random.Range(0, 7) == 0)
 				init = end900m;
 			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
 		}
@@ -256,6 +256,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void init(GameObject go) {
 			
+		}
+		
+		void OnDestroy() {
+			C2CHooks.deleteVoidLeviathan();
 		}
 		
 	}

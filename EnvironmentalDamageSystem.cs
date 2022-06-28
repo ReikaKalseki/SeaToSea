@@ -306,7 +306,7 @@ namespace ReikaKalseki.SeaToSea {
 			//warn.wasAtDepth = depth;
 		}
 	   
-		private void upgradeAlertSystem(RebreatherDepthWarnings warn) {
+		private void upgradeAlertSystem(RebreatherDepthWarnings warn) { //TODO better custom sounds
 	   		List<EnviroAlert> li = new List<EnviroAlert>();
 	   		foreach (RebreatherDepthWarnings.DepthAlert a in warn.alerts) {
 	   			EnviroAlert e = new EnviroAlert(a);

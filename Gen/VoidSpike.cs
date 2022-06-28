@@ -13,6 +13,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class VoidSpike : WorldGenerator {
 		
+		private static readonly HashSet<string> oreSet = new HashSet<string>();
 		private static readonly WeightedRandom<OreType> oreChoices = new WeightedRandom<OreType>();
 		
 		private static readonly Dictionary<string, LargeWorldLevelPrefab> prefabCache = new Dictionary<string, LargeWorldLevelPrefab>();
@@ -58,14 +59,19 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public static void register() {			
-			oreChoices.addEntry(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).ClassID, 825, 0.2), 150);
-			oreChoices.addEntry(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
-			oreChoices.addEntry(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
-			oreChoices.addEntry(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
-			oreChoices.addEntry(new OreType(VanillaResources.LARGE_QUARTZ.prefab), 10);
-			oreChoices.addEntry(new OreType(VanillaResources.URANIUM.prefab, 0, -0.04), 5);
+			addOre(new OreType(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).ClassID, 825, 0.2), 150);
+			addOre(new OreType(VanillaResources.QUARTZ.prefab, 0, 0.05), 100);
+			addOre(new OreType(VanillaResources.DIAMOND.prefab, 0, -0.05), 25);
+			addOre(new OreType(VanillaResources.LARGE_DIAMOND.prefab, 650), 5);
+			addOre(new OreType(VanillaResources.LARGE_QUARTZ.prefab), 10);
+			addOre(new OreType(VanillaResources.URANIUM.prefab, 0, -0.04), 5);
 			
 			ORE_SPAWNER.Patch();
+		}
+		
+		private static void addOre(OreType ore, double wt) {
+			oreChoices.addEntry(ore, wt);
+			oreSet.Add(ore.ore);
 		}
 		
 		public static bool isSpike(string pfb) {
@@ -200,7 +206,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 			
 		internal void generateSpike() {
-			type = spikes[UnityEngine.Random.Range(0, spikes.Length)][isAux ? 1 : 0];
+			type = spikes[isAux ? 1 : 0][UnityEngine.Random.Range(0, spikes.Length)];
 			spike = spawner(type.prefab.ClassID);
 			spike.GetComponent<SpikeHook>().scale = scale;
 			spike.transform.position = position;
@@ -358,7 +364,7 @@ namespace ReikaKalseki.SeaToSea
 				go.EnsureComponent<TechTag>().type = TechType;
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
 				go.EnsureComponent<OreSpawnerController>().speed = UnityEngine.Random.Range(0.5F, 2F);
-				SNUtil.writeToChat("Fetching spawner prefab");
+				//SNUtil.writeToChat("Fetching spawner prefab");
 				return go;
 	        }
 			
@@ -388,9 +394,8 @@ namespace ReikaKalseki.SeaToSea
 					speed = UnityEngine.Random.Range(0.5F, 2F);
 				}
 				if (currentOre == null || !currentOre.gameObject.activeInHierarchy) {
-					Transform t = findOldOre();
-					SNUtil.writeToChat("Spawner @ "+transform.position+" found: "+(t == null ? "none" : ""+t.gameObject.GetComponentInParent<Pickupable>().GetTechType()));
-					setCurrentOre(t);//transform.Find("spawned_ore");
+					findOldOre();
+					//SNUtil.writeToChat("Spawner @ "+transform.position+" found: "+(currentOre == null ? "none" : ""+currentOre.gameObject.GetComponentInParent<Pickupable>().GetTechType()));
 				}
 				if (lastSpawnTime <= 0) {
 					float time = DayNightCycle.main.timePassedAsFloat;
@@ -406,16 +411,22 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			private Transform findOldOre() {
-				Collider[] near = Physics.OverlapSphere(gameObject.transform.position, 0.05F);
+			private void findOldOre() {
+				Collider[] near = Physics.OverlapSphere(gameObject.transform.position, 0.1F);
 				foreach (Collider c in near) {
-					SNUtil.writeToChat("Check "+c+" in "+c.gameObject);
-					if (c.gameObject == gameObject)
+					//SNUtil.writeToChat("Check "+c+" in "+c.gameObject);
+					if (c.gameObject == null || c.gameObject == gameObject) {
 						continue;
-					if (c.gameObject.GetComponentInParent<Pickupable>() != null)
-						return c.gameObject.transform;
+					}
+					Pickupable p = c.gameObject.GetComponentInParent<Pickupable>();
+					PrefabIdentifier i = c.gameObject.GetComponentInParent<PrefabIdentifier>();
+					if (p != null && i != null && VoidSpike.oreSet.Contains(i.classId)) {
+						if (currentOre == null)
+							setCurrentOre(c.gameObject.transform);
+						else
+							UnityEngine.Object.Destroy(c.gameObject);
+					}
 				}
-				return null;
 			}
 			
 			void Update() {
