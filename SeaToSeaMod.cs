@@ -271,15 +271,24 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
+        RecipeUtil.addIngredient(TechType.Rebreather, TechType.Titanium, 3);
+        RecipeUtil.addIngredient(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
+        RecipeUtil.addIngredient(TechType.Rebreather, TechType.EnameledGlass, 1);
+        RecipeUtil.removeIngredient(TechType.Rebreather, TechType.WiringKit);
+        
         RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
+        
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
         RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);
+        
         RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
+        
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
         RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        
         RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
         RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
         RecipeUtil.addIngredient(TechType.ExoHullModule1, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
@@ -287,9 +296,11 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Titanium);
+        
         RecipeUtil.addIngredient(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
+        
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
         //RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);

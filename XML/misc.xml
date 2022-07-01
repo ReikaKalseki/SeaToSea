@@ -4,10 +4,10 @@
 		
 	</name>
 	<desc>
-		Warning: Passing 500 meters. Gaseous respiration ineffective.
+		Warning: Passing 500 meters. Extreme environmental pressure detected. Oxygen consumption at maximum tolerable level.
 	</desc>
 	<pda>
-		Sounds/500mwarn.ogg
+		Sounds/500mwarn-v2.ogg
 	</pda>
   </deepair>
   <lrpoison>
@@ -15,10 +15,10 @@
 		
 	</name>
 	<desc>
-		Warning: Entering toxic environment. A more impermeable suit is recommended to prevent rapid incapacitation.
+		Emergency: Chemical trauma imminent. Evacuate this region immediately, or fabricate chemical shielding.
 	</desc>
 	<pda>
-		Sounds/lrpoisonwarn.ogg
+		Sounds/lrpoisonwarn-v2.ogg
 	</pda>
   </lrpoison>
   <voidspikeenter>
