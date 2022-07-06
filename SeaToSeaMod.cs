@@ -35,6 +35,7 @@ namespace ReikaKalseki.SeaToSea
     public static Bioprocessor processor;
     
     public static SignalManager.ModSignal treaderSignal;
+    public static SignalManager.ModSignal voidSpikeDirectionHint;
     
     public static Story.StoryGoal crashMesaRadio;
     public static Story.StoryGoal voidSpikePDA;
@@ -114,6 +115,12 @@ namespace ReikaKalseki.SeaToSea
 		treaderSignal.addRadioTrigger(e.getField<string>("sound"));
 		treaderSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1239, -360, -1193));
 		treaderSignal.addWorldgen();
+		
+        e = SeaToSeaMod.signalLocale.getEntry("voidspike");
+		voidSpikeDirectionHint = SignalManager.createSignal(e);
+		voidSpikeDirectionHint.setStoryGate(PDAManager.getPage("voidpod").id);
+		voidSpikeDirectionHint.register("4c10bbd6-5100-4632-962e-69306b09222f", SpriteManager.Get(SpriteManager.Group.Pings, "Sunbeam"), VoidSpikesBiome.end500m);
+		voidSpikeDirectionHint.addWorldgen();
 		
 		e = pdaLocale.getEntry("crashmesahint");
 		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
@@ -212,7 +219,21 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SNUtil.playSound);
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("execTemp", DebugExec.tempCode);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
+    }
+    
+    private static void unlockSignal(string name) {
+    	switch(name) {
+    		case "treaderpod":
+    			treaderSignal.fireRadio();
+    			break;
+    		case "crashmesa":
+    			Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
+    			break;
+    		case "voidpod":
+    			VoidSpikesBiome.instance.fireRadio();
+    			break;
+    	}
     }
     
     private static void addItemsAndRecipes() {

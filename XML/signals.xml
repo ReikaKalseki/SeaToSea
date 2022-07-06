@@ -16,6 +16,20 @@
 		Sounds/radio_voidsignal.ogg
 	</sound>
   </voidpod>
+  <voidspike>
+	<name>
+		Location
+	</name>
+	<desc>
+		Unknown Subsurface Contact (500m)
+	</desc>
+	<pda>
+		
+	</pda>
+	<sound>
+		
+	</sound>
+  </voidspike>
   <treaderpod>
 	<name>
 		Signal

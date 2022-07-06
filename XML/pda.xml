@@ -161,7 +161,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/treadercave.ogg
 	</audio>
   </treadercave>
   <crashmesa>

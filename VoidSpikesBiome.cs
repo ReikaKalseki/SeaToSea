@@ -25,8 +25,8 @@ namespace ReikaKalseki.SeaToSea {
 		//public static readonly double gap = Vector3.Distance(end500m, signalLocation);
 		
 		private static readonly Vector3 travel = new Vector3(1, 0, -1).setLength(1500);
-		private static readonly Vector3 voidEndpoint500m = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
-		private static readonly Vector3 voidEndpoint900m = voidEndpoint500m+(end900m-end500m); //3225, -950, -2750
+		public static readonly Vector3 voidEndpoint500m = (signalLocation+travel).setY(end500m.y); //2785, -550, -2310
+		public static readonly Vector3 voidEndpoint900m = voidEndpoint500m+(end900m-end500m); //3225, -950, -2750
 		
 		public static readonly float biomeVolumeRadius = 200;
 		
@@ -184,7 +184,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isPlayerInLeviathanZone() {
-			return Vector3.Distance(Player.main.transform.position, end900m) <= biomeVolumeRadius*1.5F;
+			return false;//Vector3.Distance(Player.main.transform.position, end900m) <= biomeVolumeRadius*1.5F;
+		}
+		
+		public Vector3 getPDALocation() {
+			return wreck.pdaLocation;
 		}
 		
 		public static void checkAndAddWaveBob(SkyApplier c) {

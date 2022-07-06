@@ -31,16 +31,21 @@ namespace ReikaKalseki.SeaToSea
 					Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("trigger", 15);
 				}
 			}
-			switch(key) {
-				case "SunbeamCheckPlayerRange":
-					Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
-				break;
-				case "drfwarperheat":
-					KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);
-				break;
-				case "AuroraRadiationFixed":
-    				VoidSpikesBiome.instance.fireRadio();
-				break;
+			else if (key == PDAManager.getPage("voidpod").id) { //id is pda page story key
+				SeaToSeaMod.voidSpikeDirectionHint.activate(4);
+			}
+			else {
+				switch(key) {
+					case "SunbeamCheckPlayerRange":
+						Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
+					break;
+					case "drfwarperheat":
+						KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);
+					break;
+					case "AuroraRadiationFixed":
+	    				VoidSpikesBiome.instance.fireRadio();
+					break;
+				}
 			}
 		}
 	}

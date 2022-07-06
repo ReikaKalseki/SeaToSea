@@ -17,6 +17,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly List<VoidWreckProp> pieces = new List<VoidWreckProp>();
 		private static readonly List<VoidWreckProp> items = new List<VoidWreckProp>();
 		
+		public Vector3 pdaLocation {get; private set;}
+		
 		static VoidSpikeWreck() {
 			pieces.Add(new VoidWreckProp("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
 			pieces.Add(new VoidWreckProp("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
@@ -59,7 +61,8 @@ namespace ReikaKalseki.SeaToSea
 			refPos = MathUtil.getRandomVectorAround(refPos, new Vector3(0.5F, 0, 0.5F));
 			
 			GameObject pda = spawner(PDAManager.getPage("voidspike").getPDAClassID());
-			pda.transform.position = refPos+Vector3.up*0.2F;
+			pdaLocation = refPos+Vector3.up*0.2F;
+			pda.transform.position = pdaLocation;
 			pda.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			li.Add(pda);
 			

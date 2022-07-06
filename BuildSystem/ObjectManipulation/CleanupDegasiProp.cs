@@ -30,7 +30,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			base.applyToObject(go);
-			Transform t = go.transform.Find("BaseCell/Coral");
+			Transform t = go.transform.Find("BaseCell/Coral"); //FIXME this stopped working
 		 	if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
 		 	t = go.transform.Find("BaseCell/Decals");
