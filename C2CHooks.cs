@@ -72,10 +72,14 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static Vector3 getApparentPingPosition(PingInstance inst) {
+	    	Vector3 pos = inst.origin.position;
 	    	if (inst.pingType == SeaToSeaMod.voidSpikeDirectionHint.signalType) {
-	    		return VoidSpikesBiome.instance.getPDALocation();//VoidSpikesBiome.voidEndpoint500m;
+	    		pos = VoidSpikesBiome.instance.getPDALocation()+VoidSpikesBiome.voidEndpoint500m-VoidSpikesBiome.end500m;//VoidSpikesBiome.voidEndpoint500m;
 	    	}
-	    	return inst.origin.position;
+	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position) && Vector3.Distance(Player.main.transform.position, pos) > 2) {
+	    		pos += VoidSpikesBiome.end500m-VoidSpikesBiome.voidEndpoint500m;
+	    	}
+	    	return pos;
 	    }
 	   
 		public static void doEnvironmentalDamage(TemperatureDamage dmg) {

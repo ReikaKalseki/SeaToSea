@@ -188,7 +188,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public Vector3 getPDALocation() {
-			return wreck.pdaLocation;
+			return wreck.getPDALocation();
 		}
 		
 		public static void checkAndAddWaveBob(SkyApplier c) {
