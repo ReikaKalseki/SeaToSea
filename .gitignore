@@ -29,6 +29,7 @@ $RECYCLE.BIN/
 
 
 *.rar
+*.7z
 *.pdn
 *.ini
 *csproj*
