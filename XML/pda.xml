@@ -133,19 +133,13 @@
 		
 		Something's exploding up there. I guess it makes me feel a little better knowing that someone else is having just a bad a day as-
 		
-		[loud treader call]
-		
 		THE HELL WAS THAT?!
-		
-		[WHAM]
-		
-		[RUSHING WATER]		
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/treaderpod-bcg.wav
+		Sounds/treaderpod.ogg
 	</audio>
   </treaderpod>
   <treadercave>

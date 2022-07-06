@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		//protected OrientedBounds[] GetBounds { get; }
 		
-		public override void initializeMachine(GameObject go) {
+		public override void initializeMachine(GameObject go) { //FIXME fix by making the terminal the actual root GO's model?
 			base.initializeMachine(go);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);

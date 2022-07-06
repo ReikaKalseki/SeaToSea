@@ -276,7 +276,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Rebreather, TechType.EnameledGlass, 1);
         RecipeUtil.removeIngredient(TechType.Rebreather, TechType.WiringKit);
         
-        RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
+        //RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
         
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);

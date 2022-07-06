@@ -219,7 +219,17 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
 	    	if (UnityEngine.Random.Range(0F, 1F) < 0.93)
 	    		return;
-	    	//TODO check for nearby
+	    	int near = 0;
+			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 0.1F)) {
+				if (c.gameObject == null) {
+					continue;
+				}
+				TechTag p = c.gameObject.GetComponentInParent<TechTag>();
+				if (p != null && p.type == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType)
+					near++;
+			}
+	    	if (near > 2)
+	    		return;
 	    	GameObject owner = chunk.gameObject;
 	    	GameObject placed = ObjectUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType.ToString());
 	    	placed.transform.position = owner.transform.position+Vector3.up*0.08F;
@@ -361,9 +371,18 @@ namespace ReikaKalseki.SeaToSea {
 			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
 			 	//mdl.transform.localPosition = Vector3.zero;
 	    		Renderer r = go.GetComponentInChildren<Renderer>();
-	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLeviathan", new Dictionary<int, string>(){{1, ""}});
-	    		r.materials[0].color = new Color(0, 0, 0, 0);
+	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
+	    		//r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
+	    		
+	    		MeshFilter mesh = go.GetComponentInChildren<MeshFilter>();/*
+	    		Vector3[] verts = mesh.mesh.vertices;
+	    		foreach (int idx in mesh.mesh.GetTriangles(1)) {
+	    			float f = Math.Max(1, 2/(20*verts[idx].magnitude));
+	    			SNUtil.log("VVV "+verts[idx]+" > "+verts[idx].magnitude+" > "+f);
+	    			verts[idx].Scale(new Vector3(f, 1, f));
+	    		}
+	    		mesh.mesh.vertices = verts;*/
 	    		
 	    		FMODAsset bite = SeaToSeaMod.voidspikeLeviBite;
 	    		FMOD_StudioEventEmitter std = go.GetComponent<FMOD_StudioEventEmitter>();

@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
 				}
-				if (m == Items.DenseAzurite) {
+				if (m == Items.CrystalLens) {
 					item.unlockRequirement = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
 				}
 				if (m == Items.Luminol) {
@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Items {
 			[Item(typeof(BasicCraftingItem),	true, TechType.AramidFibers,	"WorldEntities/Natural/aerogel")]HoneycombComposite,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/Glass")]DenseAzurite,
+			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
 			[Item(typeof(Bioprocessed), 		true, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
