@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
 		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
 		
-		internal static readonly string TERMINAL_GO_NAME = "ControlPanel";
+		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
 		static Bioprocessor() {
 			leftArrow.Patch();
@@ -67,32 +67,53 @@ namespace ReikaKalseki.SeaToSea {
 		
 		//protected OrientedBounds[] GetBounds { get; }
 		
-		public override void initializeMachine(GameObject go) { //FIXME fix by making the terminal the actual root GO's model?
+		public override void initializeMachine(GameObject go) { //FIXME sky tint issues
 			base.initializeMachine(go);
 			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
 				UnityEngine.Object.Destroy(a);
 			Transform t = go.transform.Find("Bubbles");
 			if (t != null)
 				UnityEngine.Object.Destroy(t.gameObject);
+			
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+			con.hoverText = "Use Bioprocessor";
+			con.storageLabel = "BIOPROCESSOR";
+			con.enabled = true;
+			con.Resize(6, 6);
+			//con.prefabRoot = go;
 			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
 			lgc.storage = con;
-		 	foreach (Collider c in go.GetComponentsInChildren<Collider>()) {
+		 	
+			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb").transform.Find("Starship_control_terminal_01").gameObject);
+			mdl.transform.localPosition = new Vector3(0, 0, 0);
+			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
+			
+		 	t = go.transform.Find(MACHINE_GO_NAME);
+		 	GameObject machineMdl = null;
+		 	if (t == null) {
+			 	machineMdl = ObjectUtil.createWorldObject("02dfa77b-5407-4474-90c6-fcb0003ecf2d", true, false);
+				machineMdl.name = MACHINE_GO_NAME;
+			 	Vector3 vec = new Vector3(0, 1.41F, -0.975F);
+			 	machineMdl.transform.localPosition = vec;
+			 	machineMdl.transform.localScale = new Vector3(1, 1, 0.75F);
+			 	machineMdl.transform.eulerAngles = new Vector3(90, 180, 0);
+				machineMdl.transform.parent = go.transform;
+		 	}
+		 	else {
+		 		machineMdl = t.gameObject;
+		 	}
+			
+		 	foreach (Collider c in machineMdl.GetComponentsInChildren<Collider>()) {
 				UnityEngine.Object.Destroy(c);
 		 	}
-			SphereCollider cc = go.AddComponent<SphereCollider>();
+			SphereCollider cc = machineMdl.AddComponent<SphereCollider>();
 			cc.radius = 1.2F;
 			cc.center = new Vector3(0, 0.25F, 0);
-			cc = go.AddComponent<SphereCollider>();
+			cc = machineMdl.AddComponent<SphereCollider>();
 			cc.radius = 1.2F;
 			cc.center = new Vector3(0, 1F, 0);
-		 	GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("02dfa77b-5407-4474-90c6-fcb0003ecf2d").transform.Find("Submarine_engine_fragments_02").gameObject);
-		 	Vector3 vec = new Vector3(0, 1.41F, 0);//mdl.transform.localPosition; //was 1
-		 	mdl.transform.localPosition = vec;
-		 	mdl.transform.localScale = new Vector3(1, 0.75F, 1); //was 0.625
-		 	mdl.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0, 360F), 0);
-		 	mdl.transform.localEulerAngles = new Vector3(0, 90, 0);
-			Renderer r = mdl.GetComponentInChildren<Renderer>();
+			
+			Renderer r = machineMdl.GetComponentInChildren<Renderer>();
 			//SNUtil.dumpTextures(r);
 			RenderUtil.swapToModdedTextures(r, this);
 			RenderUtil.setEmissivity(r, 2, "GlowStrength");
@@ -101,63 +122,36 @@ namespace ReikaKalseki.SeaToSea {
 			r.materials[0].SetFloat("_Shininess", 8);
 			r.materials[0].SetFloat("_Fresnel", 0.4F);
 			lgc.mainRenderer = r;
-			go.GetComponent<Constructable>().model = mdl;
+			
+			go.GetComponent<Constructable>().model = machineMdl;
 			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.5F, 0.5F, 1.5F);
-			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(0, 0.5F, 0);
+			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(1, 0.5F, 0);
+			
+			t = go.transform.Find("SubDamageSounds");
+			if (t != null)
+				UnityEngine.Object.Destroy(t.gameObject);
+			
 			go.EnsureComponent<SkyApplier>();
 			SkyApplier[] skies = go.GetComponentsInChildren<SkyApplier>();
 			foreach (SkyApplier sky in skies)
 				sky.renderers = go.GetComponentsInChildren<Renderer>();
-			t = go.transform.Find("SubDamageSounds");
-			if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);
-			Transform termT = go.transform.Find(TERMINAL_GO_NAME);
-			if (termT == null) {
-				GameObject terminal = ObjectUtil.createWorldObject("6ca93e93-5209-4c27-ba60-5f68f36a95fb", true, false);
-				termT = terminal.transform;
-				terminal.name = TERMINAL_GO_NAME;
-				terminal.SetActive(false);
-				termT.localPosition = new Vector3(-1.1F, 0, 0);
-				termT.localEulerAngles = new Vector3(0, -90, 0);
-				StorageContainer con2 = terminal.EnsureComponent<StorageContainer>();
-				con2.hoverText = "Use Bioprocessor";
-				con2.storageLabel = "BIOPROCESSOR";
-				termT.parent = go.transform;
-			}
-			SNUtil.log("bioproc storage reroot: ");
-			Transform storageT = go.transform.Find("StorageRoot");
-			if (storageT != null && termT != null) {
-				GameObject newRoot = UnityEngine.Object.Instantiate(storageT.gameObject);
-				ChildObjectIdentifier coi = newRoot.EnsureComponent<ChildObjectIdentifier>();
-				coi.classId = ClassID+"_storage";
-				StorageContainer con2 = termT.gameObject.EnsureComponent<StorageContainer>();
-				newRoot.transform.parent = termT;
-				con2.storageRoot = coi;
-				con2.prefabRoot = go;
-				con2.enabled = true;
-				con2.Resize(6, 6);
-				lgc.storage = con2;
-				termT.gameObject.SetActive(true);
-				try {
-					UnityEngine.Object.Destroy(con);
-					UnityEngine.Object.Destroy(storageT.gameObject);
-				}
-				catch (Exception e) {
-					SNUtil.log("Error destroying old bioproc storage!");
-					SNUtil.log(e.ToString());
-				}
-			}
+			
+			//ObjectUtil.removeComponent<PrefabIdentifier>(machineMdl);
+			//ChildObjectIdentifier coi = machineMdl.EnsureComponent<ChildObjectIdentifier>();
+			//coi.classId = ClassID+"_mdl";
+			
 			foreach (SkyApplier sky in skies) {
 				sky.renderers = go.GetComponentsInChildren<Renderer>();
 				sky.enabled = true;
 				sky.RefreshDirtySky();
 				sky.ApplySkybox();
 			}
+			
 			setTerminalBox(go);
 		}
 		
 		internal static void setTerminalBox(GameObject go) {
-			BoxCollider box = go.transform.Find(TERMINAL_GO_NAME).gameObject.EnsureComponent<BoxCollider>();
+			BoxCollider box = go.transform.Find("Collider").gameObject.EnsureComponent<BoxCollider>();
 			box.center = new Vector3(0, 0.5F, 0);
 			box.size = new Vector3(0.5F, 1.5F, 0.5F);
 		}
@@ -184,6 +178,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal StorageContainer storage;
 		internal Renderer mainRenderer;
+		private bool setCollision;
 		
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
@@ -193,7 +188,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		protected override void updateEntity(float seconds) {
 			if (storage == null)
-				storage = gameObject.transform.Find(Bioprocessor.TERMINAL_GO_NAME).GetComponent<StorageContainer>();
+				storage = gameObject.GetComponentInChildren<StorageContainer>();
 			if (mainRenderer == null)
 				mainRenderer = gameObject.transform.Find("model").GetComponent<Renderer>();
 			if (storage == null) {
@@ -203,7 +198,10 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
-			Bioprocessor.setTerminalBox(gameObject);
+			if (!setCollision) {
+				Bioprocessor.setTerminalBox(gameObject);
+				setCollision = true;
+			}
 			
 			if (consumePower(seconds)) {
 				setEmissiveColor(noRecipeColor);
