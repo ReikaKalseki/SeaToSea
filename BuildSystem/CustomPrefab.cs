@@ -127,7 +127,9 @@ namespace ReikaKalseki.SeaToSea
 				if (tech == TechType.None && tech2 != null && tech2 != "None") {
 					tech = SNUtil.getTechType(tech2);
 				}
-				loadManipulations(e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms"), manipulations); 
+				XmlNodeList xli = e.OwnerDocument.DocumentElement != null ? e.OwnerDocument.DocumentElement.getAllChildrenIn("transforms") : null;
+				if (xli != null)
+					loadManipulations(xli, manipulations); 
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 				if (li.Count == 1) {
 					loadManipulations(li[0], manipulations);
@@ -208,7 +210,9 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				catch (Exception ex) {
-					SNUtil.writeToChat("Could not rebuild manipulation from XML "+e2.Name+"/"+e2.InnerText+": "+ex);
+					string err = "Could not rebuild manipulation from XML "+e2.Name+"/"+e2.InnerText+": "+ex;
+					SNUtil.log(err);
+					SNUtil.writeToChat(err);
 					return null;
 				}
 			}

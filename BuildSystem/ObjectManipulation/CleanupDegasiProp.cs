@@ -23,6 +23,8 @@ using SMLHelper.V2.Utility;
 namespace ReikaKalseki.SeaToSea
 {		
 	internal class CleanupDegasiProp : SwapTexture {
+		
+		bool removeLight = false;
 				
 		public CleanupDegasiProp() {
 			init();
@@ -30,12 +32,33 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			base.applyToObject(go);
-			Transform t = go.transform.Find("BaseCell/Coral"); //FIXME this stopped working
-		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+			//ObjectUtil.dumpObjectData(go);
+			Transform t = go.transform.Find("BaseCell/Coral");
+			if (t != null) {
+				t.gameObject.SetActive(false);
+				UnityEngine.Object.DestroyImmediate(t.gameObject);
+			}
 		 	t = go.transform.Find("BaseCell/Decals");
 		 	if (t != null)
 		 		UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+		 	
+		 	if (removeLight) {
+		 		t = go.transform.Find("tech_light_deco");
+		 		if (t != null) {
+					t.gameObject.SetActive(false);
+					UnityEngine.Object.DestroyImmediate(t.gameObject);
+				}
+		 		t = go.transform.Find("tech_light_deco(Placeholder)");
+		 		if (t != null) {
+					t.gameObject.SetActive(false);
+					UnityEngine.Object.DestroyImmediate(t.gameObject);
+				}
+		 		t = go.transform.Find("tech_light_deco(Clone)");
+		 		if (t != null) {
+					t.gameObject.SetActive(false);
+					UnityEngine.Object.DestroyImmediate(t.gameObject);
+				}
+		 	}
 		}
 		
 		private void init() {
@@ -46,6 +69,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void loadFromXML(XmlElement e) {
 			base.loadFromXML(e);
+			
+			bool.TryParse(e.InnerText, out removeLight);
 			
 			init();
 		}

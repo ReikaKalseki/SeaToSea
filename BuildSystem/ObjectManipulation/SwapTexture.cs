@@ -78,8 +78,11 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void loadFromXML(XmlElement e) {
 			swaps.Clear();
-			foreach (XmlElement e2 in e.ChildNodes) {
-				swaps[e2.getProperty("from")] = e2.getProperty("to");
+			foreach (XmlNode n2 in e.ChildNodes) {
+				if (n2 is XmlElement) {
+					XmlElement e2 = (XmlElement)n2;
+					swaps[e2.getProperty("from")] = e2.getProperty("to");
+				}
 			}
 		}
 		

@@ -17,6 +17,8 @@ namespace ReikaKalseki.SeaToSea
 		private static readonly List<VoidWreckProp> pieces = new List<VoidWreckProp>();
 		private static readonly List<VoidWreckProp> items = new List<VoidWreckProp>();
 		
+		private static readonly string platformPrefab;
+		
 		static VoidSpikeWreck() {
 			pieces.Add(new VoidWreckProp("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
 			pieces.Add(new VoidWreckProp("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
@@ -32,6 +34,13 @@ namespace ReikaKalseki.SeaToSea
 			items.Add(new VoidWreckProp("bc70e8c8-f750-4c8e-81c1-4884fe1af34e", new float[]{0}, 0.05F)); //first aid
 			items.Add(new VoidWreckProp("30373750-1292-4034-9797-387cf576d150", new float[]{0}, 0.05F)); //nutrient
 			items.Add(new VoidWreckProp("22b0ce08-61c9-4442-a83d-ba7fb99f26b0", new float[]{0}, 0.15F)); //water
+			
+			string id = "255ed3c3-1973-40c0-9917-d16dd9a7018d";
+			CustomPrefab pfb = new CustomPrefab(id);
+			XmlElement e = new XmlDocument().CreateElement("customprefab");
+			e.InnerXml = "<prefab>"+id+"</prefab><position><x>0</x><y>0</y><z>0</z></position><objectManipulation><CleanupDegasiProp>true</CleanupDegasiProp></objectManipulation>";
+			pfb.loadFromXML(e);
+			platformPrefab = pfb.prefabName;
 		}
 		
 		public VoidSpikeWreck(Vector3 pos) : base(pos) {
@@ -49,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
 		public override void generate(List<GameObject> li) {
 			SNUtil.log("Generating void spike deep debris @ "+position);
 			
-			GameObject platform = spawner("255ed3c3-1973-40c0-9917-d16dd9a7018d##&lt;CleanupDegasiProp&gt;&lt;/CleanupDegasiProp&gt;"); //degasi-cleaned platform
+			GameObject platform = spawner(platformPrefab);
 			platform.transform.position = position+Vector3.down*0.1F;
 			platform.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			platform.transform.localScale = Vector3.one*0.72F;
