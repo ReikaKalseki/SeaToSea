@@ -69,11 +69,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void initializeMachine(GameObject go) { //FIXME sky tint issues
 			base.initializeMachine(go);
-			foreach (Aquarium a in go.GetComponentsInParent<Aquarium>())
-				UnityEngine.Object.Destroy(a);
-			Transform t = go.transform.Find("Bubbles");
-			if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);
+			ObjectUtil.removeComponent<Aquarium>(go);
+			ObjectUtil.removeChildObject(go, "Bubbles");
 			
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
 			con.hoverText = "Use Bioprocessor";
@@ -84,13 +81,12 @@ namespace ReikaKalseki.SeaToSea {
 			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
 			lgc.storage = con;
 		 	
-			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb").transform.Find("Starship_control_terminal_01").gameObject);
+			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb"), "Starship_control_terminal_01"));
 			mdl.transform.localPosition = new Vector3(0, 0, 0);
 			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
 			
-		 	t = go.transform.Find(MACHINE_GO_NAME);
-		 	GameObject machineMdl = null;
-		 	if (t == null) {
+		 	GameObject machineMdl = ObjectUtil.getChildObject(go, MACHINE_GO_NAME);
+		 	if (machineMdl == null) {
 			 	machineMdl = ObjectUtil.createWorldObject("02dfa77b-5407-4474-90c6-fcb0003ecf2d", true, false);
 				machineMdl.name = MACHINE_GO_NAME;
 			 	Vector3 vec = new Vector3(0, 1.41F, -0.975F);
@@ -98,9 +94,6 @@ namespace ReikaKalseki.SeaToSea {
 			 	machineMdl.transform.localScale = new Vector3(1, 1, 0.75F);
 			 	machineMdl.transform.eulerAngles = new Vector3(90, 180, 0);
 				machineMdl.transform.parent = go.transform;
-		 	}
-		 	else {
-		 		machineMdl = t.gameObject;
 		 	}
 			
 		 	foreach (Collider c in machineMdl.GetComponentsInChildren<Collider>()) {
@@ -127,9 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.5F, 0.5F, 1.5F);
 			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(1, 0.5F, 0);
 			
-			t = go.transform.Find("SubDamageSounds");
-			if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);
+			ObjectUtil.removeChildObject(go, "SubDamageSounds");
 			
 			go.EnsureComponent<SkyApplier>();
 			SkyApplier[] skies = go.GetComponentsInChildren<SkyApplier>();
@@ -151,7 +142,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal static void setTerminalBox(GameObject go) {
-			BoxCollider box = go.transform.Find("Collider").gameObject.EnsureComponent<BoxCollider>();
+			BoxCollider box = ObjectUtil.getChildObject(go, "Collider").EnsureComponent<BoxCollider>();
 			box.center = new Vector3(0, 0.5F, 0);
 			box.size = new Vector3(0.5F, 1.5F, 0.5F);
 		}
@@ -190,7 +181,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (storage == null)
 				storage = gameObject.GetComponentInChildren<StorageContainer>();
 			if (mainRenderer == null)
-				mainRenderer = gameObject.transform.Find("model").GetComponent<Renderer>();
+				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
 			if (storage == null) {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;

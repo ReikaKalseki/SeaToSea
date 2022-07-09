@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.plantTechType = TechType;
 			p.size = Plantable.PlantSize.Large;
 			p.pickupable = go.GetComponentInChildren<Pickupable>();
-			p.model = go.transform.Find("coral_reef_plant_middle_05").gameObject;
+			p.model = ObjectUtil.getChildObject(go, "coral_reef_plant_middle_05");
 			CapsuleCollider cu = go.GetComponentInChildren<CapsuleCollider>();
 			if (cu != null) {
 				CapsuleCollider cc = p.model.AddComponent<CapsuleCollider>();

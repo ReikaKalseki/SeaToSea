@@ -27,9 +27,7 @@ namespace ReikaKalseki.SeaToSea
 		private string path;
 		
 		internal override void applyToObject(GameObject go) {
-			Transform t = go.transform.Find(path);
-		 	if (t != null)
-				UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+			ObjectUtil.removeChildObject(go, path);
 		}
 		
 		internal override void applyToObject(PlacedObject go) {

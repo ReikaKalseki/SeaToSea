@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void register() {
 			Patch();
 			GameObject tabPfb = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
-	    	VFXFabricating fab = tabPfb.transform.Find("Model").gameObject.EnsureComponent<VFXFabricating>();
+	    	VFXFabricating fab = ObjectUtil.getChildObject(tabPfb, "Model").EnsureComponent<VFXFabricating>();
 	    	fab.localMaxY = 0.1F;
 	    	fab.localMinY = -0.1F;
         	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){tablet});

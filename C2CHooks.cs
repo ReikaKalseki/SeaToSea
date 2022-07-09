@@ -317,7 +317,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (tech == TechType.PrecursorKey_Red || tech == TechType.PrecursorKey_White) {
 	    		ret = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tech));
 	    		ret = UnityEngine.Object.Instantiate(ret);
-	    		ret = ret.transform.Find("Model").gameObject;
+	    		ret = ObjectUtil.getChildObject(ret, "Model");
 	    		VFXFabricating fab = ret.EnsureComponent<VFXFabricating>();
 		    	fab.localMaxY = 0.1F;
 		    	fab.localMinY = -0.1F;

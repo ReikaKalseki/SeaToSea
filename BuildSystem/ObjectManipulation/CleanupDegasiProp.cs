@@ -32,33 +32,12 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			base.applyToObject(go);
-			//ObjectUtil.dumpObjectData(go);
-			Transform t = go.transform.Find("BaseCell/Coral");
-			if (t != null) {
-				t.gameObject.SetActive(false);
-				UnityEngine.Object.DestroyImmediate(t.gameObject);
-			}
-		 	t = go.transform.Find("BaseCell/Decals");
-		 	if (t != null)
-		 		UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
-		 	
-		 	if (removeLight) {
-		 		t = go.transform.Find("tech_light_deco");
-		 		if (t != null) {
-					t.gameObject.SetActive(false);
-					UnityEngine.Object.DestroyImmediate(t.gameObject);
-				}
-		 		t = go.transform.Find("tech_light_deco(Placeholder)");
-		 		if (t != null) {
-					t.gameObject.SetActive(false);
-					UnityEngine.Object.DestroyImmediate(t.gameObject);
-				}
-		 		t = go.transform.Find("tech_light_deco(Clone)");
-		 		if (t != null) {
-					t.gameObject.SetActive(false);
-					UnityEngine.Object.DestroyImmediate(t.gameObject);
-				}
-		 	}
+			
+			ObjectUtil.removeChildObject(go, "BaseCell/Coral");
+			ObjectUtil.removeChildObject(go, "BaseCell/Decals");
+			
+		 	if (removeLight)
+				ObjectUtil.removeChildObject(go, "tech_light_deco");
 		}
 		
 		private void init() {
@@ -77,7 +56,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		protected override Texture2D getTexture(string name, string texType) {
 			GameObject go = Base.pieces[(int)Base.Piece.Foundation].prefab.gameObject;
-			go = go.transform.Find("models/BaseFoundationPlatform").gameObject;
+			go = ObjectUtil.getChildObject(go, "models/BaseFoundationPlatform");
 			return (Texture2D)RenderUtil.extractTexture(go, texType);
 		}
 		

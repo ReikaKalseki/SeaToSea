@@ -30,8 +30,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			if (!string.IsNullOrEmpty(objName)) {
-				Transform has = go.transform.Find(objName);
-				if (has != null)
+				if (ObjectUtil.getChildObject(go, objName) != null)
 					return;
 			}
 			GameObject add = ObjectUtil.createWorldObject(id);

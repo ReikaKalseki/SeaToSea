@@ -36,12 +36,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			foreach (string s in objects) {
-				Transform t = go.transform.Find(s);
-			 	if (t != null)
-					UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
-				t = go.transform.Find(s+"(Clone)");
-			 	if (t != null)
-					UnityEngine.Object.Destroy(t.gameObject);//t.gameObject.SetActive(false);
+				ObjectUtil.removeChildObject(go, s);
 			}
 		}
 		
