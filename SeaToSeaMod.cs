@@ -381,7 +381,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 5);
-        
+        /*
         CraftDataHandler.SetItemSize(TechType.CreepvinePiece, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.CreepvineSeedCluster, new Vector2int(3, 3));
         CraftDataHandler.SetItemSize(TechType.BloodOil, new Vector2int(3, 3));
@@ -390,7 +390,8 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.WhiteMushroomSpore, new Vector2int(1, 2));
         CraftDataHandler.SetItemSize(TechType.JellyPlant, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.JellyPlantSeed, new Vector2int(2, 2));
-        
+        */
+       
         Bioprocessor.addRecipes();
     }
     

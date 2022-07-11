@@ -20,27 +20,23 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override Vector2int SizeInInventory {
-			get {return new Vector2int(3, 3);}
+			get {return new Vector2int(2, 2);}
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<AlkaliPlantTag>();
 			go.transform.localScale = Vector3.one*2;
-			Plantable p = go.EnsureComponent<Plantable>();
-			p.aboveWater = false;
-			p.underwater = true;
-			p.isSeedling = true;
-			p.plantTechType = TechType;
-			p.size = Plantable.PlantSize.Large;
+			/*
 			GameObject seedRef = ObjectUtil.lookupPrefab("daff0e31-dd08-4219-8793-39547fdb745e").GetComponent<Plantable>().model;
 			p.pickupable = go.GetComponentInChildren<Pickupable>();
 			p.model = UnityEngine.Object.Instantiate(seedRef);
 			GrowingPlant grow = p.model.EnsureComponent<GrowingPlant>();
 			grow.seed = p;
 			RenderUtil.setModel(p.model, "coral_reef_plant_middle_05", ObjectUtil.getChildObject(go, "coral_reef_plant_middle_05"));
+			*//*
 			CapsuleCollider cu = go.GetComponentInChildren<CapsuleCollider>();
-			if (false/*cu != null*/) {
+			if (cu != null) {
 				CapsuleCollider cc = p.model.AddComponent<CapsuleCollider>();
 				cc.radius = cu.radius*0.8F;
 				cc.center = cu.center;
@@ -51,7 +47,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			p.modelEulerAngles = new Vector3(270*0, UnityEngine.Random.Range(0, 360F), 0);
 			p.modelScale = Vector3.one*0.8F;
-			p.modelIndoorScale = Vector3.one*0.5F;
+			p.modelIndoorScale = Vector3.one*0.5F;*/
 			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 		}
 		
