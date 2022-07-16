@@ -327,16 +327,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
-	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {
+	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {/*
 	    	SNUtil.writeToChat("Started growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);
 	    	/*
 	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*/
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*//*
 	    	SNUtil.log("==SPAWN GROWING==");
 	    	ObjectUtil.dumpObjectData(p);
 	    	SNUtil.log("==OBJ==");
 	    	ObjectUtil.dumpObjectData(plant);
-	    	SNUtil.log("====");
+	    	SNUtil.log("====");*/
 	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
 	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
 	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.alkali);
@@ -344,15 +344,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {
+	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {/*
 	    	SNUtil.writeToChat("Finished growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);/*
 	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*/
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*//*
 	    	SNUtil.log("==SPAWN GROWN==");
 	    	ObjectUtil.dumpObjectData(p);
 	    	SNUtil.log("==OBJ==");
 	    	ObjectUtil.dumpObjectData(plant);
-	    	SNUtil.log("====");
+	    	SNUtil.log("====");*/
 	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
 	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
 	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);

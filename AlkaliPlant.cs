@@ -17,6 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public AlkaliPlant() : base(SeaToSeaMod.itemLocale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT, "Samples") {
 			glowIntensity = 2;
+			finalCutBonus = 0;
 			//seed.sprite = TextureManager.getSprite("Textures/Items/"+ObjectUtil.formatFileName(this));
 		}
 		
@@ -47,10 +48,18 @@ namespace ReikaKalseki.SeaToSea {
 				cc.name = cu.name;
 			}
 			p.modelEulerAngles = new Vector3(270*0, UnityEngine.Random.Range(0, 360F), 0);*/
-			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+			go.EnsureComponent<LiveMixin>().data.maxHealth /= 2;
+			foreach (Material m in r.materials) {
+				m.SetColor("_GlowColor", new Color(1, 1, 1, 1));
+				m.SetVector("_Scale", new Vector4(0.35F, 0.2F, 0.1F, 0.0F));
+				m.SetVector("_Frequency", new Vector4(1.2F, 0.5F, 1.5F, 0.5F));
+				m.SetVector("_Speed", new Vector4(0.2F, 0.5F, 1.5F, 0.5F));
+				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
+				m.SetFloat("_WaveUpMin", 0F);
+			}
 		}
 		
-		public virtual float getScaleInGrowbed(bool indoors) {
+		public override float getScaleInGrowbed(bool indoors) {
 			return indoors ? 0.25F : 0.5F;
 		}
 		
