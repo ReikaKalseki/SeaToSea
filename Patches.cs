@@ -986,6 +986,63 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(GrowingPlant))]
+	[HarmonyPatch("SpawnGrownModel")]
+	public static class PlantFinishedGrowingHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				InstructionHandlers.patchEveryReturnPre(codes, injectCallback);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	
+		private static void injectCallback(List<CodeInstruction> codes, int idx) {
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowDone", false, typeof(GrowingPlant), typeof(GameObject)));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+		}
+	}
+	
+	[HarmonyPatch(typeof(Plantable))]
+	[HarmonyPatch("Spawn")]
+	public static class PlantSpawnsGrowingHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_0)+1;
+				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowingSpawn", false, typeof(Plantable), typeof(GameObject)));
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	
+		private static void injectCallback(List<CodeInstruction> codes, int idx) {
+			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowDone", false, typeof(GrowingPlant), typeof(GameObject)));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
+			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+		}
+	}
+	
 	static class PatchLib {
 	/*
 		internal static void patchCellGet(List<CodeInstruction> codes) {

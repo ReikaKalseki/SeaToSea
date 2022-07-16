@@ -327,6 +327,38 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
+	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {
+	    	SNUtil.writeToChat("Started growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);
+	    	/*
+	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*/
+	    	SNUtil.log("==SPAWN GROWING==");
+	    	ObjectUtil.dumpObjectData(p);
+	    	SNUtil.log("==OBJ==");
+	    	ObjectUtil.dumpObjectData(plant);
+	    	SNUtil.log("====");
+	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
+	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
+	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.alkali);
+	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
+	    	}
+	    }
+	    
+	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {
+	    	SNUtil.writeToChat("Finished growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);/*
+	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*/
+	    	SNUtil.log("==SPAWN GROWN==");
+	    	ObjectUtil.dumpObjectData(p);
+	    	SNUtil.log("==OBJ==");
+	    	ObjectUtil.dumpObjectData(plant);
+	    	SNUtil.log("====");
+	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
+	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);
+	    	}
+	    }
+	    
 	    public static void OnSkyApplierSpawn(SkyApplier pk) {
 	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
 	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {
