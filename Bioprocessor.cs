@@ -8,6 +8,7 @@ using UnityEngine;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Utility;
+using SMLHelper.V2.Crafting;
 
 using ReikaKalseki.DIAlterra;
 
@@ -16,6 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class Bioprocessor : CustomMachine<BioprocessorLogic> {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
+		internal static readonly Dictionary<TechType, TechType> delegates = new Dictionary<TechType, TechType>();
 		
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
@@ -25,13 +27,19 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
+		private static TechCategory bioprocCategory = TechCategory.Misc;
+		
 		static Bioprocessor() {
 			leftArrow.Patch();
 			rightArrow.Patch();
+			bioprocCategory = TechCategoryHandler.Main.AddTechCategory("bioprocessor", "Bioprocessor");
+			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, bioprocCategory);
 		}
 		
 		public static void addRecipes() {
-			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 6);
+			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 2, 3);
+			addRecipe(TechType.AcidMushroom, CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 5, 2);
+			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 9, 2);
 			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 4);
 			addRecipe(SeaToSeaMod.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 5);
 			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 2, 3);
@@ -42,13 +50,40 @@ namespace ReikaKalseki.SeaToSea {
 		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
 			BioRecipe r = new BioRecipe(salt, secs, inp, o);
 			recipes[r.inputItem] = r;
-			RecipeUtil.addRecipe(o, TechGroup.Uncategorized, TechCategory.Misc, 1, CraftTree.Type.None);
-			RecipeUtil.addIngredient(o, SeaToSeaMod.processor.TechType, 1);
-			RecipeUtil.addIngredient(o, leftArrow.TechType, 1);
-			RecipeUtil.addIngredient(o, inp, inamt);
-			RecipeUtil.addIngredient(o, TechType.Salt, salt);
 			r.inputCount = inamt;
 			r.outputCount = outamt;
+			createRecipeDelegate(r);
+		}
+		
+		private static TechType createRecipeDelegate(BioRecipe r) {
+			TechData rec = new TechData
+			{
+				Ingredients = new List<Ingredient>(),
+				craftAmount = r.outputCount
+			};/*
+			rec.Ingredients.Add(new Ingredient(SeaToSeaMod.processor.TechType, 1));
+			rec.Ingredients.Add(new Ingredient(leftArrow.TechType, 1));
+			rec.Ingredients.Add(new Ingredient(r.inputItem, r.inputCount));
+			rec.Ingredients.Add(new Ingredient(TechType.Salt, r.saltCount));*/
+			BasicCraftingItem to = CraftingItems.getItemByTech(r.outputItem);
+			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
+			item.category = bioprocCategory;
+			item.group = TechGroup.Resources;
+			item.unlock = r.inputItem;
+			if (item.sprite == null)
+				item.sprite = SpriteManager.Get(r.outputItem);
+			item.Patch();
+			RecipeUtil.addRecipe(item.TechType, TechGroup.Resources, bioprocCategory, r.outputCount, CraftTree.Type.None);
+			//RecipeUtil.addIngredient(item.TechType, SeaToSeaMod.processor.TechType, 1);
+			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
+			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
+			RecipeUtil.addIngredient(item.TechType, TechType.Salt, r.saltCount);
+			delegates[item.TechType] = r.inputItem;
+			return item.TechType;
+		}
+		
+		public static BioRecipe getDelegateRecipe(TechType tt) {
+			return recipes[delegates[tt]];
 		}
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
@@ -82,7 +117,6 @@ namespace ReikaKalseki.SeaToSea {
 			lgc.storage = con;
 		 	
 			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb"), "Starship_control_terminal_01"));
-			mdl.transform.localPosition = new Vector3(0, 0, 0);
 			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
 			
 		 	GameObject machineMdl = ObjectUtil.getChildObject(go, MACHINE_GO_NAME);
@@ -227,6 +261,7 @@ namespace ReikaKalseki.SeaToSea {
 									setEmissiveColor(completeColor, 4);
 									SNUtil.playSoundAt(SNUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
 									setRecipe(null);
+									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString());
 								}
 							}
 							else {
@@ -300,14 +335,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 	}
 	
-	class BioRecipe {
+	public class BioRecipe {
 			
-		internal readonly TechType inputItem;
-		internal readonly TechType outputItem;
-		internal readonly int saltCount;
-		internal readonly float processTime;
+		public readonly TechType inputItem;
+		public readonly TechType outputItem;
+		public readonly int saltCount;
+		public readonly float processTime;
 		
-		internal readonly float secondsPerSalt;
+		public readonly float secondsPerSalt;
 		
 		internal int inputCount = 1;
 		internal int outputCount = 1;
@@ -318,6 +353,14 @@ namespace ReikaKalseki.SeaToSea {
 			saltCount = s;
 			processTime = t;
 			secondsPerSalt = processTime/(float)saltCount;
+		}
+		
+		public int getInputCount() {
+			return inputCount;
+		}
+		
+		public int getOutputCount() {
+			return outputCount;
 		}
 		
 		public override string ToString()

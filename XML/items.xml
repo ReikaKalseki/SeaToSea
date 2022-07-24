@@ -98,6 +98,17 @@
 			
 		</pda>
 	</SmartPolymer>
+	<WeakAcid>
+		<name>
+			Carboxylic Acid
+		</name>
+		<desc>
+			A dilute organic acid, suitable for use in basic electronics.
+		</desc>
+		<pda>
+			
+		</pda>
+	</WeakAcid>
 	<SealedSuit>
 		<name>
 			Electrochemical Suit

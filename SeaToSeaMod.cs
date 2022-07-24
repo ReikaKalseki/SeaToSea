@@ -13,8 +13,8 @@ using SMLHelper.V2.Utility;
 namespace ReikaKalseki.SeaToSea
 {
   [QModCore]
-  public static class SeaToSeaMod
-  {
+  public static class SeaToSeaMod {
+  	
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
@@ -52,12 +52,12 @@ namespace ReikaKalseki.SeaToSea
     public static FMODAsset voidspikeLeviAmbient;
 
     [QModPatch]
-    public static void Load()
-    {
+    public static void Load() {
         config.load();
         
         Harmony harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
+        FileLog.logPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "harmony-log.txt");
         FileLog.Log("Ran mod register, started harmony (harmony log)");
         SNUtil.log("Ran mod register, started harmony");
         try {
@@ -84,15 +84,6 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SNUtil.log("Registered custom machine "+processor);
-        
-	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
-	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
-	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
-	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
-	    brokenRedTablet.Patch();
-	    brokenWhiteTablet.Patch();
-	    brokenOrangeTablet.Patch();
-	    brokenBlueTablet.Patch();
 	    
 	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
@@ -135,6 +126,21 @@ namespace ReikaKalseki.SeaToSea
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
 		//AvoliteSpawner.instance.register();
+    }
+    
+    [QModPostPatch]
+    public static void PostLoad() {        
+	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
+	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
+	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
+	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
+        
+        brokenBlueTablet.register();
+        brokenRedTablet.register();
+        brokenWhiteTablet.register();
+        brokenOrangeTablet.register();
+	    
+        Bioprocessor.addRecipes();
     }
     
     private static void onTechUnlocked(TechType tech, bool vb) {
@@ -258,6 +264,10 @@ namespace ReikaKalseki.SeaToSea
         armor.craftingTime = 9;
         armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 5).addIngredient(comb, 1).addIngredient(TechType.Nickel, 2);
         
+        BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
+        acid.craftingTime = 1;
+        acid.addIngredient(TechType.AcidMushroom, 4);
+        
         CraftingItems.addAll();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -278,6 +288,7 @@ namespace ReikaKalseki.SeaToSea
         */
 		RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
 		RecipeUtil.removeRecipe(TechType.Benzene);
+		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
         sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 3);
@@ -285,12 +296,16 @@ namespace ReikaKalseki.SeaToSea
 		
 		t2Battery = new CustomBattery(itemLocale.getEntry("t2battery"), 500);
 		t2Battery.unlockRequirement = TechType.Kyanite;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
-        t2Battery.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
+		t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
+        
+        RecipeUtil.startLoggingRecipeChanges();
+        
+        RecipeUtil.modifyIngredients(TechType.Lubricant, i => {i.amount = 4; return false;});
         
         RecipeUtil.addIngredient(TechType.Rebreather, TechType.Titanium, 3);
         RecipeUtil.addIngredient(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
@@ -306,6 +321,9 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
+        
+        RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
+        RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
         
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
         RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
@@ -332,8 +350,8 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
-        //RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {i.amount *= 2; return false;});
-        //RecipeUtil.getRecipe(TechType.EnameledGlass).craftAmount *= 2;
+        RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {if (i.techType == TechType.Glass) i.amount *= 2; return false;});
+       	RecipeUtil.getRecipe(TechType.EnameledGlass).craftAmount *= 2;
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Lead, 2);
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
@@ -369,11 +387,6 @@ namespace ReikaKalseki.SeaToSea
         Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = 6; //from 3
         Base.CellHullStrength[(int)Base.CellType.Foundation] = 5; //from 2
         
-        brokenBlueTablet.register();
-        brokenRedTablet.register();
-        brokenWhiteTablet.register();
-        brokenOrangeTablet.register();
-        
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
@@ -392,7 +405,7 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.JellyPlantSeed, new Vector2int(2, 2));
         */
        
-        Bioprocessor.addRecipes();
+       	RecipeUtil.logChangedRecipes();
     }
     
     public static void addPDAEntries() {

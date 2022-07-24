@@ -47,14 +47,81 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
-	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, 80000) == 0) {
+	    	if (Time.timeScale <= 0)
+	    		return;
+	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, (int)(80000/Time.timeScale)) == 0) {
 				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
 	    			SeaToSeaMod.treaderSignal.fireRadio();
 	    		}
 	    	}
-	    	if (UnityEngine.Random.Range(0, 10) == 0 && ep.currentSub == null) {
+	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
+	    		
+	    		if (ep.GetVehicle() == null) {
+	    			float ventDist = -1;
+					EcoRegionManager ecoRegionManager = EcoRegionManager.main;
+					if (ecoRegionManager != null) {
+						IEcoTarget ecoTarget = ecoRegionManager.FindNearestTarget(EcoTargetType.HeatArea, ep.transform.position, null, 3);
+						if (ecoTarget != null) {
+							ventDist = Vector3.Distance(ecoTarget.GetPosition(), ep.transform.position);
+						}
+					}
+					if (ventDist >= 0 && ventDist <= 25) {
+						float f = Math.Min(1, (40-ventDist)/32F);
+			    		foreach (InventoryItem item in Inventory.main.container) {
+			    			if (item != null) {
+			    				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
+			    				if (b != null && Mathf.Approximately(b.capacity, SeaToSeaMod.t2Battery.capacity)) {
+			    					b.charge = Math.Min(b.charge+0.5F*f, b.capacity);
+			    					continue;
+			    				}
+			    				EnergyMixin e = item.item.gameObject.GetComponentInChildren<EnergyMixin>();
+			    				if (e != null && e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+			    					//SNUtil.writeToChat("Charging "+item.item+" by factor "+f+", d="+ventDist);
+			    					e.AddEnergy(0.5F*f);
+			    				}
+			    			}
+			    		}
+					}
+	    		}
 	    	}
+	    }
+	    
+	    public static bool canPlayerBreathe(bool orig, Player p) {
+	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
+	    	if (orig && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(p)) {
+	    		return false;
+	    	}
+	    	return orig;
+	    }
+	    
+	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
+	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(Player.main)) {
+	    		f = 0;
+	    	}
+	    	return f;
+	    }
+	    
+	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
+	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) == 0 || isLiquidBreathingRechargeable(Player.main)) {
+	    		//SNUtil.writeToChat("Add surface O2");
+	    		mgr.AddOxygenAtSurface(time);
+	    	}
+	    }
+	    
+	    public static bool isLiquidBreathingRechargeable(Player p) {
+	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
+	    		return true;
+	    	}
+	    	SubRoot sub = p.currentSub;
+	    	if (sub != null && sub.powerRelay.IsPowered()) {/*
+	    		LiquidRebreatherFiller fill = sub.gameObject.GetComponent<LiquidRebreatherFiller>();
+	    		if (fill != null && fill.isActive) {
+	    			fill.consume();
+	    			return true;
+	    		}*/
+	    	}
+	    	return false;
 	    }
 	    
 	    public static string getBiomeAt(string orig, Vector3 pos) {
@@ -62,6 +129,30 @@ namespace ReikaKalseki.SeaToSea {
 	    		return VoidSpikesBiome.biomeName;
 	    	}
 	    	return orig;
+	    }
+	    
+	    public static void updateToolDefaultBattery(EnergyMixin mix) {
+	    	TechTag tt = mix.gameObject.GetComponent<TechTag>();
+	    	if (tt == null)
+	    		return;
+	    	switch(tt.type) {
+	    		case TechType.StasisRifle:
+	    		case TechType.LaserCutter:
+	    			break;
+	    	}
+	    }
+	    
+	    public static void addT2BatteryAllowance(EnergyMixin mix) {
+	    	if (mix.compatibleBatteries.Contains(TechType.Battery) && !mix.compatibleBatteries.Contains(SeaToSeaMod.t2Battery.TechType)) {
+	    		mix.compatibleBatteries.Add(SeaToSeaMod.t2Battery.TechType);
+	    		List<EnergyMixin.BatteryModels> arr = mix.batteryModels.ToList();
+	    		arr.Add(new EnergyMixin.BatteryModels{model = SeaToSeaMod.t2Battery.GetGameObject(), techType = SeaToSeaMod.t2Battery.TechType});
+	    		mix.batteryModels = arr.ToArray();
+	    	}
+	    }
+	    
+	    public static void onCraftMenuTT(TechType tt) {
+	    	SNUtil.log("Reuqesting tooltip for "+tt.AsString());
 	    }
 	    
 	    public static bool isPingVisible(PingInstance inst) {/*
@@ -359,7 +450,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void OnSkyApplierSpawn(SkyApplier pk) {
+	    public static void onSkyApplierSpawn(SkyApplier pk) {
 	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
 	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {
 	    		GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
@@ -411,22 +502,98 @@ namespace ReikaKalseki.SeaToSea {
 	    public static GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
 	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
 	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
+	    		GameObject orig = go;
 			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
 			 	//mdl.transform.localPosition = Vector3.zero;
-	    		Renderer r = go.GetComponentInChildren<Renderer>();
+			 	/*
+			 	AssetBundle ab = ReikaKalseki.DIAlterra.AssetBundleManager.getBundle("voidspike");
+			 	GameObject bdl = ab.LoadAsset<GameObject>("VoidSpikeLevi_N8-modify");
+			 	//ObjectUtil.dumpObjectData(bdl);
+			 	Mesh tryM = ab.LoadAsset<Mesh>("Ghost_Leviathan_geo");
+			 	if (tryM == null) {
+			 		SNUtil.log("Direct fetch not found");
+			 		System.Object[] all = ab.LoadAllAssets();
+			 		tryM = all.Length >= 6 ? all[5] as Mesh : null;
+			 	}
+			 	if (tryM == null) {
+			 		SNUtil.log("Index fetch not found");
+			 		SkinnedMeshRenderer[] smrs = bdl.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+			 		if (smrs.Length != 1)
+			 			SNUtil.log("Wrong number of SMRs for mesh: "+string.Join(", ", (object[])smrs));
+			 		else
+			 			tryM = smrs[0].sharedMesh;
+			 	}
+			 	ObjectUtil.dumpObjectData(tryM);
+			 	
+			 	RenderUtil.setMesh(go, tryM);*/
+			 	
+			 	go = ObjectUtil.createWorldObject(VanillaCreatures.AMPEEL.prefab);
+			 	go.transform.position = pos;
+			 	go.transform.rotation = Quaternion.identity;
+			 	go.transform.localScale = new Vector3(3, 3, 4);
+			 	
+				foreach (Component c in go.GetComponentsInChildren<Component>()) {
+					if (c is Transform || c is Renderer || c is MeshFilter || c is Collider || c is PrefabIdentifier || c is SkyApplier || c is Rigidbody) {
+						continue;
+					}
+					if (c is SplineFollowing || c is WorldForces || c is ShockerMeleeAttack || c is FMOD_CustomEmitter || c is FMOD_StudioEventEmitter) {
+						continue;
+					}
+					if (c is VFXShockerElec || c is LODGroup || c is Locomotion) {
+						continue;
+					}
+					UnityEngine.Object.DestroyImmediate(c);
+				}
+				foreach (Component c in orig.GetComponentsInChildren<Component>()) {
+					if (c is Transform || c is Renderer || c is MeshFilter || c is Collider || c is PrefabIdentifier || c is SkyApplier || c is Rigidbody) {
+						continue;
+					}
+					if (c is SplineFollowing || c is WorldForces || c is FMOD_CustomEmitter || c is FMOD_StudioEventEmitter || c is VFXController) {
+						continue;
+					}
+					if (c is Locomotion || /*c is UnityEngine.Animator || */c is AnimateByVelocity) {
+						continue;
+					}
+			 		Component tgt = go.EnsureComponent(c.GetType());
+					tgt.copyObject(c);
+				}
+			 	go.GetComponent<CreatureFollowPlayer>().creature = go.GetComponent<GhostLeviatanVoid>();
+			 	go.GetComponent<Locomotion>().levelOfDetail = go.GetComponent<BehaviourLOD>();
+			 	/*			 	
+			 	ObjectUtil.copyComponent<GhostLeviatanVoid>(orig, go);
+			 	ObjectUtil.copyComponent<LiveMixin>(orig, go);
+			 	ObjectUtil.copyComponent<EntityTag>(orig, go);
+			 	ObjectUtil.copyComponent<AggressiveOnDamage>(orig, go);
+			 	ObjectUtil.copyComponent<SwimRandom>(orig, go);
+			 	//ObjectUtil.copyComponent<GhostLeviathanMeleeAttack>(orig, go);
+			 	ObjectUtil.copyComponent<AggressiveOnDamage>(orig, go);
+			 	ObjectUtil.copyComponent<AttackCyclops>(orig, go);
+			 	ObjectUtil.copyComponent<TechTag>(orig, go);
+			 	ObjectUtil.copyComponent<AttackLastTarget>(orig, go);
+			 	ObjectUtil.copyComponent<CreatureFollowPlayer>(orig, go).creature = go.GetComponent<GhostLeviatanVoid>();
+			 	ObjectUtil.copyComponent<LastTarget>(orig, go);
+			 	ObjectUtil.copyComponent<LastScarePosition>(orig, go);
+			 	ObjectUtil.copyComponent<Locomotion>(orig, go);
+			 	ObjectUtil.copyComponent<StayAtLeashPosition>(orig, go);
+			 	ObjectUtil.copyComponent<SwimRandom>(orig, go);*/
+			 	
+	    		SkinnedMeshRenderer r = go.GetComponentInChildren<SkinnedMeshRenderer>();
 	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
 	    		//r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
-	    		
-	    		MeshFilter mesh = go.GetComponentInChildren<MeshFilter>();/*
+	    			    		
+	    		//MeshFilter mesh = go.GetComponentInChildren<MeshFilter>();
+	    		/*
 	    		Vector3[] verts = mesh.mesh.vertices;
-	    		foreach (int idx in mesh.mesh.GetTriangles(1)) {
-	    			float f = Math.Max(1, 2/(20*verts[idx].magnitude));
-	    			SNUtil.log("VVV "+verts[idx]+" > "+verts[idx].magnitude+" > "+f);
-	    			verts[idx].Scale(new Vector3(f, 1, f));
+	    		for (int i = 0; i < verts.Length; i++) {
+	    			Vector3 vv = verts[i];
+	    			vv.x *= 0.5;
+	    			verts[i] = vv;
 	    		}
 	    		mesh.mesh.vertices = verts;*/
-	    		
+	    		//if (tryM != null)
+	    		//	mesh.mesh = tryM;
+	    		/*
 	    		FMODAsset bite = SeaToSeaMod.voidspikeLeviBite;
 	    		FMOD_StudioEventEmitter std = go.GetComponent<FMOD_StudioEventEmitter>();
 	    		std.asset = bite;
@@ -441,7 +608,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		loop.asset = idle;
 	    		FMOD_CustomLoopingEmitterWithCallback loop2 = go.GetComponent<FMOD_CustomLoopingEmitterWithCallback>();
 	    		loop2.asset = idle;
-	    		
+	    		*/
 	    		voidLeviathan = go;
 	    	}
 	    	return go;

@@ -262,6 +262,10 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
+		void Update() {
+			 gameObject.transform.localScale = new Vector3(3, 3, 4);
+		}
+		
 		void OnDestroy() {
 			C2CHooks.deleteVoidLeviathan();
 		}

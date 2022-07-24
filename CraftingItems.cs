@@ -12,6 +12,7 @@ namespace ReikaKalseki.SeaToSea
 	public static class CraftingItems {
 		
 		private static readonly Dictionary<Items, BasicCraftingItem> mappings = new Dictionary<Items, BasicCraftingItem>();
+		private static readonly Dictionary<TechType, Items> techs = new Dictionary<TechType, Items>();
 		
 		static CraftingItems() {
 			foreach (Items m in Enum.GetValues(typeof(Items))) {
@@ -48,11 +49,12 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
-			[Item(typeof(Bioprocessed), 		true, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
+			[Item(typeof(Bioprocessed), 		false, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
-			[Item(typeof(Bioprocessed),			true, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
-			[Item(typeof(Bioprocessed),			true, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(Bioprocessed),			false, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
+			[Item(typeof(Bioprocessed),			false, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(Bioprocessed),			true, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
+			[Item(typeof(BasicCraftingItem),	false, TechType.AcidMushroom,	"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 		}
 		
 		private static Item getAttr(Items key) {
@@ -62,6 +64,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		public static BasicCraftingItem getItem(Items key) {
 			return mappings[key];
+		}
+		
+		public static BasicCraftingItem getItemByTech(TechType tt) {
+			return techs.ContainsKey(tt) ? null : mappings[techs[tt]];
 		}
 		
 		public class Item : Attribute {

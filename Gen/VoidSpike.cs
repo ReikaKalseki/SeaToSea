@@ -432,7 +432,7 @@ namespace ReikaKalseki.SeaToSea
 			void Update() {
 				float time = DayNightCycle.main.timePassedAsFloat;
 				//SNUtil.writeToChat(time+": ["+currentOre+"] > "+nextTime+"/"+lastSpawnTime+" > "+despawnTime);
-				if (currentOre != null && currentOre.gameObject.activeInHierarchy) {
+				if (currentOre != null && currentOre.gameObject != null && currentOre.gameObject.activeInHierarchy) {
 					float f = (float)MathUtil.linterpolate(time, lastSpawnTime, despawnTime, 0, 1);
 					if (f >= 1) {
 						destroyCurrent();
@@ -481,7 +481,7 @@ namespace ReikaKalseki.SeaToSea
 				//go.transform.parent = gameObject.transform;
 				
 				setCurrentOre(go.transform);
-				currentRenderers = currentOre.gameObject.GetComponentsInChildren<Renderer>();
+				currentRenderers = currentOre.gameObject.GetComponentsInChildren<Renderer>(true);
 				
 				foreach (Renderer r in currentRenderers) {
 					foreach (Material m in r.materials) {
@@ -510,7 +510,7 @@ namespace ReikaKalseki.SeaToSea
 			private void setCurrentOre(Transform t) {
 				currentOre = t;
 				if (t != null) {
-					t.gameObject.GetComponentInChildren<Pickupable>().pickedUpEvent.AddHandler(this, pp => setCurrentOre(null));
+					t.gameObject.GetComponentInChildren<Pickupable>(true).pickedUpEvent.AddHandler(this, pp => setCurrentOre(null));
 				}
 			}
 			
