@@ -84,6 +84,15 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SNUtil.log("Registered custom machine "+processor);
+        
+	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
+	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
+	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
+	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
+	    brokenRedTablet.Patch();
+	    brokenWhiteTablet.Patch();
+	    brokenOrangeTablet.Patch();
+	    brokenBlueTablet.Patch();
 	    
 	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
@@ -126,21 +135,6 @@ namespace ReikaKalseki.SeaToSea
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
 		//AvoliteSpawner.instance.register();
-    }
-    
-    [QModPostPatch]
-    public static void PostLoad() {        
-	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
-	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
-	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
-	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
-        
-        brokenBlueTablet.register();
-        brokenRedTablet.register();
-        brokenWhiteTablet.register();
-        brokenOrangeTablet.register();
-	    
-        Bioprocessor.addRecipes();
     }
     
     private static void onTechUnlocked(TechType tech, bool vb) {
@@ -387,6 +381,11 @@ namespace ReikaKalseki.SeaToSea
         Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = 6; //from 3
         Base.CellHullStrength[(int)Base.CellType.Foundation] = 5; //from 2
         
+        brokenBlueTablet.register();
+        brokenRedTablet.register();
+        brokenWhiteTablet.register();
+        brokenOrangeTablet.register();
+        
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
@@ -406,6 +405,8 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	RecipeUtil.logChangedRecipes();
+       
+        Bioprocessor.addRecipes();
     }
     
     public static void addPDAEntries() {

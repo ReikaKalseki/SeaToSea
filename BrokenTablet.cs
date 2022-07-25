@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly TechType tablet;
 	        
-		internal BrokenTablet(TechType tt) : base(generateName(tt), "Broken "+tt.AsString(), "Pieces of "+Language.main.Get(tt)) {
+		internal BrokenTablet(TechType tt) : base(generateName(tt), "Broken "+tt.AsString(), "Pieces of "+tt.AsString()) {
 			tablet = tt;
 	    }
 		

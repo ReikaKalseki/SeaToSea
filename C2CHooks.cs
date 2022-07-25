@@ -43,6 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	worldLoaded = true;
 	    	SNUtil.log("Intercepted world load");
 	        
+	    	DuplicateRecipeDelegate.updateLocale();
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    }
 	    

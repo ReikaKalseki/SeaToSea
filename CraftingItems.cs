@@ -12,7 +12,7 @@ namespace ReikaKalseki.SeaToSea
 	public static class CraftingItems {
 		
 		private static readonly Dictionary<Items, BasicCraftingItem> mappings = new Dictionary<Items, BasicCraftingItem>();
-		private static readonly Dictionary<TechType, Items> techs = new Dictionary<TechType, Items>();
+		private static readonly Dictionary<TechType, BasicCraftingItem> techs = new Dictionary<TechType, BasicCraftingItem>();
 		
 		static CraftingItems() {
 			foreach (Items m in Enum.GetValues(typeof(Items))) {
@@ -40,6 +40,7 @@ namespace ReikaKalseki.SeaToSea
 		public static void addAll() {
 			foreach (BasicCraftingItem item in mappings.Values) {
 				item.Patch();
+				techs[item.TechType] = item;
 				SNUtil.log("Registered > "+item);
 			}
 		}
@@ -67,7 +68,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public static BasicCraftingItem getItemByTech(TechType tt) {
-			return techs.ContainsKey(tt) ? null : mappings[techs[tt]];
+			return techs.ContainsKey(tt) ? techs[tt] : null;
 		}
 		
 		public class Item : Attribute {

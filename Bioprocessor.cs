@@ -21,6 +21,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
+		internal static readonly Arrow returnArrow = new Arrow("arrowRet", "", "", "");
+		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
 		
 		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
 		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
@@ -32,6 +34,8 @@ namespace ReikaKalseki.SeaToSea {
 		static Bioprocessor() {
 			leftArrow.Patch();
 			rightArrow.Patch();
+			returnArrow.Patch();
+			spacer.Patch();
 			bioprocCategory = TechCategoryHandler.Main.AddTechCategory("bioprocessor", "Bioprocessor");
 			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, bioprocCategory);
 		}
@@ -70,6 +74,8 @@ namespace ReikaKalseki.SeaToSea {
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;
 			item.unlock = r.inputItem;
+			if (item.sprite == null && to != null)
+				item.sprite = to.getIcon();
 			if (item.sprite == null)
 				item.sprite = SpriteManager.Get(r.outputItem);
 			item.Patch();
@@ -78,6 +84,10 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
 			RecipeUtil.addIngredient(item.TechType, TechType.Salt, r.saltCount);
+			RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
+			RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
+			//RecipeUtil.addIngredient(item.TechType, rightArrow.TechType, 1);
+			RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
 			delegates[item.TechType] = r.inputItem;
 			return item.TechType;
 		}
@@ -260,9 +270,9 @@ namespace ReikaKalseki.SeaToSea {
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
 									SNUtil.playSoundAt(SNUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
-									setRecipe(null);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString());
 								}
+								setRecipe(null);
 							}
 							else {
 								setRecipe(null);

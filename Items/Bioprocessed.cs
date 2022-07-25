@@ -28,6 +28,18 @@ namespace ReikaKalseki.SeaToSea {
 				return CraftTree.Type.None;
 			}
 		}
+
+		public override TechGroup GroupForPDA {
+			get {
+				return TechGroup.Uncategorized;
+			}
+		}
+
+		public override TechCategory CategoryForPDA {
+			get {
+				return TechCategory.Misc;
+			}
+		}
 		
 	}
 }
