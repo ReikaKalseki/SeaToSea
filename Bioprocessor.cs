@@ -69,6 +69,7 @@ namespace ReikaKalseki.SeaToSea {
 			rec.Ingredients.Add(new Ingredient(leftArrow.TechType, 1));
 			rec.Ingredients.Add(new Ingredient(r.inputItem, r.inputCount));
 			rec.Ingredients.Add(new Ingredient(TechType.Salt, r.saltCount));*/
+			
 			BasicCraftingItem to = CraftingItems.getItemByTech(r.outputItem);
 			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
 			item.category = bioprocCategory;
@@ -84,10 +85,11 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
 			RecipeUtil.addIngredient(item.TechType, TechType.Salt, r.saltCount);
-			RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
-			RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
+			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
+			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
+			//RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, rightArrow.TechType, 1);
-			RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
+			//RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
 			delegates[item.TechType] = r.inputItem;
 			return item.TechType;
 		}

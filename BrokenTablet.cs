@@ -18,14 +18,24 @@ namespace ReikaKalseki.SeaToSea {
 	public class BrokenTablet : Spawnable {
 		
 		private readonly TechType tablet;
+		
+		private static readonly List<BrokenTablet> tablets = new List<BrokenTablet>();
 	        
 		internal BrokenTablet(TechType tt) : base(generateName(tt), "Broken "+tt.AsString(), "Pieces of "+tt.AsString()) {
 			tablet = tt;
+			tablets.Add(this);
 	    }
 		
 		private static string generateName(TechType tech) {
 			string en = Enum.GetName(typeof(TechType), tech);
 			return "brokentablet_"+en.Substring(en.LastIndexOf('_')+1);
+		}
+		
+		public static void updateLocale() {
+			foreach (BrokenTablet d in tablets) {
+				Language.main.strings[d.TechType.AsString()] = "Broken "+Language.main.strings[d.tablet.AsString()];
+				Language.main.strings["Tooltip_"+d.TechType.AsString()] = "A shattered "+Language.main.strings[d.tablet.AsString()]+". Not very useful directly.";
+			}
 		}
 		
 		public void register() {

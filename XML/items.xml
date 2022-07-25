@@ -109,6 +109,17 @@
 			
 		</pda>
 	</WeakAcid>
+	<breathfluid>
+		<name>
+			Breathing Fluid
+		</name>
+		<desc>
+			A nontoxic solvent saturated with oxygen, suitable for liquid-based respiration.
+		</desc>
+		<pda>
+			
+		</pda>
+	</breathfluid>
 	<SealedSuit>
 		<name>
 			Electrochemical Suit

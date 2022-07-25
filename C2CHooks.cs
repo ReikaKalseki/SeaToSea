@@ -42,8 +42,12 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onWorldLoaded() {
 	    	worldLoaded = true;
 	    	SNUtil.log("Intercepted world load");
+	    	
+	    	Inventory.main.equipment.onEquip += onEquipmentAdded;
+	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	        
 	    	DuplicateRecipeDelegate.updateLocale();
+		
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    }
 	    
@@ -88,6 +92,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void onEquipmentAdded(string slot, InventoryItem item) {
+	    	
+	    }
+	    
+	    public static void onEquipmentRemoved(string slot, InventoryItem item) {
+	    	if (item.item.GetTechType() == SeaToSeaMod.rebreatherV2.TechType)
+	    		Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
+	    }
+	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
 	    	if (orig && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(p)) {
@@ -123,6 +136,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		}*/
 	    	}
 	    	return false;
+	    }
+	    
+	    public static void onR(OxygenManager mgr, float time) {
+	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) == 0 || isLiquidBreathingRechargeable(Player.main)) {
+	    		//SNUtil.writeToChat("Add surface O2");
+	    		mgr.AddOxygenAtSurface(time);
+	    	}
 	    }
 	    
 	    public static string getBiomeAt(string orig, Vector3 pos) {

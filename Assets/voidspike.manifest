@@ -1,0 +1,38 @@
+ManifestFileVersion: 0
+CRC: 967305157
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: dbee5fb84425d96e454f7c16633645fb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 00d872b12b1f89e0886ed3ea9bb5f873
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+Assets:
+- Assets/BundledAssets/VoidSpikeLevi_N8-modify (1).fbx
+Dependencies: []

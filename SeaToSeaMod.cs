@@ -30,9 +30,12 @@ namespace ReikaKalseki.SeaToSea
     public static CustomEquipable rebreatherV2;
     public static CustomBattery t2Battery;
     
+    public static BreathingFluid breathingFluid;
+    
     public static AlkaliPlant alkali;
     
     public static Bioprocessor processor;
+    public static RebreatherRecharger rebreatherCharger;
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
@@ -280,8 +283,8 @@ namespace ReikaKalseki.SeaToSea
         CraftData.itemSizes[TechType.HydrochloricAcid] = new Vector2int(2, 2);
         RecipeUtil.modifyIngredients(TechType.HydrochloricAcid, i => i.amount = 12);
         */
-		RecipeUtil.removeRecipe(TechType.HydrochloricAcid);
-		RecipeUtil.removeRecipe(TechType.Benzene);
+		RecipeUtil.removeRecipe(TechType.HydrochloricAcid, true);
+		RecipeUtil.removeRecipe(TechType.Benzene, true);
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
@@ -294,8 +297,12 @@ namespace ReikaKalseki.SeaToSea
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(TechType.Silicone, 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
+        
+		breathingFluid = new BreathingFluid();
+		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleRattleSpore, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
+		breathingFluid.Patch();
         
         RecipeUtil.startLoggingRecipeChanges();
         
