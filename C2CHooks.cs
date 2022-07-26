@@ -128,21 +128,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		return true;
 	    	}
 	    	SubRoot sub = p.currentSub;
-	    	if (sub != null && sub.powerRelay.IsPowered()) {/*
-	    		LiquidRebreatherFiller fill = sub.gameObject.GetComponent<LiquidRebreatherFiller>();
-	    		if (fill != null && fill.isActive) {
-	    			fill.consume();
+	    	if (sub != null && sub.powerRelay.IsPowered()) {
+	    		RebreatherRechargerLogic fill = sub.gameObject.GetComponent<RebreatherRechargerLogic>();
+	    		if (fill != null && fill.consume()) {
 	    			return true;
-	    		}*/
+	    		}
 	    	}
 	    	return false;
-	    }
-	    
-	    public static void onR(OxygenManager mgr, float time) {
-	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) == 0 || isLiquidBreathingRechargeable(Player.main)) {
-	    		//SNUtil.writeToChat("Add surface O2");
-	    		mgr.AddOxygenAtSurface(time);
-	    	}
 	    }
 	    
 	    public static string getBiomeAt(string orig, Vector3 pos) {
@@ -153,12 +145,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void updateToolDefaultBattery(EnergyMixin mix) {
-	    	TechTag tt = mix.gameObject.GetComponent<TechTag>();
-	    	if (tt == null)
+	    	Pickupable p = mix.gameObject.GetComponent<Pickupable>();
+	    	//SNUtil.writeToChat("update tool default battery: "+p+" > "+(p == null ? "" : ""+p.GetTechType()));
+	    	if (p == null)
 	    		return;
-	    	switch(tt.type) {
+	    	addT2BatteryAllowance(mix);
+	    	switch(p.GetTechType()) {
 	    		case TechType.StasisRifle:
 	    		case TechType.LaserCutter:
+	    			mix.defaultBattery = SeaToSeaMod.t2Battery.TechType;
 	    			break;
 	    	}
 	    }
@@ -170,10 +165,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		arr.Add(new EnergyMixin.BatteryModels{model = SeaToSeaMod.t2Battery.GetGameObject(), techType = SeaToSeaMod.t2Battery.TechType});
 	    		mix.batteryModels = arr.ToArray();
 	    	}
-	    }
-	    
-	    public static void onCraftMenuTT(TechType tt) {
-	    	SNUtil.log("Reuqesting tooltip for "+tt.AsString());
 	    }
 	    
 	    public static bool isPingVisible(PingInstance inst) {/*

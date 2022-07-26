@@ -16,8 +16,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class RebreatherRecharger : CustomMachine<RebreatherRechargerLogic> {
 		
-		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
-		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
+		internal static readonly float POWER_COST = 1.5F; //per second
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
@@ -126,6 +125,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal StorageContainer storage;
 		internal Renderer mainRenderer;
 		
+		private bool isPowered;
+		
 		void Start() {
 			SNUtil.log("Reinitializing rebreather charger");
 			SeaToSeaMod.rebreatherCharger.initializeMachine(gameObject);
@@ -143,12 +144,11 @@ namespace ReikaKalseki.SeaToSea {
 			if (seconds <= 0)
 				return;
 			
-			if (consumePower(seconds)) {
-				
-			}
-			else {
-				
-			}
+			isPowered = consumePower(seconds);
+		}
+		
+		public bool consume(float time) {
+			return isPowered && consumePower(4) && storage.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null;
 		}
 		
 		private bool consumePower(float sc = 1) {
@@ -156,9 +156,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (sub == null)
 				return false;
 			float receive;
-			sub.powerRelay.ConsumeEnergy(RebreatherRecharger.POWER_COST_IDLE*sc, out receive);
+			sub.powerRelay.ConsumeEnergy(RebreatherRecharger.POWER_COST*sc, out receive);
 			receive += 0.0001F;
-			return receive >= RebreatherRecharger.POWER_COST_IDLE*sc;
+			return receive >= RebreatherRecharger.POWER_COST*sc;
 		}
 		
 	}
