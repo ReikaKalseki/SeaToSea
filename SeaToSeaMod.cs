@@ -87,6 +87,9 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();
         SNUtil.log("Registered custom machine "+processor);
+        rebreatherCharger = new RebreatherRecharger();
+        rebreatherCharger.Patch();
+        SNUtil.log("Registered custom machine "+rebreatherCharger);
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);

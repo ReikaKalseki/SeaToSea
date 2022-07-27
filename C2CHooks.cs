@@ -109,7 +109,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	return orig;
 	    }
 	    
+	    public static bool forceAllowO2 = false;
+	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
+	    	if (forceAllowO2)
+	    		return f;
 	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(Player.main)) {
 	    		f = 0;
 	    	}
@@ -126,14 +130,14 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool isLiquidBreathingRechargeable(Player p) {
 	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
 	    		return true;
-	    	}
+	    	}/*
 	    	SubRoot sub = p.currentSub;
 	    	if (sub != null && sub.powerRelay.IsPowered()) {
-	    		RebreatherRechargerLogic fill = sub.gameObject.GetComponent<RebreatherRechargerLogic>();
+	    		RebreatherRechargerSeaBaseLogic fill = sub.gameObject.GetComponent<RebreatherRechargerSeaBaseLogic>();
 	    		if (fill != null && fill.consume()) {
 	    			return true;
 	    		}
-	    	}
+	    	}*/
 	    	return false;
 	    }
 	    
