@@ -35,7 +35,13 @@ namespace ReikaKalseki.SeaToSea
     public static AlkaliPlant alkali;
     
     public static Bioprocessor processor;
-    public static RebreatherRecharger rebreatherCharger;
+    public static RebreatherRecharger rebreatherCharger;    
+    public static MachineFragment[] rebreatherChargerFraments = new MachineFragment[]{
+    	new MachineFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
+    	new MachineFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
+  		//new MachineFragment("589bf5a6-6866-4828-90b2-7266661bb6ed"),
+  		new MachineFragment("3c076458-505e-4683-90c1-34c1f7939a0f", go => go.transform.localScale = new Vector3(1, 1, 0.2F)),
+    };
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
@@ -90,6 +96,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger = new RebreatherRecharger();
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
+        rebreatherCharger.addFragments(4, 10, rebreatherChargerFraments);
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
@@ -414,7 +421,7 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.JellyPlantSeed, new Vector2int(2, 2));
         */
        
-       	RecipeUtil.logChangedRecipes();
+       	//RecipeUtil.logChangedRecipes();
        
         Bioprocessor.addRecipes();
     }

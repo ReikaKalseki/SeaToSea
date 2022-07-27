@@ -101,6 +101,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
 	    }
 	    
+	    public static void onScanRun() {
+			TechType techType = PDAScanner.scanTarget.techType;
+			SNUtil.writeToChat(PDAScanner.scanTarget.gameObject+" > "+techType+" @ "+PDAScanner.scanTarget.progress);
+			PDAScanner.EntryData entryData = PDAScanner.GetEntryData(techType);
+			SNUtil.writeToChat(entryData != null ? ""+entryData.key : "null");
+	    }
+	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
 	    	if (orig && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(p)) {

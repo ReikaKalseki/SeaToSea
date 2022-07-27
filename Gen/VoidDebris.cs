@@ -15,7 +15,7 @@ namespace ReikaKalseki.SeaToSea
 {
 	public sealed class VoidDebris : WorldGenerator {
 		
-		private string databoxPrefab;
+		private GenUtil.ContainerPrefab databoxPrefab;
 		
 		static VoidDebris() {
 			
@@ -50,7 +50,7 @@ namespace ReikaKalseki.SeaToSea
 			for (int i = 0; i < 8; i++) {
 				li.Add(generateObjectInRange(4, 3, 4, -2, PodDebris.papers[UnityEngine.Random.Range(0, PodDebris.papers.Count)]));
 			}
-			GameObject go = spawner(databoxPrefab);
+			GameObject go = spawner(databoxPrefab.ClassID);
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.down*3.5F, 1);
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
 			VoidSpikesBiome.checkAndAddWaveBob(go, true);

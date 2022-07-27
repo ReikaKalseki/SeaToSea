@@ -115,6 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 						C2CHooks.forceAllowO2 = true;
 						Player.main.oxygenMgr.AddOxygen(add);
 						//SNUtil.writeToChat("Added "+add);
+						C2CHooks.forceAllowO2 = false;
 					}
 				}
 			}

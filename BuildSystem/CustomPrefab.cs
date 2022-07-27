@@ -103,19 +103,32 @@ namespace ReikaKalseki.SeaToSea
 					isCrate = true;
 					string techn = e.getProperty("item");
 					tech = SNUtil.getTechType(techn);
-					prefabName = GenUtil.getOrCreateCrate(tech, e.getBoolean("sealed"));
+					prefabName = GenUtil.getOrCreateCrate(tech, e.getBoolean("sealed")).ClassID;
+					SNUtil.log("Redirected customprefab to crate "+prefabName);
 				}
 				else if (prefabName == "databox") {
 					isDatabox = true;
 					string techn = e.getProperty("tech");
 					tech = SNUtil.getTechType(techn);
-					prefabName = GenUtil.getOrCreateDatabox(tech);
+					prefabName = GenUtil.getOrCreateDatabox(tech).ClassID;
+					SNUtil.log("Redirected customprefab to databox "+prefabName);
+				}
+				else if (prefabName == "fragment") {
+					isFragment = true;
+					string techn = e.getProperty("tech");
+					tech = SNUtil.getTechType(techn);
+					GenUtil.ContainerPrefab g = GenUtil.getFragment(tech, e.getInt("index", 0));
+					if (g == null)
+						throw new Exception("No such fragment!");
+					prefabName = g.ClassID;
+					SNUtil.log("Redirected customprefab to fragment "+prefabName);
 				}
 				else if (prefabName == "pda") {
 					isPDA = true;
 					string pagen = e.getProperty("page");
 					PDAManager.PDAPage page = PDAManager.getPage(pagen);
 					prefabName = page.getPDAClassID();
+					SNUtil.log("Redirected customprefab to pda "+prefabName);
 				}
 				//else if (prefabName == "fragment") {
 				//	prefabName = ?;
