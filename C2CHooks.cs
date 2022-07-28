@@ -93,59 +93,39 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onEquipmentAdded(string slot, InventoryItem item) {
-	    	
+	    	if (item.item.GetTechType() == SeaToSeaMod.rebreatherV2.TechType)
+	    		LiquidBreathingSystem.instance.onEquip();
 	    }
 	    
 	    public static void onEquipmentRemoved(string slot, InventoryItem item) {
 	    	if (item.item.GetTechType() == SeaToSeaMod.rebreatherV2.TechType)
-	    		Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
+	    		LiquidBreathingSystem.instance.onUnequip();
 	    }
 	    
-	    public static void onScanRun() {
-			TechType techType = PDAScanner.scanTarget.techType;
-			SNUtil.writeToChat(PDAScanner.scanTarget.gameObject+" > "+techType+" @ "+PDAScanner.scanTarget.progress);
-			PDAScanner.EntryData entryData = PDAScanner.GetEntryData(techType);
-			SNUtil.writeToChat(entryData != null ? ""+entryData.key : "null");
+	    public static void tickO2Bar(uGUI_OxygenBar gui) {
+	    	LiquidBreathingSystem.instance.updateOxygenGUI(gui);
 	    }
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (orig && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(p)) {
+	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.isLiquidBreathingRechargeable(p)) {
 	    		return false;
 	    	}
+	    	if (orig)
+	    		LiquidBreathingSystem.instance.recharge(p, 0); //refresh gui
 	    	return orig;
 	    }
 	    
-	    public static bool forceAllowO2 = false;
-	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
-	    	if (forceAllowO2)
-	    		return f;
-	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0 && !isLiquidBreathingRechargeable(Player.main)) {
-	    		f = 0;
-	    	}
-	    	return f;
+	   		return LiquidBreathingSystem.instance.addO2ToPlayer(mgr, f);
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
-	    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) == 0 || isLiquidBreathingRechargeable(Player.main)) {
+	   		if (!LiquidBreathingSystem.instance.hasLiquidBreathing() || LiquidBreathingSystem.instance.isLiquidBreathingRechargeable(Player.main)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
+	    		LiquidBreathingSystem.instance.recharge(Player.main, 0);
 	    	}
-	    }
-	    
-	    public static bool isLiquidBreathingRechargeable(Player p) {
-	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
-	    		return true;
-	    	}/*
-	    	SubRoot sub = p.currentSub;
-	    	if (sub != null && sub.powerRelay.IsPowered()) {
-	    		RebreatherRechargerSeaBaseLogic fill = sub.gameObject.GetComponent<RebreatherRechargerSeaBaseLogic>();
-	    		if (fill != null && fill.consume()) {
-	    			return true;
-	    		}
-	    	}*/
-	    	return false;
 	    }
 	    
 	    public static string getBiomeAt(string orig, Vector3 pos) {
@@ -153,6 +133,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		return VoidSpikesBiome.biomeName;
 	    	}
 	    	return orig;
+	    }
+	    
+	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
+	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp() && LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		LiquidBreathingSystem.instance.checkLiquidBreathingSupport(a);
+	    	}
 	    }
 	    
 	    public static void updateToolDefaultBattery(EnergyMixin mix) {

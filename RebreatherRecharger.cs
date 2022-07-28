@@ -105,19 +105,18 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 
 			Transform seabase = gameObject.transform.parent;
-			if (seabase != null) {
+			if (available > 0 && seabase != null) {
 				//seabase.gameObject.EnsureComponent<RebreatherRechargerSeaBaseLogic>().addMachine(this);
-				if (Player.main.currentSub != null && seabase.gameObject == Player.main.currentSub.gameObject) {
+				Player p = Player.main;
+				if (p.currentSub != null && seabase.gameObject == p.currentSub.gameObject) {
 					//SNUtil.writeToChat("Player in base with recharger, has "+available);
-					float addable = Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable();
-					if (available > 0 && addable > 0 && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0) {
+					float addable = p.GetOxygenCapacity()-p.GetOxygenAvailable();
+					if (addable >= 1 && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0) {
 						float add = consume(addable);
-						C2CHooks.forceAllowO2 = true;
-						Player.main.oxygenMgr.AddOxygen(add);
-						//SNUtil.writeToChat("Added "+add);
-						C2CHooks.forceAllowO2 = false;
+						LiquidBreathingSystem.instance.recharge(p, add);
 					}
 				}
+				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
 			
 			isPowered = consumePower(seconds);
@@ -139,8 +138,12 @@ namespace ReikaKalseki.SeaToSea {
 			turbine.transform.localEulerAngles = angs;
 		}
 		
+		public float getFuel() {
+			return available;
+		}
+		
 		public float consume(float time) {
-			return isPowered && consumePower(4) ? consumeUpTo(time) : 0;
+			return isPowered ? consumeUpTo(time) : 0;
 		}
 		
 		private float consumeUpTo(float amt) {
