@@ -56,6 +56,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(Bioprocessed),			false, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(Bioprocessed),			true, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
 			[Item(typeof(BasicCraftingItem),	false, TechType.AcidMushroom,	"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
+			[Item(typeof(BasicCraftingItem),	false, TechType.Lubricant,		"WorldEntities/Natural/Lubricant")]Motor,
 			//[Item(typeof(BasicCraftingItem),	true, 	TechType.Kyanite,		"WorldEntities/Natural/polyaniline")]RebreatherFluid,
 		}
 		

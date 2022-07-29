@@ -90,14 +90,6 @@ namespace ReikaKalseki.SeaToSea
         
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(VoidSpike).TypeHandle);
         
-        processor = new Bioprocessor();
-        processor.Patch();
-        SNUtil.log("Registered custom machine "+processor);
-        rebreatherCharger = new RebreatherRecharger();
-        rebreatherCharger.Patch();
-        SNUtil.log("Registered custom machine "+rebreatherCharger);
-        rebreatherCharger.addFragments(4, 10, rebreatherChargerFraments);
-        
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
 	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
@@ -113,7 +105,17 @@ namespace ReikaKalseki.SeaToSea
 	    voidspikeLeviBite = SoundManager.registerSound("voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
         addFlora();
-        addItemsAndRecipes();
+        addItemsAndRecipes();        
+        
+        processor = new Bioprocessor();
+        processor.Patch();       
+        SNUtil.log("Registered custom machine "+processor);
+        Bioprocessor.addRecipes();
+        rebreatherCharger = new RebreatherRecharger();
+        rebreatherCharger.Patch();
+        SNUtil.log("Registered custom machine "+rebreatherCharger);
+        rebreatherCharger.addFragments(4, 10, rebreatherChargerFraments);
+        
         addPDAEntries();
                  
         WorldgenDatabase.instance.load();
@@ -275,6 +277,10 @@ namespace ReikaKalseki.SeaToSea
         acid.craftingTime = 1;
         acid.addIngredient(TechType.AcidMushroom, 4);
         
+        BasicCraftingItem motor = CraftingItems.getItem(CraftingItems.Items.Motor);
+        motor.craftingTime = 1;
+        motor.addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Titanium, 2).addIngredient(TechType.Lubricant, 1).addIngredient(TechType.Gold, 1);
+        
         CraftingItems.addAll();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -307,7 +313,7 @@ namespace ReikaKalseki.SeaToSea
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(t2Battery, 1);
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
 		breathingFluid = new BreathingFluid();
@@ -335,6 +341,24 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
+        
+        Dictionary<TechType, int> addMotors = new Dictionary<TechType, int>(){
+        	TechType.BaseMoonpool = 1,
+        	TechType.Seamoth = 2,
+        	TechType.Seaglide = 1,
+        	TechType.Cyclops = 4,
+        	TechType.PipeSurfaceFloater = 1,
+        	TechType.BasePipeConnector = 1,
+        	TechType.RocketBaseLadder = 1,
+        	TechType.VendingMachine = 1,
+        	TechType.ExosuitDrillArmModule = 2,
+        	TechType.Exosuit = 3,
+        };
+        foreach (TechType tt in addMotors) {
+        	int amt = tt == TechType.ExosuitDrillArmModule || tt == TechType.Exosuit ? 2 : 1;
+        	RecipeUtil.modifyIngredients(tt, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
+        	RecipeUtil.addIngredient(tt, motor.TechType, amt);
+        }
         
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
         RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
@@ -422,8 +446,6 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
-       
-        Bioprocessor.addRecipes();
     }
     
     public static void addPDAEntries() {

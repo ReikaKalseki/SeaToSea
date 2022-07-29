@@ -88,13 +88,13 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {
 	    	OxygenAreaWithLiquidSupport oxy = a.gameObject.GetComponent<OxygenAreaWithLiquidSupport>();
-	    	SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
+	    	//SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
 	    	if (oxy != null && oxy.supplier != null && DayNightCycle.main.timePassedAsFloat-oxy.lastVerify < 5) {
 	    		float need = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
 	    		if (need > 0) {
 		    		float has = oxy.supplier.consume(need);
 		    		onAddO2();
-		    		SNUtil.writeToChat("Found and use "+has+" of "+oxy.supplier.getFuel());
+		    		//SNUtil.writeToChat("Found and use "+has+" of "+oxy.supplier.getFuel());
 		    		forceAllowO2 = has;
 	    		}
 	    	}

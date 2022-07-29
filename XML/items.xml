@@ -109,6 +109,17 @@
 			
 		</pda>
 	</WeakAcid>
+	<Motor>
+		<name>
+			Electric Motor
+		</name>
+		<desc>
+			A midsize motor, capable of generating sufficient power to move sizeable machinery, pump fluids, or drive propulsion systems.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Motor>
 	<breathfluid>
 		<name>
 			Breathing Fluid

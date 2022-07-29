@@ -24,10 +24,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public RebreatherRecharger() : base("rebreathercharger", "Liquid Breathing Recharger", "Refills liquid breathing systems in proximity.", "bedc40fb-bd97-4b4d-a943-d39360c9c7bd") { //nuclear waste disposal
-			addIngredient(TechType.AdvancedWiringKit, 1);
+			addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1);
 			addIngredient(TechType.FiberMesh, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
-			addIngredient(TechType.PlasteelIngot, 1);
+			addIngredient(TechType.Titanium, 3);
 		}
 
 		public override bool UnlockedAtStart {
