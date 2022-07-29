@@ -343,21 +343,21 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
         
         Dictionary<TechType, int> addMotors = new Dictionary<TechType, int>(){
-        	TechType.BaseMoonpool = 1,
-        	TechType.Seamoth = 2,
-        	TechType.Seaglide = 1,
-        	TechType.Cyclops = 4,
-        	TechType.PipeSurfaceFloater = 1,
-        	TechType.BasePipeConnector = 1,
-        	TechType.RocketBaseLadder = 1,
-        	TechType.VendingMachine = 1,
-        	TechType.ExosuitDrillArmModule = 2,
-        	TechType.Exosuit = 3,
+        	{TechType.BaseMoonpool, 2},
+        	{TechType.Seamoth, 2},
+        	{TechType.Seaglide, 1},
+        	{TechType.Cyclops, 4},
+        	{TechType.PipeSurfaceFloater, 1},
+        	{TechType.BasePipeConnector, 1},
+        	{TechType.RocketBaseLadder, 1},
+        	{TechType.VendingMachine, 1},
+        	{TechType.ExosuitDrillArmModule, 2},
+        	{TechType.Exosuit, 3},
         };
-        foreach (TechType tt in addMotors) {
-        	int amt = tt == TechType.ExosuitDrillArmModule || tt == TechType.Exosuit ? 2 : 1;
-        	RecipeUtil.modifyIngredients(tt, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
-        	RecipeUtil.addIngredient(tt, motor.TechType, amt);
+        foreach (KeyValuePair<TechType, int> kvp in addMotors) {
+        	int amt = -1;
+        	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
+        	RecipeUtil.addIngredient(kvp.Key, motor.TechType, Math.Max(kvp.Value, amt));
         }
         
         RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);

@@ -124,7 +124,7 @@ namespace ReikaKalseki.SeaToSea {
 				speed = Math.Min(speed*1.05F+0.15F, 150);
 				secsNoPwr = 0;
 				sound.Play();
-				if (storage.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null)
+				if (available < 6000 && storage.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null)
 					available += RebreatherRecharger.ITEM_VALUE;
 			}
 			else {

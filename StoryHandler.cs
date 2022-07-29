@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea
 					VoidSpikesBiome.instance.activateSignal();
 				}
 				else if (key.Contains(SeaToSeaMod.crashMesaRadio.key)) {
-					Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("trigger", 15);
+					Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("trigger", 25);
 				}
 			}
 			else if (key == PDAManager.getPage("voidpod").id) { //id is pda page story key
@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea
 			
 		void trigger() {
 			SNUtil.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
+			SNUtil.playSound("event:/player/story/RadioShallows22NoSignalAlt"); //"signal coordinates corrupted"
 			PDAManager.getPage("crashmesahint").unlock(false);
 		}
 		

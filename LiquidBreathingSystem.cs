@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
@@ -24,6 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private Texture2D baseO2BubbleTexture;
 	    private float baseOverlayAlpha2;
 	    private float baseOverlayAlpha1;
+	    private string baseLabel;
 	    
 	    private float lastRechargeRebreatherTime = -1;
 	    private float rechargingTintStrength = 0;
@@ -102,12 +104,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void updateOxygenGUI(uGUI_OxygenBar gui) {
 			uGUI_CircularBar bar = gui.bar;
+			Text t = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextLabel").GetComponent<Text>();
 	    	if (baseO2BarTexture == null) {
 	    		baseO2BarTexture = bar.texture;
 	    		baseO2BarColor = bar.borderColor;
 	    		baseO2BubbleTexture = bar.overlay;
 	    		baseOverlayAlpha1 = gui.overlay1Alpha;
 	    		baseOverlayAlpha2 = gui.overlay2Alpha;
+	    		baseLabel = t.text; //O<size=30>2</size>
 	    		//RenderUtil.dumpTexture("o2bar_core", baseO2BarTexture);
 	    		//RenderUtil.dumpTexture("o2bar_bubble", baseO2BubbleTexture);
 	    	}	    	
@@ -121,6 +125,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	bar.overlay = pink ? TextureManager.getTexture("Textures/o2bar_liquid_bubble") : baseO2BubbleTexture;
 	    	bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1*2) : baseOverlayAlpha1;
 	    	bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2*2) : baseOverlayAlpha2;
+	    	t.text = pink ? "CF<size=30>X</size>•O<size=30>Y</size>"/*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
 	    	bar.color = Color.white;
 	    	
 	    	float time = DayNightCycle.main.timePassedAsFloat;
