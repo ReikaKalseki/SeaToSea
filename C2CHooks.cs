@@ -135,6 +135,24 @@ namespace ReikaKalseki.SeaToSea {
 	    	return orig;
 	    }
 	    
+	    public static float getSwimSpeed(float f) {
+	    	if (Player.main.motorMode != Player.MotorMode.Dive)
+	    		return f;
+	    	//SNUtil.writeToChat("Get swim speed, was "+f+", has="+LiquidBreathingSystem.instance.hasLiquidBreathing());
+	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing())
+	    		f -= 0.1F; //was 0.25
+	    	return f;
+	    }
+	    
+	    public static float getSeaglideSpeed(float f) { //1.45 by default
+	    	Pickupable held = Inventory.main.GetHeld();
+	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
+	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity));
+	    	if (Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity))
+	    		f += 0.95F; //was 0.55
+	    	return f;
+	    }
+	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
 	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp() && LiquidBreathingSystem.instance.hasLiquidBreathing()) {
 	    		LiquidBreathingSystem.instance.checkLiquidBreathingSupport(a);

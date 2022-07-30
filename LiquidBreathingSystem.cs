@@ -85,7 +85,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool hasLiquidBreathing() {
-	    	return Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0;
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {
@@ -116,7 +116,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//RenderUtil.dumpTexture("o2bar_bubble", baseO2BubbleTexture);
 	    	}	    	
 	    	
-	    	bool pink = Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0;
+			bool pink = hasLiquidBreathing();
 	    	
 	    	bar.edgeWidth = pink ? 0.25F : 0.2F;
 	    	bar.borderWidth = pink ? 0.1F : 0.2F;
