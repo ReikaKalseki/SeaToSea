@@ -1,25 +1,19 @@
 ManifestFileVersion: 0
-CRC: 967305157
+CRC: 1939052984
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: dbee5fb84425d96e454f7c16633645fb
+    Hash: 800b4192378fbc6b26f126cc2e48dce1
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 00d872b12b1f89e0886ed3ea9bb5f873
+    Hash: d39e9a74c78976b096ba8ceb9fb4a289
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
   Script: {instanceID: 0}
-- Class: 20
-  Script: {instanceID: 0}
 - Class: 21
-  Script: {instanceID: 0}
-- Class: 23
-  Script: {instanceID: 0}
-- Class: 33
   Script: {instanceID: 0}
 - Class: 43
   Script: {instanceID: 0}
@@ -29,10 +23,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 95
   Script: {instanceID: 0}
-- Class: 108
-  Script: {instanceID: 0}
 - Class: 137
   Script: {instanceID: 0}
 Assets:
-- Assets/BundledAssets/VoidSpikeLevi_N8-modify (1).fbx
+- Assets/BundledAssets/VoidSpikeLevi_FixedRig.fbx
 Dependencies: []

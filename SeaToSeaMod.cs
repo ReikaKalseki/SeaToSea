@@ -59,6 +59,8 @@ namespace ReikaKalseki.SeaToSea
     public static FMODAsset voidspikeLeviBite;
     public static FMODAsset voidspikeLeviFX;
     public static FMODAsset voidspikeLeviAmbient;
+    
+    private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
 
     [QModPatch]
     public static void Load() {
@@ -146,6 +148,28 @@ namespace ReikaKalseki.SeaToSea
 		KnownTech.onAdd += onTechUnlocked;
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
+		
+		gatedTechnologies.Add(TechType.Seamoth);
+		gatedTechnologies.Add(TechType.Cyclops);
+		gatedTechnologies.Add(TechType.Exosuit);
+		gatedTechnologies.Add(TechType.ExosuitDrillArmModule);
+		gatedTechnologies.Add(TechType.ExoHullModule1);
+		gatedTechnologies.Add(TechType.ExoHullModule2);
+		gatedTechnologies.Add(TechType.VehicleHullModule2);
+		gatedTechnologies.Add(TechType.VehicleHullModule3);
+		gatedTechnologies.Add(TechType.CyclopsHullModule2);
+		gatedTechnologies.Add(TechType.CyclopsHullModule3);
+		gatedTechnologies.Add(TechType.CyclopsThermalReactorModule);
+		gatedTechnologies.Add(TechType.CyclopsFireSuppressionModule);
+		gatedTechnologies.Add(TechType.StasisRifle);
+		gatedTechnologies.Add(TechType.LaserCutter);
+		gatedTechnologies.Add(TechType.ReinforcedDiveSuit);
+		gatedTechnologies.Add(TechType.ReinforcedGloves);
+		gatedTechnologies.Add(TechType.PrecursorKey_Blue);
+		gatedTechnologies.Add(TechType.PrecursorKey_Red);
+		gatedTechnologies.Add(TechType.PrecursorKey_White);
+		gatedTechnologies.Add(TechType.PrecursorKey_Orange);
+		gatedTechnologies.Add(TechType.PrecursorKey_Purple);
        
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
@@ -156,6 +180,10 @@ namespace ReikaKalseki.SeaToSea
     	if (tech == TechType.PrecursorKey_Orange) {
     		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
     	}
+    }
+    
+    public static bool isTechGated(TechType tt) {
+    	return gatedTechnologies.Contains(tt);
     }
     
     private static void addFlora() {

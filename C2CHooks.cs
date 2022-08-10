@@ -175,11 +175,48 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void addT2BatteryAllowance(EnergyMixin mix) {
 	    	if (mix.compatibleBatteries.Contains(TechType.Battery) && !mix.compatibleBatteries.Contains(SeaToSeaMod.t2Battery.TechType)) {
-	    		mix.compatibleBatteries.Add(SeaToSeaMod.t2Battery.TechType);
+	    		mix.compatibleBatteries.Add(SeaToSeaMod.t2Battery.TechType);/*
 	    		List<EnergyMixin.BatteryModels> arr = mix.batteryModels.ToList();
-	    		arr.Add(new EnergyMixin.BatteryModels{model = SeaToSeaMod.t2Battery.GetGameObject(), techType = SeaToSeaMod.t2Battery.TechType});
-	    		mix.batteryModels = arr.ToArray();
+	    		GameObject go = SeaToSeaMod.t2Battery.GetGameObject();
+	    		go.SetActive(false);
+	    		arr.Add(new EnergyMixin.BatteryModels{model = go, techType = SeaToSeaMod.t2Battery.TechType});
+	    		mix.batteryModels = arr.ToArray();*/
 	    	}
+	    }
+	    
+	    public static GameObject onSpawnBatteryForEnergyMixin(GameObject go) {
+	    	SNUtil.writeToChat("Spawned a "+go);
+	    	go.SetActive(false);
+	    	return go;
+	    }
+	    
+	    public static void collectTimeCapsule(TimeCapsule tc) {
+	    	bool someBlocked = false;
+			try
+			{
+				PDAEncyclopedia.AddTimeCapsule(tc.id, true);
+				PlayerTimeCapsule.main.RegisterOpen(tc.instanceId);
+				List<TimeCapsuleItem> items = TimeCapsuleContentProvider.GetItems(tc.id);
+				if (items != null) {
+					foreach (TimeCapsuleItem tci in items) {
+						if (SeaToSeaMod.isTechGated(tci.techType) || SeaToSeaMod.isTechGated(tci.batteryType)) {
+							someBlocked = true;
+							continue;
+						}
+						Pickupable pickupable = tci.Spawn();
+						if (pickupable != null) {
+							Inventory.main.ForcePickup(pickupable);
+						}
+					}
+				}
+			}
+			finally
+			{
+				UnityEngine.Object.Destroy(tc.gameObject);
+			}
+			if (someBlocked) {
+				
+			}
 	    }
 	    
 	    public static bool isPingVisible(PingInstance inst) {/*
@@ -532,15 +569,15 @@ namespace ReikaKalseki.SeaToSea {
 	    		GameObject orig = go;
 			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
 			 	//mdl.transform.localPosition = Vector3.zero;
-			 	/*
+			 	
 			 	AssetBundle ab = ReikaKalseki.DIAlterra.AssetBundleManager.getBundle("voidspike");
-			 	GameObject bdl = ab.LoadAsset<GameObject>("VoidSpikeLevi_N8-modify");
+			 	GameObject bdl = ab.LoadAsset<GameObject>("VoidSpikeLevi_FixedRig");
 			 	//ObjectUtil.dumpObjectData(bdl);
-			 	Mesh tryM = ab.LoadAsset<Mesh>("Ghost_Leviathan_geo");
+			 	Mesh tryM = ab.LoadAsset<Mesh>("Ghost_Leviathan_geo.001");
 			 	if (tryM == null) {
 			 		SNUtil.log("Direct fetch not found");
 			 		System.Object[] all = ab.LoadAllAssets();
-			 		tryM = all.Length >= 6 ? all[5] as Mesh : null;
+			 		tryM = all.Length >= 4 ? all[3] as Mesh : null;
 			 	}
 			 	if (tryM == null) {
 			 		SNUtil.log("Index fetch not found");
@@ -550,10 +587,12 @@ namespace ReikaKalseki.SeaToSea {
 			 		else
 			 			tryM = smrs[0].sharedMesh;
 			 	}
-			 	ObjectUtil.dumpObjectData(tryM);
+			 	if (true)
+			 		tryM = bdl.GetComponentsInChildren<SkinnedMeshRenderer>(true)[0].sharedMesh;
+			 	//ObjectUtil.dumpObjectData(tryM);
 			 	
-			 	RenderUtil.setMesh(go, tryM);*/
-			 	
+			 	RenderUtil.setMesh(go, tryM);
+			 	/*
 			 	go = ObjectUtil.createWorldObject(VanillaCreatures.AMPEEL.prefab);
 			 	go.transform.position = pos;
 			 	go.transform.rotation = Quaternion.identity;
@@ -578,7 +617,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (c is SplineFollowing || c is WorldForces || c is FMOD_CustomEmitter || c is FMOD_StudioEventEmitter || c is VFXController) {
 						continue;
 					}
-					if (c is Locomotion || /*c is UnityEngine.Animator || */c is AnimateByVelocity) {
+					if (c is Locomotion || c is AnimateByVelocity) {
 						continue;
 					}
 			 		Component tgt = go.EnsureComponent(c.GetType());
@@ -605,6 +644,7 @@ namespace ReikaKalseki.SeaToSea {
 			 	ObjectUtil.copyComponent<SwimRandom>(orig, go);*/
 			 	
 	    		SkinnedMeshRenderer r = go.GetComponentInChildren<SkinnedMeshRenderer>();
+				r.materials[0].SetFloat("_SpecInt", 0F);
 	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
 	    		//r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);

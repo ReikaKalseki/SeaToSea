@@ -457,6 +457,15 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 			}
+			if (id.StartsWith("flora_", StringComparison.InvariantCultureIgnoreCase)) {
+				try {
+					return ((VanillaFlora)typeof(VanillaFlora).GetField(id.Substring(6).ToUpper()).GetValue(null)).getRandomPrefab(false);
+				}
+				catch (Exception ex) {
+					SNUtil.log("Unable to fetch vanilla flora field '"+id+"': "+ex);
+					return null;
+				}
+			}
 			if (id.StartsWith("fauna_", StringComparison.InvariantCultureIgnoreCase)) {
 				try {
 					return ((VanillaCreatures)typeof(VanillaCreatures).GetField(id.Substring(6).ToUpper()).GetValue(null)).prefab;
