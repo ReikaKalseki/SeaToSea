@@ -24,20 +24,30 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	
+    	private readonly static Vector3 auroraPrawnBayCenter = new Vector3(996, 2.5F, -26.5F);//new Vector3(1003, 4, -18);
+    	//private readonly static Vector3 auroraTopLeftBack = new Vector3(1010, 13, ?);
+    	//private readonly static Vector3 auroraBottomRightFront = new Vector3(?, ?, ?);
+    	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
+    	private readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
+    	
     	private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
     	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
 		
 		private EnvironmentalDamageSystem() {
-    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 40, 9);
-    		temperatures["ILZCorridorDeep"] = new TemperatureEnvironment(120, 9, 20, 12);
-    		temperatures["ILZChamber"] = new TemperatureEnvironment(150, 10, 10, 15);
-    		temperatures["LavaPit"] = new TemperatureEnvironment(180, 12, 8, 20);
-    		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 5, 25);
-    		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 2, 40);
-    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0, 100); //in lava
-    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 4, 20);
+    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 0.5F, 40, 9);
+    		temperatures["ILZCorridorDeep"] = new TemperatureEnvironment(120, 9, 0.5F, 20, 12);
+    		temperatures["ILZChamber"] = new TemperatureEnvironment(150, 10, 0.5F, 10, 15);
+    		temperatures["LavaPit"] = new TemperatureEnvironment(180, 12, 0.5F, 8, 20);
+    		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 0.5F, 5, 25);
+    		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 0.5F, 2, 40);
+    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0.5F, 0, 100); //in lava
+    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
+    		
+    		temperatures["AuroraPrawnBay"] = new TemperatureEnvironment(150, 15F, 2.5F, 9999, 0);
+    		temperatures["AuroraPrawnBayDoor"] = new TemperatureEnvironment(200, 40F, 2.5F, 9999, 0);
+    		temperatures["AuroraFireCeilingTunnel"] = new TemperatureEnvironment(175, 5F, 1.5F, 9999, 0);
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 		   	lrLeakage["LostRiver_BonesField"] = 1;
@@ -59,26 +69,42 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
-	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()))
+			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
+			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
+			bool diveSuit = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedGloves) != 0;
+			if (aurora && !diveSuit) {
+				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.auroraFirePDA.key)) {
+		   			Story.StoryGoal.Execute(SeaToSeaMod.auroraFirePDA.key, SeaToSeaMod.auroraFirePDA.goalType);
+		   		}
+			}
+	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()) && !aurora)
 	   			return;
 	   		//SBUtil.writeToChat("not skipped");
 			float temperature = dmg.GetTemperature();
 			float f = 1;
 			float f0 = 1;
-			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
-			//SBUtil.writeToChat(biome+" for "+dmg.gameObject);
+			float fw = 0;
+			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
-	    		f0 = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0 ? 2.5F : 0.4F;
+	    		f0 = diveSuit ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
 	    		if (te != null) {
 		    		f = te.damageScalar;
 		    		temperature = te.temperature;
+		    		fw = te.waterScalar;
 	    		}
 			}
 			if (temperature >= dmg.minDamageTemperature) {
 				float num = temperature / dmg.minDamageTemperature;
 				num *= dmg.baseDamagePerSecond;
-				dmg.liveMixin.TakeDamage(num*f*f0/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Heat, null);
+				float amt = num*f*f0/ENVIRO_RATE_SCALAR;
+				if (aurora && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.gameObject.transform.position) <= 3)
+					amt *= 2;
+				dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
+				if (dmg.player && !diveSuit) {
+					Survival s = Player.main.GetComponent<Survival>();
+					s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
+				}
 			}
 	    	if (dmg.player) {
 		    	float depth = dmg.player.GetDepth();
@@ -214,6 +240,12 @@ namespace ReikaKalseki.SeaToSea {
     			ret = "LavaCastle";
     		if (string.IsNullOrEmpty(ret))
     			ret = "void";
+    		if (Vector3.Distance(auroraPrawnBayCenter, pos) <= 20)
+    			ret = "AuroraPrawnBay";
+    		if (Vector3.Distance(auroraPrawnBayDoor, pos) <= 3)
+    			ret = "AuroraPrawnBayDoor";
+    		if (Vector3.Distance(auroraFireCeilingTunnel, pos) <= 9)
+    			ret = "AuroraFireCeilingTunnel";
     		return ret;
     	}
     	
@@ -330,12 +362,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public readonly float temperature;
 		public readonly float damageScalar;
+		public readonly float waterScalar;
 		public readonly float damageScalarCyclops;
 		public readonly int cyclopsFireChance;
 		
-		internal TemperatureEnvironment(float t, float dmg, int cf, float dmgC) {
+		internal TemperatureEnvironment(float t, float dmg, float w, int cf, float dmgC) {
 			temperature = t;
 			damageScalar = dmg;
+			waterScalar = w;
 			cyclopsFireChance = cf;
 			damageScalarCyclops = dmgC;
 		}

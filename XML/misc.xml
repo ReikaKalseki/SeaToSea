@@ -32,4 +32,15 @@
 		Sounds/voidspike2.ogg
 	</pda>
   </voidspikeenter>
+  <aurorafire>
+	<name>
+		
+	</name>
+	<desc>
+		Caution: Hazardous fire levels detected. The radiation suit is not equipped for this environment.
+	</desc>
+	<pda>
+		Sounds/aurorafirewarn.ogg
+	</pda>
+  </aurorafire>
 </Root>

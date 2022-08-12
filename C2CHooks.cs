@@ -544,6 +544,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
 	    }
 	    
+	    public static void pulseSeamothDefence(SeaMoth sm) {
+	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
+	    }
+	    
 	    public static void onStoryGoalCompleted(string key) {
 	    	StoryHandler.instance.NotifyGoalComplete(key);
 	    }

@@ -264,6 +264,22 @@ namespace ReikaKalseki.SeaToSea {
 	    		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-lastPing;
 	    	}
 	    }
+	
+		private class VoidSpikeLeviathan : MonoBehaviour {
+			
+			public void init(GameObject go) {
+				
+			}
+			
+			void Update() {
+				 gameObject.transform.localScale = new Vector3(3, 3, 4);
+			}
+			
+			void OnDestroy() {
+				instance.deleteVoidLeviathan();
+			}
+			
+		}
 		
 	}
 	

@@ -132,7 +132,12 @@ namespace ReikaKalseki.SeaToSea {
 				else {
 					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
 					if (dist <= f1) {
-						SNUtil.teleportPlayer(ep, (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y));
+						Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y);
+						foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
+							Vector3 delta = levi.transform.position-tgt;
+							levi.transform.position = tgt+delta;
+						}
+						SNUtil.teleportPlayer(ep, tgt);
 			    		SNUtil.log("Teleported player to biome");
 					}
 				}
@@ -254,21 +259,5 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
 			vol.overrideBiome = VoidSpikesBiome.biomeName;
 		}
-	}
-	
-	public class VoidSpikeLeviathan : MonoBehaviour {
-		
-		public void init(GameObject go) {
-			
-		}
-		
-		void Update() {
-			 gameObject.transform.localScale = new Vector3(3, 3, 4);
-		}
-		
-		void OnDestroy() {
-			C2CHooks.deleteVoidLeviathan();
-		}
-		
 	}
 }

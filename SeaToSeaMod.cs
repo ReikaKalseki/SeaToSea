@@ -48,6 +48,7 @@ namespace ReikaKalseki.SeaToSea
     
     public static Story.StoryGoal crashMesaRadio;
     public static Story.StoryGoal voidSpikePDA;
+    public static Story.StoryGoal auroraFirePDA;
     //public static Story.StoryGoal mountainPodRadio;
     
     public static BrokenTablet brokenRedTablet;
@@ -144,6 +145,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		e = miscLocale.getEntry("voidspikeenter");
 		voidSpikePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
+		
+		e = miscLocale.getEntry("aurorafire");
+		auroraFirePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 0);
 		
 		KnownTech.onAdd += onTechUnlocked;
        
@@ -249,7 +253,7 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addCommands() {
-        BuildingHandler.instance.addCommand<string>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
+        BuildingHandler.instance.addCommand<string, PlacedObject>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
         //BuildingHandler.instance.addCommand<string>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
         BuildingHandler.instance.addCommand<bool>("bden", BuildingHandler.instance.setEnabled);  
         BuildingHandler.instance.addCommand("bdsa", BuildingHandler.instance.selectAll);

@@ -138,6 +138,11 @@ namespace ReikaKalseki.SeaToSea
 				levi.transform.position = position+offset;
 				generated.Add(levi);
 			}
+			for (int i = 0; i < 4; i++) {
+				GameObject ent = spawner(VanillaCreatures.CRABSQUID.prefab);
+				ent.transform.position = MathUtil.interpolate(VoidSpikesBiome.end500m, VoidSpikesBiome.end900m, UnityEngine.Random.Range(0.25F, 0.75F));
+				generated.Add(ent);
+			}
 		}
 		
 		private bool posIntersectsAnySpikes(Vector3 vec, string why) {

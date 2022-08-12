@@ -59,6 +59,11 @@ namespace ReikaKalseki.SeaToSea
 			addText("/"+key+": "+call.Method.Name);
 		}
 		
+		public void addCommand<T, R>(string key, Func<T, R> call) {
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Func<T, R>>(key, call);
+			addText("/"+key+": "+call.Method.Name);
+		}
+		
 		public void addCommand<T1, T2>(string key, Action<T1, T2> call) {
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<T1, T2>>(key, call);
 			addText("/"+key+": "+call.Method.Name);
@@ -98,10 +103,10 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		internal static int genID(GameObject go) {
-			if (go.transform.root != null && go.transform.root.gameObject != null)
-				return go.transform.root.gameObject.GetInstanceID();
-			else
+		internal static int genID(GameObject go) {/*
+			if (go.transform != null && go.transform.gameObject != null)
+				return go.transform.gameObject.GetInstanceID();
+			else*/
 				return go.GetInstanceID();
 		}
 		
@@ -415,9 +420,9 @@ namespace ReikaKalseki.SeaToSea
 			return ret;
 		}
     
-	    public void spawnPrefabAtLook(string arg) {
+	    internal PlacedObject spawnPrefabAtLook(string arg) {
 			if (!isEnabled)
-				return;
+				return null;
 	    	Transform transform = MainCamera.camera.transform;
 			Vector3 position = transform.position;
 			Vector3 forward = transform.forward;
@@ -425,13 +430,59 @@ namespace ReikaKalseki.SeaToSea
 			string id = getPrefabKeyFromID(arg);
 			PlacedObject b = PlacedObject.createNewObject(id);
 			if (b != null) {
-				items[b.referenceID] = b;
 				b.obj.transform.SetPositionAndRotation(pos, Quaternion.identity);
+				registerObject(b);
 				SNUtil.writeToChat("Spawned a "+b);
-				lastPlaced = b;
-				selectLastPlaced();
+				SNUtil.log("Spawned a "+b);
 			}
+			return b;
 	    }
+		
+		public void addRealObject_External(GameObject go, bool withChildren = false) {
+			addRealObject(go, withChildren);
+		}
+		
+		internal PlacedObject addRealObject(GameObject go, bool withChildren = false) {/*
+			Base bb = go.GetComponent<Base>();
+			if (bb != null) {
+				PlacedObject bo = PlacedObject.createNewObject(go);
+				registerObject(bo);
+				foreach (Transform t in go.transform) {
+					GameObject go2 = t.gameObject;
+					BaseCell bc = go2.GetComponent<BaseCell>();
+					if (bc != null) {
+						PlacedObject bo2 = PlacedObject.createNewObject(go2);
+						registerObject(bo2);
+					}
+				}
+				withChildren = false;
+			}*/
+			PlacedObject b = PlacedObject.createNewObject(go);
+			if (b != null) {
+				registerObject(b);
+				SNUtil.writeToChat("Registered a pre-existing "+b);
+				SNUtil.log("Registered a pre-existing "+b);
+				if (withChildren) {
+					foreach (Transform t in go.transform) {
+						if (t.gameObject != go && t.gameObject != null) {
+							PrefabIdentifier pi = t.gameObject.GetComponent<PrefabIdentifier>();
+							if (pi != null && pi.ClassId == PlacedObject.BUBBLE_PREFAB)
+								continue;
+							PlacedObject b2 = addRealObject(t.gameObject, true);
+							if (b2 != null)
+								b2.parent = b;
+						}
+					}
+				}
+			}
+			return b;
+		}
+		
+		private void registerObject(PlacedObject b) {
+			items[b.referenceID] = b;
+			lastPlaced = b;
+			selectLastPlaced();
+		}
 		/*
 		public void spawnTechTypeAtLook(string tech) {
 			spawnTechTypeAtLook(getTech(tech));

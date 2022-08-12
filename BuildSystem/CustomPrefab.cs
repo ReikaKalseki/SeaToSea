@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea
 			[SerializeField]
 			internal readonly List<ManipulationBase> manipulations = new List<ManipulationBase>();
 			
-			public bool isBasePiece {get; private set;}
+			public bool isBasePiece {get; protected set;}
 			public bool isCrate {get; private set;}
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
@@ -63,7 +63,13 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			public override void saveToXML(XmlElement e) {
+				string n = prefabName;
+				if (isBasePiece) {
+					e.addProperty("piece", prefabName);
+					prefabName = "base";
+				}
 				base.saveToXML(e);
+				prefabName = n;
 				if (tech != TechType.None)
 					e.addProperty("tech", Enum.GetName(typeof(TechType), tech));
 				if (manipulations.Count > 0) {
@@ -129,6 +135,14 @@ namespace ReikaKalseki.SeaToSea
 					PDAManager.PDAPage page = PDAManager.getPage(pagen);
 					prefabName = page.getPDAClassID();
 					SNUtil.log("Redirected customprefab to pda "+prefabName);
+				}
+				else if (prefabName == "base") {
+					isBasePiece = true;
+					prefabName = e.getProperty("piece");
+					List<XmlElement> li0 = e.getDirectElementsByTagName("supportData");
+					if (li0.Count == 1)
+						manipulations.Add(new SeabaseLegLengthPreservation(li0[0]));
+					SNUtil.log("Redirected customprefab to base piece "+prefabName+" >> "+li0.Count+"::"+string.Join(", ", li0.Select<XmlElement, string>(el => el.OuterXml)));
 				}
 				//else if (prefabName == "fragment") {
 				//	prefabName = ?;

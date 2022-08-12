@@ -27,7 +27,11 @@ namespace ReikaKalseki.SeaToSea
 		
 			public static readonly new string TAGNAME = "object";
 			
+			public static readonly string BUBBLE_PREFAB = "fca5cdd9-1d00-4430-8836-a747627cdb2f";
+			
 			private static GameObject bubblePrefab = null;
+			
+			private static readonly Dictionary<string, PlacedObject> ids = new Dictionary<string, PlacedObject>();
 			
 			[SerializeField]
 			internal int referenceID;
@@ -38,6 +42,8 @@ namespace ReikaKalseki.SeaToSea
 			
 			[SerializeField]
 			internal bool isSelected;
+			
+			internal PlacedObject parent = null;
 			
 			static PlacedObject() {
 				registerType(TAGNAME, e => PlacedObject.fromXML(e, false));
@@ -52,6 +58,13 @@ namespace ReikaKalseki.SeaToSea
 					throw new Exception("Tried to make a place of a null obj!");
 				if (go.transform == null)
 					SNUtil.log("Place of obj "+go+" has null transform?!");
+				position = go.transform.position;
+				rotation = go.transform.rotation;
+				scale = go.transform.localScale;
+				tech = CraftData.GetTechType(go);
+				isBasePiece = pfb.StartsWith("Base_", StringComparison.InvariantCultureIgnoreCase);
+				if (isBasePiece)
+					prefabName = prefabName.Substring(5);
 				key(go);				
 				createFX();
 			}
@@ -62,7 +75,7 @@ namespace ReikaKalseki.SeaToSea
 						UnityEngine.Object.Destroy(fx);
 					}
 					if (bubblePrefab == null) {
-						if (!UWE.PrefabDatabase.TryGetPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
+						if (!UWE.PrefabDatabase.TryGetPrefab(BUBBLE_PREFAB, out bubblePrefab)) {
 						//if (!SNUtil.getPrefab("fca5cdd9-1d00-4430-8836-a747627cdb2f", out bubblePrefab)) {
 							SNUtil.writeToChat("Bubbles not loadable!");
 						}
@@ -104,7 +117,14 @@ namespace ReikaKalseki.SeaToSea
 			private void key(GameObject go) {
 				obj = go;
 				referenceID = BuildingHandler.genID(go);
+				xmlID = Guid.NewGuid();
+				ids[xmlID.ToString()] = this;
 				tech = CraftData.GetTechType(go);
+			}
+			
+			internal void destroy() {
+				if (xmlID != null && xmlID.HasValue)
+					ids.Remove(xmlID.Value.ToString());
 			}
 			
 			internal void setSelected(bool sel) {
@@ -192,10 +212,38 @@ namespace ReikaKalseki.SeaToSea
 			
 			public override void saveToXML(XmlElement e) {
 				base.saveToXML(e);
+				
+				if (parent != null && parent.xmlID != null && parent.xmlID.HasValue) {
+					e.addProperty("parent", parent.xmlID.ToString());
+				}
+				if (isBasePiece) {
+					BaseFoundationPiece bf = obj.GetComponent<BaseFoundationPiece>();
+					if (bf != null) {
+						XmlElement e2 = e.OwnerDocument.CreateElement("supportData");
+						e2.addProperty("maxHeight", bf.maxPillarHeight);
+						e2.addProperty("extra", bf.extraHeight);
+						e2.addProperty("minHeight", bf.minHeight);
+						foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
+							Transform l = p.adjustable;
+							if (l != null) {
+								XmlElement e3 = e.OwnerDocument.CreateElement("pillar");
+								e3.addProperty("position", l.position);
+								e3.addProperty("rotation", l.rotation);
+								e3.addProperty("scale", l.localScale);
+								e2.AppendChild(e3);
+							}
+						}
+						e.AppendChild(e2);
+					}
+				}
 			}
 			
 			public override void loadFromXML(XmlElement e) {
+				if (xmlID != null && xmlID.HasValue)
+					ids.Remove(xmlID.Value.ToString());
 				base.loadFromXML(e);
+				if (xmlID != null && xmlID.HasValue)
+					ids[xmlID.Value.ToString()] = this;
 				
 				if (isDatabox) {
 					//SNUtil.writeToChat("Reprogramming databox");
@@ -211,9 +259,8 @@ namespace ReikaKalseki.SeaToSea
 				else if (isPDA) {
 					//SNUtil.setPDAPage(obj.EnsureComponent<StoryHandTarget>(), page);
 				}
-				
-				foreach (ManipulationBase mb in manipulations) {
-					mb.applyToObject(this);
+				else if (isBasePiece) {
+					//SNUtil
 				}
 				
 				setPosition(position);
@@ -221,6 +268,17 @@ namespace ReikaKalseki.SeaToSea
 				obj.transform.localScale = scale;
 				if (fx != null && fx.transform != null)
 					fx.transform.localScale = scale;
+				
+				string pp = e.getProperty("parent", true);
+				if (!string.IsNullOrEmpty(pp) && ids.ContainsKey(pp)) {
+					parent = ids[pp];
+					if (parent != null)
+						obj.transform.parent = parent.obj.transform;
+				}
+				
+				foreach (ManipulationBase mb in manipulations) {
+					mb.applyToObject(this);
+				}
 			}
 		
 			protected override void setPrefabName(string name) {
@@ -247,6 +305,24 @@ namespace ReikaKalseki.SeaToSea
 			internal static PlacedObject createNewObject(CustomPrefab pfb) {
 				return createNewObject(pfb.prefabName, pfb.isBasePiece);
 			}
+		
+			internal static PlacedObject createNewObject(GameObject go) {
+				string id = null;
+				//SNUtil.log("Attempting builderObject from '"+go.name+"'");
+				PrefabIdentifier pi = go.GetComponent<PrefabIdentifier>();
+				if (pi != null)
+					id = pi.classId;
+				if (pi == null && go.name.StartsWith("Base", StringComparison.InvariantCulture)) {
+					string name = go.name.Replace("(Clone)", "").Substring(4);
+					Base.Piece get = Base.Piece.Invalid;
+					if (Enum.TryParse<Base.Piece>(name, out get)) {
+						if (get != Base.Piece.Invalid) {
+							id = "Base_"+name;
+						}
+					}
+				}
+				return string.IsNullOrEmpty(id) ? null : createNewObject(go, id);
+			}
 			
 			private static PlacedObject createNewObject(string id, bool basePiece) {
 				if (id == null) {
@@ -254,14 +330,15 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 				GameObject go = basePiece ? ObjectUtil.getBasePiece(id) : ObjectUtil.createWorldObject(id);
-				if (go != null) {
-					BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
-					PlacedObject ret = new PlacedObject(go, id);
-					sel.placement = ret;
-					//SNUtil.dumpObjectData(ret.obj);
-					return ret;
-				}
-				return null;
+				return go == null ? null : createNewObject(go);
+			}
+			
+			private static PlacedObject createNewObject(GameObject go, string id) {
+				BuilderPlaced sel = go.AddComponent<BuilderPlaced>();
+				PlacedObject ret = new PlacedObject(go, id);
+				sel.placement = ret;
+				//SNUtil.dumpObjectData(ret.obj);
+				return ret;
 			}
 			
 		}

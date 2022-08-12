@@ -200,6 +200,29 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(SeaMoth))]
+	[HarmonyPatch("OnUpgradeModuleUse")]
+	public static class SeamothDefenceHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "ElectricalDefense", "chargeScalar");
+				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "pulseSeamothDefence", false, typeof(SeaMoth)));
+				codes.Insert(idx+1, new CodeInstruction(OpCodes.Ldarg_0));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	[HarmonyPatch(typeof(SinkingGroundChunk))]
 	[HarmonyPatch("Start")]
 	public static class TreaderChunkHook {
@@ -1284,7 +1307,7 @@ namespace ReikaKalseki.SeaToSea {
 			List<CodeInstruction> codes = new List<CodeInstruction>();
 			try {
 				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "collectTimeCapsule", false, typeof(float)));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "collectTimeCapsule", false, typeof(TimeCapsule)));
 				codes.Add(new CodeInstruction(OpCodes.Ret));
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
