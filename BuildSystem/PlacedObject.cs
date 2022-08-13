@@ -210,6 +210,18 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
+			private void nestObject(GameObject go, XmlElement e) {
+				PlacedObject p = createNewObject(go);
+				if (p != null) {
+					XmlElement e2 = e.OwnerDocument.CreateElement("child");
+					p.saveToXML(e2);
+					e.AppendChild(e2);
+					foreach (Transform t in go.transform) {
+						nestObject(t.gameObject, e2);
+					}
+				}
+			}
+			
 			public override void saveToXML(XmlElement e) {
 				base.saveToXML(e);
 				
@@ -232,6 +244,9 @@ namespace ReikaKalseki.SeaToSea
 										XmlElement e3 = e.OwnerDocument.CreateElement("component");
 										p3.saveToXML(e3);
 										e2.AppendChild(e3);
+										foreach (Transform t3 in t2) {
+											nestObject(t3.gameObject, e3);
+										}
 									}
 								}
 								cell.AppendChild(e2);
@@ -344,6 +359,12 @@ namespace ReikaKalseki.SeaToSea
 					if (Enum.TryParse<Base.Piece>(name, out get)) {
 						if (get != Base.Piece.Invalid) {
 							id = "Base_"+name;
+						}
+					}
+					if (id == null) {
+						TechTag tt = go.GetComponent<TechTag>();
+						if (tt != null && tt.type == TechType.BaseFoundation) {
+							id = "Base_Foundation";
 						}
 					}
 				}

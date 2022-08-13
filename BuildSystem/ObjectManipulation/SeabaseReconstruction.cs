@@ -49,10 +49,23 @@ namespace ReikaKalseki.SeaToSea
 						SNUtil.log("Reconstructed base component: "+pfb2);
 						GameObject go3 = pfb2.createWorldObject();
 						go3.transform.parent = go2.transform;
+						rebuildNestedObjects(go3, e3);
 						List<XmlElement> li0 = e3.getDirectElementsByTagName("supportData");
 						if (li0.Count == 1)
 							new SeabaseLegLengthPreservation(li0[0]).applyToObject(go3);
 					}
+				}
+			}
+		}
+			
+		private void rebuildNestedObjects(GameObject main, XmlElement e) {
+			foreach (XmlElement e2 in e.getDirectElementsByTagName("child")) {
+				CustomPrefab pfb = new CustomPrefab(e2.getProperty("prefab"));
+				pfb.loadFromXML(e2);
+				GameObject go = pfb.createWorldObject();
+				if (go != null) {
+					go.transform.parent = main.transform;
+					rebuildNestedObjects(go, e2);
 				}
 			}
 		}
