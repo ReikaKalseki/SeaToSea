@@ -16,13 +16,13 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
-using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Assets;
 
+using ReikaKalseki.SeaToSea;
 using ReikaKalseki.DIAlterra;
+
 
 namespace ReikaKalseki.SeaToSea
 {		
@@ -38,7 +38,8 @@ namespace ReikaKalseki.SeaToSea
 			[SerializeField]
 			internal readonly List<ManipulationBase> manipulations = new List<ManipulationBase>();
 			
-			public bool isBasePiece {get; protected set;}
+			public bool isSeabase {get; protected set;}
+			public bool isBasePiece {get; internal set;}
 			public bool isCrate {get; private set;}
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
@@ -57,6 +58,11 @@ namespace ReikaKalseki.SeaToSea
 			static CustomPrefab() {
 				registerType(TAGNAME, e => new CustomPrefab(e.getProperty("prefab")));
 			}
+			
+			public void setSeabase() {
+				isSeabase = true;
+				prefabName = "seabase";
+			}
 		
 			public override string getTagName() {
 				return TAGNAME;
@@ -66,7 +72,7 @@ namespace ReikaKalseki.SeaToSea
 				string n = prefabName;
 				if (isBasePiece) {
 					e.addProperty("piece", prefabName);
-					prefabName = "base";
+					prefabName = "basePart";
 				}
 				base.saveToXML(e);
 				prefabName = n;
@@ -89,6 +95,21 @@ namespace ReikaKalseki.SeaToSea
 						mb.applyToObject(go);
 					}
 				};
+			}
+			
+			public override GameObject createWorldObject() {
+				if (isBasePiece) {
+					GameObject go = ObjectUtil.getBasePiece(prefabName);
+					if (go != null) {
+						go.transform.position = position;
+						go.transform.rotation = rotation;
+						go.transform.localScale = scale;
+					}
+					return go;
+				}
+				else {
+					return base.createWorldObject();
+				}
 			}
 			
 			public override void loadFromXML(XmlElement e) {
@@ -136,13 +157,19 @@ namespace ReikaKalseki.SeaToSea
 					prefabName = page.getPDAClassID();
 					SNUtil.log("Redirected customprefab to pda "+prefabName);
 				}
-				else if (prefabName == "base") {
+				else if (prefabName == "basePart") {
 					isBasePiece = true;
 					prefabName = e.getProperty("piece");
 					List<XmlElement> li0 = e.getDirectElementsByTagName("supportData");
 					if (li0.Count == 1)
 						manipulations.Add(new SeabaseLegLengthPreservation(li0[0]));
 					SNUtil.log("Redirected customprefab to base piece "+prefabName+" >> "+li0.Count+"::"+string.Join(", ", li0.Select<XmlElement, string>(el => el.OuterXml)));
+				}
+				else if (prefabName == "seabase") {
+					prefabName = "e9b75112-f920-45a9-97cc-838ee9b389bb"; //base GO
+					isSeabase = true;
+					manipulations.Add(new SeabaseReconstruction(e));
+					SNUtil.log("Redirected customprefab to seabase");
 				}
 				//else if (prefabName == "fragment") {
 				//	prefabName = ?;
@@ -160,20 +187,20 @@ namespace ReikaKalseki.SeaToSea
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 				if (li.Count == 1) {
 					loadManipulations(li[0], manipulations);
-				}
-				if (manipulations.Count > 0) {
-					bool needReapply = false;
-					foreach (ManipulationBase mb in manipulations) {
-						if (mb.needsReapplication()) {
-							needReapply = true;
-							break;
+					if (manipulations.Count > 0) {
+						bool needReapply = false;
+						foreach (ManipulationBase mb in manipulations) {
+							if (mb.needsReapplication()) {
+								needReapply = true;
+								break;
+							}
 						}
-					}
-					if (needReapply) {
-						string xmlKey = prefabName+"##"+System.Security.SecurityElement.Escape(li[0].InnerXml);
-						customPrefab = getOrCreateModPrefab(xmlKey);
-						prefabName = customPrefab.ClassID;
-						tech = customPrefab.TechType;
+						if (needReapply) {
+							string xmlKey = prefabName+"##"+System.Security.SecurityElement.Escape(li[0].InnerXml);
+							customPrefab = getOrCreateModPrefab(xmlKey);
+							prefabName = customPrefab.ClassID;
+							tech = customPrefab.TechType;
+						}
 					}
 				}
 			}

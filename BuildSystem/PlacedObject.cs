@@ -216,7 +216,31 @@ namespace ReikaKalseki.SeaToSea
 				if (parent != null && parent.xmlID != null && parent.xmlID.HasValue) {
 					e.addProperty("parent", parent.xmlID.ToString());
 				}
-				if (isBasePiece) {
+				if (isSeabase) {
+					foreach (Transform t in obj.transform) {
+						GameObject go2 = t.gameObject;
+						PlacedObject p2 = createNewObject(go2);
+						if (p2 != null) {
+							XmlElement cell = e.OwnerDocument.CreateElement("part");
+							p2.saveToXML(cell);
+							BaseCell bc = go2.GetComponent<BaseCell>();
+							if (bc != null) {
+								XmlElement e2 = e.OwnerDocument.CreateElement("cellData");
+								foreach (Transform t2 in t) {
+									PlacedObject p3 = createNewObject(t2.gameObject);
+									if (p3 != null) {
+										XmlElement e3 = e.OwnerDocument.CreateElement("component");
+										p3.saveToXML(e3);
+										e2.AppendChild(e3);
+									}
+								}
+								cell.AppendChild(e2);
+							}
+							e.AppendChild(cell);
+						}
+					}
+				}
+				else if (isBasePiece) {
 					BaseFoundationPiece bf = obj.GetComponent<BaseFoundationPiece>();
 					if (bf != null) {
 						XmlElement e2 = e.OwnerDocument.CreateElement("supportData");
@@ -312,6 +336,8 @@ namespace ReikaKalseki.SeaToSea
 				PrefabIdentifier pi = go.GetComponent<PrefabIdentifier>();
 				if (pi != null)
 					id = pi.classId;
+				if (id == BUBBLE_PREFAB)
+					return null;
 				if (pi == null && go.name.StartsWith("Base", StringComparison.InvariantCulture)) {
 					string name = go.name.Replace("(Clone)", "").Substring(4);
 					Base.Piece get = Base.Piece.Invalid;

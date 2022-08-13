@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override bool needsReapplication() {
-			return true;
+			return false;
 		}
 		
 	}

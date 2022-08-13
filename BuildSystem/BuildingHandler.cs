@@ -223,8 +223,8 @@ namespace ReikaKalseki.SeaToSea
 					buildElement(e);
 				}
 				catch (Exception ex) {
-					SNUtil.writeToChat("Could not load XML block, threw exception: "+e.format()+" -> "+ex.ToString());
 					SNUtil.log(ex.ToString());
+					SNUtil.writeToChat("Could not load XML block, threw exception: "+ex.ToString()+" from "+e.format());
 				}
 			}
 		}
@@ -442,21 +442,13 @@ namespace ReikaKalseki.SeaToSea
 			addRealObject(go, withChildren);
 		}
 		
-		internal PlacedObject addRealObject(GameObject go, bool withChildren = false) {/*
-			Base bb = go.GetComponent<Base>();
-			if (bb != null) {
+		internal PlacedObject addRealObject(GameObject go, bool withChildren = false) {
+			if (go.GetComponent<Base>() != null) {
 				PlacedObject bo = PlacedObject.createNewObject(go);
 				registerObject(bo);
-				foreach (Transform t in go.transform) {
-					GameObject go2 = t.gameObject;
-					BaseCell bc = go2.GetComponent<BaseCell>();
-					if (bc != null) {
-						PlacedObject bo2 = PlacedObject.createNewObject(go2);
-						registerObject(bo2);
-					}
-				}
-				withChildren = false;
-			}*/
+				bo.setSeabase();
+				return bo;
+			}
 			PlacedObject b = PlacedObject.createNewObject(go);
 			if (b != null) {
 				registerObject(b);
@@ -465,9 +457,6 @@ namespace ReikaKalseki.SeaToSea
 				if (withChildren) {
 					foreach (Transform t in go.transform) {
 						if (t.gameObject != go && t.gameObject != null) {
-							PrefabIdentifier pi = t.gameObject.GetComponent<PrefabIdentifier>();
-							if (pi != null && pi.ClassId == PlacedObject.BUBBLE_PREFAB)
-								continue;
 							PlacedObject b2 = addRealObject(t.gameObject, true);
 							if (b2 != null)
 								b2.parent = b;
