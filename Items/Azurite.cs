@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea {
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*lt;
 			RenderUtil.setEmissivity(r, f, "GlowStrength");
 			gameObject.GetComponentInChildren<Light>().range = Azurite.BASE_LIGHT_RANGE+0.5F*f;
-			if (dT > 0 && Player.main != null) {
+			if (dT > 0 && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
 				GameObject ep = Player.main.gameObject;
 				double distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 				if (distsq < 64) {

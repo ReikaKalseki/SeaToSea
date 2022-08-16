@@ -42,11 +42,11 @@ namespace ReikaKalseki.SeaToSea
 					if (l != null) {
 						foreach (XmlElement e3 in li) {
 							Vector3 pos = e3.getVector("position").Value;
-							SNUtil.log("Comparing xml pos "+pos+" to "+l.position+" = "+Vector3.Distance(pos, l.position));
+							//SNUtil.log("Comparing xml pos "+pos+" to "+l.position+" = "+Vector3.Distance(pos, l.position));
 							if (Vector3.Distance(pos, l.position) <= 0.25) {
 								l.rotation = e3.getQuaternion("rotation").Value;
 								l.localScale = e3.getVector("scale").Value;
-								SNUtil.log("Applied pillar match "+e3.OuterXml);
+								//SNUtil.log("Applied pillar match "+e3.OuterXml);
 							}
 						}
 					}

@@ -236,6 +236,8 @@ namespace ReikaKalseki.SeaToSea
 							XmlElement cell = e.OwnerDocument.CreateElement("part");
 							p2.saveToXML(cell);
 							BaseCell bc = go2.GetComponent<BaseCell>();
+							StorageContainer sc = go2.GetComponent<StorageContainer>();
+							Charger cg = go2.GetComponent<Charger>();
 							if (bc != null) {
 								XmlElement e2 = e.OwnerDocument.CreateElement("cellData");
 								foreach (Transform t2 in t) {
@@ -248,6 +250,26 @@ namespace ReikaKalseki.SeaToSea
 											nestObject(t3.gameObject, e3);
 										}
 									}
+								}
+								cell.AppendChild(e2);
+							}
+							else if (sc != null) {
+								XmlElement e2 = e.OwnerDocument.CreateElement("inventory");
+								foreach (TechType tt in sc.container.GetItemTypes()) {
+									XmlElement e3 = e.OwnerDocument.CreateElement("item");
+									e3.addProperty("type", ""+tt);
+									e3.addProperty("amount", sc.container.GetItems(tt).Count);
+									e2.AppendChild(e3);
+								}
+								cell.AppendChild(e2);
+							}
+							else if (cg != null) {
+								XmlElement e2 = e.OwnerDocument.CreateElement("inventory");
+								foreach (KeyValuePair<string, InventoryItem> kvp in cg.equipment.equipment) {
+									XmlElement e3 = e.OwnerDocument.CreateElement("item");
+									e3.addProperty("type", ""+kvp.Value.item.GetTechType());
+									e3.addProperty("slot", kvp.Key);
+									e2.AppendChild(e3);
 								}
 								cell.AppendChild(e2);
 							}

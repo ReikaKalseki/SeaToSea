@@ -240,7 +240,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			private static void loadManipulations(XmlElement e, List<ManipulationBase> li) {
+			internal static void loadManipulations(XmlElement e, List<ManipulationBase> li) {
 				loadManipulations(e.ChildNodes, li);
 			}
 			

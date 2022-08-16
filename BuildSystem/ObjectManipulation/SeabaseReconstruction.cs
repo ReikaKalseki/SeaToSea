@@ -35,7 +35,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (XmlElement e2 in data.getDirectElementsByTagName("part")) {
 				CustomPrefab pfb = new CustomPrefab("9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5"); //BaseCell
 				pfb.loadFromXML(e2);
-				SNUtil.log("Reconstructed BaseCell: "+pfb);
+				SNUtil.log("Reconstructed BaseCell/loose piece: "+pfb);
 				GameObject go2 = pfb.createWorldObject();
 				go2.transform.parent = go.transform;
 				List<XmlElement> li1 = e2.getDirectElementsByTagName("cellData");
@@ -53,6 +53,57 @@ namespace ReikaKalseki.SeaToSea
 						List<XmlElement> li0 = e3.getDirectElementsByTagName("supportData");
 						if (li0.Count == 1)
 							new SeabaseLegLengthPreservation(li0[0]).applyToObject(go3);
+					}
+				}
+				li1 = e2.getDirectElementsByTagName("inventory");
+				if (li1.Count == 1) {
+					StorageContainer sc = go2.GetComponent<StorageContainer>();
+					Charger cg = go2.GetComponent<Charger>();
+					Planter p = go2.GetComponent<Planter>();
+					if (sc == null && cg == null) {
+						SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
+						continue;
+					}
+					foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
+						TechType tt = SNUtil.getTechType(e3.getProperty("type"));
+						if (tt == TechType.None) {
+							SNUtil.log("Could not deserialize item - null TechType: "+e3.OuterXml);
+						}
+						else {
+							GameObject igo = CraftData.GetPrefabForTechType(tt);
+							if (igo == null) {
+								SNUtil.log("Could not deserialize item - resulted in null: "+e3.OuterXml);
+								continue;
+							}
+							int amt = e3.getInt("amount", 1);
+							string slot = e3.getProperty("slot", true);
+							for (int i = 0; i < amt; i++) {
+								igo = UnityEngine.Object.Instantiate(igo);
+								igo.SetActive(false);
+								Pickupable pp = igo.GetComponent<Pickupable>();
+								if (pp == null) {
+									SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
+								}
+							/*
+								if (p != null) {
+									Plantable pt = igo.GetComponent<Plantable>();
+									if (pt == null)
+										SNUtil.log("Could not add non-plantable item to planter: "+e3.OuterXml);
+									else
+										p.AddItem(new InventoryItem(pp));
+								}*/ 
+								if (cg != null) {
+									cg.equipment.AddItem(slot, new InventoryItem(pp), true);
+								}
+								else if (sc != null) {
+									sc.container.AddItem(pp);
+								}
+								Plantable pt = igo.GetComponent<Plantable>();
+								if (pt != null) {
+									pt.growingPlant.SetProgress((float)e3.getFloat("growth", 0F));
+								}
+							}
+						}
 					}
 				}
 			}

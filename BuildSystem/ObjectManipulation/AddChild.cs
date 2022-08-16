@@ -28,6 +28,8 @@ namespace ReikaKalseki.SeaToSea
 		private string objName;
 		private Vector3 relativePos;
 		
+		private List<ManipulationBase> modifyChild = new List<ManipulationBase>();
+		
 		internal override void applyToObject(GameObject go) {
 			if (!string.IsNullOrEmpty(objName)) {
 				if (ObjectUtil.getChildObject(go, objName) != null)
@@ -38,6 +40,9 @@ namespace ReikaKalseki.SeaToSea
 			add.transform.localPosition = relativePos;
 			if (!string.IsNullOrEmpty(objName))
 				add.name = objName;
+			foreach (ManipulationBase mb in modifyChild) {
+				mb.applyToObject(add);
+			}
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
@@ -49,6 +54,10 @@ namespace ReikaKalseki.SeaToSea
 			Vector3? vec = e.getVector("position", true);
 			relativePos = vec != null && vec.HasValue ? vec.Value : Vector3.zero;
 			objName = e.getProperty("name", true);
+			List<XmlElement> li = e.getDirectElementsByTagName("modify");
+			if (li.Count == 1) {
+				CustomPrefab.loadManipulations(li[0], modifyChild);
+			}
 		}
 		
 		internal override void saveToXML(XmlElement e) {
@@ -59,6 +68,10 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override bool needsReapplication() {
+			foreach (ManipulationBase mb in modifyChild) {
+				if (mb.needsReapplication())
+					return true;
+			}
 			return false;
 		}
 		
