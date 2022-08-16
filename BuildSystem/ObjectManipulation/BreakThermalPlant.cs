@@ -31,10 +31,6 @@ namespace ReikaKalseki.SeaToSea
 		private string textOverride;
 		private Color? textColor;
 		
-		static BreakThermalPlant() {
-			
-		}
-		
 		internal override void applyToObject(GameObject go) {
 			ObjectUtil.removeComponent<ThermalPlant>(go);
 			if (deleteHead)

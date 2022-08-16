@@ -1321,6 +1321,55 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
+	[HarmonyPatch(typeof(BulkheadDoor))]
+	[HarmonyPatch("OnHandHover")]
+	public static class BulkheadLaserCutterNotice {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {/*
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "HandReticle", "SetInteractText", true, new Type[]{typeof(string)});
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getBulkheadMouseoverText", false, typeof(string), typeof(BulkheadDoor)));
+				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));*/
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getBulkheadMouseoverText", false, typeof(BulkheadDoor)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(BulkheadDoor))]
+	[HarmonyPatch("OnHandClick")]
+	public static class BulkheadDoorClickIntercept {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onBulkheadClick", false, typeof(BulkheadDoor)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	/*
 	[HarmonyPatch(typeof(PDAScanner))]
 	[HarmonyPatch("Scan")]

@@ -31,10 +31,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal override void applyToObject(GameObject go) {
-			Component[] cc = go.GetComponentsInParent(type);
-			foreach (Component c in cc) {
-				UnityEngine.Object.Destroy(c);
-			}
+			ObjectUtil.removeComponent(go, type);
 		}
 		
 		internal override void loadFromXML(XmlElement e) {

@@ -24,23 +24,22 @@ namespace ReikaKalseki.SeaToSea
 {		
 	internal sealed class AddChild : ManipulationBase {
 		
-		private string id;
+		private CustomPrefab prefab;
 		private string objName;
-		private Vector3 relativePos;
-		
-		private List<ManipulationBase> modifyChild = new List<ManipulationBase>();
 		
 		internal override void applyToObject(GameObject go) {
 			if (!string.IsNullOrEmpty(objName)) {
 				if (ObjectUtil.getChildObject(go, objName) != null)
 					return;
 			}
-			GameObject add = ObjectUtil.createWorldObject(id);
+			GameObject add = ObjectUtil.createWorldObject(prefab.prefabName);
 			add.transform.parent = go.transform;
-			add.transform.localPosition = relativePos;
+			add.transform.localPosition = prefab.position;
+			add.transform.localRotation = prefab.rotation;
+			add.transform.localScale = prefab.scale;
 			if (!string.IsNullOrEmpty(objName))
 				add.name = objName;
-			foreach (ManipulationBase mb in modifyChild) {
+			foreach (ManipulationBase mb in prefab.manipulations) {
 				mb.applyToObject(add);
 			}
 		}
@@ -50,25 +49,20 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			id = e.getProperty("prefab");
-			Vector3? vec = e.getVector("position", true);
-			relativePos = vec != null && vec.HasValue ? vec.Value : Vector3.zero;
 			objName = e.getProperty("name", true);
-			List<XmlElement> li = e.getDirectElementsByTagName("modify");
-			if (li.Count == 1) {
-				CustomPrefab.loadManipulations(li[0], modifyChild);
-			}
+			prefab = new CustomPrefab(e.getProperty("prefab"));
+			prefab.loadFromXML(e);
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			e.addProperty("prefab", id);
-			e.addProperty("position", relativePos);
+			e.addProperty("prefab", prefab.prefabName);
+			prefab.saveToXML(e);
 			if (!string.IsNullOrEmpty(objName))
 				e.addProperty("name", objName);
 		}
 		
 		public override bool needsReapplication() {
-			foreach (ManipulationBase mb in modifyChild) {
+			foreach (ManipulationBase mb in prefab.manipulations) {
 				if (mb.needsReapplication())
 					return true;
 			}

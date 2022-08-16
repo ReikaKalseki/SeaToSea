@@ -25,9 +25,11 @@ namespace ReikaKalseki.SeaToSea
 	internal class SeabaseReconstruction : ManipulationBase {
 		
 		private readonly XmlElement data;
+		private bool preventDeconstruction;
 		
 		internal SeabaseReconstruction(XmlElement e) {
 			data = e;
+			preventDeconstruction = !e.getBoolean("allowDeconstruct");
 		}
 		
 		internal override void applyToObject(GameObject go) {
@@ -50,9 +52,24 @@ namespace ReikaKalseki.SeaToSea
 						GameObject go3 = pfb2.createWorldObject();
 						go3.transform.parent = go2.transform;
 						rebuildNestedObjects(go3, e3);
+						if (preventDeconstruction) {
+							ObjectUtil.removeComponent<BaseDeconstructable>(go3);
+							PreventDeconstruction pv = go3.EnsureComponent<PreventDeconstruction>();
+							pv.inBase = true;
+							pv.inCyclops = true;
+							pv.inEscapePod = true;
+						}
 						List<XmlElement> li0 = e3.getDirectElementsByTagName("supportData");
 						if (li0.Count == 1)
 							new SeabaseLegLengthPreservation(li0[0]).applyToObject(go3);
+						li0 = e3.getDirectElementsByTagName("modify");
+						if (li0.Count == 1) {
+							List<ManipulationBase> li2 = new List<ManipulationBase>();
+							CustomPrefab.loadManipulations(li0[0], li2);
+							foreach (ManipulationBase mb in li2) {
+								mb.applyToObject(go3);
+							}
+						}
 					}
 				}
 				li1 = e2.getDirectElementsByTagName("inventory");
@@ -63,6 +80,10 @@ namespace ReikaKalseki.SeaToSea
 					if (sc == null && cg == null) {
 						SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
 						continue;
+					}
+					PlantGrowthMaximizer pg = null;
+					if (p != null) {
+						pg = go2.EnsureComponent<PlantGrowthMaximizer>();
 					}
 					foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
 						TechType tt = SNUtil.getTechType(e3.getProperty("type"));
@@ -81,32 +102,22 @@ namespace ReikaKalseki.SeaToSea
 								igo = UnityEngine.Object.Instantiate(igo);
 								igo.SetActive(false);
 								Pickupable pp = igo.GetComponent<Pickupable>();
+								InventoryItem item = null;
 								if (pp == null) {
 									SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
-								}
-							/*
-								if (p != null) {
-									Plantable pt = igo.GetComponent<Plantable>();
-									if (pt == null)
-										SNUtil.log("Could not add non-plantable item to planter: "+e3.OuterXml);
-									else
-										p.AddItem(new InventoryItem(pp));
-								}*/ 
+								} 
 								if (cg != null) {
 									cg.equipment.AddItem(slot, new InventoryItem(pp), true);
 								}
 								else if (sc != null) {
-									sc.container.AddItem(pp);
-								}
-								Plantable pt = igo.GetComponent<Plantable>();
-								if (pt != null) {
-									pt.growingPlant.SetProgress((float)e3.getFloat("growth", 0F));
+									item = sc.container.AddItem(pp);
 								}
 							}
 						}
 					}
 				}
 			}
+			SNUtil.log("Finished deserializing seabase.");
 		}
 			
 		private void rebuildNestedObjects(GameObject main, XmlElement e) {
@@ -135,6 +146,30 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override bool needsReapplication() {
 			return true;
+		}
+		
+		class PlantGrowthMaximizer : MonoBehaviour {
+			
+			void Update() {
+				Planter p = gameObject.GetComponent<Planter>();
+				if (p != null) {
+					foreach (Transform t in p.slots) {
+						if (t != null) {
+							GrowingPlant g = t.gameObject.GetComponentInChildren<GrowingPlant>(true);
+							if (g != null)
+								g.SetProgress(1);
+						}
+					}
+					foreach (Transform t in p.bigSlots) {
+						if (t != null) {
+							GrowingPlant g = t.gameObject.GetComponentInChildren<GrowingPlant>(true);
+							if (g != null)
+								g.SetProgress(1);
+						}
+					}
+				}
+			}
+			
 		}
 		
 	}

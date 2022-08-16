@@ -186,32 +186,39 @@ namespace ReikaKalseki.SeaToSea
 					loadManipulations(xli, manipulations); 
 				List<XmlElement> li = e.getDirectElementsByTagName("objectManipulation");
 				if (li.Count == 1) {
-					loadManipulations(li[0], manipulations);
-					if (manipulations.Count > 0) {
-						bool needReapply = false;
-						foreach (ManipulationBase mb in manipulations) {
-							if (mb.needsReapplication()) {
-								needReapply = true;
-								break;
-							}
-						}
-						if (needReapply) {
-							string xmlKey = prefabName+"##"+System.Security.SecurityElement.Escape(li[0].InnerXml);
-							customPrefab = getOrCreateModPrefab(xmlKey);
-							prefabName = customPrefab.ClassID;
-							tech = customPrefab.TechType;
-						}
+					ModifiedObjectPrefab mod = getManipulatedObject(li[0], this);
+					if (mod != null) {
+						prefabName = mod.ClassID;
+						tech = mod.TechType;
 					}
 				}
 			}
 			
-			private ModifiedObjectPrefab getOrCreateModPrefab(string key) {
+			public static ModifiedObjectPrefab getManipulatedObject(XmlElement e, CustomPrefab pfb) {
+				loadManipulations(e, pfb.manipulations);
+				if (pfb.manipulations.Count > 0) {
+					bool needReapply = false;
+					foreach (ManipulationBase mb in pfb.manipulations) {
+						if (mb.needsReapplication()) {
+							needReapply = true;
+							break;
+						}
+					}
+					if (needReapply) {
+						string xmlKey = pfb.prefabName+"##"+System.Security.SecurityElement.Escape(e.InnerXml);
+						return getOrCreateModPrefab(pfb, xmlKey);
+					}
+				}
+				return null;
+			}
+			
+			private static ModifiedObjectPrefab getOrCreateModPrefab(CustomPrefab orig, string key) {
 				ModifiedObjectPrefab pfb = prefabCache.ContainsKey(key) ? prefabCache[key] : null;
 				if (pfb == null) {
-					pfb = new ModifiedObjectPrefab(key, prefabName, manipulations);
+					pfb = new ModifiedObjectPrefab(key, orig.prefabName, orig.manipulations);
 					prefabCache[key] = pfb;
 					pfb.Patch();
-					TechType from = tech != TechType.None ? tech : CraftData.entClassTechTable.GetOrDefault(key, TechType.None);
+					TechType from = orig.tech != TechType.None ? orig.tech : CraftData.entClassTechTable.GetOrDefault(key, TechType.None);
 					if (from != TechType.None) {
 						KnownTechHandler.Main.SetAnalysisTechEntry(pfb.TechType, new List<TechType>(){from});
 						PDAScanner.EntryData e = new PDAScanner.EntryData();
@@ -230,7 +237,7 @@ namespace ReikaKalseki.SeaToSea
 				return pfb;
 			}
 			
-			public static void loadManipulations(XmlNodeList es, List<ManipulationBase> li) {
+			internal static void loadManipulations(XmlNodeList es, List<ManipulationBase> li) {
 				if (es == null)
 					return;
 				foreach (XmlElement e2 in es) {

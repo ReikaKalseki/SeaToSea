@@ -145,10 +145,16 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getSeaglideSpeed(float f) { //1.45 by default
+	    	if (Inventory.main == null)
+	    		return f;
 	    	Pickupable held = Inventory.main.GetHeld();
+	    	if (held == null || held.gameObject == null)
+	    		return f;
 	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
+	    	if (e == null)
+	    		return f;
 	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity));
-	    	if (Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity))
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity))
 	    		f += 0.95F; //was 0.55
 	    	return f;
 	    }
@@ -575,6 +581,39 @@ namespace ReikaKalseki.SeaToSea {
 				if (techTypeInSlot == SeaToSeaMod.depth1300.TechType) {
 					sm.crushDamage.SetExtraCrushDepth(SeaToSeaMod.depth1300.depthBonus);
 				}
+			}
+	    }
+	    
+	    public static void getBulkheadMouseoverText(BulkheadDoor bk) {
+			if (bk.enabled && bk.state == BulkheadDoor.State.Zero) {
+	    		Sealed s = bk.GetComponent<Sealed>();
+	    		if (s != null && s.IsSealed()) {
+					HandReticle.main.SetInteractText("SealedInstructions"); //is a locale key
+					HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
+					HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
+	    		}
+	    		else {
+					HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
+					HandReticle.main.SetInteractText(bk.targetState ? "Close" : "Open");
+	    		}
+			}
+	    }
+	    
+	    public static void onBulkheadClick(BulkheadDoor bk) {
+			Base componentInParent = bk.GetComponentInParent<Base>();
+			Sealed s = bk.GetComponent<Sealed>();
+			if (s != null && s.IsSealed()) {
+				
+			}
+			else if (componentInParent != null && !componentInParent.isReady) {
+				bk.ToggleImmediately();
+			}
+			else if (bk.enabled && bk.state == BulkheadDoor.State.Zero) {
+				if (GameOptions.GetVrAnimationMode()) {
+					bk.ToggleImmediately();
+					return;
+				}
+				bk.SequenceDone();
 			}
 	    }
 	}
