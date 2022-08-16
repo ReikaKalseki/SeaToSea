@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea
 						rebuildNestedObjects(go3, e3);
 						if (preventDeconstruction) {
 							ObjectUtil.removeComponent<BaseDeconstructable>(go3);
+							ObjectUtil.removeComponent<Constructable>(go3);
 							PreventDeconstruction pv = go3.EnsureComponent<PreventDeconstruction>();
 							pv.inBase = true;
 							pv.inCyclops = true;
@@ -81,9 +82,9 @@ namespace ReikaKalseki.SeaToSea
 						SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
 						continue;
 					}
-					PlantGrowthMaximizer pg = null;
+					GrowbedPropifier pg = null;
 					if (p != null) {
-						pg = go2.EnsureComponent<PlantGrowthMaximizer>();
+						pg = go2.EnsureComponent<GrowbedPropifier>();
 					}
 					foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
 						TechType tt = SNUtil.getTechType(e3.getProperty("type"));
@@ -117,6 +118,15 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 			}
+			BaseRoot b = go.GetComponent<BaseRoot>();
+			b.noPowerNotification = null;
+			b.welcomeNotification = null;
+			b.welcomeNotificationEmergency = null;
+			b.welcomeNotificationIssue = null;
+			b.hullBreachNotification = null;
+			b.hullRestoredNotification = null;
+			b.hullDamageNotification = null;
+			b.fireNotification = null;
 			SNUtil.log("Finished deserializing seabase.");
 		}
 			
@@ -148,7 +158,7 @@ namespace ReikaKalseki.SeaToSea
 			return true;
 		}
 		
-		class PlantGrowthMaximizer : MonoBehaviour {
+		class GrowbedPropifier : MonoBehaviour {
 			
 			void Update() {
 				Planter p = gameObject.GetComponent<Planter>();
@@ -167,6 +177,7 @@ namespace ReikaKalseki.SeaToSea
 								g.SetProgress(1);
 						}
 					}
+					gameObject.GetComponent<StorageContainer>().enabled = false;
 				}
 			}
 			
