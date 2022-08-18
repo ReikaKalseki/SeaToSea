@@ -616,5 +616,30 @@ namespace ReikaKalseki.SeaToSea {
 				bk.SequenceDone();
 			}
 	    }
+	    
+	    public static void onAuroraSpawn(CrashedShipExploder ex) {
+	    	Sealed s = ex.gameObject.EnsureComponent<Sealed>();
+	    	s._sealed = true;
+	    	s.maxOpenedAmount = 150;
+	    	s.openedEvent.AddHandler(ex.gameObject, new UWE.Event<Sealed>.HandleFunction(se => {
+	    		se.openedAmount = 0;
+	    		se._sealed = true;
+	    		GameObject scrap = CraftData.GetPrefabForTechType(TechType.ScrapMetal);
+	    		scrap = UnityEngine.Object.Instantiate(scrap);
+	    		scrap.SetActive(false);
+	    		Inventory.main.ForcePickup(scrap.GetComponent<Pickupable>());
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.auroraSalvagePDA.key)) {
+	    			Story.StoryGoal.Execute(SeaToSeaMod.auroraSalvagePDA.key, SeaToSeaMod.auroraSalvagePDA.goalType);
+	    		}
+	    	}));
+			GenericHandTarget ht = ex.gameObject.EnsureComponent<GenericHandTarget>();
+			ht.onHandHover = new HandTargetEvent();
+			ht.onHandHover.AddListener(hte => {
+				HandReticle.main.SetInteractText("AuroraLaserCut"); //is a locale key
+				HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
+				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
+			});
+			Language.main.strings["AuroraLaserCut"] = "Use Laser Cutter to harvest metal salvage";
+	    }
 	}
 }

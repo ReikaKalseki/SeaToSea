@@ -1370,6 +1370,50 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
+	[HarmonyPatch(typeof(CrashedShipExploder))]
+	[HarmonyPatch("Start")]
+	public static class LaserableAuroraHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onAuroraSpawn", false, typeof(CrashedShipExploder)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(Sealed))]
+	[HarmonyPatch("Weld")]
+	public static class SealedEventTimingFix {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx2 = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "Sealed", "_sealed");
+				int idx1 = idx2-2;
+				int idx0 = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "Trigger opened event");
+				List<CodeInstruction> li = InstructionHandlers.extract(codes, idx1, idx2);
+				codes.InsertRange(idx0, li);
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	/*
 	[HarmonyPatch(typeof(PDAScanner))]
 	[HarmonyPatch("Scan")]

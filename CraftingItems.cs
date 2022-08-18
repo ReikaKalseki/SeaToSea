@@ -41,7 +41,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (BasicCraftingItem item in mappings.Values) {
 				item.Patch();
 				techs[item.TechType] = item;
-				SNUtil.log("Registered > "+item);
+				SNUtil.log("Registered > "+item+" > {"+RecipeUtil.toString(CraftDataHandler.GetTechData(item.TechType))+"} @ "+string.Join("-", item.StepsToFabricatorTab)+" in "+item.GroupForPDA+"/"+item.CategoryForPDA);
 			}
 		}
 		
@@ -53,10 +53,13 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(Bioprocessed), 		false, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(Bioprocessed),			false, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
-			[Item(typeof(Bioprocessed),			false, TechType.SnakeMushroom,	"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(Bioprocessed),			false, TechType.SnakeMushroomSpore,	"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(Bioprocessed),			true, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
 			[Item(typeof(BasicCraftingItem),	false, TechType.AcidMushroom,	"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Lubricant,		"WorldEntities/Natural/Lubricant")]Motor,
+			[Item(typeof(BasicCraftingItem),	false, TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,/*
+			[Item(typeof(BasicCraftingItem),	false, TechType.ScrapMetal,		"WorldEntities/Natural/TitaniumIngot")]TitaniumIngotFromScrap,
+			[Item(typeof(BasicCraftingItem),	false, TechType.Titanium,		"WorldEntities/Natural/Titanium")]TitaniumFromIngot,*/
 			//[Item(typeof(BasicCraftingItem),	true, 	TechType.Kyanite,		"WorldEntities/Natural/polyaniline")]RebreatherFluid,
 		}
 		

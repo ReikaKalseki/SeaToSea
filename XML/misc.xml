@@ -43,4 +43,15 @@
 		Sounds/aurorafirewarn.ogg
 	</pda>
   </aurorafire>
+  <auroracut>
+	<name>
+		
+	</name>
+	<desc>
+		The Aurora is the property of the Alterra Corporation. Do not attempt salvage of the Aurora's materials.
+	</desc>
+	<pda>
+		Sounds/auroracutwarn.ogg
+	</pda>
+  </auroracut>
 </Root>

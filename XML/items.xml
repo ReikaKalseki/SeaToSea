@@ -120,6 +120,17 @@
 			
 		</pda>
 	</Motor>
+	<BaseGlass>
+		<name>
+			Reinforced Glass
+		</name>
+		<desc>
+			Laminated glass with titanium reinforcement, suitable for underwater pressure vessels.
+		</desc>
+		<pda>
+			
+		</pda>
+	</BaseGlass>
 	<breathfluid>
 		<name>
 			Breathing Fluid

@@ -59,18 +59,9 @@ namespace ReikaKalseki.SeaToSea {
 			createRecipeDelegate(r);
 		}
 		
-		private static TechType createRecipeDelegate(BioRecipe r) {
-			TechData rec = new TechData
-			{
-				Ingredients = new List<Ingredient>(),
-				craftAmount = r.outputCount
-			};/*
-			rec.Ingredients.Add(new Ingredient(SeaToSeaMod.processor.TechType, 1));
-			rec.Ingredients.Add(new Ingredient(leftArrow.TechType, 1));
-			rec.Ingredients.Add(new Ingredient(r.inputItem, r.inputCount));
-			rec.Ingredients.Add(new Ingredient(TechType.Salt, r.saltCount));*/
-			
+		private static TechType createRecipeDelegate(BioRecipe r) {			
 			BasicCraftingItem to = CraftingItems.getItemByTech(r.outputItem);
+			string rec = " (x"+r.outputCount+")";
 			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;

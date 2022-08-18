@@ -9,6 +9,7 @@ using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
+using SMLHelper.V2.Crafting;
 
 namespace ReikaKalseki.SeaToSea
 {
@@ -49,6 +50,7 @@ namespace ReikaKalseki.SeaToSea
     public static Story.StoryGoal crashMesaRadio;
     public static Story.StoryGoal voidSpikePDA;
     public static Story.StoryGoal auroraFirePDA;
+    public static Story.StoryGoal auroraSalvagePDA;
     //public static Story.StoryGoal mountainPodRadio;
     
     public static BrokenTablet brokenRedTablet;
@@ -148,6 +150,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		e = miscLocale.getEntry("aurorafire");
 		auroraFirePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 0);
+		
+		e = miscLocale.getEntry("auroracut");
+		auroraSalvagePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 0);
 		
 		KnownTech.onAdd += onTechUnlocked;
        
@@ -284,6 +289,43 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addItemsAndRecipes() {
+        BasicCraftingItem baseGlass = CraftingItems.getItem(CraftingItems.Items.BaseGlass);
+        baseGlass.craftingTime = 1.5F;
+        baseGlass.numberCrafted = 2;
+        baseGlass.addIngredient(TechType.Glass, 1).addIngredient(TechType.Titanium, 1);
+        /*
+        BasicCraftingItem byp = CraftingItems.getItem(CraftingItems.Items.TitaniumIngotFromScrap);
+        byp.addIngredient(TechType.ScrapMetal, 2);
+        byp.craftingTime = 5;
+        byp.byproducts.Add(new PlannedIngredient(new TechTypeContainer(TechType.TitaniumIngot), 1));
+        
+        byp = CraftingItems.getItem(CraftingItems.Items.TitaniumFromIngot);
+        byp.addIngredient(TechType.TitaniumIngot, 1);
+        byp.craftingTime = 3;
+        byp.byproducts.Add(new PlannedIngredient(new TechTypeContainer(TechType.Titanium), 10));
+        *//*
+      	TechData rec = new TechData();
+      	rec.Ingredients.Add(new Ingredient(TechType.ScrapMetal, 2));
+       	DuplicateRecipeDelegateWithRecipe item = new DuplicateRecipeDelegateWithRecipe(TechType.TitaniumIngot, rec);
+       	item.craftTime = 5;
+       	item.craftingType = CraftTree.Type.Fabricator;
+       	//item.category = TechCategory.BasicMaterials;
+       	//item.group = TechGroup.Resources;
+       	item.craftingMenuTree = new string[]{"Resources", "BasicMaterials"};
+       	item.setRecipe(1);
+       	item.Patch();
+       	*/
+       	TechData rec = new TechData();
+      	rec.Ingredients.Add(new Ingredient(TechType.TitaniumIngot, 1));
+       	DuplicateRecipeDelegateWithRecipe item = new DuplicateRecipeDelegateWithRecipe(TechType.Titanium, rec);
+       	item.craftTime = 3;
+       	item.craftingType = CraftTree.Type.Fabricator;
+       	//item.category = TechCategory.BasicMaterials;
+       	//item.group = TechGroup.Resources;
+       	item.craftingMenuTree = new string[]{"Resources", "BasicMaterials"};
+       	item.setRecipe(10);
+       	item.Patch();
+       
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
@@ -374,6 +416,30 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
         
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, t2Battery.TechType, 1);
+        
+        RecipeUtil.modifyIngredients(TechType.BaseRoom, i => {if (i.techType == TechType.Titanium) i.amount = 4; return false;});
+        RecipeUtil.modifyIngredients(TechType.BaseBulkhead, i => {if (i.techType == TechType.Titanium) i.amount = 2; return false;});
+        RecipeUtil.modifyIngredients(TechType.PlanterBox, i => {if (i.techType == TechType.Titanium) i.amount = 3; return false;});
+        RecipeUtil.modifyIngredients(TechType.BaseWaterPark, i => {if (i.techType == TechType.Titanium) i.amount = 1; return false;});
+        RecipeUtil.addIngredient(TechType.BasePlanter, TechType.CreepvinePiece, 1);
+        
+        HashSet<TechType> set = new HashSet<TechType>{TechType.Spotlight, TechType.Techlight, TechType.Aquarium};
+        for (TechType tt = TechType.BaseRoom; tt <= TechType.BaseNuclearReactor; tt++) {
+        	set.Add(tt);
+        }
+        foreach (TechType tt in set) {
+        	if (RecipeUtil.recipeExists(tt)) {
+	        	Ingredient i = RecipeUtil.removeIngredient(tt, TechType.Glass);
+	        	if (i != null) {
+	        		RecipeUtil.addIngredient(tt, baseGlass.TechType, i.amount);
+	        	}
+        	}
+        }
+        
+        RecipeUtil.removeIngredient(TechType.EnameledGlass, TechType.Glass);
+        RecipeUtil.addIngredient(TechType.EnameledGlass, baseGlass.TechType, 1);
+        
         Dictionary<TechType, int> addMotors = new Dictionary<TechType, int>(){
         	{TechType.BaseMoonpool, 2},
         	{TechType.Seamoth, 2},
@@ -386,6 +452,7 @@ namespace ReikaKalseki.SeaToSea
         	{TechType.ExosuitDrillArmModule, 2},
         	{TechType.Exosuit, 3},
         };
+        
         foreach (KeyValuePair<TechType, int> kvp in addMotors) {
         	int amt = -1;
         	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
