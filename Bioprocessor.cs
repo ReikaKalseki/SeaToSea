@@ -75,7 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, SeaToSeaMod.processor.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
-			RecipeUtil.addIngredient(item.TechType, TechType.Salt, r.saltCount);
+			RecipeUtil.addIngredient(item.TechType, CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, r.saltCount);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
@@ -238,7 +238,7 @@ namespace ReikaKalseki.SeaToSea {
 					nextSaltTimeRemaining -= seconds;
 					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
 					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
-						IList<InventoryItem> salt = storage.container.GetItems(TechType.Salt);
+						IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 						if (salt != null && salt.Count >= 1) {
 							storage.container.RemoveItem(salt[0].item);
 							saltRequired--;
@@ -324,7 +324,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
 				return false;
 			IList<InventoryItem> ing = storage.container.GetItems(r.inputItem);
-			IList<InventoryItem> salt = storage.container.GetItems(TechType.Salt);
+			IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;
 		}
 		

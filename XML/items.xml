@@ -131,6 +131,17 @@
 			
 		</pda>
 	</BaseGlass>
+	<BioEnzymes>
+		<name>
+			Enzymes
+		</name>
+		<desc>
+			Organic chemicals suitable for breaking down biological matter into simpler chemicals.
+		</desc>
+		<pda>
+			
+		</pda>
+	</BioEnzymes>
 	<breathfluid>
 		<name>
 			Breathing Fluid

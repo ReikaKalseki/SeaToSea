@@ -326,6 +326,11 @@ namespace ReikaKalseki.SeaToSea
        	item.setRecipe(10);
        	item.Patch();
        
+        BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
+        enzy.craftingTime = 4;
+        enzy.numberCrafted = 2;
+        enzy.addIngredient(TechType.Salt, 2).addIngredient(TechType.SeaCrownSeed, 3);
+       
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
         comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
