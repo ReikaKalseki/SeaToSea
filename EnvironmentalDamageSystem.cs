@@ -73,9 +73,7 @@ namespace ReikaKalseki.SeaToSea {
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedGloves) != 0;
 			if (aurora && !diveSuit) {
-				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.auroraFirePDA.key)) {
-		   			Story.StoryGoal.Execute(SeaToSeaMod.auroraFirePDA.key, SeaToSeaMod.auroraFirePDA.goalType);
-		   		}
+	    		PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
 			}
 	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()) && !aurora)
 	   			return;

@@ -19,6 +19,8 @@ namespace ReikaKalseki.SeaToSea {
 	public static class C2CHooks {
 	    
 	    private static bool worldLoaded = false;
+	    
+	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
     
 	    public static void onTick(DayNightCycle cyc) {
 	    	if (BuildingHandler.instance.isEnabled) {
@@ -61,6 +63,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
+	    		if (Vector3.Distance(pod3Location, ep.transform.position) <= 15) {
+	    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
+	    		}
 	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
@@ -628,9 +633,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		scrap = UnityEngine.Object.Instantiate(scrap);
 	    		scrap.SetActive(false);
 	    		Inventory.main.ForcePickup(scrap.GetComponent<Pickupable>());
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.auroraSalvagePDA.key)) {
-	    			Story.StoryGoal.Execute(SeaToSeaMod.auroraSalvagePDA.key, SeaToSeaMod.auroraSalvagePDA.goalType);
-	    		}
+	    		PDAMessages.trigger(PDAMessages.Messages.AuroraSalvage);
 	    	}));
 			GenericHandTarget ht = ex.gameObject.EnsureComponent<GenericHandTarget>();
 			ht.onHandHover = new HandTargetEvent();

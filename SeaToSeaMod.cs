@@ -34,6 +34,7 @@ namespace ReikaKalseki.SeaToSea
     public static BreathingFluid breathingFluid;
     
     public static AlkaliPlant alkali;
+    public static VentKelp kelp;
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;    
@@ -48,9 +49,6 @@ namespace ReikaKalseki.SeaToSea
     public static SignalManager.ModSignal voidSpikeDirectionHint;
     
     public static Story.StoryGoal crashMesaRadio;
-    public static Story.StoryGoal voidSpikePDA;
-    public static Story.StoryGoal auroraFirePDA;
-    public static Story.StoryGoal auroraSalvagePDA;
     //public static Story.StoryGoal mountainPodRadio;
     
     public static BrokenTablet brokenRedTablet;
@@ -145,14 +143,7 @@ namespace ReikaKalseki.SeaToSea
 		e = pdaLocale.getEntry("crashmesahint");
 		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
 		
-		e = miscLocale.getEntry("voidspikeenter");
-		voidSpikePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 5);
-		
-		e = miscLocale.getEntry("aurorafire");
-		auroraFirePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 0);
-		
-		e = miscLocale.getEntry("auroracut");
-		auroraSalvagePDA = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), 0);
+		PDAMessages.addAll();
 		
 		KnownTech.onAdd += onTechUnlocked;
        
@@ -205,7 +196,14 @@ namespace ReikaKalseki.SeaToSea
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.KooshZone_CaveFloor, 1, 2F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 0.5F);
+		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 0.5F);
+		
+		kelp = new VentKelp();
+		kelp.Patch();	
+		kelp.addPDAEntry(itemLocale.getEntry(kelp.ClassID).pda, 3);
+		SNUtil.log(" > "+kelp);
+		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3F);
+		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 5F);
     }
     
     private static void addOreGen() {

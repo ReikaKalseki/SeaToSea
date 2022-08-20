@@ -119,9 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
 			}*/
 		   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
-				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.voidSpikePDA.key)) {
-		   			Story.StoryGoal.Execute(SeaToSeaMod.voidSpikePDA.key, SeaToSeaMod.voidSpikePDA.goalType);
-		   		}
+	    		PDAMessages.trigger(PDAMessages.Messages.VoidSpike);
 		   	}
 			else {
 				float f1 = biomeVolumeRadius+25;

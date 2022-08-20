@@ -278,6 +278,17 @@
 			Assessment: Inedible but possibly useful from a chemistry standpoint
 		</pda>
 	</ALKALI_PLANT>
+	<VENT_KELP>
+		<name>
+			nameey
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</VENT_KELP>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module

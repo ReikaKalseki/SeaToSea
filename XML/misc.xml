@@ -54,4 +54,15 @@
 		Sounds/auroracutwarn.ogg
 	</pda>
   </auroracut>
+  <kelpcavedrone>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting Alterra fabricator vehicle signatures in a nearby cave system, depth 80 meters.
+	</desc>
+	<pda>
+		Sounds/kelpcaveprompt.ogg
+	</pda>
+  </kelpcavedrone>
 </Root>
