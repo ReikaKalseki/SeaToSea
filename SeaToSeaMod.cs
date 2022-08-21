@@ -38,11 +38,18 @@ namespace ReikaKalseki.SeaToSea
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;    
-    public static TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
+    public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
   		//new TechnologyFragment("589bf5a6-6866-4828-90b2-7266661bb6ed"),
   		new TechnologyFragment("3c076458-505e-4683-90c1-34c1f7939a0f", go => go.transform.localScale = new Vector3(1, 1, 0.2F)),
+    };
+    public static readonly TechnologyFragment[] bioprocFragments = new TechnologyFragment[]{
+    	new TechnologyFragment("85259b00-2672-497e-bec9-b200a1ab012f"),
+    	//new TechnologyFragment("ba258aad-07e9-4c9b-b517-2ce7400db7b2"),
+    	//new TechnologyFragment("cf4ca320-bb13-45b6-b4c9-2a079023e787"),
+    	new TechnologyFragment("f4b3942e-02d8-4526-b384-677a2ad9ce58", go => go.transform.localScale = new Vector3(0.25F, 0.25F, 0.5F)),
+    	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230"),
     };
     
     public static TechnologyFragment lathingDroneFragment;
@@ -122,6 +129,7 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor();
         processor.Patch();       
         SNUtil.log("Registered custom machine "+processor);
+        processor.addFragments(4, 5, bioprocFragments);
         Bioprocessor.addRecipes();
         rebreatherCharger = new RebreatherRecharger();
         rebreatherCharger.Patch();

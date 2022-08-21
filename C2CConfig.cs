@@ -11,7 +11,7 @@ namespace ReikaKalseki.SeaToSea
 	public class C2CConfig
 	{		
 		public enum ConfigEntries {
-			[ConfigEntry("none", true)]TEMP,
+			[ConfigEntry("Additional Exploration Prompts", true)]PROMPTS,
 		}
 	}
 }

@@ -26,19 +26,25 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
-			go.EnsureComponent<GlowKelpTag>().renderer = r;
-			foreach (Material m in r.materials) {/*
+			go.EnsureComponent<GlowKelpTag>().renderer = r;/*
+			foreach (Material m in r.materials) {
 				m.SetColor("_GlowColor", );
 				m.SetVector("_Scale", new Vector4(0.35F, 0.2F, 0.1F, 0.0F));
 				m.SetVector("_Frequency", new Vector4(1.2F, 0.5F, 1.5F, 0.5F));
 				m.SetVector("_Speed", new Vector4(0.2F, 0.5F, 1.5F, 0.5F));
 				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
-				m.SetFloat("_WaveUpMin", 0F);*/
-			}
+				m.SetFloat("_WaveUpMin", 0F);
+			}*/
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
 			return indoors ? 0.25F : 0.5F;
+		}
+	
+		public static void doThingTo(Action<GameObject> a) {
+				foreach (GlowKelpTag g in UnityEngine.Object.FindObjectsOfType<GlowKelpTag>()) {
+				a(g.gameObject);
+				}
 		}
 		
 	}
@@ -65,10 +71,10 @@ namespace ReikaKalseki.SeaToSea {
 				renderer = gameObject.GetComponentInChildren<Renderer>();
 			if (gameObject.GetComponent<GrownPlant>() != null) {
     			gameObject.SetActive(true);
-    			gameObject.transform.localScale = new Vector3(1, 0.25F, 1);
+    			gameObject.transform.localScale = new Vector3(1, 0.75F, 1);
     		}
     		else {
-    			gameObject.transform.localScale = new Vector3(2, 0.5F, 2);
+    			gameObject.transform.localScale = new Vector3(2, 1.5F, 2);
 				gameObject.transform.rotation = Quaternion.identity;
     		}
 		}
@@ -86,10 +92,10 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}*/
 			if (closestGeyser != null && closestGeyser.erupting) {
-				activity = Math.Min(1, activity+0.02F);
+				activity = Math.Min(1.5F, activity+0.025F);
 			}
 			else {
-				activity = Math.Max(0, activity-0.05F);
+				activity = Math.Max(-0.75F, activity-0.01F);
 			}
 			
 			if (renderer != null) {
