@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static bool worldLoaded = false;
 	    
 	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
+	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
     
 	    public static void onTick(DayNightCycle cyc) {
 	    	if (BuildingHandler.instance.isEnabled) {
@@ -63,7 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
-	    		if (Vector3.Distance(pod3Location, ep.transform.position) <= 15) {
+	    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 50, 40)) {
 	    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
 	    		}
 	    		

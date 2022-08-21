@@ -38,12 +38,14 @@ namespace ReikaKalseki.SeaToSea
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;    
-    public static MachineFragment[] rebreatherChargerFraments = new MachineFragment[]{
-    	new MachineFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
-    	new MachineFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
-  		//new MachineFragment("589bf5a6-6866-4828-90b2-7266661bb6ed"),
-  		new MachineFragment("3c076458-505e-4683-90c1-34c1f7939a0f", go => go.transform.localScale = new Vector3(1, 1, 0.2F)),
+    public static TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
+    	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
+    	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
+  		//new TechnologyFragment("589bf5a6-6866-4828-90b2-7266661bb6ed"),
+  		new TechnologyFragment("3c076458-505e-4683-90c1-34c1f7939a0f", go => go.transform.localScale = new Vector3(1, 1, 0.2F)),
     };
+    
+    public static TechnologyFragment lathingDroneFragment;
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
@@ -108,7 +110,14 @@ namespace ReikaKalseki.SeaToSea
 	    voidspikeLeviBite = SoundManager.registerSound("voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
         addFlora();
-        addItemsAndRecipes();        
+        addItemsAndRecipes();
+
+        BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
+        lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
+        	ObjectUtil.removeComponent<Pickupable>(go);
+        	//ObjectUtil.removeComponent<Collider>(go);
+        	ObjectUtil.removeComponent<Rigidbody>(go);
+        }); //it has its own model
         
         processor = new Bioprocessor();
         processor.Patch();       
@@ -117,7 +126,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger = new RebreatherRecharger();
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
-        rebreatherCharger.addFragments(4, 10, rebreatherChargerFraments);
+        rebreatherCharger.addFragments(4, 10, rebreatherChargerFragments);
         
         addPDAEntries();
                  
@@ -326,8 +335,8 @@ namespace ReikaKalseki.SeaToSea
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
-        enzy.numberCrafted = 2;
-        enzy.addIngredient(TechType.Salt, 2).addIngredient(TechType.SeaCrownSeed, 3);
+        enzy.numberCrafted = 4;
+        enzy.addIngredient(TechType.Salt, 3).addIngredient(TechType.SeaTreaderPoop, 1).addIngredient(TechType.SeaCrownSeed, 5);
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
@@ -357,6 +366,10 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem motor = CraftingItems.getItem(CraftingItems.Items.Motor);
         motor.craftingTime = 1;
         motor.addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Titanium, 2).addIngredient(TechType.Lubricant, 1).addIngredient(TechType.Gold, 1);
+        
+        BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
+        drone.craftingTime = 4;
+        drone.addIngredient(motor, 1).addIngredient(TechType.Titanium, 1).addIngredient(TechType.ComputerChip, 1).addIngredient(TechType.PowerCell, 1);
         
         CraftingItems.addAll();
         
@@ -402,9 +415,14 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.modifyIngredients(TechType.Lubricant, i => {i.amount = 4; return false;});
         
         RecipeUtil.addIngredient(TechType.Rebreather, TechType.Titanium, 3);
-        RecipeUtil.addIngredient(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
+        //RecipeUtil.addIngredient(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
         RecipeUtil.addIngredient(TechType.Rebreather, TechType.EnameledGlass, 1);
-        RecipeUtil.removeIngredient(TechType.Rebreather, TechType.WiringKit);
+       // RecipeUtil.removeIngredient(TechType.Rebreather, TechType.WiringKit);
+        
+        RecipeUtil.modifyIngredients(TechType.Constructor, i => i.techType != TechType.TitaniumIngot);
+        RecipeUtil.addIngredient(TechType.Constructor, TechType.WiringKit, 1);
+        RecipeUtil.addIngredient(TechType.Constructor, TechType.Silicone, 3);
+        RecipeUtil.addIngredient(TechType.Constructor, drone.TechType, 4);
         
         //RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
         

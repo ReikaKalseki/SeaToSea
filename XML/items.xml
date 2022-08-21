@@ -133,7 +133,7 @@
 	</BaseGlass>
 	<BioEnzymes>
 		<name>
-			Enzymes
+			Lysing Enzymes
 		</name>
 		<desc>
 			Organic chemicals suitable for breaking down biological matter into simpler chemicals.
@@ -142,6 +142,17 @@
 			
 		</pda>
 	</BioEnzymes>
+	<LathingDrone>
+		<name>
+			Nanolathing Drone
+		</name>
+		<desc>
+			A self-propelled drone equipped with a construction beam for constructing large objects from raw materials, similar to robotic builder tools.
+		</desc>
+		<pda>
+			
+		</pda>
+	</LathingDrone>
 	<breathfluid>
 		<name>
 			Breathing Fluid
