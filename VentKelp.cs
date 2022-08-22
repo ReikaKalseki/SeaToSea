@@ -13,9 +13,11 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VentKelp : BasicCustomPlant {
+	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<VanillaFlora> {
 		
-		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.CREEPVINE, "Samples") {
+		internal static readonly Simplex3DGenerator noiseField = (Simplex3DGenerator)new Simplex3DGenerator(DateTime.Now.Ticks).setFrequency(0.1);
+		
+		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.GRUB_BASKET, "Samples") {
 			glowIntensity = 0.8F;
 			finalCutBonus = 2;
 		}
@@ -26,6 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			go.EnsureComponent<GlowKelpTag>().renderer = r;/*
 			foreach (Material m in r.materials) {
 				m.SetColor("_GlowColor", );
@@ -35,10 +38,15 @@ namespace ReikaKalseki.SeaToSea {
 				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
 				m.SetFloat("_WaveUpMin", 0F);
 			}*/
+			//RenderUtil.makeTransparent(r);
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
 			return indoors ? 0.25F : 0.5F;
+		}
+		
+		public Dictionary<int,string> getTextureLayers() {
+			return new Dictionary<int, string>(){{0, "Leaves"}, {1, "Core"}, {2, "Unknown"}};
 		}
 	
 		public static void doThingTo(Action<GameObject> a) {
@@ -56,17 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal Renderer renderer;
 		
-		private Geyser closestGeyser = null;
-		
-		private float activity = 0;
-		
 		void Start() {
-			foreach (Geyser g in UnityEngine.Object.FindObjectsOfType<Geyser>()) {
-				float dist = Vector3.Distance(g.gameObject.transform.position, gameObject.transform.position);
-				if (closestGeyser == null || Vector3.Distance(closestGeyser.gameObject.transform.position, gameObject.transform.position) > dist) {
-					closestGeyser = g;
-				}
-			}
 			if (renderer == null)
 				renderer = gameObject.GetComponentInChildren<Renderer>();
 			if (gameObject.GetComponent<GrownPlant>() != null) {
@@ -79,28 +77,11 @@ namespace ReikaKalseki.SeaToSea {
     		}
 		}
 		
-		void Update() {/*
-			EcoRegionManager ecoRegionManager = EcoRegionManager.main;
-			if (ecoRegionManager != null) {
-				Vector3 wsPos = gameObject.transform.position;
-				IEcoTarget ecoTarget = ecoRegionManager.FindNearestTarget(EcoTargetType.HeatArea, wsPos, null, 3);
-				if (ecoTarget != null) {
-					float dist = Vector3.Distance(ecoTarget.GetPosition(), wsPos);
-					if (dist < 32) {
-						
-					}
-				}
-			}*/
-			if (closestGeyser != null && closestGeyser.erupting) {
-				activity = Math.Min(1.5F, activity+0.025F);
-			}
-			else {
-				activity = Math.Max(-0.75F, activity-0.01F);
-			}
-			
+		void Update() {			
 			if (renderer != null) {
+				float f = (1+(float)VentKelp.noiseField.getValue(transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*0.1F))/2F;
 				foreach (Material m in renderer.materials) {
-					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, activity));
+					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f));
 				}
 			}
 		}
