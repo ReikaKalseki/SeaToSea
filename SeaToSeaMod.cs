@@ -219,8 +219,8 @@ namespace ReikaKalseki.SeaToSea
 		kelp.Patch();	
 		kelp.addPDAEntry(itemLocale.getEntry(kelp.ClassID).pda, 3);
 		SNUtil.log(" > "+kelp);
-		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 2F);
-		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 3F);
+		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 1.5F);
+		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
     }
     
     private static void addOreGen() {

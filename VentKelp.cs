@@ -42,8 +42,11 @@ namespace ReikaKalseki.SeaToSea {
 				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
 				m.SetFloat("_WaveUpMin", 0.33F);
 			}*/
-			if (r0)
+			if (r0) {
 				RenderUtil.swapToModdedTextures(r0, this);
+				//RenderUtil.makeTransparent(r0, new HashSet<int>{1});
+				RenderUtil.setEmissivity(r0, 8, "GlowStrength", new HashSet<int>{1});
+			}
 			float h = 0;
 			for (int i = 0; i < 8; i++) {
 				string pfb = VanillaFlora.FERN_PALM.getRandomPrefab(false);
@@ -63,20 +66,39 @@ namespace ReikaKalseki.SeaToSea {
 				//child.EnsureComponent<PrefabIdentifier>().classId = ClassID;
 				//child.EnsureComponent<LiveMixin>().;
 				
-				Renderer r = child.GetComponentInChildren<Renderer>(true);
+				Renderer r = child.GetComponentInChildren<Renderer>(true);/*
 				r.materials[0].EnableKeyword("UWE_WAVING");
-				r.materials[1].EnableKeyword("UWE_WAVING");
 				r.materials[0].SetVector("_Scale", new Vector4(0.1F, 0.1F, 0.1F, 0.1F));
 				r.materials[0].SetVector("_Frequency", new Vector4(1, 1, 1, 1));
 				r.materials[0].SetVector("_Speed", new Vector4(0.4F, 0.4F, 0.4F, 0.4F));
 				r.materials[0].SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
-				r.materials[0].SetFloat("_WaveUpMin", 0F);
+				r.materials[0].SetFloat("_WaveUpMin", 0F);/*
+				r.materials[1].EnableKeyword("UWE_WAVING");
 				r.materials[1].SetVector("_Scale", new Vector4(2F, 2F, 1.5F, 1F));
 				r.materials[1].SetVector("_Frequency", new Vector4(0.2F, 1, 2.5F, 0.2F));
 				r.materials[1].SetVector("_Speed", new Vector4(0.1F, 0.2F, 0.2F, 0.2F));
 				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
 				r.materials[1].SetFloat("_WaveUpMin", 0.4F);
-				RenderUtil.makeTransparent(r);
+				*/
+				r.materials[0].EnableKeyword("FX_KELP");
+				r.materials[0].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
+				r.materials[0].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+				r.materials[0].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
+				r.materials[0].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+				r.materials[0].SetFloat("_WaveUpMin", 0.4F);
+				r.materials[0].SetFloat("_minYpos", 1F);
+				r.materials[0].SetFloat("_maxYpos", 0F);
+				
+				r.materials[1].EnableKeyword("FX_KELP");
+				r.materials[1].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
+				r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+				r.materials[1].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
+				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+				r.materials[1].SetFloat("_WaveUpMin", 0.4F);
+				r.materials[1].SetFloat("_minYpos", 1F);
+				r.materials[1].SetFloat("_maxYpos", 0F);
+				RenderUtil.makeTransparent(r, new HashSet<int>{1});
+				RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
 				RenderUtil.swapToModdedTextures(child.GetComponentInChildren<Renderer>(), this);
 				
 				float dh = pfb.StartsWith("1d6d8", StringComparison.InvariantCultureIgnoreCase) ? 0.55F : 0.9F;//1.25F;
@@ -121,7 +143,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
-			float f = (1+(float)VentKelp.noiseField.getValue(transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*0.1F))/2F;
+			float f = (float)Math.Abs(VentKelp.noiseField.getValue(transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*5.1F));
 			foreach (Renderer r in renderers) {
 				foreach (Material m in r.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f));
