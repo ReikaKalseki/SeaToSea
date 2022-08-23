@@ -16,8 +16,12 @@ namespace ReikaKalseki.SeaToSea {
 	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<VanillaFlora> {
 		
 		internal static readonly Simplex3DGenerator noiseField = (Simplex3DGenerator)new Simplex3DGenerator(DateTime.Now.Ticks).setFrequency(0.1);
+		internal static readonly SimplexNoiseGenerator heightNoiseField = (SimplexNoiseGenerator)new SimplexNoiseGenerator(873428712).setFrequency(1.0);
 		
 		private static readonly string CHILD_NAME = "column_plant_";
+		private static readonly string CHILD_NAME_2 = "leaf_aux_plant_";
+		
+		private static bool leavesOnlyRendering;
 		
 		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "Samples") {
 			glowIntensity = 0.8F;
@@ -34,76 +38,75 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_01");
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_02");
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
-			/*
-			foreach (Material m in r.materials) {
-				m.SetVector("_Scale", new Vector4(1, 1, 1, 1));
-				m.SetVector("_Frequency", new Vector4(2, 2, 2, 2));
-				m.SetVector("_Speed", new Vector4(0.1F, 0.1F, 0.1F, 0.1F));
-				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
-				m.SetFloat("_WaveUpMin", 0.33F);
-			}*/
-			if (r0) {
-				RenderUtil.swapToModdedTextures(r0, this);
-				//RenderUtil.makeTransparent(r0, new HashSet<int>{1});
-				RenderUtil.setEmissivity(r0, 8, "GlowStrength", new HashSet<int>{1});
-			}
 			float h = 0;
-			for (int i = 0; i < 8; i++) {
+			int n = (int)Math.Min(9, 3+((1+heightNoiseField.getValue(go.transform.position))*8));
+			for (int i = 0; i < n; i++) {
 				string pfb = VanillaFlora.FERN_PALM.getRandomPrefab(false);
-				string n = CHILD_NAME+i;
-				GameObject child = ObjectUtil.getChildObject(go, n);
-				SNUtil.log("Vent kelp had child @ "+i+": "+child);
-				if (!child) {
-					child = ObjectUtil.createWorldObject(pfb);	
-					child.name = n;
-					child.transform.parent = go.transform;
-					child.transform.localPosition = Vector3.up*h;
-					child.transform.localEulerAngles = new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0);
-					child.transform.localScale = Vector3.one;
-				}
-				child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
-				child.EnsureComponent<TechTag>().type = TechType;
-				//child.EnsureComponent<PrefabIdentifier>().classId = ClassID;
-				//child.EnsureComponent<LiveMixin>().;
+				string nm = CHILD_NAME+i;
+				GameObject child = getOrCreateSubplant(pfb, go, h, nm);
+				prepareSubplant(child);
 				
-				Renderer r = child.GetComponentInChildren<Renderer>(true);/*
-				r.materials[0].EnableKeyword("UWE_WAVING");
-				r.materials[0].SetVector("_Scale", new Vector4(0.1F, 0.1F, 0.1F, 0.1F));
-				r.materials[0].SetVector("_Frequency", new Vector4(1, 1, 1, 1));
-				r.materials[0].SetVector("_Speed", new Vector4(0.4F, 0.4F, 0.4F, 0.4F));
-				r.materials[0].SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
-				r.materials[0].SetFloat("_WaveUpMin", 0F);/*
-				r.materials[1].EnableKeyword("UWE_WAVING");
-				r.materials[1].SetVector("_Scale", new Vector4(2F, 2F, 1.5F, 1F));
-				r.materials[1].SetVector("_Frequency", new Vector4(0.2F, 1, 2.5F, 0.2F));
-				r.materials[1].SetVector("_Speed", new Vector4(0.1F, 0.2F, 0.2F, 0.2F));
-				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-				r.materials[1].SetFloat("_WaveUpMin", 0.4F);
-				*/
+				float dh = pfb.StartsWith("1d6d8", StringComparison.InvariantCultureIgnoreCase) ? 0.55F : 0.9F;//1.25F;
+				h += dh;//*UnityEngine.Random.Range(0.2F, 1F);
+			}
+			
+			float maxH = h;
+			h = 0;
+			int i0 = 0;
+			while (h < maxH-1) {
+				string pfb = VanillaFlora.FERN_PALM.getRandomPrefab(false);
+				string nm = CHILD_NAME_2+i0;
+				GameObject child = getOrCreateSubplant(pfb, go, h, nm);
+				prepareSubplant(child, true);
+				h += UnityEngine.Random.Range(0.1F, 0.9F);
+				i0++;
+			}
+		}
+		
+		private GameObject getOrCreateSubplant(string pfb, GameObject go, float h, string nm) {
+			GameObject child = ObjectUtil.getChildObject(go, nm);
+			if (!child) {
+				child = ObjectUtil.createWorldObject(pfb);	
+				child.name = nm;
+				child.transform.parent = go.transform;
+				child.transform.localPosition = Vector3.up*h;
+				child.transform.localEulerAngles = new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0);
+				child.transform.localScale = Vector3.one;
+			}
+			return child;
+		}
+		
+		private void prepareSubplant(GameObject child, bool leavesOnly = false) {
+			child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+			child.EnsureComponent<TechTag>().type = TechType;
+			
+			Renderer r = child.GetComponentInChildren<Renderer>(true);
+			leavesOnlyRendering = leavesOnly;
+			if (leavesOnly) {
+				r.materials[0].color = new Color(0, 0, 0, 0);
+			}
+			else {
 				r.materials[0].EnableKeyword("FX_KELP");
-				r.materials[0].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
+				r.materials[0].SetVector("_Scale", new Vector4(0.7F, 0.4F, 0.8F, 0.4F));
 				r.materials[0].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
 				r.materials[0].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
 				r.materials[0].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
 				r.materials[0].SetFloat("_WaveUpMin", 0.4F);
 				r.materials[0].SetFloat("_minYpos", 1F);
 				r.materials[0].SetFloat("_maxYpos", 0F);
-				
-				r.materials[1].EnableKeyword("FX_KELP");
-				r.materials[1].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
-				r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
-				r.materials[1].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
-				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-				r.materials[1].SetFloat("_WaveUpMin", 0.4F);
-				r.materials[1].SetFloat("_minYpos", 1F);
-				r.materials[1].SetFloat("_maxYpos", 0F);
-				RenderUtil.makeTransparent(r, new HashSet<int>{1});
-				RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
-				RenderUtil.swapToModdedTextures(child.GetComponentInChildren<Renderer>(), this);
-				
-				float dh = pfb.StartsWith("1d6d8", StringComparison.InvariantCultureIgnoreCase) ? 0.55F : 0.9F;//1.25F;
-				h += dh;
 			}
+			
+			r.materials[1].EnableKeyword("FX_KELP");
+			r.materials[1].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
+			r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+			r.materials[1].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
+			r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+			r.materials[1].SetFloat("_WaveUpMin", 0.4F);
+			r.materials[1].SetFloat("_minYpos", 1F);
+			r.materials[1].SetFloat("_maxYpos", 0F);
+			RenderUtil.makeTransparent(r, leavesOnly ? new HashSet<int>{0, 1} : new HashSet<int>{1});
+			RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
+			RenderUtil.swapToModdedTextures(child.GetComponentInChildren<Renderer>(), this);
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
@@ -111,7 +114,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public Dictionary<int,string> getTextureLayers() {
-			return new Dictionary<int, string>(){{0, ""}, {1, ""}};
+			return leavesOnlyRendering ? new Dictionary<int, string>(){{0, ""}, {1, "Leaves"}} : new Dictionary<int, string>(){{0, ""}, {1, ""}};
 		}
 	
 		public static void doThingTo(Action<GameObject> a) {
@@ -143,10 +146,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
-			float f = (float)Math.Abs(VentKelp.noiseField.getValue(transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*5.1F));
 			foreach (Renderer r in renderers) {
+				//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
+				float f = 1-(float)((VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
 				foreach (Material m in r.materials) {
-					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f));
+					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f*1.5F-0.5F));
 				}
 			}
 		}
