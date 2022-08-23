@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
-	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 50, 40)) {
+	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 80, 40)) {
 	    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
 	    		}
 	    		
