@@ -52,6 +52,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	DuplicateRecipeDelegate.updateLocale();
 		
 	    	VoidSpikesBiome.instance.onWorldStart();
+	    
+		    foreach (KeyValuePair<string, string> kvp in Language.main.strings) {
+	    		string s = kvp.Value;
+	    		s = s.Replace(" seed", " sample");
+	    		s = s.Replace(" spore", " sample");
+	    		Language.main.strings[kvp.Key] = s;
+		    }
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
