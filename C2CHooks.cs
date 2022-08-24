@@ -60,11 +60,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    
-		    foreach (KeyValuePair<string, string> kvp in Language.main.strings) {
-	    		string s = kvp.Value;
-	    		s = s.Replace(" seed", " sample");
-	    		s = s.Replace(" spore", " sample");
-	    		Language.main.strings[kvp.Key] = s;
+	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
+	    		string s = Language.main.strings[k];
+	    		s = s.Replace(" seed", " Sample");
+	    		s = s.Replace(" spore", " Sample");
+	    		s = s.Replace(" Seed", " Sample");
+	    		s = s.Replace(" Spore", " Sample");
+	    		Language.main.strings[k] = s;
 		    }
 	    }
 	    

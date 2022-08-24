@@ -145,6 +145,8 @@ namespace ReikaKalseki.SeaToSea
         
         addCommands();
         addOreGen();
+        
+        GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
@@ -349,10 +351,15 @@ namespace ReikaKalseki.SeaToSea
        	item.setRecipe(10);
        	item.Patch();
        
+        BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
+        enzyT.craftingTime = 1;
+        enzyT.numberCrafted = 4;
+        enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
+       
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
-        enzy.numberCrafted = 4;
-        enzy.addIngredient(TechType.Salt, 3).addIngredient(TechType.SeaTreaderPoop, 1).addIngredient(TechType.SeaCrownSeed, 5);
+        enzy.numberCrafted = 3;
+        enzy.addIngredient(TechType.Salt, 1).addIngredient(enzyT, 1).addIngredient(TechType.SeaCrownSeed, 2);
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
@@ -386,6 +393,10 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         drone.craftingTime = 4;
         drone.addIngredient(motor, 1).addIngredient(TechType.Titanium, 1).addIngredient(TechType.ComputerChip, 1).addIngredient(TechType.PowerCell, 1);
+        
+        BasicCraftingItem chlorine = CraftingItems.getItem(CraftingItems.Items.Chlorine);
+        chlorine.craftingTime = 3;
+        chlorine.addIngredient(TechType.Salt, 2).addIngredient(TechType.GasPod, 2);
         
         CraftingItems.addAll();
         
@@ -532,7 +543,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
         
-        RecipeUtil.addIngredient(TechType.Bleach, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1);
+        RecipeUtil.addIngredient(TechType.Bleach, chlorine.TechType, 1);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.Bleach, 2);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.AdvancedWiringKit, 1);
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);

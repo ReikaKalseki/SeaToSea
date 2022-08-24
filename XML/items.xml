@@ -131,6 +131,17 @@
 			
 		</pda>
 	</BaseGlass>
+	<TreaderEnzymes>
+		<name>
+			Digestive Enzymes
+		</name>
+		<desc>
+			Trace chemicals extracted from the digestive output of large herbivorous animals.
+		</desc>
+		<pda>
+			
+		</pda>
+	</TreaderEnzymes>
 	<BioEnzymes>
 		<name>
 			Lysing Enzymes
@@ -190,7 +201,7 @@
 	</RebreatherV2>
 	<CurativeBandage>
 		<name>
-			Nanowrap Bandage
+			Nanowrap Bandages
 		</name>
 		<desc>
 			A highly sophisticated wound dressing, capable of restoring far more health than a basic first aid kit, and alleviating all symptoms of poisoning.

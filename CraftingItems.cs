@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Luminol) {
 					item.glowIntensity = 2;
 				}
-				if (m == Items.LathingDrone) {
+				if (m == Items.LathingDrone || m == Items.Motor) {
 					item.isElectronics = true;
 				}
 				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
@@ -61,6 +61,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	false, TechType.AcidMushroom,	"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Lubricant,		"WorldEntities/Natural/Lubricant")]Motor,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,
+			[Item(typeof(BasicCraftingItem),	false, TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/polyaniline")]BioEnzymes,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Kyanite,		"6e0f4652-c439-4540-95be-e61384e27692")]LathingDrone,/*
 			[Item(typeof(BasicCraftingItem),	false, TechType.ScrapMetal,		"WorldEntities/Natural/TitaniumIngot")]TitaniumIngotFromScrap,
