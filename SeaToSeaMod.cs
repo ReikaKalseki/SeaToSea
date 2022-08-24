@@ -32,9 +32,11 @@ namespace ReikaKalseki.SeaToSea
     public static CustomBattery t2Battery;
     
     public static BreathingFluid breathingFluid;
+    public static CurativeBandage bandage;
     
     public static AlkaliPlant alkali;
     public static VentKelp kelp;
+    public static HealingFlower healFlower;
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;    
@@ -221,6 +223,12 @@ namespace ReikaKalseki.SeaToSea
 		SNUtil.log(" > "+kelp);
 		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 		//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
+		
+		healFlower = new HealingFlower();
+		healFlower.Patch();	
+		healFlower.addPDAEntry(itemLocale.getEntry(healFlower.ClassID).pda, 5);
+		SNUtil.log(" > "+healFlower);
+		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, false, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
     }
     
     private static void addOreGen() {
@@ -417,6 +425,11 @@ namespace ReikaKalseki.SeaToSea
 		breathingFluid = new BreathingFluid();
 		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleRattleSpore, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
 		breathingFluid.Patch();
+        
+		bandage = new CurativeBandage();
+		bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(healFlower.seed.TechType, 2).addIngredient(TechType.JellyPlant, 1);
+		bandage.Patch();
+		SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
         
         RecipeUtil.startLoggingRecipeChanges();
         

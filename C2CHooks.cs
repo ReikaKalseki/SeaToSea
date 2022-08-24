@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(300, -120, 288),
 	    	//new Vector3(66, -100, -608), big obvious but empty one
-	    	new Vector3(-672, -100, -176),
+	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
 	    };
     
@@ -517,35 +517,25 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
-	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {/*
-	    	SNUtil.writeToChat("Started growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);
-	    	/*
-	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*//*
-	    	SNUtil.log("==SPAWN GROWING==");
-	    	ObjectUtil.dumpObjectData(p);
-	    	SNUtil.log("==OBJ==");
-	    	ObjectUtil.dumpObjectData(plant);
-	    	SNUtil.log("====");*/
+	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {
 	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
 	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
 	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.alkali);
 	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
 	    	}
+	    	if (tt != null && tt.type == SeaToSeaMod.healFlower.seed.TechType) {
+	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.healFlower);
+	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
+	    	}
 	    }
 	    
-	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {/*
-	    	SNUtil.writeToChat("Finished growing "+p+" > "+plant+" > "+plant.EnsureComponent<PrefabIdentifier>().classId);/*
-	    	if (p.gameObject.GetComponentInParent<AlkaliPlantTag>() != null && Player.main.GetVehicle() != null)
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);*//*
-	    	SNUtil.log("==SPAWN GROWN==");
-	    	ObjectUtil.dumpObjectData(p);
-	    	SNUtil.log("==OBJ==");
-	    	ObjectUtil.dumpObjectData(plant);
-	    	SNUtil.log("====");*/
+	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {
 	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
 	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
 	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);
+	    	}
+	    	if (tt != null && tt.type == SeaToSeaMod.healFlower.seed.TechType) {
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.healFlower);
 	    	}
 	    }
 	    

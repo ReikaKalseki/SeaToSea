@@ -188,6 +188,17 @@
 			
 		</pda>
 	</RebreatherV2>
+	<CurativeBandage>
+		<name>
+			Nanowrap Bandage
+		</name>
+		<desc>
+			A highly sophisticated wound dressing, capable of restoring far more health than a basic first aid kit, and alleviating all symptoms of poisoning.
+		</desc>
+		<pda>
+			
+		</pda>
+	</CurativeBandage>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite
@@ -297,9 +308,24 @@
 			A tall deepwater plant, similar in general appearance to creepvine.
 		</desc>
 		<pda>
-			Deepvine differs substantially in appearance from its shallow-water counterpart, but genetic analysis reveals a close relationship.
+			Deepvine differs substantially in appearance from its shallow-water counterpart, but genetic analysis reveals a close relationship. Like creepvine, it acts as both food and shelter for the local population of small fauna, supporting an ecosystem more rich in biomass than would typically be possible at this depth.
+			
+			Deepvine has evolved to depend on chemosynthesis based on minerals ejected by nearby geothermal activity in the lieu of sunlight.
 		</pda>
 	</VENT_KELP>
+	<HEALING_FLOWER>
+		<name>
+			Salve Bush
+		</name>
+		<desc>
+			A plant with leaves possessing curative properties for physical, thermal, and chemical wounds.
+		</desc>
+		<pda>
+			Oils on the leaves of this plant act as natural analgesics, antiseptics, and anti-inflammatories, making them extremely potent as a component in bandages and wound dressings, but unsuitable for consumption.
+			
+			Assessment: Critical component of advanced healing equipment
+		</pda>
+	</HEALING_FLOWER>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module
