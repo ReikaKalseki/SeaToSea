@@ -22,6 +22,13 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
 	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
+	    
+	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
+	    	new Vector3(300, -120, 288),
+	    	//new Vector3(66, -100, -608), big obvious but empty one
+	    	new Vector3(-672, -100, -176),
+	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
+	    };
     
 	    public static void onTick(DayNightCycle cyc) {
 	    	if (BuildingHandler.instance.isEnabled) {
@@ -71,8 +78,17 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
-	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming() && MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40)) {
-	    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
+	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming()) {
+		    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40)) {
+		    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
+		    		}
+	    			if (!PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt)) {
+		    			foreach (Vector3 vec in seacrownCaveEntrances) {
+				    		if (MathUtil.isPointInCylinder(vec, ep.transform.position, 40, 60)) {
+				    			PDAMessages.trigger(PDAMessages.Messages.RedGrassCavePrompt);
+				    		}
+			    		}
+	    			}
 	    		}
 	    		
 	    		if (ep.GetVehicle() == null) {

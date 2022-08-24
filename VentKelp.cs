@@ -156,7 +156,7 @@ namespace ReikaKalseki.SeaToSea {
     			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
     		}
     		else {
-    			gameObject.transform.localScale = new Vector3(15, 12, 15);
+    			gameObject.transform.localScale = new Vector3(12, 12, 12);
 				gameObject.transform.rotation = Quaternion.identity;
     		}
 		}

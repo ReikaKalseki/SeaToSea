@@ -65,4 +65,15 @@
 		Sounds/kelpcaveprompt.ogg
 	</pda>
   </kelpcavedrone>
+  <redgrasscave>
+	<name>
+		
+	</name>
+	<desc>
+		Scans indicate biological specimens in this cave system which may be used to synthesize new chemical materials.
+	</desc>
+	<pda>
+		Sounds/cavebioprompt2.ogg
+	</pda>
+  </redgrasscave>
 </Root>

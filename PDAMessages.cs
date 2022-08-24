@@ -43,6 +43,10 @@ namespace ReikaKalseki.SeaToSea
 			return mappings[key];
 		}
 		
+		public static bool isTriggered(Messages m) {
+			return StoryGoalManager.main.completedGoals.Contains(getMessage(m).key);
+		}
+		
 		public static bool trigger(Messages m) {
 			StoryGoal sg = getMessage(m);
 	    	if (!StoryGoalManager.main.completedGoals.Contains(sg.key)) {
