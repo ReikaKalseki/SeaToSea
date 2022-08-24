@@ -68,6 +68,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		s = s.Replace(" Spore", " Sample");
 	    		Language.main.strings[k] = s;
 		    }
+	    	/* does not contain the mouse bit, and it is handled automatically anyway
+	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
+	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
+			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
@@ -659,6 +663,42 @@ namespace ReikaKalseki.SeaToSea {
 				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
 			});
 			Language.main.strings["AuroraLaserCut"] = "Use Laser Cutter to harvest metal salvage";
+	    }
+	    
+	    public static bool isItemUsable(TechType tt) {
+	    	return tt == TechType.Bladderfish || tt == TechType.FirstAidKit || tt == SeaToSeaMod.bandage.TechType;
+	    }
+	    
+	    public static bool useItem(Survival s, GameObject useObj) {
+			bool flag = false;
+			if (useObj != null) {
+				TechType tt = CraftData.GetTechType(useObj);
+				if (tt == TechType.None) {
+					Pickupable component = useObj.GetComponent<Pickupable>();
+					if (component)
+						tt = component.GetTechType();
+				}
+				SNUtil.log("Player used item "+tt);
+				if (tt == TechType.FirstAidKit && Player.main.GetComponent<LiveMixin>().AddHealth(15F) > 0.1) {
+					flag = true;
+				}
+				else if (tt == SeaToSeaMod.bandage.TechType && Player.main.GetComponent<LiveMixin>().AddHealth(50F) > 0.1) {
+					ObjectUtil.removeComponent<DamageOverTime>(Player.main.gameObject);
+					flag = true;
+				}
+				else if (tt == TechType.EnzymeCureBall) {
+					Debug.LogWarningFormat(s, "Code should be unreachable for the time being.", Array.Empty<object>());
+					InfectedMixin component2 = global::Utils.GetLocalPlayer().gameObject.GetComponent<InfectedMixin>();
+					if (component2.IsInfected()) {
+						component2.RemoveInfection();
+						global::Utils.PlayFMODAsset(s.curedSound, s.transform, 20f);
+						flag = true;
+					}
+				}
+				if (flag)
+					FMODUWE.PlayOneShot(CraftData.GetUseEatSound(tt), Player.main.transform.position, 1f);
+			}
+			return flag;
 	    }
 	}
 }

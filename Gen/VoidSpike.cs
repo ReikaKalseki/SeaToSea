@@ -509,8 +509,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			private void setCurrentOre(Transform t) {
 				currentOre = t;
-				if (t != null) {
-					t.gameObject.GetComponentInChildren<Pickupable>(true).pickedUpEvent.AddHandler(this, pp => setCurrentOre(null));
+				if (t) {
+					Pickupable p = t.gameObject.GetComponentInChildren<Pickupable>(true);
+					if (p)
+						p.pickedUpEvent.AddHandler(this, pp => setCurrentOre(null));
 				}
 			}
 			

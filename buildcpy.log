@@ -1,0 +1,220 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : Wed Aug 24 16:25:08 2022
+
+   Source : E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\
+     Dest : E:\SteamOverflow\steamapps\common\Subnautica\QMods\SeaToSea\
+
+    Files : *.*
+	    
+Exc Files : .Settings
+	    *.git*
+	    *.pdn
+	    *.rar
+	    *.cs*
+	    *_old.png
+	    *-old.png
+	    *.log
+	    
+ Exc Dirs : bin
+	    obj
+	    Properties
+	    .git*
+	    
+  Options : *.* /S /COPY:DAT /PURGE /IS /IT /MT:8 /R:1000000 /W:30 
+
+------------------------------------------------------------------------------
+
+	  New Dir         31	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\
+	    New File  		   13949	npp session100%  
+	    New File  		      24	SeaToSea.OpenCover.Settings100%  100%  
+	  New Dir          8	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Assets\
+	    New File  		  353678	voidspike100%  
+	    New File  		     622	voidspike.manifest100%  
+	  New Dir          5	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\BuildSystem\
+	  New Dir          3	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\BuildSystem\BuildPieces\
+	  New Dir         29	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\BuildSystem\ObjectManipulation\
+	  New Dir          4	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\BuildSystem\ObjectManipulation\Global\
+	  New Dir          2	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\BuildSystem\ObjectManipulation\Global\LocalFilters\
+	  New Dir          3	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\ContentMaps\
+	  New Dir          8	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Gen\
+	  New Dir          6	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Items\
+	  New Dir          2	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Items\Equipment\
+	  New Dir          3	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Items\Modules\
+	  New Dir         26	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Sounds\
+	    New File  		   85302	500m.ogg100%  
+	    New File  		  171982	500mwarn.ogg100%  
+	    New File  		  387052	500mwarn-v2.ogg100%  
+	    New File  		  298911	auroracutwarn.ogg100%  
+	    New File  		  282901	aurorafirewarn.ogg100%  
+	    New File  		  284826	cavebioprompt.ogg100%  
+	    New File  		  354488	cavebioprompt2.ogg100%  
+	    New File  		  292415	kelpcaveprompt.ogg100%  
+	    New File  		  108561	lrpoisonwarn.ogg100%  
+	    New File  		  323136	lrpoisonwarn-v2.ogg100%  100%  
+	    New File  		  769859	radio_treadersignal.ogg100%  
+	    New File  		  763002	radio_voidsignal.ogg100%  
+	    New File  		  240390	reaper.ogg100%  
+	    New File  		   1.8 m	treadercave.ogg100%  100%  
+	    New File  		   2.9 m	treaderpod.ogg100%  
+	    New File  		   5.4 m	treaderpod-bcg.wav100%  
+	    New File  		   99377	voidlevi-bite.ogg100%  
+	    New File  		  130001	voidlevi-fx1.ogg100%  
+	    New File  		  307610	voidlevi-longamb.ogg100%  
+	    New File  		  282508	voidlevi-longamb2.ogg100%  
+	    New File  		  219467	voidlevi-roar.ogg100%  100%  
+	    New File  		   4.4 m	voidpod-bcg.wav100%  100%  
+	    New File  		   4.4 m	voidpod-pda.ogg100%  
+	    New File  		  346878	voidspike.ogg100%  
+	    New File  		  367145	voidspike2.ogg100%  
+	    New File  		   2.8 m	voidspike-pda.ogg100%  
+	  New Dir         13	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\
+	    New File  		   1.2 m	crumpled_pod_01.png100%  
+	    New File  		  317415	crumpled_pod_02.png100%  
+	    New File  		  169167	lifepod_numbering_10.png100%  
+	    New File  		   49119	lifepod_numbering_14.png100%  
+	    New File  		   47919	lifepod_numbering_15.png100%  
+	    New File  		   38831	lifepod_numbering_9.png100%  
+	    New File  		   19731	o2bar_liquid.png100%  
+	    New File  		   16344	o2bar_liquid_bubble.png100%  
+	    New File  		   28761	PrecursorSmallSymbols.png100%  
+	  New Dir         53	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\Items\
+	    New File  		    8695	AlkaliPlant.png100%  
+	    New File  		     786	arrowL.png100%  
+	    New File  		     800	arrowR.png100%  
+	    New File  		     730	arrowRet.png100%  
+	    New File  		   15232	BaseGlass.png100%  
+	    New File  		   12498	BioEnzymes.png100%  
+	    New File  		   10854	Bioprocessor.png100%  
+	    New File  		   17979	BreathFluid.png100%  
+	    New File  		   12170	Chlorine.png100%  
+	    New File  		   17825	CrystalLens.png100%  
+	    New File  		   12522	CurativeBandage.png100%  
+	    New File  		    8433	Cyclopsheat.png100%  
+	    New File  		   14741	DenseAzurite.png100%  
+	    New File  		   11021	HealingFlower.png100%  
+	    New File  		   15034	HoneycombComposite.png100%  
+	    New File  		   13958	HullPlating.png100%  
+	    New File  		   14821	Iridium.png100%  
+	    New File  		   21061	LathingDrone.png100%  
+	    New File  		   12454	Luminol.png100%  
+	    New File  		   16495	Motor.png100%  
+	    New File  		   11409	PhaseCrystal.png100%  
+	    New File  		   14013	Platinum.png100%  
+	    New File  		   14740	PressureCrystals.png100%  
+	    New File  		   17676	Rebreathercharger.png100%  
+	    New File  		   18320	Rebreatherv2.png100%  
+	    New File  		   12291	Sealant.png100%  
+	    New File  		   10219	Sealedsuit.png100%  
+	    New File  		   10559	SealFabric.png100%  
+	    New File  		   22996	Seamothvoidstealth.png100%  
+	    New File  		   10659	SmartPolymer.png100%  
+	    New File  		    7786	Smdepth4.png100%  
+	    New File  		     462	spacer.png100%  
+	    New File  		   11050	t2battery.png100%  
+	    New File  		   12190	TreaderEnzymes.png100%  
+	    New File  		   16794	VentCrystal.png100%  
+	    New File  		   10026	VentKelp.png100%  
+	    New File  		   14963	WeakAcid.png100%  
+	  New Dir         12	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\Items\World\
+	    New File  		   18308	Chlorine_MainTex.png100%  
+	    New File  		    5865	Luminol_Illum.png100%  100%  
+	    New File  		   17569	Luminol_MainTex.png100%  
+	    New File  		  518516	Motor_BumpMap.png100%  
+	    New File  		  857150	Motor_MainTex.png100%  
+	    New File  		   50630	Sealant_MainTex.png100%  
+	    New File  		  493814	SealFabric_MainTex.png100%  
+	    New File  		  231701	SmartPolymer_MainTex.png100%  
+	    New File  		    7099	t2battery_Illum.png100%  
+	    New File  		   56823	t2battery_MainTex.png100%  
+	    New File  		   42126	t2battery_SpecTex.png100%  
+	  New Dir          4	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\Machines\
+	    New File  		  276969	Bioprocessor_BumpMap.png100%  
+	    New File  		   14212	Bioprocessor_Illum.png100%  
+	    New File  		  630009	Bioprocessor_MainTex.png100%  
+	    New File  		  270163	Bioprocessor_SpecTex.png100%  
+	  New Dir          7	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\PDA\
+	    New File  		   1.6 m	azurite.png100%  
+	    New File  		   2.9 m	CrashMesaImage.png100%  100%  
+	    New File  		   2.4 m	iridium.png100%  
+	    New File  		   1.4 m	LostRiverImage.png100%  
+	    New File  		   1.7 m	platinum.png100%  
+	    New File  		   1.6 m	voidspike.png100%  
+	  New Dir         24	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\Plants\
+	    New File  		  105992	AlkaliPlant_BumpMap.png100%  
+	    New File  		   42577	AlkaliPlant_Illum.png100%  
+	    New File  		   31162	AlkaliPlant_MainTex.png100%  
+	    New File  		   17829	AlkaliPlant_SpecTex.png100%  
+	    New File  		   12227	HealingFlower_Illum.png100%  
+	    New File  		   47447	HealingFlower_MainTex.png100%  
+	    New File  		   51288	HealingFlower_SpecTex.png100%  
+	    New File  		  106113	VentKelp_Illum.png100%  
+	    New File  		   35436	VentKelp_Leaves_Illum.png100%  
+	    New File  		   89359	VentKelp_Leaves_MainTex.png100%  
+	    New File  		   13742	VentKelp_Leaves_SpecTex.png100%  
+	    New File  		  169653	VentKelp_MainTex.png100%  
+	    New File  		   37715	VentKelp_SpecTex.png100%  
+	  New Dir         21	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\Resources\
+	    New File  		   2.4 m	Iridium_BumpMap.png100%  100%  
+	    New File  		   1.6 m	Iridium_MainTex.png100%  
+	    New File  		  839159	Iridium_SpecTex.png100%  
+	    New File  		  122957	PhaseCrystal_BumpMap.png100%  
+	    New File  		  303453	PhaseCrystal_Illum.png100%  
+	    New File  		  333124	PhaseCrystal_MainTex.png100%  
+	    New File  		   53811	PhaseCrystal_SpecTex.png100%  
+	    New File  		  524016	Platinum_BumpMap.png100%  
+	    New File  		   1.5 m	Platinum_MainTex.png100%  
+	    New File  		  925686	Platinum_SpecTex.png100%  
+	    New File  		  551156	PressureCrystals_BumpMap.png100%  100%  
+	    New File  		  573326	PressureCrystals_Illum.png100%  
+	    New File  		   1.9 m	PressureCrystals_MainTex.png100%  
+	    New File  		  847330	PressureCrystals_SpecTex.png100%  
+	    New File  		  470849	VentCrystal_BumpMap.png100%  
+	    New File  		  272035	VentCrystal_Illum.png100%  
+	    New File  		   2.0 m	VentCrystal_MainTex.png100%  100%  
+	    New File  		  856741	VentCrystal_SpecTex.png100%  
+	  New Dir         10	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\Textures\VoidSpikeLevi\
+	    New File  		  676097	Inner_BumpMap.png100%  
+	    New File  		  373440	Inner_Illum.png100%  
+	    New File  		  923657	Inner_MainTex.png100%  
+	    New File  		  381135	Inner_SpecTex.png100%  
+	    New File  		  500513	Outer_BumpMap.png100%  
+	    New File  		  116462	Outer_Illum.png100%  
+	    New File  		   1.6 m	Outer_MainTex.png100%  
+	    New File  		  486858	Outer_SpecTex.png100%  
+	  New Dir          4	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\XML\
+	    New File  		   12704	items.xml100%  
+	    New File  		    1626	misc.xml100%  
+	    New File  		   20297	pda.xml100%  
+	    New File  		    1329	signals.xml100%  
+	  New Dir         19	E:\My Documents\Desktop Stuff\Game Stuff\Modding\Subnautica\Mods\SeaToSea\SeaToSea\XML\WorldgenSets\
+	    New File  		    2087	bioproc_grandreef.xml100%  
+	    New File  		    2065	bioproc_underwaterislands.xml100%  100%  
+	    New File  		    3589	crashmesa.xml100%  
+	    New File  		     622	cycheat.xml100%  
+	    New File  		    2072	drf.xml100%  
+	    New File  		    1073	dunedata.xml100%  
+	    New File  		    1785	greefcharge.xml100%  
+	    New File  		    2667	jellycrate.xml100%  
+	    New File  		    2745	kelpdrones.xml100%  
+	    New File  		  202411	mountainbase.xml100%  
+	    New File  		   16651	mountain-cave-upper.xml100%  
+	    New File  		    6826	mtnislandcave.xml100%  
+	    New File  		     776	redkey.xml100%  
+	    New File  		    2745	stepcave.xml100%  
+	    New File  		    1535	treaderpod.xml100%  
+	    New File  		    2948	treadertrail.xml100%  
+	    New File  		   30622	treader-tunnel.xml100%  
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :        27        23         4         0         0         0
+   Files :       297       157       140         0         0         0
+   Bytes :   96.31 m   67.65 m   28.65 m         0         0         0
+   Times :   0:00:26   0:00:02                       0:00:00   0:00:00
+
+   Ended : Wed Aug 24 16:25:11 2022

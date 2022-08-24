@@ -1417,13 +1417,37 @@ namespace ReikaKalseki.SeaToSea {
 	
 	[HarmonyPatch(typeof(Survival))]
 	[HarmonyPatch("Use")]
-	public static class FirstAidKitRebalance {
+	public static class ItemUseReimplementation {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			List<CodeInstruction> codes = new List<CodeInstruction>();
 			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 50F);
-				codes[idx].operand = 15F;
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_1));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "useItem", false, typeof(Survival), typeof(GameObject)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(CraftData))]
+	[HarmonyPatch("IsInvUseable")]
+	public static class ItemUsabilityHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>();
+			try {
+				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isItemUsable", false, typeof(TechType)));
+				codes.Add(new CodeInstruction(OpCodes.Ret));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

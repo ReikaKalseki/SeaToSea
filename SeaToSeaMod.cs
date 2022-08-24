@@ -359,7 +359,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
         enzy.numberCrafted = 3;
-        enzy.addIngredient(TechType.Salt, 1).addIngredient(enzyT, 1).addIngredient(TechType.SeaCrownSeed, 2);
+        enzy.addIngredient(TechType.Salt, 1).addIngredient(enzyT, 1).addIngredient(TechType.SeaCrownSeed, 2).addIngredient(TechType.DisinfectedWater, 1);
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
@@ -440,7 +440,7 @@ namespace ReikaKalseki.SeaToSea
 		bandage = new CurativeBandage();
 		bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(healFlower.seed.TechType, 2).addIngredient(TechType.JellyPlant, 1);
 		bandage.Patch();
-		SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
+		//SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
         
         RecipeUtil.startLoggingRecipeChanges();
         
