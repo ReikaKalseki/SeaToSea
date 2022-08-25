@@ -7,7 +7,7 @@
 		Warning: Passing 500 meters. Extreme environmental pressure detected. Oxygen consumption at maximum tolerable level.
 	</desc>
 	<pda>
-		Sounds/500mwarn-v2.ogg
+		Sounds/500mwarn.ogg
 	</pda>
   </deepair>
   <lrpoison>
@@ -18,7 +18,7 @@
 		Emergency: Chemical trauma imminent. Evacuate this region immediately, or fabricate chemical shielding.
 	</desc>
 	<pda>
-		Sounds/lrpoisonwarn-v2.ogg
+		Sounds/lrpoisonwarn.ogg
 	</pda>
   </lrpoison>
   <voidspikeenter>
@@ -29,7 +29,7 @@
 		Short-range scans show an abundance of suspended land masses in the region below. Detecting unknown mineral deposits.
 	</desc>
 	<pda>
-		Sounds/voidspike2.ogg
+		Sounds/voidspike.ogg
 	</pda>
   </voidspikeenter>
   <aurorafire>
@@ -73,7 +73,7 @@
 		Scans indicate biological specimens in this cave system which may be used to synthesize new chemical materials.
 	</desc>
 	<pda>
-		Sounds/cavebioprompt2.ogg
+		Sounds/cavebioprompt.ogg
 	</pda>
   </redgrasscave>
 </Root>

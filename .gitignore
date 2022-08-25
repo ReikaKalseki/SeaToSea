@@ -37,6 +37,7 @@ $RECYCLE.BIN/
 *.dll
 *.sln
 *.Settings
+*.log
 
 obj/*
 bin/*
