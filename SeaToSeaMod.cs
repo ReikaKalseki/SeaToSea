@@ -67,6 +67,8 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
     
+    public static DrillableMeteorite dunesMeteor;
+    
     public static FMODAsset voidspikeLeviRoar;
     public static FMODAsset voidspikeLeviBite;
     public static FMODAsset voidspikeLeviFX;
@@ -113,6 +115,9 @@ namespace ReikaKalseki.SeaToSea
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
 	    
+	    dunesMeteor = new DrillableMeteorite();
+	    dunesMeteor.register();
+	    
 	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
 	    voidspikeLeviAmbient = SoundManager.registerSound("voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
@@ -147,6 +152,8 @@ namespace ReikaKalseki.SeaToSea
         addOreGen();
         
         GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
+        
+        GenUtil.registerWorldgen(new PositionedPrefab(dunesMeteor.ClassID, new Vector3(-1125, -409, 1130)));
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
@@ -352,8 +359,7 @@ namespace ReikaKalseki.SeaToSea
        	item.Patch();
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
-        enzyT.craftingTime = 1;
-        enzyT.numberCrafted = 4;
+        enzyT.craftingTime = 2;
         enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
@@ -440,6 +446,7 @@ namespace ReikaKalseki.SeaToSea
 		bandage = new CurativeBandage();
 		bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(healFlower.seed.TechType, 2).addIngredient(TechType.JellyPlant, 1);
 		bandage.Patch();
+		CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
 		//SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
         
         RecipeUtil.startLoggingRecipeChanges();

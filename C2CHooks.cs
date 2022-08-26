@@ -22,6 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
 	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
+	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(300, -120, 288),
@@ -62,6 +63,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
 	    		string s = Language.main.strings[k];
+	    		if (s.ToLowerInvariant().Contains("creepvine"))
+	    			continue;
 	    		s = s.Replace(" seed", " Sample");
 	    		s = s.Replace(" spore", " Sample");
 	    		s = s.Replace(" Seed", " Sample");
@@ -546,12 +549,19 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
-	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
-	    	if (pi != null && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(new Vector3(-638.9F, -506.0F, -941.3F), pk.gameObject.transform.position) <= 0.2) {
-	    		GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
-	    		go.transform.position = pi.gameObject.transform.position;
-	    		go.transform.rotation = pi.gameObject.transform.rotation;
-	    		UnityEngine.Object.Destroy(pi.gameObject);
+	    	GameObject go = pk.gameObject;
+	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
+	    	if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
+	    		GameObject go2 = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
+	    		go2.transform.position = go.transform.position;
+	    		go2.transform.rotation = go.transform.rotation;
+	    		UnityEngine.Object.Destroy(go);
+	    	}
+	    	if (ObjectUtil.isPDA(go)) {
+				ResourceTracker res = go.EnsureComponent<ResourceTracker>();
+				res.prefabIdentifier = pi;
+				res.techType = TechType.PDA;
+				res.overrideTechType = TechType.PDA;
 	    	}
 	    }/*
 	    
@@ -683,7 +693,12 @@ namespace ReikaKalseki.SeaToSea {
 					flag = true;
 				}
 				else if (tt == SeaToSeaMod.bandage.TechType && Player.main.GetComponent<LiveMixin>().AddHealth(50F) > 0.1) {
-					ObjectUtil.removeComponent<DamageOverTime>(Player.main.gameObject);
+					Inventory.main.container.RemoveItem(useObj.GetComponent<Pickupable>(), true);
+					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
+						dt.damageRemaining = 0;
+						dt.CancelInvoke("DoDamage");
+						UnityEngine.Object.DestroyImmediate(dt);
+					}
 					flag = true;
 				}
 				else if (tt == TechType.EnzymeCureBall) {
@@ -699,6 +714,13 @@ namespace ReikaKalseki.SeaToSea {
 					FMODUWE.PlayOneShot(CraftData.GetUseEatSound(tt), Player.main.transform.position, 1f);
 			}
 			return flag;
+	    }
+	    
+	    public static GameObject getDrillableDrop(Drillable d) {
+	    	PrefabIdentifier pi = d.gameObject.GetComponent<PrefabIdentifier>();
+	    	if (pi && pi.ClassId == SeaToSeaMod.dunesMeteor.ClassID)
+	    		return DrillableMeteorite.getRandomResource();
+	    	return d.ChooseRandomResource();
 	    }
 	}
 }

@@ -47,15 +47,13 @@
   </crashmesahint>
   <mountaincavehint>
 	<name>
-		Unknown lifepod transmission origin
+		Unknown lifepod detection
 	</name>
-	<pda>
-		A distress signal from an unknown lifepod contained no location data.
-		
+	<pda>		
 		Reported:
-		-Lifepod sunk in a mountainous region with minimal vegetation
-		-Modest depth at lifepod location, but much deeper water in all directions
-		-Numerous small cave systems reported.
+		-Lifepod sunk in a comparatively sparsely populated location
+		-Depth in excess of 250m
+		-Numerous small to medium cave systems reported.
 		-Origin far to the north of the Aurora
 	</pda>
 	<category>
@@ -391,4 +389,18 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </drfwarperheat>
+  <meteorite>
+	<name>
+		Ancient Metallic Meteorite
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		PlanetaryGeology
+	</category>
+	<header>
+		MeteorImage
+	</header>
+  </meteorite>
 </Root>

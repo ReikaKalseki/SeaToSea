@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal override void applyToObject(GameObject go) {
-			SNUtil.log("Reconstructing seabase: "+data.OuterXml);
+			SNUtil.log("Reconstructing seabase with "+data.ChildNodes.Count+" parts");
 			foreach (XmlElement e2 in data.getDirectElementsByTagName("part")) {
 				CustomPrefab pfb = new CustomPrefab("9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5"); //BaseCell
 				pfb.loadFromXML(e2);

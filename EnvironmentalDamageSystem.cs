@@ -30,9 +30,16 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
     	private readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
     	
+    	internal readonly static float depthFXRippleStart = 450;
+    	public readonly static float depthDamageStart = 500;
+    	public readonly static float depthDamageMax = 600;
+    	
     	private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
     	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
+    	
+    	//private DepthRippleFX depthWarningFX1;
+    	//private DepthDarkeningFX depthWarningFX2;
 		
 		private EnvironmentalDamageSystem() {
     		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 0.5F, 40, 9);
@@ -68,6 +75,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
+    		//depthWarningFX1 = Camera.main.gameObject.EnsureComponent<DepthRippleFX>();
+    		//depthWarningFX2 = Camera.main.gameObject.EnsureComponent<DepthDarkeningFX>();
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
@@ -106,10 +115,11 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	if (dmg.player) {
 		    	float depth = dmg.player.GetDepth();
-		    	float ymin = 500;
-	    		if (depth > ymin && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) == 0) {
-	    			float ymax = 600;
-	    			float f2 = depth >= ymax ? 1 : (depth-ymin)/(ymax-ymin);
+		    	bool rb = Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0;
+		    	//depthWarningFX1.setIntensities(rb ? 0 : depth);
+		    	//depthWarningFX2.setIntensities(rb ? 0 : depth);
+	    		if (depth > depthDamageStart && !rb) {
+	    			float f2 = depth >= depthDamageMax ? 1 : (float)MathUtil.linterpolate(depth, depthDamageStart, depthDamageMax, 0, 1);
 	    			dmg.liveMixin.TakeDamage(30*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
 	    		}
 		    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
@@ -353,6 +363,69 @@ namespace ReikaKalseki.SeaToSea {
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
 	   		warn.alerts.Add(ee);
+		}
+	}
+	
+	abstract class DepthFX : MonoBehaviour {
+		
+		protected float strength = 0;
+		protected float lastUpdate = 0;
+		
+		private void OnPreRender() {
+			if (DayNightCycle.main.timePassedAsFloat-lastUpdate >= 3) {
+				strength *= 0.95F;
+			}
+	    	enabled = strength > 0.01;
+		}
+		
+		internal void setIntensities(float depth) {
+			lastUpdate = DayNightCycle.main.timePassedAsFloat;
+			strength = calculateIntensity(depth);
+	    	enabled = strength > 0.01;
+		}
+		
+		protected abstract float calculateIntensity(float depth);
+	}
+	
+	class DepthRippleFX : DepthFX {
+		
+		protected override float calculateIntensity(float depth) {
+	    	return (float)MathUtil.linterpolate(depth, EnvironmentalDamageSystem.depthFXRippleStart, EnvironmentalDamageSystem.depthDamageStart, 0, 1, true);
+		}
+	
+		private void OnRenderImage(RenderTexture source, RenderTexture destination) {			
+			Material mat = gameObject.GetComponent<MesmerizedScreenFX>().mat;
+			mat.SetFloat(ShaderPropertyID._Amount, strength);
+			mat.SetColor(ShaderPropertyID._ColorStrength, new Color(0, 0, 0, strength));
+			Graphics.Blit(source, destination, mat);
+		}
+	}
+	
+	class DepthDarkeningFX : DepthFX {
+		
+		protected override float calculateIntensity(float depth) {
+	    	return (float)MathUtil.linterpolate(depth, EnvironmentalDamageSystem.depthDamageStart, EnvironmentalDamageSystem.depthDamageMax, 0, 1, true);
+		}
+	
+		private void OnRenderImage(RenderTexture source, RenderTexture destination) {/*
+			//if (!intermediaryTexture || !intermediaryTexture.IsCreated() || intermediaryTexture.height != source.height || intermediaryTexture.width != source.width)
+			//	intermediaryTexture = new RenderTexture(destination ? destination.descriptor : source.descriptor);
+			RenderTexture intermediaryTexture = RenderTexture.GetTemporary(destination ? destination.descriptor : source.descriptor);
+			Material mat1 = gameObject.GetComponent<MesmerizedScreenFX>().mat;
+			Material mat2 = gameObject.GetComponent<CyclopsSmokeScreenFX>().mat;
+			mat1.SetFloat(ShaderPropertyID._Amount, rippleStrength);
+			//mat1.color = new Color(0, 0, 0, 1);
+			mat1.SetColor(ShaderPropertyID._ColorStrength, new Color(0, 0, 0, 1));
+			mat2.color = new Color(0, 0, 0, darkening*0.95F);
+			Graphics.Blit(source, intermediaryTexture, mat1);
+			Graphics.Blit(intermediaryTexture, destination, mat2);
+			intermediaryTexture.Release();*/
+			//Graphics.Blit(source, destination);
+			
+			Material mat = gameObject.GetComponent<CyclopsSmokeScreenFX>().mat;
+			mat.SetFloat(ShaderPropertyID._Amount, strength);
+			mat.color = new Color(0, 0, 0, strength*1F);
+			Graphics.Blit(source, destination, mat);
 		}
 	}
 	

@@ -784,7 +784,7 @@ namespace ReikaKalseki.SeaToSea {
 	}
 	
 	[HarmonyPatch(typeof(SkyApplier))]
-	[HarmonyPatch("Start")]
+	[HarmonyPatch("Awake")]
 	public static class SkyApplierSpawnHook {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
@@ -1448,6 +1448,27 @@ namespace ReikaKalseki.SeaToSea {
 				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
 				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isItemUsable", false, typeof(TechType)));
 				codes.Add(new CodeInstruction(OpCodes.Ret));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(Drillable))]
+	[HarmonyPatch("SpawnLoot")]
+	public static class DrillableDropsHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "Drillable", "ChooseRandomResource", true, new Type[0]);
+				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "getDrillableDrop", false, typeof(Drillable));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
