@@ -115,9 +115,6 @@ namespace ReikaKalseki.SeaToSea
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
 	    
-	    dunesMeteor = new DrillableMeteorite();
-	    dunesMeteor.register();
-	    
 	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
 	    voidspikeLeviAmbient = SoundManager.registerSound("voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
@@ -144,6 +141,9 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger.addFragments(4, 10, rebreatherChargerFragments);
         
         addPDAEntries();
+	    
+	    dunesMeteor = new DrillableMeteorite();
+	    dunesMeteor.register();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();

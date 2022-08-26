@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void register() {
 			Patch();
-			SNUtil.addPDAEntry(this, 20, PDAManager.getPage("meteorite"), null);
+			SNUtil.addPDAEntry(this, 20, PDAManager.getPage("meteorite"));
 		}
 		
 		public static GameObject getRandomResource() {
