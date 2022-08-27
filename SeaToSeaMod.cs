@@ -154,6 +154,7 @@ namespace ReikaKalseki.SeaToSea
         GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
         
         GenUtil.registerWorldgen(new PositionedPrefab(dunesMeteor.ClassID, new Vector3(-1125, -409, 1130)));
+        GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.REAPER.prefab, new Vector3(-1125, -209, 1130)));
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
@@ -177,6 +178,10 @@ namespace ReikaKalseki.SeaToSea
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
 		
+		gatedTechnologies.Add(TechType.Kyanite);
+		gatedTechnologies.Add(TechType.Sulphur);
+		gatedTechnologies.Add(TechType.Nickel);
+		gatedTechnologies.Add(TechType.JellyPlant);
 		gatedTechnologies.Add(TechType.Seamoth);
 		gatedTechnologies.Add(TechType.Cyclops);
 		gatedTechnologies.Add(TechType.Exosuit);
@@ -550,6 +555,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
         
+        RecipeUtil.getRecipe(TechType.DisinfectedWater).craftAmount = 3;
         RecipeUtil.addIngredient(TechType.Bleach, chlorine.TechType, 1);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.Bleach, 2);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.AdvancedWiringKit, 1);

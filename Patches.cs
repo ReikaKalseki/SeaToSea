@@ -411,7 +411,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	
+	/*
 	[HarmonyPatch(typeof(WorldStreaming.WorldStreamer))]
 	[HarmonyPatch("ParseClipmapSettings")]
 	public static class WorldClippingDistance {
@@ -431,7 +431,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}
+	}*/
 	
 	[HarmonyPatch(typeof(Player))]
 	[HarmonyPatch("Update")]
