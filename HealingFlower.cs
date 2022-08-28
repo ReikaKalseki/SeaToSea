@@ -15,7 +15,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class HealingFlower : BasicCustomPlant {
 		
-		public HealingFlower() : base(SeaToSeaMod.itemLocale.getEntry("HEALING_FLOWER"), VanillaFlora.VOXEL, "Leaves") {
+		public HealingFlower() : base(SeaToSeaMod.itemLocale.getEntry("HEALING_FLOWER"), VanillaFlora.VOXEL, "6f932b93-65e8-4c89-a63b-d105203ab84c", "Leaves") {
 			glowIntensity = 1.5F;
 			finalCutBonus = 1;
 		}
@@ -31,6 +31,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override float getScaleInGrowbed(bool indoors) {
 			return indoors ? 0.25F : 0.5F;
+		}
+		
+		public override Plantable.PlantSize getSize() {
+			return Plantable.PlantSize.Small;
 		}
 		
 	}

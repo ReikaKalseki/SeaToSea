@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static bool leavesOnlyRendering;
 		
-		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "Samples") {
+		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "2a37dd2f-ee5e-4c3c-a3fe-4f5973055651", "Samples") {
 			glowIntensity = 0.8F;
 			finalCutBonus = 2;
 		}
@@ -162,6 +162,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			if (transform.position.y >= -400)
+				UnityEngine.Object.DestroyImmediate(this);
 			float f = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
 			foreach (Renderer r in renderers) {
 				//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;

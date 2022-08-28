@@ -24,6 +24,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    
+	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
+	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
+	    
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(300, -120, 288),
 	    	//new Vector3(66, -100, -608), big obvious but empty one
@@ -57,7 +60,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	Inventory.main.equipment.onEquip += onEquipmentAdded;
 	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	        
+	    	BrokenTablet.updateLocale();
 	    	DuplicateRecipeDelegate.updateLocale();
+	    	OutdoorPot.updateLocale();
 		
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    
@@ -556,8 +561,16 @@ namespace ReikaKalseki.SeaToSea {
 	    		go2.transform.position = go.transform.position;
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
+	    	}/*
+	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
+	    		go.transform.position = auroraCyclopsModule.position;
+	    		go.transform.rotation = auroraCyclopsModule.rotation;
 	    	}
-	    	if (ObjectUtil.isPDA(go)) {
+	    	else if (pi && pi.ClassId == auroraCyclopsModule.prefabName && Vector3.Distance(auroraCyclopsModule.position, go.transform.position) <= 0.2) {
+	    		go.transform.position = auroraStorageModule.position;
+	    		go.transform.rotation = auroraStorageModule.rotation;
+	    	}*/
+	    	else if (ObjectUtil.isPDA(go)) {
 				ResourceTracker res = go.EnsureComponent<ResourceTracker>();
 				res.prefabIdentifier = pi;
 				res.techType = TechType.PDA;

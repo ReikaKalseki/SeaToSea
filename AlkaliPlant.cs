@@ -15,7 +15,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class AlkaliPlant : BasicCustomPlant {
 		
-		public AlkaliPlant() : base(SeaToSeaMod.itemLocale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT, "Samples") {
+		public AlkaliPlant() : base(SeaToSeaMod.itemLocale.getEntry("ALKALI_PLANT"), VanillaFlora.REDWORT, "daff0e31-dd08-4219-8793-39547fdb745e", "Samples") {
 			glowIntensity = 2;
 			finalCutBonus = 0;
 			//seed.sprite = TextureManager.getSprite("Textures/Items/"+ObjectUtil.formatFileName(this));

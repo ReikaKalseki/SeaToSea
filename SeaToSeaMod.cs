@@ -67,6 +67,10 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
     
+    public static OutdoorPot outdoorBasicPot;
+    public static OutdoorPot outdoorChicPot;
+    public static OutdoorPot outdoorCompositePot;
+    
     public static DrillableMeteorite dunesMeteor;
     
     public static FMODAsset voidspikeLeviRoar;
@@ -591,6 +595,13 @@ namespace ReikaKalseki.SeaToSea
         brokenRedTablet.register();
         brokenWhiteTablet.register();
         brokenOrangeTablet.register();
+        
+        outdoorBasicPot = new OutdoorPot(TechType.PlanterPot);
+        outdoorCompositePot = new OutdoorPot(TechType.PlanterPot2);
+        outdoorChicPot = new OutdoorPot(TechType.PlanterPot3);
+        outdoorBasicPot.register();
+        outdoorCompositePot.register();
+        outdoorChicPot.register();
         
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         

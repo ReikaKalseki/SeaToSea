@@ -27,7 +27,7 @@ namespace ReikaKalseki.SeaToSea
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
 				}
-				if (m == Items.CrystalLens) {
+				if (m == Items.CrystalLens || m == Items.DenseAzurite) {
 					item.unlockRequirement = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
 				}
 				if (m == Items.Luminol) {
@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea
 				techs[item.TechType] = item;
 				SNUtil.log("Registered > "+item+" > {"+RecipeUtil.toString(CraftDataHandler.GetTechData(item.TechType))+"} @ "+string.Join("-", item.StepsToFabricatorTab)+" in "+item.GroupForPDA+"/"+item.CategoryForPDA);
 			}
-		}
+		}	
 		
 		public enum Items {
 			[Item(typeof(BasicCraftingItem),	true, TechType.AramidFibers,	"WorldEntities/Natural/aerogel")]HoneycombComposite,
@@ -63,7 +63,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	false, TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,
 			[Item(typeof(BasicCraftingItem),	false, TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/polyaniline")]BioEnzymes,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Kyanite,		"6e0f4652-c439-4540-95be-e61384e27692")]LathingDrone,/*
+			[Item(typeof(BasicCraftingItem),	false, TechType.Kyanite,		"WorldEntities/Natural/WiringKit")]LathingDrone,/*
 			[Item(typeof(BasicCraftingItem),	false, TechType.ScrapMetal,		"WorldEntities/Natural/TitaniumIngot")]TitaniumIngotFromScrap,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Titanium,		"WorldEntities/Natural/Titanium")]TitaniumFromIngot,*/
 			//[Item(typeof(BasicCraftingItem),	true, 	TechType.Kyanite,		"WorldEntities/Natural/polyaniline")]RebreatherFluid,

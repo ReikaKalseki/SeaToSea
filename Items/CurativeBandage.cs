@@ -14,7 +14,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public CurativeBandage() : base(SeaToSeaMod.itemLocale.getEntry("CurativeBandage"), "WorldEntities/Natural/FirstAidKit") {
 			sprite = TextureManager.getSprite("Textures/Items/CurativeBandage");
-			unlockRequirement = SeaToSeaMod.healFlower.TechType;
+			unlockRequirement = TechType.Workbench;//SeaToSeaMod.healFlower.TechType;
 			craftingTime = 6;
 		}
 
