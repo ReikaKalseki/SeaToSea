@@ -18,12 +18,7 @@ namespace ReikaKalseki.SeaToSea
 		public SeamothDepthModule(string id, string name, string desc, int d) : base(id, name, desc) {
 			maxDepth = d;
 			depthBonus = maxDepth-200;
-		}
-
-		public override TechType RequiredForUnlock {
-			get {
-				return TechType.BaseUpgradeConsole;
-			}
+			dependency = TechType.BaseUpgradeConsole;
 		}
 
 		public override CraftTree.Type FabricatorType {

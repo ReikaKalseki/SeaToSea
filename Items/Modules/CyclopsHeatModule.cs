@@ -13,13 +13,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class CyclopsHeatModule : CyclopsModule {
 				
 		public CyclopsHeatModule() : base(SeaToSeaMod.itemLocale.getEntry("CyclopsHeat")) {
-			
-		}
-
-		public override TechType RequiredForUnlock {
-			get {
-				return TechType.Kyanite;
-			}
+			preventNaturalUnlock();
 		}
 
 		public override QuickSlotType QuickSlotType {

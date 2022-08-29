@@ -14,6 +14,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public RebreatherV2() : base(SeaToSeaMod.itemLocale.getEntry("RebreatherV2"), "WorldEntities/Natural/rebreather") {
 			isArmor = true;
+			preventNaturalUnlock();
 		}
 
 		public override Vector2int SizeInInventory {
@@ -25,12 +26,6 @@ namespace ReikaKalseki.SeaToSea
 			pda.enabled = true;
 			pda.text = "I am some PDA text";
 			pda.sound = SNUtil.getSound("event:/player/story/Goal_BiomeSparseReef");
-		}
-
-		public override TechType RequiredForUnlock {
-			get {
-				return TechType.Kyanite;
-			}
 		}
 		
 		public override sealed EquipmentType EquipmentType {

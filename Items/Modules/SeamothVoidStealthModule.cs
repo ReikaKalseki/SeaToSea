@@ -13,13 +13,7 @@ namespace ReikaKalseki.SeaToSea
 	public sealed class SeamothVoidStealthModule : SeamothModule {
 				
 		public SeamothVoidStealthModule() : base(SeaToSeaMod.itemLocale.getEntry("SeamothVoidStealth")) {
-			
-		}
-
-		public override TechType RequiredForUnlock {
-			get {
-				return TechType.Kyanite;
-			}
+			preventNaturalUnlock();
 		}
 
 		public override QuickSlotType QuickSlotType {

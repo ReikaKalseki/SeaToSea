@@ -14,6 +14,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public SealedSuit() : base(SeaToSeaMod.itemLocale.getEntry("SealedSuit"), "WorldEntities/Tools/ReinforcedDiveSuit") {
 			isArmor = true;
+			preventNaturalUnlock();
 		}
 
 		public override Vector2int SizeInInventory {
@@ -22,12 +23,6 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			
-		}
-
-		public override TechType RequiredForUnlock {
-			get {
-				return TechType.Kyanite;
-			}
 		}
 		
 		public override sealed EquipmentType EquipmentType {

@@ -186,6 +186,10 @@ namespace ReikaKalseki.SeaToSea
 		gatedTechnologies.Add(TechType.Sulphur);
 		gatedTechnologies.Add(TechType.Nickel);
 		gatedTechnologies.Add(TechType.JellyPlant);
+		gatedTechnologies.Add(TechType.BloodOil);
+		gatedTechnologies.Add(TechType.WhiteMushroom);
+		gatedTechnologies.Add(TechType.SeaCrown);
+		gatedTechnologies.Add(TechType.Aerogel);
 		gatedTechnologies.Add(TechType.Seamoth);
 		gatedTechnologies.Add(TechType.Cyclops);
 		gatedTechnologies.Add(TechType.Exosuit);
@@ -415,12 +419,28 @@ namespace ReikaKalseki.SeaToSea
         
         CraftingItems.addAll();
         
+        rec = RecipeUtil.copyRecipe(enzy.getRecipe());
+        foreach (Ingredient i in rec.Ingredients) {
+        	if (i.techType == TechType.DisinfectedWater) {
+        		i.techType = TechType.BigFilteredWater;
+        		i.amount *= 2;
+        	}
+        	else {
+        		i.amount *= 3;
+        	}
+        }
+       	item = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
+       	item.craftTime = enzy.craftingTime*2F;
+       	item.setRecipe(enzy.numberCrafted*3);
+       	item.Patch();
+        
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         voidStealth.Patch();
         
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
         depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 4).addIngredient(CraftingItems.getItem(CraftingItems.Items.HullPlating), 3);
+        depth1300.dependency = TechType.Kyanite;
         depth1300.Patch();
         
         cyclopsHeat = new CyclopsHeatModule();
@@ -486,6 +506,8 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
         
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, t2Battery.TechType, 1);
+        
+        RecipeUtil.addIngredient(TechType.HighCapacityTank, TechType.Aerogel, 1);
         
         RecipeUtil.modifyIngredients(TechType.BaseRoom, i => {if (i.techType == TechType.Titanium) i.amount = 4; return false;});
         RecipeUtil.modifyIngredients(TechType.BaseBulkhead, i => {if (i.techType == TechType.Titanium) i.amount = 2; return false;});

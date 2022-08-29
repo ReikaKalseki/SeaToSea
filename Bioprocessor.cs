@@ -24,8 +24,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow returnArrow = new Arrow("arrowRet", "", "", "");
 		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
 		
-		internal static readonly float POWER_COST_IDLE = 2.0F; //per second; was 1.5 then 2.5
-		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
+		internal static readonly float POWER_COST_IDLE = 1.0F; //per second; was 1.5 then 2.5
+		internal static readonly float POWER_COST_ACTIVE = 16.0F; //per second
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
@@ -92,10 +92,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
 			addIngredient(TechType.TitaniumIngot, 1);
-			addIngredient(TechType.Magnetite, 12);
+			addIngredient(TechType.Magnetite, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6);
 			addIngredient(TechType.CopperWire, 1);
-			addIngredient(TechType.Glass, 3);
+			addIngredient(CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType, 3);
 		}
 
 		public override bool UnlockedAtStart {
@@ -112,6 +112,7 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "Bubbles");
 			
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
+			con.storageRoot.ClassId = "bioprocessorcontainer";
 			con.hoverText = "Use Bioprocessor";
 			con.storageLabel = "BIOPROCESSOR";
 			con.enabled = true;
@@ -124,6 +125,7 @@ namespace ReikaKalseki.SeaToSea {
 			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
 			
 		 	GameObject machineMdl = ObjectUtil.getChildObject(go, MACHINE_GO_NAME);
+		 	ObjectUtil.removeChildObject(go, "Submarine_engine_fragments_02");
 		 	if (machineMdl == null) {
 			 	machineMdl = ObjectUtil.createWorldObject("02dfa77b-5407-4474-90c6-fcb0003ecf2d", true, false);
 				machineMdl.name = MACHINE_GO_NAME;
@@ -155,7 +157,7 @@ namespace ReikaKalseki.SeaToSea {
 			lgc.mainRenderer = r;
 			
 			go.GetComponent<Constructable>().model = machineMdl;
-			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.5F, 0.5F, 1.5F);
+			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.3F, 0.4F, 1.3F);
 			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(1, 0.5F, 0);
 			
 			ObjectUtil.removeChildObject(go, "SubDamageSounds");
@@ -209,6 +211,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal Renderer mainRenderer;
 		private bool setCollision;
 		
+		private float energyBuffer = 0;
+		
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
 			SeaToSeaMod.processor.initializeMachine(gameObject);
@@ -241,7 +245,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
 						IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 						if (salt != null && salt.Count >= 1) {
-							storage.container.RemoveItem(salt[0].item);
+							ObjectUtil.removeItem(storage, salt[0]);
 							saltRequired--;
 							SNUtil.playSoundAt(SNUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
@@ -256,7 +260,7 @@ namespace ReikaKalseki.SeaToSea {
 							if (ing != null && ing.Count >= currentOperation.inputCount) {
 								//SNUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
-									storage.container.RemoveItem(ing[0].item); //list is updated in realtime
+									ObjectUtil.removeItem(storage, ing[0]); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
 									GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
@@ -310,20 +314,28 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private bool consumePower(float sc = 1) {
-			SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
-			if (sub == null)
-				return false;
-			float receive;
-			sub.powerRelay.ConsumeEnergy(Bioprocessor.POWER_COST_IDLE*sc, out receive);
-			receive += 0.0001F;
-			//if (receive < Bioprocessor.POWER_COST_IDLE*sc)
-			//	SNUtil.writeToChat("Wanted "+(Bioprocessor.POWER_COST_IDLE*sc)+", got "+receive);
-			return receive >= Bioprocessor.POWER_COST_IDLE*sc;//Mathf.Approximately(Bioprocessor.POWER_COST*sc, receive);
+			float amt = Bioprocessor.POWER_COST_IDLE*sc;
+			//SNUtil.writeToChat("Wanted "+amt+" / "+energyBuffer);
+			float cap = Bioprocessor.POWER_COST_ACTIVE*5;
+			if (energyBuffer < cap) {
+				SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
+				if (sub) {
+					float receive;
+					sub.powerRelay.ConsumeEnergy(cap-energyBuffer, out receive);
+					receive += 0.0001F;
+					energyBuffer += receive;
+				}
+			}
+			if (energyBuffer >= amt) {
+				energyBuffer -= amt;
+				return true;
+			}
+			return false;
 		}
 		
 		private bool canRunRecipe(BioRecipe r) {
-			if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
-				return false;
+			//if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
+			//	return false;
 			IList<InventoryItem> ing = storage.container.GetItems(r.inputItem);
 			IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;

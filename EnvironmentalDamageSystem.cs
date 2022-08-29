@@ -122,13 +122,13 @@ namespace ReikaKalseki.SeaToSea {
 	    			float f2 = depth >= depthDamageMax ? 1 : (float)MathUtil.linterpolate(depth, depthDamageStart, depthDamageMax, 0, 1);
 	    			dmg.liveMixin.TakeDamage(30*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
 	    		}
-		    	//if (Inventory.main.equipment.GetCount(sealSuit.TechType) == 0) {
+		    	if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 		    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
 		    		float amt = getLRPoison(biome);
 		    		if (amt > 0) {
 		    			dmg.liveMixin.TakeDamage(amt/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Poison, null);
 		    		}
-		    	//}
+		    	}
 	    	}
 			float leak = getLRPowerLeakage(biome);
 		   	if (leak > 0) {
@@ -362,6 +362,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		ee = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
 	   		ee.preventiveItem.Clear();
 	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
+	   		ee.preventiveItem.Add(TechType.ReinforcedDiveSuit);
 	   		warn.alerts.Add(ee);
 		}
 	}

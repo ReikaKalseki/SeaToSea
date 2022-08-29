@@ -50,9 +50,9 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Items {
 			[Item(typeof(BasicCraftingItem),	true, TechType.AramidFibers,	"WorldEntities/Natural/aerogel")]HoneycombComposite,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/Glass")]DenseAzurite,
+			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
+			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
 			[Item(typeof(Bioprocessed), 		false, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
 			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(BasicCraftingItem),	false, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
@@ -62,8 +62,8 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	false, TechType.Lubricant,		"WorldEntities/Natural/Lubricant")]Motor,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,
 			[Item(typeof(BasicCraftingItem),	false, TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Kyanite,			"WorldEntities/Natural/polyaniline")]BioEnzymes,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Kyanite,		"WorldEntities/Natural/WiringKit")]LathingDrone,/*
+			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]BioEnzymes,
+			[Item(typeof(BasicCraftingItem),	false, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]LathingDrone,/*
 			[Item(typeof(BasicCraftingItem),	false, TechType.ScrapMetal,		"WorldEntities/Natural/TitaniumIngot")]TitaniumIngotFromScrap,
 			[Item(typeof(BasicCraftingItem),	false, TechType.Titanium,		"WorldEntities/Natural/Titanium")]TitaniumFromIngot,*/
 			//[Item(typeof(BasicCraftingItem),	true, 	TechType.Kyanite,		"WorldEntities/Natural/polyaniline")]RebreatherFluid,

@@ -197,8 +197,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (e == null)
 	    		return f;
 	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity));
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity))
-	    		f += 0.95F; //was 0.55
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+	    		float bonus = 0.75F; //was 0.55 then 0.95
+	    		float depth = Player.main.GetDepth();
+	    		float depthFactor = depth <= 50 ? 1 : 1-((depth-50)/350F);
+	    		if (depthFactor > 0) {
+	    			f += bonus*depthFactor;
+	    		}
+	    	}
 	    	return f;
 	    }
 	    
@@ -702,10 +708,16 @@ namespace ReikaKalseki.SeaToSea {
 						tt = component.GetTechType();
 				}
 				SNUtil.log("Player used item "+tt);
-				if (tt == TechType.FirstAidKit && Player.main.GetComponent<LiveMixin>().AddHealth(15F) > 0.1) {
+				if (tt == TechType.FirstAidKit && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 					flag = true;
+					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+					ht.setValues(20, 20);
+					ht.activate();
 				}
-				else if (tt == SeaToSeaMod.bandage.TechType && Player.main.GetComponent<LiveMixin>().AddHealth(50F) > 0.1) {
+				else if (tt == SeaToSeaMod.bandage.TechType && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+					ht.setValues(50, 5);
+					ht.activate();
 					Inventory.main.container.RemoveItem(useObj.GetComponent<Pickupable>(), true);
 					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
 						dt.damageRemaining = 0;
@@ -735,5 +747,43 @@ namespace ReikaKalseki.SeaToSea {
 	    		return DrillableMeteorite.getRandomResource();
 	    	return d.ChooseRandomResource();
 	    }
+	}
+	
+	class HealingOverTime : MonoBehaviour {
+		
+		private static readonly float TICK_RATE = 0.25F;
+		
+		private float totalToHeal;
+		private float healingRemaining;
+		private float totalDuration;
+		
+		private float healRate;
+		private float startTime;
+		
+		internal void setValues(float total, float seconds) {
+			totalToHeal = total;
+			totalDuration = seconds;
+			healingRemaining = total;
+			healRate = totalToHeal/seconds*TICK_RATE;
+		}
+		
+		public void activate() {
+			CancelInvoke("tick");
+			startTime = Time.time;
+			InvokeRepeating("tick", 0f, TICK_RATE);
+		}
+
+		public void tick() {
+			float amt = Mathf.Min(healingRemaining, healRate);
+			Player.main.GetComponent<LiveMixin>().AddHealth(amt);
+			healingRemaining -= amt;
+			if (healingRemaining <= 0)
+				UnityEngine.Object.Destroy(this);
+		}
+		
+		private void OnKill() {
+			UnityEngine.Object.Destroy(this);
+		}
+		
 	}
 }
