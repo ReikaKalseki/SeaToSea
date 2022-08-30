@@ -24,27 +24,97 @@ namespace ReikaKalseki.SeaToSea
 {		
 	internal class SeabaseReconstruction : ManipulationBase {
 		
+		private static readonly Dictionary<string, XmlElement> dataCache = new Dictionary<string, XmlElement>();
+		
 		private readonly XmlElement data;
-		private bool preventDeconstruction;
+		private readonly string id;
 		
 		internal SeabaseReconstruction(XmlElement e) {
 			data = e;
-			preventDeconstruction = !e.getBoolean("allowDeconstruct");
+			id = e.getProperty("identifier");
+			dataCache[id] = data;
 		}
 		
 		internal override void applyToObject(GameObject go) {
-			SNUtil.log("Reconstructing seabase with "+data.ChildNodes.Count+" parts");
-			bool isNew = ObjectUtil.getChildObject(go, "PowerAttach");
+			SNUtil.log("Reconstructing seabase with "+data.ChildNodes.Count+" parts");/*
+			BaseRoot b = go.GetComponent<BaseRoot>();
+			b.noPowerNotification = null;
+			b.welcomeNotification = null;
+			b.welcomeNotificationEmergency = null;
+			b.welcomeNotificationIssue = null;
+			b.hullBreachNotification = null;
+			b.hullRestoredNotification = null;
+			b.hullDamageNotification = null;
+			b.fireNotification = null;*/
+			go.SetActive(true);/*
+			foreach (Planter p in go.GetComponentsInChildren<Planter>(true)) {
+				try {
+					p.InitPlantsDelayed();
+				}
+				catch (Exception e) {
+				
+				}
+			}*/
+			ObjectUtil.removeChildObject(go, "SubDamageSounds");
 			ObjectUtil.removeChildObject(go, "PowerAttach");
-			if (isNew) {
-				SNUtil.log("Seabase needs construction");
-				ObjectUtil.dumpObjectData(go);
-				foreach (XmlElement e2 in data.getDirectElementsByTagName("part")) {
+			ObjectUtil.removeComponent<BaseFloodSim>(go);
+			ObjectUtil.removeComponent<BaseHullStrength>(go);
+			ObjectUtil.removeComponent<BasePowerRelay>(go);
+			ObjectUtil.removeComponent<PowerFX>(go);
+			ObjectUtil.removeComponent<VoiceNotificationManager>(go);
+			ObjectUtil.removeComponent<VoiceNotification>(go);
+			ObjectUtil.removeComponent<BaseRoot>(go);
+			ObjectUtil.removeComponent<Base>(go);
+			WorldgenSeabaseController ws = go.EnsureComponent<WorldgenSeabaseController>();
+			ws.reconstructionData = data;
+			ws.seabaseID = id;
+			GameObject holder = new GameObject();
+			holder.name = id;
+			holder.EnsureComponent<SeabaseIDHolder>();
+			holder.transform.parent = go.transform;
+			go.GetComponent<LightingController>().state = LightingController.LightingState.Damaged;
+			//go.EnsureComponent<BaseHider>();
+			Vector3 pos = data.getVector("position").Value;
+			go.transform.position = pos;
+			go.transform.localPosition = Vector3.zero;
+			go.transform.localRotation = Quaternion.identity;
+			SNUtil.log("Finished deserializing seabase @ "+pos);
+		}
+		
+		class SeabaseIDHolder : MonoBehaviour {
+			
+		}
+		
+		class WorldgenSeabaseController : MonoBehaviour {
+			
+			private static readonly string GEN_MARKER = "GenMarker";
+			
+			internal XmlElement reconstructionData;
+			internal string seabaseID;
+		
+			//private Planter[] planters = null;
+			private StorageContainer[] storages = null;
+			private Charger[] chargers = null;
+			
+			void rebuild() {
+				SNUtil.log("Seabase '"+seabaseID+"' undergoing reconstruction");
+				if (reconstructionData == null) {
+					SNUtil.writeToChat("Cannot rebuild worldgen seabase @ "+transform.position+" - no data");
+					return;
+				}
+				bool isNew = true;
+				foreach (XmlElement e2 in reconstructionData.getDirectElementsByTagName("part")) {
 					CustomPrefab pfb = new CustomPrefab("9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5"); //BaseCell
 					pfb.loadFromXML(e2);
+					bool isNewL = !baseHasPart(gameObject, pfb);
+					if (!isNewL && pfb.prefabName != "9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5") { //ie is loose
+						SNUtil.log("Skipped recreate of loose piece: "+pfb);
+						isNew = false;
+						continue;
+					}
 					SNUtil.log("Reconstructed BaseCell/loose piece: "+pfb);
 					GameObject go2 = pfb.createWorldObject();
-					go2.transform.parent = go.transform;
+					go2.transform.parent = gameObject.transform;
 					List<XmlElement> li1 = e2.getDirectElementsByTagName("cellData");
 					if (li1.Count == 1) {
 						foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("component")) {
@@ -57,7 +127,7 @@ namespace ReikaKalseki.SeaToSea
 							GameObject go3 = pfb2.createWorldObject();
 							go3.transform.parent = go2.transform;
 							rebuildNestedObjects(go3, e3);
-							if (preventDeconstruction) {
+							if (!reconstructionData.getBoolean("allowDeconstruct")) {
 								ObjectUtil.removeComponent<BaseDeconstructable>(go3);
 								ObjectUtil.removeComponent<Constructable>(go3);
 								PreventDeconstruction pv = go3.EnsureComponent<PreventDeconstruction>();
@@ -78,45 +148,47 @@ namespace ReikaKalseki.SeaToSea
 							}
 						}
 					}
-					li1 = e2.getDirectElementsByTagName("inventory");
-					if (li1.Count == 1) {
-						StorageContainer sc = go2.GetComponent<StorageContainer>();
-						Charger cg = go2.GetComponent<Charger>();
-						Planter p = go2.GetComponent<Planter>();
-						if (sc == null && cg == null) {
-							SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
-							continue;
-						}
-						GrowbedPropifier pg = null;
-						if (p != null) {
-							pg = go2.EnsureComponent<GrowbedPropifier>();
-						}
-						foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
-							TechType tt = SNUtil.getTechType(e3.getProperty("type"));
-							if (tt == TechType.None) {
-								SNUtil.log("Could not deserialize item - null TechType: "+e3.OuterXml);
+					if (isNew) {
+						li1 = e2.getDirectElementsByTagName("inventory");
+						if (li1.Count == 1) {
+							StorageContainer sc = go2.GetComponent<StorageContainer>();
+							Charger cg = go2.GetComponent<Charger>();
+							Planter p = go2.GetComponent<Planter>();
+							if (sc == null && cg == null) {
+								SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
+								continue;
 							}
-							else {
-								GameObject igo = CraftData.GetPrefabForTechType(tt);
-								if (igo == null) {
-									SNUtil.log("Could not deserialize item - resulted in null: "+e3.OuterXml);
-									continue;
+							GrowbedPropifier pg = null;
+							if (p != null) {
+								pg = go2.EnsureComponent<GrowbedPropifier>();
+							}
+							foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
+								TechType tt = SNUtil.getTechType(e3.getProperty("type"));
+								if (tt == TechType.None) {
+									SNUtil.log("Could not deserialize item - null TechType: "+e3.OuterXml);
 								}
-								int amt = e3.getInt("amount", 1);
-								string slot = e3.getProperty("slot", true);
-								for (int i = 0; i < amt; i++) {
-									GameObject igo2 = UnityEngine.Object.Instantiate(igo);
-									igo2.SetActive(false);
-									Pickupable pp = igo2.GetComponent<Pickupable>();
-									InventoryItem item = null;
-									if (pp == null) {
-										SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
-									} 
-									if (cg != null) {
-										cg.equipment.AddItem(slot, new InventoryItem(pp), true);
+								else {
+									GameObject igo = CraftData.GetPrefabForTechType(tt);
+									if (igo == null) {
+										SNUtil.log("Could not deserialize item - resulted in null: "+e3.OuterXml);
+										continue;
 									}
-									else if (sc != null) {
-										item = sc.container.AddItem(pp);
+									int amt = e3.getInt("amount", 1);
+									string slot = e3.getProperty("slot", true);
+									for (int i = 0; i < amt; i++) {
+										GameObject igo2 = UnityEngine.Object.Instantiate(igo);
+										igo2.SetActive(false);
+										Pickupable pp = igo2.GetComponent<Pickupable>();
+										InventoryItem item = null;
+										if (pp == null) {
+											SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
+										} 
+										if (cg != null) {
+											cg.equipment.AddItem(slot, new InventoryItem(pp), true);
+										}
+										else if (sc != null) {
+											item = sc.container.AddItem(pp);
+										}
 									}
 								}
 							}
@@ -124,55 +196,28 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 			}
-			else {
-				SNUtil.log("Seabase GO already populated.");
-			}/*
-			BaseRoot b = go.GetComponent<BaseRoot>();
-			b.noPowerNotification = null;
-			b.welcomeNotification = null;
-			b.welcomeNotificationEmergency = null;
-			b.welcomeNotificationIssue = null;
-			b.hullBreachNotification = null;
-			b.hullRestoredNotification = null;
-			b.hullDamageNotification = null;
-			b.fireNotification = null;*/
-			go.SetActive(true);/*
-			foreach (Planter p in go.GetComponentsInChildren<Planter>(true)) {
-				try {
-					p.InitPlantsDelayed();
-				}
-				catch (Exception e) {
-				
-				}
-			}*/
-			ObjectUtil.removeChildObject(go, "SubDamageSounds");
-			ObjectUtil.removeComponent<BaseFloodSim>(go);
-			ObjectUtil.removeComponent<BaseHullStrength>(go);
-			ObjectUtil.removeComponent<BasePowerRelay>(go);
-			ObjectUtil.removeComponent<PowerFX>(go);
-			ObjectUtil.removeComponent<VoiceNotificationManager>(go);
-			ObjectUtil.removeComponent<VoiceNotification>(go);
-			ObjectUtil.removeComponent<BaseRoot>(go);
-			ObjectUtil.removeComponent<Base>(go);
-			go.EnsureComponent<WorldgenSeabaseController>().reconstructionData = data;
-			go.GetComponent<LightingController>().state = LightingController.LightingState.Damaged;
-			//go.EnsureComponent<BaseHider>();
-			Vector3 pos = data.getVector("position").Value;
-			go.transform.position = pos;
-			go.transform.localPosition = Vector3.zero;
-			go.transform.localRotation = Quaternion.identity;
-			SNUtil.log("Finished deserializing seabase @ "+pos+": children: "+go.transform.childCount);
-		}
-		
-		class WorldgenSeabaseController : MonoBehaviour {
-			
-			internal XmlElement reconstructionData;
-		
-			//private Planter[] planters = null;
-			private StorageContainer[] storages = null;
-			private Charger[] chargers = null;
 
 			void Update() {
+				if (seabaseID == null)
+					seabaseID = gameObject.GetComponentInChildren<SeabaseIDHolder>().name;
+				if (reconstructionData == null) {
+					reconstructionData = dataCache[seabaseID];
+				}
+				foreach (Transform t in transform) {
+					if (t.gameObject.name.Contains("BaseCell") && t.childCount == 0) {
+						UnityEngine.Object.Destroy(t.gameObject);
+					}
+				}
+				if (!ObjectUtil.getChildObject(gameObject, "BaseCell")) {/*
+					GameObject marker = ObjectUtil.getChildObject(gameObject, GEN_MARKER);
+					bool isNew = !marker;
+					if (!marker) {
+						marker = new GameObject();
+						marker.name = GEN_MARKER;
+						marker.transform.parent = transform;
+					}*/
+					rebuild();
+				}
 				GetComponent<LightingController>().state = LightingController.LightingState.Damaged;/*
 				if (planters == null) {
 					planters = gameObject.GetComponentsInChildren<Planter>();
@@ -246,8 +291,20 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 		}*/
+		
+		private static bool baseHasPart(GameObject main, CustomPrefab pfb) {
+			foreach (Transform t in main.transform) {
+				PrefabIdentifier pi = t.GetComponent<PrefabIdentifier>();
+				if (!pi || pi.ClassId != pfb.prefabName)
+					continue;
+				if (Vector3.Distance(pfb.position, t.position) >= 0.1)
+					continue;
+				return true;
+			}
+			return false;
+		}
 			
-		private void rebuildNestedObjects(GameObject main, XmlElement e) {
+		private static void rebuildNestedObjects(GameObject main, XmlElement e) {
 			foreach (XmlElement e2 in e.getDirectElementsByTagName("child")) {
 				CustomPrefab pfb = new CustomPrefab(e2.getProperty("prefab"));
 				pfb.loadFromXML(e2);
