@@ -171,6 +171,8 @@ namespace ReikaKalseki.SeaToSea
 					prefabName = "e9b75112-f920-45a9-97cc-838ee9b389bb"; //base GO
 					isSeabase = true;
 					manipulations.Add(new SeabaseReconstruction(e));
+					ModifiedObjectPrefab mod = getOrCreateModPrefab(this, "seabase##"+SNUtil.getModDLL().GetName().Name.ToUpperInvariant()+"##"+e.getProperty("identifier"));
+					prefabName = mod.ClassID;
 					SNUtil.log("Redirected customprefab to seabase");
 				}
 				//else if (prefabName == "fragment") {

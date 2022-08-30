@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow returnArrow = new Arrow("arrowRet", "", "", "");
 		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
 		
-		internal static readonly float POWER_COST_IDLE = 1.0F; //per second; was 1.5 then 2.5
+		internal static readonly float POWER_COST_IDLE = 0.5F; //per second; was 1.5 then 2.5
 		internal static readonly float POWER_COST_ACTIVE = 16.0F; //per second
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 9, 2);
 			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 4);
 			addRecipe(SeaToSeaMod.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 5);
-			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 2, 3);
+			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 3, 5);
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 6);
 			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 1, 4);
@@ -342,11 +342,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void setRecipe(BioRecipe r) {
+			bool had = currentOperation != null;
+			bool has = r != null;
 			currentOperation = r;
 			saltRequired = r != null ? r.saltCount : -1;
 			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
-			SNUtil.playSoundAt(SNUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
+			if (has != had)
+				SNUtil.playSoundAt(SNUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 		}
 		
 	}

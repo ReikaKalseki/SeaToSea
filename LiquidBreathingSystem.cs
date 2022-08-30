@@ -19,6 +19,8 @@ namespace ReikaKalseki.SeaToSea {
 	public class LiquidBreathingSystem {
 		
 		public static readonly LiquidBreathingSystem instance = new LiquidBreathingSystem();
+		
+		internal static readonly float ITEM_VALUE = 20*60; //seconds
 	    
 	    private Texture2D baseO2BarTexture;
 	    private Color baseO2BarColor;

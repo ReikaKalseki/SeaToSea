@@ -415,7 +415,8 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem chlorine = CraftingItems.getItem(CraftingItems.Items.Chlorine);
         chlorine.craftingTime = 3;
-        chlorine.addIngredient(TechType.Salt, 2).addIngredient(TechType.GasPod, 2);
+        chlorine.numberCrafted = 2;
+        chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
         
         CraftingItems.addAll();
         
@@ -465,7 +466,7 @@ namespace ReikaKalseki.SeaToSea
 		t2Battery.Patch();
 		
         rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 6).addIngredient(TechType.Benzene, 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
 		breathingFluid = new BreathingFluid();

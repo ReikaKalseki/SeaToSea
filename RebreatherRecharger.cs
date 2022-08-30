@@ -17,7 +17,6 @@ namespace ReikaKalseki.SeaToSea {
 	public class RebreatherRecharger : CustomMachine<RebreatherRechargerLogic> {
 		
 		internal static readonly float POWER_COST = 1.5F; //per second
-		internal static readonly float ITEM_VALUE = 20*60; //seconds
 		
 		static RebreatherRecharger() {
 			
@@ -125,7 +124,7 @@ namespace ReikaKalseki.SeaToSea {
 				secsNoPwr = 0;
 				sound.Play();
 				if (available < 6000 && storage.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null)
-					available += RebreatherRecharger.ITEM_VALUE;
+					available += LiquidBreathingSystem.ITEM_VALUE;
 			}
 			else {
 				speed = Math.Max(speed*0.98F-0.02F, 0);
