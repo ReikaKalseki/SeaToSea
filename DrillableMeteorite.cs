@@ -30,6 +30,7 @@ namespace ReikaKalseki.SeaToSea {
 			drops.addEntry(TechType.Silver, 100);
 			drops.addEntry(TechType.Gold, 50);
 			drops.addEntry(TechType.UraniniteCrystal, 50);
+			drops.addEntry(TechType.MercuryOre, 25);
 			//drops.addEntry(TechType.Diamond, 25);
 			drops.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 10);
 		}
