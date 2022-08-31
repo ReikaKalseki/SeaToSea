@@ -211,8 +211,6 @@ namespace ReikaKalseki.SeaToSea {
 		internal Renderer mainRenderer;
 		private bool setCollision;
 		
-		private float energyBuffer = 0;
-		
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
 			SeaToSeaMod.processor.initializeMachine(gameObject);
@@ -316,19 +314,14 @@ namespace ReikaKalseki.SeaToSea {
 		private bool consumePower(float sc = 1) {
 			float amt = Bioprocessor.POWER_COST_IDLE*sc;
 			//SNUtil.writeToChat("Wanted "+amt+" / "+energyBuffer);
-			float cap = Bioprocessor.POWER_COST_ACTIVE*5;
-			if (energyBuffer < cap) {
+			if (amt > 0) {
 				SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
 				if (sub) {
 					float receive;
-					sub.powerRelay.ConsumeEnergy(cap-energyBuffer, out receive);
+					sub.powerRelay.ConsumeEnergy(amt, out receive);
 					receive += 0.0001F;
-					energyBuffer += receive;
+					return receive >= amt;
 				}
-			}
-			if (energyBuffer >= amt) {
-				energyBuffer -= amt;
-				return true;
 			}
 			return false;
 		}

@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 		public BreathingFluid() : base(SeaToSeaMod.itemLocale.getEntry("breathfluid"), "WorldEntities/Natural/polyaniline") {
 			sprite = TextureManager.getSprite("Textures/Items/BreathFluid");
 			unlockRequirement = SeaToSeaMod.rebreatherV2.TechType;
+			craftingSubCategory = "C2Chemistry";
 			craftingTime = 15;
 		}
 		
@@ -34,19 +35,19 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override TechGroup GroupForPDA {
 			get {
-				return TechGroup.Survival;
+				return TechGroup.Resources;
 			}
 		}
 
 		public override TechCategory CategoryForPDA {
 			get {
-				return TechCategory.Water;
+				return SeaToSeaMod.chemistryCategory;
 			}
 		}
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"Survival", "Water"};
+				return new string[]{"Resources", "C2Chemistry"};
 			}
 		}
 

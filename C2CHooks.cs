@@ -23,6 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
 	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
+	    private static readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -32,6 +33,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	//new Vector3(66, -100, -608), big obvious but empty one
 	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
+	    };
+	    
+	    private static readonly Dictionary<string, TechType> scannerInjections = new Dictionary<string, TechType>() {
+	    	{"61ac1241-e990-4646-a618-bddb6960325b", TechType.SeaTreaderPoop},
+	    	{"54701bfc-bb1a-4a84-8f79-ba4f76691bef", TechType.GhostLeviathan},
+	    	{"35ee775a-d54c-4e63-a058-95306346d582", TechType.SeaTreader},
+	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
     
 	    public static void onTick(DayNightCycle cyc) {
@@ -63,7 +71,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	BrokenTablet.updateLocale();
 	    	DuplicateRecipeDelegate.updateLocale();
 	    	OutdoorPot.updateLocale();
-		
+	    	/*
+	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
+	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
+	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.biomeGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
+			SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.onGoalUnlockTracker.goalUnlocks.Values.Select<Story.OnGoalUnlock, string>(g => g.goal).ToArray()));
+	    	*/
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    
 	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
@@ -95,6 +108,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming()) {
 		    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40)) {
 		    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
+		    		}
+	    			if (Vector3.Distance(pod12Location, ep.transform.position) <= 75) {
+		    			PDAMessages.trigger(PDAMessages.Messages.KooshCavePrompt);
 		    		}
 	    			if (!PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt)) {
 		    			foreach (Vector3 vec in seacrownCaveEntrances) {
@@ -577,10 +593,19 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
 	    	else if (ObjectUtil.isPDA(go)) {
-				ResourceTracker res = go.EnsureComponent<ResourceTracker>();
-				res.prefabIdentifier = pi;
-				res.techType = TechType.PDA;
-				res.overrideTechType = TechType.PDA;
+				ObjectUtil.makeMapRoomScannable(go, TechType.PDA);
+	    	}
+	    	else if (pi && scannerInjections.ContainsKey(pi.ClassId)) {
+				TechType tt = scannerInjections[pi.ClassId];
+				ObjectUtil.makeMapRoomScannable(go, tt);
+				if (tt == TechType.SeaTreader) {
+					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
+				}
+				else if (tt == TechType.SeaTreaderPoop) {
+	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40) {
+		    			PDAMessages.trigger(PDAMessages.Messages.TreaderPooPrompt);
+		    		}
+				}
 	    	}
 	    }/*
 	    
@@ -674,7 +699,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onAuroraSpawn(CrashedShipExploder ex) {
 	    	Sealed s = ex.gameObject.EnsureComponent<Sealed>();
 	    	s._sealed = true;
-	    	s.maxOpenedAmount = 150;
+	    	s.maxOpenedAmount = 250; //was 150, comparedto vanilla 100
 	    	s.openedEvent.AddHandler(ex.gameObject, new UWE.Event<Sealed>.HandleFunction(se => {
 	    		se.openedAmount = 0;
 	    		se._sealed = true;
@@ -746,6 +771,102 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (pi && pi.ClassId == SeaToSeaMod.dunesMeteor.ClassID)
 	    		return DrillableMeteorite.getRandomResource();
 	    	return d.ChooseRandomResource();
+	    }
+	    
+	    public static void generateScannerRoomResourceList(uGUI_MapRoomScanner gui) {
+	    	gui.availableTechTypes.RemoveWhere(item => !playerCanScanFor(item));
+	    	gui.RebuildResourceList();
+	    }
+	    
+	    private static bool playerCanScanFor(TechType tt) {
+	    	switch(tt) {
+	    		case TechType.ReaperLeviathan:
+	    		case TechType.SeaDragon:
+	    		case TechType.GhostLeviathanJuvenile:
+	    		case TechType.GhostLeviathan:
+	    		case TechType.SeaTreader:
+	    		case TechType.SeaEmperorLeviathan:
+	    		case TechType.Reefback:
+	    			
+	    		case TechType.LimestoneChunk:
+	    		case TechType.SandstoneChunk:
+	    		case TechType.BasaltChunk:
+	    			
+	    		case TechType.PrecursorIonCrystal:
+	    		case TechType.PrecursorKey_Purple:
+	    		case TechType.PrecursorKey_Blue:
+	    		case TechType.PrecursorKey_Red:
+	    		case TechType.PrecursorKey_White:
+	    		case TechType.PrecursorKey_Orange:
+	    			return PDAScanner.complete.Contains(tt);
+	    		case TechType.StalkerTooth:
+	    			return PDAScanner.complete.Contains(TechType.Stalker);
+	    		case TechType.GenericEgg:
+	    		case TechType.StalkerEgg:
+	    		case TechType.BonesharkEgg:
+	    		case TechType.CrabsnakeEgg:
+	    		case TechType.CrashEgg:
+	    		case TechType.CrabsquidEgg:
+	    		case TechType.CutefishEgg:
+	    		case TechType.JellyrayEgg:
+	    		case TechType.RabbitrayEgg:
+	    		case TechType.SandsharkEgg:
+	    		case TechType.ShockerEgg:
+	    		case TechType.ReefbackEgg:
+	    		case TechType.MesmerEgg:
+	    		case TechType.LavaLizardEgg:
+	    		case TechType.JumperEgg:
+	    		case TechType.SpadefishEgg:
+	    			return PDAScanner.complete.Contains(TechType.GenericEgg);/*
+	    		case TechType.DrillableTitanium: //FIXME A: MAKE OWN MOD B: MAY NOT WORK SINCE LISTED UNDER "PLAIN" RESOURCE
+	    		case TechType.DrillableSulphur:
+	    		case TechType.DrillableUranium:
+	    		case TechType.DrillableQuartz:
+	    		case TechType.DrillableKyanite:
+	    		case TechType.DrillableLithium:
+	    		case TechType.DrillableMagnetite:
+	    		case TechType.DrillableSalt:
+	    		case TechType.DrillableAluminiumOxide:
+	    		case TechType.DrillableCopper:
+	    		case TechType.DrillableLead:
+	    		case TechType.DrillableSilver:
+	    		case TechType.DrillableGold:
+	    		case TechType.DrillableDiamond:
+	    		case TechType.DrillableNickel:
+	    		case TechType.DrillableMercury:
+	    			return KnownTech.analyzedTech.Contains(TechType.ExosuitDrillArmModule);*/
+	    		default:
+	    			return true;
+	    	}
+	    }
+	    /*
+	    public static void registerResourceTracker(ResourceTracker rt) {
+	    	if (rt.techType != TechType.None && isObjectVisibleToScannerRoom(rt)) {
+				Dictionary<string, ResourceTracker.ResourceInfo> orAddNew = ResourceTracker.resources.GetOrAddNew(rt.techType);
+				string key = rt.uniqueId;
+				ResourceTracker.ResourceInfo resourceInfo;
+				if (!orAddNew.TryGetValue(key, out resourceInfo)) {
+					resourceInfo = new ResourceTracker.ResourceInfo();
+					resourceInfo.uniqueId = key;
+					resourceInfo.position = rt.transform.position;
+					resourceInfo.techType = rt.techType;
+					orAddNew.Add(key, resourceInfo);
+					if (ResourceTracker.onResourceDiscovered != null) {
+						ResourceTracker.onResourceDiscovered.Invoke(resourceInfo);
+						return;
+					}
+				}
+				else {
+					resourceInfo.position = rt.transform.position;
+				}
+			}
+	    }
+	    */
+	    public static bool isObjectVisibleToScannerRoom(ResourceTracker rt) { //FIXME A: DOES NOT WORK B: MAKE OWN MOD
+	   		//SNUtil.log("Checking scanner visibility of "+rt.gameObject+" @ "+rt.gameObject.transform.position+": "+rt.gameObject.GetComponentInChildren<Drillable>());
+	    	if (rt.gameObject.GetComponentInChildren<Drillable>() && !KnownTech.knownTech.Contains(TechType.ExosuitDrillArmModule))
+	    		return false;
+	    	return true;
 	    }
 	}
 	

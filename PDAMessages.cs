@@ -32,6 +32,8 @@ namespace ReikaKalseki.SeaToSea
 			[Message("auroracut")]AuroraSalvage,
 			[Message("kelpcavedrone")]KelpCavePrompt,
 			[Message("redgrasscave")]RedGrassCavePrompt,
+			[Message("kooshcave")]KooshCavePrompt,
+			[Message("treaderpoo")]TreaderPooPrompt,
 		}
 		
 		private static Message getAttr(Messages key) {

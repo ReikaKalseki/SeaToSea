@@ -76,4 +76,26 @@
 		Sounds/cavebioprompt.ogg
 	</pda>
   </redgrasscave>
+  <kooshcave>
+	<name>
+		
+	</name>
+	<desc>
+		The local caves appear to contain high concentrations of unusual metal deposits.
+	</desc>
+	<pda>
+		Sounds/kooshcaveprompt.ogg
+	</pda>
+  </kooshcave>
+  <treaderpoo>
+	<name>
+		
+	</name>
+	<desc>
+		Unsavory biological materials may still be used for survival purposes.
+	</desc>
+	<pda>
+		Sounds/treaderpooprompt.ogg
+	</pda>
+  </treaderpoo>
 </Root>

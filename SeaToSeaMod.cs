@@ -78,6 +78,8 @@ namespace ReikaKalseki.SeaToSea
     public static FMODAsset voidspikeLeviFX;
     public static FMODAsset voidspikeLeviAmbient;
     
+    public static TechCategory chemistryCategory;
+    
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
 
     [QModPatch]
@@ -108,6 +110,10 @@ namespace ReikaKalseki.SeaToSea
         signalLocale.load();
         miscLocale.load();
         
+        chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", "Chemistry");
+        TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite("Textures/chemistrytab")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
+        
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(VoidSpike).TypeHandle);
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
@@ -118,6 +124,9 @@ namespace ReikaKalseki.SeaToSea
 	    brokenWhiteTablet.Patch();
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
+	    
+	    SpriteHandler.RegisterSprite(TechType.PDA, TextureManager.getSprite("Textures/ScannerSprites/PDA"));
+	    SpriteHandler.RegisterSprite(TechType.Databox, TextureManager.getSprite("Textures/ScannerSprites/Databox"));
 	    
 	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
@@ -221,6 +230,9 @@ namespace ReikaKalseki.SeaToSea
     	if (tech == TechType.PrecursorKey_Orange) {
     		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
     	}
+    	if (tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
+    		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio);
+    	}
     }
     
     public static bool isTechGated(TechType tt) {
@@ -295,6 +307,10 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_CaveSpecial, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_CaveSpecial, 4F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_CaveFloor, 0.75F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_CaveWall, 0.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.125F, 1);
+    	
     	
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
@@ -454,6 +470,9 @@ namespace ReikaKalseki.SeaToSea
         */
 		RecipeUtil.removeRecipe(TechType.HydrochloricAcid, true);
 		RecipeUtil.removeRecipe(TechType.Benzene, true);
+		setChemistry(TechType.Bleach);
+		setChemistry(TechType.Polyaniline);
+		setChemistry(TechType.HatchingEnzymes);
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
@@ -645,6 +664,11 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
+    }
+    
+    private static void setChemistry(TechType item) {
+		RecipeUtil.changeRecipePath(item, "Resources", "C2Chemistry");
+		RecipeUtil.setItemCategory(item, TechGroup.Resources, chemistryCategory);
     }
     
     public static void addPDAEntries() {

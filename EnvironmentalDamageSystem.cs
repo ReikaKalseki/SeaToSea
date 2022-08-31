@@ -304,8 +304,8 @@ namespace ReikaKalseki.SeaToSea {
 						num = 2;
 					}
 				}			
-				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 500) {
-					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-500)/10F);
+				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 400) {
+					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-400)/10F);
 				}
 			}
 			return breathingInterval * num;

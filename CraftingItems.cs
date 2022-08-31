@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea
 				XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(id);
 				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, attr.template});
 				mappings[m] = item;
-				item.isAdvanced = attr.isAdvanced;
+				item.craftingSubCategory = attr.category == TechCategory.VehicleUpgrades ? "C2Chemistry" : ""+attr.category;
 				item.unlockRequirement = attr.dependency;
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
@@ -32,9 +32,6 @@ namespace ReikaKalseki.SeaToSea
 				}
 				if (m == Items.Luminol) {
 					item.glowIntensity = 2;
-				}
-				if (m == Items.LathingDrone || m == Items.Motor) {
-					item.isElectronics = true;
 				}
 				item.sprite = TextureManager.getSprite("Textures/Items/"+id);
 			}
@@ -49,24 +46,21 @@ namespace ReikaKalseki.SeaToSea
 		}	
 		
 		public enum Items {
-			[Item(typeof(BasicCraftingItem),	true, TechType.AramidFibers,	"WorldEntities/Natural/aerogel")]HoneycombComposite,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
-			[Item(typeof(Bioprocessed), 		false, TechType.None,			"WorldEntities/Natural/Lubricant")]Sealant,
-			[Item(typeof(BasicCraftingItem),	true, TechType.None,			"WorldEntities/Natural/aramidfibers")]SealFabric,
-			[Item(typeof(BasicCraftingItem),	false, TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
-			[Item(typeof(Bioprocessed),			false, TechType.SnakeMushroomSpore,	"WorldEntities/Natural/polyaniline")]Luminol,
-			[Item(typeof(Bioprocessed),			true, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
-			[Item(typeof(BasicCraftingItem),	false, TechType.AcidMushroom,	"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Lubricant,		"WorldEntities/Natural/Lubricant")]Motor,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,
-			[Item(typeof(BasicCraftingItem),	false, TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
-			[Item(typeof(BasicCraftingItem),	true, TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]BioEnzymes,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]LathingDrone,/*
-			[Item(typeof(BasicCraftingItem),	false, TechType.ScrapMetal,		"WorldEntities/Natural/TitaniumIngot")]TitaniumIngotFromScrap,
-			[Item(typeof(BasicCraftingItem),	false, TechType.Titanium,		"WorldEntities/Natural/Titanium")]TitaniumFromIngot,*/
-			//[Item(typeof(BasicCraftingItem),	true, 	TechType.Kyanite,		"WorldEntities/Natural/polyaniline")]RebreatherFluid,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.AramidFibers,		"WorldEntities/Natural/aerogel")]HoneycombComposite,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Diamond,			"WorldEntities/Natural/EnameledGlass")]CrystalLens,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
+			[Item(typeof(Bioprocessed), 		TechCategory.VehicleUpgrades, 	TechType.None,				"WorldEntities/Natural/Lubricant")]Sealant,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.None,				"WorldEntities/Natural/aramidfibers")]SealFabric,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
+			[Item(typeof(Bioprocessed),			TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(Bioprocessed),			TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.AcidMushroom,		"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
+			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Lubricant,			"WorldEntities/Natural/Lubricant")]Motor,
+			[Item(typeof(BasicCraftingItem),	TechCategory.BasicMaterials, 	TechType.Quartz,			"WorldEntities/Natural/Glass")]BaseGlass,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]BioEnzymes,
+			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]LathingDrone,
 		}
 		
 		private static Item getAttr(Items key) {
@@ -84,15 +78,15 @@ namespace ReikaKalseki.SeaToSea
 		
 		public class Item : Attribute {
 			
-			public readonly bool isAdvanced;
+			public readonly TechCategory category;
 			public readonly TechType dependency;			
 			internal readonly Type itemClass;
 			public readonly string template;
 			
-			public Item(Type item, bool adv, TechType dep, string temp) {
+			public Item(Type item, TechCategory cat, TechType dep, string temp) {
 				itemClass = item;
 				dependency = dep;
-				isAdvanced = adv;
+				category = cat;
 				template = temp;
 			}
 		}
