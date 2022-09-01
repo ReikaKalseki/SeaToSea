@@ -79,6 +79,7 @@ namespace ReikaKalseki.SeaToSea
     public static FMODAsset voidspikeLeviAmbient;
     
     public static TechCategory chemistryCategory;
+    public static TechCategory ingotCategory;
     
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
 
@@ -112,7 +113,12 @@ namespace ReikaKalseki.SeaToSea
         
         chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", "Chemistry");
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite("Textures/chemistrytab")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite("Textures/CraftTab/chemistry")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
+        
+        ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", "Metal Ingots");
+        TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, ingotCategory);
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", "Metal Ingots", TextureManager.getSprite("Textures/CraftTab/ingotmaking"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", "Metal Unpacking", TextureManager.getSprite("Textures/CraftTab/ingotbreaking"), "Resources");
         
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(VoidSpike).TypeHandle);
         
@@ -230,8 +236,8 @@ namespace ReikaKalseki.SeaToSea
     	if (tech == TechType.PrecursorKey_Orange) {
     		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
     	}
-    	if (tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
-    		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio);
+    	if (tech == TechType.NuclearReactor || tech == TechType.HighCapacityTank || tech == TechType.PrecursorKey_Purple || tech == TechType.SnakeMushroom || tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
+    		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
     	}
     }
     
@@ -391,9 +397,17 @@ namespace ReikaKalseki.SeaToSea
        	item.craftingType = CraftTree.Type.Fabricator;
        	//item.category = TechCategory.BasicMaterials;
        	//item.group = TechGroup.Resources;
-       	item.craftingMenuTree = new string[]{"Resources", "BasicMaterials"};
+       	item.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
        	item.setRecipe(10);
        	item.Patch();
+       	
+       	createCompressedIngot(TechType.Copper);
+       	createCompressedIngot(TechType.Silver);
+       	createCompressedIngot(TechType.Gold);
+       	createCompressedIngot(TechType.Lead);
+       	createCompressedIngot(TechType.Lithium);
+       	createCompressedIngot(TechType.Magnetite);
+       	createCompressedIngot(TechType.Nickel);
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
@@ -443,7 +457,7 @@ namespace ReikaKalseki.SeaToSea
         chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
         
         CraftingItems.addAll();
-        
+        /*
         rec = RecipeUtil.copyRecipe(enzy.getRecipe());
         foreach (Ingredient i in rec.Ingredients) {
         	if (i.techType == TechType.DisinfectedWater) {
@@ -457,7 +471,7 @@ namespace ReikaKalseki.SeaToSea
        	item = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
        	item.craftTime = enzy.craftingTime*2F;
        	item.setRecipe(enzy.numberCrafted*3);
-       	item.Patch();
+       	item.Patch();*/
         
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
@@ -481,6 +495,9 @@ namespace ReikaKalseki.SeaToSea
 		setChemistry(TechType.Bleach);
 		setChemistry(TechType.Polyaniline);
 		setChemistry(TechType.HatchingEnzymes);
+       	
+		RecipeUtil.changeRecipePath(TechType.TitaniumIngot, "Resources", "C2CIngots");
+		RecipeUtil.setItemCategory(TechType.TitaniumIngot, TechGroup.Resources, ingotCategory);
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
@@ -672,6 +689,48 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
+    }
+    
+    private static void createCompressedIngot(TechType item) {
+    	TechType dependency = TechType.None;
+    	switch(item) {
+    		case TechType.Copper:
+    			dependency = TechType.LimestoneChunk;
+    			break;
+    		case TechType.Gold:
+    		case TechType.Silver:
+    		case TechType.Lead:
+    			dependency = TechType.SandstoneChunk;
+    			break;
+    		case TechType.Lithium:
+    			dependency = TechType.ShaleChunk;
+    			break;
+    		case TechType.Nickel:
+    		case TechType.Magnetite:
+    			dependency = item;
+    			break;
+    	}
+    	dependency = TechType.Quartz;
+    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, item+" Ingot", "An ingot of compressed "+item, "41919ae1-1471-4841-a524-705feb9c2d20");
+    	ingot.addIngredient(item, 10);
+    	ingot.craftingSubCategory = "C2CIngots";
+    	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
+    	ingot.unlockRequirement = dependency;
+    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+item).ToLowerInvariant());
+    	ingot.Patch();
+    	SNUtil.log("Added compressed ingot for "+item+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
+    	
+       	TechData rec = new TechData();
+      	rec.Ingredients.Add(new Ingredient(ingot.TechType, 1));
+       	DuplicateRecipeDelegateWithRecipe unpack = new DuplicateRecipeDelegateWithRecipe(item, rec);
+       	unpack.craftTime = 3;
+       	unpack.craftingType = CraftTree.Type.Fabricator;
+       	unpack.category = ingotCategory;
+       	unpack.group = TechGroup.Resources;
+       	unpack.unlock = dependency;
+       	unpack.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
+       	unpack.setRecipe(10);
+       	unpack.Patch();
     }
     
     private static void setChemistry(TechType item) {

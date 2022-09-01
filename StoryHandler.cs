@@ -38,6 +38,7 @@ namespace ReikaKalseki.SeaToSea
 				switch(key) {
 					case "SunbeamCheckPlayerRange":
 						Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
+						StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
 					break;
 					case "drfwarperheat":
 						KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);

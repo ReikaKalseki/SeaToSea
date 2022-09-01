@@ -602,7 +602,7 @@ namespace ReikaKalseki.SeaToSea {
 					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
 				}
 				else if (tt == TechType.SeaTreaderPoop) {
-	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40) {
+	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
 		    			PDAMessages.trigger(PDAMessages.Messages.TreaderPooPrompt);
 		    		}
 				}

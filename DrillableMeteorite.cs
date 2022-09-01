@@ -23,16 +23,16 @@ namespace ReikaKalseki.SeaToSea {
 		
 		static DrillableMeteorite() {
 			drops.addEntry(TechType.Titanium, 400);
-			drops.addEntry(TechType.Quartz, 250);
-			drops.addEntry(TechType.Copper, 200);
-			drops.addEntry(TechType.Nickel, 150);
-			drops.addEntry(TechType.Lead, 150);
-			drops.addEntry(TechType.Silver, 100);
-			drops.addEntry(TechType.Gold, 50);
-			drops.addEntry(TechType.UraniniteCrystal, 50);
-			drops.addEntry(TechType.MercuryOre, 25);
+			drops.addEntry(TechType.Quartz, 300);
+			drops.addEntry(TechType.Copper, 250);
+			drops.addEntry(TechType.Nickel, 180);
+			drops.addEntry(TechType.Lead, 180);
+			drops.addEntry(TechType.Silver, 150);
+			drops.addEntry(TechType.Gold, 100);
+			drops.addEntry(TechType.MercuryOre, 40);
+			drops.addEntry(TechType.UraniniteCrystal, 60);
 			//drops.addEntry(TechType.Diamond, 25);
-			drops.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 10);
+			drops.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 15);
 		}
 	        
 		internal DrillableMeteorite() : base("DrillableMeteorite", "Meteorite", "A large chunk of rock and metal originating from space. Rich in minerals.") {
