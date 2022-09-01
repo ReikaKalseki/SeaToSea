@@ -146,7 +146,7 @@ namespace ReikaKalseki.SeaToSea {
 			    	used = true;
 			   	}
 	    		foreach (InventoryItem item in Inventory.main.container) {
-	    			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell) {
+	    			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
 	    				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
 	    				//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
 	    				if (b != null && b.capacity > 100) {

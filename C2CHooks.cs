@@ -42,46 +42,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
 	    
-	    private static readonly Dictionary<TechType, List<TechType>> directUnlocks = new Dictionary<TechType, List<TechType>>() {/*
-	    	{TechType.LimestoneChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Copper)}},
-	    	{TechType.Lithium, new TechType[]{SeaToSeaMod.getIngot(TechType.Lithium)}},
-	    	{TechType.Magnetite, new TechType[]{SeaToSeaMod.getIngot(TechType.Magnetite)}},
-	    	{TechType.Nickel, new TechType[]{SeaToSeaMod.getIngot(TechType.Nickel)}},
-	    	{TechType.ShaleChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Lithium)}},
-	    	{TechType.SandstoneChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Silver), SeaToSeaMod.getIngot(TechType.Gold), SeaToSeaMod.getIngot(TechType.Lead)}},*/
-	    };
-	    
-	    private static FMODAsset unlockSound;
-	    
 	    static C2CHooks() {
-	    	foreach (TechType tt in SeaToSeaMod.getIngots()) {
-	    		TechType[] ingot = SeaToSeaMod.getIngot(tt);
-	    		addDirectUnlock(tt, ingot[0]);
-	    		addDirectUnlock(tt, ingot[1]);
-	    	}
-	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
-	    	addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
 	    	
-	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
-	    	addDirectUnlock(TechType.Glass, CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType);
-	    }
-	    
-	    private static void addDirectUnlock(TechType from, TechType to) {
-	    	List<TechType> li = directUnlocks.ContainsKey(from) ? directUnlocks[from] : new List<TechType>();
-	    	li.Add(to);
-	    	directUnlocks[from] = li;
-	    }
-	    
-	    private static FMODAsset getUnlockSound() {
-	    	if (unlockSound == null) {
-	    		foreach (KnownTech.AnalysisTech kt in KnownTech.analysisTech) {
-	    			if (kt.unlockMessage == "NotificationBlueprintUnlocked") {
-	    				unlockSound = kt.unlockSound;
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	return unlockSound;
 	    }
     
 	    public static void onTick(DayNightCycle cyc) {
@@ -135,12 +97,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
 	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
 			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
-	    	
-	    	foreach (TechType kvp in directUnlocks.Keys) {
-	    		if (PDAScanner.complete.Contains(kvp)) {
-	    			triggerDirectUnlock(kvp);
-	    		}
-	    	}
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
@@ -415,7 +371,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			tt = CraftData.entClassTechTable[pi.ClassId];
 	    	}
 	    	if (tt != TechType.None)
-	    		triggerDirectUnlock(tt);
+	    		TechnologyUnlockSystem.instance.triggerDirectUnlock(tt);
 	    	
 	    	foreach (Renderer r in p.gameObject.GetComponentsInChildren<Renderer>()) {
 				foreach (Material m in r.materials) {
@@ -638,24 +594,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
 	    	GameObject go = pk.gameObject;
 	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
-	    	if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
-	    		GameObject go2 = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
-	    		go2.transform.position = go.transform.position;
-	    		go2.transform.rotation = go.transform.rotation;
-	    		UnityEngine.Object.Destroy(go);
-	    	}/*
-	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
-	    		go.transform.position = auroraCyclopsModule.position;
-	    		go.transform.rotation = auroraCyclopsModule.rotation;
-	    	}
-	    	else if (pi && pi.ClassId == auroraCyclopsModule.prefabName && Vector3.Distance(auroraCyclopsModule.position, go.transform.position) <= 0.2) {
-	    		go.transform.position = auroraStorageModule.position;
-	    		go.transform.rotation = auroraStorageModule.rotation;
-	    	}*/
-	    	else if (ObjectUtil.isPDA(go)) {
-				ObjectUtil.makeMapRoomScannable(go, TechType.PDA);
-	    	}
-	    	else if (pi && scannerInjections.ContainsKey(pi.ClassId)) {
+			if (pi && scannerInjections.ContainsKey(pi.ClassId)) {
 				TechType tt = scannerInjections[pi.ClassId];
 				ObjectUtil.makeMapRoomScannable(go, tt);
 				if (tt == TechType.SeaTreader) {
@@ -666,6 +605,24 @@ namespace ReikaKalseki.SeaToSea {
 		    			PDAMessages.trigger(PDAMessages.Messages.TreaderPooPrompt);
 		    		}
 				}
+	    	}
+	    	if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
+	    		GameObject go2 = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
+	    		go2.transform.position = go.transform.position;
+	    		go2.transform.rotation = go.transform.rotation;
+	    		UnityEngine.Object.Destroy(go);
+	    		return;
+	    	}/*
+	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
+	    		go.transform.position = auroraCyclopsModule.position;
+	    		go.transform.rotation = auroraCyclopsModule.rotation;
+	    	}
+	    	else if (pi && pi.ClassId == auroraCyclopsModule.prefabName && Vector3.Distance(auroraCyclopsModule.position, go.transform.position) <= 0.2) {
+	    		go.transform.position = auroraStorageModule.position;
+	    		go.transform.rotation = auroraStorageModule.rotation;
+	    	}*/
+	    	if (ObjectUtil.isPDA(go)) {
+				ObjectUtil.makeMapRoomScannable(go, TechType.PDA);
 	    	}
 	    }/*
 	    
@@ -931,28 +888,21 @@ namespace ReikaKalseki.SeaToSea {
 	   
 		public static void onScanComplete(PDAScanner.EntryData data) {
 		   	if (data != null)
-	   			triggerDirectUnlock(data.key);
+	   			TechnologyUnlockSystem.instance.triggerDirectUnlock(data.key);
 		}
 	   
-		private static void triggerDirectUnlock(TechType tt) {
-	   		if (!directUnlocks.ContainsKey(tt))
-	   			return;
-	   		bool any = false;
-		   	foreach (TechType unlock in directUnlocks[tt]) {
-		   		if (!KnownTech.Contains(unlock)) {
-		        	KnownTech.Add(unlock);
-		        	any = true;
-		    	}
-		   	}
-	   		if (any) {
-		   		SNUtil.log("Triggering direct unlock via "+tt+" of "+directUnlocks[tt].Count+":["+string.Join(", ", directUnlocks[tt].Select<TechType, string>(tc => ""+tc))+"]");
-		   		KnownTech.AnalysisTech at = new KnownTech.AnalysisTech();
-		   		at.techType = tt;
-		   		at.unlockMessage = "NotificationBlueprintUnlocked";
-		   		at.unlockSound = getUnlockSound();
-		   		uGUI_PopupNotification.main.OnAnalyze(at, true);
-	   		}
-		}
+	   public static void tickACU(WaterPark acu) {
+	   	 foreach (WaterParkItem wp in acu.items) {
+			if (wp && wp is WaterParkCreature) {
+				Shocker s = wp.GetComponentInChildren<Shocker>();
+				if (s) {
+					float trash;
+					float dT = Time.deltaTime;
+					acu.GetComponentInParent<BaseRoot>().powerRelay.AddEnergy(dT*1.5F*Mathf.Clamp01(((WaterParkCreature)wp).age), out trash);
+				}
+			}
+	   	 }
+	   }
 	}
 	
 	class HealingOverTime : MonoBehaviour {
