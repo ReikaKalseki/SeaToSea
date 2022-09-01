@@ -41,6 +41,48 @@ namespace ReikaKalseki.SeaToSea {
 	    	{"35ee775a-d54c-4e63-a058-95306346d582", TechType.SeaTreader},
 	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
+	    
+	    private static readonly Dictionary<TechType, List<TechType>> directUnlocks = new Dictionary<TechType, List<TechType>>() {/*
+	    	{TechType.LimestoneChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Copper)}},
+	    	{TechType.Lithium, new TechType[]{SeaToSeaMod.getIngot(TechType.Lithium)}},
+	    	{TechType.Magnetite, new TechType[]{SeaToSeaMod.getIngot(TechType.Magnetite)}},
+	    	{TechType.Nickel, new TechType[]{SeaToSeaMod.getIngot(TechType.Nickel)}},
+	    	{TechType.ShaleChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Lithium)}},
+	    	{TechType.SandstoneChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Silver), SeaToSeaMod.getIngot(TechType.Gold), SeaToSeaMod.getIngot(TechType.Lead)}},*/
+	    };
+	    
+	    private static FMODAsset unlockSound;
+	    
+	    static C2CHooks() {
+	    	foreach (TechType tt in SeaToSeaMod.getIngots()) {
+	    		TechType[] ingot = SeaToSeaMod.getIngot(tt);
+	    		addDirectUnlock(tt, ingot[0]);
+	    		addDirectUnlock(tt, ingot[1]);
+	    	}
+	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
+	    	addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
+	    	
+	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
+	    	addDirectUnlock(TechType.Glass, CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType);
+	    }
+	    
+	    private static void addDirectUnlock(TechType from, TechType to) {
+	    	List<TechType> li = directUnlocks.ContainsKey(from) ? directUnlocks[from] : new List<TechType>();
+	    	li.Add(to);
+	    	directUnlocks[from] = li;
+	    }
+	    
+	    private static FMODAsset getUnlockSound() {
+	    	if (unlockSound == null) {
+	    		foreach (KnownTech.AnalysisTech kt in KnownTech.analysisTech) {
+	    			if (kt.unlockMessage == "NotificationBlueprintUnlocked") {
+	    				unlockSound = kt.unlockSound;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    	return unlockSound;
+	    }
     
 	    public static void onTick(DayNightCycle cyc) {
 	    	if (BuildingHandler.instance.isEnabled) {
@@ -93,6 +135,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
 	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
 			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
+	    	
+	    	foreach (TechType kvp in directUnlocks.Keys) {
+	    		if (PDAScanner.complete.Contains(kvp)) {
+	    			triggerDirectUnlock(kvp);
+	    		}
+	    	}
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
@@ -357,6 +405,18 @@ namespace ReikaKalseki.SeaToSea {
 					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
+	    	TechType tt = TechType.None;
+	    	TechTag tag = p.gameObject.GetComponent<TechTag>();
+	    	if (tag)
+	    		tt = tag.type;
+	    	if (tt == TechType.None) {
+	    		PrefabIdentifier pi = p.gameObject.GetComponent<PrefabIdentifier>();
+	    		if (pi)
+	    			tt = CraftData.entClassTechTable[pi.ClassId];
+	    	}
+	    	if (tt != TechType.None)
+	    		triggerDirectUnlock(tt);
+	    	
 	    	foreach (Renderer r in p.gameObject.GetComponentsInChildren<Renderer>()) {
 				foreach (Material m in r.materials) {
 					m.DisableKeyword("FX_BUILDING");
@@ -862,12 +922,37 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    }
 	    */
-	    public static bool isObjectVisibleToScannerRoom(ResourceTracker rt) { //FIXME A: DOES NOT WORK B: MAKE OWN MOD
+	    public static bool isObjectVisibleToScannerRoom(ResourceTracker rt) { //FIXME MAKE OWN MOD
 	   		//SNUtil.log("Checking scanner visibility of "+rt.gameObject+" @ "+rt.gameObject.transform.position+": "+rt.gameObject.GetComponentInChildren<Drillable>());
 	    	if (rt.gameObject.GetComponentInChildren<Drillable>() && !KnownTech.knownTech.Contains(TechType.ExosuitDrillArmModule))
 	    		return false;
 	    	return true;
 	    }
+	   
+		public static void onScanComplete(PDAScanner.EntryData data) {
+		   	if (data != null)
+	   			triggerDirectUnlock(data.key);
+		}
+	   
+		private static void triggerDirectUnlock(TechType tt) {
+	   		if (!directUnlocks.ContainsKey(tt))
+	   			return;
+	   		bool any = false;
+		   	foreach (TechType unlock in directUnlocks[tt]) {
+		   		if (!KnownTech.Contains(unlock)) {
+		        	KnownTech.Add(unlock);
+		        	any = true;
+		    	}
+		   	}
+	   		if (any) {
+		   		SNUtil.log("Triggering direct unlock via "+tt+" of "+directUnlocks[tt].Count+":["+string.Join(", ", directUnlocks[tt].Select<TechType, string>(tc => ""+tc))+"]");
+		   		KnownTech.AnalysisTech at = new KnownTech.AnalysisTech();
+		   		at.techType = tt;
+		   		at.unlockMessage = "NotificationBlueprintUnlocked";
+		   		at.unlockSound = getUnlockSound();
+		   		uGUI_PopupNotification.main.OnAnalyze(at, true);
+	   		}
+		}
 	}
 	
 	class HealingOverTime : MonoBehaviour {

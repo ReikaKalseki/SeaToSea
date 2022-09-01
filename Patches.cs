@@ -1525,17 +1525,15 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
+	
 	[HarmonyPatch(typeof(PDAScanner))]
-	[HarmonyPatch("Scan")]
+	[HarmonyPatch("Unlock")]
 	public static class ScanHook {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				InstructionHandlers.patchInitialHook(codes, 
-					InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onScanRun", false, new string[0])
-				);
+				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onScanComplete", false, typeof(PDAScanner.EntryData)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -1546,7 +1544,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	}*/
+	}
 	/*
 	[HarmonyPatch(typeof(TooltipFactory))]
 	[HarmonyPatch("Recipe")]

@@ -82,6 +82,7 @@ namespace ReikaKalseki.SeaToSea
     public static TechCategory ingotCategory;
     
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
+    private static readonly Dictionary<TechType, TechType[]> ingots = new Dictionary<TechType, TechType[]>();
 
     [QModPatch]
     public static void Load() {
@@ -406,8 +407,9 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Gold);
        	createCompressedIngot(TechType.Lead);
        	createCompressedIngot(TechType.Lithium);
-       	createCompressedIngot(TechType.Magnetite);
+       	createCompressedIngot(TechType.Magnetite, 6);
        	createCompressedIngot(TechType.Nickel);
+       	ingots[TechType.Titanium] = new TechType[]{TechType.TitaniumIngot, TechType.Titanium};
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
@@ -691,31 +693,12 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
-    private static void createCompressedIngot(TechType item) {
-    	TechType dependency = TechType.None;
-    	switch(item) {
-    		case TechType.Copper:
-    			dependency = TechType.LimestoneChunk;
-    			break;
-    		case TechType.Gold:
-    		case TechType.Silver:
-    		case TechType.Lead:
-    			dependency = TechType.SandstoneChunk;
-    			break;
-    		case TechType.Lithium:
-    			dependency = TechType.ShaleChunk;
-    			break;
-    		case TechType.Nickel:
-    		case TechType.Magnetite:
-    			dependency = item;
-    			break;
-    	}
-    	dependency = TechType.Quartz;
+    private static void createCompressedIngot(TechType item, int amt = 10) {
     	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, item+" Ingot", "An ingot of compressed "+item, "41919ae1-1471-4841-a524-705feb9c2d20");
-    	ingot.addIngredient(item, 10);
+    	ingot.addIngredient(item, amt);
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
-    	ingot.unlockRequirement = dependency;
+    	ingot.unlockRequirement = TechType.Unobtanium;
     	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+item).ToLowerInvariant());
     	ingot.Patch();
     	SNUtil.log("Added compressed ingot for "+item+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
@@ -727,10 +710,20 @@ namespace ReikaKalseki.SeaToSea
        	unpack.craftingType = CraftTree.Type.Fabricator;
        	unpack.category = ingotCategory;
        	unpack.group = TechGroup.Resources;
-       	unpack.unlock = dependency;
+       	unpack.unlock = TechType.Unobtanium;
        	unpack.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
-       	unpack.setRecipe(10);
+       	unpack.setRecipe(amt);
        	unpack.Patch();
+       	
+       	ingots[item] = new TechType[]{ingot.TechType, unpack.TechType};
+    }
+    
+    public static TechType[] getIngot(TechType item) {
+    	return ingots[item];
+    }
+    
+    public static List<TechType> getIngots() {
+    	return new List<TechType>(ingots.Keys);
     }
     
     private static void setChemistry(TechType item) {
