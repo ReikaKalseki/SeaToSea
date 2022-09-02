@@ -47,7 +47,7 @@ namespace ReikaKalseki.SeaToSea {
 			con.Resize(3, 3);
 			//con.prefabRoot = go;
 			RebreatherRechargerLogic lgc = go.GetComponent<RebreatherRechargerLogic>();
-			lgc.storage = con;
+			//lgc.storage = con;
 		 	
 			GameObject air = ObjectUtil.lookupPrefab("7b4b90b8-6294-4354-9ebb-3e5aa49ae453");
 			FMOD_CustomLoopingEmitter snd = air.GetComponentInChildren<FMOD_CustomLoopingEmitter>(true);
@@ -74,7 +74,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 	public class RebreatherRechargerLogic : CustomMachineLogic {
 		
-		internal StorageContainer storage;
 		internal Renderer mainRenderer;
 		
 		internal GameObject turbine;
@@ -92,11 +91,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		protected override void updateEntity(float seconds) {
-			if (storage == null)
-				storage = gameObject.GetComponentInChildren<StorageContainer>();
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
-			if (storage == null) {
+			StorageContainer sc = getStorage();
+			if (sc == null) {
 				return;
 			}
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
@@ -118,12 +116,12 @@ namespace ReikaKalseki.SeaToSea {
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
 			
-			isPowered = consumePower(seconds);
+			isPowered = consumePower(RebreatherRecharger.POWER_COST, seconds);
 			if (isPowered) {
 				speed = Math.Min(speed*1.05F+0.15F, 150);
 				secsNoPwr = 0;
 				sound.Play();
-				if (available < 6000 && storage.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null)
+				if (available < 6000 && sc.container.RemoveItem(SeaToSeaMod.breathingFluid.TechType) != null)
 					available += LiquidBreathingSystem.ITEM_VALUE;
 			}
 			else {
@@ -149,18 +147,7 @@ namespace ReikaKalseki.SeaToSea {
 			float use = Math.Min(amt, available);
 			available -= use;
 			return use;
-		}
-		
-		private bool consumePower(float sc = 1) {
-			SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
-			if (sub == null)
-				return false;
-			float receive;
-			sub.powerRelay.ConsumeEnergy(RebreatherRecharger.POWER_COST*sc, out receive);
-			receive += 0.0001F;
-			return receive >= RebreatherRecharger.POWER_COST*sc;
-		}
-		
+		}		
 	}
 	
 	public class RebreatherRechargerSeaBaseLogic {

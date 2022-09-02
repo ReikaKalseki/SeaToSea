@@ -41,11 +41,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static void addRecipes() {
-			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 2, 3);
+			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 1, 2);
 			addRecipe(TechType.AcidMushroom, CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 5, 2);
 			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 9, 2);
 			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 4);
-			addRecipe(SeaToSeaMod.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 5, 30, 5);
+			addRecipe(SeaToSeaMod.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 5);
 			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 3, 5);
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 6);
@@ -119,7 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 			con.Resize(6, 6);
 			//con.prefabRoot = go;
 			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
-			lgc.storage = con;
+			//lgc.storage = con;
 		 	
 			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb"), "Starship_control_terminal_01"));
 			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
@@ -207,7 +207,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float lastWorkingSound = -1;
 		
-		internal StorageContainer storage;
 		internal Renderer mainRenderer;
 		private bool setCollision;
 		
@@ -218,11 +217,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		protected override void updateEntity(float seconds) {
-			if (storage == null)
-				storage = gameObject.GetComponentInChildren<StorageContainer>();
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
-			if (storage == null) {
+			StorageContainer sc = getStorage();
+			if (sc == null) {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;
 			}
@@ -234,16 +232,16 @@ namespace ReikaKalseki.SeaToSea {
 				setCollision = true;
 			}
 			
-			if (consumePower(seconds)) {
+			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					setEmissiveColor(recipeStalledColor);
 					nextSaltTimeRemaining -= seconds;
 					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
-					if (nextSaltTimeRemaining <= 0 && consumePower(seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
-						IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+					if (nextSaltTimeRemaining <= 0 && consumePower(Bioprocessor.POWER_COST_IDLE, seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
+						IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 						if (salt != null && salt.Count >= 1) {
-							ObjectUtil.removeItem(storage, salt[0]);
+							ObjectUtil.removeItem(sc, salt[0]);
 							saltRequired--;
 							SNUtil.playSoundAt(SNUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
@@ -254,15 +252,15 @@ namespace ReikaKalseki.SeaToSea {
 						nextSaltTimeRemaining = currentOperation.secondsPerSalt;
 						if (saltRequired <= 0) {
 							//SNUtil.writeToChat("try craft");
-							IList<InventoryItem> ing = storage.container.GetItems(currentOperation.inputItem);
+							IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
 							if (ing != null && ing.Count >= currentOperation.inputCount) {
 								//SNUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
-									ObjectUtil.removeItem(storage, ing[0]); //list is updated in realtime
+									ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
 								for (int i = 0; i < currentOperation.outputCount; i++) {
 									GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
-									storage.container.AddItem(item.GetComponent<Pickupable>());
+									sc.container.AddItem(item.GetComponent<Pickupable>());
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
 									SNUtil.playSoundAt(SNUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
@@ -283,7 +281,7 @@ namespace ReikaKalseki.SeaToSea {
 				else {
 					//SNUtil.writeToChat("Looking for recipe");
 					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
-						if (canRunRecipe(r)) {
+						if (canRunRecipe(sc, r)) {
 							//SNUtil.writeToChat("Found "+r);
 							setRecipe(r);
 							break;
@@ -311,26 +309,11 @@ namespace ReikaKalseki.SeaToSea {
 			lastColorChange = time;
 		}
 		
-		private bool consumePower(float sc = 1) {
-			float amt = Bioprocessor.POWER_COST_IDLE*sc;
-			//SNUtil.writeToChat("Wanted "+amt+" / "+energyBuffer);
-			if (amt > 0) {
-				SubRoot sub = gameObject.GetComponentInParent<SubRoot>();
-				if (sub) {
-					float receive;
-					sub.powerRelay.ConsumeEnergy(amt, out receive);
-					receive += 0.0001F;
-					return receive >= amt;
-				}
-			}
-			return false;
-		}
-		
-		private bool canRunRecipe(BioRecipe r) {
+		private bool canRunRecipe(StorageContainer sc, BioRecipe r) {
 			//if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
 			//	return false;
-			IList<InventoryItem> ing = storage.container.GetItems(r.inputItem);
-			IList<InventoryItem> salt = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+			IList<InventoryItem> ing = sc.container.GetItems(r.inputItem);
+			IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;
 		}
 		

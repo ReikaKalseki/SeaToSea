@@ -44,6 +44,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
 	    	addDirectUnlock(TechType.Glass, CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType);
+	    	
+	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, SeaToSeaMod.getAlternateEnzyme().TechType);
+	    	
+	    	addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
+	    	addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType);
 		}
 	    
 	    public void addDirectUnlock(TechType from, TechType to) {

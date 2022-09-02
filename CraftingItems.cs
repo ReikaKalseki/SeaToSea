@@ -23,10 +23,10 @@ namespace ReikaKalseki.SeaToSea
 				BasicCraftingItem item = (BasicCraftingItem)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, attr.template});
 				mappings[m] = item;
 				item.craftingSubCategory = attr.category == TechCategory.VehicleUpgrades ? "C2Chemistry" : ""+attr.category;
-				item.unlockRequirement = attr.dependency;
+				item.unlockRequirement = attr.dependency;/*
 				if (m == Items.Sealant || m == Items.SealFabric) {
 					item.unlockRequirement = SeaToSeaMod.alkali.TechType;
-				}/*
+				}
 				if (m == Items.CrystalLens || m == Items.DenseAzurite) {
 					item.unlockRequirement = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
 				}*/
@@ -50,8 +50,8 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]CrystalLens,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]HullPlating, //was Magnesium
-			[Item(typeof(Bioprocessed), 		TechCategory.VehicleUpgrades, 	TechType.None,				"WorldEntities/Natural/Lubricant")]Sealant,
-			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.None,				"WorldEntities/Natural/aramidfibers")]SealFabric,
+			[Item(typeof(Bioprocessed), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/Lubricant")]Sealant,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(Bioprocessed),			TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(Bioprocessed),			TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/aramidfibers")]SmartPolymer,

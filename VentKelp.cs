@@ -131,12 +131,6 @@ namespace ReikaKalseki.SeaToSea {
 		public Dictionary<int,string> getTextureLayers() {
 			return leavesOnlyRendering ? new Dictionary<int, string>(){{0, ""}, {1, "Leaves"}} : new Dictionary<int, string>(){{0, ""}, {1, ""}};
 		}
-	
-		public static void doThingTo(Action<GameObject> a) {
-				foreach (GlowKelpTag g in UnityEngine.Object.FindObjectsOfType<GlowKelpTag>()) {
-				a(g.gameObject);
-				}
-		}
 		
 	}
 	

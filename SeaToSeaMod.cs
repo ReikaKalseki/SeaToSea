@@ -81,6 +81,8 @@ namespace ReikaKalseki.SeaToSea
     public static TechCategory chemistryCategory;
     public static TechCategory ingotCategory;
     
+    private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
+    
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     private static readonly Dictionary<TechType, TechType[]> ingots = new Dictionary<TechType, TechType[]>();
 
@@ -230,7 +232,7 @@ namespace ReikaKalseki.SeaToSea
        
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
-		//AvoliteSpawner.instance.register();
+		AvoliteSpawner.instance.register();
     }
     
     private static void onTechUnlocked(TechType tech, bool vb) {
@@ -321,8 +323,8 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.125F, 1);
     	
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Mountains_CaveFloor, 0.05F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Mountains_CaveFloor, 0.05F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.ActiveLavaZone_Falls_Wall, 0.25F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.ActiveLavaZone_Falls_Floor, 0.25F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.ActiveLavaZone_Falls_Floor_Far, 0.4F, 1);    	
@@ -435,14 +437,14 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
         sealedFabric.numberCrafted = 2;
-        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5).addIngredient(TechType.AramidFibers, 3).addIngredient(TechType.StalkerTooth, 1).addIngredient(TechType.Silicone, 2);
+        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 2).addIngredient(TechType.AramidFibers, 1).addIngredient(TechType.StalkerTooth, 1).addIngredient(TechType.Silicone, 2);
         
         BasicCraftingItem armor = CraftingItems.getItem(CraftingItems.Items.HullPlating);
         armor.craftingTime = 9;
         armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 5).addIngredient(comb, 1).addIngredient(TechType.Nickel, 2);
         
         BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
-        acid.craftingTime = 1;
+        acid.craftingTime = 0.5F;
         acid.addIngredient(TechType.AcidMushroom, 4);
         
         BasicCraftingItem motor = CraftingItems.getItem(CraftingItems.Items.Motor);
@@ -459,7 +461,6 @@ namespace ReikaKalseki.SeaToSea
         chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
         
         CraftingItems.addAll();
-        /*
         rec = RecipeUtil.copyRecipe(enzy.getRecipe());
         foreach (Ingredient i in rec.Ingredients) {
         	if (i.techType == TechType.DisinfectedWater) {
@@ -470,10 +471,11 @@ namespace ReikaKalseki.SeaToSea
         		i.amount *= 3;
         	}
         }
-       	item = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
-       	item.craftTime = enzy.craftingTime*2F;
-       	item.setRecipe(enzy.numberCrafted*3);
-       	item.Patch();*/
+       	enzymeAlternate = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
+       	enzymeAlternate.craftTime = enzy.craftingTime*2F;
+       	enzymeAlternate.setRecipe(enzy.numberCrafted*3);
+       	enzymeAlternate.unlock = TechType.Unobtanium;
+       	enzymeAlternate.Patch();
         
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
@@ -503,7 +505,7 @@ namespace ReikaKalseki.SeaToSea
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
-        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 9).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 6).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 3);
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(itemLocale.getEntry("t2battery"), 750);
@@ -730,6 +732,10 @@ namespace ReikaKalseki.SeaToSea
     private static void setChemistry(TechType item) {
 		RecipeUtil.changeRecipePath(item, "Resources", "C2Chemistry");
 		RecipeUtil.setItemCategory(item, TechGroup.Resources, chemistryCategory);
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getAlternateEnzyme() {
+    	return enzymeAlternate;
     }
     
     public static void addPDAEntries() {

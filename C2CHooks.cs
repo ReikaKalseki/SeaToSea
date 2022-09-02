@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static bool worldLoaded = false;
 	    
 	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
+	    private static readonly Vector3 pod6Location = new Vector3(363, -110, 309);
 	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    private static readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
@@ -29,9 +30,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
-	    	new Vector3(300, -120, 288),
+	    	new Vector3(300, -120, 288)*0.67F+pod6Location*0.33F,
 	    	//new Vector3(66, -100, -608), big obvious but empty one
-	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
+	    	new Vector3(-621, -130+20, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
 	    };
 	    
@@ -118,7 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		}
 	    			if (!PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt)) {
 		    			foreach (Vector3 vec in seacrownCaveEntrances) {
-				    		if (MathUtil.isPointInCylinder(vec, ep.transform.position, 40, 60)) {
+				    		if (MathUtil.isPointInCylinder(vec, ep.transform.position, 60, 80)) {
 				    			PDAMessages.trigger(PDAMessages.Messages.RedGrassCavePrompt);
 				    		}
 			    		}
@@ -596,7 +597,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
 			if (pi && scannerInjections.ContainsKey(pi.ClassId)) {
 				TechType tt = scannerInjections[pi.ClassId];
-				ObjectUtil.makeMapRoomScannable(go, tt);
+				ObjectUtil.makeMapRoomScannable(go, tt, true);
 				if (tt == TechType.SeaTreader) {
 					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
 				}
@@ -612,6 +613,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
 	    		return;
+	    	}
+	    	else if (pi && PrefabData.getPrefab(pi.ClassId) != null && PrefabData.getPrefab(pi.ClassId).Contains("Coral_reef_jeweled_disk")) {
+	    		ObjectUtil.makeMapRoomScannable(go, TechType.JeweledDiskPiece);
 	    	}/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
 	    		go.transform.position = auroraCyclopsModule.position;
@@ -898,7 +902,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (s) {
 					float trash;
 					float dT = Time.deltaTime;
-					acu.GetComponentInParent<BaseRoot>().powerRelay.AddEnergy(dT*1.5F*Mathf.Clamp01(((WaterParkCreature)wp).age), out trash);
+					acu.GetComponentInParent<BaseRoot>().powerRelay.AddEnergy(dT*0.5F*Mathf.Clamp01(((WaterParkCreature)wp).age), out trash);
 				}
 			}
 	   	 }
