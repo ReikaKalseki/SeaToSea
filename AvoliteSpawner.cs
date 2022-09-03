@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly AvoliteSpawner instance = new AvoliteSpawner();
 		
 		public readonly int AVOLITE_COUNT = 9;//6;
-		private readonly int SCRAP_COUNT = 60;//UnityEngine.Random.Range(45, 71); //45-70
+		private readonly int SCRAP_COUNT = 45;//60;//UnityEngine.Random.Range(45, 71); //45-70
 		private readonly string xmlPathRoot;
 		
 		private string avo;
@@ -80,9 +80,9 @@ namespace ReikaKalseki.SeaToSea {
 			
 			spawnerObject.Patch();
 			
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 1.0F);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 0.8F);
 			//GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Rock, 1, 0.75F);
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 0.67F);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 0.55F);
 			//LootDistributionHandler.EditLootDistributionData(spawnerObject, BiomeType.Mountains_ThermalVent, 0.2F, 1);
 		
 			IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
@@ -107,6 +107,10 @@ namespace ReikaKalseki.SeaToSea {
 					addObject(pfb);
 				}
 			}
+			SNUtil.log("Loaded sunbeam debris cache: ");
+			SNUtil.log(objects.toDebugString());
+			SNUtil.log("Remaining:");
+			SNUtil.log(objectCountsToGo.toDebugString());
 		}
 		
 		private void save() {
