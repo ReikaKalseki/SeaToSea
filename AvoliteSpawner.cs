@@ -25,6 +25,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly int SCRAP_COUNT = 60;//UnityEngine.Random.Range(45, 71); //45-70
 		private readonly string xmlPathRoot;
 		
+		private string avo;
+		
 		private readonly Vector3 eventCenter = new Vector3(215, 425.6F, 2623.6F);
 		private readonly Vector3 eventUITargetLocation = new Vector3(297.2F, 3.5F, 1101);
 		private readonly Vector3 mountainCenter = new Vector3(356.3F, 29F, 1039.4F);
@@ -60,7 +62,7 @@ namespace ReikaKalseki.SeaToSea {
 			addItem(TechType.NutrientBlock, 10);
 			addItem(TechType.DisinfectedWater, 8);
 			addItem(TechType.Battery, 4);
-			addItem(TechType.Beacon, 3);
+			//addItem(TechType.Beacon, 3);
 			
 			addItem(TechType.PowerCell, 1);
 			addItem(TechType.FireExtinguisher, 2);
@@ -78,13 +80,15 @@ namespace ReikaKalseki.SeaToSea {
 			
 			spawnerObject.Patch();
 			
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 2F);
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Rock, 1, 0.75F);
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 1F);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 1.0F);
+			//GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Rock, 1, 0.75F);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 0.67F);
 			//LootDistributionHandler.EditLootDistributionData(spawnerObject, BiomeType.Mountains_ThermalVent, 0.2F, 1);
 		
 			IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
+			
+			avo = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).ClassID;
 		}
 		
 		private void loadSave() {
@@ -95,6 +99,8 @@ namespace ReikaKalseki.SeaToSea {
 				objects.Clear();
 				objectCounts.Clear();
 				objectCountsToGo.Clear();
+				foreach (KeyValuePair<string, int> kvp in itemChoices)
+					objectCountsToGo[kvp.Key] = kvp.Value;
 				foreach (XmlElement e in doc.DocumentElement.ChildNodes) {
 					PositionedPrefab pfb = new PositionedPrefab("");
 					pfb.loadFromXML(e);
@@ -120,7 +126,13 @@ namespace ReikaKalseki.SeaToSea {
 		private void addObject(PositionedPrefab pfb) {
 			objects[pfb.position] = pfb;
 			objectCounts[pfb.prefabName] = getCount(pfb.prefabName)+1;
-			objectCountsToGo[pfb.prefabName] = itemChoices[pfb.prefabName]-objectCounts[pfb.prefabName];
+			int max = pfb.prefabName == avo ? AVOLITE_COUNT : (itemChoices.ContainsKey(pfb.prefabName) ? itemChoices[pfb.prefabName] : SCRAP_COUNT);
+			int rem = max-getCount(pfb.prefabName);
+			if (rem > 0)
+				objectCountsToGo[pfb.prefabName] = rem;
+			else if (objectCountsToGo.ContainsKey(pfb.prefabName))
+				objectCountsToGo.Remove(pfb.prefabName);
+			//SNUtil.log(objectCountsToGo[pfb.prefabName]+" remaining of "+pfb.prefabName+" from "+max);
 		}
 		
 		private PositionedPrefab allocateItem(Transform t) {
@@ -129,7 +141,13 @@ namespace ReikaKalseki.SeaToSea {
 				return null;
 			PositionedPrefab ret = new PositionedPrefab(pfb, t.position, t.rotation);
 			ret.scale = t.localScale;
-			ret.createWorldObject();
+			GameObject go = ret.createWorldObject();
+			if (pfb != "471852d4-03b6-4c47-9d4e-2ae893d63ff7" && pfb != "86589e2f-bd06-447f-b23a-1f35e6368010") //wiring kit, glass
+				go.transform.rotation = UnityEngine.Random.rotationUniform;
+			Rigidbody rb = go.GetComponentInChildren<Rigidbody>();
+			if (rb)
+				rb.isKinematic = true;
+			go.transform.position = go.transform.position+Vector3.up*0.05F;
 			addObject(ret);
 			return ret;
 		}
@@ -139,13 +157,12 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private string tryFindItem(Vector3 pos) {
-			string avo = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).ClassID;
-			if (getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 200) {
+			//SNUtil.log("Avo count = "+getCount(avo));
+			if (getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 160) {
 				return avo;
 			}
-			string scrap = "947f2823-c42a-45ef-94e4-52a9f1d3459c";
-			if (objectCountsToGo.Count == 0) {
-				if (getCount(scrap) < SCRAP_COUNT)
+			if (objectCountsToGo.Count == 0 || UnityEngine.Random.Range(0, 5) == 0) {
+				if (getCount("947f2823-c42a-45ef-94e4-52a9f1d3459c") < SCRAP_COUNT)
 					return getRandomScrap().prefab;
 				else
 					return null;
@@ -153,11 +170,13 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				string pfb = objectCountsToGo.Keys.ToList<string>()[UnityEngine.Random.Range(0, objectCountsToGo.Count-1)];
 				int amt = objectCountsToGo[pfb];
+				//SNUtil.log("Tried "+pfb+" > "+getCount(pfb)+"/"+objectCountsToGo[pfb]);
 				if (amt > 1) {
 					objectCountsToGo[pfb] = amt-1;
 				}
 				else {
 					objectCountsToGo.Remove(pfb);
+					//SNUtil.log("Removing "+pfb+" from dict: "+objectCountsToGo.toDebugString<string, int>());
 				}
 				return pfb;
 			}
@@ -172,6 +191,7 @@ namespace ReikaKalseki.SeaToSea {
 						dist = d;
 				}
 			}
+			//SNUtil.log("Closest avo to "+pos+" was "+dist);
 			return dist;
 		}
 		
@@ -202,7 +222,7 @@ namespace ReikaKalseki.SeaToSea {
 				ObjectUtil.removeComponent<Collider>(go);
 				ObjectUtil.removeComponent<ResourceTrackerUpdater>(go);
 				ObjectUtil.removeComponent<ResourceTracker>(go);
-				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
+				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<SunbeamDebris>();
 				foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 					r.enabled = false;
@@ -220,9 +240,13 @@ namespace ReikaKalseki.SeaToSea {
 				if (PDAManager.getPage("sunbeamdebrishint").isUnlocked()) {
 					PositionedPrefab pfb = instance.allocateItem(gameObject.transform);
 					if (pfb != null) {
-						SNUtil.writeToChat("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb.prefabName);
+						SNUtil.log("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb.prefabName);
 					}
-					UnityEngine.Object.DestroyImmediate(this);
+					else {
+						SNUtil.log("Item set exhausted, deleting @ "+transform.position);
+					}
+					enabled = false;
+					UnityEngine.Object.DestroyImmediate(gameObject);
 				}
 			}
 			
