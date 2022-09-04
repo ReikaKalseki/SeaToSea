@@ -21,19 +21,20 @@ namespace ReikaKalseki.SeaToSea
 				string id = attr.key;//Enum.GetName(typeof(Messages), m);
 				SNUtil.log("Constructing PDA message "+id);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.miscLocale.getEntry(id);
-				StoryGoal item = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus), attr.delay);
+				StoryGoal item = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus));
 				mappings[m] = item;
 			}
 		}
 		
 		public enum Messages {
-			[Message("voidspikeenter", 5)]VoidSpike,
+			[Message("voidspikeenter")]VoidSpike,
 			[Message("aurorafire")]AuroraFireWarn,
 			[Message("auroracut")]AuroraSalvage,
 			[Message("kelpcavedrone")]KelpCavePrompt,
 			[Message("redgrasscave")]RedGrassCavePrompt,
 			[Message("kooshcave")]KooshCavePrompt,
 			[Message("treaderpoo")]TreaderPooPrompt,
+			[Message("dunearch")]DuneArchPrompt,
 		}
 		
 		private static Message getAttr(Messages key) {
@@ -61,9 +62,8 @@ namespace ReikaKalseki.SeaToSea
 		public class Message : Attribute {
 			
 			public readonly string key;
-			public readonly int delay;
 			
-			public Message(string s, int d = 0) {
+			public Message(string s) {
 				key = s;
 			}
 		}

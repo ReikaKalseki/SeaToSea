@@ -132,7 +132,7 @@ namespace ReikaKalseki.SeaToSea
 					tech = SNUtil.getTechType(techn);
 					if (tech == TechType.None)
 						throw new Exception("Cannot put nonexistent item '"+techn+"' in crate @ "+position+"!");
-					prefabName = GenUtil.getOrCreateCrate(tech, TechTypeHandler.ModdedTechTypeExists(techn), e.getBoolean("sealed")).ClassID;
+					prefabName = GenUtil.getOrCreateCrate(tech, e.getBoolean("sealed")).ClassID;
 					SNUtil.log("Redirected customprefab to crate "+prefabName);
 				}
 				else if (prefabName == "databox") {

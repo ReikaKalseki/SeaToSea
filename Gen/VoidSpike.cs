@@ -269,7 +269,7 @@ namespace ReikaKalseki.SeaToSea
 						}
 						GameObject go = spawner(ore.isLarge ? ore.ore : ORE_SPAWNER.ClassID);
 						go.transform.position = pos;
-						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 30), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
+						go.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0F, 30F), UnityEngine.Random.Range(0, 360), 0);//UnityEngine.Random.rotationUniform;
 						if (!ore.isLarge) {
 							Pickupable p = go.EnsureComponent<Pickupable>();
 							p.isPickupable = true;

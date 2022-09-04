@@ -30,7 +30,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
-	    	new Vector3(300, -120, 288)*0.67F+pod6Location*0.33F,
+	    	new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
 	    	//new Vector3(66, -100, -608), big obvious but empty one
 	    	new Vector3(-621, -130+20, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
@@ -42,6 +42,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	{"35ee775a-d54c-4e63-a058-95306346d582", TechType.SeaTreader},
 	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
+	    
+	    private static float lastDunesEntry = -1;
 	    
 	    static C2CHooks() {
 	    	
@@ -103,11 +105,25 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void tickPlayer(Player ep) {
 	    	if (Time.timeScale <= 0)
 	    		return;
-	    	if (ep.GetVehicle() is SeaMoth && UnityEngine.Random.Range(0, (int)(80000/Time.timeScale)) == 0) {
-				if (!Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
-	    			SeaToSeaMod.treaderSignal.fireRadio();
+	    	
+	    	StoryHandler.instance.tick(ep);
+	    	
+	    	if (ep.GetBiomeString() != null && ep.GetBiomeString().ToLowerInvariant().Contains("dunes")) {
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (lastDunesEntry < 0)
+	    			lastDunesEntry = time;
+	    		if (time-lastDunesEntry >= 60) { //in dunes for at least 60s
+		    		PDAManager.PDAPage pp = PDAManager.getPage("dunearchhint");
+		    		if (!pp.isUnlocked()) {
+		    			pp.unlock();
+			    		PDAMessages.trigger(PDAMessages.Messages.DuneArchPrompt);
+			   		}
 	    		}
 	    	}
+	    	else {
+	    		lastDunesEntry = -1;
+	    	}
+	    	
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming()) {
@@ -209,16 +225,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getSeaglideSpeed(float f) { //1.45 by default
-	    	if (Inventory.main == null)
-	    		return f;
-	    	Pickupable held = Inventory.main.GetHeld();
-	    	if (held == null || held.gameObject == null)
-	    		return f;
-	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
-	    	if (e == null)
-	    		return f;
 	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity));
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+			if (isHeldToolAzuritePowered()) {
 	    		float bonus = 0.75F; //was 0.55 then 0.95
 	    		float depth = Player.main.GetDepth();
 	    		float depthFactor = depth <= 50 ? 1 : 1-((depth-50)/350F);
@@ -227,6 +235,54 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	return f;
+	    }
+	    
+	    public static float getScannerSpeed(float f) { //f is a divisor, scanTime
+			if (isHeldToolAzuritePowered()) {
+	    		f *= 0.5F; //double speed
+	    	}
+	    	return f;
+	    }
+	    /* DO NOT USE - RISKS VOIDING
+	    public static float getBuilderSpeed(float f) { //f is a divisor, item count
+	    	if (isHeldToolAzuritePowered()) {
+	    		f *= 0.667F; //1.5x speed
+	    	}
+	    	return f;
+	    }*/
+	    
+	    public static float getLaserCutterSpeed(LaserCutter lc) { //25 by default
+	    	float amt = lc.healthPerWeld;
+	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
+	    	if (e == null)
+	    		return amt;
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+	    		amt *= 1.5F;
+	    	}
+	    	return amt;
+	    }
+	    
+	    public static float getRepairSpeed(Welder lc) { //10 by default
+	    	float amt = lc.healthPerWeld;
+	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
+	    	if (e == null)
+	    		return amt;
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+	    		amt *= 2F;
+	    	}
+	    	return amt;
+	    }
+	    
+	    public static bool isHeldToolAzuritePowered() {
+	    	if (Inventory.main == null)
+	    		return false;
+	    	Pickupable held = Inventory.main.GetHeld();
+	    	if (held == null || held.gameObject == null)
+	    		return false;
+	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
+	    	if (e == null)
+	    		return false;
+	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity);
 	    }
 	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {

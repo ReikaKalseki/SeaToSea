@@ -110,6 +110,41 @@
 		Sounds/voidspike-pda.ogg
 	</audio>
   </voidspike>
+  <dunearchhint>
+	<name>
+		Survivor radio signal origin
+	</name>
+	<pda>
+		A radio signal without lifepod signatures, including location and photographic data.
+		
+		Reported:
+		-Signal contained properties matching the Aurora's onboard hardware
+		-Depth in excess of 300m
+		-Description of open sandy plains with little flora and only large fauna
+		-Nearby large rock arch reported
+	</pda>
+	<category>
+		DownloadedData/Codes
+	</category>
+	<header>
+	</header>
+  </dunearchhint>
+  <dunearch>
+	<name>
+		Trapped Survivor Crew Log
+	</name>
+	<pda>
+		--did not make it to pods in time, survived crash
+		
+		I don't know how deep I am, but the hull is groaning under the pressure, so it's probably deep. Well, as long as it holds, I guess...
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		Sounds/unknown.ogg
+	</audio>
+  </dunearch>
   <treaderpod>
 	<name>
 		Lifepod 9 Crew Log

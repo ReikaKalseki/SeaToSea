@@ -47,4 +47,21 @@
 		Sounds/radio_treadersignal.ogg
 	</sound>
   </treaderpod>
+  <dunearch>
+	<name>
+		Signal
+	</name>
+	<desc>
+		Unknown radio signal origin
+	</desc>
+	<pda>
+		
+	</pda>
+	<radio>
+		This is lifepod 9! My pods' floaters blew the moment I hit the water, so I've sunk to the bottom of this god-forsaken ocean. You guys are the ones who wanted to visit this planet and now I'm the one paying the price! Typical. How about you come help before I run out of power and therefore air, because there's not much light down here? That'll be the start of-[static]
+	</radio>
+	<sound>
+		Sounds/radio_treadersignal.ogg
+	</sound>
+  </dunearch>
 </Root>

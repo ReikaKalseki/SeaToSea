@@ -58,8 +58,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
+    //public static SignalManager.ModSignal duneArchWreckSignal;
     
     public static Story.StoryGoal crashMesaRadio;
+    //public static Story.StoryGoal duneArchRadio;
     //public static Story.StoryGoal mountainPodRadio;
     
     public static BrokenTablet brokenRedTablet;
@@ -160,7 +162,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger = new RebreatherRecharger();
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
-        rebreatherCharger.addFragments(4, 10, rebreatherChargerFragments);
+        rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
         addPDAEntries();
 	    
@@ -180,11 +182,16 @@ namespace ReikaKalseki.SeaToSea
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
-		//treaderSignal.pdaEntry.addSubcategory("AuroraSurvivors");
 		treaderSignal.addRadioTrigger(e.getField<string>("sound"));
 		treaderSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1239, -360, -1193));
 		treaderSignal.addWorldgen();
-		
+		/*
+        e = SeaToSeaMod.signalLocale.getEntry("dunearch");
+		duneArchWreckSignal = SignalManager.createSignal(e);
+		duneArchWreckSignal.addRadioTrigger(e.getField<string>("sound"));
+		duneArchWreckSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1623, -355.6, -98.5));
+		duneArchWreckSignal.addWorldgen();
+		*/
         e = SeaToSeaMod.signalLocale.getEntry("voidspike");
 		voidSpikeDirectionHint = SignalManager.createSignal(e);
 		voidSpikeDirectionHint.setStoryGate(PDAManager.getPage("voidpod").id);
@@ -192,11 +199,13 @@ namespace ReikaKalseki.SeaToSea
 		voidSpikeDirectionHint.addWorldgen();
 		
 		e = pdaLocale.getEntry("crashmesahint");
-		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"), 1200);
+		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"));
 		
 		PDAMessages.addAll();
 		
 		KnownTech.onAdd += onTechUnlocked;
+		
+		BatteryCharger.compatibleTech.Add(t2Battery.TechType);
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
 		
@@ -235,13 +244,13 @@ namespace ReikaKalseki.SeaToSea
 		AvoliteSpawner.instance.register();
     }
     
-    private static void onTechUnlocked(TechType tech, bool vb) {
+    private static void onTechUnlocked(TechType tech, bool vb) {/*
     	if (tech == TechType.PrecursorKey_Orange) {
     		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
     	}
     	if (tech == TechType.NuclearReactor || tech == TechType.HighCapacityTank || tech == TechType.PrecursorKey_Purple || tech == TechType.SnakeMushroom || tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
     		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
-    	}
+    	}*/
     }
     
     public static bool isTechGated(TechType tt) {
@@ -543,13 +552,15 @@ namespace ReikaKalseki.SeaToSea
         
         //RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
         
-        RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 4);
+        RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 6);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
         RecipeUtil.addIngredient(TechType.StasisRifle, t2Battery.TechType, 2);
         
         RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
+        
+        RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);

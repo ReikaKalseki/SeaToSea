@@ -172,7 +172,7 @@ namespace ReikaKalseki.SeaToSea {
 					return null;
 			}
 			else {
-				string pfb = objectCountsToGo.Keys.ToList<string>()[UnityEngine.Random.Range(0, objectCountsToGo.Count-1)];
+				string pfb = objectCountsToGo.Keys.ToList<string>()[UnityEngine.Random.Range(0, objectCountsToGo.Count)];
 				int amt = objectCountsToGo[pfb];
 				//SNUtil.log("Tried "+pfb+" > "+getCount(pfb)+"/"+objectCountsToGo[pfb]);
 				if (amt > 1) {
