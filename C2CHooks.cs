@@ -107,15 +107,17 @@ namespace ReikaKalseki.SeaToSea {
 	    		return;
 	    	
 	    	StoryHandler.instance.tick(ep);
+	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
 	    	if (ep.GetBiomeString() != null && ep.GetBiomeString().ToLowerInvariant().Contains("dunes")) {
 	    		float time = DayNightCycle.main.timePassedAsFloat;
 	    		if (lastDunesEntry < 0)
 	    			lastDunesEntry = time;
+	    		//SNUtil.writeToChat(lastDunesEntry+" > "+(time-lastDunesEntry));
 	    		if (time-lastDunesEntry >= 60) { //in dunes for at least 60s
 		    		PDAManager.PDAPage pp = PDAManager.getPage("dunearchhint");
 		    		if (!pp.isUnlocked()) {
-		    			pp.unlock();
+		    			pp.unlock(false);
 			    		PDAMessages.trigger(PDAMessages.Messages.DuneArchPrompt);
 			   		}
 	    		}

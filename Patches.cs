@@ -1328,7 +1328,7 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "LaserCutter", "healthPerWeld");
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "Welder", "healthPerWeld");
 				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRepairSpeed", false, typeof(Welder));
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);

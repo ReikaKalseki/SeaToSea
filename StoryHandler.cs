@@ -37,10 +37,15 @@ namespace ReikaKalseki.SeaToSea
 		public void tick(Player ep) {
 			foreach (KeyValuePair<ProgressionTrigger, DelayedProgressionTrigger> kvp in triggers) {
 				if (kvp.Key.isReady(ep)) {
+					//SNUtil.writeToChat("Trigger "+kvp.Key+" is ready");
 					DelayedProgressionTrigger dt = kvp.Value;
 					if (!dt.isFired() && UnityEngine.Random.Range(0, 1F) <= dt.chancePerTick*Time.timeScale) {
+						//SNUtil.writeToChat("Firing "+dt);
 						dt.fire();
 					}
+				}
+				else {
+					//SNUtil.writeToChat("Trigger "+kvp.Key+" condition is not met");
 				}
 			}
 		}
@@ -82,36 +87,58 @@ namespace ReikaKalseki.SeaToSea
 			isReady = b;
 		}
 		
+		public override string ToString() {
+			return isReady.Method != null ? isReady.Method.Name : "unnamed callback";
+		}
+		
 	}
 	
 	class TechTrigger : ProgressionTrigger {
 		
-		internal TechTrigger(TechType tech) : base(ep => KnownTech.knownTech.Contains(tech)) {
-			
+		private readonly TechType tech;
+		
+		internal TechTrigger(TechType tt) : base(ep => KnownTech.knownTech.Contains(tt)) {
+			tech = tt;
+		}
+		
+		public override string ToString() {
+			return "Tech "+tech;
 		}
 		
 	}
 	
 	class EncylopediaTrigger : ProgressionTrigger {
 		
+		private readonly string pdaKey;
+		
 		internal EncylopediaTrigger(PDAManager.PDAPage g) : this(g.id) {
 			
 		}
 		
 		internal EncylopediaTrigger(string key) : base(ep => PDAEncyclopedia.entries.ContainsKey(key)) {
-			
+			pdaKey = key;
+		}
+		
+		public override string ToString() {
+			return "Ency "+pdaKey;
 		}
 		
 	}
 	
 	class StoryTrigger : ProgressionTrigger {
 		
+		private readonly string storyKey;
+		
 		internal StoryTrigger(StoryGoal g) : this(g.key) {
 			
 		}
 		
 		internal StoryTrigger(string key) : base(ep => StoryGoalManager.main.completedGoals.Contains(key)) {
-			
+			storyKey = key;
+		}
+		
+		public override string ToString() {
+			return "Story "+storyKey;
 		}
 		
 	}
@@ -128,6 +155,10 @@ namespace ReikaKalseki.SeaToSea
 			chancePerTick = f;
 		}
 		
+		public override string ToString() {
+			return fire.Method != null ? fire.Method.Name : "unnamed action";
+		}
+		
 	}
 	
 	class DelayedStoryTrigger : DelayedProgressionTrigger {
@@ -136,6 +167,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal DelayedStoryTrigger(StoryGoal g, float f) : base(() => StoryGoal.Execute(g.key, g.goalType), () => StoryGoalManager.main.completedGoals.Contains(g.key), f) {
 			goal = g;
+		}
+		
+		public override string ToString() {
+			return "Story "+goal.key;
 		}
 		
 	}

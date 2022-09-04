@@ -103,10 +103,10 @@
 		
 	</name>
 	<desc>
-		??
+		Unknown radio transmission detected in the region. Unable to identify lifepod signature.
 	</desc>
 	<pda>
-		Sounds/dunearch.ogg
+		Sounds/dunearchprompt.ogg
 	</pda>
   </dunearch>
 </Root>
