@@ -164,6 +164,17 @@
 			
 		</pda>
 	</LathingDrone>
+	<KelpEnzymes>
+		<name>
+			Bacterial Sample
+		</name>
+		<desc>
+			A quantity of bacteria, highly specialized for recombining organic compounds.
+		</desc>
+		<pda>
+			
+		</pda>
+	</KelpEnzymes>
 	<breathfluid>
 		<name>
 			Breathing Fluid
@@ -316,12 +327,14 @@
 			Deepvine
 		</name>
 		<desc>
-			A tall deepwater plant, similar in general appearance to creepvine.
+			A tall deepwater plant, filling a similar role to creepvine in its local ecosystem.
 		</desc>
 		<pda>
 			Deepvine differs substantially in appearance from its shallow-water counterpart, but genetic analysis reveals a close relationship. Like creepvine, it acts as both food and shelter for the local population of small fauna, supporting an ecosystem more rich in biomass than would typically be possible at this depth.
 			
-			Deepvine has evolved to depend on chemosynthesis based on minerals ejected by nearby geothermal activity in the lieu of sunlight.
+			Unlike normal creepvine, however, deepvine has evolved to depend on chemosynthesis based on minerals ejected by nearby geothermal activity in the lieu of sunlight. This is accomplished by the leaves harboring extensive colonies of several species of bacteria which can perform biochemical reactions at far greater rate and efficiency than would be possible without them.
+			
+			Assessment: Inedibly toxic but the bacteria may be repurposed to improve the efficacy of chemical reactions
 		</pda>
 	</VENT_KELP>
 	<HEALING_FLOWER>

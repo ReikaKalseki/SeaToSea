@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 6);
 			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 1, 4);
+			addRecipe(SeaToSeaMod.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 3, 5);
 		}
 		
 		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
@@ -235,8 +236,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
+					IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
+					bool hasKelp = kelp.Count > 0;
 					setEmissiveColor(recipeStalledColor);
-					nextSaltTimeRemaining -= seconds;
+					nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
 					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
 					if (nextSaltTimeRemaining <= 0 && consumePower(Bioprocessor.POWER_COST_IDLE, seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
 						IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
@@ -257,7 +260,12 @@ namespace ReikaKalseki.SeaToSea {
 								//SNUtil.writeToChat("success");
 								for (int i = 0; i < currentOperation.inputCount; i++)
 									ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
-								for (int i = 0; i < currentOperation.outputCount; i++) {
+								int n = currentOperation.outputCount;
+								if (hasKelp) {
+									n *= 2;
+									ObjectUtil.removeItem(sc, kelp[0]);
+								}
+								for (int i = 0; i < n; i++) {
 									GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
 									item.SetActive(false);
 									sc.container.AddItem(item.GetComponent<Pickupable>());

@@ -37,6 +37,10 @@ namespace ReikaKalseki.SeaToSea {
 			return Plantable.PlantSize.Small;
 		}
 		
+		public override float getGrowthTime() {
+			return 6000; //5x
+		}
+		
 	}
 	
 	class HealingFlowerTag : MonoBehaviour {

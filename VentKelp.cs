@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static bool leavesOnlyRendering;
 		
-		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "2a37dd2f-ee5e-4c3c-a3fe-4f5973055651", "Samples") {
+		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "afba45cf-00f9-4d80-a203-429d6ce7ff62", "Samples") {
 			glowIntensity = 0.8F;
 			finalCutBonus = 2;
 		}
@@ -130,6 +130,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public Dictionary<int,string> getTextureLayers() {
 			return leavesOnlyRendering ? new Dictionary<int, string>(){{0, ""}, {1, "Leaves"}} : new Dictionary<int, string>(){{0, ""}, {1, ""}};
+		}
+		
+		public override float getGrowthTime() {
+			return 1800;
 		}
 		
 	}

@@ -103,7 +103,7 @@
 		
 	</name>
 	<desc>
-		Unknown radio transmission detected in the region. Unable to identify lifepod signature.
+		Unknown radio transmission detected in the region. Unable to identify lifepod signature. Outputting results to databank.
 	</desc>
 	<pda>
 		Sounds/dunearchprompt.ogg

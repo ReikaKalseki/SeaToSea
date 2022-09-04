@@ -286,7 +286,7 @@ namespace ReikaKalseki.SeaToSea
     private static void addOreGen() {
     	BasicCustomOre vent = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL);
     	vent.registerWorldgen(BiomeType.Dunes_ThermalVent, 1, 3F);
-    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 1.2F);
+    	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 1.0F);
     	//vent.registerWorldgen(BiomeType.JellyshroomCaves_Geyser, 1, 0.5F);
     	//vent.registerWorldgen(BiomeType.KooshZone_Geyser, 1, 1F);
     	//vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
@@ -425,6 +425,10 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
         enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
+       
+        BasicCraftingItem enzyK = CraftingItems.getItem(CraftingItems.Items.KelpEnzymes);
+        enzyK.craftingTime = 4;
+        enzyK.addIngredient(kelp.seed.TechType, 2);
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;

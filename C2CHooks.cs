@@ -114,7 +114,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (lastDunesEntry < 0)
 	    			lastDunesEntry = time;
 	    		//SNUtil.writeToChat(lastDunesEntry+" > "+(time-lastDunesEntry));
-	    		if (time-lastDunesEntry >= 60) { //in dunes for at least 60s
+	    		if (time-lastDunesEntry >= 90) { //in dunes for at least 90s
 		    		PDAManager.PDAPage pp = PDAManager.getPage("dunearchhint");
 		    		if (!pp.isUnlocked()) {
 		    			pp.unlock(false);
@@ -638,6 +638,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.healFlower);
 	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
 	    	}
+	    	if (tt != null && tt.type == SeaToSeaMod.kelp.seed.TechType) {
+	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.kelp);
+	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
+	    	}
 	    }
 	    
 	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {
@@ -647,6 +651,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (tt != null && tt.type == SeaToSeaMod.healFlower.seed.TechType) {
 	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.healFlower);
+	    	}
+	    	if (tt != null && tt.type == SeaToSeaMod.kelp.seed.TechType) {
+	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.kelp);
 	    	}
 	    }
 	    

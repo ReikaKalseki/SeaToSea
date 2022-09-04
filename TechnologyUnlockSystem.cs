@@ -49,6 +49,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
 	    	addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType);
+	    	
+	    	addDirectUnlock(SeaToSeaMod.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 		}
 	    
 	    public void addDirectUnlock(TechType from, TechType to) {
