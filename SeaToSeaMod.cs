@@ -413,13 +413,15 @@ namespace ReikaKalseki.SeaToSea
        	item.setRecipe(10);
        	item.Patch();
        	
+       	createCompressedIngot(TechType.Quartz, 5, "Boule");
        	createCompressedIngot(TechType.Copper);
        	createCompressedIngot(TechType.Silver);
        	createCompressedIngot(TechType.Gold);
        	createCompressedIngot(TechType.Lead);
-       	createCompressedIngot(TechType.Lithium);
-       	createCompressedIngot(TechType.Magnetite, 6);
+       	createCompressedIngot(TechType.Lithium, 10, "Plate");
+       	createCompressedIngot(TechType.Magnetite, 6, "Bar");
        	createCompressedIngot(TechType.Nickel);
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
        	ingots[TechType.Titanium] = new TechType[]{TechType.TitaniumIngot, TechType.Titanium};
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
@@ -655,6 +657,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 2);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
@@ -664,6 +667,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 4);
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
         //SNUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         
@@ -711,8 +715,8 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
-    private static void createCompressedIngot(TechType item, int amt = 10) {
-    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, item+" Ingot", "An ingot of compressed "+item, "41919ae1-1471-4841-a524-705feb9c2d20");
+    private static void createCompressedIngot(TechType item, int amt = 10, string name = "Ingot") {
+    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, item+" "+name, "An ingot of compressed "+item, "41919ae1-1471-4841-a524-705feb9c2d20");
     	ingot.addIngredient(item, amt);
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];

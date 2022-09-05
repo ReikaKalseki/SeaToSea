@@ -379,10 +379,12 @@ namespace ReikaKalseki.SeaToSea {
 	   		if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
 	   			return 0;
 	   		Player p = target.GetComponentInParent<Player>();
-	   		if (p != null && Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) != 0) {
+	   		if (p != null) {
+	   			bool seal = Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) != 0;
+	   			bool reinf = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0;
 	   			if (type == DamageType.Poison || type == DamageType.Acid || type == DamageType.Electrical) {
-	   				damage *= 0.2F;
-	   				damage -= 10;
+	   				damage *= seal ? 0.2F : 0.4F;
+	   				damage -= seal ? 10 : 7.5F;
 	   				if (damage < 0)
 	   					damage = 0;
 	   			}
@@ -416,7 +418,7 @@ namespace ReikaKalseki.SeaToSea {
     
 	    public static void onItemPickedUp(Pickupable p) {
 	    	if (p.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
-				if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 || Inventory.main.equipment.GetCount(TechType.SwimChargeFins) != 0) {
+				if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
