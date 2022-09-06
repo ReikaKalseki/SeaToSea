@@ -20,21 +20,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static bool worldLoaded = false;
 	    
-	    private static readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
-	    private static readonly Vector3 pod6Location = new Vector3(363, -110, 309);
-	    private static readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
-	    private static readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
-	    
-	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
-	    	new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
-	    	//new Vector3(66, -100, -608), big obvious but empty one
-	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
-	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
-	    };
 	    
 	    private static readonly Dictionary<string, TechType> scannerInjections = new Dictionary<string, TechType>() {
 	    	{"61ac1241-e990-4646-a618-bddb6960325b", TechType.SeaTreaderPoop},
@@ -42,8 +31,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	{"35ee775a-d54c-4e63-a058-95306346d582", TechType.SeaTreader},
 	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
-	    
-	    private static float lastDunesEntry = -1;
 	    
 	    static C2CHooks() {
 	    	
@@ -109,41 +96,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	StoryHandler.instance.tick(ep);
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
-	    	if (ep.GetBiomeString() != null && ep.GetBiomeString().ToLowerInvariant().Contains("dunes")) {
-	    		float time = DayNightCycle.main.timePassedAsFloat;
-	    		if (lastDunesEntry < 0)
-	    			lastDunesEntry = time;
-	    		//SNUtil.writeToChat(lastDunesEntry+" > "+(time-lastDunesEntry));
-	    		if (time-lastDunesEntry >= 90) { //in dunes for at least 90s
-		    		PDAManager.PDAPage pp = PDAManager.getPage("dunearchhint");
-		    		if (!pp.isUnlocked()) {
-		    			pp.unlock(false);
-			    		PDAMessages.trigger(PDAMessages.Messages.DuneArchPrompt);
-			   		}
-	    		}
-	    	}
-	    	else {
-	    		lastDunesEntry = -1;
-	    	}
-	    	
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
-	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming()) {
-	    			Vector3 pos = ep.transform.position;
-		    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), pos, 60, 40)) {
-		    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
-		    		}
-	    			if (Vector3.Distance(pod12Location, pos) <= 75) {
-		    			PDAMessages.trigger(PDAMessages.Messages.KooshCavePrompt);
-		    		}
-	    			if (!PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt)) {
-		    			foreach (Vector3 vec in seacrownCaveEntrances) {
-				    		if (pos.y <= vec.y && MathUtil.isPointInCylinder(vec, pos, 30, 10)) {
-				    			PDAMessages.trigger(PDAMessages.Messages.RedGrassCavePrompt);
-				    		}
-			    		}
-	    			}
-	    		}
 	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;

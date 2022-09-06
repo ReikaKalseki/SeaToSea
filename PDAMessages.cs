@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("aurorafire")]AuroraFireWarn,
 			[Message("auroracut")]AuroraSalvage,
 			[Message("kelpcavedrone")]KelpCavePrompt,
+			[Message("kelpcavedronelate")]KelpCavePromptLate,
 			[Message("redgrasscave")]RedGrassCavePrompt,
 			[Message("kooshcave")]KooshCavePrompt,
 			[Message("treaderpoo")]TreaderPooPrompt,
