@@ -416,7 +416,7 @@ namespace ReikaKalseki.SeaToSea
        	item.Patch();
        	
        	createCompressedIngot(TechType.Quartz, 5, "Boule");
-       	createCompressedIngot(TechType.AluminumOxide, 8, "Boule");
+       	createCompressedIngot(TechType.AluminumOxide, "Ruby", 8, "Boule");
        	createCompressedIngot(TechType.Copper);
        	createCompressedIngot(TechType.Silver);
        	createCompressedIngot(TechType.Gold);
@@ -424,6 +424,7 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Lithium, 10, "Plate");
        	createCompressedIngot(TechType.Magnetite, 6, "Bar");
        	createCompressedIngot(TechType.Nickel);
+       	createCompressedIngot(TechType.Kyanite, 6, "Boule");
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM));
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 8);
        	ingots[TechType.Titanium] = new TechType[]{TechType.TitaniumIngot, TechType.Titanium};
@@ -739,7 +740,7 @@ namespace ReikaKalseki.SeaToSea
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
-    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+refName).ToLowerInvariant());
+    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+refName.ToLowerInvariant()));
     	ingot.Patch();
     	SNUtil.log("Added compressed ingot for "+refName+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
     	

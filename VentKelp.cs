@@ -223,7 +223,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (lv && lv.health <= 0) {
 					kill = true;
 				}
-				int num = int.Parse(r.gameObject.name.Substring(r.gameObject.name.Length-2));
+				int num = int.Parse(r.gameObject.name.Substring(r.gameObject.name.Length-1));
 				if (num-lastNum != 1) {
 					SNUtil.writeToChat("Skipped from "+lastNum+" to "+num);
 					kill = true;
