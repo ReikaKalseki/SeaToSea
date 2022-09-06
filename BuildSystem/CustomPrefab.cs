@@ -44,6 +44,7 @@ namespace ReikaKalseki.SeaToSea
 			public bool isFragment {get; private set;}
 			public bool isDatabox {get; private set;}
 			public bool isPDA {get; private set;}
+			public bool isO2Pipe {get; private set;}
 			
 			public ModifiedObjectPrefab customPrefab {get; private set;}
 			
@@ -125,6 +126,12 @@ namespace ReikaKalseki.SeaToSea
 				}
 				else if (prefabName.StartsWith("base_", StringComparison.InvariantCultureIgnoreCase)) {
 					isBasePiece = true;
+				}
+				else if (prefabName == "o2pipe") {
+					isO2Pipe = true;
+					prefabName = "08078333-1a00-42f8-8492-e2640c17a961";
+					manipulations.Add(new PipeReconnection(e.getVector("connection").Value));
+					SNUtil.log("Redirected customprefab to pipe "+prefabName);
 				}
 				else if (prefabName == "crate") {
 					isCrate = true;

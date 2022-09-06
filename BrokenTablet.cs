@@ -41,6 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void register() {
 			Patch();
 			GameObject tabPfb = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
+			//tabPfb.SetActive(false);
 	    	VFXFabricating fab = ObjectUtil.getChildObject(tabPfb, "Model").EnsureComponent<VFXFabricating>();
 	    	fab.localMaxY = 0.1F;
 	    	fab.localMinY = -0.1F;
@@ -60,6 +61,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public override GameObject GetGameObject() {
 			GameObject tabRef = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tablet));
 			GameObject world = ObjectUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", true, false);
+			tabRef.SetActive(false);
 			if (world != null) {
 				world.SetActive(false);
 				world.EnsureComponent<TechTag>().type = TechType;

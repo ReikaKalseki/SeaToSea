@@ -30,9 +30,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
 	    private static readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
-	    	new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
+	    	new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
 	    	//new Vector3(66, -100, -608), big obvious but empty one
-	    	new Vector3(-621, -130+20, -190),//new Vector3(-672, -100, -176),
+	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
 	    };
 	    
@@ -129,15 +129,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    		if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && Player.main.IsSwimming()) {
-		    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40)) {
+	    			Vector3 pos = ep.transform.position;
+		    		if (MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), pos, 60, 40)) {
 		    			PDAMessages.trigger(PDAMessages.Messages.KelpCavePrompt);
 		    		}
-	    			if (Vector3.Distance(pod12Location, ep.transform.position) <= 75) {
+	    			if (Vector3.Distance(pod12Location, pos) <= 75) {
 		    			PDAMessages.trigger(PDAMessages.Messages.KooshCavePrompt);
 		    		}
 	    			if (!PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt)) {
 		    			foreach (Vector3 vec in seacrownCaveEntrances) {
-				    		if (MathUtil.isPointInCylinder(vec, ep.transform.position, 60, 80)) {
+				    		if (pos.y <= vec.y && MathUtil.isPointInCylinder(vec, pos, 30, 10)) {
 				    			PDAMessages.trigger(PDAMessages.Messages.RedGrassCavePrompt);
 				    		}
 			    		}

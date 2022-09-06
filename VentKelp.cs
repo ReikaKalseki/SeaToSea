@@ -181,20 +181,14 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Color activeColor = new Color(0.7F, 0.2F, 1, 1);
 		
 		private Renderer[] renderers;
+		private bool redoRenderers;
+		private float creationTime = 999999;
 		
 		void Start() {
 			SeaToSeaMod.kelp.prepareGameObject(gameObject, null);
-			if (renderers == null || renderers.Length == 0)
-				renderers = gameObject.GetComponentsInChildren<Renderer>();
-			if (gameObject.GetComponent<GrownPlant>() != null) {
+			creationTime = DayNightCycle.main.timePassedAsFloat;
+			if (gameObject.GetComponent<GrownPlant>()) {
     			gameObject.SetActive(true);
-    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
-    			foreach (Renderer r in renderers) {
-					r.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
-					r.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
-					r.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
-					r.materials[1].SetFloat("_WaveUpMin", 0F);
-    			}
     		}
     		else {
     			gameObject.transform.localScale = new Vector3(12, 12, 12);
@@ -203,13 +197,29 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
-			if (transform.position.y >= -400)
-				UnityEngine.Object.DestroyImmediate(this);
+			bool isNew = DayNightCycle.main.timePassedAsFloat-creationTime <= 0.25F;
+			if (renderers == null || renderers.Length == 0 || isNew || redoRenderers)
+				renderers = gameObject.GetComponentsInChildren<Renderer>();
+			if (gameObject.GetComponent<GrownPlant>()) {
+    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
+    			if (isNew) {
+	    			foreach (Renderer r in renderers) {
+						r.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
+						r.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
+						r.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
+						r.materials[1].SetFloat("_WaveUpMin", 0F);
+	    			}
+    			}
+			}
+			else if (transform.position.y >= -400) {
+				UnityEngine.Object.DestroyImmediate(gameObject);
+				return;
+			}
 			float f = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
 			bool kill = false;
-			int lastNum = -1;
+			List<int> presenceSet = new List<int>();
 			foreach (Renderer r in renderers) {
-				if (!r) {
+				if (!r || !r.gameObject) {
 					kill = true;
 					continue;
 				}
@@ -217,22 +227,32 @@ namespace ReikaKalseki.SeaToSea {
 				foreach (Material m in r.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f*1.5F-0.5F));
 				}
-				if (r.gameObject.transform.position.y >= -1)
-					UnityEngine.Object.DestroyImmediate(r.gameObject);
 				LiveMixin lv = r.gameObject.GetComponent<LiveMixin>();
 				if (lv && lv.health <= 0) {
 					kill = true;
 				}
-				int num = int.Parse(r.gameObject.name.Substring(r.gameObject.name.Length-1));
-				if (num-lastNum != 1) {
-					SNUtil.writeToChat("Skipped from "+lastNum+" to "+num);
+				GameObject go = r.transform.parent.gameObject;
+				if (go.transform.position.y >= -3) {
+					UnityEngine.Object.DestroyImmediate(go);
+					redoRenderers = true;
+					continue;
+				}
+				string n = go.name;
+				if (!string.IsNullOrEmpty(n) && n.Contains("leaf_aux")) {
+					int num = int.Parse(n.Substring(n.Length-1));
+					presenceSet.Add(num);
+				}
+			}
+			presenceSet.Sort();
+			int last = -1;
+			foreach (int val in presenceSet) {
+				if (val-last > 1) {
 					kill = true;
 				}
-				lastNum = num;
+				last = val;
 			}
-			if (kill) {
+			if (kill && !isNew) {
 				UnityEngine.Object.DestroyImmediate(gameObject);
-				SNUtil.writeToChat("Vent kelp segment destroyed");
 			}
 		}
 		
