@@ -15,17 +15,27 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<VanillaFlora> {
 		
+		public static float minTemperature = 25;
+		public static float idealTemperature = 60;
+		public static float maxTemperature = 150;
+		
 		internal static readonly Simplex3DGenerator noiseField = (Simplex3DGenerator)new Simplex3DGenerator(DateTime.Now.Ticks).setFrequency(0.1);
 		internal static readonly SimplexNoiseGenerator heightNoiseField = (SimplexNoiseGenerator)new SimplexNoiseGenerator(873428712).setFrequency(1.0);
 		
 		private static readonly string CHILD_NAME = "column_plant_";
 		private static readonly string CHILD_NAME_2 = "leaf_aux_plant_";
 		
+		public static readonly float GROWTH_TIME = 1800;
+		
 		private static bool leavesOnlyRendering;
 		
 		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "afba45cf-00f9-4d80-a203-429d6ce7ff62", "Samples") {
 			glowIntensity = 0.8F;
 			finalCutBonus = 2;
+		}
+		
+		internal static double getGrowthSpeed(float temp) {
+			return temp <= idealTemperature ? MathUtil.linterpolate(temp, minTemperature, idealTemperature, 0, 1, true) : MathUtil.linterpolate(temp, idealTemperature, maxTemperature, 1, 0, true);
 		}
 		
 		public override Vector2int SizeInInventory {
@@ -131,13 +141,40 @@ namespace ReikaKalseki.SeaToSea {
 		public Dictionary<int,string> getTextureLayers() {
 			return leavesOnlyRendering ? new Dictionary<int, string>(){{0, ""}, {1, "Leaves"}} : new Dictionary<int, string>(){{0, ""}, {1, ""}};
 		}
-		
+		/*
 		public override float getGrowthTime() {
-			return 1800;
+			return GROWTH_TIME;
+		}*/
+		/*
+		public override void prepareGrowingPlant(GrowingPlant g) {
+			g.gameObject.EnsureComponent<GrowingGlowKelp>();
+		}*/
+		
+	}
+	/*
+	class GrowingGlowKelp : MonoBehaviour {
+		
+		private GrowingPlant plant;
+		
+		void Update() {
+			if (!plant)
+				plant = gameObject.GetComponent<GrowingPlant>();
+			Planter p = gameObject.GetComponentInParent<Planter>();
+			Vector3 pos = p.gameObject.transform.position;
+			float temp = WaterTemperatureSimulation.main.GetTemperature(pos); //this method is patched to have the hooks for hotter ILZ and so on 
+			float spd = (float)VentKelp.getGrowthSpeed(temp);
+			//SNUtil.writeToChat(temp+"C @ "+pos+" > "+spd);
+			if (spd <= 0) {
+				plant.growthDuration = 99999;
+				plant.timeStartGrowth = DayNightCycle.main.timePassedAsFloat;
+			}
+			else {
+				plant.growthDuration = VentKelp.GROWTH_TIME/spd;
+			}
 		}
 		
 	}
-	
+	*/
 	class GlowKelpTag : MonoBehaviour {
 		
 		internal static readonly Color idleColor = new Color(0.1F, 0, 0.5F, 1);
@@ -152,6 +189,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (gameObject.GetComponent<GrownPlant>() != null) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
+    			foreach (Renderer r in renderers) {
+					r.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
+					r.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
+					r.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
+					r.materials[1].SetFloat("_WaveUpMin", 0F);
+    			}
     		}
     		else {
     			gameObject.transform.localScale = new Vector3(12, 12, 12);
@@ -163,11 +206,33 @@ namespace ReikaKalseki.SeaToSea {
 			if (transform.position.y >= -400)
 				UnityEngine.Object.DestroyImmediate(this);
 			float f = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
+			bool kill = false;
+			int lastNum = -1;
 			foreach (Renderer r in renderers) {
+				if (!r) {
+					kill = true;
+					continue;
+				}
 				//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
 				foreach (Material m in r.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f*1.5F-0.5F));
 				}
+				if (r.gameObject.transform.position.y >= -1)
+					UnityEngine.Object.DestroyImmediate(r.gameObject);
+				LiveMixin lv = r.gameObject.GetComponent<LiveMixin>();
+				if (lv && lv.health <= 0) {
+					kill = true;
+				}
+				int num = int.Parse(r.gameObject.name.Substring(r.gameObject.name.Length-2));
+				if (num-lastNum != 1) {
+					SNUtil.writeToChat("Skipped from "+lastNum+" to "+num);
+					kill = true;
+				}
+				lastNum = num;
+			}
+			if (kill) {
+				UnityEngine.Object.DestroyImmediate(gameObject);
+				SNUtil.writeToChat("Vent kelp segment destroyed");
 			}
 		}
 		

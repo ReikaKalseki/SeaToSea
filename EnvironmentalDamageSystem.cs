@@ -59,7 +59,7 @@ namespace ReikaKalseki.SeaToSea {
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 		   	lrLeakage["LostRiver_BonesField"] = 1;
 		   	lrLeakage["LostRiver_Junction"] = 1;
-		   	lrLeakage["LostRiver_TreeCove"] = 1;
+		   	lrLeakage["LostRiver_TreeCove"] = 0.9F;
 		   	lrLeakage["LostRiver_Corridor"] = 1;
 		   	lrLeakage["LostRiver_GhostTree_Lower"] = 1;
 		   	lrLeakage["LostRiver_GhostTree"] = 1;
@@ -80,7 +80,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
-			bool diveSuit = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedGloves) != 0;
+			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
 			if (aurora && !diveSuit) {
 	    		PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
 			}
@@ -93,13 +93,16 @@ namespace ReikaKalseki.SeaToSea {
 			float fw = 0;
 			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
-	    		f0 = diveSuit ? 2.5F : 0.4F;
+	    		f0 = !diveSuit ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
 	    		if (te != null) {
 		    		f = te.damageScalar;
 		    		temperature = te.temperature;
 		    		fw = te.waterScalar;
 	    		}
+	    		float baseVal = 49;
+	    		float add = dmg.minDamageTemperature-baseVal; //how much above default it is
+	    		dmg.minDamageTemperature = baseVal+add*2;
 			}
 			if (temperature >= dmg.minDamageTemperature) {
 				float num = temperature / dmg.minDamageTemperature;
@@ -107,10 +110,14 @@ namespace ReikaKalseki.SeaToSea {
 				float amt = num*f*f0/ENVIRO_RATE_SCALAR;
 				if (aurora && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.gameObject.transform.position) <= 3)
 					amt *= 2;
-				dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
-				if (dmg.player && !diveSuit) {
-					Survival s = Player.main.GetComponent<Survival>();
-					s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
+				if (aurora && diveSuit)
+					amt = 0;
+				if (amt > 0) {
+					dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
+					if (dmg.player && !diveSuit) {
+						Survival s = Player.main.GetComponent<Survival>();
+						s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
+					}
 				}
 			}
 	    	if (dmg.player) {
@@ -130,20 +137,29 @@ namespace ReikaKalseki.SeaToSea {
 		    		}
 		    	}
 	    	}
-			float leak = getLRPowerLeakage(biome);
+			float leak = getLRPowerLeakage(biome)*0.9F;
 		   	if (leak > 0) {
 		   		bool used = false;
 	    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
 		    	if (v != null && !v.docked) {
+	    			if (v is SeaMoth) {
+			    		foreach (int idx in v.slotIndexes.Values) {
+			    			InventoryItem ii = v.GetSlotItem(idx);
+			    			if (ii != null && ii.item.GetTechType() == SeaToSeaMod.powerSeal.TechType) {
+			    				leak *= 0.2F;
+			    				break;
+			    			}
+			    		}
+	    			}
 			    	//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-			    	if (v.playerSits)
-			    		leak *= 2;
-			    	AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
-			    	if (acid != null && acid.numTriggers > 0)
-			    		leak *= 8;
-			    	int trash;
-			    	v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
-			    	used = true;
+				    if (v.playerSits)
+				    	leak *= 2;
+				    AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
+				    if (acid != null && acid.numTriggers > 0)
+				    	leak *= 8;
+				    int trash;
+				    v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
+				    used = true;
 			   	}
 	    		foreach (InventoryItem item in Inventory.main.container) {
 	    			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
@@ -156,8 +172,12 @@ namespace ReikaKalseki.SeaToSea {
 	    				}
 	    			}
 	    		}
-	    		if (used)
+	    		if (used) {
 		   			PDAManager.getPage("lostrivershortcircuit").unlock();
+			   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
+			        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
+			    	}
+	    		}
 			}
 	 	}
     	

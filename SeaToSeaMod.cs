@@ -10,6 +10,7 @@ using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea
 {
@@ -27,6 +28,7 @@ namespace ReikaKalseki.SeaToSea
     public static SeamothVoidStealthModule voidStealth;
     public static CyclopsHeatModule cyclopsHeat;
     public static SeamothDepthModule depth1300;
+    public static SeamothPowerSealModule powerSeal;
     public static CustomEquipable sealSuit;
     public static CustomEquipable rebreatherV2;
     public static CustomBattery t2Battery;
@@ -293,10 +295,10 @@ namespace ReikaKalseki.SeaToSea
     	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 1.5F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 0.75F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.25F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 2F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 0.8F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 0.67F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 1.2F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 0.5F);
     	
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 0.2F, 1);
@@ -414,6 +416,7 @@ namespace ReikaKalseki.SeaToSea
        	item.Patch();
        	
        	createCompressedIngot(TechType.Quartz, 5, "Boule");
+       	createCompressedIngot(TechType.AluminumOxide, 8, "Boule");
        	createCompressedIngot(TechType.Copper);
        	createCompressedIngot(TechType.Silver);
        	createCompressedIngot(TechType.Gold);
@@ -421,7 +424,8 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Lithium, 10, "Plate");
        	createCompressedIngot(TechType.Magnetite, 6, "Bar");
        	createCompressedIngot(TechType.Nickel);
-       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM));
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 8);
        	ingots[TechType.Titanium] = new TechType[]{TechType.TitaniumIngot, TechType.Titanium};
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
@@ -456,7 +460,8 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem armor = CraftingItems.getItem(CraftingItems.Items.HullPlating);
         armor.craftingTime = 9;
-        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 5).addIngredient(comb, 1).addIngredient(TechType.Nickel, 2);
+        armor.numberCrafted = 2;
+        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 5);
         
         BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
         acid.craftingTime = 0.5F;
@@ -497,9 +502,13 @@ namespace ReikaKalseki.SeaToSea
         voidStealth.Patch();
         
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
-        depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 4).addIngredient(CraftingItems.getItem(CraftingItems.Items.HullPlating), 3);
-        depth1300.dependency = TechType.Kyanite;
+        depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 4).addIngredient(armor, 2);
+        depth1300.preventNaturalUnlock();
         depth1300.Patch();
+        
+        powerSeal = new SeamothPowerSealModule();
+        powerSeal.addIngredient(TechType.Aerogel, 1).addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
+        powerSeal.Patch();
         
         cyclopsHeat = new CyclopsHeatModule();
         cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
@@ -616,12 +625,12 @@ namespace ReikaKalseki.SeaToSea
         	RecipeUtil.addIngredient(kvp.Key, motor.TechType, Math.Max(kvp.Value, amt));
         }
         
-        RecipeUtil.addIngredient(TechType.Cyclops, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 3);
+        RecipeUtil.addIngredient(TechType.Cyclops, armor.TechType, 4);
         RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         
         RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
         RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
-        RecipeUtil.addIngredient(TechType.ExoHullModule1, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        RecipeUtil.addIngredient(TechType.ExoHullModule1, armor.TechType, 2);
         RecipeUtil.addIngredient(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
         RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
@@ -632,7 +641,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
-        //RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 2);
+        //RecipeUtil.addIngredient(TechType.VehicleHullModule3, armor.TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.PlasteelIngot);
@@ -715,15 +724,24 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
+    private static void createCompressedIngot(DIPrefab<VanillaResources> item, int amt = 10, string name = "Ingot") {
+    	string n = ((ModPrefab)item).ClassID;
+    	createCompressedIngot(((ModPrefab)item).TechType, n.Substring(0, 1)+n.Substring(1).ToLowerInvariant(), amt, name, item.getIcon());
+    }
+    
     private static void createCompressedIngot(TechType item, int amt = 10, string name = "Ingot") {
-    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, item+" "+name, "An ingot of compressed "+item, "41919ae1-1471-4841-a524-705feb9c2d20");
+    	createCompressedIngot(item, ""+item, amt, name);
+    }
+    
+    private static void createCompressedIngot(TechType item, string refName, int amt = 10, string name = "Ingot", Atlas.Sprite spr = null) {
+    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, refName+" "+name, "An ingot of compressed "+refName.ToLowerInvariant(), "41919ae1-1471-4841-a524-705feb9c2d20");
     	ingot.addIngredient(item, amt);
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
-    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+item).ToLowerInvariant());
+    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+refName).ToLowerInvariant());
     	ingot.Patch();
-    	SNUtil.log("Added compressed ingot for "+item+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
+    	SNUtil.log("Added compressed ingot for "+refName+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
     	
        	TechData rec = new TechData();
       	rec.Ingredients.Add(new Ingredient(ingot.TechType, 1));
@@ -734,6 +752,8 @@ namespace ReikaKalseki.SeaToSea
        	unpack.group = TechGroup.Resources;
        	unpack.unlock = TechType.Unobtanium;
        	unpack.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
+       	if (spr != null)
+       		unpack.sprite = spr;
        	unpack.setRecipe(amt);
        	unpack.Patch();
        	

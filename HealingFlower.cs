@@ -36,10 +36,10 @@ namespace ReikaKalseki.SeaToSea {
 		public override Plantable.PlantSize getSize() {
 			return Plantable.PlantSize.Small;
 		}
-		
+		/*
 		public override float getGrowthTime() {
 			return 6000; //5x
-		}
+		}*/
 		
 	}
 	

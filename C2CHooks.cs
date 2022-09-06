@@ -578,7 +578,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static float getWaterTemperature(float ret, WaterTemperatureSimulation sim, Vector3 pos) {
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(EnvironmentalDamageSystem.instance.getBiome(pos));
 	    	if (poison > 0)
-	    		ret = Mathf.Max(4, ret-poison*1.75F);
+	    		ret = Mathf.Max(4, ret-poison*1.75F); //make LR cold, down to 4C (max water density point)
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
 	    

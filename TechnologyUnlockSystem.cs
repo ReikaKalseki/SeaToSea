@@ -51,6 +51,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType);
 	    	
 	    	addDirectUnlock(SeaToSeaMod.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
+	    	
+	    	//addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, SeaToSeaMod.powerSeal.TechType);
+	    	//addDirectUnlock(TechType.PrecursorIonPowerCell, SeaToSeaMod.powerSeal.TechType);
+	    	
+	    	//addDirectUnlock(PDAManager.getPage("lostrivershortcircuit"), SeaToSeaMod.powerSeal.TechType);
 		}
 	    
 	    public void addDirectUnlock(TechType from, TechType to) {

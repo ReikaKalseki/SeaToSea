@@ -362,6 +362,17 @@
 			
 		</pda>
 	</SeamothVoidStealth>
+	<SeamothPowerSeal>
+		<name>
+			Electrical Sealant Module
+		</name>
+		<desc>
+			Applies an insulating coating to the seamoth exterior, significantly reducing the power loss when in conductive environments.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeamothPowerSeal>
 	<t2battery>
 		<name>
 			Advanced Battery
