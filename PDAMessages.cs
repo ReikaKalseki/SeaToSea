@@ -31,11 +31,12 @@ namespace ReikaKalseki.SeaToSea
 			[Message("aurorafire")]AuroraFireWarn,
 			[Message("auroracut")]AuroraSalvage,
 			[Message("kelpcavedrone")]KelpCavePrompt,
-			[Message("kelpcavedronelate")]KelpCavePromptLate,
+			//[Message("kelpcavedronelate")]KelpCavePromptLate,
 			[Message("redgrasscave")]RedGrassCavePrompt,
 			[Message("kooshcave")]KooshCavePrompt,
 			[Message("treaderpoo")]TreaderPooPrompt,
 			[Message("dunearch")]DuneArchPrompt,
+			[Message("followradio")]FollowRadioPrompt,
 		}
 		
 		private static Message getAttr(Messages key) {

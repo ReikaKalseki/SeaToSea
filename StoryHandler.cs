@@ -48,18 +48,22 @@ namespace ReikaKalseki.SeaToSea
 			triggers[new TechTrigger(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType)] = ds;
 			triggers[new EncylopediaTrigger("SnakeMushroom")] = ds;
 			
-			PDAPrompt kelp = addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) && !PDAMessages.isTriggered(PDAMessages.Messages.KelpCavePromptLate));
 			addPDAPrompt(PDAMessages.Messages.KooshCavePrompt, ep => Vector3.Distance(pod12Location, ep.transform.position) <= 75);
 			addPDAPrompt(PDAMessages.Messages.RedGrassCavePrompt, isNearSeacrownCave);
-			
+			PDAPrompt kelp = addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessages.isTriggered(PDAMessages.Messages.FollowRadioPrompt) && Vector3.Distance(pod3Location, ep.transform.position) <= 60));
+			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.BaseMoonpool));
-			
+			*/
 			triggers[new PDAPromptCondition(new ProgressionTrigger(doDunesCheck))] = new DunesPrompt();
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 		}
+	    
+	    private bool hasMissedRadioSignals(Player ep) {
+	    	return !(PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KelpCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KooshCavePrompt));
+	    }
 	    
 	    private bool isNearSeacrownCave(Player ep) {
 	    	Vector3 pos = ep.transform.position;

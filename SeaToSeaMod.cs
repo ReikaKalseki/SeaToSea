@@ -41,7 +41,10 @@ namespace ReikaKalseki.SeaToSea
     public static HealingFlower healFlower;
     
     public static Bioprocessor processor;
-    public static RebreatherRecharger rebreatherCharger;    
+    public static RebreatherRecharger rebreatherCharger;
+    public static BaseSonarPinger sonarBlock;
+    public static BaseCreatureRepellent repellentBlock;
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -161,10 +164,20 @@ namespace ReikaKalseki.SeaToSea
         SNUtil.log("Registered custom machine "+processor);
         processor.addFragments(4, 5, bioprocFragments);
         Bioprocessor.addRecipes();
+        
         rebreatherCharger = new RebreatherRecharger();
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
+        
+        sonarBlock = new BaseSonarPinger();
+        sonarBlock.Patch();
+        SNUtil.log("Registered custom machine "+sonarBlock);
+        //sonarBlock.addFragments(3, 5F, sonarBlockFragments);
+        
+        repellentBlock = new BaseCreatureRepellent();
+        repellentBlock.Patch();
+        SNUtil.log("Registered custom machine "+repellentBlock);
         
         addPDAEntries();
 	    
@@ -300,14 +313,17 @@ namespace ReikaKalseki.SeaToSea
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 1.2F);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 0.5F);
     	
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 0.4F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_DIAMOND.prefab, BiomeType.UnderwaterIslands_Geyser, 0.25F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LITHIUM.prefab, BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_Geyser, 2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.DIAMOND.prefab, BiomeType.UnderwaterIslands_Geyser, 1F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_Geyser, 2.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.DIAMOND.prefab, BiomeType.UnderwaterIslands_Geyser, 1.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 2.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LITHIUM.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 1F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_QUARTZ.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.33F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.15F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_DIAMOND.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.2F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.UnderwaterIslands_Geyser, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.UnderwaterIslands_Geyser, 0.15F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.25F, 1);
@@ -530,16 +546,29 @@ namespace ReikaKalseki.SeaToSea
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         sealSuit = new SealedSuit();
-        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
+        sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
         sealSuit.Patch();
 		
 		t2Battery = new CustomBattery(itemLocale.getEntry("t2battery"), 750);
 		t2Battery.unlockRequirement = TechType.Unobtanium;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
 		t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		t2Battery.Patch();
+		/*
+		rec = RecipeUtil.createUncrafting(t2Battery.TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
+      	rec.Ingredients.Add(new Ingredient(t2Battery.TechType, 1));
+      	item = new DuplicateRecipeDelegateWithRecipe(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), rec);
+       	item.craftTime = 6;
+       	item.craftingType = CraftTree.Type.Fabricator;
+       	item.category = TechCategory.Electronics;
+       	item.group = TechGroup.Resources;
+       	item.craftingMenuTree = new string[]{"Resources", "Electronics"};
+       	item.Patch();*/
+		UncraftingRecipeItem t2un = new UncraftingRecipeItem(t2Battery);
+       	t2un.craftTime = 6;
+		t2un.Patch();
 		
         rebreatherV2 = new RebreatherV2();
-        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric), 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
+        rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
         
 		breathingFluid = new BreathingFluid();
@@ -581,7 +610,22 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
         
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, t2Battery.TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.Battery, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        
+        RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
+        RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), 1);
+        RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), 1);
+        RecipeUtil.addIngredient(TechType.RocketStage2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 12);
+        RecipeUtil.addIngredient(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 3);
+        RecipeUtil.addIngredient(TechType.RocketStage2, sealedFabric.TechType, 4);
+        RecipeUtil.modifyIngredients(TechType.RocketStage2, i => {if (i.techType == TechType.Kyanite || i.techType == TechType.Sulphur) i.amount *= 2; return false;});
+        RecipeUtil.addIngredient(TechType.RocketStage3, t2Battery.TechType, 1);
+        RecipeUtil.addIngredient(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
+        RecipeUtil.addIngredient(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 2);
+        RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 4; return i.techType == TechType.ComputerChip;});
         
         RecipeUtil.addIngredient(TechType.HighCapacityTank, TechType.Aerogel, 1);
         

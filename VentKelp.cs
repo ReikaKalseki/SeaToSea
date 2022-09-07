@@ -251,8 +251,16 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				last = val;
 			}
-			if (kill && !isNew) {
-				UnityEngine.Object.DestroyImmediate(gameObject);
+			if (kill && !isNew) {/*
+				Planter p = gameObject.GetComponentInParent<Planter>();
+				GrownPlant g = gameObject.GetComponentInParent<GrownPlant>();
+				if (p && g) {
+					p.RemoveItem(p.GetSlotID(g.seed));
+					p.storageContainer.container.DestroyItem(SeaToSeaMod.kelp.seed.TechType);
+					//p.RemoveItem(g.seed);
+				}
+				UnityEngine.Object.DestroyImmediate(gameObject);*/
+				gameObject.GetComponentInParent<LiveMixin>().TakeDamage(99999F);
 			}
 		}
 		

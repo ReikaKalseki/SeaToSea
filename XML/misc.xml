@@ -59,7 +59,7 @@
 		
 	</name>
 	<desc>
-		Detecting Alterra fabricator vehicle signatures in a nearby cave system, depth 80 meters.
+		Detecting Alterra fabricator vehicle signatures in a nearby cave system, depth 80 meters. Caution is strongly advised around local volcanic activity.
 	</desc>
 	<pda>
 		Sounds/kelpcaveprompt.ogg
@@ -109,4 +109,15 @@
 		Sounds/dunearchprompt.ogg
 	</pda>
   </dunearch>
+  <followradio>
+	<name>
+		
+	</name>
+	<desc>
+		Exploration of radio transmissions from the Aurora's survivors may provide technologies and help ensure survival.
+	</desc>
+	<pda>
+		Sounds/radioprompt.ogg
+	</pda>
+  </followradio>
 </Root>

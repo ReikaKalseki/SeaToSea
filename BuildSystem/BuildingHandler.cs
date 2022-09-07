@@ -515,6 +515,33 @@ namespace ReikaKalseki.SeaToSea
 					return null;
 				}
 			}
+			if (id.StartsWith("fragment_", StringComparison.InvariantCultureIgnoreCase)) {
+				try {
+					int idx1 = id.IndexOf('_');
+					int idx2 = id.IndexOf('_', idx1+1);
+					int index = int.Parse(id.Substring(idx1+1, idx2-idx1-1));
+					TechType tt = SNUtil.getTechType(id.Substring(idx2+1));
+					if (tt == TechType.None)
+						throw new Exception("No techtype found");
+					return GenUtil.getFragment(tt, index).ClassID;
+				}
+				catch (Exception ex) {
+					SNUtil.log("Unable to fetch tech fragment '"+id+"': "+ex);
+					return null;
+				}
+			}
+			if (id.StartsWith("pda_", StringComparison.InvariantCultureIgnoreCase)) {
+				try {
+					PDAManager.PDAPage page = PDAManager.getPage(id.Substring(4));
+					if (page == null)
+						throw new Exception("No page found");
+					return page.getPDAClassID();
+				}
+				catch (Exception ex) {
+					SNUtil.log("Unable to fetch pda '"+id+"': "+ex);
+					return null;
+				}
+			}
 			//if (id.IndexOf('/') >= 0)
 			//    return PrefabData.getPrefabID(id);
 			//return PrefabData.getPrefabIDByShortName(id);

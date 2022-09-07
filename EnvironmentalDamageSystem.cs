@@ -101,8 +101,10 @@ namespace ReikaKalseki.SeaToSea {
 		    		fw = te.waterScalar;
 	    		}
 	    		float baseVal = 49;
-	    		float add = dmg.minDamageTemperature-baseVal; //how much above default it is
-	    		dmg.minDamageTemperature = baseVal+add*2;
+	    		if (dmg.minDamageTemperature > baseVal && dmg.minDamageTemperature <= 75) { //stop repeating forever
+		    		float add = dmg.minDamageTemperature-baseVal; //how much above default it is
+		    		dmg.minDamageTemperature = baseVal+add*2;
+	    		}
 			}
 			if (temperature >= dmg.minDamageTemperature) {
 				float num = temperature / dmg.minDamageTemperature;
@@ -112,6 +114,7 @@ namespace ReikaKalseki.SeaToSea {
 					amt *= 2;
 				if (aurora && diveSuit)
 					amt = 0;
+				//SNUtil.writeToChat(biome+" > "+temperature+" / "+dmg.minDamageTemperature+" > "+amt);
 				if (amt > 0) {
 					dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
 					if (dmg.player && !diveSuit) {
@@ -142,7 +145,7 @@ namespace ReikaKalseki.SeaToSea {
 		   		bool used = false;
 	    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
 		    	if (v != null && !v.docked) {
-	    			if (v is SeaMoth) {
+	    			if (v is SeaMoth || true) {
 			    		foreach (int idx in v.slotIndexes.Values) {
 			    			InventoryItem ii = v.GetSlotItem(idx);
 			    			if (ii != null && ii.item.GetTechType() == SeaToSeaMod.powerSeal.TechType) {

@@ -22,10 +22,9 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
-			PDANotification pda = go.EnsureComponent<PDANotification>();
-			pda.enabled = true;
-			pda.text = "I am some PDA text";
-			pda.sound = SNUtil.getSound("event:/player/story/Goal_BiomeSparseReef");
+			Battery b = go.EnsureComponent<Battery>();
+			b.charge = 0;
+			b._capacity = LiquidBreathingSystem.ITEM_VALUE;
 		}
 		
 		public override sealed EquipmentType EquipmentType {

@@ -60,6 +60,10 @@ namespace ReikaKalseki.SeaToSea
 			return mappings[key];
 		}
 		
+		public static TechType getIngot(Materials key) {
+			return SeaToSeaMod.getIngot(getItem(key).TechType)[0];
+		}
+		
 		public enum Materials {
 			[Material(typeof(Azurite), 			"URANIUM",	4F)]		VENT_CRYSTAL, //forms when superheated water is injected into cold water
 			[Material(typeof(BasicCustomOre),	"GOLD")]				PLATINUM,
