@@ -514,8 +514,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	UnityEngine.Object.Destroy(owner);
 	    }
 	    
+	    private static float lastSulfurDrillTime = -1;
+	    
 	    public static void onResourceSpawn(ResourceTracker p) {
-	    	if (p.pickupable != null && p.pickupable.GetTechType() == TechType.Sulphur) {
+	    	PrefabIdentifier pi = p.gameObject.GetComponent<PrefabIdentifier>();
+	    	if (p.pickupable != null && p.pickupable.GetTechType() == TechType.Sulphur && !(Player.main.GetVehicle() is Exosuit && DayNightCycle.main.timePassedAsFloat-lastSulfurDrillTime > 1.5F)) {
 		    	GameObject go = p.gameObject;
 		    	WeightedRandom<TechType> wr = new WeightedRandom<TechType>();
 		    	wr.addEntry(TechType.Lithium, 75);
@@ -527,10 +530,18 @@ namespace ReikaKalseki.SeaToSea {
 		    		wr.addEntry(TechType.Magnetite, 30);
 		    	}
 		    	if (go.transform.position.y < -1200)
-		    		wr.addEntry(TechType.Kyanite, 500);
+		    		wr.addEntry(TechType.Kyanite, 200);
 		    	TechType tech = wr.getRandomEntry();
-		    	//SNUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
+		    	SNUtil.writeToChat("Converted sulfur @ "+go.transform.position+" to "+tech);
 		    	ObjectUtil.convertResourceChunk(go, tech);
+	    	}
+	    	else if (pi && pi.ClassId == VanillaResources.LARGE_SULFUR.prefab) {
+	    		p.overrideTechType = TechType.Sulphur;
+	    		p.techType = TechType.Sulphur;
+	    		Drillable d = p.gameObject.GetComponent<Drillable>();
+	    		d.onDrilled += (dr) => {
+	    			lastSulfurDrillTime = DayNightCycle.main.timePassedAsFloat;
+	    		};
 	    	}
 	    }
 	    

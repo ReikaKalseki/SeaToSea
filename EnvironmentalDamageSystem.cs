@@ -73,6 +73,12 @@ namespace ReikaKalseki.SeaToSea {
 		    lrPoisonDamage["LostRiver_Junction"] = 15;
 		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
 		}
+    	
+    	private bool isPlayerInOcean() {
+    		Player ep = Player.main;
+    		string biome = getBiome(ep.gameObject);
+    		return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming() && !ep.currentWaterPark && !biome.ToLowerInvariant().Contains("prison") && !biome.ToLowerInvariant().Contains("precursor") && !Creature.prisonAquriumBounds.Contains(ep.transform.position);
+    	}
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
     		//depthWarningFX1 = Camera.main.gameObject.EnsureComponent<DepthRippleFX>();
@@ -84,14 +90,14 @@ namespace ReikaKalseki.SeaToSea {
 			if (aurora && !diveSuit) {
 	    		PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
 			}
-	   		if (dmg.player && (dmg.player.IsInsideWalkable() || !dmg.player.IsSwimming()) && !aurora)
+			if (dmg.player && !isPlayerInOcean() && !aurora)
 	   			return;
 	   		//SBUtil.writeToChat("not skipped");
 			float temperature = dmg.GetTemperature();
 			float f = 1;
 			float f0 = 1;
 			float fw = 0;
-			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
+			SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
 	    		f0 = !diveSuit ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
@@ -327,7 +333,7 @@ namespace ReikaKalseki.SeaToSea {
 						num = 2;
 					}
 				}			
-				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 400 && !Player.main.currentWaterPark) {
+				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 400 && isPlayerInOcean()) {
 					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-400)/10F);
 				}
 			}
@@ -338,7 +344,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
 	   		
-	   		if (!Player.main.IsUnderwater()/* || Player.main.liveMixin == null || !Player.main.liveMixin.enabled || Player.main.liveMixin.invincible*/) {
+	   		if (!isPlayerInOcean()/* || Player.main.liveMixin == null || !Player.main.liveMixin.enabled || Player.main.liveMixin.invincible*/) {
 				return;
 			}/*
 			float depth = Player.main.GetDepth();

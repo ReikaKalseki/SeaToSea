@@ -16,7 +16,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class BaseCreatureRepellent : CustomMachine<BaseCreatureRepellentLogic> {
 		
-		internal static readonly float POWER_COST = 2F; //per second
+		internal static readonly float POWER_COST = 0.25F; //per second
+		internal static readonly float POWER_COST_ACTIVE = 2.0F; //per second
 		internal static readonly float RANGE = 50F; //m
 		internal static readonly float RANGE_INNER = 20F; //m
 		
@@ -65,6 +66,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 	public class BaseCreatureRepellentLogic : CustomMachineLogic {
 		
+		private float cooldown;
+		
 		void Start() {
 			SNUtil.log("Reinitializing base sonar");
 			SeaToSeaMod.repellentBlock.initializeMachine(gameObject);
@@ -75,9 +78,16 @@ namespace ReikaKalseki.SeaToSea {
 			//	mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
 			
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
+			if (Vector3.Distance(Player.main.transform.position, transform.position) >= BaseCreatureRepellent.RANGE*4)
+				return;
+			if (cooldown > 0) {
+				cooldown -= seconds;
+				return;
+			}
 			if (seconds > 0 && consumePower(BaseCreatureRepellent.POWER_COST, seconds)) {
 				float r0 = BaseCreatureRepellent.RANGE*2;
 				float r = BaseCreatureRepellent.RANGE;
+				bool flag = false;
 				RaycastHit[] hit = Physics.SphereCastAll(gameObject.transform.position, r, new Vector3(1, 1, 1), r);
 				foreach (RaycastHit rh in hit) {
 					if (rh.transform != null && rh.transform.gameObject) {
@@ -97,12 +107,17 @@ namespace ReikaKalseki.SeaToSea {
 							c.flinch = 1;
 							c.Scared.Add(f*seconds);
 							c.Aggression.Add(-f*seconds*0.2F);
+							flag = true;
 							if (c.Scared.Value > 0.5F && dd < r*0.5F) {
 								Vector3 vec = transform.position+((c.transform.position-transform.position)*3);
 								c.GetComponent<SwimBehaviour>().SwimTo(vec, 20*f);
 							}
 						}
 					}
+				}
+				if (flag) {
+					if (!consumePower(BaseCreatureRepellent.POWER_COST_ACTIVE-BaseCreatureRepellent.POWER_COST, seconds))
+						cooldown = 5;
 				}
 			}
 		}	
