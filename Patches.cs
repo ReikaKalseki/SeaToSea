@@ -1216,6 +1216,8 @@ namespace ReikaKalseki.SeaToSea {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
 				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickO2Bar", false, typeof(uGUI_OxygenBar)));
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_S, 4);
+				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getO2RedPulseTime", false, typeof(float)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

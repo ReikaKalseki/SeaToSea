@@ -62,7 +62,9 @@ namespace ReikaKalseki.SeaToSea
 		}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
-	    	return !(PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KelpCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KooshCavePrompt));
+	    	bool late = KnownTech.knownTech.Contains(TechType.StasisRifle) || KnownTech.knownTech.Contains(TechType.BaseMoonpool) || KnownTech.knownTech.Contains(TechType.HighCapacityTank);
+	    	bool all = PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KelpCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KooshCavePrompt);
+	    	return late && !all;
 	    }
 	    
 	    private bool isNearSeacrownCave(Player ep) {

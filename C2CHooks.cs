@@ -151,6 +151,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	LiquidBreathingSystem.instance.updateOxygenGUI(gui);
 	    }
 	    
+	    public static float getO2RedPulseTime(float orig) {
+	    	return LiquidBreathingSystem.instance.isO2BarFlashingRed() ? 6 : orig;
+	    }
+	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
 	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.isLiquidBreathingRechargeable(p)) {

@@ -402,7 +402,7 @@
 		
 		This effect is most pronounced while inside the caustic brine, but sufficient ion diffusion occurs for leakage to still be significant while in clearer water.
 		
-		No known means is currently available to inhibit this phenomenon, though it is only of particular importance to vehicles as their power cells are the largest and densest electrical sources in present use.
+		A potential means to inhibit this phenomenon has been ascertained, but is as yet unavailable. Fortunately, this phenomenon is only of particular importance to vehicles as their power cells are the largest and densest electrical sources in present use.
 	</pda>
 	<category>
 		PlanetaryGeology
@@ -411,6 +411,28 @@
 		LostRiverImage
 	</header>
   </lostrivershortcircuit>
+  <deepairuse>
+	<name>
+		
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		PlanetaryGeology
+	</category>
+  </deepairuse>
+  <cyclopsheatdamage>
+	<name>
+		
+	</name>
+	<pda>
+		
+	</pda>
+	<category>
+		PlanetaryGeology
+	</category>
+  </cyclopsheatdamage>
   <drfwarperheat>
 	<name>
 		Heat Expulsion Technology

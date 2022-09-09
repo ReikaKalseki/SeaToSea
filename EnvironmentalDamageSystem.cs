@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
@@ -30,6 +31,7 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
     	private readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
     	
+    	public readonly static float highO2UsageStart = 400;
     	internal readonly static float depthFXRippleStart = 450;
     	public readonly static float depthDamageStart = 500;
     	public readonly static float depthDamageMax = 600;
@@ -39,6 +41,19 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
     	
     	private readonly Bounds prisonAquariumExpanded;
+		
+		internal readonly FMODAsset pdaBeep;
+		
+		internal GameObject lrPoisonHUDWarning;
+		internal GameObject lrLeakHUDWarning;
+		internal GameObject extremeHeatHUDWarning;
+		internal GameObject o2ConsumptionIncreasingHUDWarning;
+		internal GameObject o2ConsumptionMaxedOutHUDWarning;
+		
+		private readonly List<CustomHUDWarning> warnings = new List<CustomHUDWarning>();
+		
+		private float cyclopsHeatDamage;
+		private float playerHeatDamage;
     	
     	//private DepthRippleFX depthWarningFX1;
     	//private DepthDarkeningFX depthWarningFX2;
@@ -77,9 +92,11 @@ namespace ReikaKalseki.SeaToSea {
 		    
 		    prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents*2);
 		    prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
+		    
+			pdaBeep = SoundManager.registerSound("pda_beep", "Sounds/pdabeep.ogg", SoundSystem.voiceBus);
 		}
     	
-    	private bool isPlayerInOcean() {
+    	public bool isPlayerInOcean() {
     		Player ep = Player.main;
     		string biome = getBiome(ep.gameObject).ToLowerInvariant();
     		bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
@@ -135,6 +152,7 @@ namespace ReikaKalseki.SeaToSea {
 						Survival s = Player.main.GetComponent<Survival>();
 						s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
 					}
+		    		playerHeatDamage = DayNightCycle.main.timePassedAsFloat; //this also covers the seamoth
 				}
 			}
 	    	if (dmg.player) {
@@ -190,7 +208,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
 	    		}
 	    		if (used) {
-		   			PDAManager.getPage("lostrivershortcircuit").unlock();
+	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
+	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
 			   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
 			        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
 			    	}
@@ -233,7 +252,10 @@ namespace ReikaKalseki.SeaToSea {
 							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
 							fire.CreateFire(fire.roomFires[key]);
 						}
-	    			}
+		    			if (PDAManager.getPage("cyclopsheatdamage").unlock())
+		    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+		    				cyclopsHeatDamage = DayNightCycle.main.timePassedAsFloat;
+		    			}
 	    		}
 		    	float leak = getLRPowerLeakage(dmg.gameObject);
 		    	//SBUtil.writeToChat("leak "+leak);
@@ -245,6 +267,8 @@ namespace ReikaKalseki.SeaToSea {
 				    	leak *= 1.5F;
 				    float trash;
 				    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
+	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
+	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
 				}
 	    	}
     	}
@@ -312,7 +336,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (Inventory.Get().equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) > 0) {
 				return 3f;
 			}
-			if (Inventory.Get().equipment.GetCount(TechType.Rebreather) > 0 && ep.GetDepth() < 500) {
+			if (Inventory.Get().equipment.GetCount(TechType.Rebreather) > 0 && ep.GetDepth() < depthDamageStart) {
 				return 3f;
 			}
 			switch (ep.GetDepthClass()) {
@@ -341,8 +365,8 @@ namespace ReikaKalseki.SeaToSea {
 						num = 2;
 					}
 				}			
-				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= 400 && isPlayerInOcean()) {
-					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-400)/10F);
+				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= highO2UsageStart && isPlayerInOcean()) {
+					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-highO2UsageStart)/10F);
 				}
 			}
 			return breathingInterval * num;
@@ -351,6 +375,18 @@ namespace ReikaKalseki.SeaToSea {
 		public void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
+	   		
+	   		bool flagged = false;
+	   		for (int i = 0; i < warnings.Count; i++) {
+	   			CustomHUDWarning w = warnings[i];
+	   			if (!flagged && w.shouldShow()) {
+	   				w.setActive(true);
+	   				flagged = true;
+	   			}
+	   			else {
+	   				w.setActive(false);
+	   			}
+	   		}
 	   		
 	   		if (!isPlayerInOcean()/* || Player.main.liveMixin == null || !Player.main.liveMixin.enabled || Player.main.liveMixin.invincible*/) {
 				return;
@@ -367,13 +403,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {*/
 				foreach (EnviroAlert ee in warn.alerts) {
-	   				//SBUtil.writeToChat(ee+" : "+ee.isActive());
-	   				if (!ee.alertCooldown && ee.alert != null && ee.alert.text != null && !ee.wasActiveLastTick && ee.isActive()) {
-						ee.alertCooldown = true;
-						ee.wasActiveLastTick = true;
-						//SBUtil.writeToChat("Firing enviro alert "+ee+" when "+Player.main.GetDepth());
-						ee.alert.Play();
-						warn.StartCoroutine(warn.ResetAlertCD(ee));
+	   				//SNUtil.writeToChat(ee+" : "+ee.isActive());
+	   				if (!ee.alertCooldown && !ee.wasActiveLastTick && ee.isActive()) {
+						ee.fire(warn);
 					}
 	   				else {
 						ee.wasActiveLastTick = false;
@@ -392,16 +424,97 @@ namespace ReikaKalseki.SeaToSea {
 	   		}
 	   		warn.alerts.Clear();
 	   		warn.alerts.AddRange(li);
-	   		EnviroAlert ee = new EnviroAlert(warn, 500, SeaToSeaMod.miscLocale.getEntry("deepair"));
-	   		ee.preventiveItem.Clear();
-	   		ee.preventiveItem.Add(SeaToSeaMod.rebreatherV2.TechType);
-	   		warn.alerts.Add(ee);
-	   		ee = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
-	   		ee.preventiveItem.Clear();
-	   		ee.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
-	   		ee.preventiveItem.Add(TechType.ReinforcedDiveSuit);
-	   		warn.alerts.Add(ee);
+	   		
+	   		EnviroAlert crush = new EnviroAlert(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing(), SeaToSeaMod.miscLocale.getEntry("deepair"));
+	   		crush.preventiveItem.Clear();
+	   		warn.alerts.Add(crush);
+	   		
+	   		O2IncreasingAlert o2Up = new O2IncreasingAlert(warn);
+	   		warn.alerts.Add(o2Up);
+	   		
+	   		EnviroAlert poison = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
+	   		poison.preventiveItem.Clear();
+	   		poison.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
+	   		poison.preventiveItem.Add(TechType.ReinforcedDiveSuit);
+	   		warn.alerts.Add(poison);
+	   		
+	   		//GameObject hud = ObjectUtil.getChildObject(uGUI.main.screenCanvas, "HUD/Content");
+	   		GameObject hudTemplate = uGUI.main.GetComponentInChildren<uGUI_RadiationWarning>(true).gameObject;
+	   		lrPoisonHUDWarning = createHUDWarning(hudTemplate, "chemwarn", "Poisoning Detected", () => poison.isActive() && isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
+	   		o2ConsumptionIncreasingHUDWarning = createHUDWarning(hudTemplate, "o2warn", "Elevated O2 Consumption", () => o2Up.isActive() && isPlayerInOcean() && !crush.isActive(), 10);
+	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", "Extreme Pressure Detected", () => crush.isActive() && isPlayerInOcean(), 20);
+	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", "Power Loss Detected", () => getLRPowerLeakage(Player.main.gameObject) > 0 && (Player.main.GetVehicle() || Player.main.currentSub && Player.main.currentSub.isCyclops), 0, new Color(1F, 1F, 0.2F, 1));
+	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", "Extreme Temperature Detected", () => {
+	   			float time = DayNightCycle.main.timePassedAsFloat;
+	   			return time-playerHeatDamage <= 1 || time-cyclopsHeatDamage <= 5;
+	   		}, 100, new Color(1, 0.875F, 0.75F, 1));
+	   		
+	   		warnings.Sort();
 		}
+    	
+    	private GameObject createHUDWarning(GameObject template, string tex, string msg, EnviroAlert e, int pri, Color? c = null) {
+    		return createHUDWarning(template, tex, msg, e.isActive, pri, c);
+    	}
+    	
+    	private GameObject createHUDWarning(GameObject template, string tex, string msg, Func<bool> f, int pri, Color? c = null) {
+    		GameObject go = UnityEngine.Object.Instantiate(template);
+    		uGUI_RadiationWarning rad = go.GetComponent<uGUI_RadiationWarning>();
+    		CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
+    		warn.replace(rad, f);
+    		warn.setText(msg, c);
+    		warn.setTexture(TextureManager.getTexture("Textures/HUD/"+tex));
+    		warn.transform.SetParent(template.transform.parent, false);
+    		warn.priority = pri;
+    		go.name = "CustomHudWarning_"+msg;
+    		ObjectUtil.removeComponent<uGUI_RadiationWarning>(go);
+    		SNUtil.log("Created custom hud warning "+go);
+    		go.SetActive(true);
+    		warnings.Add(warn);
+    		return go;
+    	}
+	}
+	
+	public class CustomHUDWarning : MonoBehaviour, IComparable {
+		
+		private GameObject overlay;
+		private Text text;
+		private Func<bool> condition;
+		public bool forceShow = false;
+		
+		public int priority = 0;
+		
+		internal void replace(uGUI_RadiationWarning rad, Func<bool> f) {
+    		text = rad.text;
+    		overlay = rad.warning;
+    		overlay.transform.SetParent(gameObject.transform, false);
+    		text.transform.SetParent(overlay.transform, false);
+    		condition = f;
+		}
+		
+		internal void setTexture(Texture2D tex) {
+			Image img = overlay.GetComponentInChildren<Image>();
+			img.sprite = img.sprite.setTexture(tex);
+		}
+		
+		internal void setText(string s, Color? c = null) {
+			text.text = s;
+			if (c == null || !c.HasValue)
+				c = Color.white;
+			text.color = c.Value;
+		}
+		
+		public bool shouldShow() {
+			return forceShow || condition();
+		}
+		
+		public void setActive(bool active) {
+			overlay.SetActive(active);
+		}
+		
+		public int CompareTo(object obj) {
+			return obj is CustomHUDWarning ? ((CustomHUDWarning)obj).priority.CompareTo(priority) : 0; //inverse to put bigger first
+		}
+		
 	}
 	
 	abstract class DepthFX : MonoBehaviour {
@@ -490,6 +603,25 @@ namespace ReikaKalseki.SeaToSea {
  
 		
 	}
+	
+	class O2IncreasingAlert : EnviroAlert {
+		
+		internal O2IncreasingAlert(RebreatherDepthWarnings warn) : base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing(), null, null) {
+			preventiveItem.Clear();
+		}
+		
+		internal override void fire(RebreatherDepthWarnings warn) {
+			base.fire(warn);
+			
+			SNUtil.playSoundAt(EnvironmentalDamageSystem.instance.pdaBeep, Player.main.transform.position, false, -1);
+		   	PDAManager.getPage("deepairuse").unlock();
+		}
+		
+		public override string ToString() {
+			return "o2 increase warning";
+		}
+		
+	}
    
 	class EnviroAlert : RebreatherDepthWarnings.DepthAlert {
 		
@@ -498,9 +630,12 @@ namespace ReikaKalseki.SeaToSea {
    		internal bool wasActiveLastTick = false;
    		
    		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, FMODAsset snd) {
-   			alert = warn.gameObject.AddComponent<PDANotification>();
-   			alert.text = pda;
-   			alert.sound = snd;
+   			if (!string.IsNullOrEmpty(pda)) {
+	   			alert = warn.gameObject.AddComponent<PDANotification>();
+	   			alert.text = pda;
+	   			if (snd != null)
+	   				alert.sound = snd;
+   			}
    			applicability = f;
    		}
    		
@@ -521,6 +656,15 @@ namespace ReikaKalseki.SeaToSea {
    			this.alert = from.alert;
    			this.alertCooldown = from.alertCooldown;
 	   	}
+   		
+   		internal virtual void fire(RebreatherDepthWarnings warn) {
+			alertCooldown = true;
+			wasActiveLastTick = true;
+			//SNUtil.writeToChat("Firing enviro alert "+this+" when "+Player.main.GetDepth());
+			if (alert)
+				alert.Play();
+			warn.StartCoroutine(warn.ResetAlertCD(this));
+   		}
    		
    		internal bool isActive() {
    			Player p = Player.main;
