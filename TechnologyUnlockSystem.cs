@@ -32,11 +32,13 @@ namespace ReikaKalseki.SeaToSea {
 	    private FMODAsset unlockSound;
 		
 		private TechnologyUnlockSystem() {
-	    	foreach (TechType tt in SeaToSeaMod.getIngots()) {
-	    		TechType[] ingot = SeaToSeaMod.getIngot(tt);
-	    		addDirectUnlock(tt, ingot[0]);
-	    		addDirectUnlock(tt, ingot[1]);
+	    	foreach (SeaToSeaMod.IngotDefinition tt in SeaToSeaMod.getIngots()) {
+	    		addDirectUnlock(tt.material, tt.ingot);
+	    		addDirectUnlock(tt.material, tt.unpackingRecipe.TechType);
 	    	}
+	    	SeaToSeaMod.IngotDefinition qi = SeaToSeaMod.getIngot(TechType.Quartz);
+	    	addDirectUnlock(qi.material, SeaToSeaMod.quartzIngotToGlass.TechType);
+	    	
 	    	addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
 	    	addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
 	    	

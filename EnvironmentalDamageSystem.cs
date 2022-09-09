@@ -38,6 +38,8 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
     	private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
     	
+    	private readonly Bounds prisonAquariumExpanded;
+    	
     	//private DepthRippleFX depthWarningFX1;
     	//private DepthDarkeningFX depthWarningFX2;
 		
@@ -72,12 +74,18 @@ namespace ReikaKalseki.SeaToSea {
 		    lrPoisonDamage["LostRiver_BonesField"] = 15;
 		    lrPoisonDamage["LostRiver_Junction"] = 15;
 		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
+		    
+		    prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents*2);
+		    prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
 		}
     	
     	private bool isPlayerInOcean() {
     		Player ep = Player.main;
-    		string biome = getBiome(ep.gameObject);
-    		return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming() && !ep.currentWaterPark && !biome.ToLowerInvariant().Contains("prison") && !biome.ToLowerInvariant().Contains("precursor") && !Creature.prisonAquriumBounds.Contains(ep.transform.position);
+    		string biome = getBiome(ep.gameObject).ToLowerInvariant();
+    		bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
+    		bool inPrecursor = biome.Contains("prison") || biome.Contains("precursor") || prisonAquariumExpanded.Contains(ep.transform.position);
+    		bool inStructure = inPrecursor || ep.currentWaterPark;
+    		return inWater && !inStructure;
     	}
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
@@ -97,7 +105,7 @@ namespace ReikaKalseki.SeaToSea {
 			float f = 1;
 			float f0 = 1;
 			float fw = 0;
-			SNUtil.writeToChat(biome+" for "+dmg.gameObject);
+			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
 	    		f0 = !diveSuit ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
@@ -131,7 +139,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	if (dmg.player) {
 		    	float depth = dmg.player.GetDepth();
-		    	bool rb = Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0;
+		    	bool rb = LiquidBreathingSystem.instance.hasLiquidBreathing();
 		    	//depthWarningFX1.setIntensities(rb ? 0 : depth);
 		    	//depthWarningFX2.setIntensities(rb ? 0 : depth);
 	    		if (depth > depthDamageStart && !rb) {

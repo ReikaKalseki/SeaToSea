@@ -175,6 +175,28 @@
 			
 		</pda>
 	</KelpEnzymes>
+	<FuelTankWall>
+		<name>
+			Tank Wall
+		</name>
+		<desc>
+			A high-tech blend of materials with the right balance of elasticity and strength to contain reactive and dangerous rocket fuel.
+		</desc>
+		<pda>
+			
+		</pda>
+	</FuelTankWall>
+	<RocketFuel>
+		<name>
+			Neptune Rocket Fuel
+		</name>
+		<desc>
+			A chemical mixture capable of releasing extreme amounts of energy on demand.
+		</desc>
+		<pda>
+			
+		</pda>
+	</RocketFuel>
 	<breathfluid>
 		<name>
 			Breathing Fluid

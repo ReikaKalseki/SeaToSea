@@ -61,7 +61,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public static TechType getIngot(Materials key) {
-			return SeaToSeaMod.getIngot(getItem(key).TechType)[0];
+			return SeaToSeaMod.getIngot(getItem(key).TechType).ingot;
 		}
 		
 		public enum Materials {

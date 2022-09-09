@@ -20,7 +20,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly LiquidBreathingSystem instance = new LiquidBreathingSystem();
 		
-		internal static readonly float ITEM_VALUE = 20*60; //seconds
+		internal static readonly float ITEM_VALUE = 30*60; //seconds
+		internal static readonly float TANK_CHARGE = 10*60; //how much time you can spend (total) of liquid before returning to a base with a charger
+		internal static readonly float TANK_CAPACITY = 3*60; //per "air tank" before you need to go back to a powered air-filled space
 	    
 	    private Texture2D baseO2BarTexture;
 	    private Color baseO2BarColor;
@@ -87,7 +89,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool hasLiquidBreathing() {
-	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;// && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {

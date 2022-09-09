@@ -30,8 +30,10 @@ namespace ReikaKalseki.SeaToSea
     public static SeamothDepthModule depth1300;
     public static SeamothPowerSealModule powerSeal;
     public static CustomEquipable sealSuit;
-    public static CustomEquipable rebreatherV2;
     public static CustomBattery t2Battery;
+    
+    public static RebreatherV2 rebreatherV2;
+    public static LiquidTank liquidTank;
     
     public static BreathingFluid breathingFluid;
     public static CurativeBandage bandage;
@@ -44,6 +46,8 @@ namespace ReikaKalseki.SeaToSea
     public static RebreatherRecharger rebreatherCharger;
     public static BaseSonarPinger sonarBlock;
     public static BaseCreatureRepellent repellentBlock;
+    
+    public static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
     
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
@@ -91,7 +95,7 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
     
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
-    private static readonly Dictionary<TechType, TechType[]> ingots = new Dictionary<TechType, TechType[]>();
+    private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
 
     [QModPatch]
     public static void Load() {
@@ -360,6 +364,10 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
+    	
+    	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
+    		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
+    	}
     }
     
     private static void addCommands() {
@@ -431,6 +439,8 @@ namespace ReikaKalseki.SeaToSea
        	item.setRecipe(10);
        	item.Patch();
        	
+       	ingots[TechType.Titanium] = new IngotDefinition(TechType.TitaniumIngot, TechType.Titanium, item, 10);
+       	
        	createCompressedIngot(TechType.Quartz, 5, "Boule");
        	createCompressedIngot(TechType.AluminumOxide, "Ruby", 8, "Boule");
        	createCompressedIngot(TechType.Copper);
@@ -443,7 +453,22 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Kyanite, 6, "Boule");
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM));
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 8);
-       	ingots[TechType.Titanium] = new TechType[]{TechType.TitaniumIngot, TechType.Titanium};
+       	
+       	IngotDefinition qi = ingots[TechType.Quartz];
+       	TechData glassRec = RecipeUtil.getRecipe(TechType.Glass);
+       	rec = new TechData();
+       	rec.Ingredients.Add(new Ingredient(qi.ingot, glassRec.Ingredients[0].amount));
+       	quartzIngotToGlass = new DuplicateRecipeDelegateWithRecipe(TechType.Glass, rec);
+       	quartzIngotToGlass.setRecipe(qi.count);
+       	CraftData.GetCraftTime(TechType.Glass, out quartzIngotToGlass.craftTime);
+       	quartzIngotToGlass.craftTime *= qi.count;
+       	quartzIngotToGlass.craftingType = CraftTree.Type.Fabricator;
+       	quartzIngotToGlass.category = ingotCategory;
+       	quartzIngotToGlass.group = TechGroup.Resources;
+       	quartzIngotToGlass.unlock = TechType.Unobtanium;
+       	quartzIngotToGlass.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
+    	quartzIngotToGlass.sprite = SpriteManager.Get(TechType.Glass);
+    	quartzIngotToGlass.Patch();
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
@@ -460,7 +485,7 @@ namespace ReikaKalseki.SeaToSea
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
-        comb.addIngredient(TechType.AramidFibers, 6).addIngredient(TechType.PlasteelIngot, 1);
+        comb.addIngredient(TechType.AramidFibers, 4).addIngredient(TechType.PlasteelIngot, 1);
         
         BasicCraftingItem gem = CraftingItems.getItem(CraftingItems.Items.DenseAzurite);
         gem.craftingTime = 4;
@@ -496,6 +521,14 @@ namespace ReikaKalseki.SeaToSea
         chlorine.craftingTime = 3;
         chlorine.numberCrafted = 2;
         chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
+        
+        BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
+        tankWall.craftingTime = 2.5F;
+        tankWall.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 6).addIngredient(sealedFabric, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.SmartPolymer), 1);
+        
+        BasicCraftingItem fuel = CraftingItems.getItem(CraftingItems.Items.RocketFuel);
+        fuel.craftingTime = 6;
+        fuel.addIngredient(TechType.Sulphur, 3).addIngredient(TechType.Kyanite, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
         
         CraftingItems.addAll();
         rec = RecipeUtil.copyRecipe(enzy.getRecipe());
@@ -570,6 +603,10 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2 = new RebreatherV2();
         rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(t2Battery, 1);
         rebreatherV2.Patch();
+		
+        liquidTank = new LiquidTank();
+        liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
+        liquidTank.Patch();
         
 		breathingFluid = new BreathingFluid();
 		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleRattleSpore, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
@@ -616,16 +653,30 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         
         RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
+        RecipeUtil.addIngredient(TechType.RocketBase, TechType.Silicone, 8);
+        RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4);
+        RecipeUtil.modifyIngredients(TechType.RocketBase, i => {
+      		if (i.techType == TechType.TitaniumIngot)
+      			i.techType = TechType.PlasteelIngot;
+      		else if (i.techType == TechType.Lead)
+      			i.amount = 6;
+      		return i.techType == TechType.ComputerChip;
+        });
+        RecipeUtil.addIngredient(TechType.RocketBaseLadder, TechType.WiringKit, 4);
+        RecipeUtil.modifyIngredients(TechType.RocketStage1, i => i.techType != TechType.PlasteelIngot);
         RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), 1);
         RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), 1);
-        RecipeUtil.addIngredient(TechType.RocketStage2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 12);
-        RecipeUtil.addIngredient(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 3);
-        RecipeUtil.addIngredient(TechType.RocketStage2, sealedFabric.TechType, 4);
-        RecipeUtil.modifyIngredients(TechType.RocketStage2, i => {if (i.techType == TechType.Kyanite || i.techType == TechType.Sulphur) i.amount *= 2; return false;});
+        RecipeUtil.addIngredient(TechType.RocketStage1, TechType.CrashPowder, 3);
+        RecipeUtil.addIngredient(TechType.RocketStage1, TechType.Diamond, 4);
+        RecipeUtil.modifyIngredients(TechType.RocketStage2, i => i.techType == TechType.Kyanite || i.techType == TechType.Sulphur);
+        RecipeUtil.addIngredient(TechType.RocketStage2, tankWall.TechType, 2);
+        RecipeUtil.addIngredient(TechType.RocketStage2, fuel.TechType, 4);
+        RecipeUtil.addIngredient(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+        RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 8; return i.techType == TechType.ComputerChip;});
         RecipeUtil.addIngredient(TechType.RocketStage3, t2Battery.TechType, 1);
+        RecipeUtil.addIngredient(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
         RecipeUtil.addIngredient(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
-        RecipeUtil.addIngredient(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 2);
-        RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 4; return i.techType == TechType.ComputerChip;});
+        RecipeUtil.addIngredient(TechType.RocketStage3, TechType.ReactorRod, 4);
         
         RecipeUtil.addIngredient(TechType.HighCapacityTank, TechType.Aerogel, 1);
         
@@ -802,15 +853,15 @@ namespace ReikaKalseki.SeaToSea
        	unpack.setRecipe(amt);
        	unpack.Patch();
        	
-       	ingots[item] = new TechType[]{ingot.TechType, unpack.TechType};
+       	ingots[item] = new IngotDefinition(item, ingot.TechType, unpack, amt);
     }
     
-    public static TechType[] getIngot(TechType item) {
+    internal static IngotDefinition getIngot(TechType item) {
     	return ingots[item];
     }
     
-    public static List<TechType> getIngots() {
-    	return new List<TechType>(ingots.Keys);
+    internal static List<IngotDefinition> getIngots() {
+    	return new List<IngotDefinition>(ingots.Values);
     }
     
     private static void setChemistry(TechType item) {
@@ -836,6 +887,22 @@ namespace ReikaKalseki.SeaToSea
 	public static bool hasNoGasMask() {
    		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;
 	}
+    
+    internal class IngotDefinition {
+    	
+    	internal readonly TechType material;
+    	internal readonly TechType ingot;
+    	internal readonly DuplicateRecipeDelegateWithRecipe unpackingRecipe;
+    	internal readonly int count;
+    	
+    	internal IngotDefinition(TechType mat, TechType ing, DuplicateRecipeDelegateWithRecipe unpack, int amt) {
+    		material = mat;
+    		ingot = ing;
+    		count = amt;
+    		unpackingRecipe = unpack;
+    	}
+    	
+    }
 
   }
 }
