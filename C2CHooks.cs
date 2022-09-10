@@ -103,6 +103,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	StoryHandler.instance.tick(ep);
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
+	    	/*
+	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
+	    		if (ep.currentSub) {
+	    			ep.oxygenMgr.UnregisterSource(ox);
+	    		}
+	    		else {
+	    			ep.oxygenMgr.RegisterSource(ox);
+	    		}
+	    	}*/
 	    	
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
@@ -254,8 +264,13 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
-	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp() && LiquidBreathingSystem.instance.hasLiquidBreathing()) {
-	    		LiquidBreathingSystem.instance.checkLiquidBreathingSupport(a);
+	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp()) {
+		    	float o2ToAdd = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
+		    	if (o2ToAdd > 0)
+		    		LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref o2ToAdd, true);
+		    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+		    		LiquidBreathingSystem.instance.checkLiquidBreathingSupport(a);
+		    	}
 	    	}
 	    }
 	    
@@ -530,9 +545,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getWaterTemperature(float ret, WaterTemperatureSimulation sim, Vector3 pos) {
-	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(EnvironmentalDamageSystem.instance.getBiome(pos));
+	    	string biome = EnvironmentalDamageSystem.instance.getBiome(pos);
+	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
 	    		ret = Mathf.Max(4, ret-poison*1.75F); //make LR cold, down to 4C (max water density point)
+	    	if (biome.ToLowerInvariant().Contains("void") && pos.y <= -50)
+	    		ret = Mathf.Max(4, ret+(pos.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(pos);
+	    	if (dist <= 300)
+	    		ret += (float)((300-dist)/30); //add up to 10C as approach
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
 	    

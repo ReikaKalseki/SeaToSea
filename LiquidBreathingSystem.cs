@@ -106,14 +106,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	return false;
 	    }
 	    
-	    public bool tryFillPlayerO2Bar(Player p, ref float amt) {
+	    public bool tryFillPlayerO2Bar(Player p, ref float amt, bool force = false) {
 	    	if (hasTankButNoMask()) {
 	    		amt = 0;
 	    		return false;
 	    	}
 	    	if (!hasLiquidBreathing())
 	    		return true;
-	    	if (!isInPoweredArea(p)) {
+	    	if (!force && !isInPoweredArea(p)) {
 	    		amt = 0;
 	    	    return false;
 	    	}
@@ -137,9 +137,6 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {
-	    	float o2ToAdd = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
-	    	if (o2ToAdd > 0)
-		    	forceAllowO2 = o2ToAdd;
 	    	OxygenAreaWithLiquidSupport oxy = a.gameObject.GetComponent<OxygenAreaWithLiquidSupport>();
 	    	//SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
 	    	if (oxy != null && oxy.supplier != null && DayNightCycle.main.timePassedAsFloat-oxy.lastVerify < 5) {

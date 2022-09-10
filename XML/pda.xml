@@ -413,26 +413,33 @@
   </lostrivershortcircuit>
   <deepairuse>
 	<name>
-		
+		Deep-Sea Respiration
 	</name>
 	<pda>
+		At the very high ambient pressures below 400m depth, the process of expelling waste gases is inefficient and includes significant quantities of otherwise usable air, even with a rebreather equipped. While this is not immediately lethal, and does not completely prevent exploration of deeper areas, it does significant reduce swim range outside of vehicles, and will become increasingly more problematic at greater depths.
 		
+		A more advanced and powerful gas delivery system will be needed to eliminate these concerns.
 	</pda>
 	<category>
-		PlanetaryGeology
+		Advanced
 	</category>
   </deepairuse>
-  <cyclopsheatdamage>
+  <heatdamage>
 	<name>
-		
+		Mechanical Overheating
 	</name>
 	<pda>
+		The high level of volcanic activity in this region has superheated the water to the point where it will not only rapidly kill an unprotected swimmer, but will even cause submersibles to rapidly overheat to the point of accruing damage. The seamoth is sufficiently durable to survive brief exposures to this environment, but extended journeys will require either outpost moonpools or the ability to survive free swimming to perform immediate repairs.
 		
+		This will not be an option for the cyclops; due to its much greater heat generation and increased surface area with which to absorb environmental heat, it is wholly unsuited for this environment unless it can be protected by an as-yet unknown mechanism.
 	</pda>
 	<category>
 		PlanetaryGeology
 	</category>
-  </cyclopsheatdamage>
+	<header>
+		ILZHeatImage
+	</header>
+  </heatdamage>
   <drfwarperheat>
 	<name>
 		Heat Expulsion Technology

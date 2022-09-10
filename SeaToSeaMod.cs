@@ -736,7 +736,8 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         
-        RecipeUtil.addIngredient(TechType.VehicleHullModule2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 1);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.Silicone, 2);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
         //RecipeUtil.addIngredient(TechType.VehicleHullModule3, armor.TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);

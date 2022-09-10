@@ -101,7 +101,7 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
-			sc.hoverText = "Reload Fluid ("+available+"s remaining)";
+			sc.hoverText = "Reload Fluid ("+available.ToString("0.00")+"s fluid in buffer)";
 
 			Transform seabase = gameObject.transform.parent;
 			if (available > 0 && seabase != null) {

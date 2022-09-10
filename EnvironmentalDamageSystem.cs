@@ -152,7 +152,11 @@ namespace ReikaKalseki.SeaToSea {
 						Survival s = Player.main.GetComponent<Survival>();
 						s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
 					}
-		    		playerHeatDamage = DayNightCycle.main.timePassedAsFloat; //this also covers the seamoth
+					if (temperature >= 90) {//do not do at vents
+		    			playerHeatDamage = DayNightCycle.main.timePassedAsFloat; //this also covers the seamoth
+		    			if (!dmg.player && PDAManager.getPage("heatdamage").unlock()) //only trigger for seamoth
+		    				;//SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+					}
 				}
 			}
 	    	if (dmg.player) {
@@ -252,10 +256,8 @@ namespace ReikaKalseki.SeaToSea {
 							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
 							fire.CreateFire(fire.roomFires[key]);
 						}
-		    			if (PDAManager.getPage("cyclopsheatdamage").unlock())
-		    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
-		    				cyclopsHeatDamage = DayNightCycle.main.timePassedAsFloat;
-		    			}
+		    			cyclopsHeatDamage = DayNightCycle.main.timePassedAsFloat;
+		    		}
 	    		}
 		    	float leak = getLRPowerLeakage(dmg.gameObject);
 		    	//SBUtil.writeToChat("leak "+leak);
