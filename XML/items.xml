@@ -222,6 +222,19 @@
 	</SealedSuit>
 	<RebreatherV2>
 		<name>
+			Recirculation Mask
+		</name>
+		<desc>
+			A motorized face mask equipped with the ability to actively pump a breathing medium from storage and either recirculate it back to the tank or force waste gas out against very high pressures.
+			
+			A requirement for liquid breathing hardware to function.
+		</desc>
+		<pda>
+			
+		</pda>
+	</RebreatherV2>
+	<LiquidTank>
+		<name>
 			Liquid Breathing System
 		</name>
 		<desc>
@@ -231,7 +244,7 @@
 		<pda>
 			
 		</pda>
-	</RebreatherV2>
+	</LiquidTank>
 	<CurativeBandage>
 		<name>
 			Nanowrap Bandages

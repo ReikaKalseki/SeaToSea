@@ -883,10 +883,10 @@ namespace ReikaKalseki.SeaToSea
 			page.register();
     	}
     }
-   
+   /*
 	public static bool hasNoGasMask() {
    		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;
-	}
+	}*/
     
     internal class IngotDefinition {
     	

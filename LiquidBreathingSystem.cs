@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly float ITEM_VALUE = 30*60; //seconds
 		internal static readonly float TANK_CHARGE = 10*60; //how much time you can spend (total) of liquid before returning to a base with a charger
-		internal static readonly float TANK_CAPACITY = 3*60; //per "air tank" before you need to go back to a powered air-filled space
+		internal static readonly float TANK_CAPACITY = 2.5F*60; //per "air tank" before you need to go back to a powered air-filled space
 	    
 	    private Texture2D baseO2BarTexture;
 	    private Color baseO2BarColor;
@@ -48,15 +48,19 @@ namespace ReikaKalseki.SeaToSea {
 	    	Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
 	    }
 	    
-	    public void recharge(Player p, float amt) {
+	    public void refreshGui() {
+	    	refillPlayerO2Bar(Player.main, 0);
+	    }
+	    
+	    public void refillPlayerO2Bar(Player p, float amt) {
 			forceAllowO2 += amt;
 			if (amt > 0)
 				p.oxygenMgr.AddOxygen(amt);
-			onAddO2();
+			onAddO2ToBar();
 			//SNUtil.writeToChat("Added "+add);
 	    }
 	    
-	    private void onAddO2() {
+	    private void onAddO2ToBar() {
 			lastRechargeRebreatherTime = DayNightCycle.main.timePassedAsFloat;	    		
 	    }
 	    
@@ -64,19 +68,64 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (forceAllowO2 > 0) {
 	    		float ret = Math.Min(f, forceAllowO2);
 				forceAllowO2 = 0;
-				onAddO2();
+				onAddO2ToBar();
 	    		return ret;
 	    	}
-	    	if (hasLiquidBreathing() && !isLiquidBreathingRechargeable(Player.main)) {
+	    	if (hasLiquidBreathing() && !canLiquidBreathingRefillO2Bar(Player.main)) {
 	    		f = 0;
 	    	}
 	    	return f;
 	    }
 	    
-	    public bool isLiquidBreathingRechargeable(Player p) {
-	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
-				onAddO2();
+	    public float getFuelLevel() {
+	    	Battery b = getTankBattery();
+	    	return b ? b.charge : 0;
+	    }
+	    
+	    public float getAvailableFuelSpace() {
+	    	Battery b = getTankBattery();
+	    	return b ? b.capacity-b.charge : 0;
+	    }
+	    
+	    private Battery getTankBattery() {
+	    	InventoryItem tank = Inventory.main.equipment.GetItemInSlot("Tank");
+	    	if (tank.item.GetTechType() != SeaToSeaMod.liquidTank.TechType)
+	    		return null;
+	    	Battery b = tank.item.gameObject.GetComponent<Battery>();
+	    	return b;
+	    }
+	    
+	    public float rechargePlayerLiquidBreathingFuel(float amt) {
+	    	Battery b = getTankBattery();
+	    	if (!b)
+	    		return 0;
+	    	float add = Mathf.Min(amt, b.capacity-b.charge);
+	    	b.charge += add;
+	    	return add;
+	    }
+	    
+	    public bool canLiquidBreathingRefillO2Bar(Player p) {
+	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key))
 	    		return true;
+	    	Vehicle v = p.GetVehicle();
+	    	if (v && v.IsPowered())
+	    		return true;
+	    	SubRoot sub = p.currentSub;
+	    	if (sub && sub.powerRelay.IsPowered())
+	    		return true;
+	    	return false;
+	    }
+	    
+	    public bool tryFillPlayerO2Bar(Player p, ref float amt) {
+	    	if (!canLiquidBreathingRefillO2Bar(p)) {
+	    		amt = 0;
+	    	    return false;
+	    	}
+	    	amt = Mathf.Min(amt, getFuelLevel());
+	    	/*
+	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
+				onAddO2ToBar();
+	    		return amt;
 	    	}/*
 	    	SubRoot sub = p.currentSub;
 	    	if (sub != null && sub.powerRelay.IsPowered()) {
@@ -85,11 +134,11 @@ namespace ReikaKalseki.SeaToSea {
 	    			return true;
 	    		}
 	    	}*/
-	    	return false;
+	    	return amt > 0;
 	    }
 	    
 	    public bool hasLiquidBreathing() {
-	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;// && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {

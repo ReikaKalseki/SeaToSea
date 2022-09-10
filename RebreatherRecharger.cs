@@ -107,10 +107,10 @@ namespace ReikaKalseki.SeaToSea {
 				Player p = Player.main;
 				if (p.currentSub != null && seabase.gameObject == p.currentSub.gameObject) {
 					//SNUtil.writeToChat("Player in base with recharger, has "+available);
-					float addable = p.GetOxygenCapacity()-p.GetOxygenAvailable();
-					if (addable >= 1 && Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0) {
-						float add = consume(addable);
-						LiquidBreathingSystem.instance.recharge(p, add);
+					if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+						float add = consume(LiquidBreathingSystem.instance.getAvailableFuelSpace());
+						float added = LiquidBreathingSystem.instance.rechargePlayerLiquidBreathingFuel(add);
+						available += add-added; //if somehow added less than space, refund it
 					}
 				}
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);

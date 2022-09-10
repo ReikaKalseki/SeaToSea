@@ -22,12 +22,15 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
-			Oxygen b = go.EnsureComponent<Oxygen>();
-			b.oxygenAvailable = 0;
-			b.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY;
+			Oxygen o2 = go.EnsureComponent<Oxygen>();
+			o2.oxygenAvailable = 0;
+			o2.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY;
+			Battery b = go.EnsureComponent<Battery>();
+			b.charge = 0;
+			b._capacity = LiquidBreathingSystem.ITEM_VALUE;
 		}
 		
-		public override sealed EquipmentType EquipmentType {
+		public override EquipmentType EquipmentType {
 			get {
 				return EquipmentType.Tank;
 			}

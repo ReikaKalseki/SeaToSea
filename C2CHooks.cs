@@ -138,12 +138,12 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onEquipmentAdded(string slot, InventoryItem item) {
-	    	if (item.item.GetTechType() == SeaToSeaMod.rebreatherV2.TechType)
+	    	if (item.item.GetTechType() == SeaToSeaMod.liquidTank.TechType)
 	    		LiquidBreathingSystem.instance.onEquip();
 	    }
 	    
 	    public static void onEquipmentRemoved(string slot, InventoryItem item) {
-	    	if (item.item.GetTechType() == SeaToSeaMod.rebreatherV2.TechType)
+	    	if (item.item.GetTechType() == SeaToSeaMod.liquidTank.TechType)
 	    		LiquidBreathingSystem.instance.onUnequip();
 	    }
 	    
@@ -157,11 +157,11 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.isLiquidBreathingRechargeable(p)) {
+	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.canLiquidBreathingRefillO2Bar(p)) {
 	    		return false;
 	    	}
 	    	if (orig)
-	    		LiquidBreathingSystem.instance.recharge(p, 0); //refresh gui
+	    		LiquidBreathingSystem.instance.refreshGui();
 	    	return orig;
 	    }
 	    
@@ -170,10 +170,10 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
-	   		if (!LiquidBreathingSystem.instance.hasLiquidBreathing() || LiquidBreathingSystem.instance.isLiquidBreathingRechargeable(Player.main)) {
+	   		if (!LiquidBreathingSystem.instance.hasLiquidBreathing() || LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref time)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
-	    		LiquidBreathingSystem.instance.recharge(Player.main, 0);
+	    		LiquidBreathingSystem.instance.refreshGui();
 	    	}
 	    }
 	    

@@ -333,10 +333,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (mode != Player.Mode.Normal && mode - Player.Mode.Piloting <= 1) {
 				return 3f;
 			}
-			if (Inventory.Get().equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) > 0) {
+			if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
 				return 3f;
 			}
-			if (Inventory.Get().equipment.GetCount(TechType.Rebreather) > 0 && ep.GetDepth() < depthDamageStart) {
+			if (Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather && ep.GetDepth() < depthDamageStart) {
 				return 3f;
 			}
 			switch (ep.GetDepthClass()) {
@@ -355,8 +355,8 @@ namespace ReikaKalseki.SeaToSea {
 				return 0;
 			float num = 1;
 			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting) {
-				bool hasRebreatherV2 = Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType) != 0;
-				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetCount(TechType.Rebreather) != 0;
+				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;
+				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
 				if (!hasRebreather) {
 					if (depthClass == 2) {
 						num = 1.5F;
@@ -364,9 +364,12 @@ namespace ReikaKalseki.SeaToSea {
 					else if (depthClass == 3) {
 						num = 2;
 					}
-				}			
-				if (depthClass >= 3 && !hasRebreatherV2 && Player.main.GetDepth() >= highO2UsageStart && isPlayerInOcean()) {
-					num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-highO2UsageStart)/10F);
+				}
+				if (depthClass >= 3 && isPlayerInOcean()) {
+					float depth = Player.main.GetDepth();
+					if ((depth >= depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing()) || (depth >= highO2UsageStart && !hasRebreatherV2)) {
+						num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-highO2UsageStart)/10F);
+					}
 				}
 			}
 			return breathingInterval * num;
@@ -606,7 +609,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class O2IncreasingAlert : EnviroAlert {
 		
-		internal O2IncreasingAlert(RebreatherDepthWarnings warn) : base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing(), null, null) {
+		internal O2IncreasingAlert(RebreatherDepthWarnings warn) : base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType, null, null) {
 			preventiveItem.Clear();
 		}
 		
