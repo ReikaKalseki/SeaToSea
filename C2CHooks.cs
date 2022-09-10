@@ -157,8 +157,9 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.canLiquidBreathingRefillO2Bar(p)) {
-	    		return false;
+	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		if (!LiquidBreathingSystem.instance.isInPoweredArea(p) || LiquidBreathingSystem.instance.getFuelLevel() <= 0)
+	    			return false;
 	    	}
 	    	return orig;
 	    }
@@ -169,7 +170,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
-	   		if (!LiquidBreathingSystem.instance.hasLiquidBreathing() || LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref time)) {
+	   		if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref time)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
 	    	}

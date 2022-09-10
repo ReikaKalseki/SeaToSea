@@ -17,6 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class RebreatherRecharger : CustomMachine<RebreatherRechargerLogic> {
 		
 		internal static readonly float POWER_COST = 1.5F; //per second
+		internal static readonly float MAX_RATE = 7.5F; //seconds per second
 		
 		static RebreatherRecharger() {
 			
@@ -100,6 +101,7 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
 			if (seconds <= 0)
 				return;
+			sc.hoverText = "Reload Fluid ("+available+"s remaining)";
 
 			Transform seabase = gameObject.transform.parent;
 			if (available > 0 && seabase != null) {
@@ -144,7 +146,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private float consumeUpTo(float amt) {
-			float use = Math.Min(amt, available);
+			float use = Mathf.Min(amt, available, RebreatherRecharger.MAX_RATE);
 			available -= use;
 			return use;
 		}		

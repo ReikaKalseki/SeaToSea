@@ -94,7 +94,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	return add;
 	    }
 	    
-	    public bool canLiquidBreathingRefillO2Bar(Player p) {
+	    public bool isInPoweredArea(Player p) {
 	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key))
 	    		return true;
 	    	Vehicle v = p.GetVehicle();
@@ -107,7 +107,13 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool tryFillPlayerO2Bar(Player p, ref float amt) {
-	    	if (!canLiquidBreathingRefillO2Bar(p)) {
+	    	if (hasTankButNoMask()) {
+	    		amt = 0;
+	    		return false;
+	    	}
+	    	if (!hasLiquidBreathing())
+	    		return true;
+	    	if (!isInPoweredArea(p)) {
 	    		amt = 0;
 	    	    return false;
 	    	}
@@ -117,21 +123,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		return false;
 	    	}
 	    	amt = Mathf.Min(amt, b.charge);
-	    	/*
-	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
-				onAddO2ToBar();
-	    		return amt;
-	    	}/*
-	    	SubRoot sub = p.currentSub;
-	    	if (sub != null && sub.powerRelay.IsPowered()) {
-	    		RebreatherRechargerSeaBaseLogic fill = sub.gameObject.GetComponent<RebreatherRechargerSeaBaseLogic>();
-	    		if (fill != null && fill.consume()) {
-	    			return true;
-	    		}
-	    	}*/
-	    	if (amt > 0 && p.GetOxygenCapacity()-p.GetOxygenAvailable() <= 1) //do not "charge" for it (hah) if just keeping the player topped up in a powered area
+	    	if (amt > 0 && p.GetOxygenCapacity()-p.GetOxygenAvailable() > 1) //do not "charge" for it (hah) if just keeping the player topped up in a powered area
 	    		b.charge -= amt;
 	    	return amt > 0;
+	    }
+	    
+	    public bool hasTankButNoMask() {
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
 	    }
 	    
 	    public bool hasLiquidBreathing() {
