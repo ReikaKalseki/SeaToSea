@@ -49,32 +49,19 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void refreshGui() {
-	    	refillPlayerO2Bar(Player.main, 0);
+	    	lastRechargeRebreatherTime = DayNightCycle.main.timePassedAsFloat;
 	    }
-	    
+	    /*
 	    public void refillPlayerO2Bar(Player p, float amt) {
 			forceAllowO2 += amt;
 			if (amt > 0)
 				p.oxygenMgr.AddOxygen(amt);
 			onAddO2ToBar();
 			//SNUtil.writeToChat("Added "+add);
-	    }
+	    }*/
 	    
 	    private void onAddO2ToBar() {
-			lastRechargeRebreatherTime = DayNightCycle.main.timePassedAsFloat;	    		
-	    }
-	    
-	    public float addO2ToPlayer(OxygenManager mgr, float f) {
-	    	if (forceAllowO2 > 0) {
-	    		float ret = Math.Min(f, forceAllowO2);
-				forceAllowO2 = 0;
-				onAddO2ToBar();
-	    		return ret;
-	    	}
-	    	if (hasLiquidBreathing() && !canLiquidBreathingRefillO2Bar(Player.main)) {
-	    		f = 0;
-	    	}
-	    	return f;
+				    		
 	    }
 	    
 	    public float getFuelLevel() {
@@ -100,7 +87,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!b)
 	    		return 0;
 	    	float add = Mathf.Min(amt, b.capacity-b.charge);
-	    	b.charge += add;
+	    	if (add > 0) {
+	    		b.charge += add;
+	    		refreshGui();
+	    	}
 	    	return add;
 	    }
 	    
@@ -121,7 +111,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		amt = 0;
 	    	    return false;
 	    	}
-	    	amt = Mathf.Min(amt, getFuelLevel());
+	    	Battery b = getTankBattery();
+	    	if (!b) {
+	    		amt = 0;
+	    		return false;
+	    	}
+	    	amt = Mathf.Min(amt, b.charge);
 	    	/*
 	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key)) {
 				onAddO2ToBar();
@@ -134,6 +129,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			return true;
 	    		}
 	    	}*/
+	    	if (amt > 0 && p.GetOxygenCapacity()-p.GetOxygenAvailable() <= 1) //do not "charge" for it (hah) if just keeping the player topped up in a powered area
+	    		b.charge -= amt;
 	    	return amt > 0;
 	    }
 	    
@@ -142,17 +139,22 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {
+	    	float o2ToAdd = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
+	    	if (o2ToAdd > 0)
+		    	forceAllowO2 = o2ToAdd;
 	    	OxygenAreaWithLiquidSupport oxy = a.gameObject.GetComponent<OxygenAreaWithLiquidSupport>();
 	    	//SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
 	    	if (oxy != null && oxy.supplier != null && DayNightCycle.main.timePassedAsFloat-oxy.lastVerify < 5) {
-	    		float need = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
-	    		if (need > 0) {
-		    		float has = oxy.supplier.consume(need);
-		    		onAddO2();
-		    		//SNUtil.writeToChat("Found and use "+has+" of "+oxy.supplier.getFuel());
-		    		forceAllowO2 = has;
-	    		}
+	    		refillFrom(oxy.supplier);
 	    	}
+	    }
+	    
+	    public void refillFrom(RebreatherRechargerLogic lgc) {
+			if (hasLiquidBreathing()) {
+				float add = lgc.consume(getAvailableFuelSpace());
+				float added = rechargePlayerLiquidBreathingFuel(add);
+				lgc.refund(add-added); //if somehow added less than space, refund it
+			}
 	    }
 		
 		public void updateOxygenGUI(uGUI_OxygenBar gui) {
@@ -195,7 +197,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public bool isO2BarFlashingRed() {
-	    	return !hasLiquidBreathing() && Player.main.GetDepth() >= 400 && EnvironmentalDamageSystem.instance.isPlayerInOcean();
+	    	return Player.main.GetDepth() >= 400 && EnvironmentalDamageSystem.instance.isPlayerInOcean() && Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType;
 	    }
 	    
 	    public void applyToBasePipes(RebreatherRechargerLogic machine, Transform seabase) {

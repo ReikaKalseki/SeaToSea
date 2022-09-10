@@ -160,20 +160,18 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing() && !LiquidBreathingSystem.instance.canLiquidBreathingRefillO2Bar(p)) {
 	    		return false;
 	    	}
-	    	if (orig)
-	    		LiquidBreathingSystem.instance.refreshGui();
 	    	return orig;
 	    }
 	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
-	   		return LiquidBreathingSystem.instance.addO2ToPlayer(mgr, f);
+	   		LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref f);
+	   		return f;
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
 	   		if (!LiquidBreathingSystem.instance.hasLiquidBreathing() || LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref time)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
-	    		LiquidBreathingSystem.instance.refreshGui();
 	    	}
 	    }
 	    

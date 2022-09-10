@@ -107,11 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 				Player p = Player.main;
 				if (p.currentSub != null && seabase.gameObject == p.currentSub.gameObject) {
 					//SNUtil.writeToChat("Player in base with recharger, has "+available);
-					if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
-						float add = consume(LiquidBreathingSystem.instance.getAvailableFuelSpace());
-						float added = LiquidBreathingSystem.instance.rechargePlayerLiquidBreathingFuel(add);
-						available += add-added; //if somehow added less than space, refund it
-					}
+					LiquidBreathingSystem.instance.refillFrom(this);
 				}
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
@@ -133,6 +129,10 @@ namespace ReikaKalseki.SeaToSea {
 			Vector3 angs = turbine.transform.localEulerAngles;
 			angs.y += speed*seconds;
 			turbine.transform.localEulerAngles = angs;
+		}
+		
+		public void refund(float amt) {
+			available += amt;
 		}
 		
 		public float getFuel() {
