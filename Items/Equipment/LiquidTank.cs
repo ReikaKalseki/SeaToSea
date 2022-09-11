@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			Oxygen o2 = go.EnsureComponent<Oxygen>();
 			o2.oxygenAvailable = 0;
-			o2.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY-45; //-45 because player has that as base
+			o2.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY;
 			Battery b = go.EnsureComponent<Battery>();
 			b.charge = 0;
 			b._capacity = LiquidBreathingSystem.ITEM_VALUE;

@@ -109,7 +109,7 @@ namespace ReikaKalseki.SeaToSea {
 				Player p = Player.main;
 				if (p.currentSub != null && seabase.gameObject == p.currentSub.gameObject) {
 					//SNUtil.writeToChat("Player in base with recharger, has "+available);
-					LiquidBreathingSystem.instance.refillFrom(this);
+					LiquidBreathingSystem.instance.refillFrom(this, seconds);
 				}
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
@@ -141,12 +141,12 @@ namespace ReikaKalseki.SeaToSea {
 			return available;
 		}
 		
-		public float consume(float time) {
-			return isPowered ? consumeUpTo(time) : 0;
+		public float consume(float time, float seconds) {
+			return isPowered ? consumeUpTo(time, seconds) : 0;
 		}
 		
-		private float consumeUpTo(float amt) {
-			float use = Mathf.Min(amt, available, RebreatherRecharger.MAX_RATE);
+		private float consumeUpTo(float amt, float seconds) {
+			float use = Mathf.Min(amt, available, RebreatherRecharger.MAX_RATE*seconds);
 			available -= use;
 			return use;
 		}		

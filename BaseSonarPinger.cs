@@ -25,10 +25,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public BaseSonarPinger() : base("basesonarping", "Seabase Sonar Antenna", "Continuously fires sonar pulses from a seabase.", "8949b0da-5173-431f-a989-e621af02f942") {
-			addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
-			addIngredient(TechType.ComputerChip, 1);
+			addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3);
 			addIngredient(TechType.Gold, 2);
+			addIngredient(TechType.CyclopsSonarModule, 1);
 		}
 
 		public override bool UnlockedAtStart {

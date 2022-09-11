@@ -40,6 +40,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	"430b36ae-94f3-4289-91ac-25475ad3bf74"
 	    };
 	    
+	    private static Oxygen playerBaseO2;
+	    
 	    static C2CHooks() {
 	    	
 	    }
@@ -103,16 +105,34 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	StoryHandler.instance.tick(ep);
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
-	    	/*
+	    	
 	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
+	    		if (playerBaseO2 == null) {
+	    			foreach (Oxygen o in Player.main.oxygenMgr.sources) {
+	    				if (o.isPlayer) {
+	    					playerBaseO2 = o;
+	    					break;
+	    				}
+	    			}
+	    		}
 	    		if (ep.currentSub) {
 	    			ep.oxygenMgr.UnregisterSource(ox);
+	    			ep.oxygenMgr.RegisterSource(playerBaseO2);
+	    			float add = Mathf.Min(ep.oxygenMgr.oxygenUnitsPerSecondSurface, ox.oxygenCapacity-ox.oxygenAvailable)*Time.deltaTime;
+	    			if (add > 0.01) {
+	    				if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(ep, ref add))
+	    					ox.AddOxygen(add);
+	    			}
 	    		}
 	    		else {
+	    			ep.oxygenMgr.UnregisterSource(playerBaseO2);
 	    			ep.oxygenMgr.RegisterSource(ox);
 	    		}
-	    	}*/
+	    	}
+	    	else {
+	    		ep.oxygenMgr.RegisterSource(playerBaseO2);
+	    	}
 	    	
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
@@ -641,7 +661,7 @@ namespace ReikaKalseki.SeaToSea {
 				TechType tt = scannerInjections[pi.ClassId];
 				ObjectUtil.makeMapRoomScannable(go, tt, true);
 				if (tt == TechType.SeaTreader) {
-					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
+					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				}
 				else if (tt == TechType.SeaTreaderPoop) {
 	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {

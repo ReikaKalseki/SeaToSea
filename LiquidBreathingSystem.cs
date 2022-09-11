@@ -23,6 +23,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly float ITEM_VALUE = 30*60; //seconds
 		internal static readonly float TANK_CHARGE = 10*60; //how much time you can spend (total) of liquid before returning to a base with a charger
 		internal static readonly float TANK_CAPACITY = 2.5F*60; //per "air tank" before you need to go back to a powered air-filled space
+		
+		private static readonly string customHUDText = "CF<size=30>X</size>•O<size=30>Y</size>";
 	    
 	    private Texture2D baseO2BarTexture;
 	    private Color baseO2BarColor;
@@ -46,6 +48,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public void onUnequip() {
 	    	Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
+	    	SNUtil.playSoundAt(SNUtil.getSound("event:/player/Puke"), Player.main.lastPosition, false, 12);
 	    }
 	    
 	    public void refreshGui() {
@@ -123,8 +126,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		return false;
 	    	}
 	    	amt = Mathf.Min(amt, b.charge);
-	    	if (amt > 0 && p.GetOxygenCapacity()-p.GetOxygenAvailable() > 1) //do not "charge" for it (hah) if just keeping the player topped up in a powered area
+	    	if (amt > 0)
 	    		b.charge -= amt;
+	    	//SNUtil.writeToChat(amt+" > "+b.charge);
 	    	return amt > 0;
 	    }
 	    
@@ -140,13 +144,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	OxygenAreaWithLiquidSupport oxy = a.gameObject.GetComponent<OxygenAreaWithLiquidSupport>();
 	    	//SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
 	    	if (oxy != null && oxy.supplier != null && DayNightCycle.main.timePassedAsFloat-oxy.lastVerify < 5) {
-	    		refillFrom(oxy.supplier);
+	    		refillFrom(oxy.supplier, Time.deltaTime);
 	    	}
 	    }
 	    
-	    public void refillFrom(RebreatherRechargerLogic lgc) {
+	    public void refillFrom(RebreatherRechargerLogic lgc, float seconds) {
 			if (hasLiquidBreathing()) {
-				float add = lgc.consume(getAvailableFuelSpace());
+				float add = lgc.consume(getAvailableFuelSpace(), seconds);
 				float added = rechargePlayerLiquidBreathingFuel(add);
 				lgc.refund(add-added); //if somehow added less than space, refund it
 			}
@@ -155,6 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void updateOxygenGUI(uGUI_OxygenBar gui) {
 			uGUI_CircularBar bar = gui.bar;
 			Text t = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextLabel").GetComponent<Text>();
+			Text tn = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextValue").GetComponent<Text>();
 	    	if (baseO2BarTexture == null) {
 	    		baseO2BarTexture = bar.texture;
 	    		baseO2BarColor = bar.borderColor;
@@ -175,7 +180,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	bar.overlay = pink ? TextureManager.getTexture("Textures/HUD/o2bar_liquid_bubble") : baseO2BubbleTexture;
 	    	bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1*2) : baseOverlayAlpha1;
 	    	bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2*2) : baseOverlayAlpha2;
-	    	t.text = pink ? "CF<size=30>X</size>•O<size=30>Y</size>"/*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
+	    	t.text = pink ? customHUDText /*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
+	    	bool pow = isInPoweredArea(Player.main);
+	    	tn.color = pink && pow ? Color.gray : Color.white;
+	    	if (pink && pow)
+	    		tn.text = "-";
 	    	bar.color = Color.white;
 	    	
 	    	float time = DayNightCycle.main.timePassedAsFloat;

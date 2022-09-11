@@ -221,7 +221,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
 			StorageContainer sc = getStorage();
-			if (sc == null) {
+			if (!sc) {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;
 			}

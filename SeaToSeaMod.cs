@@ -474,9 +474,10 @@ namespace ReikaKalseki.SeaToSea
         enzyT.craftingTime = 2;
         enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
        
+        int kelpamt = 2;
         BasicCraftingItem enzyK = CraftingItems.getItem(CraftingItems.Items.KelpEnzymes);
-        enzyK.craftingTime = 4;
-        enzyK.addIngredient(kelp.seed.TechType, 2);
+        enzyK.craftingTime = 3;
+        enzyK.addIngredient(kelp.seed.TechType, kelpamt);
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
@@ -546,6 +547,15 @@ namespace ReikaKalseki.SeaToSea
        	enzymeAlternate.setRecipe(enzy.numberCrafted*3);
        	enzymeAlternate.unlock = TechType.Unobtanium;
        	enzymeAlternate.Patch();
+       	
+        int s = 3;
+        rec = new TechData();
+        rec.Ingredients.Add(new Ingredient(kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.75F)));
+      	rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));
+       	rec.craftAmount = enzyK.numberCrafted*s;
+       	item = new DuplicateRecipeDelegateWithRecipe(enzyK, rec);
+       	item.craftTime = enzyK.craftingTime*s;
+       	item.Patch();
         
         voidStealth = new SeamothVoidStealthModule();
         voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
@@ -738,6 +748,7 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.Silicone, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
         //RecipeUtil.addIngredient(TechType.VehicleHullModule3, armor.TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
