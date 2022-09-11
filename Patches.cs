@@ -1128,7 +1128,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	*//*
+	*/
 	[HarmonyPatch(typeof(OxygenManager))]
 	[HarmonyPatch("Update")]
 	public static class SurfaceOxygenIntercept {
@@ -1207,7 +1207,7 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
-	*/
+	
 	[HarmonyPatch(typeof(uGUI_OxygenBar))]
 	[HarmonyPatch("LateUpdate")]
 	public static class O2BarTick {

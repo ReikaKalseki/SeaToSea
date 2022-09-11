@@ -106,16 +106,22 @@ namespace ReikaKalseki.SeaToSea {
 	    	StoryHandler.instance.tick(ep);
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
-	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
-	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
-	    		if (playerBaseO2 == null) {
-	    			foreach (Oxygen o in Player.main.oxygenMgr.sources) {
-	    				if (o.isPlayer) {
-	    					playerBaseO2 = o;
-	    					break;
-	    				}
+	    	if (playerBaseO2 == null) {
+	    		foreach (Oxygen o in Player.main.oxygenMgr.sources) {
+	    			if (o.isPlayer) {
+	    				playerBaseO2 = o;
+	    				break;
 	    			}
 	    		}
+	    	}
+	    	
+	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
+	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
+	    		ep.oxygenMgr.UnregisterSource(ox);
+	    		ep.oxygenMgr.UnregisterSource(playerBaseO2);
+	    	}	    	
+	    	else if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
 	    		if (ep.currentSub) {
 	    			ep.oxygenMgr.UnregisterSource(ox);
 	    			ep.oxygenMgr.RegisterSource(playerBaseO2);
@@ -187,20 +193,19 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (orig && LiquidBreathingSystem.instance.hasLiquidBreathing()) {
-	    		if (!LiquidBreathingSystem.instance.isInPoweredArea(p) || LiquidBreathingSystem.instance.getFuelLevel() <= 0)
-	    			return false;
-	    	}
+	    	if (LiquidBreathingSystem.instance.hasTankButNoMask())
+	    		return false;
 	    	return orig;
 	    }
 	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
-	   		LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref f);
+	   		if (LiquidBreathingSystem.instance.hasTankButNoMask())
+	   			f = 0;
 	   		return f;
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
-	   		if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref time)) {
+	    	if (!LiquidBreathingSystem.instance.hasTankButNoMask()) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
 	    	}
@@ -661,7 +666,7 @@ namespace ReikaKalseki.SeaToSea {
 				TechType tt = scannerInjections[pi.ClassId];
 				ObjectUtil.makeMapRoomScannable(go, tt, true);
 				if (tt == TechType.SeaTreader) {
-					go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+					//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 				}
 				else if (tt == TechType.SeaTreaderPoop) {
 	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {

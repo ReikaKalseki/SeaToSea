@@ -237,7 +237,7 @@ namespace ReikaKalseki.SeaToSea {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
-					bool hasKelp = kelp.Count > 0;
+					bool hasKelp = kelp != null && kelp.Count > 0;
 					setEmissiveColor(recipeStalledColor);
 					nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
 					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
