@@ -54,6 +54,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	addDirectUnlock(SeaToSeaMod.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 	    	
+	    	addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
+	    	
 	    	//addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, SeaToSeaMod.powerSeal.TechType);
 	    	//addDirectUnlock(TechType.PrecursorIonPowerCell, SeaToSeaMod.powerSeal.TechType);
 	    	

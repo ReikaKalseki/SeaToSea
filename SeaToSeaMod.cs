@@ -812,6 +812,8 @@ namespace ReikaKalseki.SeaToSea
         
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.BaseReinforcement);
+        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.HeatBlade); //force you to learn it from the mountain cave base
+        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.SeamothElectricalDefense);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);

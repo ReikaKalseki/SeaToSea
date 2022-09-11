@@ -98,13 +98,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool isInPoweredArea(Player p) {
-	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key))
+	    	if (p == null)
+	    		return false;
+	    	if (p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key))
 	    		return true;
 	    	Vehicle v = p.GetVehicle();
 	    	if (v && v.IsPowered())
 	    		return true;
 	    	SubRoot sub = p.currentSub;
-	    	if (sub && sub.powerRelay.IsPowered())
+	    	if (sub && sub.powerRelay && sub.powerRelay.IsPowered())
 	    		return true;
 	    	return false;
 	    }
