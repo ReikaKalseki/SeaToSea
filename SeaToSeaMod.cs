@@ -49,6 +49,9 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
     
+    public static readonly Vector3 underwaterIslandsDeepWreck1 = new Vector3(-122, -506, 913);
+    public static readonly Vector3 underwaterIslandsDeepWreck2 = new Vector3(-112, -506, 896);
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -746,7 +749,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         
-        RecipeUtil.modifyIngredients(TechType.VehicleHullModule2, i => {if (i.techType == TechType.EnameledGlass || i.techType == TechType.EnameledMagnetite) i.amount *= 4; return false;});
+        RecipeUtil.modifyIngredients(TechType.VehicleHullModule2, i => {if (i.techType == TechType.EnameledGlass || i.techType == TechType.Magnetite) i.amount *= 4; return false;});
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.Silicone, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);

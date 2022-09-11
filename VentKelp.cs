@@ -211,7 +211,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
     			}
 			}
-			else if (transform.position.y >= -400) {
+			else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, SeaToSeaMod.underwaterIslandsDeepWreck1, SeaToSeaMod.underwaterIslandsDeepWreck2) <= 12) {
 				UnityEngine.Object.DestroyImmediate(gameObject);
 				return;
 			}
