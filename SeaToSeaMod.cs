@@ -746,15 +746,17 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
         RecipeUtil.addIngredient(TechType.LaserCutter, t2Battery.TechType, 1);
         
+        RecipeUtil.modifyIngredients(TechType.VehicleHullModule2, i => {if (i.techType == TechType.EnameledGlass || i.techType == TechType.EnameledMagnetite) i.amount *= 4; return false;});
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.Silicone, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
         RecipeUtil.addIngredient(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
         //RecipeUtil.addIngredient(TechType.VehicleHullModule3, armor.TechType, 2);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 2);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.PlasteelIngot);
-        //RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 1);
+        RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 4);
+        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Lubricant, 6);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
@@ -810,10 +812,11 @@ namespace ReikaKalseki.SeaToSea
         outdoorCompositePot.register();
         outdoorChicPot.register();
         
+        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule2);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.BaseReinforcement);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.HeatBlade); //force you to learn it from the mountain cave base
-        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.SeamothElectricalDefense);
+        //KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.SeamothElectricalDefense);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
