@@ -54,6 +54,17 @@
 		Sounds/auroracutwarn.ogg
 	</pda>
   </auroracut>
+  <underislandgeyserminerals>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting intense volcanic activity on the seafloor in this region, resulting in high concentrations of mineral resources.
+	</desc>
+	<pda>
+		Sounds/underislandgeyserminerals.ogg
+	</pda>
+  </underislandgeyserminerals>
   <kelpcavedrone>
 	<name>
 		

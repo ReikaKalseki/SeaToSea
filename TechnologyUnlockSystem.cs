@@ -28,8 +28,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	{TechType.ShaleChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Lithium)}},
 	    	{TechType.SandstoneChunk, new TechType[]{SeaToSeaMod.getIngot(TechType.Silver), SeaToSeaMod.getIngot(TechType.Gold), SeaToSeaMod.getIngot(TechType.Lead)}},*/
 	    };
-	    
-	    private FMODAsset unlockSound;
 		
 		private TechnologyUnlockSystem() {
 	    	foreach (SeaToSeaMod.IngotDefinition tt in SeaToSeaMod.getIngots()) {
@@ -67,18 +65,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	li.Add(to);
 	    	directUnlocks[from] = li;
 	    }
-	    
-	    private FMODAsset getUnlockSound() {
-	    	if (unlockSound == null) {
-	    		foreach (KnownTech.AnalysisTech kt in KnownTech.analysisTech) {
-	    			if (kt.unlockMessage == "NotificationBlueprintUnlocked") {
-	    				unlockSound = kt.unlockSound;
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	return unlockSound;
-	    }
 		
 		public void onLogin() {
 	    	foreach (TechType kvp in directUnlocks.Keys) {
@@ -100,11 +86,7 @@ namespace ReikaKalseki.SeaToSea {
 		   	}
 	   		if (any) {
 		   		SNUtil.log("Triggering direct unlock via "+tt+" of "+directUnlocks[tt].Count+":["+string.Join(", ", directUnlocks[tt].Select<TechType, string>(tc => ""+tc))+"]");
-		   		KnownTech.AnalysisTech at = new KnownTech.AnalysisTech();
-		   		at.techType = tt;
-		   		at.unlockMessage = "NotificationBlueprintUnlocked";
-		   		at.unlockSound = getUnlockSound();
-		   		uGUI_PopupNotification.main.OnAnalyze(at, true);
+		   		SNUtil.triggerTechPopup(tt);
 	   		}
 		}
 	}

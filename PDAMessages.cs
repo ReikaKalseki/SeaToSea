@@ -37,6 +37,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("treaderpoo")]TreaderPooPrompt,
 			[Message("dunearch")]DuneArchPrompt,
 			[Message("followradio")]FollowRadioPrompt,
+			[Message("underislandgeyserminerals")]UnderwaterIslandsPrompt,
 		}
 		
 		private static Message getAttr(Messages key) {
