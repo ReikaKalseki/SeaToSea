@@ -26,24 +26,26 @@ namespace ReikaKalseki.SeaToSea
 		
 		private double range = 1;
 		private double intensity = 1;
-		private Color color = Color.white;
+		private Color? color = Color.white;
 		
 		internal override void modifyComponent(Light c) {
 			c.range = (float)range;
 			c.intensity = (float)intensity;
-			c.color = color;
+			if (color != null && color.HasValue)
+				c.color = color.Value;
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
 			range = e.getFloat("range", double.NaN);
 			intensity = e.getFloat("intensity", double.NaN);
-			color = e.getColor("color", false).Value;
+			color = e.getColor("color", true);
 		}
 		
 		internal override void saveToXML(XmlElement e) {
 			e.addProperty("intensity", intensity);
 			e.addProperty("range", range);
-			e.addProperty("color", color);
+			if (color != null && color.HasValue)
+				e.addProperty("color", color.Value);
 		}
 		
 	}

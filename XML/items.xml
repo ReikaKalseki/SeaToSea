@@ -356,6 +356,9 @@
 			
 			Assessment: Inedible but possibly useful from a chemistry standpoint
 		</pda>
+		<header>
+			AlkaliVines
+		</header>
 	</ALKALI_PLANT>
 	<VENT_KELP>
 		<name>
@@ -371,6 +374,9 @@
 			
 			Assessment: Inedibly toxic but the bacteria may be repurposed to improve the efficacy of chemical reactions
 		</pda>
+		<header>
+			DeepVine
+		</header>
 	</VENT_KELP>
 	<HEALING_FLOWER>
 		<name>
@@ -384,6 +390,9 @@
 			
 			Assessment: Critical component of advanced healing equipment
 		</pda>
+		<header>
+			SalveBush
+		</header>
 	</HEALING_FLOWER>
 	<SeamothVoidStealth>
 		<name>

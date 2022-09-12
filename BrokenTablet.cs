@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class BrokenTablet : Spawnable {
 		
-		private readonly TechType tablet;
+		public readonly TechType tablet;
 		
 		private static readonly List<BrokenTablet> tablets = new List<BrokenTablet>();
 	        

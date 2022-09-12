@@ -25,11 +25,16 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	
-    	private readonly static Vector3 auroraPrawnBayCenter = new Vector3(996, 2.5F, -26.5F);//new Vector3(1003, 4, -18);
+    	//private readonly static Vector3 auroraPrawnBayCenter = new Vector3(996, 2.5F, -26.5F);//new Vector3(1003, 4, -18);
     	//private readonly static Vector3 auroraTopLeftBack = new Vector3(1010, 13, ?);
     	//private readonly static Vector3 auroraBottomRightFront = new Vector3(?, ?, ?);
     	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
     	private readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
+    	
+    	private readonly static Vector3 auroraPrawnBayLineA1 = new Vector3(995, 2.6F, -38.6F);
+    	private readonly static Vector3 auroraPrawnBayLineA2 = new Vector3(1023.5F, 2.6F, -12.7F);
+    	private readonly static Vector3 auroraPrawnBayLineB1 = new Vector3(981.3F, 2.6F, -21.4F);
+    	private readonly static Vector3 auroraPrawnBayLineB2 = new Vector3(1010.9F, 2.6F, 9.9F);
     	
     	public readonly static float highO2UsageStart = 400;
     	internal readonly static float depthFXRippleStart = 450;
@@ -69,7 +74,7 @@ namespace ReikaKalseki.SeaToSea {
     		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		
-    		temperatures["AuroraPrawnBay"] = new TemperatureEnvironment(150, 15F, 2.5F, 9999, 0);
+    		temperatures["AuroraPrawnBay"] = new TemperatureEnvironment(150, 10F, 2.5F, 9999, 0);
     		temperatures["AuroraPrawnBayDoor"] = new TemperatureEnvironment(200, 40F, 2.5F, 9999, 0);
     		temperatures["AuroraFireCeilingTunnel"] = new TemperatureEnvironment(175, 5F, 1.5F, 9999, 0);
     		
@@ -96,6 +101,13 @@ namespace ReikaKalseki.SeaToSea {
 			pdaBeep = SoundManager.registerSound("pda_beep", "Sounds/pdabeep.ogg", SoundSystem.voiceBus);
 		}
     	
+    	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
+    		double d1 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineA1, auroraPrawnBayLineA2);
+    		double d2 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineB1, auroraPrawnBayLineB2);
+    		double d3 = MathUtil.getDistanceToLineSegment(pos, (auroraPrawnBayLineA1+auroraPrawnBayLineB1)/2F, (auroraPrawnBayLineA2+auroraPrawnBayLineB2)/2F);
+    		return Math.Min(d1, Math.Min(d3, d2)) <= 6.25;
+    	}
+    	
     	public bool isPlayerInOcean() {
     		Player ep = Player.main;
     		string biome = getBiome(ep.gameObject).ToLowerInvariant();
@@ -112,8 +124,11 @@ namespace ReikaKalseki.SeaToSea {
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
-			if (aurora && !diveSuit) {
-	    		PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
+			if (aurora && !diveSuit && !PDAMessages.isTriggered(PDAMessages.Messages.AuroraFireWarn) && !PDAMessages.isTriggered(PDAMessages.Messages.AuroraFireWarn_NoRad)) {
+				if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
+	    			PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
+	    		else
+	    			PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn_NoRad);
 			}
 			if (dmg.player && !isPlayerInOcean() && !aurora)
 	   			return;
@@ -311,7 +326,7 @@ namespace ReikaKalseki.SeaToSea {
     			ret = "LavaCastle";
     		if (string.IsNullOrEmpty(ret))
     			ret = "void";
-    		if (Vector3.Distance(auroraPrawnBayCenter, pos) <= 20)
+    		if (isPlayerInAuroraPrawnBay(pos))
     			ret = "AuroraPrawnBay";
     		if (Vector3.Distance(auroraPrawnBayDoor, pos) <= 3)
     			ret = "AuroraPrawnBayDoor";

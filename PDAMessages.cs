@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea
 		public enum Messages {
 			[Message("voidspikeenter")]VoidSpike,
 			[Message("aurorafire")]AuroraFireWarn,
+			[Message("aurorafire_norad")]AuroraFireWarn_NoRad,
 			[Message("auroracut")]AuroraSalvage,
 			[Message("kelpcavedrone")]KelpCavePrompt,
 			//[Message("kelpcavedronelate")]KelpCavePromptLate,

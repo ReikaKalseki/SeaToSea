@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 				
 		internal override sealed void applyToObject(GameObject go) {
-			T component = go.GetComponentInParent<T>();
+			T component = go.GetComponentInChildren<T>();
 			if (component != null)
 				modifyComponent(component);
 		}

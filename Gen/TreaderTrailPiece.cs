@@ -37,8 +37,8 @@ namespace ReikaKalseki.SeaToSea
 			debris.scrapCount = Math.Max(1, (int)(intensity*UnityEngine.Random.Range(2, 6)));
 			debris.paperCount = 0;
 			debris.debrisScale = 0.25F;
-			debris.debrisAmount = intensity;
-			debris.yBaseline = position.y+0.4F;
+			debris.debrisAmount = intensity*1.5F;
+			debris.yBaseline = position.y+0.55F;
 			debris.areaSpread = 0.5F;
 			debris.bounds = new Vector3(4, 0, 4);
 			debris.generate(li);

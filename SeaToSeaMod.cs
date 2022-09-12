@@ -99,6 +99,7 @@ namespace ReikaKalseki.SeaToSea
     
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
+    private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
 
     [QModPatch]
     public static void Load() {
@@ -260,10 +261,20 @@ namespace ReikaKalseki.SeaToSea
 		gatedTechnologies.Add(TechType.PrecursorKey_White);
 		gatedTechnologies.Add(TechType.PrecursorKey_Orange);
 		gatedTechnologies.Add(TechType.PrecursorKey_Purple);
+		
+		registerTabletTechKey(brokenBlueTablet);
+		registerTabletTechKey(brokenOrangeTablet);
+		registerTabletTechKey(brokenWhiteTablet);
+		registerTabletTechKey(brokenRedTablet);
        
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
+    }
+    
+    private static void registerTabletTechKey(BrokenTablet tb) {
+		brokenTablets[tb.TechType] = tb.tablet;
+		brokenTablets[tb.tablet] = tb.tablet;
     }
     
     private static void onTechUnlocked(TechType tech, bool vb) {/*
@@ -273,6 +284,8 @@ namespace ReikaKalseki.SeaToSea
     	if (tech == TechType.NuclearReactor || tech == TechType.HighCapacityTank || tech == TechType.PrecursorKey_Purple || tech == TechType.SnakeMushroom || tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
     		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
     	}*/
+    	if (brokenTablets.ContainsKey(tech))
+    		SNUtil.triggerTechPopup(brokenTablets[tech]);
     }
     
     public static bool isTechGated(TechType tt) {
@@ -282,7 +295,8 @@ namespace ReikaKalseki.SeaToSea
     private static void addFlora() {
 		alkali = new AlkaliPlant();
 		alkali.Patch();	
-		alkali.addPDAEntry(itemLocale.getEntry(alkali.ClassID).pda, 3);
+		XMLLocale.LocaleEntry e = itemLocale.getEntry(alkali.ClassID);
+		alkali.addPDAEntry(e.pda, 3, e.getField<string>("header"));
 		SNUtil.log(" > "+alkali);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
@@ -293,14 +307,16 @@ namespace ReikaKalseki.SeaToSea
 		
 		kelp = new VentKelp();
 		kelp.Patch();	
-		kelp.addPDAEntry(itemLocale.getEntry(kelp.ClassID).pda, 3);
+		e = itemLocale.getEntry(kelp.ClassID);
+		kelp.addPDAEntry(e.pda, 3, e.getField<string>("header"));
 		SNUtil.log(" > "+kelp);
 		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 		//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 		
 		healFlower = new HealingFlower();
 		healFlower.Patch();	
-		healFlower.addPDAEntry(itemLocale.getEntry(healFlower.ClassID).pda, 5);
+		e = itemLocale.getEntry(healFlower.ClassID);
+		healFlower.addPDAEntry(e.pda, 5, e.getField<string>("header"));
 		SNUtil.log(" > "+healFlower);
 		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, false, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
     }
@@ -367,6 +383,15 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.CrashZone_Sand, 0.5F, 1);
+    	
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
     	
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
     		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
@@ -553,11 +578,28 @@ namespace ReikaKalseki.SeaToSea
        	
         int s = 3;
         rec = new TechData();
-        rec.Ingredients.Add(new Ingredient(kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.75F)));
+        rec.Ingredients.Add(new Ingredient(kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.5F)));
       	rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));
        	rec.craftAmount = enzyK.numberCrafted*s;
        	item = new DuplicateRecipeDelegateWithRecipe(enzyK, rec);
-       	item.craftTime = enzyK.craftingTime*s;
+       	item.craftTime = enzyK.craftingTime*s/2F;
+       	item.Patch();
+       	
+        rec = new TechData();
+        rec.Ingredients.Add(new Ingredient(acid.TechType, 9));
+      	rec.Ingredients.Add(new Ingredient(TechType.Gold, 2));
+      	rec.Ingredients.Add(new Ingredient(TechType.SpottedLeavesPlantSeed, 4));
+      	rec.Ingredients.Add(new Ingredient(TechType.Lubricant, 4));
+       	item = new DuplicateRecipeDelegateWithRecipe(TechType.Polyaniline, rec);
+       	item.setRecipe();
+       	CraftData.GetCraftTime(TechType.Polyaniline, out item.craftTime);
+       	item.craftTime *= 4;
+       	item.category = chemistryCategory;
+       	item.group = TechGroup.Resources;
+       	item.craftingType = CraftTree.Type.Fabricator;
+       	item.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
+       	item.unlock = TechType.AcidMushroom;
+       	item.suffixName = " Traces";
        	item.Patch();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -622,7 +664,7 @@ namespace ReikaKalseki.SeaToSea
         liquidTank.Patch();
         
 		breathingFluid = new BreathingFluid();
-		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleRattleSpore, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
+		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
 		breathingFluid.Patch();
         
 		bandage = new CurativeBandage();
@@ -778,8 +820,8 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 3);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
@@ -787,9 +829,9 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Magnetite, 3);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 2);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 4);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, ingots[TechType.Magnetite].ingot, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 6);
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
         //SNUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         

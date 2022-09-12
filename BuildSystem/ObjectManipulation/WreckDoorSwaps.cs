@@ -33,11 +33,11 @@ namespace ReikaKalseki.SeaToSea
 					if (!t || !t.gameObject)
 						continue;
 					Vector3 pos = t.position;
-					SNUtil.log("Checking door "+t.position);
+					//SNUtil.log("Checking door "+t.position);
 					if (Vector3.Distance(d.position, pos) <= 0.5) {
 						found = true;
 						d.applyTo(t.gameObject);
-						SNUtil.log("Matched to door "+pos+", converted to "+d.doorType);
+						//SNUtil.log("Matched to door "+pos+", converted to "+d.doorType);
 					}
 				}
 				if (!found)

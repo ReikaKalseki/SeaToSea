@@ -43,6 +43,17 @@
 		Sounds/aurorafirewarn.ogg
 	</pda>
   </aurorafire>
+  <aurorafire_norad>
+	<name>
+		
+	</name>
+	<desc>
+		Caution: Hazardous fire levels detected.
+	</desc>
+	<pda>
+		Sounds/aurorafirewarn-norad.ogg
+	</pda>
+  </aurorafire_norad>
   <auroracut>
 	<name>
 		

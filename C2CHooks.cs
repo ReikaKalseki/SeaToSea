@@ -82,8 +82,16 @@ namespace ReikaKalseki.SeaToSea {
 			SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.onGoalUnlockTracker.goalUnlocks.Values.Select<Story.OnGoalUnlock, string>(g => g.goal).ToArray()));
 	    	*/
 	    	VoidSpikesBiome.instance.onWorldStart();
+        
+	    	moveToExploitable("SeaCrown");
+	    	moveToExploitable("SpottedLeavesPlant");
+	    	moveToExploitable("OrangeMushroom");
+	    	moveToExploitable("SnakeMushroom");
+	    	moveToExploitable("PurpleVasePlant");
 	    
 	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
+	    		if (k.ToLowerInvariant().Contains("desc"))
+	    			continue;
 	    		string s = Language.main.strings[k];
 	    		if (s.ToLowerInvariant().Contains("creepvine"))
 	    			continue;
@@ -91,12 +99,30 @@ namespace ReikaKalseki.SeaToSea {
 	    		s = s.Replace(" spore", " Sample");
 	    		s = s.Replace(" Seed", " Sample");
 	    		s = s.Replace(" Spore", " Sample");
+	    		SNUtil.log("Updating seed naming for "+k);
 	    		Language.main.strings[k] = s;
 		    }
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
 	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
 			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
+	    }
+	    
+	    private static void moveToExploitable(string key) {
+	    	PDAEncyclopedia.EntryData data = PDAEncyclopedia.mapping[key];/*
+	    	TreeNode root = PDAEncyclopedia.tree;
+	    	TreeNode node = root;
+	    	foreach (string s in data.path.Split('/')) {
+	    		node = node[s];
+	    	}
+	    	if (node == null) {
+	    		SNUtil.log("Found no ency node for "+key+" in "+data.path);
+	    		return;
+	    	}*/
+	    	//node.parent.RemoveNode(node);
+	    	//root[3][1][0].AddNode(node);
+	    	data.path = data.path.Replace("Sea", "Exploitable").Replace("Land", "Exploitable");
+	    	data.nodes = PDAEncyclopedia.ParsePath(data.path);
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
@@ -122,7 +148,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	}	    	
 	    	else if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
-	    		if (ep.currentSub) {
+	    		if (LiquidBreathingSystem.instance.isLiquidBreathingActive(ep)) {
+	    			ep.oxygenMgr.UnregisterSource(playerBaseO2);
+	    			ep.oxygenMgr.RegisterSource(ox);
+	    		}
+	    		else {
 	    			ep.oxygenMgr.UnregisterSource(ox);
 	    			ep.oxygenMgr.RegisterSource(playerBaseO2);
 	    			float add = Mathf.Min(ep.oxygenMgr.oxygenUnitsPerSecondSurface, ox.oxygenCapacity-ox.oxygenAvailable)*Time.deltaTime;
@@ -130,10 +160,6 @@ namespace ReikaKalseki.SeaToSea {
 	    				if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(ep, ref add))
 	    					ox.AddOxygen(add);
 	    			}
-	    		}
-	    		else {
-	    			ep.oxygenMgr.UnregisterSource(playerBaseO2);
-	    			ep.oxygenMgr.RegisterSource(ox);
 	    		}
 	    	}
 	    	else {
@@ -835,7 +861,7 @@ namespace ReikaKalseki.SeaToSea {
 					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 					ht.setValues(50, 5);
 					ht.activate();
-					Inventory.main.container.RemoveItem(useObj.GetComponent<Pickupable>(), true);
+					Inventory.main.container.DestroyItem(tt);
 					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
 						dt.damageRemaining = 0;
 						dt.CancelInvoke("DoDamage");
@@ -978,6 +1004,19 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	   	 }
 	   }
+	   
+		public static string getO2Tooltip(Oxygen ox) {
+	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType) {
+	   			return ox.GetSecondsLeft()+"s fluid stored in supply tank";
+	   		}
+	   		return LanguageCache.GetOxygenText(ox.GetSecondsLeft());
+		}
+	   
+		public static string getBatteryTooltip(Battery ox) {
+	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType)
+	   			return Mathf.RoundToInt(ox.charge)+"s fluid stored in primary tank";
+	   		return Language.main.GetFormat<float, int, float>("BatteryCharge", ox.charge/ox.capacity, Mathf.RoundToInt(ox.charge), ox.capacity);
+		}
 	}
 	
 	class ContainmentFacilityDragonRepellent : MonoBehaviour {

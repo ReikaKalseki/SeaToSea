@@ -141,11 +141,11 @@ namespace ReikaKalseki.SeaToSea {
 				UnityEngine.Object.Destroy(c);
 		 	}
 			SphereCollider cc = machineMdl.AddComponent<SphereCollider>();
-			cc.radius = 1.2F;
-			cc.center = new Vector3(0, 0.25F, 0);
+			cc.radius = 0.85F;
+			cc.center = new Vector3(0, 0, 0.2F);
 			cc = machineMdl.AddComponent<SphereCollider>();
-			cc.radius = 1.2F;
-			cc.center = new Vector3(0, 1F, 0);
+			cc.radius = 0.85F;
+			cc.center = new Vector3(0, 0, 1F);
 			
 			Renderer r = machineMdl.GetComponentInChildren<Renderer>();
 			//SNUtil.dumpTextures(r);
@@ -163,21 +163,9 @@ namespace ReikaKalseki.SeaToSea {
 			
 			ObjectUtil.removeChildObject(go, "SubDamageSounds");
 			
-			go.EnsureComponent<SkyApplier>();
-			SkyApplier[] skies = go.GetComponentsInChildren<SkyApplier>();
-			foreach (SkyApplier sky in skies)
-				sky.renderers = go.GetComponentsInChildren<Renderer>();
-			
 			//ObjectUtil.removeComponent<PrefabIdentifier>(machineMdl);
 			//ChildObjectIdentifier coi = machineMdl.EnsureComponent<ChildObjectIdentifier>();
 			//coi.classId = ClassID+"_mdl";
-			
-			foreach (SkyApplier sky in skies) {
-				sky.renderers = go.GetComponentsInChildren<Renderer>();
-				sky.enabled = true;
-				sky.RefreshDirtySky();
-				sky.ApplySkybox();
-			}
 			
 			setTerminalBox(go);
 		}

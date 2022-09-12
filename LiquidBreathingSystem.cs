@@ -48,7 +48,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public void onUnequip() {
 	    	Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
-	    	SNUtil.playSoundAt(SNUtil.getSound("event:/player/Puke"), Player.main.lastPosition, false, 12);
+	    	SNUtil.playSoundAt(SNUtil.getSound(Player.main.IsUnderwater() ? "event:/player/Puke_underwater" : "event:/player/Puke"), Player.main.lastPosition, false, 12);
 	    }
 	    
 	    public void refreshGui() {
@@ -95,6 +95,15 @@ namespace ReikaKalseki.SeaToSea {
 	    		refreshGui();
 	    	}
 	    	return add;
+	    }
+	    
+	    public bool isLiquidBreathingActive(Player ep) {
+	    	if (ep.currentEscapePod && ep.currentEscapePod == EscapePod.main)
+	    		return false;
+	    	SubRoot sub = ep.currentSub;
+	    	if (sub && sub.powerRelay && sub.powerRelay.IsPowered())
+	    		return false;
+	    	return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
 	    }
 	    
 	    public bool isInPoweredArea(Player p) {
