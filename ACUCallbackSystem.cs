@@ -16,7 +16,7 @@ using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class ACUCallbackSystem { //TODO make this its own mod "acu metabolism"
+	public class ACUCallbackSystem { //TODO make this its own mod "acu metabolism" ; TODO add "healthy ecosystem" bonus to breeding
 		
 		public static readonly ACUCallbackSystem instance = new ACUCallbackSystem();
 		
@@ -60,25 +60,24 @@ namespace ReikaKalseki.SeaToSea {
 		};
 	    
 	    private readonly Dictionary<TechType, ACUMetabolism> metabolisms = new Dictionary<TechType, ACUMetabolism>() {
-			{TechType.RabbitRay, new ACUMetabolism(0.01F, 600, false)},
-			{TechType.Gasopod, new ACUMetabolism(0.05F, 480, false)},
-			{TechType.Jellyray, new ACUMetabolism(0.04F, 420, false)},
-	    	{TechType.Stalker, new ACUMetabolism(0.05F, 300, false)},
-	    	{TechType.Sandshark, new ACUMetabolism(0.03F, 480, false)},
-	    	{TechType.BoneShark, new ACUMetabolism(0.03F, 300, false)},
-	    	{TechType.Shocker, new ACUMetabolism(0.1F, 240, false)},
-	    	{TechType.Crabsnake, new ACUMetabolism(0.08F, 180, false)},
-	    	{TechType.CrabSquid, new ACUMetabolism(0.15F, 180, false)},
-	    	{TechType.LavaLizard, new ACUMetabolism(0.05F, 480, false)},
-	    	{TechType.SpineEel, new ACUMetabolism(0.03F, 240, false)},
+			{TechType.RabbitRay, new ACUMetabolism(0.01F, 0.1F, false)},
+			{TechType.Gasopod, new ACUMetabolism(0.05F, 0.4F, false)},
+			{TechType.Jellyray, new ACUMetabolism(0.04F, 0.3F, false)},
+	    	{TechType.Stalker, new ACUMetabolism(0.05F, 0.5F, true)},
+	    	{TechType.Sandshark, new ACUMetabolism(0.03F, 0.6F, true)},
+	    	{TechType.BoneShark, new ACUMetabolism(0.03F, 0.8F, true)},
+	    	{TechType.Shocker, new ACUMetabolism(0.1F, 0.5F, true)},
+	    	{TechType.Crabsnake, new ACUMetabolism(0.08F, 1F, true)},
+	    	{TechType.CrabSquid, new ACUMetabolism(0.15F, 1F, true)},
+	    	{TechType.LavaLizard, new ACUMetabolism(0.05F, 0.5F, true)},
+	    	{TechType.SpineEel, new ACUMetabolism(0.03F, 1.5F, true)},
 	    };
 		
 		private ACUCallbackSystem() {
 			foreach (TechType tt in new List<TechType>(edibleFish.Keys)) {
 				GameObject go = CraftData.GetPrefabForTechType(SNUtil.getTechType("Cooked"+tt));
 				Eatable ea = go.GetComponent<Eatable>();
-				edibleFish[tt] = ea.foodValue;
-				SNUtil.log(tt+" > "+ea.foodValue);
+				edibleFish[tt] = ea.foodValue*0.01F; //so a reginald is ~40%
 			}
 		}
 		
@@ -86,14 +85,27 @@ namespace ReikaKalseki.SeaToSea {
 			float dT = Time.deltaTime;
 			foreach (WaterParkItem wp in new List<WaterParkItem>(acu.items)) {
 				if (wp && wp is WaterParkCreature) {
-					TechTag tt = wp.gameObject.GetComponentInChildren<TechTag>();
-					if (tt && metabolisms.ContainsKey(tt.type)) {
-						ACUMetabolism am = metabolisms[tt.type];	
+					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
+					TechType tt = pp ? pp.GetTechType() : TechType.None;
+					if (metabolisms.ContainsKey(tt)) {
+						ACUMetabolism am = metabolisms[tt];	
 						Creature c = wp.gameObject.GetComponentInChildren<Creature>();
 						c.Hunger.Add(dT*am.metabolismPerSecond);
-						if (c.Hunger.Value >= 0.5F)
-							if (tryEat(c, acu, am))
+						c.Hunger.Falloff = 0;
+						if (c.Hunger.Value >= 0.5F) {
+							float amt;
+							if (tryEat(c, acu, am, out amt)) {
 								c.Happy.Add(0.05F);
+								float f = am.normalizedPoopChance*amt*Mathf.Pow(((WaterParkCreature)wp).age, 2F);
+								//SNUtil.writeToChat(c+" ate > "+f);
+								if (UnityEngine.Random.Range(0F, 1F) < f) {
+									GameObject poo = ObjectUtil.createWorldObject(CraftingItems.getItem(CraftingItems.Items.MiniPoop).ClassID);
+									poo.transform.position = c.transform.position+Vector3.down*0.05F;
+									poo.transform.rotation = UnityEngine.Random.rotationUniform;
+									//SNUtil.writeToChat("Poo spawned");
+								}
+							}
+						}
 					}
 					Shocker s = wp.GetComponentInChildren<Shocker>();
 					if (s) {
@@ -104,35 +116,48 @@ namespace ReikaKalseki.SeaToSea {
 	   	 	}
 		}
 		
-		private bool tryEat(Creature c, WaterPark acu, ACUMetabolism am) {
+		private bool tryEat(Creature c, WaterPark acu, ACUMetabolism am, out float amt) {
 			if (am.isCarnivore) {
 				foreach (WaterParkItem wp in acu.items) {
-					TechTag tt = wp.GetComponentInChildren<TechTag>();
-					if (tt && edibleFish.ContainsKey(tt.type)) {
-						if (c.Hunger.Value+edibleFish[tt.type] <= 1) {
-							c.Hunger.Add(-edibleFish[tt.type]);
-							acu.RemoveItem(tt.GetComponent<Pickupable>());
+					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
+					TechType tt = pp ? pp.GetTechType() : TechType.None;
+					//SNUtil.writeToChat(pp+" > "+tt+" > "+edibleFish.ContainsKey(tt));
+					if (edibleFish.ContainsKey(tt)) {
+						if (c.Hunger.Value >= edibleFish[tt]) {
+							c.Hunger.Add(-edibleFish[tt]);
+							acu.RemoveItem(wp);
+							UnityEngine.Object.DestroyImmediate(pp.gameObject);
+							amt = edibleFish[tt];
+							//SNUtil.writeToChat(c+" ate a "+tt+" and got "+amt);
 							return true;
 						}
 					}
 				}
+				amt = 0;
 				return false;
 			}
 			else {
 				StorageContainer sc = acu.planter.GetComponentInChildren<StorageContainer>();
-				foreach (TechTag tt in sc.GetComponentsInChildren<TechTag>()) {
-					if (tt && ediblePlants.ContainsKey(VanillaFlora.getFromID(CraftData.GetClassIdForTechType(tt.type)))) {
-						if (c.Hunger.Value+ediblePlants[tt.type] <= 1) {
-							c.Hunger.Add(-ediblePlants[tt.type]);
-							LiveMixin lv = tt.gameObject.GetComponent<LiveMixin>();
-							if (lv && lv.IsAlive())
-								lv.TakeDamage(10, c.transform.position, DamageType.Normal, c.gameObject);
-							else
-								sc.container.DestroyItem(tt.type);
-							return true;
+				foreach (PrefabIdentifier tt in sc.GetComponentsInChildren<PrefabIdentifier>()) {
+					if (tt) {
+						VanillaFlora vf = VanillaFlora.getFromID(tt.ClassId);
+						//SNUtil.writeToChat(tt+" > "+vf+" > "+ediblePlants.ContainsKey(vf));
+						if (vf != null && ediblePlants.ContainsKey(vf)) {
+							if (c.Hunger.Value >= ediblePlants[vf]) {
+								c.Hunger.Add(-ediblePlants[vf]);
+								amt = ediblePlants[vf];
+								//SNUtil.writeToChat(c+" ate a "+vf+" and got "+amt);
+								LiveMixin lv = tt.gameObject.GetComponent<LiveMixin>();
+								if (lv && lv.IsAlive())
+									lv.TakeDamage(10, c.transform.position, DamageType.Normal, c.gameObject);
+								else
+									sc.container.DestroyItem(CraftData.entClassTechTable[tt.ClassId]);
+								return true;
+							}
 						}
 					}
 				}
+				amt = 0;
 				return false;
 			}
 		}
@@ -141,11 +166,11 @@ namespace ReikaKalseki.SeaToSea {
 			
 			internal readonly bool isCarnivore;
 			internal readonly float metabolismPerSecond;
-			internal readonly float secondsPerPoop;
+			internal readonly float normalizedPoopChance;
 			
-			internal ACUMetabolism(float mf, float sp, bool isc) {
-				secondsPerPoop = sp;
-				metabolismPerSecond = mf*0.25F;
+			internal ACUMetabolism(float mf, float pp, bool isc) {
+				normalizedPoopChance = pp*0.25F;
+				metabolismPerSecond = mf*0.02F;
 				isCarnivore = isc;
 			}
 			

@@ -136,7 +136,7 @@
 			Digestive Enzymes
 		</name>
 		<desc>
-			Trace chemicals extracted from the digestive output of large herbivorous animals.
+			Trace chemicals extracted from the digestive output of large animals.
 		</desc>
 		<pda>
 			
@@ -197,6 +197,17 @@
 			
 		</pda>
 	</RocketFuel>
+	<MiniPoop>
+		<name>
+			Alien Feces (Small)
+		</name>
+		<desc>
+			A small quantity of fecal matter from alien fauna.
+		</desc>
+		<pda>
+			
+		</pda>
+	</MiniPoop>
 	<breathfluid>
 		<name>
 			Breathing Fluid
