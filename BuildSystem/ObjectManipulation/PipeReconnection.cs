@@ -72,10 +72,11 @@ namespace ReikaKalseki.SeaToSea
 				foreach (IPipeConnection conn in li) {
 					Vector3 pos = ((MonoBehaviour)conn).transform.position;
 					double dd = Vector3.Distance(pos, position);
-					SNUtil.log("Pipe "+gameObject.transform.position+" reconnected to "+pos+" @ dist="+dd);
+					SNUtil.log("Pipe "+gameObject.transform.position+" check against "+pos+" @ dist="+dd);
 					if (connection == null || dd < dist) {
 						connection = conn;
 						dist = dd;
+						SNUtil.log("Reconnected");
 					}
 				}
 				if (connection != null)

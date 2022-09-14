@@ -90,7 +90,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	moveToExploitable("PurpleVasePlant");
 	    
 	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
-	    		if (k.ToLowerInvariant().Contains("desc"))
+	    		string k2 = k.ToLowerInvariant();
+	    		if (k2.Contains("tooltip") || k2.Contains("desc") || k2.Contains("ency"))
 	    			continue;
 	    		string s = Language.main.strings[k];
 	    		if (s.ToLowerInvariant().Contains("creepvine"))
@@ -99,7 +100,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		s = s.Replace(" spore", " Sample");
 	    		s = s.Replace(" Seed", " Sample");
 	    		s = s.Replace(" Spore", " Sample");
-	    		SNUtil.log("Updating seed naming for "+k);
+	    		//SNUtil.log("Updating seed naming for "+k);
 	    		Language.main.strings[k] = s;
 		    }
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
@@ -219,19 +220,19 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (LiquidBreathingSystem.instance.hasTankButNoMask())
+	    	if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(p))
 	    		return false;
 	    	return orig;
 	    }
 	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
-	   		if (LiquidBreathingSystem.instance.hasTankButNoMask())
+	   		if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(Player.main))
 	   			f = 0;
 	   		return f;
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
-	    	if (!LiquidBreathingSystem.instance.hasTankButNoMask()) {
+	    	if (LiquidBreathingSystem.instance.isO2BarAbleToFill(Player.main)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
 	    	}
@@ -992,18 +993,9 @@ namespace ReikaKalseki.SeaToSea {
 	   			TechnologyUnlockSystem.instance.triggerDirectUnlock(data.key);
 		}
 	   
-	   public static void tickACU(WaterPark acu) {
-	   	 foreach (WaterParkItem wp in acu.items) {
-			if (wp && wp is WaterParkCreature) {
-				Shocker s = wp.GetComponentInChildren<Shocker>();
-				if (s) {
-					float trash;
-					float dT = Time.deltaTime;
-					acu.GetComponentInParent<BaseRoot>().powerRelay.AddEnergy(dT*0.5F*Mathf.Clamp01(((WaterParkCreature)wp).age), out trash);
-				}
-			}
-	   	 }
-	   }
+	   	public static void tickACU(WaterPark acu) {
+	   		ACUCallbackSystem.instance.tick(acu);
+	   	}
 	   
 		public static string getO2Tooltip(Oxygen ox) {
 	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType) {

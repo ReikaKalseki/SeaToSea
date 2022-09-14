@@ -371,7 +371,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!GameModeUtils.RequiresOxygen())
 				return 0;
 			float num = 1;
-			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting) {
+			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting && isPlayerInOcean()) {
 				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;
 				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
 				if (!hasRebreather) {
@@ -382,7 +382,7 @@ namespace ReikaKalseki.SeaToSea {
 						num = 2;
 					}
 				}
-				if (depthClass >= 3 && isPlayerInOcean()) {
+				if (depthClass >= 3) {
 					float depth = Player.main.GetDepth();
 					if ((depth >= depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing()) || (depth >= highO2UsageStart && !hasRebreatherV2)) {
 						num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-highO2UsageStart)/10F);
@@ -396,10 +396,12 @@ namespace ReikaKalseki.SeaToSea {
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
 	   		
+	   		bool inOcean = isPlayerInOcean();
+	   		
 	   		bool flagged = false;
 	   		for (int i = 0; i < warnings.Count; i++) {
 	   			CustomHUDWarning w = warnings[i];
-	   			if (!flagged && w.shouldShow()) {
+	   			if (!flagged && inOcean && w.shouldShow()) {
 	   				w.setActive(true);
 	   				flagged = true;
 	   			}
@@ -408,31 +410,18 @@ namespace ReikaKalseki.SeaToSea {
 	   			}
 	   		}
 	   		
-	   		if (!isPlayerInOcean()/* || Player.main.liveMixin == null || !Player.main.liveMixin.enabled || Player.main.liveMixin.invincible*/) {
+	   		if (!inOcean) {
 				return;
-			}/*
-			float depth = Player.main.GetDepth();
-			
-			bool hasRebreatherV2 = Inventory.main.equipment.GetCount(rebreatherV2.TechType) != 0;
-			bool hasRebreatherV1 = Inventory.main.equipment.GetCount(TechType.Rebreather) != 0;
-			if (hasRebreatherV2) {
-				
 			}
-			else if (hasRebreatherV1) {
-				
-			}
-			else {*/
-				foreach (EnviroAlert ee in warn.alerts) {
-	   				//SNUtil.writeToChat(ee+" : "+ee.isActive());
-	   				if (!ee.alertCooldown && !ee.wasActiveLastTick && ee.isActive()) {
-						ee.fire(warn);
-					}
-	   				else {
-						ee.wasActiveLastTick = false;
-	   				}
+			foreach (EnviroAlert ee in warn.alerts) {
+	   			//SNUtil.writeToChat(ee+" : "+ee.isActive());
+	   			if (!ee.alertCooldown && !ee.wasActiveLastTick && ee.isActive()) {
+					ee.fire(warn);
 				}
-			//}
-			//warn.wasAtDepth = depth;
+	   			else {
+					ee.wasActiveLastTick = false;
+	   			}
+			}
 		}
 	   
 		private void upgradeAlertSystem(RebreatherDepthWarnings warn) {

@@ -106,6 +106,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
 	    }
 	    
+	    public bool isO2BarAbleToFill(Player ep) {
+	    	if (hasTankButNoMask())
+	    		return false;
+	    	return !hasLiquidBreathing() || isInPoweredArea(ep) || !isLiquidBreathingActive(ep);
+	    }
+	    
 	    public bool isInPoweredArea(Player p) {
 	    	if (!p)
 	    		return false;
@@ -192,9 +198,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1*2) : baseOverlayAlpha1;
 	    	bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2*2) : baseOverlayAlpha2;
 	    	t.text = pink ? customHUDText /*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
-	    	bool pow = isInPoweredArea(Player.main);
-	    	tn.color = pink && pow ? Color.gray : Color.white;
-	    	if (pink && pow)
+	    	bool inactive = isLiquidBreathingActive(Player.main);
+	    	tn.color = pink && inactive ? Color.gray : Color.white;
+	    	if (pink && inactive)
 	    		tn.text = "-";
 	    	bar.color = Color.white;
 	    	

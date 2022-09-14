@@ -64,6 +64,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]KelpEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/aerogel")]FuelTankWall,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/Lubricant")]RocketFuel,
+			[Item(typeof(BasicCraftingItem),	TechCategory.Misc, 				TechType.SeaTreaderPoop,	"WorldEntities/Natural/SeaTreaderPoop")]MiniPoop,
 		}
 		
 		private static Item getAttr(Items key) {
