@@ -55,16 +55,6 @@ namespace ReikaKalseki.SeaToSea
 				
 				}
 			}*/
-			ObjectUtil.removeChildObject(go, "SubDamageSounds");
-			ObjectUtil.removeChildObject(go, "PowerAttach");
-			ObjectUtil.removeComponent<BaseFloodSim>(go);
-			ObjectUtil.removeComponent<BaseHullStrength>(go);
-			ObjectUtil.removeComponent<BasePowerRelay>(go);
-			ObjectUtil.removeComponent<PowerFX>(go);
-			ObjectUtil.removeComponent<VoiceNotificationManager>(go);
-			ObjectUtil.removeComponent<VoiceNotification>(go);
-			ObjectUtil.removeComponent<BaseRoot>(go);
-			ObjectUtil.removeComponent<Base>(go);
 			WorldgenSeabaseController ws = go.EnsureComponent<WorldgenSeabaseController>();
 			ws.reconstructionData = data;
 			ws.seabaseID = id;
@@ -151,6 +141,7 @@ namespace ReikaKalseki.SeaToSea
 					if (isNew) {
 						li1 = e2.getDirectElementsByTagName("inventory");
 						if (li1.Count == 1) {
+							SNUtil.log("Recreating inventory contents");
 							StorageContainer sc = go2.GetComponent<StorageContainer>();
 							Charger cg = go2.GetComponent<Charger>();
 							Planter p = go2.GetComponent<Planter>();
@@ -192,9 +183,32 @@ namespace ReikaKalseki.SeaToSea
 									}
 								}
 							}
+							if (sc != null)
+								SNUtil.log("Recreated inventory contents: "+sc.container.itemsMap);
+							if (cg != null)
+								SNUtil.log("Recreated charger contents: "+cg.equipment.equipment.toDebugString());
 						}
 					}
 				}
+				ObjectUtil.removeChildObject(gameObject, "SubDamageSounds");
+				ObjectUtil.removeChildObject(gameObject, "PowerAttach");
+				ObjectUtil.removeChildObject(gameObject, "MapRoomFunctionality");
+				ObjectUtil.removeComponent<BaseFloodSim>(gameObject);
+				ObjectUtil.removeComponent<BaseHullStrength>(gameObject);
+				ObjectUtil.removeComponent<BasePowerRelay>(gameObject);
+				ObjectUtil.removeComponent<PowerFX>(gameObject);
+				ObjectUtil.removeComponent<VoiceNotificationManager>(gameObject);
+				ObjectUtil.removeComponent<VoiceNotification>(gameObject);
+				ObjectUtil.removeComponent<BaseRoot>(gameObject);
+				ObjectUtil.removeComponent<Base>(gameObject);
+				ObjectUtil.removeComponent<UseableDiveHatch>(gameObject);
+				ObjectUtil.removeComponent<WaterPark>(gameObject);
+				ObjectUtil.removeComponent<CustomMachineLogic>(gameObject);
+				foreach (MapRoomCamera c in gameObject.GetComponentsInChildren<MapRoomCamera>(true)) {
+					UnityEngine.Object.DestroyImmediate(c.gameObject);
+				}
+				SNUtil.log("Finished reconstructing seabase '"+seabaseID+"' @ "+transform.position);
+				ObjectUtil.dumpObjectData(gameObject);
 			}
 
 			void Update() {

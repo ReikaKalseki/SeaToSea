@@ -198,7 +198,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1*2) : baseOverlayAlpha1;
 	    	bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2*2) : baseOverlayAlpha2;
 	    	t.text = pink ? customHUDText /*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
-	    	bool inactive = isLiquidBreathingActive(Player.main);
+	    	bool inactive = !isLiquidBreathingActive(Player.main);
 	    	tn.color = pink && inactive ? Color.gray : Color.white;
 	    	if (pink && inactive)
 	    		tn.text = "-";

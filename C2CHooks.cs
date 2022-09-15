@@ -786,9 +786,15 @@ namespace ReikaKalseki.SeaToSea {
 			if (bk.enabled && bk.state == BulkheadDoor.State.Zero) {
 	    		Sealed s = bk.GetComponent<Sealed>();
 	    		if (s != null && s.IsSealed()) {
-					HandReticle.main.SetInteractText("SealedInstructions"); //is a locale key
-					HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
-					HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
+	    			if (s.maxOpenedAmount < 0) {
+	    				HandReticle.main.SetInteractText("BulkheadInoperable");
+						HandReticle.main.SetIcon(HandReticle.IconType.None, 1f);
+	    			}
+	    			else {
+						HandReticle.main.SetInteractText("SealedInstructions"); //is a locale key
+						HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
+						HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
+	    			}
 	    		}
 	    		else {
 					HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
@@ -836,6 +842,8 @@ namespace ReikaKalseki.SeaToSea {
 				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
 			});
 			Language.main.strings["AuroraLaserCut"] = "Use Laser Cutter to harvest metal salvage";
+			Language.main.strings["BulkheadInoperable"] = "Bulkhead is inoperable";
+			Language.main.strings["DockToChangeVehicleUpgrades"] = "Vehicle upgrades can only be exchanged while docked";
 	    }
 	    
 	    public static bool isItemUsable(TechType tt) {
@@ -1008,6 +1016,23 @@ namespace ReikaKalseki.SeaToSea {
 	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType)
 	   			return Mathf.RoundToInt(ox.charge)+"s fluid stored in primary tank";
 	   		return Language.main.GetFormat<float, int, float>("BatteryCharge", ox.charge/ox.capacity, Mathf.RoundToInt(ox.charge), ox.capacity);
+		}
+	   
+	   public static void onClickedVehicleUpgrades(VehicleUpgradeConsoleInput v) {
+			if (v.docked)
+				v.OpenPDA();
+	   }
+	   
+		public static void onHoverVehicleUpgrades(VehicleUpgradeConsoleInput v) {
+			HandReticle main = HandReticle.main;
+		   	if (!v.docked) {
+				main.SetInteractText("DockToChangeVehicleUpgrades"); //locale key
+				main.SetIcon(HandReticle.IconType.HandDeny, 1f);
+		   	}
+			else if (v.equipment != null) {
+				main.SetInteractText(v.interactText);
+				main.SetIcon(HandReticle.IconType.Hand, 1f);
+			}
 		}
 	}
 	

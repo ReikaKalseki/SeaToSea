@@ -60,6 +60,10 @@ namespace ReikaKalseki.SeaToSea
 				registerType(TAGNAME, e => new CustomPrefab(e.getProperty("prefab")));
 			}
 			
+			public override string ToString() {
+				return base.ToString().Replace(" @ ", " ["+tech+"] @ ");
+			}
+			
 			public void setSeabase() {
 				isSeabase = true;
 				prefabName = "seabase";

@@ -225,6 +225,8 @@ namespace ReikaKalseki.SeaToSea
 			public override void saveToXML(XmlElement e) {
 				base.saveToXML(e);
 				
+				SNUtil.log("Serializing "+obj+" to xml as '"+prefabName+"':");
+				
 				if (parent != null && parent.xmlID != null && parent.xmlID.HasValue) {
 					e.addProperty("parent", parent.xmlID.ToString());
 				}
@@ -232,7 +234,10 @@ namespace ReikaKalseki.SeaToSea
 					foreach (Transform t in obj.transform) {
 						GameObject go2 = t.gameObject;
 						PlacedObject p2 = createNewObject(go2);
-						if (p2 != null) {
+						if (p2 == null) {
+							SNUtil.log("Could not find an identifier for "+t);
+						}
+						else {
 							XmlElement cell = e.OwnerDocument.CreateElement("part");
 							p2.saveToXML(cell);
 							BaseCell bc = go2.GetComponent<BaseCell>();
@@ -242,7 +247,10 @@ namespace ReikaKalseki.SeaToSea
 								XmlElement e2 = e.OwnerDocument.CreateElement("cellData");
 								foreach (Transform t2 in t) {
 									PlacedObject p3 = createNewObject(t2.gameObject);
-									if (p3 != null) {
+									if (p3 == null) {
+										SNUtil.log("Could not find an identifier for "+t2);
+									}
+									else {
 										XmlElement e3 = e.OwnerDocument.CreateElement("component");
 										p3.saveToXML(e3);
 										e2.AppendChild(e3);
@@ -266,6 +274,8 @@ namespace ReikaKalseki.SeaToSea
 							else if (cg != null) {
 								XmlElement e2 = e.OwnerDocument.CreateElement("inventory");
 								foreach (KeyValuePair<string, InventoryItem> kvp in cg.equipment.equipment) {
+									if (kvp.Value == null || kvp.Value.item == null)
+										continue;
 									XmlElement e3 = e.OwnerDocument.CreateElement("item");
 									e3.addProperty("type", ""+kvp.Value.item.GetTechType());
 									e3.addProperty("slot", kvp.Key);
@@ -284,19 +294,22 @@ namespace ReikaKalseki.SeaToSea
 						e2.addProperty("maxHeight", bf.maxPillarHeight);
 						e2.addProperty("extra", bf.extraHeight);
 						e2.addProperty("minHeight", bf.minHeight);
-						foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
-							Transform l = p.adjustable;
-							if (l != null) {
-								XmlElement e3 = e.OwnerDocument.CreateElement("pillar");
-								e3.addProperty("position", l.position);
-								e3.addProperty("rotation", l.rotation);
-								e3.addProperty("scale", l.localScale);
-								e2.AppendChild(e3);
+						if (bf.pillars != null) {
+							foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
+								Transform l = p.adjustable;
+								if (l) {
+									XmlElement e3 = e.OwnerDocument.CreateElement("pillar");
+									e3.addProperty("position", l.position);
+									e3.addProperty("rotation", l.rotation);
+									e3.addProperty("scale", l.localScale);
+									e2.AppendChild(e3);
+								}
 							}
 						}
 						e.AppendChild(e2);
 					}
 				}
+				SNUtil.log("Finished XML serialization of "+this.prefabName);
 			}
 			
 			public override void loadFromXML(XmlElement e) {
@@ -378,6 +391,10 @@ namespace ReikaKalseki.SeaToSea
 				if (pi == null && go.name.StartsWith("Base", StringComparison.InvariantCulture)) {
 					string name = go.name.Replace("(Clone)", "").Substring(4);
 					Base.Piece get = Base.Piece.Invalid;
+					if (name.Contains("WaterPark") && !name.Contains("RoomWaterPark"))
+						name = name.Replace("WaterPark", "RoomWaterPark");
+					else if (name.Contains("CorridorLadder"))
+						name = name.Replace("Corridor", "CorridorIShape");
 					if (Enum.TryParse<Base.Piece>(name, out get)) {
 						if (get != Base.Piece.Invalid) {
 							id = "Base_"+name;

@@ -145,6 +145,20 @@
 		Sounds/dunarch.ogg
 	</audio>
   </dunearch>
+  <bkelpbase>
+	<name>
+		Survivor Crew Log
+	</name>
+	<pda>
+		Came down in the nearby wreck in the blood kelp trench, took the smdepth4 databox, eventually died to the ampeel (BZZZT)
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		Sounds/bkelpbase.ogg
+	</audio>
+  </bkelpbase>
   <treaderpod>
 	<name>
 		Lifepod 9 Crew Log
