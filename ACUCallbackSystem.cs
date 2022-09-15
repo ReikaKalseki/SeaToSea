@@ -58,9 +58,10 @@ namespace ReikaKalseki.SeaToSea {
 			
 			addFood(new PlantFood(VanillaFlora.CREEPVINE, 0.1F, RegionType.Kelp));
 			addFood(new PlantFood(VanillaFlora.CREEPVINE_FERTILE, 0.2F, RegionType.Kelp));
+			addFood(new PlantFood(VanillaFlora.BLOOD_KELP, 0.15F, RegionType.BloodKelp));
 			addFood(new PlantFood(VanillaFlora.JELLYSHROOM, 0.25F, RegionType.Jellyshroom));
 			addFood(new PlantFood(VanillaFlora.EYE_STALK, 0.15F, RegionType.Other));
-			addFood(new PlantFood(VanillaFlora.GABE_FEATHER, 0.25F, RegionType.BloodKelp, RegionType.Other));
+			addFood(new PlantFood(VanillaFlora.GABE_FEATHER, 0.25F, RegionType.LostRiver, RegionType.BloodKelp, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.GHOSTWEED, 0.25F, RegionType.LostRiver));
 			addFood(new PlantFood(VanillaFlora.HORNGRASS, 0.05F, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.KOOSH, 0.15F, RegionType.Koosh));
@@ -68,7 +69,7 @@ namespace ReikaKalseki.SeaToSea {
 			addFood(new PlantFood(VanillaFlora.PAPYRUS, 0.15F, RegionType.RedGrass, RegionType.Jellyshroom, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.VIOLET_BEAU, 0.2F, RegionType.Jellyshroom, RegionType.RedGrass, RegionType.Koosh, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.CAVE_BUSH, 0.05F, RegionType.Koosh, RegionType.Jellyshroom, RegionType.Other));
-			addFood(new PlantFood(VanillaFlora.REGRESS, 0.2F, RegionType.Other));
+			addFood(new PlantFood(VanillaFlora.REGRESS, 0.2F, RegionType.GrandReef, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.REDWORT, 0.15F, RegionType.RedGrass, RegionType.Koosh, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.ROUGE_CRADLE, 0.05F, RegionType.RedGrass, RegionType.Other));
 			addFood(new PlantFood(VanillaFlora.SEACROWN, 0.4F, RegionType.Koosh, RegionType.RedGrass));
@@ -89,6 +90,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void tick(WaterPark acu) {
 			float dT = Time.deltaTime;
+			if (dT <= 0.0001)
+				return;
 			bool healthy = false;
 			bool consistent = true;
 			HashSet<RegionType> possibleBiomes = new HashSet<RegionType>();
@@ -98,13 +101,21 @@ namespace ReikaKalseki.SeaToSea {
 			int plant = 0;
 			int herb = 0;
 			int carn = 0;
+			int hero = 0;
+			//SNUtil.writeToChat("@@"+string.Join(",", possibleBiomes));
 			List<WaterParkCreature> foodFish = new List<WaterParkCreature>();
 			foreach (WaterParkItem wp in new List<WaterParkItem>(acu.items)) {
 				if (wp && wp is WaterParkCreature) {
 					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
 					TechType tt = pp ? pp.GetTechType() : TechType.None;
 					if (edibleFish.ContainsKey(tt)) {
-						possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(edibleFish[tt].regionType));
+						if (tt == TechType.Peeper && wp.gameObject.GetComponent<Peeper>().isHero)
+							hero++;
+						else //sparkle peepers are always valid
+							possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(edibleFish[tt].regionType));
+						//if (possibleBiomes.Count <= 0)
+						//	SNUtil.writeToChat("Biome list empty after "+tt+" > "+edibleFish[tt]);
+						//SNUtil.writeToChat(tt+" > "+edibleFish[tt]+" > "+string.Join(",", possibleBiomes));
 						foodFish.Add((WaterParkCreature)wp);
 						herb++;
 					}
@@ -117,13 +128,17 @@ namespace ReikaKalseki.SeaToSea {
 						List<RegionType> li = new List<RegionType>(am.additionalRegions);
 						li.Add(am.primaryRegion);
 						possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(li));
+						//SNUtil.writeToChat(tt+" > "+am+" > "+string.Join(",", possibleBiomes));
+						//if (possibleBiomes.Count <= 0)
+						//	SNUtil.writeToChat("Biome list empty after "+tt+" > "+am);
 						Creature c = wp.gameObject.GetComponentInChildren<Creature>();
-						c.Hunger.Add(dT*am.metabolismPerSecond);
+						c.Hunger.Add(dT*am.metabolismPerSecond*FOOD_SCALAR);
 						c.Hunger.Falloff = 0;
 						if (c.Hunger.Value >= 0.5F) {
 							Food amt;
-							if (tryEat(c, acu, am, sc, plants, out amt)) {
-								float food = amt.foodValue;
+							GameObject eaten;
+							if (tryEat(c, acu, am, sc, plants, out amt, out eaten)) {
+								float food = amt.foodValue*FOOD_SCALAR;
 								if (amt.isRegion(am.primaryRegion)) {
 									food *= 3;
 								}
@@ -135,11 +150,17 @@ namespace ReikaKalseki.SeaToSea {
 										}
 									}
 								}
+								InfectedMixin inf = eaten ? eaten.GetComponent<InfectedMixin>() : null;
+								if (inf && inf.IsInfected()) {
+									food *= 0.25F;
+									c.gameObject.EnsureComponent<InfectedMixin>().IncreaseInfectedAmount(0.2F);
+								}
 								if (c.Hunger.Value >= food) {
 									c.Happy.Add(0.05F);
 									c.Hunger.Add(-food);
 									float f = am.normalizedPoopChance*amt.foodValue*Mathf.Pow(((WaterParkCreature)wp).age, 2F);
 									//SNUtil.writeToChat(c+" ate > "+f);
+									amt.consume(c, acu, sc, eaten);
 									if (UnityEngine.Random.Range(0F, 1F) < f) {
 										GameObject poo = ObjectUtil.createWorldObject(CraftingItems.getItem(CraftingItems.Items.MiniPoop).ClassID);
 										poo.transform.position = c.transform.position+Vector3.down*0.05F;
@@ -157,55 +178,69 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 	   	 	}
+			HashSet<VanillaFlora> plantTypes = new HashSet<VanillaFlora>();
 			foreach (PrefabIdentifier pi in plants) {
 				if (pi) {
 					VanillaFlora vf = VanillaFlora.getFromID(pi.ClassId);
 					if (vf != null && ediblePlants.ContainsKey(vf)) {
-						possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(ediblePlants[vf].regionType));
+						PlantFood pf = ediblePlants[vf];
+						possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(pf.regionType));
+						//if (possibleBiomes.Count <= 0)
+						//	SNUtil.writeToChat("Biome list empty after "+vf+" > "+pf);
+						//SNUtil.writeToChat(vf+" > "+pf+" > "+string.Join(",", possibleBiomes));
+						plantTypes.Add(vf);
 						plant++;
 					}
 				}
 			}
 			consistent = possibleBiomes.Count > 0 && plant > 0;
-			healthy = plant > 0 && herb > 0 && carn > 0 && carn <= Math.Max(1, herb/6) && herb > 0 && herb <= plant*4;
-			//SNUtil.writeToChat(plant+"/"+herb+"/"+carn+" & "+string.Join(", ", possibleBiomes)+" > "+healthy+" & "+consistent);
+			healthy = plant > 0 && plantTypes.Count > 1 && herb > 0 && carn > 0 && carn <= Math.Max(1, herb/Mathf.Max(1, 6-hero*0.5F)) && herb > 0 && herb <= plant*(4+hero*0.5F);
 			float boost = 0;
 			if (consistent)
 				boost += 1F;
 			if (healthy)
 				boost += 2F;
+			if (hero > 0)
+				boost *= 1+hero*0.5F;
+			//SNUtil.writeToChat(plant+"/"+herb+"/"+carn+"$"+hero+" & "+string.Join(", ", possibleBiomes)+" > "+healthy+" & "+consistent+" > "+boost);
 			if (boost > 0) {
 				boost *= dT;
 				foreach (WaterParkCreature wp in foodFish) {
 					//SNUtil.writeToChat(wp+" > "+boost+" > "+wp.matureTime+"/"+wp.timeNextBreed);
 					if (wp.canBreed) {
-						if (wp.isMature) {
+						Peeper pp = wp.gameObject.GetComponent<Peeper>();
+						if (pp && pp.isHero)
+							wp.timeNextBreed = DayNightCycle.main.timePassedAsFloat+1000; //prevent sparkle peepers from breeding
+						else if (wp.isMature)
 							wp.timeNextBreed -= boost;
-						}
-						else {
+						else
 							wp.matureTime -= boost;
-						}
 					}
 				}
 			}
 		}
 		
-		private bool tryEat(Creature c, WaterPark acu, ACUMetabolism am, StorageContainer sc, PrefabIdentifier[] pia, out Food amt) {
+		private bool tryEat(Creature c, WaterPark acu, ACUMetabolism am, StorageContainer sc, PrefabIdentifier[] pia, out Food amt, out GameObject eaten) {
 			if (am.isCarnivore) {
 				WaterParkItem wp = acu.items[UnityEngine.Random.Range(0, acu.items.Count)];
 				if (wp) {
 					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
 					TechType tt = pp ? pp.GetTechType() : TechType.None;
+					if (tt == TechType.Peeper && wp.gameObject.GetComponent<Peeper>().isHero) { //do not allow eating sparkle peepers
+						amt = null;
+						eaten = null;
+						return false;
+					}
 					//SNUtil.writeToChat(pp+" > "+tt+" > "+edibleFish.ContainsKey(tt));
 					if (edibleFish.ContainsKey(tt)) {
-						acu.RemoveItem(wp);
-						UnityEngine.Object.DestroyImmediate(pp.gameObject);
+						eaten = pp.gameObject;
 						amt = edibleFish[tt];
 						//SNUtil.writeToChat(c+" ate a "+tt+" and got "+amt);
 						return true;
 					}
 				}
 				amt = null;
+				eaten = null;
 				return false;
 			}
 			else {
@@ -216,20 +251,17 @@ namespace ReikaKalseki.SeaToSea {
 					if (vf != null && ediblePlants.ContainsKey(vf)) {
 						amt = ediblePlants[vf];
 						//SNUtil.writeToChat(c+" ate a "+vf+" and got "+amt);
-						LiveMixin lv = tt.gameObject.GetComponent<LiveMixin>();
-						if (lv && lv.IsAlive())
-							lv.TakeDamage(10, c.transform.position, DamageType.Normal, c.gameObject);
-						else
-							sc.container.DestroyItem(CraftData.entClassTechTable[tt.ClassId]);
+						eaten = tt.gameObject;
 						return true;
 					}
 				}
 				amt = null;
+				eaten = null;
 				return false;
 			}
 		}
 		
-		class Food {
+		abstract class Food {
 			
 			internal readonly float foodValue;
 			internal readonly HashSet<RegionType> regionType = new HashSet<RegionType>();
@@ -243,6 +275,12 @@ namespace ReikaKalseki.SeaToSea {
 				return regionType.Contains(r);
 			}
 			
+			public override string ToString()
+			{
+				return string.Format("[Food FoodValue={0}, RegionType=[{1}]]", foodValue, string.Join(",", regionType));
+			}
+			
+			internal abstract void consume(Creature c, WaterPark acu, StorageContainer sc, GameObject go);
 		}
 		
 		class AnimalFood : Food {
@@ -259,6 +297,11 @@ namespace ReikaKalseki.SeaToSea {
 				return ea.foodValue*0.01F; //so a reginald is ~40%
 			}
 			
+			internal override void consume(Creature c, WaterPark acu, StorageContainer sc, GameObject go) {
+				acu.RemoveItem(go.GetComponent<WaterParkCreature>());
+				UnityEngine.Object.DestroyImmediate(go);
+			}
+			
 		}
 		
 		class PlantFood : Food {
@@ -267,6 +310,14 @@ namespace ReikaKalseki.SeaToSea {
 			
 			internal PlantFood(VanillaFlora vf, float f, params RegionType[] r) : base(f, r) {
 				plant = vf;
+			}
+			
+			internal override void consume(Creature c, WaterPark acu, StorageContainer sc, GameObject go) {
+				LiveMixin lv = go.GetComponent<LiveMixin>();
+				if (lv && lv.IsAlive())
+					lv.TakeDamage(10, c.transform.position, DamageType.Normal, c.gameObject);
+				else
+					sc.container.DestroyItem(CraftData.GetTechType(go));
 			}
 			
 		}
@@ -280,13 +331,17 @@ namespace ReikaKalseki.SeaToSea {
 			internal readonly HashSet<RegionType> additionalRegions = new HashSet<RegionType>();
 			
 			internal ACUMetabolism(float mf, float pp, bool isc, RegionType r, params RegionType[] rr) {
-				normalizedPoopChance = pp*0.25F;
-				metabolismPerSecond = mf*0.1F*FOOD_SCALAR;
+				normalizedPoopChance = pp*2;
+				metabolismPerSecond = mf*0.05F;
 				isCarnivore = isc;
 				primaryRegion = r;
 				additionalRegions.AddRange(rr.ToList());
 			}
 			
+			public override string ToString()
+			{
+				return string.Format("[ACUMetabolism IsCarnivore={0}, MetabolismPerSecond={1}, NormalizedPoopChance={2}, PrimaryRegion={3}, AdditionalRegions=[{4}]]]", isCarnivore, metabolismPerSecond.ToString("0.0000"), normalizedPoopChance, primaryRegion, string.Join(",", additionalRegions));
+			}			
 		}
 		
 		enum RegionType {
