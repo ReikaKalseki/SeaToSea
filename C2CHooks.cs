@@ -1034,6 +1034,26 @@ namespace ReikaKalseki.SeaToSea {
 				main.SetIcon(HandReticle.IconType.Hand, 1f);
 			}
 		}
+	   
+	   	public static bool isInsideForHatch(UseableDiveHatch hatch) {
+	   		SeabaseReconstruction.WorldgenBaseWaterparkHatch wb = hatch.gameObject.GetComponent<SeabaseReconstruction.WorldgenBaseWaterparkHatch>();
+	   		if (wb)
+	   			return wb.isPlayerInside();
+	   		return Player.main.IsInsideWalkable() && Player.main.currentWaterPark == null;
+	   	}
+	   
+	   	public static bool canAddItemToACU(Pickupable item) {
+			if (!item)
+		   		return false;
+			TechType tt = item.GetTechType();
+			if (tt == TechType.ScrapMetal || tt == TechType.Titanium || tt == TechType.Silver)
+				return true;
+			GameObject go = item.gameObject;
+			if (go.GetComponent<Creature>() == null && go.GetComponent<CreatureEgg>() == null)
+				return false;
+			LiveMixin lv = go.GetComponent<LiveMixin>();
+			return !lv || lv.IsAlive();
+	   	}
 	}
 	
 	class ContainmentFacilityDragonRepellent : MonoBehaviour {

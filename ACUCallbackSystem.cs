@@ -102,12 +102,23 @@ namespace ReikaKalseki.SeaToSea {
 			int herb = 0;
 			int carn = 0;
 			int hero = 0;
+			int teeth = 0;
 			//SNUtil.writeToChat("@@"+string.Join(",", possibleBiomes));
 			List<WaterParkCreature> foodFish = new List<WaterParkCreature>();
+			List<Stalker> stalkers = new List<Stalker>();
+			List<Pickupable> stalkerToys = new List<Pickupable>();
 			foreach (WaterParkItem wp in new List<WaterParkItem>(acu.items)) {
-				if (wp && wp is WaterParkCreature) {
-					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
-					TechType tt = pp ? pp.GetTechType() : TechType.None;
+				Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
+				TechType tt = pp ? pp.GetTechType() : TechType.None;
+				if (tt == TechType.Titanium || tt == TechType.ScrapMetal || tt == TechType.Silver) {
+					pp.gameObject.transform.localScale = Vector3.one*0.5F;
+					stalkerToys.Add(pp);
+				}
+				else if (tt == TechType.StalkerTooth) {
+					pp.gameObject.transform.localScale = Vector3.one*0.125F;
+					teeth++;
+				}
+				else if (wp is WaterParkCreature) {
 					if (edibleFish.ContainsKey(tt)) {
 						if (tt == TechType.Peeper && wp.gameObject.GetComponent<Peeper>().isHero)
 							hero++;
@@ -134,6 +145,9 @@ namespace ReikaKalseki.SeaToSea {
 						Creature c = wp.gameObject.GetComponentInChildren<Creature>();
 						c.Hunger.Add(dT*am.metabolismPerSecond*FOOD_SCALAR);
 						c.Hunger.Falloff = 0;
+						if (tt == TechType.Stalker) {
+							stalkers.Add((Stalker)c);
+						}
 						if (c.Hunger.Value >= 0.5F) {
 							Food amt;
 							GameObject eaten;
@@ -156,7 +170,7 @@ namespace ReikaKalseki.SeaToSea {
 									c.gameObject.EnsureComponent<InfectedMixin>().IncreaseInfectedAmount(0.2F);
 								}
 								if (c.Hunger.Value >= food) {
-									c.Happy.Add(0.05F);
+									c.Happy.Add(0.25F);
 									c.Hunger.Add(-food);
 									float f = am.normalizedPoopChance*amt.foodValue*Mathf.Pow(((WaterParkCreature)wp).age, 2F);
 									//SNUtil.writeToChat(c+" ate > "+f);
@@ -193,8 +207,11 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
+			if (possibleBiomes.Count == 1) {
+				updateACUTheming(acu, possibleBiomes.First<RegionType>());
+			}
 			consistent = possibleBiomes.Count > 0 && plant > 0;
-			healthy = plant > 0 && plantTypes.Count > 1 && herb > 0 && carn > 0 && carn <= Math.Max(1, herb/Mathf.Max(1, 6-hero*0.5F)) && herb > 0 && herb <= plant*(4+hero*0.5F);
+			healthy = plant > 0 && plantTypes.Count > 1 && herb > 0 && carn > 0 && carn <= Math.Max(1, herb/Mathf.Max(1, 6-hero*0.5F)) && carn <= acu.height*1.5F && herb > 0 && herb <= plant*(4+hero*0.5F);
 			float boost = 0;
 			if (consistent)
 				boost += 1F;
@@ -218,6 +235,73 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
+			if (teeth < 10 && consistent && healthy && possibleBiomes.Contains(RegionType.Kelp)) {
+				foreach (Stalker s in stalkers) {
+					float f = dT*stalkerToys.Count*0.001F*s.Happy.Value;
+					//SNUtil.writeToChat(s.Happy.Value+" x "+stalkerToys.Count+" > "+f);
+					if (UnityEngine.Random.Range(0F, 1F) < f) {
+						//do not use, so can have ref to GO; reimplement // s.LoseTooth();
+						GameObject go = UnityEngine.Object.Instantiate<GameObject>(s.toothPrefab);
+						//SNUtil.writeToChat(s+" > "+go);
+						go.transform.position = s.loseToothDropLocation.transform.position;
+						go.transform.rotation = s.loseToothDropLocation.transform.rotation;
+						if (go.activeSelf && s.isActiveAndEnabled) {
+							foreach (Collider c in go.GetComponentsInChildren<Collider>())
+								Physics.IgnoreCollision(s.stalkerBodyCollider, c);
+						}
+						Utils.PlayFMODAsset(s.loseToothSound, go.transform, 8f);
+						LargeWorldEntity.Register(go);
+						acu.AddItem(go.GetComponent<Pickupable>());
+					}
+				}
+			}
+		}
+		
+		private void updateACUTheming(WaterPark acu, RegionType theme) {
+			string floorTex = Enum.GetName(typeof(RegionType), theme);
+			GameObject container = getACUFloor(acu);
+			if (!container)
+				return;
+			GameObject floor = ObjectUtil.getChildObject(container, "Large_Aquarium_Room_generic_ground");
+			switch(theme) {
+				case RegionType.Shallows:
+					break;
+				case RegionType.Kelp:
+					break;
+				case RegionType.RedGrass: //use shallows sand
+					break;
+				case RegionType.Mushroom:
+					break;
+				case RegionType.Jellyshroom:
+					break;
+				case RegionType.Koosh: //use shallows sand
+					break;
+				case RegionType.BloodKelp:
+					break;
+				case RegionType.GrandReef:
+					break;
+				case RegionType.LostRiver:
+					break;
+				case RegionType.LavaZone:
+					break;
+				case RegionType.Other:
+					updateACUTheming(acu, RegionType.Shallows);
+					return;
+			}
+			if (!string.IsNullOrEmpty(floorTex)) {
+				Renderer r = floor.GetComponentInChildren<Renderer>();
+				Texture2D tex = TextureManager.getTexture("Textures/ACUFloor/"+floorTex);
+				if (tex)
+					r.material.mainTexture = tex;
+			}
+		}
+		
+		private GameObject getACUFloor(WaterPark acu) {
+			foreach (WaterParkPiece wp in acu.transform.parent.GetComponentsInChildren<WaterParkPiece>()) {
+				if (wp.floorBottom && Vector3.Distance(wp.transform.position, acu.transform.position) <= 0.5)
+					return wp.floorBottom;
+			}
+			return null;
 		}
 		
 		private bool tryEat(Creature c, WaterPark acu, ACUMetabolism am, StorageContainer sc, PrefabIdentifier[] pia, out Food amt, out GameObject eaten) {

@@ -81,6 +81,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal XmlElement reconstructionData;
 			internal string seabaseID;
+			
+			private float lastSkyTime = -1;
+			private Vector3 baseCenter = Vector3.zero;
+			private int pieceCount;
 		
 			//private Planter[] planters = null;
 			private StorageContainer[] storages = null;
@@ -89,22 +93,21 @@ namespace ReikaKalseki.SeaToSea
 			void rebuild() {
 				SNUtil.log("Seabase '"+seabaseID+"' undergoing reconstruction");
 				if (reconstructionData == null) {
-					SNUtil.writeToChat("Cannot rebuild worldgen seabase @ "+transform.position+" - no data");
+					SNUtil.writeToChat("Cannot rebuild worldgen seabase @ "+baseCenter+" - no data");
 					return;
 				}
-				bool isNew = true;
 				foreach (XmlElement e2 in reconstructionData.getDirectElementsByTagName("part")) {
 					CustomPrefab pfb = new CustomPrefab("9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5"); //BaseCell
 					pfb.loadFromXML(e2);
-					bool isNewL = !baseHasPart(gameObject, pfb);
-					if (!isNewL && pfb.prefabName != "9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5") { //ie is loose
+					if (baseHasPart(gameObject, pfb) && pfb.prefabName != "9d3e9fa5-a5ac-496e-89f4-70e13c0bedd5") { //ie is loose
 						SNUtil.log("Skipped recreate of loose piece: "+pfb);
-						isNew = false;
 						continue;
 					}
 					SNUtil.log("Reconstructed BaseCell/loose piece: "+pfb);
 					GameObject go2 = pfb.createWorldObject();
 					go2.transform.parent = gameObject.transform;
+					baseCenter += go2.transform.position;
+					pieceCount++;
 					List<XmlElement> li1 = e2.getDirectElementsByTagName("cellData");
 					if (li1.Count == 1) {
 						foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("component")) {
@@ -115,6 +118,12 @@ namespace ReikaKalseki.SeaToSea
 								continue;
 							SNUtil.log("Reconstructed base component: "+pfb2);
 							GameObject go3 = pfb2.createWorldObject();
+							if (pfb2.prefabName == "RoomWaterParkBottom")
+								ObjectUtil.removeChildObject(go3, "BaseWaterParkFloorBottom/Bubbles");
+							else if (pfb2.prefabName == "RoomWaterParkHatch") {
+								if (ObjectUtil.removeChildObject(go3, "BaseCorridorHatch(Clone)") == 0)
+									SNUtil.log("Found no hatches to remove!");
+							}
 							go3.transform.parent = go2.transform;
 							rebuildNestedObjects(go3, e3);
 							if (!reconstructionData.getBoolean("allowDeconstruct")) {
@@ -128,6 +137,8 @@ namespace ReikaKalseki.SeaToSea
 							List<XmlElement> li0 = e3.getDirectElementsByTagName("supportData");
 							if (li0.Count == 1)
 								new SeabaseLegLengthPreservation(li0[0]).applyToObject(go3);
+							else if (li0.Count == 0)
+								new SeabaseLegLengthPreservation(null).applyToObject(go3);
 							li0 = e3.getDirectElementsByTagName("modify");
 							if (li0.Count == 1) {
 								List<ManipulationBase> li2 = new List<ManipulationBase>();
@@ -138,61 +149,62 @@ namespace ReikaKalseki.SeaToSea
 							}
 						}
 					}
-					if (isNew) {
-						li1 = e2.getDirectElementsByTagName("inventory");
-						if (li1.Count == 1) {
-							SNUtil.log("Recreating inventory contents");
-							StorageContainer sc = go2.GetComponent<StorageContainer>();
-							Charger cg = go2.GetComponent<Charger>();
-							Planter p = go2.GetComponent<Planter>();
-							if (sc == null && cg == null) {
-								SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
-								continue;
-							}
-							GrowbedPropifier pg = null;
-							if (p != null) {
-								pg = go2.EnsureComponent<GrowbedPropifier>();
-							}
-							foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
-								TechType tt = SNUtil.getTechType(e3.getProperty("type"));
-								if (tt == TechType.None) {
-									SNUtil.log("Could not deserialize item - null TechType: "+e3.OuterXml);
-								}
-								else {
-									GameObject igo = CraftData.GetPrefabForTechType(tt);
-									if (igo == null) {
-										SNUtil.log("Could not deserialize item - resulted in null: "+e3.OuterXml);
-										continue;
-									}
-									int amt = e3.getInt("amount", 1);
-									string slot = e3.getProperty("slot", true);
-									for (int i = 0; i < amt; i++) {
-										GameObject igo2 = UnityEngine.Object.Instantiate(igo);
-										igo2.SetActive(false);
-										Pickupable pp = igo2.GetComponent<Pickupable>();
-										InventoryItem item = null;
-										if (pp == null) {
-											SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
-										} 
-										if (cg != null) {
-											cg.equipment.AddItem(slot, new InventoryItem(pp), true);
-										}
-										else if (sc != null) {
-											item = sc.container.AddItem(pp);
-										}
-									}
-								}
-							}
-							if (sc != null)
-								SNUtil.log("Recreated inventory contents: "+sc.container.itemsMap);
-							if (cg != null)
-								SNUtil.log("Recreated charger contents: "+cg.equipment.equipment.toDebugString());
+					li1 = e2.getDirectElementsByTagName("inventory");
+					if (li1.Count == 1) {
+						SNUtil.log("Recreating inventory contents: "+li1[0].OuterXml);
+						StorageContainer sc = go2.GetComponent<StorageContainer>();
+						Charger cg = go2.GetComponent<Charger>();
+						Planter p = go2.GetComponent<Planter>();
+						if (sc == null && cg == null) {
+							SNUtil.log("Tried to deserialize inventory to a null container in "+go2);
+							continue;
 						}
+						GrowbedPropifier pg = null;
+						if (p != null) {
+							pg = go2.EnsureComponent<GrowbedPropifier>();
+						}
+						foreach (XmlElement e3 in li1[0].getDirectElementsByTagName("item")) {
+							TechType tt = SNUtil.getTechType(e3.getProperty("type"));
+							if (tt == TechType.None) {
+								SNUtil.log("Could not deserialize item - null TechType: "+e3.OuterXml);
+							}
+							else {
+								GameObject igo = CraftData.GetPrefabForTechType(tt);
+								if (igo == null) {
+									SNUtil.log("Could not deserialize item - resulted in null: "+e3.OuterXml);
+									continue;
+								}
+								int amt = e3.getInt("amount", 1);
+								string slot = e3.getProperty("slot", true);
+								for (int i = 0; i < amt; i++) {
+									GameObject igo2 = UnityEngine.Object.Instantiate(igo);
+									igo2.SetActive(false);
+									Pickupable pp = igo2.GetComponent<Pickupable>();
+									InventoryItem item = null;
+									if (pp == null) {
+										SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
+									} 
+									SNUtil.log("Added "+pp);
+									if (cg != null) {
+										cg.equipment.AddItem(slot, new InventoryItem(pp), true);
+									}
+									else if (sc != null) {
+										item = sc.container.AddItem(pp);
+									}
+								}
+							}
+						}
+						if (sc != null)
+							SNUtil.log("Recreated inventory contents: "+sc.container._items.toDebugString());
+						if (cg != null)
+							SNUtil.log("Recreated charger contents: "+cg.equipment.equipment.toDebugString());
 					}
 				}
 				ObjectUtil.removeChildObject(gameObject, "SubDamageSounds");
 				ObjectUtil.removeChildObject(gameObject, "PowerAttach");
 				ObjectUtil.removeChildObject(gameObject, "MapRoomFunctionality");
+				ObjectUtil.removeChildObject(gameObject, "*x_TechLight_Cone");
+				ObjectUtil.removeComponent<Light>(gameObject);
 				ObjectUtil.removeComponent<BaseFloodSim>(gameObject);
 				ObjectUtil.removeComponent<BaseHullStrength>(gameObject);
 				ObjectUtil.removeComponent<BasePowerRelay>(gameObject);
@@ -201,17 +213,37 @@ namespace ReikaKalseki.SeaToSea
 				ObjectUtil.removeComponent<VoiceNotification>(gameObject);
 				ObjectUtil.removeComponent<BaseRoot>(gameObject);
 				ObjectUtil.removeComponent<Base>(gameObject);
-				ObjectUtil.removeComponent<UseableDiveHatch>(gameObject);
 				ObjectUtil.removeComponent<WaterPark>(gameObject);
+				ObjectUtil.setActive<Animator>(gameObject, false);
 				ObjectUtil.removeComponent<CustomMachineLogic>(gameObject);
+				
+				baseCenter /= pieceCount;
+				
+				//ObjectUtil.removeComponent<SkyApplier>(gameObject);				
+				/*
+				SkyApplier sk = gameObject.EnsureComponent<SkyApplier>();
+				sk.renderers = gameObject.GetComponentsInChildren<Renderer>();
+				sk.environmentSky = MarmoSkies.main.skyBaseInterior;
+				sk.applySky = sk.environmentSky;
+				sk.enabled = true;
+				sk.ApplySkybox();
+				sk.RefreshDirtySky();*/
+				
+				foreach (UseableDiveHatch c in gameObject.GetComponentsInChildren<UseableDiveHatch>(true)) {
+					if (c.gameObject.name.Contains("WaterPark"))
+						c.gameObject.EnsureComponent<WorldgenBaseWaterparkHatch>();
+					else
+						UnityEngine.Object.DestroyImmediate(c); //component not object
+				}
 				foreach (MapRoomCamera c in gameObject.GetComponentsInChildren<MapRoomCamera>(true)) {
 					UnityEngine.Object.DestroyImmediate(c.gameObject);
 				}
-				SNUtil.log("Finished reconstructing seabase '"+seabaseID+"' @ "+transform.position);
-				ObjectUtil.dumpObjectData(gameObject);
+				SNUtil.log("Finished reconstructing seabase '"+seabaseID+"' @ "+baseCenter);
+				//ObjectUtil.dumpObjectData(gameObject);
 			}
 
 			void Update() {
+				float time = DayNightCycle.main.timePassedAsFloat;
 				if (seabaseID == null)
 					seabaseID = gameObject.GetComponentInChildren<SeabaseIDHolder>().name;
 				if (reconstructionData == null) {
@@ -232,7 +264,35 @@ namespace ReikaKalseki.SeaToSea
 					}*/
 					rebuild();
 				}
-				GetComponent<LightingController>().state = LightingController.LightingState.Damaged;/*
+				if (time-lastSkyTime >= 15) {
+					SkyApplier[] skies = gameObject.GetComponentsInChildren<SkyApplier>(true);
+					mset.Sky skyAt = WaterBiomeManager.main.GetBiomeEnvironment(baseCenter);
+					foreach (SkyApplier sk in skies) {
+						if (!sk)
+							continue;
+						if (sk.environmentSky != MarmoSkies.main.skyBaseGlass && sk.environmentSky != MarmoSkies.main.skyBaseInterior && sk.environmentSky != skyAt) {
+							sk.environmentSky = skyAt;
+						}/*
+						bool glass = true; looks bad
+						foreach (Renderer r in sk.renderers) {
+							if (r && !r.name.ToLowerInvariant().Contains("glass")) {
+								glass = false;
+								break;
+							}
+						}
+						if (glass) {
+							sk.environmentSky = MarmoSkies.main.skyBaseGlass;
+						}*/
+						sk.applySky = sk.environmentSky;
+						sk.enabled = true;
+						sk.ApplySkybox();
+						sk.RefreshDirtySky();
+					}
+					//SNUtil.writeToChat("Set skies: "+skyAt+" @ "+baseCenter);
+					lastSkyTime = time;
+					ObjectUtil.setActive<Animator>(gameObject, false);
+					GetComponent<LightingController>().state = LightingController.LightingState.Damaged;
+				}/*
 				if (planters == null) {
 					planters = gameObject.GetComponentsInChildren<Planter>();
 				}*/
@@ -300,7 +360,7 @@ namespace ReikaKalseki.SeaToSea
 				bool active = gameObject.activeSelf;
 				gameObject.SetActive(Vector3.Distance(Player.main.transform.position, transform.position) <= 100);
 				if (active != gameObject.activeSelf) {
-					SNUtil.writeToChat("Toggling seabase @ "+transform.position+": "+active+" > "+gameObject.activeSelf);
+					SNUtil.writeToChat("Toggling seabase @ "+baseCenter+": "+active+" > "+gameObject.activeSelf);
 				}
 			}
 			
@@ -346,6 +406,29 @@ namespace ReikaKalseki.SeaToSea
 			return true;
 		}
 		
+		public class WorldgenBaseWaterparkHatch : MonoBehaviour {
+			
+			private UseableDiveHatch hatch;
+			private bool cleanedModel = false;
+			
+			void Update() {
+				if (!hatch) {
+					hatch = gameObject.GetComponent<UseableDiveHatch>();
+					ObjectUtil.setActive<Animator>(gameObject, true);
+				}
+				if (!cleanedModel)
+					cleanedModel = ObjectUtil.removeChildObject(gameObject, "BaseCorridorHatch(Clone)") > 0;
+			}
+			
+			public bool isPlayerInside() {
+				Vector3 acuCenter = transform.position;
+				Vector3 outside = transform.position+transform.forward*4.5F;
+				Vector3 pos = Player.main.transform.position;
+				return Vector3.Distance(pos, acuCenter) > Vector3.Distance(pos, outside);
+			}
+			
+		}
+		
 		class GrowbedPropifier : MonoBehaviour {
 			
 			void Update() {
@@ -369,6 +452,14 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
+		}
+		
+		public static List<mset.Sky> getBiomeSkies() {
+			return WaterBiomeManager.main.biomeSkies;
+		}
+		
+		public int getBiomeIndex(string s) {
+			return WaterBiomeManager.main.GetBiomeIndex(s);
 		}
 		
 	}

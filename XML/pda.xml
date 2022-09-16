@@ -147,10 +147,11 @@
   </dunearch>
   <bkelpbase>
 	<name>
-		Survivor Crew Log
+		Lifepod 1 Crew Log #1
 	</name>
 	<pda>
-		Came down in the nearby wreck in the blood kelp trench, took the smdepth4 databox, eventually died to the ampeel (BZZZT)
+		--pod got stuck on part of the vehicle bay (the blood kelp trench wreck) coming down
+		---khasar-entry-style recording of the incident as it happens
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -159,6 +160,20 @@
 		Sounds/bkelpbase.ogg
 	</audio>
   </bkelpbase>
+  <bkelpbase2>
+	<name>
+		Lifepod 1 Crew Log #2
+	</name>
+	<pda>
+		Gaaah! Every time I make a bit of progress towards making it out of here, some new problem shows up to stop me again! First my pod gets caught on the vehicle bay on the way down, ripping half the fixtures out of the wall, dragging me into the depths, and dumping me in this pitch-black cave. 
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		Sounds/bkelpbase2.ogg
+	</audio>
+  </bkelpbase2>
   <treaderpod>
 	<name>
 		Lifepod 9 Crew Log

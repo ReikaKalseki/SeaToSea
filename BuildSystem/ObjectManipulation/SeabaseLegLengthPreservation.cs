@@ -33,20 +33,36 @@ namespace ReikaKalseki.SeaToSea
 		internal override void applyToObject(GameObject go) {
 			BaseFoundationPiece bf = go.GetComponent<BaseFoundationPiece>();
 			if (bf != null) {
-				bf.maxPillarHeight = (float)data.getFloat("maxHeight", double.NaN);
-				bf.extraHeight = (float)data.getFloat("extra", double.NaN);
-				bf.minHeight = (float)data.getFloat("minHeight", double.NaN);
-				List<XmlElement> li = data.getDirectElementsByTagName("pillar");
-				foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
-					Transform l = p.adjustable;
-					if (l != null) {
-						foreach (XmlElement e3 in li) {
-							Vector3 pos = e3.getVector("position").Value;
-							//SNUtil.log("Comparing xml pos "+pos+" to "+l.position+" = "+Vector3.Distance(pos, l.position));
-							if (Vector3.Distance(pos, l.position) <= 0.25) {
-								l.rotation = e3.getQuaternion("rotation").Value;
-								l.localScale = e3.getVector("scale").Value;
-								//SNUtil.log("Applied pillar match "+e3.OuterXml);
+				if (data == null) {
+					foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
+						if (p.root)
+							UnityEngine.Object.DestroyImmediate(p.root);
+						if (p.adjustable)
+							UnityEngine.Object.DestroyImmediate(p.adjustable.gameObject);
+						if (p.bottom)
+							UnityEngine.Object.DestroyImmediate(p.bottom.gameObject);
+					}
+				}
+				else {
+					bf.maxPillarHeight = (float)data.getFloat("maxHeight", double.NaN);
+					bf.extraHeight = (float)data.getFloat("extra", double.NaN);
+					bf.minHeight = (float)data.getFloat("minHeight", double.NaN);
+					List<XmlElement> li = data.getDirectElementsByTagName("pillar");
+					foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
+						Transform l = p.adjustable;
+						if (l) {
+							foreach (XmlElement e3 in li) {
+								Vector3 pos = e3.getVector("position").Value;
+								//SNUtil.log("Comparing xml pos "+pos+" to "+l.position+" = "+Vector3.Distance(pos, l.position));
+								if (Vector3.Distance(pos, l.position) <= 0.25) {
+									l.rotation = e3.getQuaternion("rotation").Value;
+									l.localScale = e3.getVector("scale").Value;
+									//SNUtil.log("Applied pillar match "+e3.OuterXml);
+								}
+							}
+							foreach (Shocker s in UnityEngine.Object.FindObjectsOfType<Shocker>()) {
+								if (s && s.gameObject)
+									ObjectUtil.ignoreCollisions(s.gameObject, l.gameObject);
 							}
 						}
 					}
