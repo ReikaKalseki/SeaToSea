@@ -34,14 +34,7 @@ namespace ReikaKalseki.SeaToSea
 			BaseFoundationPiece bf = go.GetComponent<BaseFoundationPiece>();
 			if (bf != null) {
 				if (data == null) {
-					foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
-						if (p.root)
-							UnityEngine.Object.DestroyImmediate(p.root);
-						if (p.adjustable)
-							UnityEngine.Object.DestroyImmediate(p.adjustable.gameObject);
-						if (p.bottom)
-							UnityEngine.Object.DestroyImmediate(p.bottom.gameObject);
-					}
+					UnityEngine.Object.DestroyImmediate(bf.gameObject);
 				}
 				else {
 					bf.maxPillarHeight = (float)data.getFloat("maxHeight", double.NaN);
@@ -51,14 +44,23 @@ namespace ReikaKalseki.SeaToSea
 					foreach (BaseFoundationPiece.Pillar p in bf.pillars) {
 						Transform l = p.adjustable;
 						if (l) {
+							bool matched = false;
 							foreach (XmlElement e3 in li) {
 								Vector3 pos = e3.getVector("position").Value;
 								//SNUtil.log("Comparing xml pos "+pos+" to "+l.position+" = "+Vector3.Distance(pos, l.position));
 								if (Vector3.Distance(pos, l.position) <= 0.25) {
 									l.rotation = e3.getQuaternion("rotation").Value;
 									l.localScale = e3.getVector("scale").Value;
-									//SNUtil.log("Applied pillar match "+e3.OuterXml);
+									SNUtil.log("Applied pillar match "+e3.OuterXml);
+									matched = true;
 								}
+							}
+							if (!matched || (!p.bottom && p.adjustable.localScale == Vector3.one)) {
+								//SNUtil.log("Destroying base leg @ "+l.position);
+								if (p.bottom)
+									UnityEngine.Object.DestroyImmediate(p.bottom.gameObject);
+								UnityEngine.Object.DestroyImmediate(p.adjustable.gameObject);
+								UnityEngine.Object.DestroyImmediate(p.root);
 							}
 							foreach (Shocker s in UnityEngine.Object.FindObjectsOfType<Shocker>()) {
 								if (s && s.gameObject)

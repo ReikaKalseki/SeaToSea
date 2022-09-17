@@ -121,8 +121,7 @@ namespace ReikaKalseki.SeaToSea
 							if (pfb2.prefabName == "RoomWaterParkBottom")
 								ObjectUtil.removeChildObject(go3, "BaseWaterParkFloorBottom/Bubbles");
 							else if (pfb2.prefabName == "RoomWaterParkHatch") {
-								if (ObjectUtil.removeChildObject(go3, "BaseCorridorHatch(Clone)") == 0)
-									SNUtil.log("Found no hatches to remove!");
+								ObjectUtil.removeChildObject(go3, "BaseCorridorHatch(Clone)")
 							}
 							go3.transform.parent = go2.transform;
 							rebuildNestedObjects(go3, e3);
@@ -151,7 +150,7 @@ namespace ReikaKalseki.SeaToSea
 					}
 					li1 = e2.getDirectElementsByTagName("inventory");
 					if (li1.Count == 1) {
-						SNUtil.log("Recreating inventory contents: "+li1[0].OuterXml);
+						//SNUtil.log("Recreating inventory contents: "+li1[0].OuterXml);
 						StorageContainer sc = go2.GetComponent<StorageContainer>();
 						Charger cg = go2.GetComponent<Charger>();
 						Planter p = go2.GetComponent<Planter>();
@@ -184,7 +183,7 @@ namespace ReikaKalseki.SeaToSea
 									if (pp == null) {
 										SNUtil.log("Could not deserialize item - no pickupable: "+e3.OuterXml);
 									} 
-									SNUtil.log("Added "+pp);
+									//SNUtil.log("Added "+pp);
 									if (cg != null) {
 										cg.equipment.AddItem(slot, new InventoryItem(pp), true);
 									}
@@ -193,11 +192,12 @@ namespace ReikaKalseki.SeaToSea
 									}
 								}
 							}
-						}
+						}/*
 						if (sc != null)
 							SNUtil.log("Recreated inventory contents: "+sc.container._items.toDebugString());
 						if (cg != null)
 							SNUtil.log("Recreated charger contents: "+cg.equipment.equipment.toDebugString());
+							*/
 					}
 				}
 				ObjectUtil.removeChildObject(gameObject, "SubDamageSounds");

@@ -228,10 +228,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    		if (used) {
 	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);/*
 			   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
 			        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
-			    	}
+			    	}*/
 	    		}
 			}
 	 	}
