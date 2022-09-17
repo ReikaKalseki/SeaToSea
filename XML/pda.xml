@@ -4,7 +4,7 @@
 		Possible salvageable materials
 	</name>
 	<pda>
-		The destruction of the Sunbeam trading ship may have resulted in some of its cargo being scattered over the areas near where it was attempting to land. This may provide access to materials not normally available on the surface of 4546B.
+		The destruction of the Sunbeam trading ship may have resulted in some of its cargo and construction materials being scattered over the areas near where it was attempting to land. This may provide access to materials not normally available on the surface of 4546B.
 		
 		However, these materials are scattered over a wide area, and the local fauna make a manual search highly inadvisable.
 	</pda>
@@ -134,15 +134,15 @@
 		Trapped Survivor Crew Log
 	</name>
 	<pda>
-		--did not make it to pods in time, survived crash
+		What kind of evacuation policy expects and depends on not having any damage to the lifepods? Whatever hit the Aurora took out the whole port row of them, pods 26 to 49, completely toast, just like anyone unlucky enough to get left behind after the rest detached. Like me.
 		
-		I don't know how deep I am, but the hull is groaning under the pressure, so it's probably deep. Well, as long as it holds, I guess...
+		Actually, thinking about it, I'm amazed that I'm still alive, what with having ridden the ship - or more likely, part of it - all the way down to the surface. However, that'll change real fast if I can't find a way out of here - my food is just about out, and while I don't ACTUALLY know how deep I am, I can hear the hull groaning under the pressure, so it's probably deep. Oh, and of course I haven't got a fabricator, a radio, medkits, anything. Just me and a bunch of boxes I can't even open with the tools at hand. As long as the hull holds, I've got starvation to look forward to. If it doesn't...well then it'll be over quite a bit faster.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/dunarch.ogg
+		Sounds/dunearch.ogg
 	</audio>
   </dunearch>
   <bkelpbase>
@@ -165,7 +165,23 @@
 		Lifepod 1 Crew Log #2
 	</name>
 	<pda>
-		Gaaah! Every time I make a bit of progress towards making it out of here, some new problem shows up to stop me again! First my pod gets caught on the vehicle bay on the way down, ripping half the fixtures out of the wall, dragging me into the depths, and dumping me in this pitch-black cave. 
+		The only reason I'm alive right now is because the chunk of the vehicle bay up there, the one that snagged my pod during the crash and dragged me down here with it, was packed full of vehicle parts, blueprints, and enough survival equipment to let me make a seamoth and a basic little hideout in this pit.
+		
+		From there, it's been nothing but headaches the entire way. We're 600 meters below the surface, where the pressure is high enough that even with an air tank I can't last ten seconds out there. My seamoth wasn't doing much better until I managed to collect enough lithium - that's one thing that the bay didn't have, probably burned in the crash - to make a half ton of plasteel and reinforce the hull.
+		
+		And that's just the beginning! There's three ways out of this place, and none of them work as an exit:
+		Straight up is guarded by some giant roaring monster - I didn't get a good look, but I don't think I'd have lived to talk about if I had.
+		Out along the trench, meanwhile, takes me right past three bus-sized tesla coils in fishy shape, while I'm in a metal vehicle immersed in seawater. So that's out.
+		
+		So, that leaves the tunnel across the way, the one full of green fog. Sure, at first glance it doesn't look so threatening; it's bright, not very cramped, and full of resources.
+		
+		Don't let that fool you. That fog is NASTY stuff, some kind of alkaline soup of salts. Get any on your skin and it leaves a burn worse than a soldering iron. Given time, the concentrated stuff running down the bottom will even eat through solid titanium. Even if you don't take a dip in the river, however, the stuff that diffuses into the water above is still corrosive enough to confine you in your vehicle unless you've got damn good protection.
+		
+		Speaking of protection, that's something your vehicle will need too, unless you like the brine causing the energy to leak out of your power cells like...air from a submerged chunk of starship. I thought I was clever, getting around that by bringing a bag full of power cells on one of my trips. I wish - all I had to show for it was a dead seamoth and 21 empty cells. Like I said, that brine is awful stuff. It wasn't until I managed to jury-rig a basic sealant upgrade that I could explore the area proper.
+		
+		Now comes the next problem: Three of the four ways out of that cave network are impassable, inhabited by a glowing serpent with a half dozen yellow eyes that'll try and smash your seamoth the moment it spots you. And the fourth, the one I've been trying to navigate next? Sure, it seems safe at first, just a glowing tree and a bunch of harmless rays feeding on it, but not only does that dive even deeper, of course beyond the range of a seamoth even with all of the usual standard suite of upgrades - that meant more jury-rigging, of course - it leads right into a boiling hellscape of lava.
+		
+		It's far too hot down there for any kind of extended search; I've got to find another way out. Or I could try to rush one of the existing exits. Well, that or die trying. This base, nice as it is - for a prison on the bottom of the ocean, at least - is not where I want to spend all eternity.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -179,15 +195,15 @@
 		Lifepod 9 Crew Log
 	</name>
 	<pda>
-		Ohhh, "it's only a small detour", they said. "There's probably nothing there", they said. That we'll just pop over, find nothing, and be on our merry way with nothing to show for it but a nice fat bonus from the Mongolian States. I had a bad feeling, of course, but nooooo, noone listens to me! Why would they? I've only been acting as a warp navigator for ten years!
+		Ohhh, "it's only a small detour", they said. "There's probably nothing there", they said. To hear them tell it, we'll just pop over, find nothing, and be on our merry way with nothing to show for it but a nice fat bonus from the Mongolian States. I had a bad feeling, of course, but nooooo, noone listens to me! Why would they? I've only been acting as a deep space navigator for ten years! I've seen things go sideways from far less reckless decisions than this!
 		
-		And now I'm stuck here AT THE BOTTOM OF THIS WORTHLESS OCEAN, in a lifepod whose floatation systems might as well say "NOT RATED FOR EXPOSURE TO WATER"! And that's not all! I've got a fabricator, medical cabinet, and radio, but guess what? NONE OF THEM WORK WITHOUT POWER! Of which there's precious little when you've got 400 meters of water over your solar panels.
+		And now that they got their way? I'm stuck here AT THE BOTTOM OF THIS WORTHLESS OCEAN, in a lifepod whose floatation systems might as well say "NOT RATED FOR EXPOSURE TO WATER"! And that's not all! I've got a fabricator, medical cabinet, and radio, but guess what? NONE OF THEM WORK WITHOUT POWER! Of which there's precious little when you've got 400 meters of water over your solar panels.
 		
 		Damn Alterra and damn everything they make! Thanks to them, things could NOT get worse!
 		
 		Something's exploding up there. I guess it makes me feel a little better knowing that someone else is having just a bad a day as-
 		
-		THE HELL WAS THAT?!
+		....What was that?
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -209,7 +225,7 @@
 		
 		You know what else there's a ton of down here? Riches! Diamonds, rubies, gold, you name it, there's huge deposits of it. Shame I'll probably never get a chance to get rich with it, what with the being STUCK AT THE BOTTOM OF THE OCEAN and all.
 
-		I think I see some rubies in the rocks in the ceiling, too. All I've gotta do is cut some of those vines loose.
+		I think I see some rubies in the rocks in the ceiling, too. All I've gotta do is cut some of those vines loose. Maybe if I do get back I'll be rich enough to buy out all the people who sent us on this mission, just so I can fire them. That'll be the day.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -283,7 +299,7 @@
 		
 		...It's...it's been three days. I'm starving, I'm tired, I have a bruise the size of a grapefruit, and...I'll be honest. I'm COMPLETELY fed up at this point. I've had it with this damned planet. We didn't even make it a single day before some kind of beast tore the flotation system right off the pod and sent us to the seafloor. Ripped a pretty big hole in the hull, too.
 		
-		The others took off. Made a couple of seaglides and headed west. They swore they saw land on the way down, but I know the grim truth; this planet's nothing but an ocean. I wonder how long they spent searching for a mirage before they met a good reminder they should have stayed back here.
+		The others took off. Made a couple of seaglides and headed west. They swore they saw land on the way down, but I know the grim truth; this planet's nothing but ocean. I wonder how long they spent searching for a mirage before they met a good reminder they should have stayed back here. Maybe the same reminder that took out the pod.
 		
 		The water fried the radio, too: since we went under, the only sounds it's been making are deep garbled nonsense about 'tracking subjects'. So I've got to survive on my own until rescue gets here......If it gets here.
 	</pda>
@@ -307,7 +323,7 @@
 
 		Soooo...sooner or later I'm gonna have to risk it and go grab the ones off the vents outside and then look for more. This area hasn't had all that many, though. Maybe the mountains around here channel the currents through the vent areas and disturb whatever conditions those crystals need to form? I can't imagine where else I'd look; I haven't seen anywhere that's got similar levels of geothermal activity anywhere near here. Maybe I should check that other cave system to the west. Unfortunately it's got one of those leviathans patrolling the entrance, so I haven't had the courage to do that yet.
 		
-		But...god, if this works, I can make a new seamoth, and slip right past these blasted giants and head to the Aurora to wait for rescue. If it doesn't......
+		But...god, if this works, I can make a new seamoth, and slip right past these blasted giants and head to the Aurora to wait for rescue. If it doesn't...
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -321,7 +337,7 @@
 		Mountain Island Crew Log
 	</name>
 	<pda>
-		Voice 2: There IS land here. Just...not very much of it. Certainly not enough to support three people. Not when it's mostly a spire of rock surrounded by sand.
+		Voice 2: I was right and [Voice 1 Name] was wrong. There IS land here. Just...not very much of it. Certainly not enough to support three people. Not when it's mostly a spire of rock surrounded by sand.
 		
 		Voice 3: And the-
 		
@@ -341,7 +357,7 @@
 		
 		Voice 3: [pause] Okaayyyyy...
 		
-		Voice 2: [distant] And don't come back until you find something!
+		Voice 2: [distant] And don't come back until you find something! [close again] Maybe if I'm feeling generous I'll head back east and tell [Voice1 Name] about this place. He's an insufferable bastard, but I don't quite feel like leaving him to die with nothing to eat, drink, or take shelter in.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -359,13 +375,13 @@
 		
 		[Voice3 Name] did find something in the caves after all. Unfortunately, as usual for him, it was completely useless to us. Some kind of ring of more of that alien metal. Could be a statue for all I care.
 		
-		We also found some more of those tablets, but I'm not touching them. Not after what it did to the other two. I'm sure they're cursed, along with rest of this alien trash. Hell, maybe we have that to thank for what happened to the ship, too. Maybe this whole damn planet's some kind of prison and those things are tracking devices that bring torment on anyone who's touched one.
+		We also found some more of those tablets, but I'm not touching them. Not after what it did to the others. I'm sure they're cursed, along with rest of this alien trash. Hell, maybe we have that to thank for what happened to the ship, too. Maybe this whole damn planet's some kind of prison and those things are tracking devices that bring torment on anyone who's touched one.
 
-		Exhibit A: We've come out of this cave for fish on several occasions, and it's never come to anything. Buuuuuuut, after [Voice3] and [othername] dug up another tablet - and not just another one of those purple ones, either; this one was red as blood - on our very next trip out, we ended up face to face with the thing I'm sure killed the pod. Giant ugly beast, probably a hundred feet long. Four black eyes and a mouth big enough to swallow someone whole. I'm not just guessing, either - it grabbed [voice3] with its jaws before any of us had a chance to react.
+		Exhibit A: We've come out of this cave for fish on several occasions, and it's never come to anything. Buuuuuuut, after [Voice3 Name] and [Other Name] dug up another tablet - and not just another one of those purple ones, either; this one was red as blood - on our very next trip out, we ended up face to face with the thing I'm sure killed the pod. Giant ugly beast, probably a hundred feet long. Four black eyes and a mouth big enough to swallow someone whole. I'm not just guessing, either - it grabbed [voice3 Name] with its jaws before any of us had a chance to react.
 		
-		The monster took chase after the other two of us. When we made it back to the cave it wasn't "we" at all - I'm the only one who escaped.....only in the barest sense too, given that I can still hear that thing every minute of every day I'm in here.
+		The monster took chase after the other two of us. When we made it back to the cave it wasn't "we" at all - I'm the only one who escaped...and only in the barest sense too, given that I can still hear that thing every minute of every day I'm in here.
 		
-		Maybe it senses the tablet, which they left right next to our little cache. I'll probably have to get rid of it, but I've gotta find another way out of this cave first. I'm not going near the old exit ever again, especially holding that thing. But as soon as I do find a way into some deeper water - the deeper the better - down that thing goes. I do hope there's an exit on the west side of this island, away from that thing.
+		Maybe it senses the tablet, which they left right next to our little cache. I'll probably have to get rid of it, but I've gotta find another way out of this cave first. I'm not going near the old exit ever again, especially holding that thing. But as soon as I do find a way into some deeper water - the deeper the better - down it goes. I do hope there's an exit on the west side of this island, away from that...creature.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -374,54 +390,6 @@
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </islandcave>
-  <bloodtrench>
-	<name>
-		Lifepod 14 Crew Log
-	</name>
-	<pda>
-		Oh, god, oh god, oh god, this can't be happening! I can't be getting stranded on some godforsaken planet out on the edge of Federation space!
-		
-		[Metal banging]
-		
-		OK, OK, it's definitely happening! I really am about to crash into an alien ocean!
-		
-		[splashdown]
-		
-		And I'm in water, great. Well, I guess mom wasn't kidding when she said swimming lessons could end up saving my life.
-		
-		[Hiss, followed by bubbling sound]
-		
-		...Or they WOULD, if not for the fact that I'm sinking to the bottom.
-		
-		[thud]
-		
-		Can I even make it to the surface from here? Sigh.
-		
-		Okay, this isn't actually that bad. Yeah, the grass is blood-red, but it's clear, bright and sandy so it's not like I'm in the depths. Maybe I'm even near shore. No problem, I'll get out of this. Just keep calm. Everything's gonna be JUST fine.
-		
-		[bone shark noise, then thud]
-		
-		[second of silence]
-		
-		[metal groaning and metal-on-dirt noises]
-		
-		I'm sinking again?! You have GOT to be kidding me!
-		
-		[pause, then thud]
-		
-		Oh, it's really dark down here. Like pitch black...aside from those terrifying looking plants over there. 
-		
-		Wait, what's that that light over there? It's moving...closer...GAAAH!
-		
-		[zapping sound]
-	</pda>
-	<category>
-		DownloadedData/AuroraSurvivors
-	</category>
-	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
-	</audio>
-  </bloodtrench>
   <lostrivershortcircuit>
 	<name>
 		Hypersalinated Water
@@ -431,7 +399,7 @@
 		
 		This effect is most pronounced while inside the caustic brine, but sufficient ion diffusion occurs for leakage to still be significant while in clearer water.
 		
-		A potential means to inhibit this phenomenon has been ascertained, but is as yet unavailable. Fortunately, this phenomenon is only of particular importance to vehicles as their power cells are the largest and densest electrical sources in present use.
+		No known means is currently available to inhibit this phenomenon, though it is only of particular importance to vehicles as their power cells are the largest and densest electrical sources in present use.
 	</pda>
 	<category>
 		PlanetaryGeology
