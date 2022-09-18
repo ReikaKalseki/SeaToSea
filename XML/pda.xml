@@ -255,31 +255,31 @@
 	<pda>
 		[splashdown]
 		
-		Voice 1: [calm] Seems everything's working exactly as advertised. Soft...ish landing, upright and afloat; power's on; the fab works.
+		Lorenz: [calm] Seems everything's working exactly as advertised. Soft...ish landing, upright and afloat; power's on; the fab works.
 		
 		Voice 2: [unimpressed] For now.
 		
-		Voice 1: [exasperated] Right. I forgot, one of the fundamental laws of nature is that when things are working perfectly it's just trying to lull you into a false sense of security before it all goes tits-up.
+		Lorenz: [exasperated] Right. I forgot, one of the fundamental laws of nature is that when things are working perfectly it's just trying to lull you into a false sense of security before it all goes tits-up.
 		
 		Voice 2: [fed up] That's exactly how I'd say things have gone so far! Perfectly! What a GREAT way to describe the ship falling out of orbit and stranding us all here!
 		
-		Voice 1: Look, the ship isn't far away, and I know we'd have sent out a distress call. Rescue's probably already on its way. We just have to stay calm, stay put, and everything will turn out fine.
+		Lorenz: Look, the ship isn't far away, and I know we'd have sent out a distress call. Rescue's probably already on its way. We just have to stay calm, stay put, and everything will turn out fine.
 		
 		Voice 2: Until we run out of food and water because there's four of us in a pod designed for two.
 		
-		Voice 3: Hello!
+		Fordson: Hello!
 		
-		Voice 2: Thanks, [voice 3], very helpful.
+		Voice 2: Thanks, Fordson, very helpful.
 		
-		Voice 1: So we ration our supplies a bit. Worst comes to worst, there's probably something in the water to sustain us, at least for the few days we need.
+		Lorenz: So we ration our supplies a bit. Worst comes to worst, there's probably something in the water to sustain us, at least for the few days we need.
 		
 		Voice 2: So that's your plan, then? Just stay floating in this metal box until we either get plucked out of the water by rescue or run out of supplies?
 		
-		Voice 1: I like the sound of it. Perhaps it's a bit too well-thought out for you? Maybe you'd prefer something a bit more deranged, like venturing off into the unknown?
+		Lorenz: I like the sound of it. Perhaps it's a bit too well-thought out for you? Maybe you'd prefer something a bit more deranged, like venturing off into the unknown?
 		
 		Voice 2: If I do, I won't be letting you come with me.
 		
-		Voice 1: [pleased/exasperated] Best news I've had all day.
+		Lorenz: [pleased/exasperated] Best news I've had all day.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -293,11 +293,11 @@
 		Mountain Lifepod Crew Log #2
 	</name>
 	<pda>
-		Voice 1: [sounding very defeated]
+		[sounding very defeated]
 		
 		[heavy breathing for a few seconds]
 		
-		...It's...it's been three days. I'm starving, I'm tired, I have a bruise the size of a grapefruit, and...I'll be honest. I'm COMPLETELY fed up at this point. I've had it with this damned planet. We didn't even make it a single day before some kind of beast tore the flotation system right off the pod and sent us to the seafloor. Ripped a pretty big hole in the hull, too.
+		Lorenz: It's...it's been three days. I'm starving, I'm tired, I have a bruise the size of a grapefruit, and...I'll be honest. I'm COMPLETELY fed up at this point. I've had it with this damned planet. We didn't even make it a single day before some kind of beast tore the flotation system right off the pod and sent us to the seafloor. Ripped a pretty big hole in the hull, too.
 		
 		The others took off. Made a couple of seaglides and headed west. They swore they saw land on the way down, but I know the grim truth; this planet's nothing but ocean. I wonder how long they spent searching for a mirage before they met a good reminder they should have stayed back here. Maybe the same reminder that took out the pod.
 		
@@ -315,7 +315,7 @@
 		Mountain Cave Crew Log
 	</name>
 	<pda>
-		Voice 1: Surviving out here hasn't been easy, but it hasn't been quite as bad as I'd feared. Food and water have been pretty trivial - though those squishy pink fish are getting rarer than I'd like - and there's lots of materials to be had. I even managed to grab some crates full of supplies and tools from the wreck up top.
+		Lorenz: Surviving out here hasn't been easy, but it hasn't been quite as bad as I'd feared. Food and water have been pretty trivial - though those squishy pink fish are getting rarer than I'd like - and there's lots of materials to be had. I even managed to grab some crates full of supplies and tools from the wreck up top.
 		
 		Unfortunately, that's where the good news ends: the whole region is crawling with more of those monsters that destroyed the lifepod. One of 'em smashed my seamoth the moment I took it for a test drive. I made it out, but only barely. They do tend to keep to the open areas, at least, so I've so far been able to avoid them by holing up here in the cave, but I can't do that forever.
 		
@@ -337,27 +337,27 @@
 		Mountain Island Crew Log
 	</name>
 	<pda>
-		Voice 2: I was right and [Voice 1 Name] was wrong. There IS land here. Just...not very much of it. Certainly not enough to support three people. Not when it's mostly a spire of rock surrounded by sand.
+		Voice 2: I was right and Lorenz was wrong. There IS land here. Just...not very much of it. Certainly not enough to support three people. Not when it's mostly a spire of rock surrounded by sand.
 		
-		Voice 3: And the-
+		Fordson: And the-
 		
 		Voice 2: OK, yes, there's also some giant probably-alien building, too. But I don't think that we'd find much to eat in there either.
 		
-		Voice 3: No, but it could-
+		Fordson: No, but it could-
 		
 		Voice 2 [pissed off] Not that it matters, anyway. Not when we're locked out after SOMEONE dropped the mystery tablet twenty feet from the door. That thing is probably centuries old, survived out here who knows how long, and then you fumbled it. Onto a rock no less.
 		
-		Voice 3: I said I was sorry...
+		Fordson: I said I was sorry...
 		
 		Voice 2: Why don't you make yourself more useful, perhaps go see if that cave over there has anything for us? To eat, perhaps?
 		
-		Voice 3: What about-
+		Fordson: What about-
 		
 		Voice 2: I know you already - so bravely - tested the ediblility of those trees, but they won't last a week if all three of us start eating them, especially when they're mostly water and you kill it taking enough of it to fill yourself. So...you. Cave. Find stuff.
 		
-		Voice 3: [pause] Okaayyyyy...
+		Fordson: [pause] Okaayyyyy...
 		
-		Voice 2: [distant] And don't come back until you find something! [close again] Maybe if I'm feeling generous I'll head back east and tell [Voice1 Name] about this place. He's an insufferable bastard, but I don't quite feel like leaving him to die with nothing to eat, drink, or take shelter in.
+		Voice 2: [distant] And don't come back until you find something! [close again] Maybe if I'm feeling generous I'll head back east and tell Lorenz about this place. He's an insufferable bastard, but I don't quite feel like leaving him to die with nothing to eat, drink, or take shelter in. If for no other reason than rubbing the fact I was right in his face.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
@@ -373,11 +373,11 @@
 	<pda>
 		Voice 2 [traumatized]: What good is being right when the only thing it changes is how you die?
 		
-		[Voice3 Name] did find something in the caves after all. Unfortunately, as usual for him, it was completely useless to us. Some kind of ring of more of that alien metal. Could be a statue for all I care.
+		Fordson did find something in the caves after all. Unfortunately, as usual for him, it was completely useless to us. Some kind of ring of more of that alien metal. Could be a statue for all I care.
 		
 		We also found some more of those tablets, but I'm not touching them. Not after what it did to the others. I'm sure they're cursed, along with rest of this alien trash. Hell, maybe we have that to thank for what happened to the ship, too. Maybe this whole damn planet's some kind of prison and those things are tracking devices that bring torment on anyone who's touched one.
 
-		Exhibit A: We've come out of this cave for fish on several occasions, and it's never come to anything. Buuuuuuut, after [Voice3 Name] and [Other Name] dug up another tablet - and not just another one of those purple ones, either; this one was red as blood - on our very next trip out, we ended up face to face with the thing I'm sure killed the pod. Giant ugly beast, probably a hundred feet long. Four black eyes and a mouth big enough to swallow someone whole. I'm not just guessing, either - it grabbed [voice3 Name] with its jaws before any of us had a chance to react.
+		Exhibit A: We've come out of this cave for fish on several occasions, and it's never come to anything. Buuuuuuut, after Fordson and [Other Name] dug up another tablet - and not just another one of those purple ones, either; this one was red as blood - on our very next trip out, we ended up face to face with the thing I'm sure killed the pod. Giant ugly beast, probably a hundred feet long. Four black eyes and a mouth big enough to swallow someone whole. I'm not just guessing, either - it grabbed Fordson with its jaws before any of us had a chance to react.
 		
 		The monster took chase after the other two of us. When we made it back to the cave it wasn't "we" at all - I'm the only one who escaped...and only in the barest sense too, given that I can still hear that thing every minute of every day I'm in here.
 		

@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly ACUCallbackSystem instance = new ACUCallbackSystem();
 		
 		private static readonly float FOOD_SCALAR = 0.2F; //all food values and metabolism multiplied by this, to give granularity
+		private static readonly string ACU_DECO_SLOT_NAME = "ACUDecoHolder";
 		
 		private readonly Dictionary<TechType, AnimalFood> edibleFish = new Dictionary<TechType, AnimalFood>();
 		
@@ -258,11 +259,34 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void updateACUTheming(WaterPark acu, RegionType theme) {
+			if (theme == RegionType.Other)
+				theme = RegionType.Shallows;
 			string floorTex = Enum.GetName(typeof(RegionType), theme);
 			GameObject container = getACUFloor(acu);
 			if (!container)
 				return;
 			GameObject floor = ObjectUtil.getChildObject(container, "Large_Aquarium_Room_generic_ground");
+			List<GameObject> decoHolders = ObjectUtil.getChildObjects(container, ACU_DECO_SLOT_NAME);
+			if (decoHolders.Count == 0) {
+				foreach (Transform t in floor.transform) {
+					string n = t.gameObject.name;
+					if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture) || n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) {
+						GameObject slot = new GameObject();
+						slot.name = ACU_DECO_SLOT_NAME;
+						slot.transform.parent = t.parent;
+						slot.transform.localPosition = t.localPosition;
+						slot.transform.localRotation = t.localRotation;
+						addProp(t.gameObject, slot, RegionType.Shallows, floor);
+						decoHolders.Add(slot);
+					}
+				}
+			}
+			bool hasProps = false;
+			foreach (GameObject slot in decoHolders) {
+				bool match = slot.name == Enum.GetName(typeof(RegionType), theme);
+				slot.SetActive(match);
+				if (match)
+			}
 			switch(theme) {
 				case RegionType.Shallows:
 					break;
@@ -277,6 +301,9 @@ namespace ReikaKalseki.SeaToSea {
 				case RegionType.Koosh: //use shallows sand
 					break;
 				case RegionType.BloodKelp:
+					foreach (GameObject slot in decoHolders) {
+						
+					}
 					break;
 				case RegionType.GrandReef:
 					break;
@@ -284,9 +311,6 @@ namespace ReikaKalseki.SeaToSea {
 					break;
 				case RegionType.LavaZone:
 					break;
-				case RegionType.Other:
-					updateACUTheming(acu, RegionType.Shallows);
-					return;
 			}
 			if (!string.IsNullOrEmpty(floorTex)) {
 				Renderer r = floor.GetComponentInChildren<Renderer>();
@@ -294,6 +318,17 @@ namespace ReikaKalseki.SeaToSea {
 				if (tex)
 					r.material.mainTexture = tex;
 			}
+		}
+		
+		private void addProp(GameObject go, GameObject slot, RegionType r, GameObject floor) {
+			string rname = Enum.GetName(typeof(RegionType), r);
+			GameObject rSlot = ObjectUtil.getChildObject(slot, rname);
+			if (!rSlot) {
+				rSlot = new GameObject();
+				rSlot.name = rname;
+				rSlot.transform.parent = slot.transform;
+			}
+			go.transform.parent = rSlot.transform;
 		}
 		
 		private GameObject getACUFloor(WaterPark acu) {
