@@ -267,50 +267,78 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			GameObject floor = ObjectUtil.getChildObject(container, "Large_Aquarium_Room_generic_ground");
 			List<GameObject> decoHolders = ObjectUtil.getChildObjects(container, ACU_DECO_SLOT_NAME);
-			if (decoHolders.Count == 0) {
-				foreach (Transform t in floor.transform) {
-					string n = t.gameObject.name;
-					if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture) || n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) {
-						GameObject slot = new GameObject();
-						slot.name = ACU_DECO_SLOT_NAME;
-						slot.transform.parent = t.parent;
-						slot.transform.localPosition = t.localPosition;
-						slot.transform.localRotation = t.localRotation;
-						addProp(t.gameObject, slot, RegionType.Shallows, floor);
-						decoHolders.Add(slot);
-					}
+			//SNUtil.writeToChat(container+" > "+decoHolders.Count);
+			foreach (Transform t in container.transform) {
+				string n = t.gameObject.name; chcek for same location
+				if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture) || n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) {
+					GameObject slot = new GameObject();
+					slot.name = ACU_DECO_SLOT_NAME;
+					slot.SetActive(true);
+					slot.transform.parent = container.transform;
+					slot.transform.position = t.position;
+					slot.transform.rotation = t.rotation;
+					addProp(t.gameObject, slot, RegionType.Shallows);
+					decoHolders.Add(slot);
 				}
 			}
-			bool hasProps = false;
 			foreach (GameObject slot in decoHolders) {
-				bool match = slot.name == Enum.GetName(typeof(RegionType), theme);
-				slot.SetActive(match);
-				if (match)
-			}
-			switch(theme) {
-				case RegionType.Shallows:
-					break;
-				case RegionType.Kelp:
-					break;
-				case RegionType.RedGrass: //use shallows sand
-					break;
-				case RegionType.Mushroom:
-					break;
-				case RegionType.Jellyshroom:
-					break;
-				case RegionType.Koosh: //use shallows sand
-					break;
-				case RegionType.BloodKelp:
-					foreach (GameObject slot in decoHolders) {
-						
+				bool found = false;
+				foreach (Transform bt in slot.transform) {
+					GameObject biomeSlot = bt.gameObject;
+					bool match = biomeSlot.name == Enum.GetName(typeof(RegionType), theme);
+					biomeSlot.SetActive(match);
+					if (match) {
+						found = true;
+						if (bt.childCount == 0) {
+							switch(theme) {
+								case RegionType.Shallows:
+									break;
+								case RegionType.Kelp:
+									break;
+								case RegionType.RedGrass: //use shallows sand
+									break;
+								case RegionType.Mushroom:
+									break;
+								case RegionType.Jellyshroom:
+									break;
+								case RegionType.Koosh: //use shallows sand
+									break;
+								case RegionType.BloodKelp:
+									string pfb = "";
+									switch(UnityEngine.Random.Range(0, 4)) {
+										case 0:
+											pfb = "7bfe0629-a008-43b8-bd16-d69ad056769f";
+											break;
+										case 1:
+											pfb = "e291d076-bf95-4cdd-9dd9-6acd37566cf6";
+											break;
+										case 2:
+											pfb = "2bfcbaf4-1ae6-4628-9816-28a6a26ff340";
+											break;
+										case 3:
+											pfb = "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8";
+											break;
+									}
+									GameObject go = ObjectUtil.createWorldObject(pfb, true, false);
+									go = go.GetComponentInChildren<Renderer>(true).gameObject;
+									go.SetActive(true);
+									go.transform.localScale = Vector3.one*0.1F;
+									go.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+									addProp(go, slot, theme, biomeSlot);
+									break;
+								case RegionType.GrandReef:
+									break;
+								case RegionType.LostRiver:
+									break;
+								case RegionType.LavaZone:
+									break;
+							}
+						}
 					}
-					break;
-				case RegionType.GrandReef:
-					break;
-				case RegionType.LostRiver:
-					break;
-				case RegionType.LavaZone:
-					break;
+				}
+				if (!found) {
+					addProp(null, slot, theme);
+				}
 			}
 			if (!string.IsNullOrEmpty(floorTex)) {
 				Renderer r = floor.GetComponentInChildren<Renderer>();
@@ -320,20 +348,35 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
-		private void addProp(GameObject go, GameObject slot, RegionType r, GameObject floor) {
+		private void addProp(GameObject go, GameObject slot, RegionType r, GameObject rSlot = null) {
 			string rname = Enum.GetName(typeof(RegionType), r);
-			GameObject rSlot = ObjectUtil.getChildObject(slot, rname);
+			if (!rSlot)
+				rSlot = ObjectUtil.getChildObject(slot, rname);
 			if (!rSlot) {
 				rSlot = new GameObject();
 				rSlot.name = rname;
 				rSlot.transform.parent = slot.transform;
+				rSlot.transform.localPosition = Vector3.zero;
+				rSlot.transform.localRotation = Quaternion.identity;
 			}
-			go.transform.parent = rSlot.transform;
+			if (go) {
+				go.transform.parent = rSlot.transform;
+				go.transform.localPosition = Vector3.zero;
+				go.transform.localRotation = Quaternion.identity;
+				ObjectUtil.removeComponent<SkyApplier>(go);
+				SkyApplier sk = go.EnsureComponent<SkyApplier>();
+				sk.renderers = go.GetComponentsInChildren<Renderer>(true);
+				sk.environmentSky = MarmoSkies.main.skyBaseInterior;
+				sk.applySky = sk.environmentSky;
+				sk.enabled = true;
+				sk.ApplySkybox();
+				sk.RefreshDirtySky();
+			}
 		}
 		
 		private GameObject getACUFloor(WaterPark acu) {
 			foreach (WaterParkPiece wp in acu.transform.parent.GetComponentsInChildren<WaterParkPiece>()) {
-				if (wp.floorBottom && Vector3.Distance(wp.transform.position, acu.transform.position) <= 0.5)
+				if (wp.floorBottom && wp.floorBottom.activeSelf && Vector3.Distance(wp.transform.position.setY(0), acu.transform.position.setY(0)) <= 0.5)
 					return wp.floorBottom;
 			}
 			return null;

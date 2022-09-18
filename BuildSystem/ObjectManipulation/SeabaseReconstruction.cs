@@ -121,7 +121,7 @@ namespace ReikaKalseki.SeaToSea
 							if (pfb2.prefabName == "RoomWaterParkBottom")
 								ObjectUtil.removeChildObject(go3, "BaseWaterParkFloorBottom/Bubbles");
 							else if (pfb2.prefabName == "RoomWaterParkHatch") {
-								ObjectUtil.removeChildObject(go3, "BaseCorridorHatch(Clone)")
+								ObjectUtil.removeChildObject(go3, "BaseCorridorHatch(Clone)");
 							}
 							go3.transform.parent = go2.transform;
 							rebuildNestedObjects(go3, e3);

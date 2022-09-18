@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal override void applyToObject(GameObject go) {
 			BaseFoundationPiece bf = go.GetComponent<BaseFoundationPiece>();
-			if (bf != null) {
+			if (bf) {
 				if (data == null) {
 					UnityEngine.Object.DestroyImmediate(bf.gameObject);
 				}
@@ -59,12 +59,15 @@ namespace ReikaKalseki.SeaToSea
 								//SNUtil.log("Destroying base leg @ "+l.position);
 								if (p.bottom)
 									UnityEngine.Object.DestroyImmediate(p.bottom.gameObject);
-								UnityEngine.Object.DestroyImmediate(p.adjustable.gameObject);
+								if (p.adjustable)
+									UnityEngine.Object.DestroyImmediate(p.adjustable.gameObject);
 								UnityEngine.Object.DestroyImmediate(p.root);
 							}
-							foreach (Shocker s in UnityEngine.Object.FindObjectsOfType<Shocker>()) {
-								if (s && s.gameObject)
-									ObjectUtil.ignoreCollisions(s.gameObject, l.gameObject);
+							if (l) {
+								foreach (Shocker s in UnityEngine.Object.FindObjectsOfType<Shocker>()) {
+									if (s && s.gameObject)
+										ObjectUtil.ignoreCollisions(s.gameObject, l.gameObject);
+								}
 							}
 						}
 					}
