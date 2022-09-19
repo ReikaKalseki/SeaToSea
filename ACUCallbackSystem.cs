@@ -16,7 +16,7 @@ using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class ACUCallbackSystem { //TODO make this its own mod "acu metabolism" ; TODO add "healthy ecosystem" bonus to breeding
+	public class ACUCallbackSystem { //TODO make this its own mod and split into many classes
 		
 		public static readonly ACUCallbackSystem instance = new ACUCallbackSystem();
 		
@@ -26,6 +26,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly Dictionary<TechType, AnimalFood> edibleFish = new Dictionary<TechType, AnimalFood>();
 		
 		private readonly Dictionary<VanillaFlora, PlantFood> ediblePlants = new Dictionary<VanillaFlora, PlantFood>();
+		
+		private readonly Dictionary<RegionType, WeightedRandom<ACUPropDefinition>> propTypes = new Dictionary<RegionType, WeightedRandom<ACUPropDefinition>>();
 	    
 	    private readonly Dictionary<TechType, ACUMetabolism> metabolisms = new Dictionary<TechType, ACUMetabolism>() {
 			{TechType.RabbitRay, new ACUMetabolism(0.01F, 0.1F, false, RegionType.Shallows)},
@@ -78,6 +80,47 @@ namespace ReikaKalseki.SeaToSea {
 			addFood(new PlantFood(VanillaFlora.VEINED_NETTLE, 0.15F, RegionType.Shallows));
 			addFood(new PlantFood(VanillaFlora.WRITHING_WEED, 0.15F, RegionType.Shallows));
 			addFood(new PlantFood(VanillaFlora.TIGER, 0.5F, RegionType.RedGrass));
+			
+			registerProp(RegionType.BloodKelp, "7bfe0629-a008-43b8-bd16-d69ad056769f", 15, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "e291d076-bf95-4cdd-9dd9-6acd37566cf6", 15, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "2bfcbaf4-1ae6-4628-9816-28a6a26ff340", 15, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8", 15, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d", 25, 0.4F, 0.15F); //blood oil
+			
+			foreach (string pfb in VanillaFlora.DEEP_MUSHROOM.getPrefabs(false, true)) {
+				Action<GameObject> a = go => {
+					go.transform.localScale = Vector3.one*0.33F;
+					go.transform.localRotation = Quaternion.Euler(UnityEngine.Random.Range(-10F, 10F), UnityEngine.Random.Range(0, 360F), 0);
+				};
+				registerProp(RegionType.BloodKelp, pfb, 5, a);
+				registerProp(RegionType.LostRiver, pfb, 5, a);
+				registerProp(RegionType.LavaZone, pfb, 5, a);
+			}
+			
+			foreach (string pfb in VanillaFlora.JELLYSHROOM_TINY.getPrefabs(true, true))
+				registerProp(RegionType.Jellyshroom, pfb, 5);
+			
+			registerProp(RegionType.LostRiver, VanillaFlora.BRINE_LILY.getRandomPrefab(false), 10);
+			
+			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL1.getRandomPrefab(false), 10, 0.1F);
+			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL2.getRandomPrefab(false), 10, 0.1F);
+			
+			registerProp(RegionType.LavaZone, "077ebe13-eb45-4ee4-8f6f-f566cfe11ab2", 10, 0.5F);
+		}
+		
+		private void prepareBloodTendril(GameObject go) {
+			go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.04F, 0.06F);
+			go.transform.rotation = Quaternion.identity;
+		}
+		
+		private void registerProp(RegionType r, string s, double wt, float scale, float voff = 0) {
+			registerProp(r, s, wt, go => {go.transform.localScale = Vector3.one*scale; go.transform.position = go.transform.position+Vector3.up*voff;});
+		}
+		
+		private void registerProp(RegionType r, string s, double wt, Action<GameObject> a = null) {
+			WeightedRandom<ACUPropDefinition> wr = propTypes.ContainsKey(r) ? propTypes[r] : new WeightedRandom<ACUPropDefinition>();
+			wr.addEntry(new ACUPropDefinition(s, wt, a), wt);
+			propTypes[r] = wr;
 		}
 		
 		private void addFood(Food f) {
@@ -266,19 +309,33 @@ namespace ReikaKalseki.SeaToSea {
 			if (!container)
 				return;
 			GameObject floor = ObjectUtil.getChildObject(container, "Large_Aquarium_Room_generic_ground");
+			GameObject glass = ObjectUtil.getChildObject(container.transform.parent.gameObject, "model/Large_Aquarium_generic_room_glass_01");
 			List<GameObject> decoHolders = ObjectUtil.getChildObjects(container, ACU_DECO_SLOT_NAME);
-			//SNUtil.writeToChat(container+" > "+decoHolders.Count);
+			//SNUtil.writeToChat("##"+theme+" > "+floor+" & "+glass+" & "+decoHolders.Count);
 			foreach (Transform t in container.transform) {
-				string n = t.gameObject.name; chcek for same location
+				string n = t.gameObject.name;
 				if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture) || n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) {
-					GameObject slot = new GameObject();
-					slot.name = ACU_DECO_SLOT_NAME;
-					slot.SetActive(true);
-					slot.transform.parent = container.transform;
-					slot.transform.position = t.position;
-					slot.transform.rotation = t.rotation;
-					addProp(t.gameObject, slot, RegionType.Shallows);
-					decoHolders.Add(slot);
+					bool flag = true;
+					if (decoHolders.Count > 0) {
+						foreach (GameObject slot in decoHolders) {
+							if (Vector3.Distance(slot.transform.position, t.position) <= 0.05F) {
+								UnityEngine.Object.DestroyImmediate(t.gameObject);
+								flag = false;
+								break;
+							}
+						}
+					}
+					if (flag) {
+						GameObject slot = new GameObject();
+						slot.name = ACU_DECO_SLOT_NAME;
+						slot.SetActive(true);
+						slot.transform.parent = container.transform;
+						slot.transform.position = t.position;
+						//slot.transform.rotation = t.rotation;
+						slot.transform.rotation = Quaternion.identity;
+						addProp(t.gameObject, slot, RegionType.Shallows);
+						decoHolders.Add(slot);
+					}
 				}
 			}
 			foreach (GameObject slot in decoHolders) {
@@ -290,49 +347,11 @@ namespace ReikaKalseki.SeaToSea {
 					if (match) {
 						found = true;
 						if (bt.childCount == 0) {
-							switch(theme) {
-								case RegionType.Shallows:
-									break;
-								case RegionType.Kelp:
-									break;
-								case RegionType.RedGrass: //use shallows sand
-									break;
-								case RegionType.Mushroom:
-									break;
-								case RegionType.Jellyshroom:
-									break;
-								case RegionType.Koosh: //use shallows sand
-									break;
-								case RegionType.BloodKelp:
-									string pfb = "";
-									switch(UnityEngine.Random.Range(0, 4)) {
-										case 0:
-											pfb = "7bfe0629-a008-43b8-bd16-d69ad056769f";
-											break;
-										case 1:
-											pfb = "e291d076-bf95-4cdd-9dd9-6acd37566cf6";
-											break;
-										case 2:
-											pfb = "2bfcbaf4-1ae6-4628-9816-28a6a26ff340";
-											break;
-										case 3:
-											pfb = "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8";
-											break;
-									}
-									GameObject go = ObjectUtil.createWorldObject(pfb, true, false);
-									go = go.GetComponentInChildren<Renderer>(true).gameObject;
-									go.SetActive(true);
-									go.transform.localScale = Vector3.one*0.1F;
-									go.transform.localRotation = Quaternion.Euler(-90, 0, 0);
-									addProp(go, slot, theme, biomeSlot);
-									break;
-								case RegionType.GrandReef:
-									break;
-								case RegionType.LostRiver:
-									break;
-								case RegionType.LavaZone:
-									break;
-							}
+							ACUPropDefinition def = getRandomACUProp(acu, theme);
+							//SNUtil.writeToChat("$$"+def);
+							//SNUtil.log("$$"+def);
+							if (def != null)
+								addProp(def.spawn(), slot, theme, biomeSlot);
 						}
 					}
 				}
@@ -346,6 +365,39 @@ namespace ReikaKalseki.SeaToSea {
 				if (tex)
 					r.material.mainTexture = tex;
 			}
+			Biome b = getAttr(theme);
+			//SNUtil.writeToChat("::"+b);
+			if (b != null) {
+				mset.Sky biomeSky = WorldUtil.getSkybox(b.biomeName);
+				if (biomeSky) {
+					ObjectUtil.setSky(glass, biomeSky);
+					Renderer r = glass.GetComponentInChildren<Renderer>();
+					if (!r) {
+						SNUtil.writeToChat("No glass renderer");
+						return;
+					}
+					Material m = r.materials[0];
+					if (!m) {
+						SNUtil.writeToChat("No glass material");
+						return;
+					}
+					m.SetFloat("_Fresnel", 1F);
+					m.SetFloat("_Shininess", 7.5F);
+					m.SetFloat("_SpecInt", 0.75F);
+					m.SetColor("_Color", b.waterColor);
+					foreach (WaterParkItem wp in acu.items) {
+						if (wp)
+							ObjectUtil.setSky(wp.gameObject, biomeSky);
+					}
+					foreach (GameObject go in decoHolders) {
+						ObjectUtil.setSky(go, biomeSky);
+					}
+				}
+			}
+		}
+		
+		private ACUPropDefinition getRandomACUProp(WaterPark acu, RegionType r) {
+			return propTypes.ContainsKey(r) ? propTypes[r].getRandomEntry() : null;
 		}
 		
 		private void addProp(GameObject go, GameObject slot, RegionType r, GameObject rSlot = null) {
@@ -362,15 +414,16 @@ namespace ReikaKalseki.SeaToSea {
 			if (go) {
 				go.transform.parent = rSlot.transform;
 				go.transform.localPosition = Vector3.zero;
-				go.transform.localRotation = Quaternion.identity;
+				//go.transform.localRotation = Quaternion.identity;
+				ObjectUtil.removeComponent<PrefabIdentifier>(go);
+				ObjectUtil.removeComponent<TechTag>(go);
+				ObjectUtil.removeComponent<Pickupable>(go);
+				ObjectUtil.removeComponent<Collider>(go);
+				ObjectUtil.removeComponent<PickPrefab>(go);
 				ObjectUtil.removeComponent<SkyApplier>(go);
 				SkyApplier sk = go.EnsureComponent<SkyApplier>();
 				sk.renderers = go.GetComponentsInChildren<Renderer>(true);
-				sk.environmentSky = MarmoSkies.main.skyBaseInterior;
-				sk.applySky = sk.environmentSky;
-				sk.enabled = true;
-				sk.ApplySkybox();
-				sk.RefreshDirtySky();
+				ObjectUtil.setSky(go, MarmoSkies.main.skyBaseInterior);
 			}
 		}
 		
@@ -506,18 +559,70 @@ namespace ReikaKalseki.SeaToSea {
 			}			
 		}
 		
+		class ACUPropDefinition {
+			
+			private readonly double weight;
+			private readonly string prefab;
+			private readonly Action<GameObject> modify;
+			
+			internal ACUPropDefinition(string pfb, double wt, Action<GameObject> a = null) {
+				weight = wt;
+				prefab = pfb;
+				modify = a;
+			}
+			
+			internal GameObject spawn() {
+				GameObject go = ObjectUtil.createWorldObject(prefab, true, false);
+				if (go == null) {
+					SNUtil.writeToChat("Could not spawn GO for "+this);
+					return null;
+				}
+				go = go.GetComponentInChildren<Renderer>(true).gameObject;
+				go.SetActive(true);
+				if (modify != null)
+					modify(go);
+				return go;
+			}
+			
+			public override string ToString()
+			{
+				return string.Format("[ACUPropDefinition Weight={0}, Prefab={1}]", weight, prefab);
+			}
+			
+		}
+		
 		enum RegionType {
-			Shallows,
-			Kelp,
-			RedGrass,
-			Mushroom,
-			Jellyshroom,
-			Koosh,
-			BloodKelp,
-			GrandReef,
-			LostRiver,
-			LavaZone,
-			Other,
+			[Biome("SafeShallows", 1F, 1F, 1F, 0.3F)]Shallows,
+			[Biome("KelpForest", 0.3F, 0.6F, 0.3F, 0.67F)]Kelp,
+			[Biome("GrassyPlateaus", 1F, 1F, 1F, 0.3F)]RedGrass,
+			[Biome("MushroomForest", 1F, 1F, 1F, 0.3F)]Mushroom,
+			[Biome("JellyshroomCaves", 0.8F, 0.2F, 0.5F, 0.8F)]Jellyshroom,
+			[Biome("KooshZone", 0.6F, 0.3F, 0.8F, 0.8F)]Koosh,
+			[Biome("BloodKelp", 0, 0, 0, 0.95F)]BloodKelp,
+			[Biome("GrandReef", 0, 0, 0.5F, 0.9F)]GrandReef,
+			[Biome("LostRiver", 0.1F, 0.5F, 0.2F, 0.8F)]LostRiver,
+			[Biome("LavaZone", 0.7F, 0.5F, 0.1F, 0.75F)]LavaZone,
+			[Biome("Dunes", 0.1F, 0.4F, 0.7F, 0.5F)]Other,
+		}
+		
+		private class Biome : Attribute {
+			
+			public readonly string biomeName;
+			internal readonly Color waterColor;
+			
+			internal Biome(string b, float r, float g, float bl, float a) {
+				biomeName = b;
+				waterColor = new Color(r, g, bl, a);
+			}
+			
+			public override string ToString() {
+				return biomeName;
+			}
+		}
+		
+		private static Biome getAttr(RegionType key) {
+			System.Reflection.FieldInfo info = typeof(RegionType).GetField(Enum.GetName(typeof(RegionType), key));
+			return (Biome)Attribute.GetCustomAttribute(info, typeof(Biome));
 		}
 	}
 	
