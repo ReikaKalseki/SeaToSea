@@ -75,6 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	BrokenTablet.updateLocale();
 	    	DuplicateRecipeDelegate.updateLocale();
 	    	OutdoorPot.updateLocale();
+	    	CustomEgg.updateLocale();
 	    	/*
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
@@ -1054,6 +1055,12 @@ namespace ReikaKalseki.SeaToSea {
 			LiveMixin lv = go.GetComponent<LiveMixin>();
 			return !lv || lv.IsAlive();
 	   	}
+	   
+	   public static void onChunkGenGrass(IVoxelandChunk2 chunk) {
+	   	foreach (Renderer r in chunk.grassRenders) {
+	   		ACUCallbackSystem.instance.cacheGrassMaterial(r.materials[0]);
+	   	}
+	   }
 	}
 	
 	class ContainmentFacilityDragonRepellent : MonoBehaviour {

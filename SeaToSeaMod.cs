@@ -100,6 +100,7 @@ namespace ReikaKalseki.SeaToSea
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
     private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
+    private static readonly Dictionary<TechType, CustomEgg> eggs = new Dictionary<TechType, CustomEgg>();
 
     [QModPatch]
     public static void Load() {
@@ -159,6 +160,9 @@ namespace ReikaKalseki.SeaToSea
         
         addFlora();
         addItemsAndRecipes();
+        createEgg(TechType.SpineEel, TechType.BonesharkEgg, BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
+        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, BiomeType.TreeCove_LakeFloor);
+        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, BiomeType.InactiveLavaZone_Chamber_Floor_Far);
 
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -331,9 +335,10 @@ namespace ReikaKalseki.SeaToSea
     	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 0.8F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Ceiling, 1, 1.2F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor, 1, 0.3F);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 0.67F);
-    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 1.2F);
+    	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.6F);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 0.5F);
     	
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2.5F, 1);
@@ -880,6 +885,15 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
+    }
+    
+    private static void createEgg(TechType creature, TechType basis, params BiomeType[] spawn) {
+    	CustomEgg egg = new CustomEgg(creature,  basis);
+    	egg.setTexture("Textures/Eggs/");
+    	eggs[creature] = egg;
+    	egg.Patch();
+    	foreach (BiomeType b in spawn)
+    		GenUtil.registerSlotWorldgen(egg.ClassID, egg.PrefabFileName, egg.TechType, false, b, 1, 0.2F);
     }
     
     private static void createCompressedIngot(DIPrefab<VanillaResources> item, int amt = 10, string name = "Ingot") {
