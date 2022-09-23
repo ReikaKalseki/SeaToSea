@@ -55,14 +55,14 @@ namespace ReikaKalseki.SeaToSea
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
 			VoidSpikesBiome.checkAndAddWaveBob(go, true);
 		}
-		
+		/*
 		[Obsolete]
 		public GameObject spawnPDA() {
 			GameObject pda = spawner(SignalManager.getSignal("voidpod").signalHolder.ClassID);
 			pda.transform.rotation = UnityEngine.Random.rotationUniform;
 			VoidSpikesBiome.checkAndAddWaveBob(pda, true);
 			return pda;
-		}
+		}*/
 		
 		private GameObject generateObjectInRange(float dx, float dy, float dz, double offsetY = 0, Prop type = null) {
 			Prop p = type == null ? PodDebris.debrisProps.getRandomEntry() : type;

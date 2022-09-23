@@ -541,10 +541,11 @@ namespace ReikaKalseki.SeaToSea {
 								SNUtil.writeToChat("No glass material");
 								return;
 							}
-							m.SetFloat("_Fresnel", 1F);
+							m.SetFloat("_Fresnel", 0.5F);
 							m.SetFloat("_Shininess", 7.5F);
 							m.SetFloat("_SpecInt", 0.75F);
 							m.SetColor("_Color", b.waterColor);
+							m.SetColor("_SpecColor", b.waterColor);
 							m.SetInt("_ZWrite", 1);
 						}
 						foreach (WaterParkItem wp in acu.items) {

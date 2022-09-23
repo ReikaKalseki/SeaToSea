@@ -279,27 +279,27 @@ namespace ReikaKalseki.SeaToSea
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
         
         UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
-	    		if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
-					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
-					ht.setValues(20, 20);
-					ht.activate();
-					return true;
-	    	    }
-	    	    return false;
+	    	if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+				ht.setValues(20, 20);
+				ht.activate();
+				return true;
+	    	}
+	    	return false;
 		});
         UsableItemRegistry.instance.addUsableItem(bandage.TechType, (s, go) => {
-	    		if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
-					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
-					ht.setValues(50, 5);
-					ht.activate();
-					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
-						dt.damageRemaining = 0;
-						dt.CancelInvoke("DoDamage");
-						UnityEngine.Object.DestroyImmediate(dt);
-					}
-					return true;
+	    	if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+				ht.setValues(50, 5);
+				ht.activate();
+				foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
+					dt.damageRemaining = 0;
+					dt.CancelInvoke("DoDamage");
+					UnityEngine.Object.DestroyImmediate(dt);
 				}
-	    	    return false;
+				return true;
+			}
+	    	return false;
 		});
     }
     
