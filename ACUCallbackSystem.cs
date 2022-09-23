@@ -109,44 +109,44 @@ namespace ReikaKalseki.SeaToSea {
 			//foreach (string pfb in VanillaFlora.BLOOD_GRASS.getPrefabs(false, true))
 			//	registerProp(RegionType.RedGrass, pfb, 15);
 			
-			registerProp(RegionType.Mushroom, "961194a9-e88b-40d7-900d-a48c5b739352", 5, 0.4F);
-			registerProp(RegionType.Mushroom, "fe145621-5b25-4000-a3dd-74c1aaa961e2", 5, 0.4F);
-			registerProp(RegionType.Mushroom, "f3de21af-550b-4901-a6e8-e45e31c1509d", 5, 0.4F);
-			registerProp(RegionType.Mushroom, "5086a02a-ea6d-41ba-90c3-ea74d97cf6b5", 5, 0.4F);
-			registerProp(RegionType.Mushroom, "7c7e0e95-8311-4ee0-80dd-30a61b151161", 5, 0.4F);
+			registerProp(RegionType.Mushroom, "961194a9-e88b-40d7-900d-a48c5b739352", 5, false, 0.4F);
+			registerProp(RegionType.Mushroom, "fe145621-5b25-4000-a3dd-74c1aaa961e2", 5, false, 0.4F);
+			registerProp(RegionType.Mushroom, "f3de21af-550b-4901-a6e8-e45e31c1509d", 5, false, 0.4F);
+			registerProp(RegionType.Mushroom, "5086a02a-ea6d-41ba-90c3-ea74d97cf6b5", 5, false, 0.4F);
+			registerProp(RegionType.Mushroom, "7c7e0e95-8311-4ee0-80dd-30a61b151161", 5, false, 0.4F);
 			
-			registerProp(RegionType.BloodKelp, "7bfe0629-a008-43b8-bd16-d69ad056769f", 15, prepareBloodTendril);
-			registerProp(RegionType.BloodKelp, "e291d076-bf95-4cdd-9dd9-6acd37566cf6", 15, prepareBloodTendril);
-			registerProp(RegionType.BloodKelp, "2bfcbaf4-1ae6-4628-9816-28a6a26ff340", 15, prepareBloodTendril);
-			registerProp(RegionType.BloodKelp, "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8", 15, prepareBloodTendril);
-			registerProp(RegionType.BloodKelp, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d", 25, 0.4F, 0.165F); //blood oil
+			registerProp(RegionType.BloodKelp, "7bfe0629-a008-43b8-bd16-d69ad056769f", 15, true, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "e291d076-bf95-4cdd-9dd9-6acd37566cf6", 15, true, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "2bfcbaf4-1ae6-4628-9816-28a6a26ff340", 15, true, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8", 15, true, prepareBloodTendril);
+			registerProp(RegionType.BloodKelp, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d", 25, true, 0.4F, 0.165F); //blood oil
 			
 			foreach (string pfb in VanillaFlora.DEEP_MUSHROOM.getPrefabs(false, true)) {
 				Action<GameObject> a = go => {
 					go.transform.localScale = Vector3.one*0.33F;
-					go.transform.localRotation = Quaternion.Euler(UnityEngine.Random.Range(260F, 280F), UnityEngine.Random.Range(0F, 360F), 0);
+					go.transform.localRotation = Quaternion.Euler(UnityEngine.Random.Range(260F, 280F), UnityEngine.Random.Range(0F, 360F)*0, 0);
 				};
-				registerProp(RegionType.BloodKelp, pfb, 5, a);
+				registerProp(RegionType.BloodKelp, pfb, 5, true, a);
 				//registerProp(RegionType.LostRiver, pfb, 5, a); is a native flora here
 				//registerProp(RegionType.LavaZone, pfb, 5, a); and here
 			}
 			
 			foreach (string pfb in VanillaFlora.JELLYSHROOM_TINY.getPrefabs(true, true))
-				registerProp(RegionType.Jellyshroom, pfb, 5);
+				registerProp(RegionType.Jellyshroom, pfb, 5, false);
 			
 			foreach (string pfb in VanillaFlora.TREE_LEECH.getPrefabs(false, true))
-				registerProp(RegionType.Mushroom, pfb, 5, 0.25F);
+				registerProp(RegionType.Mushroom, pfb, 5, false, 0.25F);
 			foreach (string pfb in VanillaFlora.GRUE_CLUSTER.getPrefabs(true, true))
-				registerProp(RegionType.Mushroom, pfb, 5, 0.00004F); //why the hell is this thing so huge in native scale and vanilla scales it to 0.0001F
+				registerProp(RegionType.Mushroom, pfb, 5, false, 0.00004F); //why the hell is this thing so huge in native scale and vanilla scales it to 0.0001F
 			
-			registerProp(RegionType.LostRiver, VanillaFlora.BRINE_LILY.getRandomPrefab(false), 10, 0.25F);
+			registerProp(RegionType.LostRiver, VanillaFlora.BRINE_LILY.getRandomPrefab(false), 10, false, 0.25F);
 			foreach (string pfb in VanillaFlora.CLAW_KELP.getPrefabs(true, true))
-				registerProp(RegionType.LostRiver, pfb, 5, 0.125F);
+				registerProp(RegionType.LostRiver, pfb, 5, true, 0.1F);
 			
-			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL1.getRandomPrefab(false), 10, 0.1F);
-			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL2.getRandomPrefab(false), 10, 0.1F);
+			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL1.getRandomPrefab(false), 10, true, 0.1F);
+			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL2.getRandomPrefab(false), 10, true, 0.1F);
 			
-			registerProp(RegionType.LavaZone, "077ebe13-eb45-4ee4-8f6f-f566cfe11ab2", 10, 0.5F);
+			registerProp(RegionType.LavaZone, "077ebe13-eb45-4ee4-8f6f-f566cfe11ab2", 10, false, 0.5F);
 			
 			if (Directory.Exists(rootCachePath)) {
 				foreach (string folder in Directory.EnumerateDirectories(rootCachePath)) {
@@ -180,7 +180,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void prepareBloodTendril(GameObject go) {
-			go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.04F, 0.06F);
+			go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.15F, 0.25F);
 			go.transform.rotation = Quaternion.identity;
 		}
 		
@@ -196,20 +196,20 @@ namespace ReikaKalseki.SeaToSea {
 						UnityEngine.Object.DestroyImmediate(go);
 				}
 			};
-			registerProp(r, "880b59b7-8fd6-412f-bbcb-a4260b263124", wt*0.75F, a);
-			registerProp(r, "bac42c90-8995-439f-be2f-29a6d164c82a", wt*0.25F, a);
+			registerProp(r, "880b59b7-8fd6-412f-bbcb-a4260b263124", wt*0.75F, false, a);
+			registerProp(r, "bac42c90-8995-439f-be2f-29a6d164c82a", wt*0.25F, false, a);
 		}
 		
-		private void registerProp(RegionType r, string s, double wt, float scale, float voff = 0) {
-			registerProp(r, s, wt, go => {
+		private void registerProp(RegionType r, string s, double wt, bool up, float scale, float voff = 0) {
+			registerProp(r, s, wt, up, go => {
 			    go.transform.localScale = Vector3.one*UnityEngine.Random.Range(scale*0.95F, scale*1.05F);
 				go.transform.position = go.transform.position+Vector3.up*voff;
 			});
 		}
 		
-		private void registerProp(RegionType r, string s, double wt, Action<GameObject> a = null) {
+		private void registerProp(RegionType r, string s, double wt, bool up, Action<GameObject> a = null) {
 			WeightedRandom<ACUPropDefinition> wr = propTypes.ContainsKey(r) ? propTypes[r] : new WeightedRandom<ACUPropDefinition>();
-			wr.addEntry(new ACUPropDefinition(s, wt, a), wt);
+			wr.addEntry(new ACUPropDefinition(s, wt, up, a), wt);
 			propTypes[r] = wr;
 		}
 		
@@ -239,6 +239,11 @@ namespace ReikaKalseki.SeaToSea {
 			private List<GameObject> decoHolders;
 			
 			private RegionType currentTheme = RegionType.Shallows;
+			private int plantCount;
+			private int herbivoreCount;
+			private int carnivoreCount;
+			private int sparkleCount;
+			private float stalkerToyValue;
 			
 			internal void setACU(WaterPark w) {
 				if (acu != w) {
@@ -278,21 +283,33 @@ namespace ReikaKalseki.SeaToSea {
 				possibleBiomes.AddRange((IEnumerable<RegionType>)Enum.GetValues(typeof(RegionType)));
 				//SNUtil.writeToChat("SC:"+sc);
 				PrefabIdentifier[] plants = sc.GetComponentsInChildren<PrefabIdentifier>();
-				int plant = 0;
-				int herb = 0;
-				int carn = 0;
-				int hero = 0;
+				plantCount = 0;
+				herbivoreCount = 0;
+				carnivoreCount = 0;
 				int teeth = 0;
+				sparkleCount = 0;
 				//SNUtil.writeToChat("@@"+string.Join(",", possibleBiomes));
 				List<WaterParkCreature> foodFish = new List<WaterParkCreature>();
 				List<Stalker> stalkers = new List<Stalker>();
-				List<Pickupable> stalkerToys = new List<Pickupable>();
+				stalkerToyValue = 0;
 				foreach (WaterParkItem wp in new List<WaterParkItem>(acu.items)) {
 					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
 					TechType tt = pp ? pp.GetTechType() : TechType.None;
 					if (tt == TechType.Titanium || tt == TechType.ScrapMetal || tt == TechType.Silver) {
 						pp.gameObject.transform.localScale = Vector3.one*0.5F;
-						stalkerToys.Add(pp);
+						float v = 0;
+						switch(tt) {
+							case TechType.Titanium:
+								v = 0.5F;
+								break;
+							case TechType.ScrapMetal:
+								v = 1;
+								break;
+							case TechType.Silver:
+								v = 2;
+								break;
+						}
+						stalkerToyValue += v;
 					}
 					else if (tt == TechType.StalkerTooth) {
 						pp.gameObject.transform.localScale = Vector3.one*0.125F;
@@ -301,21 +318,21 @@ namespace ReikaKalseki.SeaToSea {
 					else if (wp is WaterParkCreature) {
 						if (ACUCallbackSystem.instance.edibleFish.ContainsKey(tt)) {
 							if (tt == TechType.Peeper && wp.gameObject.GetComponent<Peeper>().isHero)
-								hero++;
+								sparkleCount++;
 							else //sparkle peepers are always valid
 								possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(ACUCallbackSystem.instance.edibleFish[tt].regionType));
 							//if (possibleBiomes.Count <= 0)
 							//	SNUtil.writeToChat("Biome list empty after "+tt+" > "+edibleFish[tt]);
 							//SNUtil.writeToChat(tt+" > "+edibleFish[tt]+" > "+string.Join(",", possibleBiomes));
 							foodFish.Add((WaterParkCreature)wp);
-							herb++;
+							herbivoreCount++;
 						}
 						else if (ACUCallbackSystem.instance.metabolisms.ContainsKey(tt)) {
 							ACUMetabolism am = ACUCallbackSystem.instance.metabolisms[tt];
 							if (am.isCarnivore)
-								carn++;
+								carnivoreCount++;
 							else
-								herb += tt == TechType.Gasopod ? 4 : (tt == TechType.GhostRayRed || tt == TechType.GhostRayBlue ? 3 : 2);
+								herbivoreCount += tt == TechType.Gasopod ? 4 : (tt == TechType.GhostRayRed || tt == TechType.GhostRayBlue ? 3 : 2);
 							List<RegionType> li = new List<RegionType>(am.additionalRegions);
 							li.Add(am.primaryRegion);
 							possibleBiomes = new HashSet<RegionType>(possibleBiomes.Intersect(li));
@@ -383,19 +400,19 @@ namespace ReikaKalseki.SeaToSea {
 							//	SNUtil.writeToChat("Biome list empty after "+vf+" > "+pf);
 							//SNUtil.writeToChat(vf+" > "+pf+" > "+string.Join(",", possibleBiomes));
 							plantTypes.Add(vf);
-							plant++;
+							plantCount++;
 						}
 					}
 				}
-				consistent = possibleBiomes.Count > 0 && plant > 0;
-				healthy = plant > 0 && plantTypes.Count > (possibleBiomes.Count == 1 && possibleBiomes.First<RegionType>() == RegionType.LavaZone ? 0 : 1) && herb > 0 && carn > 0 && carn <= Math.Max(1, herb/Mathf.Max(1, 6-hero*0.5F)) && carn <= acu.height*1.5F && herb > 0 && herb <= plant*(4+hero*0.5F);
+				consistent = possibleBiomes.Count > 0 && plantCount > 0;
+				healthy = plantCount > 0 && plantTypes.Count > (possibleBiomes.Count == 1 && possibleBiomes.First<RegionType>() == RegionType.LavaZone ? 0 : 1) && herbivoreCount > 0 && carnivoreCount > 0 && carnivoreCount <= Math.Max(1, herbivoreCount/Mathf.Max(1, 6-sparkleCount*0.5F)) && carnivoreCount <= acu.height*1.5F && herbivoreCount > 0 && herbivoreCount <= plantCount*(4+sparkleCount*0.5F);
 				float boost = 0;
 				if (consistent)
 					boost += 1F;
 				if (healthy)
 					boost += 2F;
-				if (hero > 0)
-					boost *= 1+hero*0.5F;
+				if (sparkleCount > 0)
+					boost *= 1+sparkleCount*0.5F;
 				//SNUtil.writeToChat(plant+"/"+herb+"/"+carn+"$"+hero+" & "+string.Join(", ", possibleBiomes)+" > "+healthy+" & "+consistent+" > "+boost);
 				if (boost > 0) {
 					boost *= dT;
@@ -414,7 +431,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				if (teeth < 10 && consistent && healthy && possibleBiomes.Contains(RegionType.Kelp)) {
 					foreach (Stalker s in stalkers) {
-						float f = dT*stalkerToys.Count*0.001F*s.Happy.Value;
+						float f = dT*stalkerToyValue*0.001F*s.Happy.Value;
 						//SNUtil.writeToChat(s.Happy.Value+" x "+stalkerToys.Count+" > "+f);
 						if (UnityEngine.Random.Range(0F, 1F) < f) {
 							//do not use, so can have ref to GO; reimplement // s.LoseTooth();
@@ -448,7 +465,10 @@ namespace ReikaKalseki.SeaToSea {
 				//SNUtil.writeToChat("##"+theme+" > "+floor+" & "+glass+" & "+decoHolders.Count);
 				foreach (Transform t in lowestSegment.transform) {
 					string n = t.gameObject.name;
-					if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture) || n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) {
+					if (n.StartsWith("Coral_reef_shell_plates", StringComparison.InvariantCulture)) { //because is flat, skip it
+						t.gameObject.SetActive(false);
+					}
+					else if (n.StartsWith("Coral_reef_small_deco", StringComparison.InvariantCulture)) {
 						bool flag = true;
 						if (decoHolders.Count > 0) {
 							foreach (GameObject slot in decoHolders) {
@@ -525,6 +545,7 @@ namespace ReikaKalseki.SeaToSea {
 							m.SetFloat("_Shininess", 7.5F);
 							m.SetFloat("_SpecInt", 0.75F);
 							m.SetColor("_Color", b.waterColor);
+							m.SetInt("_ZWrite", 1);
 						}
 						foreach (WaterParkItem wp in acu.items) {
 							if (wp)
@@ -700,7 +721,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			internal ACUMetabolism(float mf, float pp, bool isc, RegionType r, params RegionType[] rr) {
 				normalizedPoopChance = pp*2;
-				metabolismPerSecond = mf*0.05F;
+				metabolismPerSecond = mf*0.033F;
 				isCarnivore = isc;
 				primaryRegion = r;
 				additionalRegions.AddRange(rr.ToList());
