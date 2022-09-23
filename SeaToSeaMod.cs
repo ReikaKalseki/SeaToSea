@@ -274,6 +274,33 @@ namespace ReikaKalseki.SeaToSea
 		VoidSpikesBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
+		
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+        
+        UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
+	    		if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+					ht.setValues(20, 20);
+					ht.activate();
+					return true;
+	    	    }
+	    	    return false;
+		});
+        UsableItemRegistry.instance.addUsableItem(bandage.TechType, (s, go) => {
+	    		if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
+					ht.setValues(50, 5);
+					ht.activate();
+					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
+						dt.damageRemaining = 0;
+						dt.CancelInvoke("DoDamage");
+						UnityEngine.Object.DestroyImmediate(dt);
+					}
+					return true;
+				}
+	    	    return false;
+		});
     }
     
     private static void registerTabletTechKey(BrokenTablet tb) {

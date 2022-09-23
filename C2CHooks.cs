@@ -18,8 +18,6 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public static class C2CHooks {
 	    
-	    private static bool worldLoaded = false;
-	    
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
@@ -43,7 +41,12 @@ namespace ReikaKalseki.SeaToSea {
 	    private static Oxygen playerBaseO2;
 	    
 	    static C2CHooks() {
-	    	
+	    	DIHooks.onDayNightTickEvent += onTick;
+	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
+	    	DIHooks.onPlayerTickEvent += tickPlayer;
+	    	DIHooks.onDamageEvent += recalculateDamage;
+	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
+	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
 	    }
     
 	    public static void onTick(DayNightCycle cyc) {
@@ -65,17 +68,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void onWorldLoaded() {
-	    	worldLoaded = true;
-	    	SNUtil.log("Intercepted world load");
-	    	
+	    public static void onWorldLoaded() {	    	
 	    	Inventory.main.equipment.onEquip += onEquipmentAdded;
 	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	        
 	    	BrokenTablet.updateLocale();
-	    	DuplicateRecipeDelegate.updateLocale();
 	    	OutdoorPot.updateLocale();
-	    	CustomEgg.updateLocale();
 	    	/*
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
@@ -130,8 +128,6 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void tickPlayer(Player ep) {
 	    	if (Time.timeScale <= 0)
 	    		return;
-	    	
-	    	StoryHandler.instance.tick(ep);
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
 	    	if (playerBaseO2 == null) {
@@ -409,21 +405,20 @@ namespace ReikaKalseki.SeaToSea {
 	   		EnvironmentalDamageSystem.instance.tickTemperatureDamages(dmg);
 	 	}
    
-		public static float recalculateDamage(float damage, DamageType type, GameObject target, GameObject dealer) {
-	   		if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
-	   			return 0;
-	   		Player p = target.GetComponentInParent<Player>();
+		public static void recalculateDamage(DIHooks.DamageToDeal dmg) {
+	   		//if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
+	   		//	return 0;
+	   		Player p = dmg.target.GetComponentInParent<Player>();
 	   		if (p != null) {
 	   			bool seal = Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) != 0;
 	   			bool reinf = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0;
-	   			if (type == DamageType.Poison || type == DamageType.Acid || type == DamageType.Electrical) {
-	   				damage *= seal ? 0.2F : 0.4F;
-	   				damage -= seal ? 10 : 7.5F;
-	   				if (damage < 0)
-	   					damage = 0;
+	   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
+	   				dmg.amount *= seal ? 0.2F : 0.4F;
+	   				dmg.amount -= seal ? 10 : 7.5F;
+	   				if (dmg.amount < 0)
+	   					dmg.amount = 0;
 	   			}
 	   		}
-	   		return damage;
 		}
 	   
 	   	public static float getVehicleRechargeAmount(Vehicle v) {
@@ -456,23 +451,6 @@ namespace ReikaKalseki.SeaToSea {
 					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
-	    	TechType tt = TechType.None;
-	    	TechTag tag = p.gameObject.GetComponent<TechTag>();
-	    	if (tag)
-	    		tt = tag.type;
-	    	if (tt == TechType.None) {
-	    		PrefabIdentifier pi = p.gameObject.GetComponent<PrefabIdentifier>();
-	    		if (pi)
-	    			tt = CraftData.entClassTechTable[pi.ClassId];
-	    	}
-	    	if (tt != TechType.None)
-	    		TechnologyUnlockSystem.instance.triggerDirectUnlock(tt);
-	    	
-	    	foreach (Renderer r in p.gameObject.GetComponentsInChildren<Renderer>()) {
-				foreach (Material m in r.materials) {
-					m.DisableKeyword("FX_BUILDING");
-				}
-			}
 	    }
     
 	    public static float getReachDistance() {
@@ -493,36 +471,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	else {
 	    		return orig;
 	    	}
-	    }
-    
-	    public static void onEntityRegister(CellManager cm, LargeWorldEntity lw) {
-	    	if (!worldLoaded) {
-	    		onWorldLoaded();
-	    	}/*
-	    	if (lw.cellLevel != LargeWorldEntity.CellLevel.Global) {
-	    		BatchCells batchCells;
-				Int3 block = cm.streamer.GetBlock(lw.transform.position);
-				Int3 key = block / cm.streamer.blocksPerBatch;
-				if (cm.batch2cells.TryGetValue(key, out batchCells)) {
-							Int3 u = block % cm.streamer.blocksPerBatch;
-							Int3 cellSize = BatchCells.GetCellSize((int)lw.cellLevel, cm.streamer.blocksPerBatch);
-							Int3 cellId = u / cellSize;
-							bool flag = cellId.x < 0 || cellId.y < 0 || cellId.z < 0;
-					if (!flag) {
-			    		try {
-							//batchCells.Get(cellId, (int)lw.cellLevel);
-							batchCells.GetCells((int)lw.cellLevel).Get(cellId);
-			    		}
-			    		catch {
-							flag = true;
-			    		}
-					}
-					if (flag) {
-						SNUtil.log("Moving object "+lw.gameObject+" to global cell, as it is outside the world bounds and was otherwise going to bind to an OOB cell.");
-		    			lw.cellLevel = LargeWorldEntity.CellLevel.Global;
-					}
-				}
-	    	}*/
 	    }
 	    
 	    public static EntityCell getEntityCellForInt3(Array3<EntityCell> data, Int3 raw, BatchCells batch) {
@@ -658,35 +606,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
-	    public static void onFarmedPlantGrowingSpawn(Plantable p, GameObject plant) {
-	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
-	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
-	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.alkali);
-	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
-	    	}
-	    	if (tt != null && tt.type == SeaToSeaMod.healFlower.seed.TechType) {
-	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.healFlower);
-	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
-	    	}
-	    	if (tt != null && tt.type == SeaToSeaMod.kelp.seed.TechType) {
-	    		RenderUtil.swapToModdedTextures(plant.GetComponentInChildren<Renderer>(true), SeaToSeaMod.kelp);
-	    		plant.gameObject.EnsureComponent<TechTag>().type = tt.type;
-	    	}
-	    }
-	    
-	    public static void onFarmedPlantGrowDone(GrowingPlant p, GameObject plant) {
-	    	TechTag tt = p.gameObject.GetComponent<TechTag>();
-	    	if (tt != null && tt.type == SeaToSeaMod.alkali.seed.TechType) {
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.alkali);
-	    	}
-	    	if (tt != null && tt.type == SeaToSeaMod.healFlower.seed.TechType) {
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.healFlower);
-	    	}
-	    	if (tt != null && tt.type == SeaToSeaMod.kelp.seed.TechType) {
-	    		ObjectUtil.convertTemplateObject(plant, SeaToSeaMod.kelp);
-	    	}
-	    }
-	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
 	    	GameObject go = pk.gameObject;
 	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
@@ -751,10 +670,6 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void pulseSeamothDefence(SeaMoth sm) {
 	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
-	    }
-	    
-	    public static void onStoryGoalCompleted(string key) {
-	    	StoryHandler.instance.NotifyGoalComplete(key);
 	    }
 	    
 	    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {
@@ -845,53 +760,6 @@ namespace ReikaKalseki.SeaToSea {
 			Language.main.strings["AuroraLaserCut"] = "Use Laser Cutter to harvest metal salvage";
 			Language.main.strings["BulkheadInoperable"] = "Bulkhead is inoperable";
 			Language.main.strings["DockToChangeVehicleUpgrades"] = "Vehicle upgrades can only be exchanged while docked";
-	    }
-	    
-	    public static bool isItemUsable(TechType tt) {
-	    	return tt == TechType.Bladderfish || tt == TechType.FirstAidKit || tt == SeaToSeaMod.bandage.TechType;
-	    }
-	    
-	    public static bool useItem(Survival s, GameObject useObj) {
-			bool flag = false;
-			if (useObj != null) {
-				TechType tt = CraftData.GetTechType(useObj);
-				if (tt == TechType.None) {
-					Pickupable component = useObj.GetComponent<Pickupable>();
-					if (component)
-						tt = component.GetTechType();
-				}
-				SNUtil.log("Player used item "+tt);
-				if (tt == TechType.FirstAidKit && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
-					flag = true;
-					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
-					ht.setValues(20, 20);
-					ht.activate();
-				}
-				else if (tt == SeaToSeaMod.bandage.TechType && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
-					HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
-					ht.setValues(50, 5);
-					ht.activate();
-					Inventory.main.container.DestroyItem(tt);
-					foreach (DamageOverTime dt in Player.main.gameObject.GetComponentsInChildren<DamageOverTime>()) {
-						dt.damageRemaining = 0;
-						dt.CancelInvoke("DoDamage");
-						UnityEngine.Object.DestroyImmediate(dt);
-					}
-					flag = true;
-				}
-				else if (tt == TechType.EnzymeCureBall) {
-					Debug.LogWarningFormat(s, "Code should be unreachable for the time being.", Array.Empty<object>());
-					InfectedMixin component2 = global::Utils.GetLocalPlayer().gameObject.GetComponent<InfectedMixin>();
-					if (component2.IsInfected()) {
-						component2.RemoveInfection();
-						global::Utils.PlayFMODAsset(s.curedSound, s.transform, 20f);
-						flag = true;
-					}
-				}
-				if (flag)
-					FMODUWE.PlayOneShot(CraftData.GetUseEatSound(tt), Player.main.transform.position, 1f);
-			}
-			return flag;
 	    }
 	    
 	    public static GameObject getDrillableDrop(Drillable d) {
@@ -997,11 +865,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	return true;
 	    }
 	   
-		public static void onScanComplete(PDAScanner.EntryData data) {
-		   	if (data != null)
-	   			TechnologyUnlockSystem.instance.triggerDirectUnlock(data.key);
-		}
-	   
 	   	public static void tickACU(WaterPark acu) {
 	   		ACUCallbackSystem.instance.tick(acu);
 	   	}
@@ -1079,44 +942,6 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-		}
-		
-	}
-	
-	class HealingOverTime : MonoBehaviour {
-		
-		private static readonly float TICK_RATE = 0.25F;
-		
-		private float totalToHeal;
-		private float healingRemaining;
-		private float totalDuration;
-		
-		private float healRate;
-		private float startTime;
-		
-		internal void setValues(float total, float seconds) {
-			totalToHeal = total;
-			totalDuration = seconds;
-			healingRemaining = total;
-			healRate = totalToHeal/seconds*TICK_RATE;
-		}
-		
-		public void activate() {
-			CancelInvoke("tick");
-			startTime = Time.time;
-			InvokeRepeating("tick", 0f, TICK_RATE);
-		}
-
-		public void tick() {
-			float amt = Mathf.Min(healingRemaining, healRate);
-			Player.main.GetComponent<LiveMixin>().AddHealth(amt);
-			healingRemaining -= amt;
-			if (healingRemaining <= 0)
-				UnityEngine.Object.Destroy(this);
-		}
-		
-		private void OnKill() {
-			UnityEngine.Object.Destroy(this);
 		}
 		
 	}

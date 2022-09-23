@@ -11,27 +11,6 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	[HarmonyPatch(typeof(DayNightCycle))]
-	[HarmonyPatch("Update")]
-	public static class UpdateLoopHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onTick", false, typeof(DayNightCycle)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
 	[HarmonyPatch(typeof(BlueprintHandTarget))]
 	[HarmonyPatch("Start")]
 	public static class DataboxRecipeHook {
@@ -243,26 +222,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(StoryGoalCustomEventHandler))]
-	[HarmonyPatch("NotifyGoalComplete")]
-	public static class StoryHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStoryGoalCompleted", false, typeof(string)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
 	[HarmonyPatch(typeof(SkyApplier))]
 	[HarmonyPatch("Start")]
 	public static class WaveBobbingDebrisHook {
@@ -328,152 +287,6 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
-	//[HarmonyPatch(typeof(LargeWorld))]
-	[HarmonyPatch]
-	public static class WorldLoadHook {
-		
-	    public static MethodBase TargetMethod() {
-			//MethodInfo target = typeof(LargeWorld).GetMethod("MountWorldAsync", new Type[]{typeof(string), typeof(string), typeof(LargeWorldStreamer), typeof(WorldStreaming.WorldStreamer), typeof(Voxeland), typeof(IOut<UWE.Result>)});
-	        //return AccessTools.EnumeratorMoveNext((MethodBase)target);
-	        return AccessTools.Method(typeof(LargeWorld).GetNestedType("<MountWorldAsync>d__81", BindingFlags.NonPublic | BindingFlags.Instance), "MoveNext");
-	    }
-		
-	    public static Type TargetType() {
-			 return typeof(LargeWorld);
-	    }
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				//FileLog.Log("WORLDLOAD Codes are "+InstructionHandlers.toString(codes));
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "LargeWorld: Loading world. Frame {0}.");
-				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onWorldLoaded", false, new Type[0]));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-				FileLog.Log("WORLDNLOAD Codes are "+InstructionHandlers.toString(codes));
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}*/
-	/*
-	//[HarmonyPatch(typeof(LargeWorld))]
-	[HarmonyPatch]
-	public static class WorldLoadHook2 {
-		
-	    public static MethodBase TargetMethod() {
-			//MethodInfo target = typeof(LargeWorld).GetMethod("MountWorldAsync", new Type[]{typeof(string), typeof(string), typeof(LargeWorldStreamer), typeof(WorldStreaming.WorldStreamer), typeof(Voxeland), typeof(IOut<UWE.Result>)});
-	        //return AccessTools.EnumeratorMoveNext((MethodBase)target);
-	        return AccessTools.Method(typeof(Player).GetNestedType("<Start>d__184", BindingFlags.NonPublic | BindingFlags.Instance), "MoveNext");
-	    }
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				//FileLog.Log("WORLDLOAD Codes are "+InstructionHandlers.toString(codes));
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "TrackTravelStats");
-				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onWorldLoaded", false, new Type[0]));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-				//FileLog.Log("WORLD2NLOAD Codes are "+InstructionHandlers.toString(codes));
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	*/
-	
-	[HarmonyPatch(typeof(CellManager))]
-	[HarmonyPatch("RegisterEntity", typeof(LargeWorldEntity))]
-	public static class EntityRegisterBypass {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onEntityRegister", false, typeof(CellManager), typeof(LargeWorldEntity)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	/*
-	[HarmonyPatch(typeof(WorldStreaming.WorldStreamer))]
-	[HarmonyPatch("ParseClipmapSettings")]
-	public static class WorldClippingDistance {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ret);
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "modifyWorldMeshSettings", false, typeof(ClipMapManager.Settings)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}*/
-	
-	[HarmonyPatch(typeof(Player))]
-	[HarmonyPatch("Update")]
-	public static class PlayerTick {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickPlayer", false, typeof(Player)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(Pickupable))]
-	[HarmonyPatch("Pickup")]
-	public static class OnPlayerPickup {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "Pickupable", "PlayPickupSound", true, new Type[0]);
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onItemPickedUp", false, typeof(Pickupable)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
 	
 	[HarmonyPatch(typeof(ResourceTracker))]
 	[HarmonyPatch("Start")]
@@ -494,27 +307,6 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
-	[HarmonyPatch(typeof(LargeWorldEntity))]
-	[HarmonyPatch("Start")]
-	public static class AllObjectSpawnCallback {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				codes.Insert(0, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onEntitySpawn", false, typeof(LargeWorldEntity)));
-				codes.Insert(0, new CodeInstruction(OpCodes.Ldarg_0));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}*/
 	
 	[HarmonyPatch(typeof(Player))]
 	[HarmonyPatch("GetBreathPeriod")]
@@ -616,31 +408,6 @@ namespace ReikaKalseki.SeaToSea {
 				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
 				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "doEnvironmentalDamage", false, typeof(TemperatureDamage)));
 				codes.Add(new CodeInstruction(OpCodes.Ret));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(DamageSystem))]
-	[HarmonyPatch("CalculateDamage")]
-	public static class DamageCalcHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ret);
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "recalculateDamage", false, typeof(float), typeof(DamageType), typeof(GameObject), typeof(GameObject)));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_3));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_2));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
-				//already present//codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {
@@ -783,26 +550,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(SkyApplier))]
-	[HarmonyPatch("Awake")]
-	public static class SkyApplierSpawnHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onSkyApplierSpawn", false, typeof(SkyApplier)));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
 	[HarmonyPatch(typeof(CrafterGhostModel), "GetGhostModel", new Type[]{typeof(TechType)})]
 	public static class CrafterGhostModelOverride {
 		
@@ -826,121 +573,6 @@ namespace ReikaKalseki.SeaToSea {
 			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 		}
 	}
-	/*
-	[HarmonyPatch(typeof(uGUI_PingEntry))]
-	[HarmonyPatch("UpdateLabel")]
-	public static class PingTextHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {				
-				PatchLib.patchEveryReturnPre(codes, injectHook);
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	
-		private static void injectHook(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPingAdd", false, typeof(uGUI_PingEntry), typeof(PingType), typeof(string), typeof(string)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_2));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-		}
-	}*//*
-	
-	[HarmonyPatch(typeof(BatchCells))]
-	[HarmonyPatch("Add")]
-	public static class GetCellsRedirect_Add {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				PatchLib.patchCellGet(codes);
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(BatchCells))]
-	[HarmonyPatch("Get")]
-	public static class GetCellsRedirect_Get {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				PatchLib.patchCellGet(codes);
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(BatchCells))]
-	[HarmonyPatch("InitCellsTiers")]
-	public static class BatchCellsInit {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>();
-			try {
-				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "initBatchCells", false, typeof(BatchCells)));
-				codes.Add(new CodeInstruction(OpCodes.Ret));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(BatchCells))]
-	[HarmonyPatch("RemoveEmpty")]
-	public static class BatchCellRemoveEmptyHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				for (int i = 0; i < codes.Count; i++) {
-					if (codes[i].opcode == OpCodes.Call && ((MethodInfo)codes[i].operand).Name == "Set") {
-						codes[i].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "setEntityCellForInt3", false, typeof(Array3<EntityCell>), typeof(Int3), typeof(EntityCell), typeof(BatchCells));
-						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
-						FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-					}
-				}
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}*/
 	
 	[HarmonyPatch(typeof(LargeWorld), "GetBiome", new Type[]{typeof(Vector3)})]
 	public static class BiomeFetchHook {
@@ -1009,63 +641,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(GrowingPlant))]
-	[HarmonyPatch("SpawnGrownModel")]
-	public static class PlantFinishedGrowingHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchEveryReturnPre(codes, injectCallback);
-				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	
-		private static void injectCallback(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowDone", false, typeof(GrowingPlant), typeof(GameObject)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-		}
-	}
-	
-	[HarmonyPatch(typeof(Plantable))]
-	[HarmonyPatch("Spawn")]
-	public static class PlantSpawnsGrowingHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_0)+1;
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowingSpawn", false, typeof(Plantable), typeof(GameObject)));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
-				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	
-		private static void injectCallback(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowDone", false, typeof(GrowingPlant), typeof(GameObject)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-		}
-	}
-	
 	[HarmonyPatch(typeof(EnergyMixin))]
 	[HarmonyPatch("Start")]
 	public static class ToolBatteryAllowanceHook {
@@ -1105,30 +680,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
-	/*
-	[HarmonyPatch(typeof(EnergyMixin))]
-	[HarmonyPatch("SpawnBattery")]
-	public static class BatteryDupeFix {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				//int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "UnityEngine.Object", "Instantiate", false, new Type[]{typeof(GameObject)});
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_1);
-				codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onSpawnBatteryForEnergyMixin", false, typeof(GameObject)));
-				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	*/
+	
 	[HarmonyPatch(typeof(OxygenManager))]
 	[HarmonyPatch("Update")]
 	public static class SurfaceOxygenIntercept {
@@ -1483,51 +1035,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(Survival))]
-	[HarmonyPatch("Use")]
-	public static class ItemUseReimplementation {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>();
-			try {
-				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Add(new CodeInstruction(OpCodes.Ldarg_1));
-				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "useItem", false, typeof(Survival), typeof(GameObject)));
-				codes.Add(new CodeInstruction(OpCodes.Ret));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(CraftData))]
-	[HarmonyPatch("IsInvUseable")]
-	public static class ItemUsabilityHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>();
-			try {
-				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isItemUsable", false, typeof(TechType)));
-				codes.Add(new CodeInstruction(OpCodes.Ret));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
 	[HarmonyPatch(typeof(Drillable))]
 	[HarmonyPatch("SpawnLoot")]
 	public static class DrillableDropsHook {
@@ -1582,26 +1089,6 @@ namespace ReikaKalseki.SeaToSea {
 				codes.Add(new CodeInstruction(OpCodes.Ret));*/
 				CodeInstruction br = codes[2];
 				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isObjectVisibleToScannerRoom", false, typeof(ResourceTracker)), new CodeInstruction(OpCodes.Brfalse, br.operand));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(PDAScanner))]
-	[HarmonyPatch("Unlock")]
-	public static class ScanHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onScanComplete", false, typeof(PDAScanner.EntryData)));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

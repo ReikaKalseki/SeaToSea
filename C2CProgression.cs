@@ -9,14 +9,13 @@ using SMLHelper.V2.Assets;
 using UnityEngine;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public class StoryHandler : IStoryGoalListener {
+	public class C2CProgression : IStoryGoalListener {
 		
-		public static readonly StoryHandler instance = new StoryHandler();
-		
-		private readonly Dictionary<ProgressionTrigger, DelayedProgressionEffect> triggers = new Dictionary<ProgressionTrigger, DelayedProgressionEffect>();
+		public static readonly C2CProgression instance = new C2CProgression();
 		
 	    private readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
 	    private readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
@@ -32,21 +31,23 @@ namespace ReikaKalseki.SeaToSea
 	    
 	    private float lastDunesEntry = -1;
 		
-		private StoryHandler() {
-			triggers[new StoryTrigger("AuroraRadiationFixed")] = new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F);
-			triggers[new TechTrigger(TechType.PrecursorKey_Orange)] = new DelayedStoryEffect(SeaToSeaMod.crashMesaRadio, 0.00004F);
-			triggers[new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth)] = new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000018F);
+		private C2CProgression() {
+	    	StoryHandler.instance.addListener(this);
+	    	
+			StoryHandler.instance.registerTrigger(new StoryTrigger("AuroraRadiationFixed"), new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F));
+			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Orange), new DelayedStoryEffect(SeaToSeaMod.crashMesaRadio, 0.00004F));
+			StoryHandler.instance.registerTrigger(new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth), new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000018F));
 			
 			
 			StoryGoal pod12Radio = new StoryGoal("RadioKoosh26", Story.GoalType.Radio, 0);
 			DelayedStoryEffect ds = new DelayedStoryEffect(pod12Radio, 0.00008F);
-			triggers[new StoryTrigger("SunbeamCheckPlayerRange")] = ds;
-			triggers[new TechTrigger(TechType.BaseNuclearReactor)] = ds;
-			triggers[new TechTrigger(TechType.HighCapacityTank)] = ds;
-			triggers[new TechTrigger(TechType.PrecursorKey_Purple)] = ds;
-			triggers[new TechTrigger(TechType.BaseUpgradeConsole)] = ds;
-			triggers[new TechTrigger(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType)] = ds;
-			triggers[new EncylopediaTrigger("SnakeMushroom")] = ds;
+			StoryHandler.instance.registerTrigger(new StoryTrigger("SunbeamCheckPlayerRange"), ds);
+			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.BaseNuclearReactor), ds);
+			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.HighCapacityTank), ds);
+			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Purple), ds);
+			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.BaseUpgradeConsole), ds);
+			StoryHandler.instance.registerTrigger(new TechTrigger(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType), ds);
+			StoryHandler.instance.registerTrigger(new EncylopediaTrigger("SnakeMushroom"), ds);
 			
 			addPDAPrompt(PDAMessages.Messages.KooshCavePrompt, ep => Vector3.Distance(pod12Location, ep.transform.position) <= 75);
 			addPDAPrompt(PDAMessages.Messages.RedGrassCavePrompt, isNearSeacrownCave);
@@ -57,7 +58,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.BaseMoonpool));
 			*/
-			triggers[new PDAPromptCondition(new ProgressionTrigger(doDunesCheck))] = new DunesPrompt();
+			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new ProgressionTrigger(doDunesCheck)), new DunesPrompt());
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 		}
@@ -93,24 +94,8 @@ namespace ReikaKalseki.SeaToSea
 	    }
 	    
 	    private void addPDAPrompt(PDAPrompt m, ProgressionTrigger pt) {
-	    	triggers[new PDAPromptCondition(pt)] = m;
+	    	StoryHandler.instance.registerTrigger(new PDAPromptCondition(pt), m);
 	    }
-		
-		public void tick(Player ep) {
-			foreach (KeyValuePair<ProgressionTrigger, DelayedProgressionEffect> kvp in triggers) {
-				if (kvp.Key.isReady(ep)) {
-					//SNUtil.writeToChat("Trigger "+kvp.Key+" is ready");
-					DelayedProgressionEffect dt = kvp.Value;
-					if (!dt.isFired() && UnityEngine.Random.Range(0, 1F) <= dt.chancePerTick*Time.timeScale) {
-						//SNUtil.writeToChat("Firing "+dt);
-						dt.fire();
-					}
-				}
-				else {
-					//SNUtil.writeToChat("Trigger "+kvp.Key+" condition is not met");
-				}
-			}
-		}
 	    
 	    private bool doDunesCheck(Player ep) {
 	    	if (ep.GetBiomeString() != null && ep.GetBiomeString().ToLowerInvariant().Contains("dunes")) {
@@ -129,7 +114,6 @@ namespace ReikaKalseki.SeaToSea
 	    }
 		
 		public void NotifyGoalComplete(string key) {
-			//SNUtil.writeToChat("Story '"+key+"'");
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
 				if (key.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
 					SeaToSeaMod.treaderSignal.activate(20);
@@ -165,7 +149,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private readonly ProgressionTrigger baseline;
 		
-		public PDAPromptCondition(ProgressionTrigger p) : base(ep => StoryHandler.instance.canTriggerPDAPrompt(ep) && p.isReady(ep)) {
+		public PDAPromptCondition(ProgressionTrigger p) : base(ep => C2CProgression.instance.canTriggerPDAPrompt(ep) && p.isReady(ep)) {
 			baseline = p;
 		}
 		
