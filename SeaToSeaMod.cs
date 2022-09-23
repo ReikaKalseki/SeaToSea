@@ -160,9 +160,9 @@ namespace ReikaKalseki.SeaToSea
         
         addFlora();
         addItemsAndRecipes();
-        createEgg(TechType.SpineEel, TechType.BonesharkEgg, BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
-        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, BiomeType.TreeCove_LakeFloor);
-        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, BiomeType.InactiveLavaZone_Chamber_Floor_Far);
+        createEgg(TechType.SpineEel, TechType.BonesharkEgg, "", BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
+        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, "", BiomeType.TreeCove_LakeFloor);
+        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, "", BiomeType.InactiveLavaZone_Chamber_Floor_Far);
 
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -589,7 +589,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem fuel = CraftingItems.getItem(CraftingItems.Items.RocketFuel);
         fuel.craftingTime = 6;
-        fuel.addIngredient(TechType.Sulphur, 3).addIngredient(TechType.Kyanite, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
+        fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
         
         CraftingItems.addAll();
         rec = RecipeUtil.copyRecipe(enzy.getRecipe());
@@ -914,10 +914,11 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
-    private static void createEgg(TechType creature, TechType basis, params BiomeType[] spawn) {
+    private static void createEgg(TechType creature, TechType basis, string cd = null, params BiomeType[] spawn) {
     	CustomEgg egg = new CustomEgg(creature,  basis);
     	egg.setTexture("Textures/Eggs/");
     	eggs[creature] = egg;
+    	egg.creatureHeldDesc = cd;
     	egg.Patch();
     	foreach (BiomeType b in spawn)
     		GenUtil.registerSlotWorldgen(egg.ClassID, egg.PrefabFileName, egg.TechType, false, b, 1, 0.2F);

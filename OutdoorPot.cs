@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static string generateName(TechType tech) {
 			string en = Enum.GetName(typeof(TechType), tech);
-			return "brokentablet_"+en.Substring(en.LastIndexOf('_')+1);
+			return "outdoorpot_"+en.Substring(en.LastIndexOf('_')+1);
 		}
 		
 		public static void updateLocale() {
