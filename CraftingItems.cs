@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea
 					item.glowIntensity = 2;
 				}
 				if (item.sprite == null)
-					item.sprite = TextureManager.getSprite("Textures/Items/"+id);
+					item.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/"+id);
 			}
 		}
 		

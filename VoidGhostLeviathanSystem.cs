@@ -84,7 +84,7 @@ namespace ReikaKalseki.SeaToSea {
 			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
 			 	//mdl.transform.localPosition = Vector3.zero;
 			 	
-			 	AssetBundle ab = ReikaKalseki.DIAlterra.AssetBundleManager.getBundle("voidspike");
+			 	AssetBundle ab = ReikaKalseki.DIAlterra.AssetBundleManager.getBundle(SeaToSeaMod.modDLL, "voidspike");
 			 	GameObject bdl = ab.LoadAsset<GameObject>("VoidSpikeLevi_FixedRig");
 			 	//ObjectUtil.dumpObjectData(bdl);
 			 	Mesh tryM = ab.LoadAsset<Mesh>("Ghost_Leviathan_geo.001");
@@ -159,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 			 	
 	    		SkinnedMeshRenderer r = go.GetComponentInChildren<SkinnedMeshRenderer>();
 				r.materials[0].SetFloat("_SpecInt", 0F);
-	    		RenderUtil.swapTextures(r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
+	    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
 	    		//r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
 	    			    		

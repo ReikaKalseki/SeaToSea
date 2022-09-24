@@ -16,7 +16,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class Arrow : BasicCraftingItem {
 		
 		public Arrow(string id, string name, string desc, string template) : base(id, name, desc, template) {
-			sprite = TextureManager.getSprite("Textures/Items/"+id);
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/"+id);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {

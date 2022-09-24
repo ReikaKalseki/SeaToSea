@@ -42,7 +42,7 @@ namespace ReikaKalseki.SeaToSea
 			 				string file = tex.name;
 			 				if (file.Contains(textureSeek)) {
 			 					string path = "Textures/"+newTexBase+targetNumber;
-			 					Texture2D tex2 = TextureManager.getTexture(path);
+			 					Texture2D tex2 = TextureManager.getTexture(SeaToSeaMod.modDLL, path);
 			 					if (tex2 == null) {
 			 						SNUtil.writeToChat("Could not find desired pod number texture @ "+path);
 			 						continue;

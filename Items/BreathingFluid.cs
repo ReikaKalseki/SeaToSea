@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class BreathingFluid : BasicCraftingItem {
 		
 		public BreathingFluid() : base(SeaToSeaMod.itemLocale.getEntry("breathfluid"), "WorldEntities/Natural/polyaniline") {
-			sprite = TextureManager.getSprite("Textures/Items/BreathFluid");
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BreathFluid");
 			unlockRequirement = TechType.Unobtanium;//SeaToSeaMod.rebreatherV2.TechType;
 			craftingSubCategory = "C2Chemistry";
 			craftingTime = 15;

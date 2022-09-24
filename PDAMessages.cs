@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 				string id = attr.key;//Enum.GetName(typeof(Messages), m);
 				SNUtil.log("Constructing PDA message "+id);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.miscLocale.getEntry(id);
-				StoryGoal item = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound("prompt_"+e.key, e.pda, SoundSystem.voiceBus));
+				StoryGoal item = SNUtil.addVOLine(e.key, Story.GoalType.PDA, e.desc, SoundManager.registerSound(SeaToSeaMod.modDLL, "prompt_"+e.key, e.pda, SoundSystem.voiceBus));
 				mappings[m] = item;
 			}
 		}

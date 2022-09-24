@@ -2,6 +2,7 @@
 using System.IO;    //For data read/write methods
 using System;    //For data read/write methods
 using System.Collections.Generic;   //Working with Lists and Collections
+using System.Reflection;
 using System.Linq;   //More advanced manipulation of lists/collections
 using HarmonyLib;
 using QModManager.API.ModLoading;
@@ -18,6 +19,9 @@ namespace ReikaKalseki.SeaToSea
   public static class SeaToSeaMod {
   	
     public const string MOD_KEY = "ReikaKalseki.SeaToSea";
+    
+    //public static readonly ModLogger logger = new ModLogger();
+	public static readonly Assembly modDLL = Assembly.GetExecutingAssembly();
     
     public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
     public static readonly XMLLocale itemLocale = new XMLLocale("XML/items.xml");
@@ -121,7 +125,6 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(ex.ToString());
         }
         
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(WorldGenerator).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(PlacedObject).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
         
@@ -132,12 +135,12 @@ namespace ReikaKalseki.SeaToSea
         
         chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", "Chemistry");
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite("Textures/CraftTab/chemistry")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
         
         ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", "Metal Ingots");
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, ingotCategory);
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", "Metal Ingots", TextureManager.getSprite("Textures/CraftTab/ingotmaking"), "Resources");
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", "Metal Unpacking", TextureManager.getSprite("Textures/CraftTab/ingotbreaking"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", "Metal Ingots", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", "Metal Unpacking", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
         
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(VoidSpike).TypeHandle);
         
@@ -150,19 +153,19 @@ namespace ReikaKalseki.SeaToSea
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
 	    
-	    SpriteHandler.RegisterSprite(TechType.PDA, TextureManager.getSprite("Textures/ScannerSprites/PDA"));
-	    SpriteHandler.RegisterSprite(TechType.Databox, TextureManager.getSprite("Textures/ScannerSprites/Databox"));
+	    SpriteHandler.RegisterSprite(TechType.PDA, TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/ScannerSprites/PDA"));
+	    SpriteHandler.RegisterSprite(TechType.Databox, TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/ScannerSprites/Databox"));
 	    
-	    voidspikeLeviRoar = SoundManager.registerSound("voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
-	    voidspikeLeviFX = SoundManager.registerSound("voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
-	    voidspikeLeviAmbient = SoundManager.registerSound("voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
-	    voidspikeLeviBite = SoundManager.registerSound("voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
+	    voidspikeLeviRoar = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
+	    voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
+	    voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
+	    voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
         addFlora();
         addItemsAndRecipes();
-        createEgg(TechType.SpineEel, TechType.BonesharkEgg, "", BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
-        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, "", BiomeType.TreeCove_LakeFloor);
-        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, "", BiomeType.InactiveLavaZone_Chamber_Floor_Far);
+        createEgg(TechType.SpineEel, TechType.BonesharkEgg, 1, "An aggressive and poison-resistant eel-like predator found exclusively in the Lost River.", BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
+        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, 1.75F, "A large passive herbivore with unusual biology adapted to its native environment.", BiomeType.TreeCove_LakeFloor);
+        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, 1.25F, "A highly heat-resistant ray species closely related to ghost rays.", BiomeType.InactiveLavaZone_Chamber_Floor_Far);
 
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -914,11 +917,12 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
-    private static void createEgg(TechType creature, TechType basis, string cd = null, params BiomeType[] spawn) {
+    private static void createEgg(TechType creature, TechType basis, float scale, string cd = null, params BiomeType[] spawn) {
     	CustomEgg egg = new CustomEgg(creature,  basis);
     	egg.setTexture("Textures/Eggs/");
     	eggs[creature] = egg;
     	egg.creatureHeldDesc = cd;
+    	egg.eggScale = scale;
     	egg.Patch();
     	foreach (BiomeType b in spawn)
     		GenUtil.registerSlotWorldgen(egg.ClassID, egg.PrefabFileName, egg.TechType, false, b, 1, 0.2F);
@@ -939,7 +943,7 @@ namespace ReikaKalseki.SeaToSea
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
-    	ingot.sprite = TextureManager.getSprite(("Textures/Items/ingot_"+refName.ToLowerInvariant()));
+    	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/ingot_"+refName.ToLowerInvariant());
     	ingot.Patch();
     	SNUtil.log("Added compressed ingot for "+refName+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
     	
@@ -983,7 +987,7 @@ namespace ReikaKalseki.SeaToSea
 			if (e.hasField("audio"))
 				page.setVoiceover(e.getField<string>("audio"));
 			if (e.hasField("header"))
-				page.setHeaderImage(TextureManager.getTexture("Textures/PDA/"+e.getField<string>("header")));
+				page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/"+e.getField<string>("header")));
 			page.register();
     	}
     }

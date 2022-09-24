@@ -193,8 +193,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	bar.edgeWidth = pink ? 0.25F : 0.2F;
 	    	bar.borderWidth = pink ? 0.1F : 0.2F;
 	    	bar.borderColor = pink ? new Color(1, 0.6F, 0.82F) : baseO2BarColor;
-	    	bar.texture = pink ? TextureManager.getTexture("Textures/HUD/o2bar_liquid") : baseO2BarTexture;
-	    	bar.overlay = pink ? TextureManager.getTexture("Textures/HUD/o2bar_liquid_bubble") : baseO2BubbleTexture;
+	    	bar.texture = pink ? TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/o2bar_liquid") : baseO2BarTexture;
+	    	bar.overlay = pink ? TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/o2bar_liquid_bubble") : baseO2BubbleTexture;
 	    	bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1*2) : baseOverlayAlpha1;
 	    	bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2*2) : baseOverlayAlpha2;
 	    	t.text = pink ? customHUDText /*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;

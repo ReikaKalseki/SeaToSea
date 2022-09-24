@@ -141,7 +141,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			registerProp(RegionType.LostRiver, VanillaFlora.BRINE_LILY.getRandomPrefab(false), 10, false, 0.25F);
 			foreach (string pfb in VanillaFlora.CLAW_KELP.getPrefabs(true, true))
-				registerProp(RegionType.LostRiver, pfb, 5, true, 0.1F);
+				registerProp(RegionType.LostRiver, pfb, 5, true, 0.1F, 0, go => go.transform.rotation = Quaternion.Euler(270, 0, 0));
 			
 			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL1.getRandomPrefab(false), 10, true, 0.1F);
 			registerProp(RegionType.GrandReef, VanillaFlora.ANCHOR_POD_SMALL2.getRandomPrefab(false), 10, true, 0.1F);
@@ -154,7 +154,7 @@ namespace ReikaKalseki.SeaToSea {
 					try {
 						SNUtil.log("Loading cached grass material '"+name+"' from "+folder);
 						MaterialPropertyDefinition m = new MaterialPropertyDefinition(name);
-						m.readFromFile(folder);
+						m.readFromFile(SeaToSeaMod.modDLL, folder);
 						terrainGrassTextures[m.name] = m;
 					}
 					catch (Exception ex) {
@@ -200,10 +200,12 @@ namespace ReikaKalseki.SeaToSea {
 			registerProp(r, "bac42c90-8995-439f-be2f-29a6d164c82a", wt*0.25F, false, a);
 		}
 		
-		private void registerProp(RegionType r, string s, double wt, bool up, float scale, float voff = 0) {
+		private void registerProp(RegionType r, string s, double wt, bool up, float scale, float voff = 0, Action<GameObject> a = null) {
 			registerProp(r, s, wt, up, go => {
 			    go.transform.localScale = Vector3.one*UnityEngine.Random.Range(scale*0.95F, scale*1.05F);
 				go.transform.position = go.transform.position+Vector3.up*voff;
+				if (a != null)
+					a(go);
 			});
 		}
 		
@@ -293,6 +295,8 @@ namespace ReikaKalseki.SeaToSea {
 				List<Stalker> stalkers = new List<Stalker>();
 				stalkerToyValue = 0;
 				foreach (WaterParkItem wp in new List<WaterParkItem>(acu.items)) {
+					if (!wp)
+						continue;
 					Pickupable pp = wp.gameObject.GetComponentInChildren<Pickupable>();
 					TechType tt = pp ? pp.GetTechType() : TechType.None;
 					if (tt == TechType.Titanium || tt == TechType.ScrapMetal || tt == TechType.Silver) {
@@ -519,7 +523,7 @@ namespace ReikaKalseki.SeaToSea {
 				
 				if (!string.IsNullOrEmpty(floorTex)) {
 					Renderer r = floor.GetComponentInChildren<Renderer>();
-					Texture2D tex = TextureManager.getTexture("Textures/ACUFloor/"+floorTex);
+					Texture2D tex = TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/ACUFloor/"+floorTex);
 					if (tex)
 						r.material.mainTexture = tex;
 				}
@@ -546,7 +550,7 @@ namespace ReikaKalseki.SeaToSea {
 							m.SetFloat("_SpecInt", 0.75F);
 							m.SetColor("_Color", b.waterColor);
 							m.SetColor("_SpecColor", b.waterColor);
-							m.SetInt("_ZWrite", 1);
+							//m.SetInt("_ZWrite", 1);
 						}
 						foreach (WaterParkItem wp in acu.items) {
 							if (wp)
@@ -781,7 +785,7 @@ namespace ReikaKalseki.SeaToSea {
 			[Biome("KooshZone", 0.6F, 0.3F, 0.8F, 0.8F)]Koosh,
 			[Biome("BloodKelp", 0, 0, 0, 0.95F)]BloodKelp,
 			[Biome("GrandReef", 0, 0, 0.5F, 0.9F)]GrandReef,
-			[Biome("lostriver_bonesfield", 0.1F, 0.5F, 0.2F, 0.8F)]LostRiver,
+			[Biome("lostriver_bonesfield", 0.1F, 0.5F, 0.2F, 0.92F)]LostRiver,
 			[Biome("ilzchamber", 0.7F, 0.5F, 0.1F, 0.75F)]LavaZone,
 			[Biome("Dunes", 0.1F, 0.4F, 0.7F, 0.5F)]Other,
 		}

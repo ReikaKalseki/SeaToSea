@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 		    prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents*2);
 		    prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
 		    
-			pdaBeep = SoundManager.registerSound("pda_beep", "Sounds/pdabeep.ogg", SoundSystem.voiceBus);
+			pdaBeep = SoundManager.registerSound(SeaToSeaMod.modDLL, "pda_beep", "Sounds/pdabeep.ogg", SoundSystem.voiceBus);
 		}
     	
     	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
@@ -471,7 +471,7 @@ namespace ReikaKalseki.SeaToSea {
     		CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
     		warn.replace(rad, f);
     		warn.setText(msg, c);
-    		warn.setTexture(TextureManager.getTexture("Textures/HUD/"+tex));
+    		warn.setTexture(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/"+tex));
     		warn.transform.SetParent(template.transform.parent, false);
     		warn.priority = pri;
     		go.name = "CustomHudWarning_"+msg;
@@ -648,11 +648,11 @@ namespace ReikaKalseki.SeaToSea {
    			applicability = f;
    		}
    		
-   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, XMLLocale.LocaleEntry e) : this(warn, f, e.desc, SoundManager.registerSound("enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
+   		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, XMLLocale.LocaleEntry e) : this(warn, f, e.desc, SoundManager.registerSound(SeaToSeaMod.modDLL, "enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
    			
    		}
    		
-   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, XMLLocale.LocaleEntry e) : this(warn, depth, e.desc, SoundManager.registerSound("enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
+   		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, XMLLocale.LocaleEntry e) : this(warn, depth, e.desc, SoundManager.registerSound(SeaToSeaMod.modDLL, "enviroAlert_"+e.key, e.pda, SoundSystem.voiceBus)) {
    			
    		}
    	

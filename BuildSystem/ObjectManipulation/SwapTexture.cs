@@ -35,7 +35,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected virtual Texture2D getTexture(string name, string texType) {
-			return TextureManager.getTexture("Textures/"+name);
+			return TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/"+name);
 		}
 		
 		internal override void applyToObject(GameObject go) {

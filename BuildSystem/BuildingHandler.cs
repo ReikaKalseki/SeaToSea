@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea
 		public void dumpTextures() {
 			foreach (PlacedObject go in items.Values) {
 				if (go.isSelected) {
-					RenderUtil.dumpTextures(go.obj.GetComponentInChildren<Renderer>());
+					RenderUtil.dumpTextures(SeaToSeaMod.modDLL, go.obj.GetComponentInChildren<Renderer>());
 				}
 			}
 		}
