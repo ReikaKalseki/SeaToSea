@@ -120,7 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 			registerProp(RegionType.BloodKelp, "2bfcbaf4-1ae6-4628-9816-28a6a26ff340", 15, true, prepareBloodTendril);
 			registerProp(RegionType.BloodKelp, "2ab96dc4-5201-4a41-aa5c-908f0a9a0da8", 15, true, prepareBloodTendril);
 			registerProp(RegionType.BloodKelp, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d", 25, true, 0.4F, 0.165F); //blood oil
-			
+			/* too finicky
 			foreach (string pfb in VanillaFlora.DEEP_MUSHROOM.getPrefabs(false, true)) {
 				Action<GameObject> a = go => {
 					go.transform.localScale = Vector3.one*0.33F;
@@ -129,7 +129,7 @@ namespace ReikaKalseki.SeaToSea {
 				registerProp(RegionType.BloodKelp, pfb, 5, true, a);
 				//registerProp(RegionType.LostRiver, pfb, 5, a); is a native flora here
 				//registerProp(RegionType.LavaZone, pfb, 5, a); and here
-			}
+			}*/
 			
 			foreach (string pfb in VanillaFlora.JELLYSHROOM_TINY.getPrefabs(true, true))
 				registerProp(RegionType.Jellyshroom, pfb, 5, false);
