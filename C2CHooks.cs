@@ -102,10 +102,16 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.log("Updating seed naming for "+k);
 	    		Language.main.strings[k] = s;
 		    }
+	    	
+	    	Language.main.strings["BulkheadInoperable"] = SeaToSeaMod.miscLocale.getEntry("BulkheadInoperable").desc;
+			Language.main.strings["DockToChangeVehicleUpgrades"] = SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc;
+	    	Language.main.strings["Tooltip_"+TechType.MercuryOre.AsString()] = SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc;
+			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
 	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
 			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
+	    	
 	    }
 	    
 	    private static void moveToExploitable(string key) {
@@ -617,7 +623,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else if (tt == TechType.SeaTreaderPoop) {
 	    			if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
-		    			PDAMessages.trigger(PDAMessages.Messages.TreaderPooPrompt);
+						PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    		}
 				}
 	    	}
@@ -735,38 +741,6 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				bk.SequenceDone();
 			}
-	    }
-	    
-	    public static void onAuroraSpawn(CrashedShipExploder ex) {
-	    	Sealed s = ex.gameObject.EnsureComponent<Sealed>();
-	    	s._sealed = true;
-	    	s.maxOpenedAmount = 250; //was 150, comparedto vanilla 100
-	    	s.openedEvent.AddHandler(ex.gameObject, new UWE.Event<Sealed>.HandleFunction(se => {
-	    		se.openedAmount = 0;
-	    		se._sealed = true;
-	    		GameObject scrap = CraftData.GetPrefabForTechType(TechType.ScrapMetal);
-	    		scrap = UnityEngine.Object.Instantiate(scrap);
-	    		scrap.SetActive(false);
-	    		Inventory.main.ForcePickup(scrap.GetComponent<Pickupable>());
-	    		PDAMessages.trigger(PDAMessages.Messages.AuroraSalvage);
-	    	}));
-			GenericHandTarget ht = ex.gameObject.EnsureComponent<GenericHandTarget>();
-			ht.onHandHover = new HandTargetEvent();
-			ht.onHandHover.AddListener(hte => {
-				HandReticle.main.SetInteractText("AuroraLaserCut"); //is a locale key
-				HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
-				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
-			});
-			Language.main.strings["AuroraLaserCut"] = "Use Laser Cutter to harvest metal salvage";
-			Language.main.strings["BulkheadInoperable"] = "Bulkhead is inoperable";
-			Language.main.strings["DockToChangeVehicleUpgrades"] = "Vehicle upgrades can only be exchanged while docked";
-	    }
-	    
-	    public static GameObject getDrillableDrop(Drillable d) {
-	    	PrefabIdentifier pi = d.gameObject.GetComponent<PrefabIdentifier>();
-	    	if (pi && pi.ClassId == SeaToSeaMod.dunesMeteor.ClassID)
-	    		return DrillableMeteorite.getRandomResource();
-	    	return d.ChooseRandomResource();
 	    }
 	    
 	    public static void generateScannerRoomResourceList(uGUI_MapRoomScanner gui) {

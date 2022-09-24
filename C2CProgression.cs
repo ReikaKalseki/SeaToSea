@@ -52,7 +52,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.KooshCavePrompt, ep => Vector3.Distance(pod12Location, ep.transform.position) <= 75);
 			addPDAPrompt(PDAMessages.Messages.RedGrassCavePrompt, isNearSeacrownCave);
 			addPDAPrompt(PDAMessages.Messages.UnderwaterIslandsPrompt, isInUnderwaterIslands);
-			PDAPrompt kelp = addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessages.isTriggered(PDAMessages.Messages.FollowRadioPrompt) && Vector3.Distance(pod3Location, ep.transform.position) <= 60));
+			PDAPrompt kelp = addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.FollowRadioPrompt).key) && Vector3.Distance(pod3Location, ep.transform.position) <= 60));
 			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));
@@ -65,7 +65,7 @@ namespace ReikaKalseki.SeaToSea
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
 	    	bool late = KnownTech.knownTech.Contains(TechType.StasisRifle) || KnownTech.knownTech.Contains(TechType.BaseMoonpool) || KnownTech.knownTech.Contains(TechType.HighCapacityTank);
-	    	bool all = PDAMessages.isTriggered(PDAMessages.Messages.RedGrassCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KelpCavePrompt) && PDAMessages.isTriggered(PDAMessages.Messages.KooshCavePrompt);
+	    	bool all = PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.RedGrassCavePrompt).key) && PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePrompt).key) && PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KooshCavePrompt).key);
 	    	return late && !all;
 	    }
 	    
@@ -163,7 +163,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private readonly PDAMessages.Messages prompt;
 		
-		public PDAPrompt(PDAMessages.Messages m, float f) : base(() => PDAMessages.trigger(m), () => PDAMessages.isTriggered(m), f) {
+		public PDAPrompt(PDAMessages.Messages m, float f) : base(() => PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(m).key), () => PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(m).key), f) {
 			prompt = m;
 		}
 		
@@ -177,7 +177,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly PDAManager.PDAPage page = PDAManager.getPage("dunearchhint");
 		
-		public DunesPrompt() : base(() => {PDAMessages.trigger(PDAMessages.Messages.DuneArchPrompt); page.unlock(false);}, () => PDAMessages.isTriggered(PDAMessages.Messages.DuneArchPrompt), 0.006F) {
+		public DunesPrompt() : base(() => {PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.DuneArchPrompt).key); page.unlock(false);}, () => PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.DuneArchPrompt).key), 0.006F) {
 			
 		}
 		

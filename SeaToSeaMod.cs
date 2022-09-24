@@ -89,8 +89,6 @@ namespace ReikaKalseki.SeaToSea
     public static OutdoorPot outdoorChicPot;
     public static OutdoorPot outdoorCompositePot;
     
-    public static DrillableMeteorite dunesMeteor;
-    
     public static FMODAsset voidspikeLeviRoar;
     public static FMODAsset voidspikeLeviBite;
     public static FMODAsset voidspikeLeviFX;
@@ -112,11 +110,11 @@ namespace ReikaKalseki.SeaToSea
         
         Harmony harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
-        FileLog.logPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "harmony-log.txt");
+        FileLog.logPath = Path.Combine(Path.GetDirectoryName(modDLL.Location), "harmony-log.txt");
         FileLog.Log("Ran mod register, started harmony (harmony log)");
         SNUtil.log("Ran mod register, started harmony");
         try {
-        	harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+        	harmony.PatchAll(modDLL);
         }
         catch (Exception ex) {
 			FileLog.Log("Caught exception when running patcher!");
@@ -195,9 +193,6 @@ namespace ReikaKalseki.SeaToSea
         SNUtil.log("Registered custom machine "+repellentBlock);
         
         addPDAEntries();
-	    
-	    dunesMeteor = new DrillableMeteorite();
-	    dunesMeteor.register();
                  
         WorldgenDatabase.instance.load();
         DataboxTypingMap.instance.load();
@@ -206,9 +201,6 @@ namespace ReikaKalseki.SeaToSea
         addOreGen();
         
         GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
-        
-        GenUtil.registerWorldgen(new PositionedPrefab(dunesMeteor.ClassID, new Vector3(-1125, -409, 1130)));
-        GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.REAPER.prefab, new Vector3(-1125, -209, 1130)));
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
@@ -465,10 +457,7 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addItemsAndRecipes() {
-        BasicCraftingItem baseGlass = CraftingItems.getItem(CraftingItems.Items.BaseGlass);
-        baseGlass.craftingTime = 1.5F;
-        baseGlass.numberCrafted = 2;
-        baseGlass.addIngredient(TechType.Glass, 1).addIngredient(TechType.Titanium, 1);
+		
         /*
         BasicCraftingItem byp = CraftingItems.getItem(CraftingItems.Items.TitaniumIngotFromScrap);
         byp.addIngredient(TechType.ScrapMetal, 2);
@@ -769,28 +758,6 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.RocketStage3, TechType.ReactorRod, 4);
         
         RecipeUtil.addIngredient(TechType.HighCapacityTank, TechType.Aerogel, 1);
-        
-        RecipeUtil.modifyIngredients(TechType.BaseRoom, i => {if (i.techType == TechType.Titanium) i.amount = 4; return false;});
-        RecipeUtil.modifyIngredients(TechType.BaseBulkhead, i => {if (i.techType == TechType.Titanium) i.amount = 2; return false;});
-        RecipeUtil.modifyIngredients(TechType.PlanterBox, i => {if (i.techType == TechType.Titanium) i.amount = 3; return false;});
-        RecipeUtil.modifyIngredients(TechType.BaseWaterPark, i => {if (i.techType == TechType.Titanium) i.amount = 1; return false;});
-        RecipeUtil.addIngredient(TechType.BasePlanter, TechType.CreepvinePiece, 1);
-        
-        HashSet<TechType> set = new HashSet<TechType>{TechType.Spotlight, TechType.Techlight, TechType.Aquarium};
-        for (TechType tt = TechType.BaseRoom; tt <= TechType.BaseNuclearReactor; tt++) {
-        	set.Add(tt);
-        }
-        foreach (TechType tt in set) {
-        	if (RecipeUtil.recipeExists(tt)) {
-	        	Ingredient i = RecipeUtil.removeIngredient(tt, TechType.Glass);
-	        	if (i != null) {
-	        		RecipeUtil.addIngredient(tt, baseGlass.TechType, i.amount);
-	        	}
-        	}
-        }
-        
-        RecipeUtil.removeIngredient(TechType.EnameledGlass, TechType.Glass);
-        RecipeUtil.addIngredient(TechType.EnameledGlass, baseGlass.TechType, 1);
         
         Dictionary<TechType, int> addMotors = new Dictionary<TechType, int>(){
         	{TechType.BaseMoonpool, 2},

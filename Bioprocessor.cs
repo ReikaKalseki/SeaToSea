@@ -97,7 +97,7 @@ namespace ReikaKalseki.SeaToSea {
 			addIngredient(TechType.Magnetite, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6);
 			addIngredient(TechType.CopperWire, 1);
-			addIngredient(CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType, 3);
+			addIngredient(TechType.EnameledGlass, 3);
 		}
 
 		public override bool UnlockedAtStart {
@@ -106,9 +106,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
-		//protected OrientedBounds[] GetBounds { get; }
-		
-		public override void initializeMachine(GameObject go) { //FIXME sky tint issues
+		public override void initializeMachine(GameObject go) {
 			base.initializeMachine(go);
 			ObjectUtil.removeComponent<Aquarium>(go);
 			ObjectUtil.removeChildObject(go, "Bubbles");

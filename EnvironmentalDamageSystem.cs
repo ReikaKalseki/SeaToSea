@@ -124,11 +124,11 @@ namespace ReikaKalseki.SeaToSea {
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
-			if (aurora && !diveSuit && !PDAMessages.isTriggered(PDAMessages.Messages.AuroraFireWarn) && !PDAMessages.isTriggered(PDAMessages.Messages.AuroraFireWarn_NoRad)) {
+			if (aurora && !diveSuit && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key) && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key)) {
 				if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
-	    			PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn);
+	    			PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key);
 	    		else
-	    			PDAMessages.trigger(PDAMessages.Messages.AuroraFireWarn_NoRad);
+	    			PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key);
 			}
 			if (dmg.player && !isPlayerInOcean() && !aurora)
 	   			return;

@@ -450,20 +450,4 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </drfwarperheat>
-  <meteorite>
-	<name>
-		Ancient Metallic Meteorite
-	</name>
-	<pda>
-		A slightly buried several-thousand-year-old impactor, containing high concentrations of metal ores, including metallic elements not commonly found on planetary surfaces. The amount of material in this body is sufficiently large that it is for all intents and purposes infinite from the perspective of a single inhabitant.
-		
-		Analysis: Potential inexhaustible supply of various metals for construction purposes, and source of trace minerals for specialized fabrication
-	</pda>
-	<category>
-		PlanetaryGeology
-	</category>
-	<header>
-		MeteorImage
-	</header>
-  </meteorite>
 </Root>

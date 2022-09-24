@@ -34,7 +34,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, TechType.BaseReinforcement);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Glass, CraftingItems.getItem(CraftingItems.Items.BaseGlass).TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, SeaToSeaMod.getAlternateEnzyme().TechType);
 	    	
