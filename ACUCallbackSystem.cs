@@ -14,9 +14,9 @@ using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
+using ReikaKalseki.SeabaseExpansions;
 
-namespace ReikaKalseki.SeaToSea {
+namespace ReikaKalseki.SeabaseExpansions {
 	
 	public class ACUCallbackSystem { //TODO make this its own mod and split into many classes
 		

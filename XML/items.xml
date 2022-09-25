@@ -186,17 +186,6 @@
 			
 		</pda>
 	</RocketFuel>
-	<MiniPoop>
-		<name>
-			Alien Feces (Small)
-		</name>
-		<desc>
-			A small quantity of fecal matter from alien fauna.
-		</desc>
-		<pda>
-			
-		</pda>
-	</MiniPoop>
 	<breathfluid>
 		<name>
 			Breathing Fluid

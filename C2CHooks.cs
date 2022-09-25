@@ -41,31 +41,11 @@ namespace ReikaKalseki.SeaToSea {
 	    private static Oxygen playerBaseO2;
 	    
 	    static C2CHooks() {
-	    	DIHooks.onDayNightTickEvent += onTick;
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
 	    	DIHooks.onDamageEvent += recalculateDamage;
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
 	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
-	    }
-    
-	    public static void onTick(DayNightCycle cyc) {
-	    	if (BuildingHandler.instance.isEnabled) {
-		    	if (GameInput.GetButtonDown(GameInput.Button.LeftHand)) {
-		    		BuildingHandler.instance.handleClick(KeyCodeUtils.GetKeyHeld(KeyCode.LeftControl));
-		    	}
-	    		if (GameInput.GetButtonDown(GameInput.Button.RightHand)) {
-		    		BuildingHandler.instance.handleRClick(KeyCodeUtils.GetKeyHeld(KeyCode.LeftControl));
-		    	}
-		    	
-		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.Delete)) {
-		    		BuildingHandler.instance.deleteSelected();
-		    	}
-		    	
-		    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
-		    		BuildingHandler.instance.manipulateSelected();
-		    	}
-	    	}
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -704,45 +684,6 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    }
 	    
-	    public static void getBulkheadMouseoverText(BulkheadDoor bk) {
-			if (bk.enabled && bk.state == BulkheadDoor.State.Zero) {
-	    		Sealed s = bk.GetComponent<Sealed>();
-	    		if (s != null && s.IsSealed()) {
-	    			if (s.maxOpenedAmount < 0) {
-	    				HandReticle.main.SetInteractText("BulkheadInoperable");
-						HandReticle.main.SetIcon(HandReticle.IconType.None, 1f);
-	    			}
-	    			else {
-						HandReticle.main.SetInteractText("SealedInstructions"); //is a locale key
-						HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
-						HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
-	    			}
-	    		}
-	    		else {
-					HandReticle.main.SetIcon(HandReticle.IconType.Hand, 1f);
-					HandReticle.main.SetInteractText(bk.targetState ? "Close" : "Open");
-	    		}
-			}
-	    }
-	    
-	    public static void onBulkheadClick(BulkheadDoor bk) {
-			Base componentInParent = bk.GetComponentInParent<Base>();
-			Sealed s = bk.GetComponent<Sealed>();
-			if (s != null && s.IsSealed()) {
-				
-			}
-			else if (componentInParent != null && !componentInParent.isReady) {
-				bk.ToggleImmediately();
-			}
-			else if (bk.enabled && bk.state == BulkheadDoor.State.Zero) {
-				if (GameOptions.GetVrAnimationMode()) {
-					bk.ToggleImmediately();
-					return;
-				}
-				bk.SequenceDone();
-			}
-	    }
-	    
 	    public static void generateScannerRoomResourceList(uGUI_MapRoomScanner gui) {
 	    	gui.availableTechTypes.RemoveWhere(item => !playerCanScanFor(item));
 	    	gui.RebuildResourceList();
@@ -839,10 +780,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	return true;
 	    }
 	   
-	   	public static void tickACU(WaterPark acu) {
-	   		ACUCallbackSystem.instance.tick(acu);
-	   	}
-	   
 		public static string getO2Tooltip(Oxygen ox) {
 	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType) {
 	   			return ox.GetSecondsLeft()+"s fluid stored in supply tank";
@@ -872,32 +809,6 @@ namespace ReikaKalseki.SeaToSea {
 				main.SetIcon(HandReticle.IconType.Hand, 1f);
 			}
 		}
-	   
-	   	public static bool isInsideForHatch(UseableDiveHatch hatch) {
-	   		SeabaseReconstruction.WorldgenBaseWaterparkHatch wb = hatch.gameObject.GetComponent<SeabaseReconstruction.WorldgenBaseWaterparkHatch>();
-	   		if (wb)
-	   			return wb.isPlayerInside();
-	   		return Player.main.IsInsideWalkable() && Player.main.currentWaterPark == null;
-	   	}
-	   
-	   	public static bool canAddItemToACU(Pickupable item) {
-			if (!item)
-		   		return false;
-			TechType tt = item.GetTechType();
-			if (tt == TechType.ScrapMetal || tt == TechType.Titanium || tt == TechType.Silver)
-				return true;
-			GameObject go = item.gameObject;
-			if (go.GetComponent<Creature>() == null && go.GetComponent<CreatureEgg>() == null)
-				return false;
-			LiveMixin lv = go.GetComponent<LiveMixin>();
-			return !lv || lv.IsAlive();
-	   	}
-	   
-	   public static void onChunkGenGrass(IVoxelandChunk2 chunk) {
-	   	foreach (Renderer r in chunk.grassRenders) {
-	   		ACUCallbackSystem.instance.cacheGrassMaterial(r.materials[0]);
-	   	}
-	   }
 	}
 	
 	class ContainmentFacilityDragonRepellent : MonoBehaviour {

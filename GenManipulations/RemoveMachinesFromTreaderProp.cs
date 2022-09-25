@@ -16,18 +16,27 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.SeaToSea
+namespace ReikaKalseki.DIAlterra
 {		
-	internal sealed class AddComponent : ManipulationBase {
+	internal class RemoveMachinesFromTreaderProp : ManipulationBase {
 		
-		private Type type;
+		private static List<string> objects = new List<string>();
+		
+		static RemoveMachinesFromTreaderProp() {
+			objects.Add("BaseCell/Coral");
+			objects.Add("BaseCell/Decals");
+			objects.Add("Fabricator");
+			objects.Add("Workbench");
+			objects.Add("Bench");
+		}
 		
 		internal override void applyToObject(GameObject go) {
-			go.EnsureComponent(type);
+			foreach (string s in objects) {
+				ObjectUtil.removeChildObject(go, s);
+			}
 		}
 		
 		internal override void applyToObject(PlacedObject go) {
@@ -35,11 +44,11 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal override void loadFromXML(XmlElement e) {
-			type = InstructionHandlers.getTypeBySimpleName(e.InnerText);
+			
 		}
 		
 		internal override void saveToXML(XmlElement e) {
-			e.InnerText = type.Name;
+			
 		}
 		
 	}

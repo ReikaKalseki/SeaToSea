@@ -151,9 +151,6 @@ namespace ReikaKalseki.SeaToSea
 	    brokenOrangeTablet.Patch();
 	    brokenBlueTablet.Patch();
 	    
-	    SpriteHandler.RegisterSprite(TechType.PDA, TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/ScannerSprites/PDA"));
-	    SpriteHandler.RegisterSprite(TechType.Databox, TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/ScannerSprites/Databox"));
-	    
 	    voidspikeLeviRoar = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
 	    voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
@@ -426,19 +423,7 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void addCommands() {
-        BuildingHandler.instance.addCommand<string, PlacedObject>("pfb", BuildingHandler.instance.spawnPrefabAtLook);
-        //BuildingHandler.instance.addCommand<string>("btt", BuildingHandler.instance.spawnTechTypeAtLook);
-        BuildingHandler.instance.addCommand<bool>("bden", BuildingHandler.instance.setEnabled);  
-        BuildingHandler.instance.addCommand("bdsa", BuildingHandler.instance.selectAll);
-        BuildingHandler.instance.addCommand("bdslp", BuildingHandler.instance.selectLastPlaced);
-        BuildingHandler.instance.addCommand<string>("bdexs", BuildingHandler.instance.saveSelection);
-        BuildingHandler.instance.addCommand<string>("bdexa", BuildingHandler.instance.saveAll);
-        BuildingHandler.instance.addCommand<string>("bdld", BuildingHandler.instance.loadFile);
-        BuildingHandler.instance.addCommand("bdinfo", BuildingHandler.instance.selectedInfo);
-        BuildingHandler.instance.addCommand("bdtex", BuildingHandler.instance.dumpTextures);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, bool>>("sound", SNUtil.playSound);
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
-        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string, string, string>>("exec", DebugExec.run);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
     }
     
@@ -827,7 +812,6 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
-        //SNUtil.addSelfUnlock(TechType.PrecursorKey_Red, PDAManager.createPage(locale.getEntry("redkey")));
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
@@ -835,7 +819,6 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 6);
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
-        //SNUtil.addSelfUnlock(TechType.PrecursorKey_White, PDAManager.createPage(locale.getEntry("whitekey")));
         
         RecipeUtil.modifyIngredients(TechType.BaseReinforcement, i => true);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);

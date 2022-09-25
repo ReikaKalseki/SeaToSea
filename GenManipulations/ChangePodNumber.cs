@@ -16,11 +16,10 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.SeaToSea
+namespace ReikaKalseki.DIAlterra
 {		
 	internal class ChangePodNumber : ManipulationBase {
 		
@@ -32,6 +31,10 @@ namespace ReikaKalseki.SeaToSea
 		static ChangePodNumber() {
 			
 		}
+		/*
+		protected virtual Texture2D getTexture(string name, string texType) {
+			return TextureManager.getTexture(mod, "Textures/"+name);
+		}*/
 		
 		internal override void applyToObject(GameObject go) {
 		 	foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {

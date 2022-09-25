@@ -16,11 +16,10 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.SeaToSea
+namespace ReikaKalseki.DIAlterra
 {		
 	internal class GrandReefPodRandomizer : ManipulationBase {
 		
