@@ -50,11 +50,11 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 6);
 			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 1, 4);
-			addRecipe(CraftingItems.getItem(CraftingItems.Items.MiniPoop).TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
+			
 			//addRecipe(SeaToSeaMod.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 3, 5);
 		}
 		
-		private static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
+		public static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
 			BioRecipe r = new BioRecipe(salt, secs, inp, o);
 			recipes[r.inputItem] = r;
 			r.inputCount = inamt;

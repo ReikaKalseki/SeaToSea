@@ -19,7 +19,7 @@ using ReikaKalseki.DIAlterra;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.DIAlterra
+namespace ReikaKalseki.SeaToSea
 {		
 	internal class ChangePodNumber : ManipulationBase {
 		
@@ -36,7 +36,7 @@ namespace ReikaKalseki.DIAlterra
 			return TextureManager.getTexture(mod, "Textures/"+name);
 		}*/
 		
-		internal override void applyToObject(GameObject go) {
+		public override void applyToObject(GameObject go) {
 		 	foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 			 	foreach (Material m in r.materials) {
 			 		foreach (string n in m.GetTexturePropertyNames()) {
@@ -60,15 +60,15 @@ namespace ReikaKalseki.DIAlterra
 		 	}
 		}
 		
-		internal override void applyToObject(PlacedObject go) {
+		public override void applyToObject(PlacedObject go) {
 			applyToObject(go.obj);
 		}
 		
-		internal override void loadFromXML(XmlElement e) {
+		public override void loadFromXML(XmlElement e) {
 			targetNumber = int.Parse(e.InnerText);
 		}
 		
-		internal override void saveToXML(XmlElement e) {
+		public override void saveToXML(XmlElement e) {
 			e.InnerText = targetNumber.ToString();
 		}
 		

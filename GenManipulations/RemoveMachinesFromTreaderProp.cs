@@ -19,7 +19,7 @@ using ReikaKalseki.DIAlterra;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.DIAlterra
+namespace ReikaKalseki.SeaToSea
 {		
 	internal class RemoveMachinesFromTreaderProp : ManipulationBase {
 		
@@ -33,21 +33,21 @@ namespace ReikaKalseki.DIAlterra
 			objects.Add("Bench");
 		}
 		
-		internal override void applyToObject(GameObject go) {
+		public override void applyToObject(GameObject go) {
 			foreach (string s in objects) {
 				ObjectUtil.removeChildObject(go, s);
 			}
 		}
 		
-		internal override void applyToObject(PlacedObject go) {
+		public override void applyToObject(PlacedObject go) {
 			applyToObject(go.obj);
 		}
 		
-		internal override void loadFromXML(XmlElement e) {
+		public override void loadFromXML(XmlElement e) {
 			
 		}
 		
-		internal override void saveToXML(XmlElement e) {
+		public override void saveToXML(XmlElement e) {
 			
 		}
 		

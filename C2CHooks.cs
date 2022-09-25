@@ -53,7 +53,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	        
 	    	BrokenTablet.updateLocale();
-	    	OutdoorPot.updateLocale();
 	    	/*
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));

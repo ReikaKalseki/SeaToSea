@@ -48,8 +48,6 @@ namespace ReikaKalseki.SeaToSea
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;
-    public static BaseSonarPinger sonarBlock;
-    public static BaseCreatureRepellent repellentBlock;
     
     public static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
     
@@ -85,10 +83,6 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
     
-    public static OutdoorPot outdoorBasicPot;
-    public static OutdoorPot outdoorChicPot;
-    public static OutdoorPot outdoorCompositePot;
-    
     public static FMODAsset voidspikeLeviRoar;
     public static FMODAsset voidspikeLeviBite;
     public static FMODAsset voidspikeLeviFX;
@@ -102,7 +96,6 @@ namespace ReikaKalseki.SeaToSea
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
     private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
-    private static readonly Dictionary<TechType, CustomEgg> eggs = new Dictionary<TechType, CustomEgg>();
 
     [QModPatch]
     public static void Load() {
@@ -158,10 +151,7 @@ namespace ReikaKalseki.SeaToSea
         
         addFlora();
         addItemsAndRecipes();
-        createEgg(TechType.SpineEel, TechType.BonesharkEgg, 1, "An aggressive and poison-resistant eel-like predator found exclusively in the Lost River.", BiomeType.BonesField_Ground, BiomeType.LostRiverJunction_Ground);
-        createEgg(TechType.GhostRayBlue, TechType.JumperEgg, 1.75F, "A large passive herbivore with unusual biology adapted to its native environment.", BiomeType.TreeCove_LakeFloor);
-        createEgg(TechType.GhostRayRed, TechType.CrabsnakeEgg, 1.25F, "A highly heat-resistant ray species closely related to ghost rays.", BiomeType.InactiveLavaZone_Chamber_Floor_Far);
-
+        
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
         	ObjectUtil.removeComponent<Pickupable>(go);
@@ -180,18 +170,9 @@ namespace ReikaKalseki.SeaToSea
         SNUtil.log("Registered custom machine "+rebreatherCharger);
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
-        sonarBlock = new BaseSonarPinger();
-        sonarBlock.Patch();
-        SNUtil.log("Registered custom machine "+sonarBlock);
-        //sonarBlock.addFragments(3, 5F, sonarBlockFragments);
-        
-        repellentBlock = new BaseCreatureRepellent();
-        repellentBlock.Patch();
-        SNUtil.log("Registered custom machine "+repellentBlock);
-        
         addPDAEntries();
                  
-        WorldgenDatabase.instance.load();
+        new WorldgenDatabase().load();
         DataboxTypingMap.instance.load();
         
         addCommands();
@@ -293,6 +274,13 @@ namespace ReikaKalseki.SeaToSea
 			}
 	    	return false;
 		});
+    }
+    
+    [QModPostPatch]
+    public static void PostLoad() {
+		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");
+		if (miniPoo != null)
+			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
     }
     
     private static void registerTabletTechKey(BrokenTablet tb) {
@@ -835,13 +823,6 @@ namespace ReikaKalseki.SeaToSea
         brokenWhiteTablet.register();
         brokenOrangeTablet.register();
         
-        outdoorBasicPot = new OutdoorPot(TechType.PlanterPot);
-        outdoorCompositePot = new OutdoorPot(TechType.PlanterPot2);
-        outdoorChicPot = new OutdoorPot(TechType.PlanterPot3);
-        outdoorBasicPot.register();
-        outdoorCompositePot.register();
-        outdoorChicPot.register();
-        
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule2);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
         KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.BaseReinforcement);
@@ -865,17 +846,6 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
-    }
-    
-    private static void createEgg(TechType creature, TechType basis, float scale, string cd = null, params BiomeType[] spawn) {
-    	CustomEgg egg = new CustomEgg(creature,  basis);
-    	egg.setTexture("Textures/Eggs/");
-    	eggs[creature] = egg;
-    	egg.creatureHeldDesc = cd;
-    	egg.eggScale = scale;
-    	egg.Patch();
-    	foreach (BiomeType b in spawn)
-    		GenUtil.registerSlotWorldgen(egg.ClassID, egg.PrefabFileName, egg.TechType, false, b, 1, 0.2F);
     }
     
     private static void createCompressedIngot(DIPrefab<VanillaResources> item, int amt = 10, string name = "Ingot") {

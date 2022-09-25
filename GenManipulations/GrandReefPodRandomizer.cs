@@ -19,7 +19,7 @@ using ReikaKalseki.DIAlterra;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.DIAlterra
+namespace ReikaKalseki.SeaToSea
 {		
 	internal class GrandReefPodRandomizer : ManipulationBase {
 		
@@ -48,7 +48,7 @@ namespace ReikaKalseki.DIAlterra
 		private double groundThickness = 0;
 		private double maxSinkFraction = 1;
 		
-		internal override void applyToObject(GameObject go) {
+		public override void applyToObject(GameObject go) {
 			string id = ObjectUtil.getPrefabID(go);
 			double hoff = 0;
 			if (randomType) {
@@ -73,7 +73,7 @@ namespace ReikaKalseki.DIAlterra
 			}
 		}
 		
-		internal override void applyToObject(PlacedObject go) {
+		public override void applyToObject(PlacedObject go) {
 			double hoff = 0;
 			if (randomType) {
 				Pod old = prefabs[go.prefabName];
@@ -97,7 +97,7 @@ namespace ReikaKalseki.DIAlterra
 			}
 		}
 		
-		internal override void loadFromXML(XmlElement e) {
+		public override void loadFromXML(XmlElement e) {
 			XmlElement type;
 			randomType = e.getBoolean("randomType", out type);
 			allowMediumSize = randomType && bool.Parse(type.GetAttribute("medium"));
@@ -109,7 +109,7 @@ namespace ReikaKalseki.DIAlterra
 			maxSinkFraction = e.getFloat("maxSinkFraction", 1);
 		}
 		
-		internal override void saveToXML(XmlElement e) {
+		public override void saveToXML(XmlElement e) {
 			XmlElement prop = e.addProperty("randomType", randomType);
 			prop.SetAttribute("medium", allowMediumSize.ToString());
 			prop.SetAttribute("large", allowLargeSize.ToString());

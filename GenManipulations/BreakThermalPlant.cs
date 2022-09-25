@@ -19,7 +19,7 @@ using ReikaKalseki.DIAlterra;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.DIAlterra
+namespace ReikaKalseki.SeaToSea
 {		
 	internal class BreakThermalPlant : ManipulationBase {
 		
@@ -30,7 +30,7 @@ namespace ReikaKalseki.DIAlterra
 		private string textOverride;
 		private Color? textColor;
 		
-		internal override void applyToObject(GameObject go) {
+		public override void applyToObject(GameObject go) {
 			ObjectUtil.removeComponent<ThermalPlant>(go);
 			if (deleteHead)
 				ObjectUtil.removeChildObject(go, "model/root/head");
@@ -52,11 +52,11 @@ namespace ReikaKalseki.DIAlterra
 			}
 		}
 		
-		internal override void applyToObject(PlacedObject go) {
+		public override void applyToObject(PlacedObject go) {
 			applyToObject(go.obj);
 		}
 		
-		internal override void loadFromXML(XmlElement e) {
+		public override void loadFromXML(XmlElement e) {
 			disablePowergen = e.getBoolean("RemovePower");
 			deleteHead = e.getBoolean("DeleteHead");
 			disableBar = e.getBoolean("DisableBar");
@@ -65,7 +65,7 @@ namespace ReikaKalseki.DIAlterra
 			textColor = e.getColor("TextColor", false, true);
 		}
 		
-		internal override void saveToXML(XmlElement e) {
+		public override void saveToXML(XmlElement e) {
 			e.addProperty("RemovePower", disablePowergen);
 			e.addProperty("DeleteHead", deleteHead);
 			e.addProperty("DisableBar", disableBar);
