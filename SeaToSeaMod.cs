@@ -116,9 +116,8 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(ex.ToString());
         }
         
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(PlacedObject).TypeHandle);
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(CustomPrefab).TypeHandle);
-        
+        CustomPrefab.addPrefabNamespace("ReikaKalseki.SeaToSea");
+                
         itemLocale.load();
         pdaLocale.load();
         signalLocale.load();
