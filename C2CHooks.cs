@@ -30,14 +30,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	{"ff43eacd-1a9e-4182-ab7b-aa43c16d1e53", TechType.SeaDragon},
 	    };
 	    
-	    private static readonly HashSet<string> containmentDragonRepellents = new HashSet<string>() {
-	    	"c5512e00-9959-4f57-98ae-9a9962976eaa",
-	    	"542aaa41-26df-4dba-b2bc-3fa3aa84b777",
-	    	"5bcaefae-2236-4082-9a44-716b0598d6ed",
-	    	"20ad299d-ca52-48ef-ac29-c5ec5479e070",
-	    	"430b36ae-94f3-4289-91ac-25475ad3bf74"
-	    };
-	    
 	    private static Oxygen playerBaseO2;
 	    
 	    static C2CHooks() {
@@ -613,10 +605,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		UnityEngine.Object.Destroy(go);
 	    		return;
 	    	}
-	    	if (pi && containmentDragonRepellents.Contains(pi.ClassId)) {
-	    		go.EnsureComponent<ContainmentFacilityDragonRepellent>();
-	    		return;
-	    	}
 	    	else if (pi && PrefabData.getPrefab(pi.ClassId) != null && PrefabData.getPrefab(pi.ClassId).Contains("Coral_reef_jeweled_disk")) {
 	    		ObjectUtil.makeMapRoomScannable(go, TechType.JeweledDiskPiece);
 	    	}/*
@@ -808,25 +796,5 @@ namespace ReikaKalseki.SeaToSea {
 				main.SetIcon(HandReticle.IconType.Hand, 1f);
 			}
 		}
-	}
-	
-	class ContainmentFacilityDragonRepellent : MonoBehaviour {
-		
-		void Update() {
-			float r = 80;
-			if (Player.main.transform.position.y <= 1350 && Vector3.Distance(transform.position, Player.main.transform.position) <= 100) {
-				RaycastHit[] hit = Physics.SphereCastAll(gameObject.transform.position, r, new Vector3(1, 1, 1), r);
-				foreach (RaycastHit rh in hit) {
-					if (rh.transform != null && rh.transform.gameObject) {
-						SeaDragon c = rh.transform.gameObject.GetComponent<SeaDragon>();
-						if (c) {
-							Vector3 vec = transform.position+((c.transform.position-transform.position).normalized*120);
-							c.GetComponent<SwimBehaviour>().SwimTo(vec, 20);
-						}
-					}
-				}
-			}
-		}
-		
 	}
 }

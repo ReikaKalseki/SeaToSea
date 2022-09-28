@@ -112,11 +112,7 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "Bubbles");
 			
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
-			con.storageRoot.ClassId = "bioprocessorcontainer";
-			con.hoverText = "Use Bioprocessor";
-			con.storageLabel = "BIOPROCESSOR";
-			con.enabled = true;
-			con.Resize(6, 6);
+			initializeStorageContainer(con, 6, 6);
 			//con.prefabRoot = go;
 			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
 			//lgc.storage = con;
