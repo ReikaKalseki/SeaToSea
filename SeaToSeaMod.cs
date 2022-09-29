@@ -13,6 +13,10 @@ using SMLHelper.V2.Utility;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Assets;
 
+using ReikaKalseki.Auroresource;
+using ReikaKalseki.Reefbalance;
+using ReikaKalseki.AqueousEngineering;
+
 namespace ReikaKalseki.SeaToSea
 {
   [QModCore]
@@ -96,11 +100,28 @@ namespace ReikaKalseki.SeaToSea
     private static readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
     private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
-
-    [QModPatch]
-    public static void Load() {
+    
+    [QModPrePatch]
+    public static void PreLoad() {
         config.load();
         
+    	SNUtil.log("Overriding config entries in support mods", modDLL);
+    	
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_GLASS, false);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_HUDCHIP, false);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_SEABASE, true);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_DECO, true);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_KELP, true);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_SEEDS, false);
+    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.REINF_GLASS, true);
+    	
+    	AuroresourceMod.config.setValue(ARConfig.ConfigEntries.SPEED, Mathf.Clamp(AuroresourceMod.config.getFloat(ARConfig.ConfigEntries.SPEED), 0.5F, 1F));
+    	
+    	AqueousEngineeringMod.config.setValue(AEConfig.ConfigEntries.POO_RATE, Mathf.Clamp(AqueousEngineeringMod.config.getFloat(AEConfig.ConfigEntries.POO_RATE), 0.25F, 4F));
+    }
+
+    [QModPatch]
+    public static void Load() {        
         Harmony harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
         FileLog.logPath = Path.Combine(Path.GetDirectoryName(modDLL.Location), "harmony-log.txt");
