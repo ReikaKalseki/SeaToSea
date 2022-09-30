@@ -87,6 +87,8 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
     
+    public static PowerSealModuleFragment powersealModuleFragment;
+    
     public static FMODAsset voidspikeLeviRoar;
     public static FMODAsset voidspikeLeviBite;
     public static FMODAsset voidspikeLeviFX;
@@ -104,6 +106,10 @@ namespace ReikaKalseki.SeaToSea
     [QModPrePatch]
     public static void PreLoad() {
         config.load();
+        
+        ReefbalanceMod.config.load();
+        AuroresourceMod.config.load();
+        AqueousEngineeringMod.config.load();
         
     	SNUtil.log("Overriding config entries in support mods", modDLL);
     	
@@ -159,10 +165,6 @@ namespace ReikaKalseki.SeaToSea
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
 	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
 	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
-	    brokenRedTablet.Patch();
-	    brokenWhiteTablet.Patch();
-	    brokenOrangeTablet.Patch();
-	    brokenBlueTablet.Patch();
 	    
 	    voidspikeLeviRoar = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundSystem.masterBus);
 	    voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundSystem.masterBus);
@@ -635,6 +637,10 @@ namespace ReikaKalseki.SeaToSea
         cyclopsHeat = new CyclopsHeatModule();
         cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
         cyclopsHeat.Patch();
+	    
+	    powersealModuleFragment = new PowerSealModuleFragment();
+	    powersealModuleFragment.register();
+	    
         /*
         CraftData.itemSizes[TechType.AcidMushroom] = new Vector2int(1, 2);
         CraftData.itemSizes[TechType.HydrochloricAcid] = new Vector2int(2, 2);

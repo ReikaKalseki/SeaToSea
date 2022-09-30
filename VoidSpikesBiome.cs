@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly string biomeName = "Void_Spikes";
 		
-		public static readonly int CLUSTER_COUNT = 88;
+		public static readonly int CLUSTER_COUNT = 104;//88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
