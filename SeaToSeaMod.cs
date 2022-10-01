@@ -16,6 +16,7 @@ using SMLHelper.V2.Assets;
 using ReikaKalseki.Auroresource;
 using ReikaKalseki.Reefbalance;
 using ReikaKalseki.AqueousEngineering;
+using ReikaKalseki.Exscansion;
 
 namespace ReikaKalseki.SeaToSea
 {
@@ -110,6 +111,7 @@ namespace ReikaKalseki.SeaToSea
         ReefbalanceMod.config.load();
         AuroresourceMod.config.load();
         AqueousEngineeringMod.config.load();
+        ExscansionMod.config.load();
         
     	SNUtil.log("Overriding config entries in support mods", modDLL);
     	
@@ -125,6 +127,13 @@ namespace ReikaKalseki.SeaToSea
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, 4F));
+    	
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASERANGE, 200);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.MAXRANGE, 600);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RANGEAMT, 200);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.SPDAMT, 6);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASESPEED, 18);
     }
 
     [QModPatch]
