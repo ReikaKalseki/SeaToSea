@@ -113,17 +113,18 @@ namespace ReikaKalseki.SeaToSea
         
     	SNUtil.log("Overriding config entries in support mods", modDLL);
     	
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_GLASS, false);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_HUDCHIP, false);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.CHEAP_SEABASE, true);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_DECO, true);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_KELP, true);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.COMPACT_SEEDS, false);
-    	ReefbalanceMod.config.setValue(RBConfig.ConfigEntries.REINF_GLASS, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.CHEAP_GLASS, false);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.CHEAP_HUDCHIP, false);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.CHEAP_SEABASE, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_DECO, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_KELP, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_SEEDS, false);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.REINF_GLASS, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LARGE_CYCLOCKER, true);
     	
-    	AuroresourceMod.config.setValue(ARConfig.ConfigEntries.SPEED, Mathf.Clamp(AuroresourceMod.config.getFloat(ARConfig.ConfigEntries.SPEED), 0.5F, 1F));
+    	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
     	
-    	AqueousEngineeringMod.config.setValue(AEConfig.ConfigEntries.POO_RATE, Mathf.Clamp(AqueousEngineeringMod.config.getFloat(AEConfig.ConfigEntries.POO_RATE), 0.25F, 4F));
+    	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, 4F));
     }
 
     [QModPatch]

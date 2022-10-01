@@ -942,51 +942,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(uGUI_MapRoomScanner))]
-	[HarmonyPatch("UpdateAvailableTechTypes")]
-	public static class ScannerTypeFilteringHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "uGUI_MapRoomScanner", "RebuildResourceList", true, new Type[0]);
-				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "generateScannerRoomResourceList", false, typeof(uGUI_MapRoomScanner));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
-	[HarmonyPatch(typeof(ResourceTracker))]
-	[HarmonyPatch("Register")]
-	public static class ScannerFilteringHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {/*
-				codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
-				codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "registerResourceTracker", false, typeof(ResourceTracker)));
-				codes.Add(new CodeInstruction(OpCodes.Ret));*/
-				CodeInstruction br = codes[2];
-				InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isObjectVisibleToScannerRoom", false, typeof(ResourceTracker)), new CodeInstruction(OpCodes.Brfalse, br.operand));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	}
-	
 	[HarmonyPatch(typeof(Oxygen))]
 	[HarmonyPatch("GetSecondaryTooltip")]
 	public static class O2TooltipHook {
