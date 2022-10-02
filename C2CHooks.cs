@@ -577,7 +577,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	GameObject go = pk.gameObject;
 	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
-				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
+				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 	    	}
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {

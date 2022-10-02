@@ -67,20 +67,62 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class AlkaliPlantTag : MonoBehaviour {
 		
+		private bool isGrown;
+		private float rootScale;
+		
+		private float currentScale = 1;
+		private bool currentlyHiding;
+		
 		void Start() {
+			isGrown = gameObject.GetComponent<GrownPlant>() != null;
+			currentScale = 1;
+			rootScale = UnityEngine.Random.Range(2, 2.5F);
     		if (gameObject.transform.position.y > -10)
     			UnityEngine.Object.Destroy(gameObject);
-    		else if (gameObject.GetComponent<GrownPlant>() != null) {
+    		else if (isGrown) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
     		}
     		else {
-    			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(2, 2.5F);
+    			gameObject.transform.localScale = Vector3.one*rootScale;
     		}
 		}
 		
 		void Update() {
-			
+			Player ep = Player.main;
+			if (ep && !isGrown) {
+				float dT = Time.deltaTime;
+				float dd = Vector3.Distance(ep.transform.position, transform.position);
+				currentlyHiding = dd <= 15F && canSeePlayer(ep);
+				if (currentlyHiding) {
+					float sp = currentScale-1F*dT;
+					if (dd <= 8)
+						sp *= 1.5F;
+					currentScale = Mathf.Max(0.05F, sp);
+				}
+				else {
+					currentScale = Mathf.Min(1, currentScale+0.15F*dT);
+				}
+				if (float.IsInfinity(currentScale) || float.IsNaN(currentScale))
+					currentScale = 1;
+				currentScale = Mathf.Clamp(currentScale, 0.05F, 1);
+				float f = rootScale*currentScale;
+				RenderUtil.setEmissivity(GetComponentInChildren<Renderer>(), SeaToSeaMod.alkali.glowIntensity*currentScale, "GlowStrength");
+				transform.localScale = new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
+				GetComponent<LiveMixin>().data.knifeable = isHarvestable();
+			}
+		}
+		
+		private bool canSeePlayer(Player ep) {
+			if (ep.GetVehicle())
+				return true;
+			Vector3 pos1 = ep.transform.position;
+			Vector3 pos2 = transform.position+transform.up.normalized*0.5F;
+			return WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2);
+		}
+		
+		bool isHarvestable() {
+			return currentScale >= 0.75F;
 		}
 		
 	}
