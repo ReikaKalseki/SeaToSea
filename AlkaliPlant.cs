@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float timeVisible = 0;
 		private float currentScale = 1;
-		private bool currentlyHiding;
+		private bool currentlyHiding = false;
 		
 		void Start() {
 			isGrown = gameObject.GetComponent<GrownPlant>() != null;
@@ -94,22 +94,26 @@ namespace ReikaKalseki.SeaToSea {
 			if (ep && !isGrown) {
 				float dT = Time.deltaTime;
 				float dd = Vector3.Distance(ep.transform.position, transform.position);
-				currentlyHiding = dd <= 15F && canSeePlayer(ep);
+				if (dd <= 15F && canSeePlayer(ep))
+					timeVisible += dT;
+				else
+					timeVisible = 0;
+				currentlyHiding = timeVisible >= 0.67F;
 				if (currentlyHiding) {
 					float sp = 1F*dT;
 					if (dd <= 8)
 						sp *= 1.5F;
-					currentScale = Mathf.Max(0.05F, currentScale-sp);
+					currentScale = Mathf.Max(0.03F, currentScale-sp);
 				}
 				else {
 					currentScale = Mathf.Min(1, currentScale+0.15F*dT);
 				}
 				if (float.IsInfinity(currentScale) || float.IsNaN(currentScale)) //how this happens is beyond me
 					currentScale = 1;
-				currentScale = Mathf.Clamp(currentScale, 0.05F, 1);
+				currentScale = Mathf.Clamp(currentScale, 0.03F, 1);
 				float f = rootScale*currentScale;
 				float glow = SeaToSeaMod.alkali.glowIntensity*currentScale;
-				if (glow <= 0.055)
+				if (glow <= 0.035)
 					glow = 0;
 				RenderUtil.setEmissivity(GetComponentInChildren<Renderer>(), glow, "GlowStrength");
 				transform.localScale = new Vector3(0.33F+f*0.67F, f, 0.33F+f*0.67F);//Vector3.one*f;//new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
@@ -122,10 +126,15 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			Vector3 pos1 = ep.transform.position;
 			Vector3 pos2 = transform.position+transform.up.normalized*0.5F;
-			return WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2);
+			if (WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2))
+				return true;
+			pos2 = transform.position+transform.up.normalized*1.5F;
+			if (WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2))
+				return true;
+			return false;
 		}
 		
-		bool isHarvestable() {
+		public bool isHarvestable() {
 			return currentScale >= 0.75F;
 		}
 		

@@ -680,5 +680,13 @@ namespace ReikaKalseki.SeaToSea {
 				main.SetIcon(HandReticle.IconType.Hand, 1f);
 			}
 		}
+	    
+	    public static bool isObjectKnifeable(LiveMixin lv) {
+	    	AlkaliPlantTag a = lv.GetComponent<AlkaliPlantTag>();
+	    	if (a) {
+	    		return a.isHarvestable();
+	    	}
+	    	return !lv || (!lv.weldable && lv.knifeable && !lv.GetComponent<EscapePod>());
+	    }
 	}
 }
