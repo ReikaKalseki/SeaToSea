@@ -70,6 +70,7 @@ namespace ReikaKalseki.SeaToSea {
 		private bool isGrown;
 		private float rootScale;
 		
+		private float timeVisible = 0;
 		private float currentScale = 1;
 		private bool currentlyHiding;
 		
@@ -95,20 +96,23 @@ namespace ReikaKalseki.SeaToSea {
 				float dd = Vector3.Distance(ep.transform.position, transform.position);
 				currentlyHiding = dd <= 15F && canSeePlayer(ep);
 				if (currentlyHiding) {
-					float sp = currentScale-1F*dT;
+					float sp = 1F*dT;
 					if (dd <= 8)
 						sp *= 1.5F;
-					currentScale = Mathf.Max(0.05F, sp);
+					currentScale = Mathf.Max(0.05F, currentScale-sp);
 				}
 				else {
 					currentScale = Mathf.Min(1, currentScale+0.15F*dT);
 				}
-				if (float.IsInfinity(currentScale) || float.IsNaN(currentScale))
+				if (float.IsInfinity(currentScale) || float.IsNaN(currentScale)) //how this happens is beyond me
 					currentScale = 1;
 				currentScale = Mathf.Clamp(currentScale, 0.05F, 1);
 				float f = rootScale*currentScale;
-				RenderUtil.setEmissivity(GetComponentInChildren<Renderer>(), SeaToSeaMod.alkali.glowIntensity*currentScale, "GlowStrength");
-				transform.localScale = new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
+				float glow = SeaToSeaMod.alkali.glowIntensity*currentScale;
+				if (glow <= 0.055)
+					glow = 0;
+				RenderUtil.setEmissivity(GetComponentInChildren<Renderer>(), glow, "GlowStrength");
+				transform.localScale = new Vector3(0.33F+f*0.67F, f, 0.33F+f*0.67F);//Vector3.one*f;//new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
 				GetComponent<LiveMixin>().data.knifeable = isHarvestable();
 			}
 		}
