@@ -420,15 +420,12 @@ namespace ReikaKalseki.SeaToSea {
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
-				RaycastHit[] hit = Physics.SphereCastAll(p.transform.position, 36, new Vector3(1, 1, 1), 36);
+				RaycastHit[] hit = Physics.SphereCastAll(p.transform.position, 60, new Vector3(1, 1, 1), 60);
 				foreach (RaycastHit rh in hit) {
 					if (rh.transform != null && rh.transform.gameObject) {
 						DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
 						if (c && !c.gameObject.GetComponent<WaterParkCreature>()) {
-							Creature cc = c.gameObject.GetComponent<Creature>();
-							if (cc && cc.liveMixin && cc.liveMixin.IsAlive()) {
-								cc.Aggression.Add(0.4F);
-							}
+							c.triggerPtAggro();
 						}
 					}
 				}
@@ -495,7 +492,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
-	    	if (UnityEngine.Random.Range(0F, 1F) < 0.93)
+	    	if (UnityEngine.Random.Range(0F, 1F) < 0.88)
 	    		return;
 	    	int near = 0;
 			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 0.1F)) {

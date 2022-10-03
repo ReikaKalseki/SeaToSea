@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			DeepStalkerTag kc = world.EnsureComponent<DeepStalkerTag>();
 			Renderer r = world.GetComponentInChildren<Renderer>();
-			RenderUtil.setEmissivity(r, 2, "GlowStrength");
+			RenderUtil.setEmissivity(r, 1.25F, "GlowStrength");
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
 			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 			return world;
@@ -38,6 +38,9 @@ namespace ReikaKalseki.SeaToSea {
 		public void register() {
 			Patch();
 			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Carnivores", locale.pda, locale.getField<string>("header"), null);
+	    
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 1F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 1.2F);
 		}
 			
 	}
@@ -46,6 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Renderer render;
 		private Stalker creatureComponent;
+		private AggressiveWhenSeeTarget playerHuntComponent;
 		
 		private readonly Color peacefulColor = new Color(0.2F, 0.67F, 1F, 1);
 		private readonly Color aggressiveColor = new Color(1, 0, 0, 1);
@@ -53,12 +57,25 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float aggressionForColor = 0;
 		
+		private float platinumGrabTime = -1;
+		
 		private void Update() {
 			if (!render) {
 				render = GetComponentInChildren<Renderer>();
 			}
 			if (!creatureComponent) {
 				creatureComponent = GetComponent<Stalker>();
+			}
+			if (!playerHuntComponent) {
+				foreach (AggressiveWhenSeeTarget agg in GetComponents<AggressiveWhenSeeTarget>()) {
+					if (agg.targetType == EcoTargetType.Shark) {
+						agg.aggressionPerSecond *= 0.15F;
+						agg.ignoreSameKind = false;
+						agg.maxRangeScalar *= 1.5F;
+						playerHuntComponent = agg;
+						break;
+					}
+				}
 			}
 			if (render && creatureComponent) {
 				float dT = Time.deltaTime;
@@ -70,7 +87,24 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				render.materials[0].SetColor("_GlowColor", Color.Lerp(peacefulColor, aggressiveColor, aggressionForColor));
 			}
-			
+			if (DayNightCycle.main.timePassedAsFloat-platinumGrabTime <= 12) {
+				triggerPtAggro(false);
+			}
+			SeaTreader anchor = WorldUtil.getClosest<SeaTreader>(gameObject);
+			if (anchor && Vector3.Distance(transform.position, anchor.transform.position) >= 80) {
+				GetComponent<SwimBehaviour>().SwimTo(anchor.transform.position, 25);
+			}
+		}
+		
+		internal void triggerPtAggro(bool isNew = true) {
+			if (isNew)
+				platinumGrabTime = DayNightCycle.main.timePassedAsFloat;
+			if (creatureComponent && creatureComponent.liveMixin && creatureComponent.liveMixin.IsAlive()) {
+				creatureComponent.Aggression.Add(0.4F);
+				if (playerHuntComponent) {
+					playerHuntComponent.lastTarget.SetTarget(Player.main.gameObject);
+				}
+			}
 		}
 		
 	}
