@@ -1051,6 +1051,56 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
+	[HarmonyPatch(typeof(CollectShiny))]
+	[HarmonyPatch("UpdateShinyTarget")]
+	public static class StalkerPlatinumSeekingHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				for (int i = codes.Count-1; i >= 0; i--) {
+					CodeInstruction ci = codes[i];
+					if (ci.opcode == OpCodes.Stfld && ((FieldInfo)ci.operand).Name == "shinyTarget") {
+						codes.Insert(i, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getStalkerShinyTarget", false, typeof(GameObject), typeof(CollectShiny)));
+						codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+					}
+				}
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(CollectShiny))]
+	[HarmonyPatch("Perform")]
+	public static class StalkerAvoidOtherHeldHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx2 = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "CollectShiny", "shinyTarget");
+				int idx1 = InstructionHandlers.getLastOpcodeBefore(codes, idx2, OpCodes.Ldc_I4_0);
+				InstructionHandlers.nullInstructions(codes, idx1, idx2);
+				codes[idx1] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onShinyTargetIsCurrentlyHeldByStalker", false, typeof(CollectShiny));
+				//codes.RemoveRange();
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	/*
 	[HarmonyPatch(typeof(TooltipFactory))]
 	[HarmonyPatch("Recipe")]

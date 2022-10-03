@@ -21,6 +21,32 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			base.prepareGameObject(go, r);
+			
+			
+			go.EnsureComponent<PlatinumTag>();
+		}
+		
+	}
+	
+	class PlatinumTag : MonoBehaviour {
+		
+		private float lastTime;
+		
+		private ResourceTracker resource;
+		
+		void Start() {
+    		
+		}
+		
+		void Update() {
+			if (!resource)
+				resource = gameObject.GetComponent<ResourceTracker>();
+			float time = DayNightCycle.main.timePassedAsFloat;
+			float dT = time-lastTime;
+			if (dT >= 1) {
+				gameObject.EnsureComponent<ResourceTrackerUpdater>().tracker = resource;
+			}
+			lastTime = time;
 		}
 		
 	}

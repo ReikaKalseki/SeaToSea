@@ -498,6 +498,7 @@ namespace ReikaKalseki.SeaToSea
        	//item.category = TechCategory.BasicMaterials;
        	//item.group = TechGroup.Resources;
        	item.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
+       	item.ownerMod = modDLL;
        	item.setRecipe(10);
        	item.Patch();
        	
@@ -530,6 +531,7 @@ namespace ReikaKalseki.SeaToSea
        	quartzIngotToGlass.unlock = TechType.Unobtanium;
        	quartzIngotToGlass.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
     	quartzIngotToGlass.sprite = SpriteManager.Get(TechType.Glass);
+    	quartzIngotToGlass.ownerMod = modDLL;
     	quartzIngotToGlass.Patch();
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
@@ -605,6 +607,7 @@ namespace ReikaKalseki.SeaToSea
         	}
         }
        	enzymeAlternate = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
+       	enzymeAlternate.ownerMod = modDLL;
        	enzymeAlternate.craftTime = enzy.craftingTime*2F;
        	enzymeAlternate.setRecipe(enzy.numberCrafted*3);
        	enzymeAlternate.unlock = TechType.Unobtanium;
@@ -617,6 +620,7 @@ namespace ReikaKalseki.SeaToSea
        	rec.craftAmount = enzyK.numberCrafted*s;
        	item = new DuplicateRecipeDelegateWithRecipe(enzyK, rec);
        	item.craftTime = enzyK.craftingTime*s/2F;
+       	item.ownerMod = modDLL;
        	item.Patch();
        	
         rec = new TechData();
@@ -634,6 +638,7 @@ namespace ReikaKalseki.SeaToSea
        	item.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
        	item.unlock = TechType.AcidMushroom;
        	item.suffixName = " Traces";
+       	item.ownerMod = modDLL;
        	item.Patch();
         
         voidStealth = new SeamothVoidStealthModule();
@@ -691,6 +696,7 @@ namespace ReikaKalseki.SeaToSea
        	item.Patch();*/
 		UncraftingRecipeItem t2un = new UncraftingRecipeItem(t2Battery);
        	t2un.craftTime = 6;
+       	t2un.ownerMod = modDLL;
 		t2un.Patch();
 		
         rebreatherV2 = new RebreatherV2();
@@ -905,6 +911,7 @@ namespace ReikaKalseki.SeaToSea
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
     	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/ingot_"+refName.ToLowerInvariant());
+       	//ingot.ownerMod = modDLL;
     	ingot.Patch();
     	SNUtil.log("Added compressed ingot for "+refName+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));
     	
@@ -917,6 +924,7 @@ namespace ReikaKalseki.SeaToSea
        	unpack.group = TechGroup.Resources;
        	unpack.unlock = TechType.Unobtanium;
        	unpack.craftingMenuTree = new string[]{"Resources", "C2CIngots2"};
+       	unpack.ownerMod = modDLL;
        	if (spr != null)
        		unpack.sprite = spr;
        	unpack.setRecipe(amt);

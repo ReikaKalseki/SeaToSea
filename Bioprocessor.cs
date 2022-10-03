@@ -69,6 +69,7 @@ namespace ReikaKalseki.SeaToSea {
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;
 			item.unlock = r.inputItem;
+			item.ownerMod = SeaToSeaMod.modDLL;
 			if (item.sprite == null && to != null)
 				item.sprite = to.getIcon();
 			if (item.sprite == null)

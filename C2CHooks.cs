@@ -389,6 +389,9 @@ namespace ReikaKalseki.SeaToSea {
 	   					dmg.amount = 0;
 	   			}
 	   		}
+	   		if ((dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture) && dmg.target.GetComponent<DeepStalkerTag>()) {
+	   			dmg.amount *= 0.5F; //50% resistance to "factorio physical" damage
+	   		}
 		}
 	   
 	   	public static float getVehicleRechargeAmount(Vehicle v) {
@@ -424,8 +427,8 @@ namespace ReikaKalseki.SeaToSea {
 				foreach (RaycastHit rh in hit) {
 					if (rh.transform != null && rh.transform.gameObject) {
 						DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
-						if (c && !c.gameObject.GetComponent<WaterParkCreature>()) {
-							c.triggerPtAggro();
+						if (c && !c.currentlyHasPlatinum() && !c.gameObject.GetComponent<WaterParkCreature>()) {
+							c.triggerPtAggro(Player.main.gameObject);
 						}
 					}
 				}
@@ -700,6 +703,31 @@ namespace ReikaKalseki.SeaToSea {
 	    		return a.isHarvestable();
 	    	}
 	    	return !lv || (!lv.weldable && lv.knifeable && !lv.GetComponent<EscapePod>());
+	    }
+	    
+	    public static GameObject getStalkerShinyTarget(GameObject def, CollectShiny cc) {
+	    	if (cc.shinyTarget && cc.GetComponent<DeepStalkerTag>()) {
+	    		bool hasPlat = cc.shinyTarget.GetComponent<PlatinumTag>();
+	    		bool lookingAtPlat = def.GetComponent<PlatinumTag>();
+	    		if (hasPlat == lookingAtPlat)
+	    			return def;
+	    		else if (hasPlat)
+	    			return cc.shinyTarget;
+	    		else
+	    			return def;
+	    	}
+	    	return def;
+	    }
+	    
+	    public static void onShinyTargetIsCurrentlyHeldByStalker(CollectShiny cc) {
+	    	if (cc.shinyTarget && cc.shinyTarget.GetComponent<PlatinumTag>()) {
+	    		DeepStalkerTag ds = cc.GetComponent<DeepStalkerTag>();
+	    		ds.tryStealFrom(cc.shinyTarget.GetComponentInParent<Stalker>());
+	    	}
+	    	else {
+				cc.targetPickedUp = false;
+				cc.shinyTarget = null;
+	    	}
 	    }
 	}
 }
