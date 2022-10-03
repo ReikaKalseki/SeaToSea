@@ -35,13 +35,13 @@ namespace ReikaKalseki.SeaToSea
 			internal void tick() {
 				Player ep = Player.main;
 				if (ep) {
-					float dist = Vector3.Distance(ep.transform.position, transform.position+transform.forward*12+transform.up*0);
+					float dist = Vector3.Distance(ep.transform.position, transform.position+transform.forward*10+transform.up*0);
 					if (dist <= 12)  {
 						int amt = Inventory.main.GetPickupCount(TechType.SeaTreaderPoop);
 						if (amt > 0) {
 							float df = Mathf.Clamp01(1.5F/dist);
 							float chance = Mathf.Clamp(0.25F*amt, 0, 0.8F)*df;
-							SNUtil.writeToChat(dist+" x "+amt+" > "+df+" > "+chance);
+							//SNUtil.writeToChat(dist+" x "+amt+" > "+df+" > "+chance);
 							if (chance > 0 && UnityEngine.Random.Range(0F, 1F) <= chance) {
 								gameObject.GetComponent<SeaTreaderMeleeAttack>().OnAttackTriggerEnter(Player.main.GetComponentInChildren<Collider>());
 							}

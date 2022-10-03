@@ -39,8 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 			Patch();
 			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Carnivores", locale.pda, locale.getField<string>("header"), null);
 	    
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 1F);
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 1.2F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.5F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 0.4F);
 		}
 			
 	}
@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea {
 		private Renderer render;
 		private Stalker creatureComponent;
 		private AggressiveWhenSeeTarget playerHuntComponent;
+		private CollectShiny collectorComponent;
 		
 		private readonly Color peacefulColor = new Color(0.2F, 0.67F, 1F, 1);
 		private readonly Color aggressiveColor = new Color(1, 0, 0, 1);
@@ -66,6 +67,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (!creatureComponent) {
 				creatureComponent = GetComponent<Stalker>();
 			}
+			if (!collectorComponent) {
+				collectorComponent = GetComponent<CollectShiny>();
+			}
 			if (!playerHuntComponent) {
 				foreach (AggressiveWhenSeeTarget agg in GetComponents<AggressiveWhenSeeTarget>()) {
 					if (agg.targetType == EcoTargetType.Shark) {
@@ -77,8 +81,10 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
+			
+			float dT = Time.deltaTime;
+			
 			if (render && creatureComponent) {
-				float dT = Time.deltaTime;
 				if (aggressionForColor < creatureComponent.Aggression.Value) {
 					aggressionForColor = Mathf.Min(creatureComponent.Aggression.Value, aggressionForColor+dT*colorChangeSpeed);
 				}
@@ -87,20 +93,60 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				render.materials[0].SetColor("_GlowColor", Color.Lerp(peacefulColor, aggressiveColor, aggressionForColor));
 			}
+			
+			Player ep = Player.main;
+			float dist = Vector3.Distance(ep.transform.position, transform.position);
+			if (dist <= 30)  {
+				int amt = Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
+				if (amt > 0 && UnityEngine.Random.Range(0F, 1F) <= Mathf.Min(amt*0.8F, 0.8F)*dT*15) {
+					triggerPtAggro();
+				}
+			}
+			
 			if (DayNightCycle.main.timePassedAsFloat-platinumGrabTime <= 12) {
 				triggerPtAggro(false);
 			}
-			SeaTreader anchor = WorldUtil.getClosest<SeaTreader>(gameObject);
-			if (anchor && Vector3.Distance(transform.position, anchor.transform.position) >= 80) {
-				GetComponent<SwimBehaviour>().SwimTo(anchor.transform.position, 25);
+			else {
+				SeaTreader anchor = WorldUtil.getClosest<SeaTreader>(gameObject);
+				if (anchor && Vector3.Distance(transform.position, anchor.transform.position) >= 80) {
+					GetComponent<SwimBehaviour>().SwimTo(anchor.transform.position, 25);
+				}
 			}
+		}
+		
+		public void OnMeleeAttack(GameObject target) {
+			//SNUtil.writeToChat(this+" attacked "+target);
+			if (target == Player.main.gameObject) {
+				Pickupable p = Inventory.main.container.RemoveItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
+				if (p) {
+					Inventory.main.InternalDropItem(p, false);
+					grab(p.gameObject);
+				}
+			}
+			else {
+				Stalker s = target.GetComponentInParent<Stalker>();
+				if (s) {
+					CollectShiny c = s.GetComponent<CollectShiny>();
+					GameObject go = c.shinyTarget;
+					if (go) {
+						c.DropShinyTarget();
+						grab(go);
+					}
+				}
+			}
+		}
+		
+		private void grab(GameObject go) {
+			collectorComponent.DropShinyTarget();
+			collectorComponent.shinyTarget = go;
+			collectorComponent.TryPickupShinyTarget();
 		}
 		
 		internal void triggerPtAggro(bool isNew = true) {
 			if (isNew)
 				platinumGrabTime = DayNightCycle.main.timePassedAsFloat;
 			if (creatureComponent && creatureComponent.liveMixin && creatureComponent.liveMixin.IsAlive()) {
-				creatureComponent.Aggression.Add(0.4F);
+				creatureComponent.Aggression.Add(isNew ? 0.3F : 0.1F);
 				if (playerHuntComponent) {
 					playerHuntComponent.lastTarget.SetTarget(Player.main.gameObject);
 				}
