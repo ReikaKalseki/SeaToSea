@@ -413,9 +413,24 @@ namespace ReikaKalseki.SeaToSea {
 		}
     
 	    public static void onItemPickedUp(Pickupable p) {
-	    	if (p.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
+	    	TechType tt = p.GetTechType();
+	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
+				}
+	    	}
+	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
+				RaycastHit[] hit = Physics.SphereCastAll(p.transform.position, 36, new Vector3(1, 1, 1), 36);
+				foreach (RaycastHit rh in hit) {
+					if (rh.transform != null && rh.transform.gameObject) {
+						DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
+						if (c && !c.gameObject.GetComponent<WaterParkCreature>()) {
+							Creature cc = c.gameObject.GetComponent<Creature>();
+							if (cc && cc.liveMixin && cc.liveMixin.IsAlive()) {
+								cc.Aggression.Add(0.4F);
+							}
+						}
+					}
 				}
 	    	}
 	    }
@@ -578,6 +593,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+				go.EnsureComponent<C2CTreader>();
 	    	}
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {

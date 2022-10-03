@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Materials {
 			[Material(typeof(Azurite), 			"URANIUM",	4F)]		VENT_CRYSTAL, //forms when superheated water is injected into cold water
-			[Material(typeof(BasicCustomOre),	"GOLD")]				PLATINUM,
+			[Material(typeof(Platinum),			"GOLD")]				PLATINUM,
 			[Material(typeof(PressureCrystals),	"TITANIUM",	1.2F)]		PRESSURE_CRYSTALS,
 			[Material(typeof(BasicCustomOre),	"KYANITE",	0.75F)]		PHASE_CRYSTAL,	
 			[Material(typeof(BasicCustomOre),	"SILVER")]				IRIDIUM,

@@ -67,6 +67,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class AlkaliPlantTag : MonoBehaviour {
 		
+		private Renderer renderer;
+		
 		private bool isGrown;
 		private float rootScale;
 		
@@ -90,6 +92,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			if (!renderer)
+				renderer = GetComponentInChildren<Renderer>();
 			Player ep = Player.main;
 			if (ep && !isGrown) {
 				float dT = Time.deltaTime;
@@ -115,7 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 				float glow = SeaToSeaMod.alkali.glowIntensity*currentScale;
 				if (glow <= 0.035)
 					glow = 0;
-				RenderUtil.setEmissivity(GetComponentInChildren<Renderer>(), glow, "GlowStrength");
+				RenderUtil.setEmissivity(renderer, glow, "GlowStrength");
 				transform.localScale = new Vector3(0.33F+f*0.67F, f, 0.33F+f*0.67F);//Vector3.one*f;//new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
 				GetComponent<LiveMixin>().data.knifeable = isHarvestable();
 			}

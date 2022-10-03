@@ -56,6 +56,8 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
     
+    public static DeepStalker deepStalker;
+    
     public static readonly Vector3 underwaterIslandsDeepWreck1 = new Vector3(-122, -506, 913);
     public static readonly Vector3 underwaterIslandsDeepWreck2 = new Vector3(-112, -506, 896);
     
@@ -181,6 +183,9 @@ namespace ReikaKalseki.SeaToSea
 	    voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
 	    voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
+	    deepStalker = new DeepStalker(itemLocale.getEntry("deepstalker"));
+	    deepStalker.register();
+	    
         addFlora();
         addItemsAndRecipes();
         

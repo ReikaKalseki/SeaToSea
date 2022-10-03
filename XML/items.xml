@@ -385,6 +385,24 @@
 			SalveBush
 		</header>
 	</HEALING_FLOWER>
+	<deepstalker>
+		<name>
+			Abyssal Stalker
+		</name>
+		<desc>
+			A deep-sea relative of the common stalker.
+		</desc>
+		<pda>
+			A relative of the stalkers found in shallow creepvine forests, this species has adapted to the low-light conditions of its environment, using the darkness for camouflage in lieu of hiding in dense foliage.
+			
+			One trait that has been preserved or even amplified, however, is the Stalker's attraction to metallic materials; Abyssal Stalkers will congregate around sources of such materials, and will aggressively defend them from potential rivals.
+			
+			The purpose of the bioluminescent features on the stalker may be to aid this intimidation, or they may be designed to attract small prey fish.
+		</pda>
+		<header>
+			
+		</header>
+	</deepstalker>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module

@@ -159,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 			 	
 	    		SkinnedMeshRenderer r = go.GetComponentInChildren<SkinnedMeshRenderer>();
 				r.materials[0].SetFloat("_SpecInt", 0F);
-	    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/VoidSpikeLevi/", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
+	    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/VoidSpikeLevi_", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
 	    		//r.materials[0].color = new Color(0, 0, 0, 0);
 	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
 	    			    		
