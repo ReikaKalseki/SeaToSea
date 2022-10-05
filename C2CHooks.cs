@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onDamageEvent += recalculateDamage;
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
 	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
+	    	DIHooks.getBiomeEvent += getBiomeAt;
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -208,6 +209,9 @@ namespace ReikaKalseki.SeaToSea {
 	    public static string getBiomeAt(string orig, Vector3 pos) {
 	    	if (VoidSpikesBiome.instance.isInBiome(pos)) {
 	    		return VoidSpikesBiome.biomeName;
+	    	}
+	    	else if (pos.y <= -375 && orig.ToLowerInvariant() == "underwaterislands") {
+	    		return "Glass Forest";
 	    	}
 	    	return orig;
 	    }
@@ -498,8 +502,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (UnityEngine.Random.Range(0F, 1F) < 0.88)
 	    		return;
 	    	int near = 0;
-			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 0.1F)) {
-				if (c.gameObject == null) {
+			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 4F)) {
+				if (!c || !c.gameObject) {
 					continue;
 				}
 				TechTag p = c.gameObject.GetComponentInParent<TechTag>();

@@ -24,9 +24,15 @@ namespace ReikaKalseki.SeaToSea {
 	    private static GameObject redirectedTarget;
 	    
 	    private static readonly double MAXDEPTH = 2000;//800;
+	    
+	    private readonly List<FMODAsset> distantRoars = new List<FMODAsset>();
+	    
+	    private float nextDistantRoarTime = -1;
 		
 		private VoidGhostLeviathanSystem() {
-			
+	    	for (int i = 0; i <= 2; i++) {
+	    		distantRoars.Add(SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-roar-far-"+i, "Sounds/voidlevi/roar-distant-"+i+".ogg"));
+	    	}
 		}
 	    
 	    public void deleteVoidLeviathan() {
@@ -47,13 +53,43 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	return redirectedTarget;
 	    }
+	    
+	    public void playDistantRoar(Player ep) {
+	    	if (ep.currentSub)
+	    		return;
+	    	if (DayNightCycle.main.timePassedAsFloat < nextDistantRoarTime)
+	    		return;
+	    	if (voidLeviathan && voidLeviathan.activeInHierarchy && Vector3.Distance(voidLeviathan.transform.position, ep.transform.position) <= 200)
+	    		return;/*
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
+	    		
+	    	}*/
+	    	FMODAsset roar = null;
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position);
+	    	string biome = ep.GetBiomeString();
+	    	//SNUtil.writeToChat(dist+" @ "+biome);
+	    	float vol = 1;
+	    	if (dist <= VoidSpikesBiome.biomeVolumeRadius) {
+	    		roar = distantRoars[UnityEngine.Random.Range(1, distantRoars.Count-1)];
+	    		float dd = Vector3.Distance(ep.transform.position, VoidSpikesBiome.end900m);
+	    		vol = Mathf.Clamp01(2-dd/400F);
+	    	}
+	    	else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.biomeName || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
+	    		roar = distantRoars[0];
+	    		vol = 1-(float)Math.Min(1, dist/1250D);
+	    	}
+	    	if (roar != null) {
+	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(12F, 60F)*(float)Math.Max(0.2, dist/100);
+	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
+	    	}
+	    }
     
 	    public bool isSpawnableVoid(string biome) {
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone() && voidLeviathan != null && voidLeviathan.activeInHierarchy) {
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone() && voidLeviathan && voidLeviathan.activeInHierarchy) {
 	    		return false;
 	    	}
 	    	Player ep = Player.main;
-	    	bool edge = string.Equals(biome, "void", StringComparison.OrdinalIgnoreCase);
+	    	bool edge = string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase);
 	    	bool far = string.IsNullOrEmpty(biome);
 	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) <= VoidSpikesBiome.biomeVolumeRadius+25)
 	    		far = true;

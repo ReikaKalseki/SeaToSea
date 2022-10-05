@@ -39,9 +39,11 @@ namespace ReikaKalseki.SeaToSea {
 		public void register() {
 			Patch();
 			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Carnivores", locale.pda, locale.getField<string>("header"), null);
+			
+			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, 0.25F, BiomeType.GrandReef_TreaderPath);
 	    
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.5F);
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 0.4F);
+	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.5F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
 	   		
 	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
 		}
@@ -49,6 +51,8 @@ namespace ReikaKalseki.SeaToSea {
 	}
 	
 	class DeepStalkerTag : MonoBehaviour {
+				
+		private static readonly FMODAsset biteSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "deepstalkerbite", "Sounds/deepstalker-bite.ogg", SoundSystem.masterBus);
 		
 		private static float lastPlayerBiteTime;
 		
@@ -58,12 +62,14 @@ namespace ReikaKalseki.SeaToSea {
 		private MeleeAttack attackComponent;
 		private CollectShiny collectorComponent;
 		private SwimBehaviour swimmer;
+		private WaterParkCreature acuComponent;
 		
 		private readonly Color peacefulColor = new Color(0.2F, 0.67F, 1F, 1);
 		private readonly Color aggressiveColor = new Color(1, 0, 0, 1);
 		private readonly float colorChangeSpeed = 1;
 		
 		private float aggressionForColor = 0;
+		private float aggressionForACUColor = 0;
 		
 		private float platinumGrabTime = -1;
 		private float lastAreaCheck = -1;
@@ -71,6 +77,10 @@ namespace ReikaKalseki.SeaToSea {
 		private GameObject currentForcedTarget;
 		
 		private SeaTreader treaderTarget;
+		
+		void Start() {
+			acuComponent = GetComponent<WaterParkCreature>();
+		}
 		
 		private void Update() {
 			if (!render) {
@@ -91,6 +101,8 @@ namespace ReikaKalseki.SeaToSea {
 				attackComponent.canBitePlayer = true;
 				attackComponent.canBiteVehicle = true;
 				attackComponent.ignoreSameKind = false;
+				attackComponent.attackSound.asset = biteSound;
+				attackComponent.attackSound.path = biteSound.path;
 			}
 			if (!collectorComponent) {
 				collectorComponent = GetComponent<CollectShiny>();
@@ -114,11 +126,18 @@ namespace ReikaKalseki.SeaToSea {
 			float dT = Time.deltaTime;
 			
 			if (render && creatureComponent) {
-				if (aggressionForColor < creatureComponent.Aggression.Value) {
-					aggressionForColor = Mathf.Min(creatureComponent.Aggression.Value, aggressionForColor+dT*colorChangeSpeed);
+				float target = creatureComponent.Aggression.Value;
+				if (acuComponent) {
+					if (UnityEngine.Random.Range(0F, 1F) <= 0.008F) {
+						aggressionForACUColor = UnityEngine.Random.Range(0F, 1F);
+					}
+					target = aggressionForACUColor;
 				}
-				else if (aggressionForColor > creatureComponent.Aggression.Value) {
-					aggressionForColor = Mathf.Max(creatureComponent.Aggression.Value, aggressionForColor-dT*colorChangeSpeed);
+				if (aggressionForColor < target) {
+					aggressionForColor = Mathf.Min(target, aggressionForColor+dT*colorChangeSpeed);
+				}
+				else if (aggressionForColor > target) {
+					aggressionForColor = Mathf.Max(target, aggressionForColor-dT*colorChangeSpeed);
 				}
 				render.materials[0].SetColor("_GlowColor", Color.Lerp(peacefulColor, aggressiveColor, aggressionForColor));
 			}
@@ -190,7 +209,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			if (!currentForcedTarget && treaderTarget && Vector3.Distance(transform.position, treaderTarget.transform.position) >= 80) {
-				swimmer.SwimTo(treaderTarget.transform.position, 25);
+				swimmer.SwimTo(treaderTarget.transform.position, 20);
 			}
 		}
 		
@@ -246,7 +265,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (playerHuntComponent) {
 					playerHuntComponent.lastTarget.SetTarget(currentForcedTarget);
 				}
-				swimmer.SwimTo(currentForcedTarget.transform.position, 25);
+				swimmer.SwimTo(currentForcedTarget.transform.position, 20);
 			}
 		}
 		

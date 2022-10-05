@@ -30,7 +30,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly float biomeVolumeRadius = 200;
 		
-		public static readonly string biomeName = "Void_Spikes";
+		public static readonly string biomeName = "Void Spikes";
 		
 		public static readonly int CLUSTER_COUNT = 104;//88;
 		
@@ -118,6 +118,7 @@ namespace ReikaKalseki.SeaToSea {
 					AtmosphereDirector.main.PopSettings(AtmosphereDirector.main.priorityQueue[AtmosphereDirector.main.priorityQueue.Count-1]);
 				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
 			}*/
+			VoidGhostLeviathanSystem.instance.playDistantRoar(ep);
 		   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
 				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
@@ -174,7 +175,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public double getDistanceToBiome(Vector3 vec) {
-			return MathUtil.getDistanceToLineSegment(vec, end500m, end900m);// endcap dist either < L
+			return Math.Min(MathUtil.getDistanceToLineSegment(vec, voidEndpoint500m, voidEndpoint900m), MathUtil.getDistanceToLineSegment(vec, end500m, end900m));// endcap dist either < L
 		}
 		
 		private double getSpikeDepth(Vector3 vec) {

@@ -183,7 +183,7 @@ namespace ReikaKalseki.SeaToSea
 	    voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundSystem.masterBus);
 	    voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundSystem.masterBus);
         
-	    deepStalker = new DeepStalker(itemLocale.getEntry("deepstalker"));
+	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
 	    deepStalker.register();
 	    
         addFlora();
@@ -318,6 +318,8 @@ namespace ReikaKalseki.SeaToSea
 		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");
 		if (miniPoo != null)
 			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
+		
+		ACUEcosystems.addPredatorType(deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
     }
     
     private static void registerTabletTechKey(BrokenTablet tb) {
@@ -437,10 +439,10 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.SeaTreaderPath_Path, 0.33F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
-    	LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.GrandReef_TreaderPath, 0.2F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP1.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP2.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
     	
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
     		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);

@@ -574,30 +574,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(LargeWorld), "GetBiome", new Type[]{typeof(Vector3)})]
-	public static class BiomeFetchHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {		
-				InstructionHandlers.patchEveryReturnPre(codes, injectHook);
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	
-		private static void injectHook(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getBiomeAt", false, typeof(string), typeof(Vector3)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_1));
-		}
-	}
-	
 	[HarmonyPatch(typeof(uGUI_Pings))]
 	[HarmonyPatch("OnWillRenderCanvases")]
 	public static class PingVisibilityHook {

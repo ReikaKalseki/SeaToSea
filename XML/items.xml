@@ -385,7 +385,7 @@
 			SalveBush
 		</header>
 	</HEALING_FLOWER>
-	<deepstalker>
+	<DeepStalker>
 		<name>
 			Abyssal Stalker
 		</name>
@@ -402,7 +402,7 @@
 		<header>
 			
 		</header>
-	</deepstalker>
+	</DeepStalker>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module
