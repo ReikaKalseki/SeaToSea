@@ -46,6 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.onGoalUnlockTracker.goalUnlocks.Values.Select<Story.OnGoalUnlock, string>(g => g.goal).ToArray()));
 	    	*/
 	    	VoidSpikesBiome.instance.onWorldStart();
+	    	UnderwaterIslandsFloorBiome.instance.onWorldStart();
         
 	    	moveToExploitable("SeaCrown");
 	    	moveToExploitable("SpottedLeavesPlant");
@@ -137,6 +138,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
+	    		UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
 	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
@@ -207,12 +209,10 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static string getBiomeAt(string orig, Vector3 pos) {
-	    	if (VoidSpikesBiome.instance.isInBiome(pos)) {
+	    	if (VoidSpikesBiome.instance.isInBiome(pos))
 	    		return VoidSpikesBiome.biomeName;
-	    	}
-	    	else if (pos.y <= -375 && orig.ToLowerInvariant() == "underwaterislands") {
-	    		return "Glass Forest";
-	    	}
+	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(orig, pos))
+	    		return UnderwaterIslandsFloorBiome.biomeName;
 	    	return orig;
 	    }
 	    
@@ -536,11 +536,18 @@ namespace ReikaKalseki.SeaToSea {
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
 	    		ret = Mathf.Max(4, ret-poison*1.75F); //make LR cold, down to 4C (max water density point)
-	    	if (biome.ToLowerInvariant().Contains("void") && pos.y <= -50)
+	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && pos.y <= -50)
 	    		ret = Mathf.Max(4, ret+(pos.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
-	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(pos);
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(pos, true);
 	    	if (dist <= 300)
-	    		ret += (float)((300-dist)/30); //add up to 10C as approach
+	    		ret = (float)MathUtil.linterpolate(dist, 0, 300, VoidSpikesBiome.waterTemperature, ret, true);
+	    	if (VoidSpikesBiome.instance.isInBiome(pos))
+	    		return VoidSpikesBiome.waterTemperature;
+	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(pos);
+	    	if (dist <= 150)
+	    		ret = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, ret, true);
+	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome())
+	    		ret += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(pos);
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
 	    

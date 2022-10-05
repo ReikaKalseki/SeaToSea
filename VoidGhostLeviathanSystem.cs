@@ -60,12 +60,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (DayNightCycle.main.timePassedAsFloat < nextDistantRoarTime)
 	    		return;
 	    	if (voidLeviathan && voidLeviathan.activeInHierarchy && Vector3.Distance(voidLeviathan.transform.position, ep.transform.position) <= 200)
-	    		return;/*
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
-	    		
-	    	}*/
+	    		return;
 	    	FMODAsset roar = null;
-	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position);
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position, true);
 	    	string biome = ep.GetBiomeString();
 	    	//SNUtil.writeToChat(dist+" @ "+biome);
 	    	float vol = 1;
@@ -76,22 +73,38 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.biomeName || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
 	    		roar = distantRoars[0];
-	    		vol = 1-(float)Math.Min(1, dist/1250D);
+	    		vol = 1-(float)Math.Max(0, Math.Min(1, (dist-250)/1500D));
 	    	}
 	    	if (roar != null) {
-	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(12F, 60F)*(float)Math.Max(0.2, dist/100);
+	    		float delta = (float)Math.Max(18, UnityEngine.Random.Range(18F, 60F)*dist/1000);
+	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+delta;
+	    		SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
 	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position)) {
+	    		spawnJustVisibleDistanceFX(ep);
+	    	}
+	    }
+	    
+	    public void spawnJustVisibleDistanceFX(Player ep) {
+	    	float range = UnityEngine.Random.Range(50F, 75F);
+	    	Vector3 pos = ep.transform.position+ep.transform.forward*range;
+	    	pos = MathUtil.getRandomVectorAround(pos, 30);
+	    	Vector3 dist = pos-ep.transform.position;
+	    	dist.setLength(range);
+	    	pos = ep.transform.position+dist;
+	    	
+	    	
 	    }
     
 	    public bool isSpawnableVoid(string biome) {
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone() && voidLeviathan && voidLeviathan.activeInHierarchy) {
+	    	Player ep = Player.main;
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position) && voidLeviathan && voidLeviathan.activeInHierarchy) {
 	    		return false;
 	    	}
-	    	Player ep = Player.main;
 	    	bool edge = string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase);
 	    	bool far = string.IsNullOrEmpty(biome);
-	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) <= VoidSpikesBiome.biomeVolumeRadius+25)
+	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position, true) <= VoidSpikesBiome.biomeVolumeRadius+25)
 	    		far = true;
 	    	if (!far && !edge)
 	    		return false;
@@ -115,7 +128,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
 	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone()) {
+	    	if (false && VoidSpikesBiome.instance.isPlayerInLeviathanZone(Player.main.transform.position)) {
 	    		GameObject orig = go;
 			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
 			 	//mdl.transform.localPosition = Vector3.zero;
@@ -242,7 +255,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			VoidSpikeLeviathan spikeType = gv.gameObject.GetComponentInChildren<VoidSpikeLeviathan>();
 			bool spike = spikeType != null;
-			bool zone = VoidSpikesBiome.instance.isPlayerInLeviathanZone();
+			bool zone = VoidSpikesBiome.instance.isPlayerInLeviathanZone(main.transform.position);
 			bool validVoid = spike ? zone : (!zone && main2.IsPlayerInVoid());
 			bool flag = main2 && validVoid;
 			gv.updateBehaviour = flag;

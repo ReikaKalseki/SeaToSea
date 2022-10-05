@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly float biomeVolumeRadius = 200;
 		
 		public static readonly string biomeName = "Void Spikes";
+		public static readonly float waterTemperature = 18;
 		
 		public static readonly int CLUSTER_COUNT = 104;//88;
 		
@@ -110,7 +111,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void tickPlayer(Player ep) {
 			Vector3 pos = ep.transform.position;
-			double dist = getDistanceToBiome(pos);
+			double dist = getDistanceToBiome(pos, false);
 			//SNUtil.writeToChat("Dist @ "+pos+" = "+dist);
 			/*
 			if (dist < biomeVolumeRadius+75) {
@@ -126,19 +127,32 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				float f1 = biomeVolumeRadius+25;
 				if (dist >= f1 && dist <= f1+20) {
-					SNUtil.teleportPlayer(ep, (voidEndpoint500m+(pos-end500m).addLength(50)).setY(pos.y));
-		    		SNUtil.log("Teleported player back from biome");
+					Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
+					foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
+						if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, end500m) <= biomeVolumeRadius+50) {
+							Vector3 delta = sm.transform.position-end500m;
+							sm.transform.position = tgt+delta;
+						}
+					}
+					SNUtil.teleportPlayer(ep, tgt);
+		    		SNUtil.log("Teleported player back from biome: "+tgt);
 				}
 				else {
 					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
 					if (dist <= f1) {
-						Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-50)).setY(pos.y);
+						Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
 						foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
 							Vector3 delta = levi.transform.position-tgt;
 							levi.transform.position = tgt+delta;
 						}
+						foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
+							if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, voidEndpoint500m) <= biomeVolumeRadius+50) {
+								Vector3 delta = sm.transform.position-voidEndpoint500m;
+								sm.transform.position = tgt+delta;
+							}
+						}
 						SNUtil.teleportPlayer(ep, tgt);
-			    		SNUtil.log("Teleported player to biome");
+			    		SNUtil.log("Teleported player to biome: "+tgt);
 					}
 				}
 			}
@@ -171,11 +185,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public bool isInBiome(Vector3 vec) {
 			//SNUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return getDistanceToBiome(vec) <= biomeVolumeRadius+150;
+			return getDistanceToBiome(vec, false) <= biomeVolumeRadius+150;
 		}
 		
-		public double getDistanceToBiome(Vector3 vec) {
-			return Math.Min(MathUtil.getDistanceToLineSegment(vec, voidEndpoint500m, voidEndpoint900m), MathUtil.getDistanceToLineSegment(vec, end500m, end900m));// endcap dist either < L
+		public double getDistanceToBiome(Vector3 vec, bool includeVoidSide) {
+			double ret = MathUtil.getDistanceToLineSegment(vec, end500m, end900m);// endcap dist either < L
+			if (includeVoidSide)
+				ret = Math.Min(ret, MathUtil.getDistanceToLineSegment(vec, voidEndpoint500m, voidEndpoint900m));
+			return ret;
 		}
 		
 		private double getSpikeDepth(Vector3 vec) {
@@ -192,8 +209,8 @@ namespace ReikaKalseki.SeaToSea {
 			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
 		}
 		
-		public bool isPlayerInLeviathanZone() {
-			return false;//Vector3.Distance(Player.main.transform.position, end900m) <= biomeVolumeRadius*1.5F;
+		public bool isPlayerInLeviathanZone(Vector3 pos) {
+			return isInBiome(pos) && Vector3.Distance(pos, end900m) <= biomeVolumeRadius*1.5F;
 		}
 		
 		public Vector3 getPDALocation() {

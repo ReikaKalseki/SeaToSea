@@ -58,9 +58,6 @@ namespace ReikaKalseki.SeaToSea
     
     public static DeepStalker deepStalker;
     
-    public static readonly Vector3 underwaterIslandsDeepWreck1 = new Vector3(-122, -506, 913);
-    public static readonly Vector3 underwaterIslandsDeepWreck2 = new Vector3(-112, -506, 896);
-    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -214,8 +211,6 @@ namespace ReikaKalseki.SeaToSea
         
         addCommands();
         addOreGen();
-        
-        GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
 			
         XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 		treaderSignal = SignalManager.createSignal(e);
@@ -282,6 +277,7 @@ namespace ReikaKalseki.SeaToSea
 		registerTabletTechKey(brokenRedTablet);
        
 		VoidSpikesBiome.instance.register();
+		UnderwaterIslandsFloorBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
 		

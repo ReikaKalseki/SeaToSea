@@ -46,6 +46,8 @@ namespace ReikaKalseki.SeaToSea {
 	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, false, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
 	   		
 	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
+	   		
+	   		BioReactorHandler.SetBioReactorCharge(TechType, BaseBioReactor.charge[TechType.Stalker]);
 		}
 			
 	}
