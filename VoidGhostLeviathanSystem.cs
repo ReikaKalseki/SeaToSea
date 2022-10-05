@@ -73,12 +73,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.biomeName || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
 	    		roar = distantRoars[0];
-	    		vol = 1-(float)Math.Max(0, Math.Min(1, (dist-250)/1500D));
+	    		vol = 1-(float)Math.Max(0, Math.Min(1, (dist-250)/1000D));
 	    	}
 	    	if (roar != null) {
 	    		float delta = (float)Math.Max(18, UnityEngine.Random.Range(18F, 60F)*dist/1000);
 	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+delta;
-	    		SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
+	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
 	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
 	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position)) {

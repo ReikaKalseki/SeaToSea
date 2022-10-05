@@ -539,15 +539,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && pos.y <= -50)
 	    		ret = Mathf.Max(4, ret+(pos.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
 	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(pos, true);
-	    	if (dist <= 300)
-	    		ret = (float)MathUtil.linterpolate(dist, 0, 300, VoidSpikesBiome.waterTemperature, ret, true);
+	    	if (dist <= 500)
+	    		ret = (float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, ret, true);
 	    	if (VoidSpikesBiome.instance.isInBiome(pos))
 	    		return VoidSpikesBiome.waterTemperature;
 	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(pos);
 	    	if (dist <= 150)
 	    		ret = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, ret, true);
-	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome())
-	    		ret += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(pos);
+	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(WaterBiomeManager.main.GetBiome(pos, false), pos))
+	    		ret += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(ret, pos);
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
 	    

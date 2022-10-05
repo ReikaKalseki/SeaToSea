@@ -18,8 +18,8 @@ namespace ReikaKalseki.SeaToSea {
 	public class UnderwaterIslandsFloorBiome {
 		
 		public static readonly float minimumDepth = 375;
-		public static readonly float biomeRadius = ?;
-		public static readonly Vector3 biomeCenter = new Vector3(?, ?, ?);
+		public static readonly float biomeRadius = 240;
+		public static readonly Vector3 biomeCenter = new Vector3(-107, -481, 953);
 		
 		public static readonly string biomeName = "Glass Forest";
 		public static readonly float waterTemperature = 35;
@@ -60,17 +60,24 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isInBiome(string orig, Vector3 pos) {
-			return orig != null && pos.y <= -minimumDepth && string.Equals(orig, "underwaterislands", StringComparison.InvariantCultureIgnoreCase) && getDistanceToBiome(pos) < 5;
+			if (orig == null || pos.y > -minimumDepth)
+				return false;
+			if (orig == biomeName)
+				return true;
+			//bool match = string.Equals(orig, "underwaterislands", StringComparison.InvariantCultureIgnoreCase) || string.Equals(orig, "UnderwaterIslands_ValleyFloor", StringComparison.InvariantCultureIgnoreCase);
+			return orig.ToLowerInvariant().Contains("underwaterislands") && getDistanceToBiome(pos) < 5;
 		}
 		
 		public double getDistanceToBiome(Vector3 vec) {
 			return Math.Max(0, Vector3.Distance(vec, biomeCenter)-biomeRadius);
 		}
 		
-		public float getTemperatureBoost(Vector3 pos) {
-			float boost = ((-pos.y)-minimumDepth)*0.33F; // so add about 40C
-			boost /= 1+getDistanceToBiome(pos)*0.01F;
-			return boost;
+		public float getTemperatureBoost(float baseline, Vector3 pos) {
+			float boost = ((-pos.y)-minimumDepth-75)*0.33F; // so add about 40C
+			if (boost <= 0)
+				return 0;
+			boost /= 1+(float)getDistanceToBiome(pos)*0.01F;
+			return Mathf.Min(boost, 200-baseline);
 		}
 	}
 	/*

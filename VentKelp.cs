@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r0) {
 			base.prepareGameObject(go, r0);
-			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
 			float h = 0;/*
 			int n = (int)Math.Min(9, 3+((1+heightNoiseField.getValue(go.transform.position))*8));
@@ -72,6 +72,14 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_01");
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_02");
 			ObjectUtil.removeChildObject(go, "coral_reef_plant_middle_12");
+			go.SetActive(true);
+		}
+		
+		protected override void ProcessPrefab(GameObject go) {
+			base.ProcessPrefab(go);
+			
+			go.SetActive(true);
+			ModPrefabCache.AddPrefab(go, true);
 		}
 		
 		private GameObject getOrCreateSubplant(string pfb, GameObject go, float h, string nm) {
@@ -211,7 +219,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
     			}
 			}
-			else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, SeaToSeaMod.underwaterIslandsDeepWreck1, SeaToSeaMod.underwaterIslandsDeepWreck2) <= 12) {
+			else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 12) {
 				UnityEngine.Object.DestroyImmediate(gameObject);
 				return;
 			}
