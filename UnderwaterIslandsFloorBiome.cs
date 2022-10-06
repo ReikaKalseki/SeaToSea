@@ -45,6 +45,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			addAtmoFX(end900m);
 			*/
+			
+			GenUtil.registerSlotWorldgen(SeaToSeaMod.kelp.ClassID, SeaToSeaMod.kelp.PrefabFileName, SeaToSeaMod.kelp.TechType, EntitySlot.Type.Tall, LargeWorldEntity.CellLevel.VeryFar, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
+			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 		}
 		
 		private void addAtmoFX(Vector3 pos) {
@@ -73,7 +76,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public float getTemperatureBoost(float baseline, Vector3 pos) {
-			float boost = ((-pos.y)-minimumDepth-75)*0.33F; // so add about 40C
+			float boost = ((-pos.y)-minimumDepth-75)*0.5F; // so add about 50C
 			if (boost <= 0)
 				return 0;
 			boost /= 1+(float)getDistanceToBiome(pos)*0.01F;

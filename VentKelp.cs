@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer r0) {
 			base.prepareGameObject(go, r0);
-			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
 			float h = 0;/*
 			int n = (int)Math.Min(9, 3+((1+heightNoiseField.getValue(go.transform.position))*8));
@@ -72,14 +72,6 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_01");
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_02");
 			ObjectUtil.removeChildObject(go, "coral_reef_plant_middle_12");
-			go.SetActive(true);
-		}
-		
-		protected override void ProcessPrefab(GameObject go) {
-			base.ProcessPrefab(go);
-			
-			go.SetActive(true);
-			ModPrefabCache.AddPrefab(go, true);
 		}
 		
 		private GameObject getOrCreateSubplant(string pfb, GameObject go, float h, string nm) {

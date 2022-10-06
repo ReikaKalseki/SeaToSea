@@ -344,11 +344,11 @@ namespace ReikaKalseki.SeaToSea
 		XMLLocale.LocaleEntry e = itemLocale.getEntry(alkali.ClassID);
 		alkali.addPDAEntry(e.pda, 3, e.getField<string>("header"));
 		SNUtil.log(" > "+alkali);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Mountains_CaveFloor, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.Dunes_CaveFloor, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.KooshZone_CaveFloor, 1, 2F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_CaveFloor, 1, 0.5F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Dunes_CaveFloor, 1, 0.5F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.KooshZone_CaveFloor, 1, 2F);
+		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
 		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 0.5F);
 		
 		kelp = new VentKelp();
@@ -356,15 +356,13 @@ namespace ReikaKalseki.SeaToSea
 		e = itemLocale.getEntry(kelp.ClassID);
 		kelp.addPDAEntry(e.pda, 3, e.getField<string>("header"));
 		SNUtil.log(" > "+kelp);
-		GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
-		//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 		
 		healFlower = new HealingFlower();
 		healFlower.Patch();	
 		e = itemLocale.getEntry(healFlower.ClassID);
 		healFlower.addPDAEntry(e.pda, 5, e.getField<string>("header"));
 		SNUtil.log(" > "+healFlower);
-		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, false, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
+		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Near, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
     }
     
     private static void addOreGen() {
