@@ -43,7 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, 0.25F, BiomeType.GrandReef_TreaderPath);
 	    
 	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.5F);
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
 	   		
 	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
 	   		

@@ -446,6 +446,16 @@ namespace ReikaKalseki.SeaToSea
     private static void addCommands() {
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
+        
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
+    }
+    
+    public static void spawnVentKelp(float dist) {
+		  GameObject obj = ObjectUtil.createWorldObject(kelp.ClassID, true, false);
+		  obj.SetActive(false);
+		  obj.transform.position = Player.main.transform.position+Player.main.transform.forward*dist;
+		  LargeWorld.main.streamer.cellManager.RegisterEntity(obj);
+		  obj.SetActive(true);
     }
     
     private static void unlockSignal(string name) {

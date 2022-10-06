@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly UnderwaterIslandsFloorBiome instance = new UnderwaterIslandsFloorBiome();
 		
-		//private readonly AtmoFX atmoFX = new AtmoFX();
+		private readonly GlassForestAtmoFX atmoFX = new GlassForestAtmoFX();
 		
 		private UnderwaterIslandsFloorBiome() {
 			
@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void register() {
         	GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
 			
-			//atmoFX.Patch();
+			atmoFX.Patch();
 			/*
 			for (float i = -100; i <= length+100; i += biomeVolumeRadius*0.5F) {
 				addAtmoFX(end500m+(end900m-end500m).normalized*i);
@@ -46,13 +46,15 @@ namespace ReikaKalseki.SeaToSea {
 			addAtmoFX(end900m);
 			*/
 			
-			GenUtil.registerSlotWorldgen(SeaToSeaMod.kelp.ClassID, SeaToSeaMod.kelp.PrefabFileName, SeaToSeaMod.kelp.TechType, EntitySlot.Type.Tall, LargeWorldEntity.CellLevel.VeryFar, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
+			GenUtil.registerWorldgen(atmoFX.ClassID, biomeCenter, Quaternion.identity, go => go.transform.localScale = Vector3.one*(biomeRadius+50));
+			
+			GenUtil.registerSlotWorldgen(SeaToSeaMod.kelp.ClassID, SeaToSeaMod.kelp.PrefabFileName, SeaToSeaMod.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 		}
-		
+		/*
 		private void addAtmoFX(Vector3 pos) {
-			//GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
-		}
+			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
+		}*/
 		
 		public void tickPlayer(Player ep) {
 			
@@ -83,10 +85,10 @@ namespace ReikaKalseki.SeaToSea {
 			return Mathf.Min(boost, 200-baseline);
 		}
 	}
-	/*
-	class AtmoFX : GenUtil.CustomPrefabImpl {
+	
+	class GlassForestAtmoFX : GenUtil.CustomPrefabImpl {
 	       
-		internal AtmoFX() : base("glassforestFX", "58b3c65d-1915-497d-b652-f6beba004def") { //blood kelp
+		internal GlassForestAtmoFX() : base("glassforestFX", "19e3c9a7-66e5-4849-abc6-11d48d63887a") { //koosh
 			
 		}
 	
@@ -96,10 +98,10 @@ namespace ReikaKalseki.SeaToSea {
 			AtmosphereVolume vol = go.EnsureComponent<AtmosphereVolume>();
 			vol.affectsVisuals = true;
 			vol.enabled = true;
-			vol.fogMaxDistance = 100;
-			vol.fogStartDistance = 20;
-			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
-			vol.overrideBiome = VoidSpikesBiome.biomeName;
+			vol.fogMaxDistance = 150;
+			vol.fogStartDistance = 40;
+			vol.fogColor = new Color(0.44F, 0.188F, 1, vol.fogColor.a);
+			vol.overrideBiome = UnderwaterIslandsFloorBiome.biomeName;
 		}
-	}*/
+	}
 }

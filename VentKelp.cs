@@ -88,7 +88,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void prepareSubplant(GameObject child, bool leavesOnly = false) {
-			child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+			child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 			child.EnsureComponent<TechTag>().type = TechType;
 			
 			Renderer r = child.GetComponentInChildren<Renderer>(true);
@@ -212,6 +212,8 @@ namespace ReikaKalseki.SeaToSea {
     			}
 			}
 			else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 12) {
+				//SNUtil.writeToChat("Destroying vent kelp @ "+transform.position.y);
+				SNUtil.log("Destroying vent kelp @ "+transform.position.y);
 				UnityEngine.Object.DestroyImmediate(gameObject);
 				return;
 			}
