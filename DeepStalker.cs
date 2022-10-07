@@ -42,7 +42,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, 0.25F, BiomeType.GrandReef_TreaderPath);
 	    
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.5F);
+	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.15F);
 	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
 	   		
 	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
@@ -54,7 +54,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class DeepStalkerTag : MonoBehaviour {
 				
-		private static readonly FMODAsset biteSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "deepstalkerbite", "Sounds/deepstalker-bite.ogg", SoundSystem.masterBus);
+		private static readonly FMODAsset biteSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "deepstalkerbite", "Sounds/deepstalker-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 24);}, SoundSystem.masterBus);
 		
 		private static float lastPlayerBiteTime;
 		

@@ -18,8 +18,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly Dictionary<string, LargeWorldLevelPrefab> prefabCache = new Dictionary<string, LargeWorldLevelPrefab>();
 		
-		private static readonly string FLOATER = createPrefabCopy("37ea521a-6be4-437c-8ed7-6b453d9218a8", LargeWorldEntity.CellLevel.Batch).ClassID;
-		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.Batch).ClassID;
+		private static readonly string FLOATER = createPrefabCopy("37ea521a-6be4-437c-8ed7-6b453d9218a8", LargeWorldEntity.CellLevel.VeryFar).ClassID;
+		private static readonly string FLOATER_LIGHT = createPrefabCopy("923a14c0-a7a2-49bd-a6fd-915d661582ee", LargeWorldEntity.CellLevel.VeryFar).ClassID;
 		private static readonly float FLOATER_BASE_SCALE = 0.12F;
 		
 		private static readonly OreSpawner ORE_SPAWNER = new OreSpawner();
@@ -522,7 +522,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			internal readonly bool isCenter;
 	       
-			internal SpikePrefab(string template, bool c) : base(template, LargeWorldEntity.CellLevel.Batch) {
+			internal SpikePrefab(string template, bool c) : base(template, LargeWorldEntity.CellLevel.VeryFar) {
 				isCenter = c;
 		    }
 	

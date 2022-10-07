@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			addAtmoFX(end900m);
 			*/
 			
-			GenUtil.registerWorldgen(atmoFX.ClassID, biomeCenter, Quaternion.identity, go => go.transform.localScale = Vector3.one*(biomeRadius+50));
+			//GenUtil.registerWorldgen(atmoFX.ClassID, biomeCenter, Quaternion.identity, go => go.transform.localScale = Vector3.one*(biomeRadius+50));
 			
 			GenUtil.registerSlotWorldgen(SeaToSeaMod.kelp.ClassID, SeaToSeaMod.kelp.PrefabFileName, SeaToSeaMod.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
@@ -62,6 +62,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void onWorldStart() {
 			
+		}
+		
+		public bool isInBiome(Vector3 pos) {
+			string orig = WaterBiomeManager.main.GetBiome(pos, false);
+			return isInBiome(orig, pos);
 		}
 		
 		public bool isInBiome(string orig, Vector3 pos) {
@@ -84,23 +89,38 @@ namespace ReikaKalseki.SeaToSea {
 			boost /= 1+(float)getDistanceToBiome(pos)*0.01F;
 			return Mathf.Min(boost, 200-baseline);
 		}
+		
+		public bool isAtmoFX(PrefabIdentifier pi) {
+			return pi && pi.ClassId == atmoFX.ClassID;
+		}
 	}
 	
 	class GlassForestAtmoFX : GenUtil.CustomPrefabImpl {
 	       
-		internal GlassForestAtmoFX() : base("glassforestFX", "19e3c9a7-66e5-4849-abc6-11d48d63887a") { //koosh
+		internal GlassForestAtmoFX() : base("glassforestFX", "62a47c16-bf83-46ee-b16b-8cc35e7df97d") { //valley floor
 			
 		}
 	
 		public override void prepareGameObject(GameObject go, Renderer r) {
 			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
-			lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
-			AtmosphereVolume vol = go.EnsureComponent<AtmosphereVolume>();
+			lw.cellLevel = LargeWorldEntity.CellLevel.VeryFar;
+			AtmosphereVolume vol = go.EnsureComponent<AtmosphereVolume>();/*
 			vol.affectsVisuals = true;
+			vol.priority = 1;
 			vol.enabled = true;
 			vol.fogMaxDistance = 150;
-			vol.fogStartDistance = 40;
+			vol.fogStartDistance = 90;
 			vol.fogColor = new Color(0.44F, 0.188F, 1, vol.fogColor.a);
+			/*
+			vol.fog.color = vol.fogColor;*//*
+			vol.fog.maxDistance = 600F;
+			vol.fog.startDistance = 150F;
+			GradientColorKey[] keys = vol.fog.dayNightColor.colorKeys;
+			for (int i = 0; i < keys.Length; i++)
+				keys[i].color = vol.fogColor;
+			vol.fog.dayNightColor.colorKeys = keys;
+			//vol.fog.dayNightColor.
+			*/
 			vol.overrideBiome = UnderwaterIslandsFloorBiome.biomeName;
 		}
 	}

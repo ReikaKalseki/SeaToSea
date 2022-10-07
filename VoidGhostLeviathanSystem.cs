@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private VoidGhostLeviathanSystem() {
 	    	for (int i = 0; i <= 2; i++) {
-	    		distantRoars.Add(SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-roar-far-"+i, "Sounds/voidlevi/roar-distant-"+i+".ogg"));
+	    		distantRoars.Add(SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-roar-far-"+i, "Sounds/voidlevi/roar-distant-"+i+".ogg", SoundManager.soundMode3D));
 	    	}
 		}
 	    
@@ -76,10 +76,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		vol = 1-(float)Math.Max(0, Math.Min(1, (dist-250)/1000D));
 	    	}
 	    	if (roar != null) {
-	    		float delta = (float)Math.Max(18, UnityEngine.Random.Range(18F, 60F)*dist/1000);
+	    		float delta = (float)Math.Max(30, UnityEngine.Random.Range(30F, 120F)*dist/1000);
 	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+delta;
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
-	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
+	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, vol);
 	    	}
 	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position)) {
 	    		spawnJustVisibleDistanceFX(ep);

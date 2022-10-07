@@ -29,6 +29,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
+		private static readonly FMODAsset workingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "bioprocwork", "Sounds/bioproc-loop.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 16); SoundManager.setLooping(s);});
+		
 		private static TechCategory bioprocCategory = TechCategory.Misc;
 		
 		static Bioprocessor() {
@@ -153,6 +155,9 @@ namespace ReikaKalseki.SeaToSea {
 			r.materials[0].SetFloat("_Fresnel", 0.4F);
 			lgc.mainRenderer = r;
 			
+			lgc.soundLoop = go.EnsureComponent<FMOD_CustomLoopingEmitter>();
+			lgc.soundLoop.asset = workingSound;
+			
 			go.GetComponent<Constructable>().model = machineMdl;
 			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.3F, 0.4F, 1.3F);
 			go.GetComponent<ConstructableBounds>().bounds.position = new Vector3(1, 0.5F, 0);
@@ -186,6 +191,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly Color workingColor = new Color(0, 1, 0);
 		private static readonly Color completeColor = new Color(0.25F, 0.7F, 1);
 		
+		
 		private float lastColorChange = -1;
 		private float colorCooldown = -1;
 		private Color emissiveColor;
@@ -193,6 +199,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastWorkingSound = -1;
 		
 		internal Renderer mainRenderer;
+		internal FMOD_CustomLoopingEmitter soundLoop;
 		private bool setCollision;
 		
 		void Start() {
@@ -316,8 +323,13 @@ namespace ReikaKalseki.SeaToSea {
 			saltRequired = r != null ? r.saltCount : -1;
 			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
-			if (has != had)
+			if (has != had) {
 				SNUtil.playSoundAt(SNUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
+				if (has)
+					;//soundLoop.Play();
+				else
+					;//soundLoop.Stop();
+			}
 		}
 		
 	}

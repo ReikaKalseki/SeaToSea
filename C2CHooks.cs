@@ -546,7 +546,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(pos);
 	    	if (dist <= 150)
 	    		ret = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, ret, true);
-	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(WaterBiomeManager.main.GetBiome(pos, false), pos))
+	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(pos))
 	    		ret += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(ret, pos);
 	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
 	    }
@@ -617,7 +617,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
 	    		return;
-	    	}/*
+	    	}
+	    	/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
 	    		go.transform.position = auroraCyclopsModule.position;
 	    		go.transform.rotation = auroraCyclopsModule.rotation;
