@@ -643,7 +643,7 @@ namespace ReikaKalseki.SeaToSea
        	item.craftingType = CraftTree.Type.Fabricator;
        	item.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
        	item.unlock = TechType.AcidMushroom;
-       	item.suffixName = " Traces";
+       	//item.suffixName = " Traces";
        	item.ownerMod = modDLL;
        	item.Patch();
         

@@ -103,8 +103,8 @@ namespace ReikaKalseki.SeaToSea {
 				attackComponent.canBitePlayer = true;
 				attackComponent.canBiteVehicle = true;
 				attackComponent.ignoreSameKind = false;
-				attackComponent.attackSound.asset = biteSound;
-				attackComponent.attackSound.path = biteSound.path;
+				//attackComponent.attackSound.asset = biteSound;
+				//attackComponent.attackSound.path = biteSound.path;
 			}
 			if (!collectorComponent) {
 				collectorComponent = GetComponent<CollectShiny>();
@@ -167,7 +167,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (!has && !currentForcedTarget && time-lastAreaCheck >= 1) {
 				lastAreaCheck = time;
-				treaderTarget = WorldUtil.getClosest<SeaTreader>(gameObject);
+				if (!treaderTarget || !treaderTarget.gameObject.activeInHierarchy || Vector3.Distance(treaderTarget.transform.position, transform.position) >= 120)
+					bindToTreader(WorldUtil.getClosest<SeaTreader>(gameObject));
 				List<GameObject> loosePlatinum = new List<GameObject>();
 				List<CollectShiny> stalkersWithPlatinum = new List<CollectShiny>();
 				RaycastHit[] hit = Physics.SphereCastAll(transform.position, 40, new Vector3(1, 1, 1), 40);
@@ -215,6 +216,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		public bool isAlive() {
+			return creatureComponent && creatureComponent.liveMixin && creatureComponent.liveMixin.IsAlive();
+		}
+		
 		public bool currentlyHasPlatinum() {
 			return collectorComponent && collectorComponent.targetPickedUp && collectorComponent.shinyTarget && collectorComponent.shinyTarget.GetComponent<PlatinumTag>();
 		}
@@ -251,6 +256,25 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal void tryStealFrom(Stalker s) {
 			triggerPtAggro(s.gameObject, true);
+		}
+		
+		internal void bindToTreader(SeaTreader s) {
+			treaderTarget = s;
+			if (s)
+				s.gameObject.GetComponent<C2CTreader>().attachStalker(this);
+		}
+		
+		void OnDestroy() {
+			if (treaderTarget)
+				treaderTarget.gameObject.GetComponent<C2CTreader>().removeStalker(this);
+		}
+
+		void OnDisable() {
+			OnDestroy();
+		}
+
+		void OnKill() {
+			OnDestroy();
 		}
 		
 		internal void triggerPtAggro(GameObject target, bool isNew = true) {
