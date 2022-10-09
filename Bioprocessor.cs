@@ -246,7 +246,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (salt != null && salt.Count >= 1) {
 							ObjectUtil.removeItem(sc, salt[0]);
 							saltRequired--;
-							SoundManager.playSoundAt(SoundManager.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
+							SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
 						else {
@@ -271,7 +271,7 @@ namespace ReikaKalseki.SeaToSea {
 									sc.container.AddItem(item.GetComponent<Pickupable>());
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
-									SoundManager.playSoundAt(SoundManager.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
+									SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString());
 								}
 								setRecipe(null);
@@ -335,7 +335,7 @@ namespace ReikaKalseki.SeaToSea {
 			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			if (has != had) {
-				SoundManager.playSoundAt(SoundManager.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
+				SoundManager.playSoundAt(SoundManager.buildSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 				if (has)
 					;//soundLoop.Play();
 				else

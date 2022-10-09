@@ -48,7 +48,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public void onUnequip() {
 	    	Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
-	    	SoundManager.playSoundAt(SoundManager.getSound(Player.main.IsUnderwater() ? "event:/player/Puke_underwater" : "event:/player/Puke"), Player.main.lastPosition, false, 12);
+	    	SoundManager.playSoundAt(SoundManager.buildSound(Player.main.IsUnderwater() ? "event:/player/Puke_underwater" : "event:/player/Puke"), Player.main.lastPosition, false, 12);
 	    }
 	    
 	    public void refreshGui() {

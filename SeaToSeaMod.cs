@@ -373,6 +373,7 @@ namespace ReikaKalseki.SeaToSea
     	//vent.registerWorldgen(BiomeType.KooshZone_Geyser, 1, 1F);
     	//vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
     	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
+    	//vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.5F);
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Ceiling, 1, 1.2F);
@@ -403,7 +404,6 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_LakePit_Floor, 0.4F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.BonesField_LakePit_Wall, 0.2F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.SkeletonCave_Lake_Floor, 0.2F, 1);
-    	vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.5F);
     	//CustomMaterials.getItem(CustomMaterials.Materials.).registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 8F);
     	/*
     	LootDistributionHandler.EditLootDistributionData(CraftData.GetClassIdForTechType(TechType.Magnetite), BiomeType.Dunes_ThermalVent, 2F, 1);

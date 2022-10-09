@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 	public static class C2CHooks {
 	    
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
+	    private static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -384,6 +385,10 @@ namespace ReikaKalseki.SeaToSea {
 	   		//	return 0;
 	   		Player p = dmg.target.GetComponentInParent<Player>();
 	   		if (p != null) {
+	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 20) {
+	   				dmg.amount = 0;
+	   				return;
+	   			}
 	   			bool seal = Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) != 0;
 	   			bool reinf = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0;
 	   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
@@ -534,6 +539,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getWaterTemperature(float ret, WaterTemperatureSimulation sim, Vector3 pos) {
+	    	if (Vector3.Distance(pos, mountainBaseGeoCenter) <= 20)
+	    		return Mathf.Min(ret, 45);
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(pos);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
