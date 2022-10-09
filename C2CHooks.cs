@@ -432,7 +432,9 @@ namespace ReikaKalseki.SeaToSea {
 					if (rh.transform != null && rh.transform.gameObject) {
 						DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
 						if (c && !c.currentlyHasPlatinum() && !c.gameObject.GetComponent<WaterParkCreature>()) {
-							c.triggerPtAggro(Player.main.gameObject);
+							float chance = Mathf.Clamp01(1F-Vector3.Distance(rh.transform.position, p.transform.position)/90F);
+							if (UnityEngine.Random.Range(0F, 1F) <= chance)
+								c.triggerPtAggro(Player.main.gameObject);
 						}
 					}
 				}
@@ -740,6 +742,12 @@ namespace ReikaKalseki.SeaToSea {
 				cc.targetPickedUp = false;
 				cc.shinyTarget = null;
 	    	}
+	    }
+	    
+	    public static void stalkerTryDropTooth(Stalker s) {
+	    	if (s.GetComponent<DeepStalkerTag>() && UnityEngine.Random.Range(0F, 1F) <= 0.8)
+	    		return;
+	    	s.LoseTooth();
 	    }
 	}
 }

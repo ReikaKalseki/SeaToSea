@@ -839,6 +839,9 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
         
+        RecipeUtil.modifyIngredients(TechType.AdvancedWiringKit, i => {if (i.techType == TechType.WiringKit) i.amount *= 2; return false;});
+        RecipeUtil.modifyIngredients(TechType.WiringKit, i => {i.amount = 3; return false;});
+        
         RecipeUtil.getRecipe(TechType.DisinfectedWater).craftAmount = 3;
         RecipeUtil.addIngredient(TechType.Bleach, chlorine.TechType, 1);
         RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.Bleach, 2);

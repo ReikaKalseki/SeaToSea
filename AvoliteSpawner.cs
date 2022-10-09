@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly Vector3 eventCenter = new Vector3(215, 425.6F, 2623.6F);
 		private readonly Vector3 eventUITargetLocation = new Vector3(297.2F, 3.5F, 1101);
-		private readonly Vector3 mountainCenter = new Vector3(356.3F, 29F, 1039.4F);
+		private readonly Vector3 mountainCenter = new Vector3(359.9F, 29F, 985.9F);
 		private readonly Vector3 biomeCenter = new Vector3(800, 0, 1300);//new Vector3(966, 0, 1336);
 		
 		private readonly Dictionary<string, int> itemChoices = new Dictionary<string, int>();
@@ -213,6 +213,15 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		bool isValidPosition(Vector3 pos) {
+			if (pos.y >= -100)
+				return false;
+			string biome = WaterBiomeManager.main.GetBiome(pos, false);
+			if (!string.Equals(biome, "mountains", StringComparison.InvariantCultureIgnoreCase))
+				return false;
+			return Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
+		}
+		
 		class SunbeamDebrisObject : Spawnable {
 			
 			public SunbeamDebrisObject() : base("SunbeamDebris", "", "") {
@@ -241,7 +250,11 @@ namespace ReikaKalseki.SeaToSea {
 			void Update() {
 				//SNUtil.writeToChat("SunbeamCheckPlayerRange > "+Story.StoryGoalManager.main.IsGoalComplete("SunbeamCheckPlayerRange"));
 				//SNUtil.writeToChat("sunbeamdebrishint > "+Story.StoryGoalManager.main.IsGoalComplete("sunbeamdebrishint"));
-				if (PDAManager.getPage("sunbeamdebrishint").isUnlocked()) {
+				if (!instance.isValidPosition(transform.position)) {
+					SNUtil.log("Invalid sunbeam debris location, deleting @ "+transform.position);
+					UnityEngine.Object.DestroyImmediate(gameObject);
+				}
+				else if (PDAManager.getPage("sunbeamdebrishint").isUnlocked()) {
 					PositionedPrefab pfb = instance.allocateItem(gameObject.transform);
 					if (pfb != null) {
 						SNUtil.log("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb.prefabName);

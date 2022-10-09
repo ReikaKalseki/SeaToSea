@@ -10,6 +10,9 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Crafting;
 
+using FMOD;
+using FMOD.Studio;
+
 using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
@@ -29,7 +32,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
-		private static readonly FMODAsset workingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "bioprocwork", "Sounds/bioproc-loop.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 16); SoundManager.setLooping(s);});
+		internal static Sound workingSoundReference;
+		internal static readonly FMODAsset workingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "bioprocwork", "Sounds/bioproc-loop.ogg", SoundManager.soundMode3D, s => {workingSoundReference = s; SoundManager.setup3D(s, 16); SoundManager.setLooping(s);});
 		
 		private static TechCategory bioprocCategory = TechCategory.Misc;
 		
@@ -157,6 +161,9 @@ namespace ReikaKalseki.SeaToSea {
 			
 			lgc.soundLoop = go.EnsureComponent<FMOD_CustomLoopingEmitter>();
 			lgc.soundLoop.asset = workingSound;
+			uint millis;
+			workingSoundReference.getLength(out millis, TIMEUNIT.MS);
+			lgc.soundLoop.length = millis/1000F;
 			
 			go.GetComponent<Constructable>().model = machineMdl;
 			go.GetComponent<ConstructableBounds>().bounds.extents = new Vector3(1.3F, 0.4F, 1.3F);
@@ -216,13 +223,15 @@ namespace ReikaKalseki.SeaToSea {
 				setEmissiveColor(new Color(1, 0, 1)); //error
 				return;
 			}
-			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
+			//SNUtil.writeToChat("I am ticking @ "+transform.position+": "+seconds);
 			if (seconds <= 0)
 				return;
 			if (!setCollision) {
 				Bioprocessor.setTerminalBox(gameObject);
 				setCollision = true;
 			}
+			
+			//soundLoop.attributes.position = transform.position.toFMODVector();
 			
 			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
@@ -237,7 +246,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (salt != null && salt.Count >= 1) {
 							ObjectUtil.removeItem(sc, salt[0]);
 							saltRequired--;
-							SNUtil.playSoundAt(SNUtil.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
+							SoundManager.playSoundAt(SoundManager.getSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 						}
 						else {
@@ -262,7 +271,7 @@ namespace ReikaKalseki.SeaToSea {
 									sc.container.AddItem(item.GetComponent<Pickupable>());
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
-									SNUtil.playSoundAt(SNUtil.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
+									SoundManager.playSoundAt(SoundManager.getSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString());
 								}
 								setRecipe(null);
@@ -271,10 +280,6 @@ namespace ReikaKalseki.SeaToSea {
 								setRecipe(null);
 							}
 						}
-					}
-					else if (DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= 1.0) {
-						lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
-						//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 					}
 				}
 				else {
@@ -292,6 +297,11 @@ namespace ReikaKalseki.SeaToSea {
 				setRecipe(null);
 				//SNUtil.writeToChat("Insufficient power");
 				setEmissiveColor(offlineColor);
+			}
+			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length+0.1F) {
+				lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
+				//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
+				SoundManager.playSoundAt(soundLoop.asset, gameObject.transform.position);
 			}
 		}
 		
@@ -317,6 +327,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void setRecipe(BioRecipe r) {
+			//SNUtil.writeToChat(r == null ? "null" : r.inputItem.AsString()+" > "+r.outputItem.AsString());
 			bool had = currentOperation != null;
 			bool has = r != null;
 			currentOperation = r;
@@ -324,7 +335,7 @@ namespace ReikaKalseki.SeaToSea {
 			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			if (has != had) {
-				SNUtil.playSoundAt(SNUtil.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
+				SoundManager.playSoundAt(SoundManager.getSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 				if (has)
 					;//soundLoop.Play();
 				else

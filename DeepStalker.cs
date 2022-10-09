@@ -42,8 +42,8 @@ namespace ReikaKalseki.SeaToSea {
 			
 			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, 0.25F, BiomeType.GrandReef_TreaderPath);
 	    
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.15F);
-	   		GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
+	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.15F);
+	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
 	   		
 	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
 	   		
@@ -127,6 +127,9 @@ namespace ReikaKalseki.SeaToSea {
 			
 			float dT = Time.deltaTime;
 			
+			if (render)
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, render, "Textures/Creature/DeepStalker");
+			
 			if (render && creatureComponent) {
 				float target = creatureComponent.Aggression.Value;
 				if (acuComponent) {
@@ -154,7 +157,7 @@ namespace ReikaKalseki.SeaToSea {
 				collectorComponent.shinyTarget.EnsureComponent<ResourceTrackerUpdater>().tracker = collectorComponent.shinyTarget.GetComponent<ResourceTracker>();
 			}
 			
-			if (currentForcedTarget && currentForcedTarget == Player.main.gameObject && UnityEngine.Random.Range(0F, 1F) <= 0.08F) {
+			if (currentForcedTarget && currentForcedTarget == Player.main.gameObject && UnityEngine.Random.Range(0F, 1F) <= 0.12F) {
 				if (has || time-lastPlayerBiteTime < 5 || Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) == 0) {
 					//SNUtil.writeToChat("Dropped player target");
 					playerHuntComponent.lastTarget.SetTarget(null);
@@ -199,7 +202,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (dist <= 30)  {
 						int amt = Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
 						//SNUtil.writeToChat("Counting platinum = "+amt);
-						if (amt > 0 && UnityEngine.Random.Range(0F, 1F) <= Mathf.Min(amt*0.08F, 0.8F)) {
+						if (amt > 0 && UnityEngine.Random.Range(0F, 1F) <= Mathf.Min(amt*0.06F, 0.67F)) {
 							triggerPtAggro(ep.gameObject);
 							flag = true;
 						}

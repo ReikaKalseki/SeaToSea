@@ -190,8 +190,8 @@ namespace ReikaKalseki.SeaToSea
 	class CrashMesaCallback : MonoBehaviour {
 			
 		void trigger() {
-			SNUtil.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
-			SNUtil.playSound("event:/player/story/RadioShallows22NoSignalAlt"); //"signal coordinates corrupted"
+			SoundManager.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
+			SoundManager.playSound("event:/player/story/RadioShallows22NoSignalAlt"); //"signal coordinates corrupted"
 			PDAManager.getPage("crashmesahint").unlock(false);
 		}
 		

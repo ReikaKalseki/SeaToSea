@@ -432,7 +432,7 @@ namespace ReikaKalseki.SeaToSea
 			void Update() {
 				float time = DayNightCycle.main.timePassedAsFloat;
 				//SNUtil.writeToChat(time+": ["+currentOre+"] > "+nextTime+"/"+lastSpawnTime+" > "+despawnTime);
-				if (currentOre != null && currentOre.gameObject != null && currentOre.gameObject.activeInHierarchy) {
+				if (currentOre && currentOre.gameObject && currentOre.gameObject.activeInHierarchy) {
 					float f = (float)MathUtil.linterpolate(time, lastSpawnTime, despawnTime, 0, 1);
 					if (f >= 1) {
 						destroyCurrent();
@@ -440,6 +440,8 @@ namespace ReikaKalseki.SeaToSea
 					else {
 						float f2 = f < 0.1 ? 1-f*10 : f;
 						foreach (Renderer r in currentRenderers) {
+							if (!r)
+								continue;
 							foreach (Material m in r.materials) {
 								m.SetFloat(ShaderPropertyID._Built, 0.75F-f2*0.3125F);
 							}

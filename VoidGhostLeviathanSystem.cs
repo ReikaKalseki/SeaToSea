@@ -79,7 +79,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		float delta = (float)Math.Max(30, UnityEngine.Random.Range(30F, 120F)*dist/1000);
 	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+delta;
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
-	    		SNUtil.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, vol);
+	    		SoundManager.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
 	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position)) {
 	    		spawnJustVisibleDistanceFX(ep);
@@ -261,7 +261,7 @@ namespace ReikaKalseki.SeaToSea {
 			gv.updateBehaviour = flag;
 			gv.AllowCreatureUpdates(gv.updateBehaviour);
 			if (spike && UnityEngine.Random.Range(0, 100) == 0) {
-				SNUtil.playSoundAt(SeaToSeaMod.voidspikeLeviFX, gv.gameObject.transform.position);
+				SoundManager.playSoundAt(SeaToSeaMod.voidspikeLeviFX, gv.gameObject.transform.position, false, 128);
 			}
 			if (flag || (spike && Vector3.Distance(main.transform.position, gv.transform.position) <= 50)) {
 				if (false) {

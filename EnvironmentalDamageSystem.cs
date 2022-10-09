@@ -228,7 +228,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    		if (used) {
 	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);/*
+	    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);/*
 			   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
 			        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
 			    	}*/
@@ -285,7 +285,7 @@ namespace ReikaKalseki.SeaToSea {
 				    float trash;
 				    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
 	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-	    				SNUtil.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+	    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
 				}
 	    	}
     	}
@@ -517,7 +517,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void setActive(bool active) {
-			overlay.SetActive(active);
+			if (overlay)
+				overlay.SetActive(active);
 		}
 		
 		public int CompareTo(object obj) {
@@ -622,7 +623,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal override void fire(RebreatherDepthWarnings warn) {
 			base.fire(warn);
 			
-			SNUtil.playSoundAt(EnvironmentalDamageSystem.instance.pdaBeep, Player.main.transform.position, false, -1);
+			SoundManager.playSoundAt(EnvironmentalDamageSystem.instance.pdaBeep, Player.main.transform.position, false, -1);
 		   	PDAManager.getPage("deepairuse").unlock();
 		}
 		
