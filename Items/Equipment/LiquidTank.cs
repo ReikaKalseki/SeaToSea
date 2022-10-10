@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 			get {return new Vector2int(3, 3);}
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			Oxygen o2 = go.EnsureComponent<Oxygen>();
 			o2.oxygenAvailable = 0;
 			o2.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY;

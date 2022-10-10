@@ -178,7 +178,7 @@ namespace ReikaKalseki.SeaToSea
 			useGravity = g;
 	    }
 	
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			ObjectUtil.removeComponent<MedicalCabinet>(go);
 			ObjectUtil.removeComponent<Fabricator>(go);
 			ObjectUtil.removeComponent<Centrifuge>(go);

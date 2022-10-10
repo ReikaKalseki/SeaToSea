@@ -178,7 +178,7 @@ namespace ReikaKalseki.SeaToSea {
 				foreach (RaycastHit rh in hit) {
 					if (rh.transform != null && rh.transform.gameObject) {
 						PlatinumTag pt = rh.transform.GetComponent<PlatinumTag>();
-						if (pt && !pt.gameObject.GetComponentInParent<Stalker>()) {
+						if (pt && pt.getTimeOnGround() >= 2.5F) {
 							//collectorComponent.shinyTarget = pt.gameObject;
 							loosePlatinum.Add(pt.gameObject);
 						}
@@ -249,6 +249,18 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
+		}
+		
+		public void OnShinyPickedUp(GameObject target) {
+			PlatinumTag pt = target.GetComponent<PlatinumTag>();
+			if (pt)
+				pt.pickup(this);
+		}
+		
+		public void OnShinyDropped(GameObject target) {
+			PlatinumTag pt = target.GetComponent<PlatinumTag>();
+			if (pt)
+				pt.drop();
 		}
 		
 		private void grab(GameObject go) {

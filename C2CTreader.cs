@@ -59,7 +59,7 @@ namespace ReikaKalseki.SeaToSea
 						}
 					}
 					if (dist <= 120)  {
-						RaycastHit[] hit = Physics.SphereCastAll(transform.position, 30, new Vector3(1, 1, 1), 30);
+						RaycastHit[] hit = Physics.SphereCastAll(transform.position, 60, new Vector3(1, 1, 1), 60);
 						int amt = 0;
 						foreach (RaycastHit rh in hit) {
 							if (rh.transform != null && rh.transform.gameObject) {

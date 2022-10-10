@@ -42,7 +42,7 @@ namespace ReikaKalseki.SeaToSea {
 			get {return new Vector2int(1, 2);}
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r0) {
+		public override void prepareGameObject(GameObject go, Renderer[] r0) {
 			base.prepareGameObject(go, r0);
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
@@ -91,47 +91,48 @@ namespace ReikaKalseki.SeaToSea {
 			child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 			child.EnsureComponent<TechTag>().type = TechType;
 			
-			Renderer r = child.GetComponentInChildren<Renderer>(true);
-			leavesOnlyRendering = leavesOnly;
-			if (leavesOnly) {
-				r.materials[0].color = new Color(0, 0, 0, 0);
-				//child.transform.localScale = new Vector3(1.1F, 1.5F, 1.1F);
-				r.materials[0].DisableKeyword("MARMO_EMISSION");
-				r.materials[0].DisableKeyword("MARMO_SPECMAP");
+			foreach (Renderer r in child.GetComponentsInChildren<Renderer>(true)) {
+				leavesOnlyRendering = leavesOnly;
+				if (leavesOnly) {
+					r.materials[0].color = new Color(0, 0, 0, 0);
+					//child.transform.localScale = new Vector3(1.1F, 1.5F, 1.1F);
+					r.materials[0].DisableKeyword("MARMO_EMISSION");
+					r.materials[0].DisableKeyword("MARMO_SPECMAP");
+				}
+				else {
+					r.materials[0].EnableKeyword("FX_KELP");
+					r.materials[0].SetVector("_Scale", new Vector4(0.7F, 0.4F, 0.8F, 0.4F));
+					r.materials[0].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+					r.materials[0].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
+					r.materials[0].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+					r.materials[0].SetFloat("_WaveUpMin", 0.4F);
+					r.materials[0].SetFloat("_minYpos", 1F);
+					r.materials[0].SetFloat("_maxYpos", 0F);
+				}
+				
+				r.materials[1].EnableKeyword("FX_KELP");
+				r.materials[1].SetFloat("_minYpos", 1F);
+				r.materials[1].SetFloat("_maxYpos", 0F);
+				if (leavesOnly) {
+					r.materials[1].SetVector("_Scale", new Vector4(0.5F, 0.3F, 0.5F, 0.4F));
+					r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+					r.materials[1].SetVector("_Speed", new Vector4(0.5F, 0.6F, 0.0F, 0.0F));
+					r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+					r.materials[1].SetFloat("_WaveUpMin", 0.25F);
+				}
+				else {
+					r.materials[1].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
+					r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
+					r.materials[1].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
+					r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+					r.materials[1].SetFloat("_WaveUpMin", 0.4F);
+				}
+				r.materials[0].SetColor("_GlowColor", GlowKelpTag.idleColor);
+				r.materials[1].SetColor("_GlowColor", GlowKelpTag.idleColor);
+				RenderUtil.makeTransparent(r, leavesOnly ? new HashSet<int>{0, 1} : new HashSet<int>{1});
+				RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
+				RenderUtil.swapToModdedTextures(r, this);
 			}
-			else {
-				r.materials[0].EnableKeyword("FX_KELP");
-				r.materials[0].SetVector("_Scale", new Vector4(0.7F, 0.4F, 0.8F, 0.4F));
-				r.materials[0].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
-				r.materials[0].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
-				r.materials[0].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-				r.materials[0].SetFloat("_WaveUpMin", 0.4F);
-				r.materials[0].SetFloat("_minYpos", 1F);
-				r.materials[0].SetFloat("_maxYpos", 0F);
-			}
-			
-			r.materials[1].EnableKeyword("FX_KELP");
-			r.materials[1].SetFloat("_minYpos", 1F);
-			r.materials[1].SetFloat("_maxYpos", 0F);
-			if (leavesOnly) {
-				r.materials[1].SetVector("_Scale", new Vector4(0.5F, 0.3F, 0.5F, 0.4F));
-				r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
-				r.materials[1].SetVector("_Speed", new Vector4(0.5F, 0.6F, 0.0F, 0.0F));
-				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-				r.materials[1].SetFloat("_WaveUpMin", 0.25F);
-			}
-			else {
-				r.materials[1].SetVector("_Scale", new Vector4(1.1F, 0.6F, 1.3F, 0.6F));
-				r.materials[1].SetVector("_Frequency", new Vector4(0.16F, 0.1F, 0.12F, 0.6F));
-				r.materials[1].SetVector("_Speed", new Vector4(1F, 0.8F, 0.0F, 0.0F));
-				r.materials[1].SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-				r.materials[1].SetFloat("_WaveUpMin", 0.4F);
-			}
-			r.materials[0].SetColor("_GlowColor", GlowKelpTag.idleColor);
-			r.materials[1].SetColor("_GlowColor", GlowKelpTag.idleColor);
-			RenderUtil.makeTransparent(r, leavesOnly ? new HashSet<int>{0, 1} : new HashSet<int>{1});
-			RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
-			RenderUtil.swapToModdedTextures(child.GetComponentInChildren<Renderer>(), this);
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {

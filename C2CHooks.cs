@@ -719,11 +719,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public static bool isObjectKnifeable(LiveMixin lv) {
+	    	if (!lv)
+	    		return true;
 	    	AlkaliPlantTag a = lv.GetComponent<AlkaliPlantTag>();
 	    	if (a) {
 	    		return a.isHarvestable();
 	    	}
-	    	return !lv || (!lv.weldable && lv.knifeable && !lv.GetComponent<EscapePod>());
+	    	return !lv.weldable && lv.knifeable && !lv.GetComponent<EscapePod>();
 	    }
 	    
 	    public static GameObject getStalkerShinyTarget(GameObject def, CollectShiny cc) {
@@ -751,10 +753,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void stalkerTryDropTooth(Stalker s) {
+	    public static bool stalkerTryDropTooth(Stalker s) {
 	    	if (s.GetComponent<DeepStalkerTag>() && UnityEngine.Random.Range(0F, 1F) <= 0.8)
-	    		return;
-	    	s.LoseTooth();
+	    		return false;
+	    	return s.LoseTooth();
 	    }
 	}
 }

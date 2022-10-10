@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			
 			
@@ -31,6 +31,10 @@ namespace ReikaKalseki.SeaToSea {
 	class PlatinumTag : MonoBehaviour {
 		
 		private float lastTime;
+		
+		private float lastPickupTime;
+		private float timeOnGround;
+		private DeepStalkerTag currentStalker;
 		
 		private ResourceTracker resource;
 		
@@ -47,6 +51,23 @@ namespace ReikaKalseki.SeaToSea {
 				gameObject.EnsureComponent<ResourceTrackerUpdater>().tracker = resource;
 			}
 			lastTime = time;
+			if (currentStalker)
+				timeOnGround = 0;
+			else
+				timeOnGround += dT;
+		}
+		
+		public void pickup(DeepStalkerTag s) {
+			currentStalker = s;
+			lastPickupTime = DayNightCycle.main.timePassedAsFloat;
+		} 
+		
+		public void drop() {
+			currentStalker = null;
+		}
+		
+		public float getTimeOnGround() {
+			return timeOnGround;
 		}
 		
 	}

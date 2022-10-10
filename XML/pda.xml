@@ -148,14 +148,13 @@
 		Lifepod 1 Crew Log #1
 	</name>
 	<pda>
-		--pod got stuck on part of the vehicle bay (the blood kelp trench wreck) coming down
-		---khasar-entry-style recording of the incident as it happens
+		--todo--
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/bkelpbase.ogg
+		Sounds/bkelp-pda-entry-bcg.ogg
 	</audio>
   </bkelpbase>
   <bkelpbase2>

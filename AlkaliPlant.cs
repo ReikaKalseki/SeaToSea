@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 			get {return new Vector2int(2, 2);}
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<AlkaliPlantTag>();
 			go.transform.localScale = Vector3.one*2;
@@ -49,13 +49,15 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			p.modelEulerAngles = new Vector3(270*0, UnityEngine.Random.Range(0, 360F), 0);*/
 			go.EnsureComponent<LiveMixin>().data.maxHealth /= 2;
-			foreach (Material m in r.materials) {
-				m.SetColor("_GlowColor", new Color(1, 1, 1, 1));
-				m.SetVector("_Scale", new Vector4(0.35F, 0.2F, 0.1F, 0.0F));
-				m.SetVector("_Frequency", new Vector4(1.2F, 0.5F, 1.5F, 0.5F));
-				m.SetVector("_Speed", new Vector4(0.2F, 0.5F, 1.5F, 0.5F));
-				m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
-				m.SetFloat("_WaveUpMin", 0F);
+			foreach (Renderer rr in r) {
+				foreach (Material m in rr.materials) {
+					m.SetColor("_GlowColor", new Color(1, 1, 1, 1));
+					m.SetVector("_Scale", new Vector4(0.35F, 0.2F, 0.1F, 0.0F));
+					m.SetVector("_Frequency", new Vector4(1.2F, 0.5F, 1.5F, 0.5F));
+					m.SetVector("_Speed", new Vector4(0.2F, 0.5F, 1.5F, 0.5F));
+					m.SetVector("_ObjectUp", new Vector4(1F, 1F, 1F, 1F));
+					m.SetFloat("_WaveUpMin", 0F);
+				}
 			}
 		}
 		
@@ -126,8 +128,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private bool canSeePlayer(Player ep) {
-			if (ep.GetVehicle())
-				return true;
+			if (ep.IsInBase())
+				return false;
+			Vehicle v = ep.GetVehicle();
+			if (v)
+				return Vector3.Distance(v.transform.position, transform.position) <= 4 || (v.useRigidbody && v.GetComponent<Rigidbody>().velocity.magnitude > 0.1);
 			Vector3 pos1 = ep.transform.position;
 			Vector3 pos2 = transform.position+transform.up.normalized*0.5F;
 			if (WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2))

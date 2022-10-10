@@ -19,16 +19,18 @@ namespace ReikaKalseki.SeaToSea {
 			collectSound = "event:/loot/pickup_quartz";
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
-			base.prepareGameObject(go, r);
-			RenderUtil.makeTransparent(r);
-			r.sharedMaterial.SetFloat("_Fresnel", 0.65F);
-			r.sharedMaterial.SetFloat("_Shininess", 15F);
-			r.sharedMaterial.SetFloat("_SpecInt", 18F);
-			r.materials[0].SetFloat("_Fresnel", 0.6F);
-			r.materials[0].SetFloat("_Shininess", 15F);
-			r.materials[0].SetFloat("_SpecInt", 18F);
-			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+		public override void prepareGameObject(GameObject go, Renderer[] r0) {
+			base.prepareGameObject(go, r0);
+			foreach (Renderer r in r0) {
+				RenderUtil.makeTransparent(r);
+				r.sharedMaterial.SetFloat("_Fresnel", 0.65F);
+				r.sharedMaterial.SetFloat("_Shininess", 15F);
+				r.sharedMaterial.SetFloat("_SpecInt", 18F);
+				r.materials[0].SetFloat("_Fresnel", 0.6F);
+				r.materials[0].SetFloat("_Shininess", 15F);
+				r.materials[0].SetFloat("_SpecInt", 18F);
+				r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+			}
 			
 			Light l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;

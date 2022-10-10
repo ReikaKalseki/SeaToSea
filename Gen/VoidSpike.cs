@@ -340,7 +340,7 @@ namespace ReikaKalseki.SeaToSea
 				level = lvl;
 		    }
 	
-			public override void prepareGameObject(GameObject go, Renderer r) {
+			public override void prepareGameObject(GameObject go, Renderer[] r) {
 				LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
 				lw.cellLevel = level;
 			}
@@ -528,7 +528,7 @@ namespace ReikaKalseki.SeaToSea
 				isCenter = c;
 		    }
 	
-			public override void prepareGameObject(GameObject go, Renderer r) {
+			public override void prepareGameObject(GameObject go, Renderer[] r) {
 				base.prepareGameObject(go, r);
 				go.EnsureComponent<SpikeHook>();
 				if (isCenter) {

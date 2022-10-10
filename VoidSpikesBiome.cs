@@ -269,7 +269,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 	
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			LargeWorldEntity lw = go.EnsureComponent<LargeWorldEntity>();
 			lw.cellLevel = LargeWorldEntity.CellLevel.Batch;
 			AtmosphereVolume vol = go.EnsureComponent<AtmosphereVolume>();

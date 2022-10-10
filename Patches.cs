@@ -1086,7 +1086,7 @@ namespace ReikaKalseki.SeaToSea {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "Stalker", "LoseTooth", true, new Type[0]);
-				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "stalkerTryDropTooth", false, typeof(Stalker));
+				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "stalkerTryDropTooth", false, typeof(Stalker));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

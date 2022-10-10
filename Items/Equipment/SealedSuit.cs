@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 			get {return new Vector2int(2, 2);}
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			
 		}
 		

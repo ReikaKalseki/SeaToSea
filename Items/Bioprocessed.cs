@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 		}
 

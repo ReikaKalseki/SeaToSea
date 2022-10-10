@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea {
 			get {return new Vector2int(1, 1);}
 		}
 		
-		public override void prepareGameObject(GameObject go, Renderer r) {
+		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<HealingFlowerTag>();
 		}
