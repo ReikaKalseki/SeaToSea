@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 			addIngredient(TechType.FiberMesh, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 			addIngredient(TechType.Titanium, 1);
-			addIngredient(TechType.Pipe, 7);
+			addIngredient(TechType.Pipe, 15);
 		}
 
 		public override bool UnlockedAtStart {

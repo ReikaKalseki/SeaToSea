@@ -76,6 +76,8 @@ namespace ReikaKalseki.SeaToSea {
 		private float platinumGrabTime = -1;
 		private float lastAreaCheck = -1;
 		
+		private float targetCooldown = 0;
+		
 		private GameObject currentForcedTarget;
 		
 		private SeaTreader treaderTarget;
@@ -149,74 +151,98 @@ namespace ReikaKalseki.SeaToSea {
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			
-			bool has = currentlyHasPlatinum();
-			if (has) {
+			if (time < targetCooldown) {
 				playerHuntComponent.lastTarget.SetTarget(null);
 				currentForcedTarget = null;
-				creatureComponent.Aggression.Add(-0.15F);
-				collectorComponent.shinyTarget.EnsureComponent<ResourceTrackerUpdater>().tracker = collectorComponent.shinyTarget.GetComponent<ResourceTracker>();
+				collectorComponent.DropShinyTarget();
 			}
-			
-			if (currentForcedTarget && currentForcedTarget == Player.main.gameObject && UnityEngine.Random.Range(0F, 1F) <= 0.12F) {
-				if (has || time-lastPlayerBiteTime < 5 || Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) == 0) {
-					//SNUtil.writeToChat("Dropped player target");
+			else {
+				bool has = currentlyHasPlatinum();
+				if (has) {
 					playerHuntComponent.lastTarget.SetTarget(null);
 					currentForcedTarget = null;
+					creatureComponent.Aggression.Add(-0.15F);
+					collectorComponent.shinyTarget.EnsureComponent<ResourceTrackerUpdater>().tracker = collectorComponent.shinyTarget.GetComponent<ResourceTracker>();
 				}
-			}
-			
-			if (currentForcedTarget && time-platinumGrabTime <= 12) {
-				triggerPtAggro(currentForcedTarget, false);
-			}
-			else if (!has && !currentForcedTarget && time-lastAreaCheck >= 1) {
-				lastAreaCheck = time;
-				if (!treaderTarget || !treaderTarget.gameObject.activeInHierarchy || Vector3.Distance(treaderTarget.transform.position, transform.position) >= 120)
-					bindToTreader(WorldUtil.getClosest<SeaTreader>(gameObject));
-				List<GameObject> loosePlatinum = new List<GameObject>();
-				List<CollectShiny> stalkersWithPlatinum = new List<CollectShiny>();
-				RaycastHit[] hit = Physics.SphereCastAll(transform.position, 40, new Vector3(1, 1, 1), 40);
-				foreach (RaycastHit rh in hit) {
-					if (rh.transform != null && rh.transform.gameObject) {
-						PlatinumTag pt = rh.transform.GetComponent<PlatinumTag>();
-						if (pt && pt.getTimeOnGround() >= 2.5F) {
-							//collectorComponent.shinyTarget = pt.gameObject;
-							loosePlatinum.Add(pt.gameObject);
-						}
-						CollectShiny c = rh.transform.gameObject.GetComponent<CollectShiny>();
-						if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
-							//collectorComponent.shinyTarget = c.shinyTarget;
-							//triggerPtAggro(c.gameObject);
-							//break;
-							stalkersWithPlatinum.Add(c);
-						}
+				
+				if (currentForcedTarget && currentForcedTarget == Player.main.gameObject && UnityEngine.Random.Range(0F, 1F) <= 0.12F) {
+					if (has || time-lastPlayerBiteTime < 5 || Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) == 0) {
+						//SNUtil.writeToChat("Dropped player target");
+						playerHuntComponent.lastTarget.SetTarget(null);
+						currentForcedTarget = null;
 					}
 				}
-				bool flag = false;
-				if (loosePlatinum.Count > 0) {
-					collectorComponent.shinyTarget = loosePlatinum[UnityEngine.Random.Range(0, loosePlatinum.Count)];
-					flag = true;
+				
+				if (currentForcedTarget && time-platinumGrabTime <= 12) {
+					triggerPtAggro(currentForcedTarget, false);
 				}
-				else {
-					Player ep = Player.main;
-					float dist = Vector3.Distance(ep.transform.position, transform.position);
-					if (dist <= 30)  {
-						int amt = Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
-						//SNUtil.writeToChat("Counting platinum = "+amt);
-						if (amt > 0 && UnityEngine.Random.Range(0F, 1F) <= Mathf.Min(amt*0.06F, 0.67F)) {
-							triggerPtAggro(ep.gameObject);
-							flag = true;
+				else if (!has && !currentForcedTarget && time-lastAreaCheck >= 1 && !GetComponent<WaterParkCreature>()) {
+					lastAreaCheck = time;
+					if (!treaderTarget || !treaderTarget.gameObject.activeInHierarchy || Vector3.Distance(treaderTarget.transform.position, transform.position) >= 120)
+						bindToTreader(WorldUtil.getClosest<SeaTreader>(gameObject));
+					List<GameObject> loosePlatinum = new List<GameObject>();
+					List<CollectShiny> stalkersWithPlatinum = new List<CollectShiny>();
+					RaycastHit[] hit = Physics.SphereCastAll(transform.position, 40, new Vector3(1, 1, 1), 40);
+					foreach (RaycastHit rh in hit) {
+						if (rh.transform != null && rh.transform.gameObject) {
+							PlatinumTag pt = rh.transform.GetComponent<PlatinumTag>();
+							if (pt && pt.getTimeOnGround() >= 2.5F) {
+								//collectorComponent.shinyTarget = pt.gameObject;
+								loosePlatinum.Add(pt.gameObject);
+							}
+							CollectShiny c = rh.transform.gameObject.GetComponent<CollectShiny>();
+							if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
+								//collectorComponent.shinyTarget = c.shinyTarget;
+								//triggerPtAggro(c.gameObject);
+								//break;
+								stalkersWithPlatinum.Add(c);
+							}
 						}
 					}
-				}
-				if (!flag && stalkersWithPlatinum.Count > 0) {
-					CollectShiny c = stalkersWithPlatinum[UnityEngine.Random.Range(0, stalkersWithPlatinum.Count)];
-					collectorComponent.shinyTarget = c.shinyTarget;
-					triggerPtAggro(c.gameObject);
+					bool flag = false;
+					if (loosePlatinum.Count > 0) {
+						collectorComponent.shinyTarget = loosePlatinum[UnityEngine.Random.Range(0, loosePlatinum.Count)];
+						flag = true;
+					}
+					else {
+						Player ep = Player.main;
+						float dist = Vector3.Distance(ep.transform.position, transform.position);
+						if (dist <= 30)  {
+							int amt = Inventory.main.GetPickupCount(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
+							//SNUtil.writeToChat("Counting platinum = "+amt);
+							if (amt > 0 && UnityEngine.Random.Range(0F, 1F) <= Mathf.Min(amt*0.06F, 0.67F)) {
+								triggerPtAggro(ep.gameObject);
+								flag = true;
+							}
+						}
+					}
+					if (!flag && stalkersWithPlatinum.Count > 0) {
+						CollectShiny c = stalkersWithPlatinum[UnityEngine.Random.Range(0, stalkersWithPlatinum.Count)];
+						collectorComponent.shinyTarget = c.shinyTarget;
+						triggerPtAggro(c.gameObject);
+					}
 				}
 			}
-			if (!currentForcedTarget && treaderTarget && Vector3.Distance(transform.position, treaderTarget.transform.position) >= 80) {
-				swimmer.SwimTo(treaderTarget.transform.position, 20);
+			if (!currentForcedTarget && !GetComponent<WaterParkCreature>()) {
+				float distp = Vector3.Distance(transform.position, Player.main.transform.position);
+				if (distp >= 200) {
+					destroyFar();
+				}
+				else if (treaderTarget) {
+					float dist = Vector3.Distance(transform.position, treaderTarget.transform.position);
+					if (dist >= 150 && distp >= 30) {
+						destroyFar();
+					}
+					else if (dist >= 80) {
+						swimmer.SwimTo(treaderTarget.transform.position, 20);	
+					}
+				}
 			}
+		}
+		
+		private void destroyFar() {
+			collectorComponent.DropShinyTarget();
+			UnityEngine.Object.DestroyImmediate(gameObject);
 		}
 		
 		public bool isAlive() {
@@ -225,6 +251,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public bool currentlyHasPlatinum() {
 			return collectorComponent && collectorComponent.targetPickedUp && collectorComponent.shinyTarget && collectorComponent.shinyTarget.GetComponent<PlatinumTag>();
+		}
+		
+		internal void onHitWithElectricDefense() {
+			currentForcedTarget = null;
+			targetCooldown = DayNightCycle.main.timePassedAsFloat+12;
+			creatureComponent.Aggression.Add(-1F);
+			collectorComponent.DropShinyTarget();
+			collectorComponent.timeNextFindShiny = targetCooldown;
 		}
 		
 		public void OnMeleeAttack(GameObject target) {
@@ -293,8 +327,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void triggerPtAggro(GameObject target, bool isNew = true) {
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time < targetCooldown)
+				return;
+			if (GetComponent<WaterParkCreature>())
+				return;
 			if (isNew) {
-				platinumGrabTime = DayNightCycle.main.timePassedAsFloat;
+				platinumGrabTime = time;
 				//SNUtil.writeToChat(this+" aimed at "+target);
 			}
 			else {

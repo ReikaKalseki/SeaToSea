@@ -448,12 +448,13 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidGhostLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
     }
     
     public static void spawnVentKelp(float dist) {
 		  GameObject obj = ObjectUtil.createWorldObject(kelp.ClassID, true, false);
 		  obj.SetActive(false);
-		  obj.transform.position = Player.main.transform.position+Player.main.transform.forward*dist;
+		  obj.transform.position = Player.main.transform.position+MainCamera.camera.transform.forward.normalized*dist;
 		  LargeWorld.main.streamer.cellManager.RegisterEntity(obj);
 		  obj.SetActive(true);
     }

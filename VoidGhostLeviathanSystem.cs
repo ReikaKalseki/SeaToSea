@@ -23,11 +23,41 @@ namespace ReikaKalseki.SeaToSea {
 	    private static GameObject voidLeviathan;
 	    private static GameObject redirectedTarget;
 	    
+	    private static GameObject distantSparkFX;
+	    
 	    private static readonly double MAXDEPTH = 2000;//800;
 	    
 	    private readonly List<FMODAsset> distantRoars = new List<FMODAsset>();
 	    
 	    private float nextDistantRoarTime = -1;
+	    
+	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
+	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc"),
+	    	new DistantFX("6e4b4259-becc-4d2c-b56a-03ccedbc4672"),
+	    	new DistantFX("3274b205-b153-41b6-9736-f3972e38f0ad"),
+	    	new DistantFX("04781674-e27a-43ce-891f-a82781314c15", 2.5F, 5, 0.5F, go => {
+	    		go.transform.rotation = UnityEngine.Random.rotationUniform;
+	    		go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.75F, 1.5F);
+	    	}), //lavafall base
+	    };
+	    
+	    class DistantFX {
+	    	
+	    	internal readonly string prefab;
+	    	internal readonly float distanceScalar;
+	    	internal readonly float lifeScalar;
+	    	internal readonly float speedScalar;
+	    	internal readonly Action<GameObject> modification;
+	    	
+	    	internal DistantFX(string pfb, float d = 1, float l = 1, float s = 1, Action<GameObject> a = null) {
+	    		prefab = pfb;
+	    		distanceScalar = d;
+	    		lifeScalar = l;
+	    		speedScalar = s;
+	    		modification = a;
+	    	}
+	    	
+	    }
 		
 		private VoidGhostLeviathanSystem() {
 	    	for (int i = 0; i <= 2; i++) {
@@ -36,22 +66,36 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public void deleteVoidLeviathan() {
-	    	if (voidLeviathan != null)
+	    	if (voidLeviathan)
 	    		UnityEngine.Object.DestroyImmediate(voidLeviathan);
 	    	voidLeviathan = null;
 	    }
 	    
 	    public void deleteGhostTarget() {
-	    	if (redirectedTarget != null)
+	    	if (redirectedTarget)
 	    		UnityEngine.Object.DestroyImmediate(redirectedTarget);
 	    	redirectedTarget = null;
 	    }
 	    
 	    private GameObject getOrCreateTarget() {
-	    	if (redirectedTarget == null) {
-	    		redirectedTarget = null;
+	    	if (!redirectedTarget) {
+	    		redirectedTarget = new GameObject("Void Ghost Target");
 	    	}
 	    	return redirectedTarget;
+	    }
+	    
+	    private GameObject getOrCreateSparkFX(DistantFX fx) {
+	    	if (!distantSparkFX) {
+	    		distantSparkFX = ObjectUtil.createWorldObject(fx.prefab); //or ff8e782e-e6f3-40a6-9837-d5b6dcce92bc
+	    		distantSparkFX.EnsureComponent<VoidSparkFX>();
+	    	}
+	    	return distantSparkFX;
+	    }
+	    
+	    private GameObject createSparkSphere(SeaMoth sm) {
+			ElectricalDefense def = sm.seamothElectricalDefensePrefab.GetComponent<ElectricalDefense>();
+			GameObject sphere = def.fxElecSpheres[0];
+	    	return Utils.SpawnZeroedAt(sphere, sm.transform, false);
 	    }
 	    
 	    public void playDistantRoar(Player ep) {
@@ -61,15 +105,21 @@ namespace ReikaKalseki.SeaToSea {
 	    		return;
 	    	if (voidLeviathan && voidLeviathan.activeInHierarchy && Vector3.Distance(voidLeviathan.transform.position, ep.transform.position) <= 200)
 	    		return;
+	    	doDistantRoar(ep);
+	    }
+	    
+	    internal void doDistantRoar(Player ep, bool forceSpark = false, bool forceEMP = false) {
 	    	FMODAsset roar = null;
 	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position, true);
 	    	string biome = ep.GetBiomeString();
 	    	//SNUtil.writeToChat(dist+" @ "+biome);
 	    	float vol = 1;
+	    	bool inBiome = false;
 	    	if (dist <= VoidSpikesBiome.biomeVolumeRadius) {
 	    		roar = distantRoars[UnityEngine.Random.Range(1, distantRoars.Count-1)];
 	    		float dd = Vector3.Distance(ep.transform.position, VoidSpikesBiome.end900m);
 	    		vol = Mathf.Clamp01(2-dd/400F);
+	    		inBiome = true;
 	    	}
 	    	else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.biomeName || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
 	    		roar = distantRoars[0];
@@ -81,20 +131,47 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
 	    		SoundManager.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position)) {
+	    	if (forceSpark || inBiome) {
 	    		spawnJustVisibleDistanceFX(ep);
+	    	}
+	    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
+	    		float chance = Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
+	    		if (UnityEngine.Random.Range(0F, 1F) <= chance)
+	    			shutdownSeamoth(ep);
 	    	}
 	    }
 	    
-	    public void spawnJustVisibleDistanceFX(Player ep) {
-	    	float range = UnityEngine.Random.Range(50F, 75F);
-	    	Vector3 pos = ep.transform.position+ep.transform.forward*range;
-	    	pos = MathUtil.getRandomVectorAround(pos, 30);
+	    private void spawnJustVisibleDistanceFX(Player ep) {
+	    	float range = UnityEngine.Random.Range(30F, 40F);
+	    	DistantFX type = distantFXList[UnityEngine.Random.Range(0, distantFXList.Count)];
+	    	range *= type.distanceScalar;
+	    	Vector3 pos = ep.transform.position+/*ep.transform.forward*/MainCamera.camera.transform.forward.normalized*range;
+	    	pos = MathUtil.getRandomVectorAround(pos, 20);
 	    	Vector3 dist = pos-ep.transform.position;
-	    	dist.setLength(range);
+	    	dist = dist.setLength(range);
 	    	pos = ep.transform.position+dist;
-	    	
-	    	
+	    	GameObject go = getOrCreateSparkFX(type);
+	    	go.transform.position = pos;
+	    	go.transform.localScale = Vector3.one*UnityEngine.Random.Range(1.5F, 2.5F);
+	    	if (type.modification != null)
+	    		type.modification(distantSparkFX);
+	    	VoidSparkFX fx = go.GetComponent<VoidSparkFX>();
+	    	fx.relativePosition = dist;
+	    	float speed = UnityEngine.Random.Range(2.5F, 10F)+(range-30)*0.5F;
+	    	if (UnityEngine.Random.Range(0F, 1F) <= 0.2F)
+	    		speed *= 3;
+	    	speed *= type.speedScalar;
+	    	fx.velocity = MathUtil.getRandomVectorAround(Vector3.zero, 1).normalized*speed;
+	    	go.SetActive(true);
+	    	UnityEngine.Object.Destroy(go, UnityEngine.Random.Range(0.33F, 0.75F)*type.lifeScalar);
+	    }
+	    
+	    private void shutdownSeamoth(Player ep) {
+	    	Vehicle v = ep.GetVehicle();
+	    	if (v && v is SeaMoth) {
+	    		createSparkSphere((SeaMoth)v).SetActive(true);
+	    		v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F));
+	    	}
 	    }
     
 	    public bool isSpawnableVoid(string biome) {
@@ -283,14 +360,16 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private double getAvoidanceChance(Player ep, SeaMoth sm, bool edge, bool far) {
 	    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
-	    	if (pinged != null && pinged.getTimeSince() <= 10000)
+	    	if (pinged != null && pinged.getTimeSince() <= 30)
 	    		return 0;
 	    	double minDist = double.PositiveInfinity;
 	    	foreach (GameObject go in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
 	    		float dist = Vector3.Distance(go.transform.position, sm.transform.position);
 	    		minDist = Math.Min(dist, minDist);
 	    	}
-	    	double frac2 = double.IsPositiveInfinity(minDist) ? 0 : Math.Max(0, (120-minDist)/120D);
+	    	double frac2 = double.IsPositiveInfinity(minDist) || double.IsNaN(minDist) ? 0 : Math.Max(0, 1-minDist/120D);
+	    	if (frac2 >= 1)
+	    		return 0;
 	    	double depth = -sm.transform.position.y;
 	    	if (depth < MAXDEPTH)
 	    		return 1;
@@ -302,15 +381,15 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public void tagSeamothSonar(SeaMoth sm) {
 	    	SonarPinged ping = sm.gameObject.EnsureComponent<SonarPinged>();
-	    	ping.lastPing = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+	    	ping.lastPing = DayNightCycle.main.timePassedAsFloat;
 	    }
     
 	    private class SonarPinged : MonoBehaviour {
 	    	
-	    	internal long lastPing;
+	    	internal float lastPing;
 	    	
-	    	internal long getTimeSince() {
-	    		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-lastPing;
+	    	internal float getTimeSince() {
+	    		return DayNightCycle.main.timePassedAsFloat-lastPing;
 	    	}
 	    }
 	
@@ -329,6 +408,17 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 		}
+	    
+	    private class VoidSparkFX : MonoBehaviour {
+	    	
+	    	internal Vector3 velocity;
+	    	internal Vector3 relativePosition;
+			
+			void Update() {
+	    		gameObject.transform.position =  gameObject.transform.position+velocity*Time.deltaTime;
+			}
+	    	
+	    }
 		
 	}
 	

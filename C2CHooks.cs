@@ -11,6 +11,7 @@ using SMLHelper.V2.Utility;
 
 using UnityEngine;
 
+using ReikaKalseki.AqueousEngineering;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
@@ -33,6 +34,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
 	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
 	    	DIHooks.getBiomeEvent += getBiomeAt;
+	    	
+	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -389,17 +392,25 @@ namespace ReikaKalseki.SeaToSea {
 	   				dmg.amount = 0;
 	   				return;
 	   			}
-	   			bool seal = Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) != 0;
-	   			bool reinf = Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) != 0;
-	   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
-	   				dmg.amount *= seal ? 0.2F : 0.4F;
-	   				dmg.amount -= seal ? 10 : 7.5F;
-	   				if (dmg.amount < 0)
-	   					dmg.amount = 0;
+	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
+	   			bool seal = suit != null && suit.item.GetTechType() == SeaToSeaMod.sealSuit.TechType;
+	   			bool reinf = suit != null && suit.item.GetTechType() == TechType.ReinforcedDiveSuit;
+	   			if (seal || reinf) {
+		   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
+		   				dmg.amount *= seal ? 0.2F : 0.4F;
+		   				dmg.amount -= seal ? 10 : 7.5F;
+		   				if (dmg.amount < 0)
+		   					dmg.amount = 0;
+		   			}
 	   			}
 	   		}
-	   		if ((dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture) && dmg.target.GetComponent<DeepStalkerTag>()) {
-	   			dmg.amount *= 0.5F; //50% resistance to "factorio physical" damage
+	   		if (dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture || dmg.type == DamageType.Electrical) {
+	   			DeepStalkerTag s = dmg.target.GetComponent<DeepStalkerTag>();
+	   			if (s) {
+	   				if (dmg.type == DamageType.Electrical)
+	   					s.onHitWithElectricDefense();
+	   				dmg.amount *= 0.5F; //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
+	   			}
 	   		}
 		}
 	   
@@ -428,7 +439,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
-					Player.main.gameObject.GetComponentInParent<LiveMixin>().TakeDamage(25, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
+	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
+					lv.TakeDamage(lv.maxHealth/4F, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
@@ -660,6 +672,15 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void pulseSeamothDefence(SeaMoth sm) {
 	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
+	    }
+	    
+	    public static void onBaseSonarPinged(GameObject go) {
+	    	if (VoidSpikesBiome.instance.isInBiome(go.transform.position)) {
+	    		Player ep = Player.main;
+	    		Vehicle v = ep.GetVehicle();
+	    		if (v && v is SeaMoth && VoidSpikesBiome.instance.isInBiome(ep.transform.position))
+	    			VoidGhostLeviathanSystem.instance.tagSeamothSonar((SeaMoth)v);
+	    	}
 	    }
 	    
 	    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {

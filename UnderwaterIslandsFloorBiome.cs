@@ -87,7 +87,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (boost <= 0)
 				return 0;
 			boost /= 1+(float)getDistanceToBiome(pos)*0.01F;
-			return Mathf.Min(boost, 200-baseline);
+			float ret = Mathf.Min(boost, 200-baseline);
+			float dist = (float)MathUtil.getDistanceToLineSegment(pos, wreckCtrPos1, wreckCtrPos2);
+			if (dist <= 40) {
+				ret *= Mathf.Clamp01(dist/30F);
+			}
+			return ret;
 		}
 		
 		public bool isAtmoFX(PrefabIdentifier pi) {
