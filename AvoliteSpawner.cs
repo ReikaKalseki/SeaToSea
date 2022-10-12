@@ -13,6 +13,7 @@ using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Exscansion;
 using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
@@ -89,6 +90,8 @@ namespace ReikaKalseki.SeaToSea {
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
 			
 			avo = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).ClassID;
+			
+			ESHooks.scannabilityEvent += isItemMapRoomDetectable;
 		}
 		
 		private void loadSave() {
@@ -222,9 +225,15 @@ namespace ReikaKalseki.SeaToSea {
 			return Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
 		}
 		
+		bool isItemMapRoomDetectable(ResourceTracker rt) {
+			if (rt.techType == spawnerObject.TechType || rt.overrideTechType == spawnerObject.TechType)
+				return PDAManager.getPage("sunbeamdebrishint").isUnlocked();
+			return true;
+		}
+		
 		class SunbeamDebrisObject : Spawnable {
 			
-			public SunbeamDebrisObject() : base("SunbeamDebris", "", "") {
+			public SunbeamDebrisObject() : base("SunbeamDebris", "Sunbeam Debris", "Dropped salvageable material from the Sunbeam.") {
 				
 			}
 			
@@ -233,13 +242,15 @@ namespace ReikaKalseki.SeaToSea {
 				go.SetActive(false);
 				ObjectUtil.removeComponent<Pickupable>(go);
 				ObjectUtil.removeComponent<Collider>(go);
-				ObjectUtil.removeComponent<ResourceTrackerUpdater>(go);
-				ObjectUtil.removeComponent<ResourceTracker>(go);
+				//ObjectUtil.removeComponent<ResourceTrackerUpdater>(go);
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<SunbeamDebris>();
 				foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 					r.enabled = false;
 				}
+				ResourceTracker rt = go.EnsureComponent<ResourceTracker>();
+				rt.techType = TechType;
+				rt.overrideTechType = TechType;
 				return go;
 			}
 			

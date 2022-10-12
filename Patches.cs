@@ -1119,6 +1119,27 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	*/
+	
+	[HarmonyPatch(typeof(Inventory))]
+	[HarmonyPatch("ExecuteItemAction")]
+	public static class EatInterception {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "Survival", "Eat", true, new Type[]{typeof(GameObject)});
+				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "TryEat", false, typeof(Survival), typeof(GameObject));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
 	static class PatchLib {
 	/*
 		internal static void patchCellGet(List<CodeInstruction> codes) {

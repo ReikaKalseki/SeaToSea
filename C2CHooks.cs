@@ -20,6 +20,7 @@ namespace ReikaKalseki.SeaToSea {
 	public static class C2CHooks {
 	    
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
+	    private static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
 	    private static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
@@ -144,15 +145,21 @@ namespace ReikaKalseki.SeaToSea {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    		UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
 	    		
+	    		if (Vector3.Distance(ep.transform.position, crashMesa) <= 150) {
+	    			IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
+	    			if (tgt != null) {
+	    				GameObject go = tgt.GetGameObject();
+	    				go.GetComponent<SwimBehaviour>().SwimTo(MathUtil.getRandomVectorAround(crashMesa, 30).setY(crashMesa.y), 20);
+	    				go.GetComponent<Creature>().Aggression.Add(1);
+	    				go.GetComponent<MeleeAttack>().lastTarget.SetTarget(ep.gameObject);
+	    			}
+	    		}
+	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
-					EcoRegionManager ecoRegionManager = EcoRegionManager.main;
-					if (ecoRegionManager != null) {
-						IEcoTarget ecoTarget = ecoRegionManager.FindNearestTarget(EcoTargetType.HeatArea, ep.transform.position, null, 3);
-						if (ecoTarget != null) {
-							ventDist = Vector3.Distance(ecoTarget.GetPosition(), ep.transform.position);
-						}
-					}
+					IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.HeatArea, ep.transform.position, null, 3);
+					if (tgt != null)
+						ventDist = Vector3.Distance(tgt.GetPosition(), ep.transform.position);
 					if (ventDist >= 0 && ventDist <= 25) {
 						float f = Math.Min(1, (40-ventDist)/32F);
 			    		foreach (InventoryItem item in Inventory.main.container) {
@@ -655,23 +662,23 @@ namespace ReikaKalseki.SeaToSea {
 	    }*/
     
 	    public static bool isSpawnableVoid(string biome) {
-	    	return VoidGhostLeviathanSystem.instance.isSpawnableVoid(biome);
+	    	return VoidSpikeLeviathanSystem.instance.isSpawnableVoid(biome);
 	    }
 	    
 	    public static GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
-	    	return VoidGhostLeviathanSystem.instance.getVoidLeviathan(spawner, pos);
+	    	return VoidSpikeLeviathanSystem.instance.getVoidLeviathan(spawner, pos);
 	    }
 	    
 	    public static void tickVoidLeviathan(GhostLeviatanVoid gv) {
-	    	VoidGhostLeviathanSystem.instance.tickVoidLeviathan(gv);
+	    	VoidSpikeLeviathanSystem.instance.tickVoidLeviathan(gv);
 	    }
 	    
 	    public static void pingSeamothSonar(SeaMoth sm) {
-	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
+	    	VoidSpikeLeviathanSystem.instance.tagSeamothSonar(sm);
 	    }
 	    
 	    public static void pulseSeamothDefence(SeaMoth sm) {
-	    	VoidGhostLeviathanSystem.instance.tagSeamothSonar(sm);
+	    	VoidSpikeLeviathanSystem.instance.tagSeamothSonar(sm);
 	    }
 	    
 	    public static void onBaseSonarPinged(GameObject go) {
@@ -679,7 +686,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		Player ep = Player.main;
 	    		Vehicle v = ep.GetVehicle();
 	    		if (v && v is SeaMoth && VoidSpikesBiome.instance.isInBiome(ep.transform.position))
-	    			VoidGhostLeviathanSystem.instance.tagSeamothSonar((SeaMoth)v);
+	    			VoidSpikeLeviathanSystem.instance.tagSeamothSonar((SeaMoth)v);
 	    	}
 	    }
 	    
@@ -778,6 +785,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (s.GetComponent<DeepStalkerTag>() && UnityEngine.Random.Range(0F, 1F) <= 0.8)
 	    		return false;
 	    	return s.LoseTooth();
+	    }
+	    
+	    public static bool tryEat(Survival s, GameObject go) {
+	    	if (LiquidBreathingSystem.instance.isLiquidBreathingActive(Player.main)) {
+	    		SoundManager.playSoundAt(SoundManager.buildSound("event:/player/invalid_construction"), Player.main.transform.position, false, -1, 1);
+	    		return false;
+	    	}
+	    	return s.Eat(go);
 	    }
 	}
 }

@@ -16,9 +16,9 @@ using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidGhostLeviathanSystem {
+	public class VoidSpikeLeviathanSystem {
 		
-		public static readonly VoidGhostLeviathanSystem instance = new VoidGhostLeviathanSystem();
+		public static readonly VoidSpikeLeviathanSystem instance = new VoidSpikeLeviathanSystem();
 	    
 	    private static GameObject voidLeviathan;
 	    private static GameObject redirectedTarget;
@@ -59,19 +59,19 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    }
 		
-		private VoidGhostLeviathanSystem() {
+		private VoidSpikeLeviathanSystem() {
 	    	for (int i = 0; i <= 2; i++) {
 	    		distantRoars.Add(SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-roar-far-"+i, "Sounds/voidlevi/roar-distant-"+i+".ogg", SoundManager.soundMode3D));
 	    	}
 		}
 	    
-	    public void deleteVoidLeviathan() {
+	    internal void deleteVoidLeviathan() {
 	    	if (voidLeviathan)
 	    		UnityEngine.Object.DestroyImmediate(voidLeviathan);
 	    	voidLeviathan = null;
 	    }
 	    
-	    public void deleteGhostTarget() {
+	    internal void deleteGhostTarget() {
 	    	if (redirectedTarget)
 	    		UnityEngine.Object.DestroyImmediate(redirectedTarget);
 	    	redirectedTarget = null;
@@ -207,115 +207,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
 	    	if (false && VoidSpikesBiome.instance.isPlayerInLeviathanZone(Player.main.transform.position)) {
 	    		GameObject orig = go;
-			 	//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("e82d3c24-5a58-4307-a775-4741050c8a78").transform.Find("model").gameObject);
-			 	//mdl.transform.localPosition = Vector3.zero;
-			 	
-			 	AssetBundle ab = ReikaKalseki.DIAlterra.AssetBundleManager.getBundle(SeaToSeaMod.modDLL, "voidspike");
-			 	GameObject bdl = ab.LoadAsset<GameObject>("VoidSpikeLevi_FixedRig");
-			 	//ObjectUtil.dumpObjectData(bdl);
-			 	Mesh tryM = ab.LoadAsset<Mesh>("Ghost_Leviathan_geo.001");
-			 	if (tryM == null) {
-			 		SNUtil.log("Direct fetch not found");
-			 		System.Object[] all = ab.LoadAllAssets();
-			 		tryM = all.Length >= 4 ? all[3] as Mesh : null;
-			 	}
-			 	if (tryM == null) {
-			 		SNUtil.log("Index fetch not found");
-			 		SkinnedMeshRenderer[] smrs = bdl.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-			 		if (smrs.Length != 1)
-			 			SNUtil.log("Wrong number of SMRs for mesh: "+string.Join(", ", (object[])smrs));
-			 		else
-			 			tryM = smrs[0].sharedMesh;
-			 	}
-			 	if (true)
-			 		tryM = bdl.GetComponentsInChildren<SkinnedMeshRenderer>(true)[0].sharedMesh;
-			 	//ObjectUtil.dumpObjectData(tryM);
-			 	
-			 	RenderUtil.setMesh(go, tryM);
-			 	/*
-			 	go = ObjectUtil.createWorldObject(VanillaCreatures.AMPEEL.prefab);
-			 	go.transform.position = pos;
-			 	go.transform.rotation = Quaternion.identity;
-			 	go.transform.localScale = new Vector3(3, 3, 4);
-			 	
-				foreach (Component c in go.GetComponentsInChildren<Component>()) {
-					if (c is Transform || c is Renderer || c is MeshFilter || c is Collider || c is PrefabIdentifier || c is SkyApplier || c is Rigidbody) {
-						continue;
-					}
-					if (c is SplineFollowing || c is WorldForces || c is ShockerMeleeAttack || c is FMOD_CustomEmitter || c is FMOD_StudioEventEmitter) {
-						continue;
-					}
-					if (c is VFXShockerElec || c is LODGroup || c is Locomotion) {
-						continue;
-					}
-					UnityEngine.Object.DestroyImmediate(c);
-				}
-				foreach (Component c in orig.GetComponentsInChildren<Component>()) {
-					if (c is Transform || c is Renderer || c is MeshFilter || c is Collider || c is PrefabIdentifier || c is SkyApplier || c is Rigidbody) {
-						continue;
-					}
-					if (c is SplineFollowing || c is WorldForces || c is FMOD_CustomEmitter || c is FMOD_StudioEventEmitter || c is VFXController) {
-						continue;
-					}
-					if (c is Locomotion || c is AnimateByVelocity) {
-						continue;
-					}
-			 		Component tgt = go.EnsureComponent(c.GetType());
-					tgt.copyObject(c);
-				}
-			 	go.GetComponent<CreatureFollowPlayer>().creature = go.GetComponent<GhostLeviatanVoid>();
-			 	go.GetComponent<Locomotion>().levelOfDetail = go.GetComponent<BehaviourLOD>();
-			 	/*			 	
-			 	ObjectUtil.copyComponent<GhostLeviatanVoid>(orig, go);
-			 	ObjectUtil.copyComponent<LiveMixin>(orig, go);
-			 	ObjectUtil.copyComponent<EntityTag>(orig, go);
-			 	ObjectUtil.copyComponent<AggressiveOnDamage>(orig, go);
-			 	ObjectUtil.copyComponent<SwimRandom>(orig, go);
-			 	//ObjectUtil.copyComponent<GhostLeviathanMeleeAttack>(orig, go);
-			 	ObjectUtil.copyComponent<AggressiveOnDamage>(orig, go);
-			 	ObjectUtil.copyComponent<AttackCyclops>(orig, go);
-			 	ObjectUtil.copyComponent<TechTag>(orig, go);
-			 	ObjectUtil.copyComponent<AttackLastTarget>(orig, go);
-			 	ObjectUtil.copyComponent<CreatureFollowPlayer>(orig, go).creature = go.GetComponent<GhostLeviatanVoid>();
-			 	ObjectUtil.copyComponent<LastTarget>(orig, go);
-			 	ObjectUtil.copyComponent<LastScarePosition>(orig, go);
-			 	ObjectUtil.copyComponent<Locomotion>(orig, go);
-			 	ObjectUtil.copyComponent<StayAtLeashPosition>(orig, go);
-			 	ObjectUtil.copyComponent<SwimRandom>(orig, go);*/
-			 	
-	    		SkinnedMeshRenderer r = go.GetComponentInChildren<SkinnedMeshRenderer>();
-				r.materials[0].SetFloat("_SpecInt", 0F);
-	    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/VoidSpikeLevi_", new Dictionary<int, string>(){{0, "Outer"}, {1, "Inner"}});
-	    		//r.materials[0].color = new Color(0, 0, 0, 0);
-	    		go.EnsureComponent<VoidSpikeLeviathan>().init(go);
-	    			    		
-	    		//MeshFilter mesh = go.GetComponentInChildren<MeshFilter>();
-	    		/*
-	    		Vector3[] verts = mesh.mesh.vertices;
-	    		for (int i = 0; i < verts.Length; i++) {
-	    			Vector3 vv = verts[i];
-	    			vv.x *= 0.5;
-	    			verts[i] = vv;
-	    		}
-	    		mesh.mesh.vertices = verts;*/
-	    		//if (tryM != null)
-	    		//	mesh.mesh = tryM;
-	    		/*
-	    		FMODAsset bite = SeaToSeaMod.voidspikeLeviBite;
-	    		FMOD_StudioEventEmitter std = go.GetComponent<FMOD_StudioEventEmitter>();
-	    		std.asset = bite;
-	    		std.path = bite.path;
-	    		
-	    		FMODAsset chg = SeaToSeaMod.voidspikeLeviRoar;
-	    		FMOD_CustomEmitter cus = go.GetComponent<FMOD_CustomEmitter>();
-	    		cus.asset = chg;
-	    		
-	    		FMODAsset idle = SeaToSeaMod.voidspikeLeviAmbient;
-	    		FMOD_CustomLoopingEmitter loop = go.GetComponent<FMOD_CustomLoopingEmitter>();
-	    		loop.asset = idle;
-	    		FMOD_CustomLoopingEmitterWithCallback loop2 = go.GetComponent<FMOD_CustomLoopingEmitterWithCallback>();
-	    		loop2.asset = idle;
-	    		*/
+	    		go = ObjectUtil.createWorldObject(SeaToSeaMod.voidSpikeLevi.ClassID);
+	    		go.transform.position = pos;
 	    		voidLeviathan = go;
 	    	}
 	    	return go;
@@ -392,22 +285,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		return DayNightCycle.main.timePassedAsFloat-lastPing;
 	    	}
 	    }
-	
-		private class VoidSpikeLeviathan : MonoBehaviour {
-			
-			public void init(GameObject go) {
-				
-			}
-			
-			void Update() {
-				 gameObject.transform.localScale = new Vector3(3, 3, 4);
-			}
-			
-			void OnDestroy() {
-				instance.deleteVoidLeviathan();
-			}
-			
-		}
 	    
 	    private class VoidSparkFX : MonoBehaviour {
 	    	

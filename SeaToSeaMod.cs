@@ -28,35 +28,36 @@ namespace ReikaKalseki.SeaToSea
     //public static readonly ModLogger logger = new ModLogger();
 	public static readonly Assembly modDLL = Assembly.GetExecutingAssembly();
     
-    public static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
-    public static readonly XMLLocale itemLocale = new XMLLocale("XML/items.xml");
-    public static readonly XMLLocale pdaLocale = new XMLLocale("XML/pda.xml");
-    public static readonly XMLLocale signalLocale = new XMLLocale("XML/signals.xml");
-    public static readonly XMLLocale miscLocale = new XMLLocale("XML/misc.xml");
+    internal static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
+    internal static readonly XMLLocale itemLocale = new XMLLocale("XML/items.xml");
+    internal static readonly XMLLocale pdaLocale = new XMLLocale("XML/pda.xml");
+    internal static readonly XMLLocale signalLocale = new XMLLocale("XML/signals.xml");
+    internal static readonly XMLLocale miscLocale = new XMLLocale("XML/misc.xml");
     
-    public static SeamothVoidStealthModule voidStealth;
-    public static CyclopsHeatModule cyclopsHeat;
-    public static SeamothDepthModule depth1300;
-    public static SeamothPowerSealModule powerSeal;
-    public static CustomEquipable sealSuit;
-    public static CustomBattery t2Battery;
+    internal static SeamothVoidStealthModule voidStealth;
+    internal static CyclopsHeatModule cyclopsHeat;
+    internal static SeamothDepthModule depth1300;
+    internal static SeamothPowerSealModule powerSeal;
+    internal static CustomEquipable sealSuit;
+    internal static CustomBattery t2Battery;
     
-    public static RebreatherV2 rebreatherV2;
-    public static LiquidTank liquidTank;
+    internal static RebreatherV2 rebreatherV2;
+    internal static LiquidTank liquidTank;
     
-    public static BreathingFluid breathingFluid;
-    public static CurativeBandage bandage;
+    internal static BreathingFluid breathingFluid;
+    internal static CurativeBandage bandage;
     
-    public static AlkaliPlant alkali;
-    public static VentKelp kelp;
-    public static HealingFlower healFlower;
+    internal static AlkaliPlant alkali;
+    internal static VentKelp kelp;
+    internal static HealingFlower healFlower;
     
-    public static Bioprocessor processor;
-    public static RebreatherRecharger rebreatherCharger;
+    internal static Bioprocessor processor;
+    internal static RebreatherRecharger rebreatherCharger;
     
-    public static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
+    internal static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;
     
-    public static DeepStalker deepStalker;
+    internal static DeepStalker deepStalker;
+    internal static VoidSpikeLeviathan voidSpikeLevi;
     
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
@@ -182,6 +183,9 @@ namespace ReikaKalseki.SeaToSea
         
 	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
 	    deepStalker.register();
+	    
+	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
+	    voidSpikeLevi.register();
 	    
         addFlora();
         addItemsAndRecipes();
@@ -351,6 +355,8 @@ namespace ReikaKalseki.SeaToSea
 		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
 		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 0.5F);
 		
+		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
+		
 		kelp = new VentKelp();
 		kelp.Patch();	
 		e = itemLocale.getEntry(kelp.ClassID);
@@ -448,7 +454,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidGhostLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
     }
     
     public static void spawnVentKelp(float dist) {

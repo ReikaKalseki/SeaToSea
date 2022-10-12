@@ -403,6 +403,20 @@
 			deepstalker
 		</header>
 	</DeepStalker>
+	<VoidSpikeLevi>
+		<name>
+			
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+		<header>
+			voidlevi
+		</header>
+	</VoidSpikeLevi>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module

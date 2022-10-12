@@ -28,10 +28,11 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			DeepStalkerTag kc = world.EnsureComponent<DeepStalkerTag>();
-			Renderer r = world.GetComponentInChildren<Renderer>();
-			RenderUtil.setEmissivity(r, 1.25F, "GlowStrength");
-			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
-			r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+			foreach (Renderer r in world.GetComponentsInChildren<Renderer>()) {
+				RenderUtil.setEmissivity(r, 1.25F, "GlowStrength");
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
+				r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
+			}
 			world.EnsureComponent<AggressiveToPilotingVehicle>().aggressionPerSecond = 0.2F;
 			return world;
 	    }
