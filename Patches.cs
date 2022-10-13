@@ -1128,7 +1128,7 @@ namespace ReikaKalseki.SeaToSea {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "Survival", "Eat", true, new Type[]{typeof(GameObject)});
-				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "TryEat", false, typeof(Survival), typeof(GameObject));
+				codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "tryEat", false, typeof(Survival), typeof(GameObject));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

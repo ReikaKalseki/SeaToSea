@@ -141,19 +141,28 @@ namespace ReikaKalseki.SeaToSea {
 	    		ep.oxygenMgr.RegisterSource(playerBaseO2);
 	    	}
 	    	
-	    	if (UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0 && ep.currentSub == null) {
+	    	float dist = Vector3.Distance(ep.transform.position, crashMesa);
+	    	if (dist < 5 || (dist <= 200 && UnityEngine.Random.Range(0F, 1F) <= 0.04F*Time.timeScale*(dist <= 75 ? 2.5F : 1))) {
+	    		IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
+	    		if (tgt != null && Vector3.Distance(tgt.GetPosition(), crashMesa) >= Mathf.Max(dist, 15)) {
+	    			GameObject go = tgt.GetGameObject();
+	    			Vehicle v = ep.GetVehicle();
+	    			GameObject hit = v ? v.gameObject : ep.gameObject;
+	    			Vector3 pos = dist <= 40 ? hit.transform.position : MathUtil.getRandomVectorAround(crashMesa, 45).setY(crashMesa.y);
+	    			if (Vector3.Distance(go.transform.position, pos) >= 30)
+	    				go.GetComponent<SwimBehaviour>().SwimTo(pos, 20);
+	    			ReaperLeviathan r = go.GetComponent<ReaperLeviathan>();
+	    			r.Aggression.Add(0.5F);
+	    			r.leashPosition = pos;
+	    			go.GetComponent<ReaperMeleeAttack>().lastTarget.SetTarget(hit);
+	    			foreach (AggressiveWhenSeeTarget a in go.GetComponents<AggressiveWhenSeeTarget>())
+	    				a.lastTarget.SetTarget(hit);
+	    		}
+	    	}
+	    	
+	    	if (ep.currentSub == null && UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0) {
 	    		VoidSpikesBiome.instance.tickPlayer(ep);
 	    		UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
-	    		
-	    		if (Vector3.Distance(ep.transform.position, crashMesa) <= 150) {
-	    			IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
-	    			if (tgt != null) {
-	    				GameObject go = tgt.GetGameObject();
-	    				go.GetComponent<SwimBehaviour>().SwimTo(MathUtil.getRandomVectorAround(crashMesa, 30).setY(crashMesa.y), 20);
-	    				go.GetComponent<Creature>().Aggression.Add(1);
-	    				go.GetComponent<MeleeAttack>().lastTarget.SetTarget(ep.gameObject);
-	    			}
-	    		}
 	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
@@ -788,8 +797,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static bool tryEat(Survival s, GameObject go) {
-	    	if (LiquidBreathingSystem.instance.isLiquidBreathingActive(Player.main)) {
-	    		SoundManager.playSoundAt(SoundManager.buildSound("event:/player/invalid_construction"), Player.main.transform.position, false, -1, 1);
+	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		SoundManager.playSoundAt(SoundManager.buildSound("event:/interface/select"), Player.main.transform.position, false, -1, 1);
 	    		return false;
 	    	}
 	    	return s.Eat(go);
