@@ -119,7 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 					AtmosphereDirector.main.PopSettings(AtmosphereDirector.main.priorityQueue[AtmosphereDirector.main.priorityQueue.Count-1]);
 				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
 			}*/
-			VoidSpikeLeviathanSystem.instance.playDistantRoar(ep);
+			VoidSpikeLeviathanSystem.instance.tick(ep);
 		   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
 				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);

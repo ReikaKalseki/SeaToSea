@@ -22,6 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    private static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
 	    private static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
+	    private static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -420,12 +421,24 @@ namespace ReikaKalseki.SeaToSea {
 		   			}
 	   			}
 	   		}
+	   		//SubRoot sub = dmg.target.FindAncestor<SubRoot>();
+	   		//if (sub && sub.isCyclops)
+	   		//	SNUtil.writeToChat("Cyclops ["+dmg.target.GetFullHierarchyPath()+"] took "+dmg.amount+" of "+dmg.type+" from '"+dmg.dealer+"'");
 	   		if (dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture || dmg.type == DamageType.Electrical) {
 	   			DeepStalkerTag s = dmg.target.GetComponent<DeepStalkerTag>();
 	   			if (s) {
 	   				if (dmg.type == DamageType.Electrical)
 	   					s.onHitWithElectricDefense();
 	   				dmg.amount *= 0.5F; //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
+	   			}
+	   		}
+	   		if (dmg.type == DamageType.Electrical) {
+	   			VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.GetComponent<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
+	   			if (s) {
+	   				dmg.amount = 0F;
+	   			}
+	   			if (!p && Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
+	   				dmg.amount = 0F;
 	   			}
 	   		}
 		}

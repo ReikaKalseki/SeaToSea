@@ -89,12 +89,12 @@ namespace ReikaKalseki.SeaToSea
     public static BrokenTablet brokenBlueTablet;
     
     public static PowerSealModuleFragment powersealModuleFragment;
-    
-    public static FMODAsset voidspikeLeviRoar;
-    public static FMODAsset voidspikeLeviBite;
-    public static FMODAsset voidspikeLeviFX;
-    public static FMODAsset voidspikeLeviAmbient;
-    
+    /*
+    public static SoundManager.SoundData voidspikeLeviRoar;
+    public static SoundManager.SoundData voidspikeLeviBite;
+    public static SoundManager.SoundData voidspikeLeviFX;
+    public static SoundManager.SoundData voidspikeLeviAmbient;
+    */
     public static TechCategory chemistryCategory;
     public static TechCategory ingotCategory;
     
@@ -176,10 +176,10 @@ namespace ReikaKalseki.SeaToSea
 	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
 	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
 	    
-	    voidspikeLeviRoar = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
-	    voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
-	    voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
-	    voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
+	   // voidspikeLeviRoar = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_roar", "Sounds/voidlevi-roar.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
+	    //voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
+	   // voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
+	    //voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
         
 	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
 	    deepStalker.register();
@@ -455,6 +455,7 @@ namespace ReikaKalseki.SeaToSea
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doFlash);
     }
     
     public static void spawnVentKelp(float dist) {
@@ -659,7 +660,7 @@ namespace ReikaKalseki.SeaToSea
         voidStealth.Patch();
         
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
-        depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 4).addIngredient(armor, 2);
+        depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(armor, 2);
         depth1300.preventNaturalUnlock();
         depth1300.Patch();
         
@@ -861,6 +862,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
         

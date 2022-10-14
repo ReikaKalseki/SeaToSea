@@ -12,6 +12,7 @@ using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Assets;
+using ReikaKalseki.Exscansion;
 using ECCLibrary;
 
 namespace ReikaKalseki.SeaToSea {
@@ -90,9 +91,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
-		public override bool ScannerRoomScannable { //FIXME inject this into Exscansion
+		public override bool ScannerRoomScannable {
 			get {
-				return false;
+				return true;
 			}
 		}
 
@@ -116,7 +117,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override float Mass {
 			get {
-				return 100000F;
+				return 10000F; //4x reaper
 			}
 		}
 
@@ -137,7 +138,7 @@ namespace ReikaKalseki.SeaToSea {
 				return new CreatureAsset.AvoidObstaclesData(0.2F, false, 25);
 			}
 		}
-/* use own code
+
 		public override string GetEncyDesc {
 			get {
 				return locale.pda;
@@ -147,10 +148,10 @@ namespace ReikaKalseki.SeaToSea {
 		public override ScannableItemData ScannableSettings {
 			get {
 				const string path = "Lifeforms/Fauna/Leviathans";
-				return new ScannableItemData(true, 20, path, path.Split('/'), null, TextureManager.getTexture(SeaToSeaMod.modDLL, locale.getField<string>("header")));
+				return new ScannableItemData(true, 20, path, path.Split('/'), null, TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/"+locale.getField<string>("header")));
 			}
 		}
-*/
+
         public override void AddCustomBehaviour(CreatureComponents cc) {
             //if you have special components you want to add here (like your own custom CreatureActions) then add them here
             if (cc.infectedMixin)
@@ -162,6 +163,9 @@ namespace ReikaKalseki.SeaToSea {
 				cc.renderer.materials[0].SetFloat("_Fresnel", 0.8F);
             prefab.EnsureComponent<VoidSpikeLeviathanAI>();
             CreateTrail(prefab, cc, 1.5F, 15F, 1.5F);
+			MakeAggressiveTo(512, 8, EcoTargetType.Leviathan, 0, 1F);
+			MakeAggressiveTo(512, 8, EcoTargetType.Whale, 0.0F, 0.5F);
+			MakeAggressiveTo(400, 6, EcoTargetType.Shark, 0.2F, 0.25F);
         }
 
         public override void SetLiveMixinData(ref LiveMixinData data) {
@@ -174,11 +178,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void register() {
-			MakeAggressiveTo(512, 8, EcoTargetType.Leviathan, 0, 1F);
-			MakeAggressiveTo(512, 8, EcoTargetType.Whale, 0.0F, 0.5F);
-			MakeAggressiveTo(400, 6, EcoTargetType.Shark, 0.2F, 0.25F);
 			Patch();
-			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"), e => e.scanTime = 20);
+			ESHooks.addLeviathan(TechType);
+			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"));
 		}
 	
 		internal class VoidSpikeLeviathanAI : MonoBehaviour {
@@ -203,6 +205,14 @@ namespace ReikaKalseki.SeaToSea {
 			
 			void OnDestroy() {
 				VoidSpikeLeviathanSystem.instance.deleteVoidLeviathan();
+			}
+		
+			public void OnMeleeAttack(GameObject target) {
+				//SNUtil.writeToChat(this+" attacked "+target);
+				Vehicle v = target.GetComponent<Vehicle>();
+				if (v) {
+					VoidSpikeLeviathanSystem.instance.shutdownSeamoth(v, 6); //shut down for up to 30s, drain up to 25% power
+				}
 			}
 			
 		}

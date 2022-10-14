@@ -25,11 +25,20 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static GameObject distantSparkFX;
 	    
+	    private static readonly float DAZZLE_FADE_LENGTH = 5;
 	    private static readonly double MAXDEPTH = 2000;//800;
 	    
-	    private readonly List<FMODAsset> distantRoars = new List<FMODAsset>();
+	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
 	    
 	    private float nextDistantRoarTime = -1;
+	    private float lastFlashTime = -1;
+	    private float currentFlashDuration = 0; //full blindness length; fade is (DAZZLE_FADE_LENGTH)x longer after that
+	    
+	    private GameObject mainCamera;
+	    private MesmerizedScreenFXController mesmerController;
+	    private MesmerizedScreenFX mesmerShader;
+	    private Vector4 defaultMesmerShaderColors;
+	    private readonly Vector4 dazzleColors = new Vector4(800, 800, 1000, 1);
 	    
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
 	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc"),
@@ -98,10 +107,47 @@ namespace ReikaKalseki.SeaToSea {
 	    	return Utils.SpawnZeroedAt(sphere, sm.transform, false);
 	    }
 	    
-	    public void playDistantRoar(Player ep) {
+	    internal void tick(Player ep) {
+	    	if (!mainCamera) {
+	    		mainCamera = Camera.main.gameObject;
+	    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
+	    		mesmerShader = mainCamera.GetComponent<MesmerizedScreenFX>();
+	    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
+	    	}
+	    	float time = DayNightCycle.main.timePassedAsFloat;
+	    	playDistantRoar(ep, time);
+	    	float dtf = time-lastFlashTime;
+	    	if (dtf <= currentFlashDuration*(1+DAZZLE_FADE_LENGTH)) {
+	    		float f = 0;
+	    		if (dtf <= 0.33) {
+	    			f = dtf*3;
+	    		}
+	    		else if (dtf <= currentFlashDuration) {
+	    			f = 1;
+	    		}
+	    		else {
+	    			float f2 = (dtf-currentFlashDuration)/(currentFlashDuration*DAZZLE_FADE_LENGTH);
+	    			f = 1-f2;
+	    			f *= f;
+	    			f = Mathf.Clamp01(f*1.2F-0.1F);
+	    		}
+	    		//SNUtil.writeToChat(dtf+" / "+currentFlashDuration+" > "+f.ToString("0.00000"));
+	    		//SNUtil.log(time+" > "+f.ToString("0.00000"), SeaToSeaMod.modDLL);
+	    		mesmerController.enabled = false;
+	    		mesmerShader.enabled = true;
+	    		mesmerShader.amount = f;
+	    		mesmerShader.mat.SetVector("_ColorStrength", dazzleColors);
+	    	}
+	    	else {
+	    		mesmerController.enabled = true;
+	    		mesmerShader.mat.SetVector("_ColorStrength", defaultMesmerShaderColors);
+	    	}
+	    }
+	    
+	    internal void playDistantRoar(Player ep, float time) {
 	    	if (ep.currentSub)
 	    		return;
-	    	if (DayNightCycle.main.timePassedAsFloat < nextDistantRoarTime)
+	    	if (time < nextDistantRoarTime)
 	    		return;
 	    	if (voidLeviathan && voidLeviathan.activeInHierarchy && Vector3.Distance(voidLeviathan.transform.position, ep.transform.position) <= 200)
 	    		return;
@@ -109,7 +155,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    internal void doDistantRoar(Player ep, bool forceSpark = false, bool forceEMP = false) {
-	    	FMODAsset roar = null;
+	    	SoundManager.SoundData? roar = null;
 	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position, true);
 	    	string biome = ep.GetBiomeString();
 	    	//SNUtil.writeToChat(dist+" @ "+biome);
@@ -125,11 +171,11 @@ namespace ReikaKalseki.SeaToSea {
 	    		roar = distantRoars[0];
 	    		vol = 1-(float)Math.Max(0, Math.Min(1, (dist-250)/1000D));
 	    	}
-	    	if (roar != null) {
+	    	if (roar != null && roar.HasValue) {
 	    		float delta = (float)Math.Max(30, UnityEngine.Random.Range(30F, 120F)*dist/1000);
 	    		nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat+delta;
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
-	    		SoundManager.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
+	    		SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
 	    	if (forceSpark || inBiome) {
 	    		spawnJustVisibleDistanceFX(ep);
@@ -137,7 +183,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
 	    		float chance = Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
 	    		if (UnityEngine.Random.Range(0F, 1F) <= chance)
-	    			shutdownSeamoth(ep);
+	    			shutdownSeamoth(ep.GetVehicle());
 	    	}
 	    }
 	    
@@ -166,17 +212,23 @@ namespace ReikaKalseki.SeaToSea {
 	    	UnityEngine.Object.Destroy(go, UnityEngine.Random.Range(0.33F, 0.75F)*type.lifeScalar);
 	    }
 	    
-	    private void shutdownSeamoth(Player ep) {
-	    	Vehicle v = ep.GetVehicle();
-	    	if (v && v is SeaMoth) {
-	    		createSparkSphere((SeaMoth)v).SetActive(true);
-	    		v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F));
+	    internal void shutdownSeamoth(Vehicle v, float factor = 1) {
+	    	if (v) {
+	    		if (v is SeaMoth)
+	    			createSparkSphere((SeaMoth)v).SetActive(true);
+	    		v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F)*factor);
+	    		v.ConsumeEnergy(UnityEngine.Random.Range(4F, 10F)*factor); //2-5% base
 	    	}
+	    }
+	    
+	    internal void doFlash() {
+	    	lastFlashTime = DayNightCycle.main.timePassedAsFloat;
+	    	currentFlashDuration = UnityEngine.Random.Range(4F, 8F);
 	    }
     
 	    public bool isSpawnableVoid(string biome) {
 	    	Player ep = Player.main;
-	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position) && voidLeviathan && voidLeviathan.activeInHierarchy) {
+	    	if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position) && isLeviathanEnabled() && voidLeviathan && voidLeviathan.activeInHierarchy) {
 	    		return false;
 	    	}
 	    	bool edge = string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase);
@@ -190,28 +242,28 @@ namespace ReikaKalseki.SeaToSea {
 	    		double ch = getAvoidanceChance(ep, sm, edge, far);
 	    		//SNUtil.writeToChat(ch+" @ "+sm.transform.position);
 	    		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
-		    		foreach (int idx in sm.slotIndexes.Values) {
-		    			InventoryItem ii = sm.GetSlotItem(idx);
-		    			if (ii != null && ii.item.GetTechType() != TechType.None && ii.item.GetTechType() == SeaToSeaMod.voidStealth.TechType) {
-	    					//SNUtil.writeToChat("Avoid");
-		    				return false;
-		    			}
-		    		}
+	    			if (InventoryUtil.vehicleHasUpgrade(sm, SeaToSeaMod.voidStealth.TechType))
+	    				return false;
 	    			//SNUtil.writeToChat("Tried and failed");
 	    		}
 	    	}
 	    	return true;
 	    }
 	    
+	    public bool isLeviathanEnabled() {
+	    	return false;
+	    }
+	    
 	    public GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {
-	    	GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
-	    	if (false && VoidSpikesBiome.instance.isPlayerInLeviathanZone(Player.main.transform.position)) {
-	    		GameObject orig = go;
-	    		go = ObjectUtil.createWorldObject(SeaToSeaMod.voidSpikeLevi.ClassID);
+	    	if (isLeviathanEnabled() && VoidSpikesBiome.instance.isPlayerInLeviathanZone(Player.main.transform.position)) {
+	    		GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.voidSpikeLevi.ClassID);
 	    		go.transform.position = pos;
 	    		voidLeviathan = go;
+	    		return go;
 	    	}
-	    	return go;
+	    	else {
+	    		return UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
+	    	}
 	    }
 	    
 	    public void tickVoidLeviathan(GhostLeviatanVoid gv) {
@@ -223,15 +275,15 @@ namespace ReikaKalseki.SeaToSea {
 					voidLeviathan = null;
 				return;
 			}
-			VoidSpikeLeviathan spikeType = gv.gameObject.GetComponentInChildren<VoidSpikeLeviathan>();
-			bool spike = spikeType != null;
+			VoidSpikeLeviathan.VoidSpikeLeviathanAI spikeType = gv.gameObject.GetComponentInChildren<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
+			bool spike = spikeType;
 			bool zone = VoidSpikesBiome.instance.isPlayerInLeviathanZone(main.transform.position);
-			bool validVoid = spike ? zone : (!zone && main2.IsPlayerInVoid());
+			bool validVoid = spike ? zone : (!(zone && isLeviathanEnabled()) && main2.IsPlayerInVoid());
 			bool flag = main2 && validVoid;
 			gv.updateBehaviour = flag;
 			gv.AllowCreatureUpdates(gv.updateBehaviour);
 			if (spike && UnityEngine.Random.Range(0, 100) == 0) {
-				SoundManager.playSoundAt(SeaToSeaMod.voidspikeLeviFX, gv.gameObject.transform.position, false, 128);
+				//SoundManager.playSoundAt(SeaToSeaMod.voidspikeLeviFX, gv.gameObject.transform.position, false, 128);
 			}
 			if (flag || (spike && Vector3.Distance(main.transform.position, gv.transform.position) <= 50)) {
 				if (false) {
@@ -252,6 +304,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    private double getAvoidanceChance(Player ep, SeaMoth sm, bool edge, bool far) {
+	    	if (isLeviathanEnabled() && VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))
+	    		return 0;
 	    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
 	    	if (pinged != null && pinged.getTimeSince() <= 30)
 	    		return 0;

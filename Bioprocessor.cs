@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
 		internal static Sound workingSoundReference;
-		internal static readonly FMODAsset workingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "bioprocwork", "Sounds/bioproc-loop.ogg", SoundManager.soundMode3D, s => {workingSoundReference = s; SoundManager.setup3D(s, 16); SoundManager.setLooping(s);});
+		internal static readonly SoundManager.SoundData workingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "bioprocwork", "Sounds/bioproc-loop.ogg", SoundManager.soundMode3D, s => {workingSoundReference = s; SoundManager.setup3D(s, 16); SoundManager.setLooping(s);});
 		
 		private static TechCategory bioprocCategory = TechCategory.Misc;
 		
@@ -160,7 +160,7 @@ namespace ReikaKalseki.SeaToSea {
 			lgc.mainRenderer = r;
 			
 			lgc.soundLoop = go.EnsureComponent<FMOD_CustomLoopingEmitter>();
-			lgc.soundLoop.asset = workingSound;
+			lgc.soundLoop.asset = workingSound.asset;
 			uint millis;
 			workingSoundReference.getLength(out millis, TIMEUNIT.MS);
 			lgc.soundLoop.length = millis/1000F;

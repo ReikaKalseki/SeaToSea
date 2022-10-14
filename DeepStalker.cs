@@ -55,7 +55,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class DeepStalkerTag : MonoBehaviour {
 				
-		private static readonly FMODAsset biteSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "deepstalkerbite", "Sounds/deepstalker-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 24);}, SoundSystem.masterBus);
+		private static readonly SoundManager.SoundData biteSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "deepstalkerbite", "Sounds/deepstalker-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 24);}, SoundSystem.masterBus);
 		
 		private static float lastPlayerBiteTime;
 		
@@ -106,8 +106,8 @@ namespace ReikaKalseki.SeaToSea {
 				attackComponent.canBitePlayer = true;
 				attackComponent.canBiteVehicle = true;
 				attackComponent.ignoreSameKind = false;
-				//attackComponent.attackSound.asset = biteSound;
-				//attackComponent.attackSound.path = biteSound.path;
+				//attackComponent.attackSound.asset = biteSound.asset;
+				//attackComponent.attackSound.path = biteSound.asset.path;
 			}
 			if (!collectorComponent) {
 				collectorComponent = GetComponent<CollectShiny>();
