@@ -219,51 +219,70 @@ namespace ReikaKalseki.SeaToSea {
 			float leak = getLRPowerLeakage(biome)*0.9F;
 		   	if (leak > 0) {
 		   		bool used = false;
-	    		Vehicle v = dmg.gameObject.GetComponentInParent<Vehicle>();
-		    	if (v != null && !v.docked) {
-	    			if (InventoryUtil.vehicleHasUpgrade(v, SeaToSeaMod.powerSeal.TechType))
-	    				leak *= 0.2F;
-			    	//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-				    if (v.playerSits)
-				    	leak *= 2;
-				    AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
-				    if (acid != null && acid.numTriggers > 0)
-				    	leak *= 8;
-				    float fb = 0;
-				    foreach (EnergyMixin mix in v.energyInterface.sources) {
-				    	if (mix && !Mathf.Approximately(mix.capacity, 1000))
-				    		fb++;
-				    }
-				    fb /= v.energyInterface.sources.Length;
-				    leak *= fb;
-				    if (leak > 0) {
-				    	int trash;
-					    v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
-					    used = true;
-				    }
-			   	}
-	    		foreach (InventoryItem item in Inventory.main.container) {
-	    			if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
-	    				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
-	    				//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
-	    				if (b != null && b.capacity > 100) {
-	    					b.charge = Math.Max(b.charge-leak*0.1F, 0);
-	    					//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
-			    			//used = true;
-	    				}
-	    			}
-	    		}
-	    		if (used) {
-	    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-	    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
-	    			vehiclePowerLeak = time;
-	    			/*
-			   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
-			        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
-			    	}*/
-	    		}
+		   		Vehicle v = dmg.player ? dmg.player.GetVehicle() : dmg.gameObject.FindAncestor<Vehicle>();
+		    	if (v)
+		    		leak *= getLRLeakFactor(v);
+		    	if (leak > 0) {
+			    	if (dmg.player) {
+		    			triggerPowerLeakage(Inventory.main.container, leak);
+						//used = true;
+			    	}
+			    	else if (v) {
+					    int trash;
+						v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
+						used = true;
+						foreach (StorageContainer sc in v.GetComponentsInChildren<StorageContainer>(true))
+							if (!sc.gameObject.FindAncestor<Player>())
+								triggerPowerLeakage(sc.container, leak);
+			    	}
+		    		if (used) {
+		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
+		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+		    			vehiclePowerLeak = time;
+		    			/*
+				   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
+				        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
+				    	}*/
+		    		}
+		    	}
 			}
 	 	}
+    	
+    	private float getLRLeakFactor(Vehicle v) {
+    		if (v.docked)
+    			return 0;
+    		float leak = 1;
+	    	if (InventoryUtil.vehicleHasUpgrade(v, SeaToSeaMod.powerSeal.TechType))
+	    		leak *= 0.2F;
+			//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
+			if (v.playerSits)
+				leak *= 2;
+			AcidicBrineDamage acid = v.GetComponent<AcidicBrineDamage>();
+			if (acid && acid.numTriggers > 0)
+				leak *= 8;
+			float fb = 0;
+			foreach (EnergyMixin mix in v.energyInterface.sources) {
+			   	if (mix && !Mathf.Approximately(mix.capacity, 1000))
+			   		fb++;
+			}
+			fb /= v.energyInterface.sources.Length;
+			leak *= fb;
+			return leak;
+    	}
+    	
+    	private void triggerPowerLeakage(ItemsContainer c, float leak) {
+			foreach (InventoryItem item in c) {
+	    		if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
+	    			Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
+	    			//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
+	    			if (b != null && b.capacity > 100) {
+	    				b.charge = Math.Max(b.charge-leak*0.1F, 0);
+	    				//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
+			   			//used = true;
+	    			}
+	    		}
+	    	}
+    	}
     	
     	public void tickCyclopsDamage(CrushDamage dmg) {
 			if (!dmg.gameObject.activeInHierarchy || !dmg.enabled) {
@@ -314,6 +333,10 @@ namespace ReikaKalseki.SeaToSea {
 				    if (leak > 0) {
 				    	cyclopsPowerLeak = time;
 					    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
+					    foreach (StorageContainer sc in sub.GetComponentsInChildren<StorageContainer>(true)) {
+					    	if (!sc.gameObject.FindAncestor<Vehicle>() && !sc.gameObject.FindAncestor<Player>())
+								triggerPowerLeakage(sc.container, leak);
+					    }
 		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
 		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
 				    }
