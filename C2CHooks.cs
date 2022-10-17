@@ -108,7 +108,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickSeamoth(SeaMoth sm) {
-	    	if (sm.lightsActive)
+	    	if (sm.toggleLights.lightsActive)
 	    		GlowOil.handleLightTick(sm.transform);
 	    }
 	    

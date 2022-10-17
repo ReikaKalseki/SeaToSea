@@ -17,26 +17,29 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class GlowOil : Spawnable {
 		
-		internal static readonly float MAX_GLOW = 20;
+		internal static readonly float MAX_GLOW = 4;
 		
 		private readonly XMLLocale.LocaleEntry locale;
 		
 		private static float lastPlayerLightCheck;
 		private static float lastLightRaytrace;
+		
+		internal static readonly Simplex3DGenerator sizeNoise = new Simplex3DGenerator();
 	        
 	    internal GlowOil(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
 	    }
 			
 	    public override GameObject GetGameObject() {
-			GameObject world = ObjectUtil.createWorldObject("18229b4b-3ed3-4b35-ae30-43b1c31a6d8d");
+			GameObject world = ObjectUtil.createWorldObject("505e7eff-46b3-4ad2-84e1-0fadb7be306c");
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			ResourceTracker rt = world.EnsureComponent<ResourceTracker>();
 			rt.techType = TechType;
 			rt.overrideTechType = TechType;
 			//world.GetComponent<Rigidbody>().isKinematic = true;
-			world.GetComponent<WorldForces>().underwaterGravity = 0;
+			//world.GetComponent<WorldForces>().underwaterGravity = 0;
+			ObjectUtil.removeComponent<EnzymeBall>();
 			GlowOilTag g = world.EnsureComponent<GlowOilTag>();
 			Light l = ObjectUtil.addLight(world);
 			l.bounceIntensity *= 2;
@@ -62,7 +65,7 @@ namespace ReikaKalseki.SeaToSea {
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time-lastPlayerLightCheck >= 0.25F) {
 				lastPlayerLightCheck = time;
-				PlayerTool pt = Inventory.GetHeldTool();
+				PlayerTool pt = Inventory.main.GetHeldTool();
 				if (pt && pt.energyMixin && pt.energyMixin.charge > 0) {
 					if ((pt is Seaglide && ((Seaglide)pt).toggleLights.lightsActive) || (pt is FlashLight && ((FlashLight)pt).toggleLights.lightsActive)) {
 						handleLightTick(MainCamera.camera.transform);
@@ -72,11 +75,15 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static void handleLightTick(Transform go) {
-			foreach (RaycastHit hit in Physics.SphereCastAll(go.position, 4, go.forward, 512)) {
-				if (hit.transform) {
-					GlowOilTag g = hit.transform.GetComponentInParent<GlowOilTag>();
-					if (g)
-						g.onLit();
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastLightRaytrace >= 0.25F) {
+				lastLightRaytrace = time;
+				foreach (RaycastHit hit in Physics.SphereCastAll(go.position, 2.5F, go.forward, 180)) {
+					if (hit.transform) {
+						GlowOilTag g = hit.transform.GetComponentInParent<GlowOilTag>();
+						if (g)
+							g.onLit();
+					}
 				}
 			}
 		}
@@ -98,20 +105,21 @@ namespace ReikaKalseki.SeaToSea {
 				render = GetComponentInChildren<Renderer>();
 			if (!light)
 				light = GetComponentInChildren<Light>();
+			transform.localScale = Vector3.one*(1.5F+0.5F*(float)GlowOil.sizeNoise.getValue(transform.position));
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			float dT = time-lastGlowUpdate;
-			if (dT >= 0.1F) {
+			if (dT >= 0.02F) {
 				lastGlowUpdate = time;
-				updateGlowStrength(dT);
+				updateGlowStrength(time, dT);
 			}
 			
 			light.intensity = glowIntensity*GlowOil.MAX_GLOW;
-			RenderUtil.setEmissivity(render, glowIntensity*2.5F, "GlowStrength");
+			RenderUtil.setEmissivity(render, glowIntensity*3.5F, "GlowStrength");
 		}
 		
 		private void updateGlowStrength(float time, float dT) {
-			float delta = time-lastLitTime < 1.5F ? 0.25F : -0.1F;
+			float delta = time-lastLitTime < 1.5F ? 0.5F : -0.15F;
 			glowIntensity = Mathf.Clamp01(glowIntensity+delta*dT);
 		}
 		
