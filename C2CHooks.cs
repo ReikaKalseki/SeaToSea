@@ -31,11 +31,15 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
-	    	DIHooks.onPlayerTickEvent += tickPlayer;
 	    	DIHooks.onDamageEvent += recalculateDamage;
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
 	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
 	    	DIHooks.getBiomeEvent += getBiomeAt;
+	    	
+	    	DIHooks.onPlayerTickEvent += tickPlayer;
+	    	DIHooks.onSeamothTickEvent += tickSeamoth;
+	    	DIHooks.onPrawnTickEvent += tickPrawn;
+	    	DIHooks.onCyclopsTickEvent += tickCyclops;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    }
@@ -103,9 +107,22 @@ namespace ReikaKalseki.SeaToSea {
 	    	data.nodes = PDAEncyclopedia.ParsePath(data.path);
 	    }
 	    
+	    public static void tickSeamoth(SeaMoth sm) {
+	    	if (sm.lightsActive)
+	    		GlowOil.handleLightTick(sm.transform);
+	    }
+	    
+	    public static void tickPrawn(Exosuit e) {
+	    	if (true) //lights always on
+	    		GlowOil.handleLightTick(e.transform);
+	    }
+	    
+	    public static void tickCyclops(SubRoot sub) {
+	    	if (sub.subLightsOn) //lights always on
+	    		GlowOil.handleLightTick(sub.transform);
+	    }
+	    
 	    public static void tickPlayer(Player ep) {
-	    	if (Time.timeScale <= 0)
-	    		return;
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
 	    	if (playerBaseO2 == null) {
@@ -116,6 +133,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
 	    		}
 	    	}
+	    	
+	    	GlowOil.checkPlayerLightTick(ep);
 	    	
 	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();

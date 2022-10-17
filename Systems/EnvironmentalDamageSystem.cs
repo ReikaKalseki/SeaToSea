@@ -224,7 +224,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		leak *= getLRLeakFactor(v);
 		    	if (leak > 0) {
 			    	if (dmg.player) {
-		    			triggerPowerLeakage(Inventory.main.container, leak);
+		    			used = triggerPowerLeakage(Inventory.main.container, leak);
 						//used = true;
 			    	}
 			    	else if (v) {
@@ -270,7 +270,8 @@ namespace ReikaKalseki.SeaToSea {
 			return leak;
     	}
     	
-    	private void triggerPowerLeakage(ItemsContainer c, float leak) {
+    	private bool triggerPowerLeakage(ItemsContainer c, float leak) {
+    		bool found = false;
 			foreach (InventoryItem item in c) {
 	    		if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
 	    			Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
@@ -279,9 +280,11 @@ namespace ReikaKalseki.SeaToSea {
 	    				b.charge = Math.Max(b.charge-leak*0.1F, 0);
 	    				//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
 			   			//used = true;
+			   			found = true;
 	    			}
 	    		}
 	    	}
+    		return found;
     	}
     	
     	public void tickCyclopsDamage(CrushDamage dmg) {
@@ -306,6 +309,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (dmg.soundOnDamage) {
 							dmg.soundOnDamage.Play();
 						}
+						//DO NOT SPAWN HEAT https://i.imgur.com/S0Rg7KX.jpgPDA PAGE
 						if (temp.cyclopsFireChance <= 0 || UnityEngine.Random.Range(0, temp.cyclopsFireChance) == 0) {
 							CyclopsRooms key = (CyclopsRooms)UnityEngine.Random.Range(0, Enum.GetNames(typeof(CyclopsRooms)).Length);
 							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
@@ -508,8 +512,8 @@ namespace ReikaKalseki.SeaToSea {
 	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", "Extreme Pressure Detected", () => crush.isActive() && isPlayerInOcean(), 20);
 	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", "Power Loss Detected", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
 	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", "Extreme Temperature Detected", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
-	   		extremeHeatHUDWarning.showWhenNotSwimming = true;
-	   		lrLeakHUDWarning.showWhenNotSwimming = true;
+	   		extremeHeatHUDWarning.showWhenNotSwimming = () => true;
+	   		lrLeakHUDWarning.showWhenNotSwimming = () => Player.main.GetVehicle() || (Player.main.currentSub && Player.main.currentSub.isCyclops && Player.main.isPiloting);
 	   		warnings.Sort();
 		}
     	
@@ -553,7 +557,7 @@ namespace ReikaKalseki.SeaToSea {
 		private Text text;
 		private Func<bool> condition;
 		public bool forceShow = false;
-		internal bool showWhenNotSwimming = false;
+		internal Func<bool> showWhenNotSwimming = () => false;
 		
 		public int priority = 0;
 		
@@ -582,7 +586,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool shouldShow(bool inOcean) {
-			return forceShow || ((showWhenNotSwimming || inOcean) && condition());
+			return forceShow || ((showWhenNotSwimming() || inOcean) && condition());
 		}
 		
 		public void setActive(bool active) {

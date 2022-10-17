@@ -59,6 +59,8 @@ namespace ReikaKalseki.SeaToSea
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
     
+    internal static GlowOil glowOil;
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -189,6 +191,9 @@ namespace ReikaKalseki.SeaToSea
 	    
         addFlora();
         addItemsAndRecipes();
+	    
+	    glowOil = new GlowOil(itemLocale.getEntry("GlowOil"));
+	    glowOil.register();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -873,7 +878,11 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, ingots[TechType.Magnetite].ingot, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 6);
-        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);        
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);       
+
+        RecipeUtil.ensureIngredient(TechType.Seamoth, TechType.PowerCell, 1);
+        RecipeUtil.ensureIngredient(TechType.Exosuit, TechType.PowerCell, 2);
+        RecipeUtil.ensureIngredient(TechType.Cyclops, TechType.PowerCell, 6);
         
         RecipeUtil.modifyIngredients(TechType.BaseReinforcement, i => true);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);

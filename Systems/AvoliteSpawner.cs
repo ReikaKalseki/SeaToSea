@@ -217,7 +217,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		bool isValidPosition(Vector3 pos) {
-			if (pos.y >= -100)
+			if (pos.y >= -100 || pos.y <= -400)
 				return false;
 			string biome = WaterBiomeManager.main.GetBiome(pos, false);
 			if (!string.Equals(biome, "mountains", StringComparison.InvariantCultureIgnoreCase))

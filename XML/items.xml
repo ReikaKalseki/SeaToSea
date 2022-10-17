@@ -405,7 +405,7 @@
 	</DeepStalker>
 	<VoidSpikeLevi>
 		<name>
-			
+			 Leviathan
 		</name>
 		<desc>
 			
@@ -417,6 +417,20 @@
 			voidlevi
 		</header>
 	</VoidSpikeLevi>
+	<GlowOil>
+		<name>
+			 
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+		<header>
+			
+		</header>
+	</GlowOil>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module
