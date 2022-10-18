@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea
     internal static AlkaliPlant alkali;
     internal static VentKelp kelp;
     internal static HealingFlower healFlower;
+    internal static GlowOilMushroom glowShroom;
     
     internal static Bioprocessor processor;
     internal static RebreatherRecharger rebreatherCharger;
@@ -190,10 +191,11 @@ namespace ReikaKalseki.SeaToSea
 	    //voidSpikeLevi.register();
 	    
         addFlora();
-        addItemsAndRecipes();
 	    
 	    glowOil = new GlowOil(itemLocale.getEntry("GlowOil"));
 	    glowOil.register();
+	    
+        addItemsAndRecipes();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -373,9 +375,16 @@ namespace ReikaKalseki.SeaToSea
 		SNUtil.log(" > "+healFlower);
 		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Near, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
 		
+		glowShroom = new GlowOilMushroom();
+		glowShroom.Patch();	
+		e = itemLocale.getEntry(glowShroom.ClassID);
+		glowShroom.addPDAEntry(e.pda, 5, e.getField<string>("header"));
+		SNUtil.log(" > "+glowShroom);
+		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));
+		BioReactorHandler.Main.SetBioReactorCharge(glowShroom.seed.TechType, BaseBioReactor.GetCharge(TechType.SnakeMushroomSpore)*3);
     }
     
     private static void addOreGen() {
@@ -566,16 +575,16 @@ namespace ReikaKalseki.SeaToSea
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
-        enzy.numberCrafted = 3;
+        enzy.numberCrafted = 4;
         enzy.addIngredient(TechType.Salt, 1).addIngredient(enzyT, 1).addIngredient(TechType.SeaCrownSeed, 2).addIngredient(TechType.DisinfectedWater, 1);
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
-        comb.addIngredient(TechType.AramidFibers, 4).addIngredient(TechType.PlasteelIngot, 1);
+        comb.addIngredient(TechType.AramidFibers, 3).addIngredient(TechType.PlasteelIngot, 1);
         
         BasicCraftingItem gem = CraftingItems.getItem(CraftingItems.Items.DenseAzurite);
         gem.craftingTime = 4;
-        gem.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 9).addIngredient(TechType.Diamond, 1).addIngredient(TechType.Magnetite, 5);
+        gem.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 9).addIngredient(TechType.Diamond, 1).addIngredient(TechType.Magnetite, 5).addIngredient(glowOil.TechType, 3);
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
@@ -584,12 +593,12 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem sealedFabric = CraftingItems.getItem(CraftingItems.Items.SealFabric);
         sealedFabric.craftingTime = 4;
         sealedFabric.numberCrafted = 2;
-        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 2).addIngredient(TechType.AramidFibers, 1).addIngredient(TechType.StalkerTooth, 1).addIngredient(TechType.Silicone, 2);
+        sealedFabric.addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 3).addIngredient(TechType.AramidFibers, 1).addIngredient(TechType.StalkerTooth, 1).addIngredient(TechType.Silicone, 2);
         
         BasicCraftingItem armor = CraftingItems.getItem(CraftingItems.Items.HullPlating);
         armor.craftingTime = 9;
         armor.numberCrafted = 2;
-        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 5);
+        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 6);
         
         BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
         acid.craftingTime = 0.5F;
@@ -610,7 +619,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
         tankWall.craftingTime = 2.5F;
-        tankWall.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 6).addIngredient(sealedFabric, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.SmartPolymer), 1);
+        tankWall.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 9).addIngredient(sealedFabric, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.SmartPolymer), 1);
         
         BasicCraftingItem fuel = CraftingItems.getItem(CraftingItems.Items.RocketFuel);
         fuel.craftingTime = 6;
@@ -676,7 +685,7 @@ namespace ReikaKalseki.SeaToSea
         powerSeal.Patch();
         
         cyclopsHeat = new CyclopsHeatModule();
-        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
+        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(glowOil, 8).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
         cyclopsHeat.Patch();
 	    
 	    powersealModuleFragment = new PowerSealModuleFragment();
@@ -729,7 +738,7 @@ namespace ReikaKalseki.SeaToSea
         liquidTank.Patch();
         
 		breathingFluid = new BreathingFluid();
-		breathingFluid.addIngredient(TechType.Benzene, 2).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 3).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 3);
+		breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
 		breathingFluid.Patch();
         
 		bandage = new CurativeBandage();
@@ -763,6 +772,8 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, sealSuit.TechType, 1);
         
         RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
+        
+        RecipeUtil.modifyIngredients(TechType.PlasteelIngot, i => {if (i.techType == TechType.Lithium) i.amount = i.amount*3/2; return false;});
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);

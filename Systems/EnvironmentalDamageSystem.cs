@@ -238,7 +238,8 @@ namespace ReikaKalseki.SeaToSea {
 		    		if (used) {
 		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
 		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
-		    			vehiclePowerLeak = time;
+		    			if (!dmg.player)
+		    				vehiclePowerLeak = time;
 		    			/*
 				   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
 				        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
@@ -321,6 +322,8 @@ namespace ReikaKalseki.SeaToSea {
 		    	float leak = getLRPowerLeakage(dmg.gameObject);
 		    	//SBUtil.writeToChat("leak "+leak);
 			   	if (leak > 0) {
+		    		leak *= 1.2F; //+20% more for cyclops
+		    		
 	    			SubControl con = dmg.gameObject.GetComponentInParent<SubControl>();
 				    if (con.cyclopsMotorMode.engineOn)
 				    	leak *= 1.25F;
@@ -519,14 +522,21 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private bool isLeakingLRPower() {
     		Player ep = Player.main;
-	   		float time = DayNightCycle.main.timePassedAsFloat;
-	   		return time-vehiclePowerLeak <= 1 || time-cyclopsPowerLeak <= 5;
+    		if (ep.GetVehicle() || (ep.currentSub && ep.currentSub.isCyclops)) {
+	    		if (getLRPowerLeakage(ep.gameObject) <= 0)
+	    			return false;
+		   		float time = DayNightCycle.main.timePassedAsFloat;
+		   		return time-vehiclePowerLeak <= 1 || time-cyclopsPowerLeak <= 5;
+    		}
+    		return false;
     	}
     	
     	private bool isTakingHeatDamage() {
     		Player ep = Player.main;
-	   		float time = DayNightCycle.main.timePassedAsFloat;
-	   		return time-playerHeatDamage <= 1 || time-cyclopsHeatDamage <= 5;
+	    	if (getLavaHeatDamage(ep.gameObject) == null)
+	    		return false;
+		   	float time = DayNightCycle.main.timePassedAsFloat;
+		   	return time-playerHeatDamage <= 1 || time-cyclopsHeatDamage <= 5;
     	}
     	
     	private CustomHUDWarning createHUDWarning(GameObject template, string tex, string msg, EnviroAlert e, int pri, Color? c = null) {

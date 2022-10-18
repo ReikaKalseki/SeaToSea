@@ -139,7 +139,7 @@ namespace ReikaKalseki.SeaToSea {
 			return indoors ? 0.25F : 0.5F;
 		}
 		
-		public Dictionary<int,string> getTextureLayers() {
+		public Dictionary<int,string> getTextureLayers(Renderer r) {
 			return leavesOnlyRendering ? new Dictionary<int, string>(){{0, ""}, {1, "Leaves"}} : new Dictionary<int, string>(){{0, ""}, {1, ""}};
 		}
 		/*

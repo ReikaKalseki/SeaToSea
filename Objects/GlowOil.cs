@@ -17,14 +17,14 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class GlowOil : Spawnable {
 		
-		internal static readonly float MAX_GLOW = 3;
+		internal static readonly float MAX_GLOW = 2;
 		
 		private readonly XMLLocale.LocaleEntry locale;
 		
 		private static float lastPlayerLightCheck;
 		private static float lastLightRaytrace;
 		
-		internal static readonly Simplex3DGenerator sizeNoise = (Simplex3DGenerator)new Simplex3DGenerator(0).setFrequency(0.2);
+		internal static readonly Simplex3DGenerator sizeNoise = (Simplex3DGenerator)new Simplex3DGenerator(0).setFrequency(0.4);
 	        
 	    internal GlowOil(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
@@ -43,7 +43,13 @@ namespace ReikaKalseki.SeaToSea {
 			rt.overrideTechType = TechType;
 			world.GetComponentInChildren<PickPrefab>().pickTech = TechType;
 			//world.GetComponent<Rigidbody>().isKinematic = true;
-			world.GetComponent<WorldForces>().underwaterGravity = 0;
+			WorldForces wf = world.GetComponent<WorldForces>();
+			wf.underwaterGravity = 0;
+			wf.underwaterDrag *= 2;
+			Rigidbody rb = world.GetComponent<Rigidbody>();
+			rb.angularDrag *= 3;
+			rb.maxAngularVelocity = 6;
+			rb.drag = wf.underwaterDrag;
 			//ObjectUtil.removeComponent<EnzymeBall>(world);
 			ObjectUtil.removeComponent<Plantable>(world);
 			GlowOilTag g = world.EnsureComponent<GlowOilTag>();
@@ -54,22 +60,14 @@ namespace ReikaKalseki.SeaToSea {
 			l.range = 12;
 			Renderer r = world.GetComponentInChildren<Renderer>();
 			RenderUtil.setEmissivity(r.materials[0], 0, "GlowStrength");
+			RenderUtil.setEmissivity(r.materials[1], 0, "GlowStrength");
 			r.materials[0].SetFloat("_Shininess", 10);
 			r.materials[0].SetFloat("_SpecInt", 3);
 			r.materials[0].SetFloat("_Fresnel", 1);
+			setupRenderer(r, "Main");
 			RenderUtil.makeTransparent(r.materials[1]);
-			//r.materials[1].SetFloat("_ZWrite", 1);
-			for (int i = 0; i < r.materials.Length; i++) {
-				Material m = r.materials[i];
-				m.EnableKeyword("UWE_WAVING");
-				m.DisableKeyword("FX_KELP");
-				m.SetVector("_Scale", Vector4.one*(0.1F-0.05F*i));
-				m.SetVector("_Frequency", new Vector4(2F, 1.5F, 1F, 0.5F));
-				m.SetVector("_Speed", Vector4.one*(0.08F-0.02F*i));
-				m.SetVector("_ObjectUp", new Vector4(0F, 0F, 0F, 0F));
-				m.SetFloat("_WaveUpMin", 2.5F);
-				m.SetColor("_Color", new Color(1, 1, 1, 1));
-			}
+			r.materials[0].EnableKeyword("FX_KELP");
+			r.materials[0].SetColor("_Color", new Color(0, 0, 0, 1F));
 			return world;
 	    }
 		
@@ -82,6 +80,27 @@ namespace ReikaKalseki.SeaToSea {
 			e.locked = true;
 			e.scanTime = 3;
 			PDAHandler.AddCustomScannerEntry(e);
+		}
+		
+		internal static void setupRenderer(Renderer r, string texName) {
+			//RenderUtil.makeTransparent(r.materials[1]);
+			//r.materials[1].SetFloat("_ZWrite", 1);
+			for (int i = 0; i < r.materials.Length; i++) {
+				Material m = r.materials[i];
+				//m.DisableKeyword("UWE_WAVING");
+				m.DisableKeyword("FX_KELP");
+				m.SetVector("_Scale", Vector4.one*(0.06F-0.02F*i));
+				m.SetVector("_Frequency", new Vector4(2.5F, 2F, 1.5F, 0.5F));
+				m.SetVector("_Speed", Vector4.one*(0.1F-0.025F*i));
+				m.SetVector("_ObjectUp", new Vector4(0F, 0F, 0F, 0F));
+				m.SetFloat("_WaveUpMin", 2.5F);
+				m.SetColor("_Color", new Color(1, 1, 1, 1));
+				m.SetFloat("_minYpos", 0.7F);
+				m.SetFloat("_maxYpos", 0.3F);
+			}
+			r.materials[0].SetColor("_Color", new Color(1, 1, 1, 0.5F));
+			r.materials[1].SetColor("_Color", new Color(0, 0, 0, 1));
+			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Resources/GlowOil/"+texName, new Dictionary<int, string>{{0, "Shell"}, {1, "Inner"}});
 		}
 		
 		public static void checkPlayerLightTick(Player ep) {
@@ -117,20 +136,56 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Light light;
 		
-		private Renderer render;
+		private Renderer mainRender;
+		private PrefabIdentifier prefab;
+		private Rigidbody mainBody;
+		
+		//private GameObject bubble;
 		
 		private float glowIntensity = 0;
 		
 		private float lastGlowUpdate;
 		private float lastLitTime;
+		private float lastRepelTime;
+		
+		private readonly List<GlowSeed> seeds = new List<GlowSeed>();
 		
 		void Update() {
-			if (!render) {
-				render = GetComponentInChildren<Renderer>();
+			if (!mainRender) {
+				mainRender = GetComponentInChildren<Renderer>();
+			}
+			if (!mainBody) {
+				mainBody = GetComponentInChildren<Rigidbody>();
+			}
+			if (!prefab) {
+				prefab = GetComponentInChildren<PrefabIdentifier>();
+			}
+			int hash = prefab.Id.GetHashCode();
+			while (seeds.Count < 4+((hash%5)+5)%5) {
+				GameObject go = ObjectUtil.createWorldObject("18229b4b-3ed3-4b35-ae30-43b1c31a6d8d");
+				RenderUtil.convertToModel(go);
+				ObjectUtil.removeComponent<Collider>(go);
+				ObjectUtil.removeComponent<PrefabIdentifier>(go);
+				ObjectUtil.removeComponent<ChildObjectIdentifier>(go);
+				go.transform.SetParent(transform);
+				go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.1F, 0.15F);
+				go.transform.localPosition = MathUtil.getRandomVectorAround(Vector3.zero, 0.4F);
+				go.transform.localRotation = UnityEngine.Random.rotationUniform;
+				Renderer r = go.GetComponentInChildren<Renderer>();
+				r.materials[0].SetFloat("_Shininess", 0F);
+				r.materials[0].SetFloat("_SpecInt", 0F);
+				r.materials[0].SetFloat("_Fresnel", 0F);
+				r.materials[0].EnableKeyword("UWE_WAVING");
+				r.materials[1].EnableKeyword("UWE_WAVING");
+				RenderUtil.setEmissivity(r.materials[0], 0, "GlowStrength");
+				RenderUtil.setEmissivity(r.materials[1], 0, "GlowStrength");
+				GlowOil.setupRenderer(r, "Seed");
+				Vector3 rot = UnityEngine.Random.rotationUniform.eulerAngles.normalized*UnityEngine.Random.Range(0.75F, 1.25F);
+				seeds.Add(new GlowSeed{go = go, render = r, motion = MathUtil.getRandomVectorAround(Vector3.zero, 0.07F), rotation = rot});
 			}
 			if (!light)
 				light = GetComponentInChildren<Light>();
-			float sc = (0.1F+0.02F*(float)GlowOil.sizeNoise.getValue(transform.position));
+			float sc = (0.25F+0.05F*(float)GlowOil.sizeNoise.getValue(transform.position));
 			transform.localScale = Vector3.one*sc;
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
@@ -139,9 +194,62 @@ namespace ReikaKalseki.SeaToSea {
 				lastGlowUpdate = time;
 				updateGlowStrength(time, dT);
 			}
+			if (time-lastRepelTime >= 0.5) {
+				lastRepelTime = time;
+				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, 8F, Vector3.zero, 8)) {
+					if (hit.transform) {
+						GlowOilTag g = hit.transform.GetComponentInParent<GlowOilTag>();
+						repel(g);
+					}
+				}
+			}
 			
-			light.intensity = glowIntensity*GlowOil.MAX_GLOW;
-			RenderUtil.setEmissivity(render.materials[1], glowIntensity*7.5F, "GlowStrength");
+			dT = Time.deltaTime;
+			foreach (GlowSeed g in seeds) {
+				if (!g.go)
+					continue;
+				Vector3 dd = g.go.transform.localPosition;
+				if (dd.HasAnyNaNs()) {
+					dd = MathUtil.getRandomVectorAround(Vector3.zero, 0.4F);
+					g.go.transform.localPosition = dd;
+					//SNUtil.writeToChat(seeds.IndexOf(g)+" was nan pos");
+				}
+				else {
+					//SNUtil.writeToChat(seeds.IndexOf(g)+" was NOT nan pos");
+					float d = dd.sqrMagnitude;
+					if (float.IsNaN(d)) {
+						g.motion = MathUtil.getRandomVectorAround(Vector3.zero, 0.07F);
+						//SNUtil.writeToChat(seeds.IndexOf(g)+" was nan dd - "+g.go.transform.localPosition);
+						//SNUtil.log(seeds.IndexOf(g)+" was nan dd - "+g.go.transform.localPosition);
+					}
+					else {
+						Vector3 norm = dd.normalized;
+						if (norm.HasAnyNaNs()) {
+							//SNUtil.writeToChat("NaN Norm");
+							//SNUtil.log("NaN Norm");
+							norm = Vector3.zero;
+						}
+						//SNUtil.writeToChat("Mot="+g.motion);
+						//SNUtil.log("Mot="+g.motion);
+						g.motion = g.motion-(norm*d*6F*dT);
+						float maxD = 2.0F*transform.localScale.magnitude;
+						if (float.IsNaN(maxD)) {
+							//SNUtil.writeToChat("NaN maxD");
+							//SNUtil.log("NaN maxD");
+							maxD = 0;
+						}
+						if (d > maxD) {
+							g.go.transform.position = norm*maxD;
+						}
+					}
+					g.go.transform.localPosition = g.go.transform.localPosition+g.motion*dT;
+					g.go.transform.Rotate(g.rotation, Space.Self);
+				}
+				RenderUtil.setEmissivity(g.render.materials[1], glowIntensity*12F, "GlowStrength");
+			}
+			RenderUtil.setEmissivity(mainRender.materials[0], glowIntensity*5F, "GlowStrength");
+			if (light)
+				light.intensity = glowIntensity*GlowOil.MAX_GLOW;
 		}
 		
 		private void updateGlowStrength(float time, float dT) {
@@ -149,9 +257,23 @@ namespace ReikaKalseki.SeaToSea {
 			glowIntensity = Mathf.Clamp01(glowIntensity+delta*dT);
 		}
 		
+		internal void repel(GlowOilTag g) {
+			Vector3 dd = transform.position-g.transform.position;
+			mainBody.AddForce(dd.normalized*(1F-dd.sqrMagnitude)*12, ForceMode.VelocityChange);
+			g.mainBody.AddForce(dd.normalized*(1F-dd.sqrMagnitude)*-12, ForceMode.VelocityChange);
+		}
+		
 		internal void onLit() {
-			SNUtil.writeToChat("Lit");
 			lastLitTime = DayNightCycle.main.timePassedAsFloat;
+		}
+		
+		class GlowSeed {
+			
+			internal GameObject go;
+			internal Renderer render;
+			internal Vector3 motion = Vector3.zero;
+			internal Vector3 rotation = Vector3.zero;
+			
 		}
 		
 	}
