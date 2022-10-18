@@ -33,6 +33,10 @@ namespace ReikaKalseki.SeaToSea {
 		public override Vector2int SizeInInventory {
 			get { return new Vector2int(1, 1); }
 		}
+
+		protected sealed override Atlas.Sprite GetItemSprite() {
+			return TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/GlowOil");
+		}
 			
 	    public override GameObject GetGameObject() {
 			GameObject world = ObjectUtil.createWorldObject("18229b4b-3ed3-4b35-ae30-43b1c31a6d8d"); //enzyme 42: "505e7eff-46b3-4ad2-84e1-0fadb7be306c"
@@ -45,7 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 			//world.GetComponent<Rigidbody>().isKinematic = true;
 			WorldForces wf = world.GetComponent<WorldForces>();
 			wf.underwaterGravity = 0;
-			wf.underwaterDrag *= 2;
+			wf.underwaterDrag *= 1;
 			Rigidbody rb = world.GetComponent<Rigidbody>();
 			rb.angularDrag *= 3;
 			rb.maxAngularVelocity = 6;
@@ -194,17 +198,19 @@ namespace ReikaKalseki.SeaToSea {
 				lastGlowUpdate = time;
 				updateGlowStrength(time, dT);
 			}
+			dT = Time.deltaTime;
 			if (time-lastRepelTime >= 0.5) {
 				lastRepelTime = time;
+				SNUtil.writeToChat("Repel attempt");
 				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, 8F, Vector3.zero, 8)) {
 					if (hit.transform) {
 						GlowOilTag g = hit.transform.GetComponentInParent<GlowOilTag>();
-						repel(g);
+						if (g)
+							repel(g, dT);
 					}
 				}
 			}
 			
-			dT = Time.deltaTime;
 			foreach (GlowSeed g in seeds) {
 				if (!g.go)
 					continue;
@@ -257,10 +263,11 @@ namespace ReikaKalseki.SeaToSea {
 			glowIntensity = Mathf.Clamp01(glowIntensity+delta*dT);
 		}
 		
-		internal void repel(GlowOilTag g) {
+		internal void repel(GlowOilTag g, float dT) {
 			Vector3 dd = transform.position-g.transform.position;
-			mainBody.AddForce(dd.normalized*(1F-dd.sqrMagnitude)*12, ForceMode.VelocityChange);
-			g.mainBody.AddForce(dd.normalized*(1F-dd.sqrMagnitude)*-12, ForceMode.VelocityChange);
+			SNUtil.writeToChat("Repel from "+g.transform.position+" > "+dd);
+			mainBody.AddForce(dd.normalized*(15F/dd.sqrMagnitude)*dT, ForceMode.VelocityChange);
+			g.mainBody.AddForce(dd.normalized*(-15F/dd.sqrMagnitude)*dT, ForceMode.VelocityChange);
 		}
 		
 		internal void onLit() {

@@ -43,14 +43,21 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
-		public Dictionary<int, string> getTextureLayers(Renderer r) {
+		public Dictionary<int, string> getTextureLayers(Renderer r) {/*
 			bool hasGlow = r.materials.Length > 1;
-			string N = r.material.name;
-			N = N.Substring(N.LastIndexOf('_')+1);
+			N = N.Substring(N.LastIndexOf('_')+1).Trim();
 			return hasGlow ? new Dictionary<int, string>{{0, "Trunk_"+N}, {1, "Cap_"+N}} : new Dictionary<int, string>{{0, "Inner_"+N}};
+			*/
+			Dictionary<int, string> ret = new Dictionary<int, string>();
+			for (int i = 0; i < r.materials.Length; i++) {
+				string N = r.materials[i].name.Replace("(Instance)", "");
+				N = N.Substring(N.LastIndexOf('_')+1).Trim();
+				ret[i] = N;
+			}
+			return ret;
 		}
 
-		public string getTextureFolder() {
+		public override string getTextureFolder() {
 			return Path.Combine(base.getTextureFolder(), "GlowOilMushroom");
 		}
 		
@@ -117,8 +124,10 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else {
 					float dT2 = time-lastEmitTime;
-					if (dT <= 3)
-						setBrightness(1-dT/3F);
+					if (dT <= 1)
+						setBrightness(1-dT*2);
+					if (dT <= 20)
+						setBrightness(0.5F-dT/40F);
 					else if (dT2 <= 1)
 						setBrightness(1-dT2);
 					else
@@ -132,8 +141,12 @@ namespace ReikaKalseki.SeaToSea {
 				l.intensity = 2*f;
 			}
 			foreach (Renderer r in renderers) {
-				if (r.materials.Length > 1)
-					RenderUtil.setEmissivity(r.materials[1], 0.5F+f*2.5F, "GlowStrength");
+				if (r.materials.Length > 1) {
+					RenderUtil.setEmissivity(r.materials[0], 0.75F+f*0.5F, "GlowStrength");
+					RenderUtil.setEmissivity(r.materials[1], 0.4F+f*3.6F, "GlowStrength");
+				}
+				else
+					RenderUtil.setEmissivity(r.materials[0], 0, "GlowStrength");
 			}
 		}
 		
@@ -146,9 +159,10 @@ namespace ReikaKalseki.SeaToSea {
 			Rigidbody rb = go.GetComponent<Rigidbody>();
 			rb.isKinematic = false;
 			rb.angularVelocity = MathUtil.getRandomVectorAround(Vector3.zero, 15);
-			Vector3 vec = MathUtil.getRandomVectorAround(transform.up.normalized*20, 0.5F);
+			Vector3 vec = MathUtil.getRandomVectorAround(transform.up.normalized*UnityEngine.Random.Range(10F, 15F), 0.5F);
 			rb.AddForce(vec, ForceMode.VelocityChange);
 			SoundManager.playSoundAt(fireSound, transform.position, false, 40);
+			go.GetComponent<GlowOilTag>().onLit();
 			//rb.drag = go.GetComponent<WorldForces>().underwaterDrag;
 		}
 		

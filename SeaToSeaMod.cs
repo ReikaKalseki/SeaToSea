@@ -378,8 +378,9 @@ namespace ReikaKalseki.SeaToSea
 		glowShroom = new GlowOilMushroom();
 		glowShroom.Patch();	
 		e = itemLocale.getEntry(glowShroom.ClassID);
-		glowShroom.addPDAEntry(e.pda, 5, e.getField<string>("header"));
+		glowShroom.addPDAEntry(e.pda, 15F, e.getField<string>("header"));
 		SNUtil.log(" > "+glowShroom);
+		GenUtil.registerSlotWorldgen(glowShroom.ClassID, glowShroom.PrefabFileName, glowShroom.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Far, BiomeType.Dunes_Grass, 1, 0.3F);
 		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*1.5F);
