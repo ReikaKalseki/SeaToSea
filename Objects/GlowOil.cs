@@ -18,6 +18,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class GlowOil : Spawnable {
 		
 		internal static readonly float MAX_GLOW = 2;
+		internal static readonly float MAX_RADIUS = 18;
 		
 		private readonly XMLLocale.LocaleEntry locale;
 		
@@ -61,7 +62,7 @@ namespace ReikaKalseki.SeaToSea {
 			l.bounceIntensity *= 2;
 			l.color = new Color(0.5F, 0.8F, 1F, 1F);
 			l.intensity = 0;
-			l.range = 12;
+			l.range = MAX_RADIUS;
 			Renderer r = world.GetComponentInChildren<Renderer>();
 			RenderUtil.setEmissivity(r.materials[0], 0, "GlowStrength");
 			RenderUtil.setEmissivity(r.materials[1], 0, "GlowStrength");
@@ -201,9 +202,8 @@ namespace ReikaKalseki.SeaToSea {
 			dT = Time.deltaTime;
 			if (time-lastRepelTime >= 0.5) {
 				lastRepelTime = time;
-				SNUtil.writeToChat("Repel attempt");
-				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, 8F, Vector3.zero, 8)) {
-					if (hit.transform) {
+				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position, 8F, Vector3.one, 8)) {
+					if (hit.transform && hit.transform != transform) {
 						GlowOilTag g = hit.transform.GetComponentInParent<GlowOilTag>();
 						if (g)
 							repel(g, dT);
@@ -251,11 +251,13 @@ namespace ReikaKalseki.SeaToSea {
 					g.go.transform.localPosition = g.go.transform.localPosition+g.motion*dT;
 					g.go.transform.Rotate(g.rotation, Space.Self);
 				}
-				RenderUtil.setEmissivity(g.render.materials[1], glowIntensity*12F, "GlowStrength");
+				RenderUtil.setEmissivity(g.render.materials[1], glowIntensity*9F, "GlowStrength");
 			}
 			RenderUtil.setEmissivity(mainRender.materials[0], glowIntensity*5F, "GlowStrength");
-			if (light)
+			if (light) {
 				light.intensity = glowIntensity*GlowOil.MAX_GLOW;
+				light.range = GlowOil.MAX_RADIUS*(0.5F+glowIntensity/2F);
+			}
 		}
 		
 		private void updateGlowStrength(float time, float dT) {
@@ -265,7 +267,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal void repel(GlowOilTag g, float dT) {
 			Vector3 dd = transform.position-g.transform.position;
-			SNUtil.writeToChat("Repel from "+g.transform.position+" > "+dd);
+			//SNUtil.writeToChat("Repel from "+g.transform.position+" > "+dd);
 			mainBody.AddForce(dd.normalized*(15F/dd.sqrMagnitude)*dT, ForceMode.VelocityChange);
 			g.mainBody.AddForce(dd.normalized*(-15F/dd.sqrMagnitude)*dT, ForceMode.VelocityChange);
 		}
