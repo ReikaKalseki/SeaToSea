@@ -50,7 +50,6 @@ namespace ReikaKalseki.SeaToSea
     internal static AlkaliPlant alkali;
     internal static VentKelp kelp;
     internal static HealingFlower healFlower;
-    internal static GlowOilMushroom glowShroom;
     
     internal static Bioprocessor processor;
     internal static RebreatherRecharger rebreatherCharger;
@@ -59,8 +58,6 @@ namespace ReikaKalseki.SeaToSea
     
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
-    
-    internal static GlowOil glowOil;
     
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
@@ -191,9 +188,6 @@ namespace ReikaKalseki.SeaToSea
 	    //voidSpikeLevi.register();
 	    
         addFlora();
-	    
-	    glowOil = new GlowOil(itemLocale.getEntry("GlowOil"));
-	    glowOil.register();
 	    
         addItemsAndRecipes();
         
@@ -327,6 +321,12 @@ namespace ReikaKalseki.SeaToSea
 			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
 		
 		ACUEcosystems.addPredatorType(deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
+		
+		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
+		if (glowOil != null) {
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, 3);
+			RecipeUtil.addIngredient(cyclopsHeat.TechType, glowOil.TechType, 8);			
+		}
     }
     
     private static void registerTabletTechKey(BrokenTablet tb) {
@@ -375,17 +375,9 @@ namespace ReikaKalseki.SeaToSea
 		SNUtil.log(" > "+healFlower);
 		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Near, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
 		
-		glowShroom = new GlowOilMushroom();
-		glowShroom.Patch();	
-		e = itemLocale.getEntry(glowShroom.ClassID);
-		glowShroom.addPDAEntry(e.pda, 15F, e.getField<string>("header"));
-		SNUtil.log(" > "+glowShroom);
-		GenUtil.registerSlotWorldgen(glowShroom.ClassID, glowShroom.PrefabFileName, glowShroom.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Far, BiomeType.Dunes_Grass, 1, 0.3F);
-		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));
-		BioReactorHandler.Main.SetBioReactorCharge(glowShroom.seed.TechType, BaseBioReactor.GetCharge(TechType.SnakeMushroomSpore)*3);
     }
     
     private static void addOreGen() {
@@ -585,7 +577,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem gem = CraftingItems.getItem(CraftingItems.Items.DenseAzurite);
         gem.craftingTime = 4;
-        gem.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 9).addIngredient(TechType.Diamond, 1).addIngredient(TechType.Magnetite, 5).addIngredient(glowOil.TechType, 3);
+        gem.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 9).addIngredient(TechType.Diamond, 1).addIngredient(TechType.Magnetite, 5);
         
         BasicCraftingItem lens = CraftingItems.getItem(CraftingItems.Items.CrystalLens);
         lens.craftingTime = 20;
@@ -686,7 +678,7 @@ namespace ReikaKalseki.SeaToSea
         powerSeal.Patch();
         
         cyclopsHeat = new CyclopsHeatModule();
-        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(glowOil, 8).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
+        cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
         cyclopsHeat.Patch();
 	    
 	    powersealModuleFragment = new PowerSealModuleFragment();

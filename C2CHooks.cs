@@ -34,12 +34,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onDamageEvent += recalculateDamage;
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
 	    	DIHooks.onSkyApplierSpawnEvent += onSkyApplierSpawn;
+	    	
 	    	DIHooks.getBiomeEvent += getBiomeAt;
+	    	DIHooks.getTemperatureEvent += getWaterTemperature;
 	    	
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
-	    	DIHooks.onSeamothTickEvent += tickSeamoth;
-	    	DIHooks.onPrawnTickEvent += tickPrawn;
-	    	DIHooks.onCyclopsTickEvent += tickCyclops;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    }
@@ -107,21 +106,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	data.nodes = PDAEncyclopedia.ParsePath(data.path);
 	    }
 	    
-	    public static void tickSeamoth(SeaMoth sm) {
-	    	if (sm.toggleLights.lightsActive)
-	    		GlowOil.handleLightTick(sm.transform);
-	    }
-	    
-	    public static void tickPrawn(Exosuit e) {
-	    	if (true) //lights always on
-	    		GlowOil.handleLightTick(e.transform);
-	    }
-	    
-	    public static void tickCyclops(SubRoot sub) {
-	    	if (sub.subLightsOn) //lights always on
-	    		GlowOil.handleLightTick(sub.transform);
-	    }
-	    
 	    public static void tickPlayer(Player ep) {
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
@@ -133,8 +117,6 @@ namespace ReikaKalseki.SeaToSea {
 	    			}
 	    		}
 	    	}
-	    	
-	    	GlowOil.checkPlayerLightTick(ep);
 	    	
 	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
@@ -598,26 +580,30 @@ namespace ReikaKalseki.SeaToSea {
 	    	EnvironmentalDamageSystem.instance.tickCyclopsDamage(dmg);
 	    }
 	    
-	    public static float getWaterTemperature(float ret, WaterTemperatureSimulation sim, Vector3 pos) {
-	    	if (Vector3.Distance(pos, mountainBaseGeoCenter) <= 20)
-	    		return Mathf.Min(ret, 45);
-	    	string biome = EnvironmentalDamageSystem.instance.getBiome(pos);
+	    public static void getWaterTemperature(DIHooks.WaterTemperatureCalculation calc) {
+	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
+	    		calc.temperature = Mathf.Min(calc.temperature, 45);
+	    		return;
+	    	}
+	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
-	    		ret = Mathf.Max(4, ret-poison*1.75F); //make LR cold, down to 4C (max water density point)
-	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && pos.y <= -50)
-	    		ret = Mathf.Max(4, ret+(pos.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
-	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(pos, true);
+	    		calc.temperature = Mathf.Max(4, calc.temperature-poison*1.75F); //make LR cold, down to 4C (max water density point)
+	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && calc.position.y <= -50)
+	    		calc.temperature = Mathf.Max(4, calc.temperature+(calc.position.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(calc.position, true);
 	    	if (dist <= 500)
-	    		ret = (float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, ret, true);
-	    	if (VoidSpikesBiome.instance.isInBiome(pos))
-	    		return VoidSpikesBiome.waterTemperature;
-	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(pos);
+	    		calc.temperature = (float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, calc.temperature, true);
+	    	if (VoidSpikesBiome.instance.isInBiome(calc.position)) {
+	    		calc.temperature = VoidSpikesBiome.waterTemperature;
+	    		return;
+	    	}
+	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(calc.position);
 	    	if (dist <= 150)
-	    		ret = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, ret, true);
-	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(pos))
-	    		ret += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(ret, pos);
-	    	return Mathf.Max(ret, EnvironmentalDamageSystem.instance.getWaterTemperature(pos));
+	    		calc.temperature = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, calc.temperature, true);
+	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(calc.position))
+	    		calc.temperature += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(calc.temperature, calc.position);
+	    	calc.temperature = Mathf.Max(calc.temperature, EnvironmentalDamageSystem.instance.getWaterTemperature(calc.position));
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {
