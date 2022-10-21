@@ -176,12 +176,12 @@ namespace ReikaKalseki.SeaToSea {
 			    		foreach (InventoryItem item in Inventory.main.container) {
 			    			if (item != null) {
 			    				Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
-			    				if (b != null && Mathf.Approximately(b.capacity, SeaToSeaMod.t2Battery.capacity)) {
+			    				if (b != null && Mathf.Approximately(b.capacity, C2CItems.t2Battery.capacity)) {
 			    					b.charge = Math.Min(b.charge+0.5F*f, b.capacity);
 			    					continue;
 			    				}
 			    				EnergyMixin e = item.item.gameObject.GetComponentInChildren<EnergyMixin>();
-			    				if (e != null && e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+			    				if (e != null && e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity)) {
 			    					//SNUtil.writeToChat("Charging "+item.item+" by factor "+f+", d="+ventDist);
 			    					e.AddEnergy(0.5F*f);
 			    				}
@@ -193,12 +193,12 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onEquipmentAdded(string slot, InventoryItem item) {
-	    	if (item.item.GetTechType() == SeaToSeaMod.liquidTank.TechType)
+	    	if (item.item.GetTechType() == C2CItems.liquidTank.TechType)
 	    		LiquidBreathingSystem.instance.onEquip();
 	    }
 	    
 	    public static void onEquipmentRemoved(string slot, InventoryItem item) {
-	    	if (item.item.GetTechType() == SeaToSeaMod.liquidTank.TechType)
+	    	if (item.item.GetTechType() == C2CItems.liquidTank.TechType)
 	    		LiquidBreathingSystem.instance.onUnequip();
 	    }
 	    
@@ -230,12 +230,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static string getBiomeAt(string orig, Vector3 pos) {
-	    	if (VoidSpikesBiome.instance.isInBiome(pos))
-	    		return VoidSpikesBiome.biomeName;
-	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(orig, pos))
-	    		return UnderwaterIslandsFloorBiome.biomeName;
-	    	return orig;
+	    public static void getBiomeAt(DIHooks.BiomeCheck b) {
+	    	if (VoidSpikesBiome.instance.isInBiome(b.position)) {
+	    		b.setValue(VoidSpikesBiome.biomeName);
+	    		b.lockValue();
+	    	}
+	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(b.originalValue, b.position)) {
+	    		b.setValue(UnderwaterIslandsFloorBiome.biomeName);
+	    		b.lockValue();
+	    	}
 	    }
 	    
 	    public static float getSwimSpeed(float f) {
@@ -248,7 +251,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getSeaglideSpeed(float f) { //1.45 by default
-	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity));
+	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity));
 			if (isHeldToolAzuritePowered()) {
 	    		float bonus = 0.75F; //was 0.55 then 0.95
 	    		float depth = Player.main.GetDepth();
@@ -279,7 +282,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
 	    	if (e == null)
 	    		return amt;
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity)) {
 	    		amt *= 1.5F;
 	    	}
 	    	return amt;
@@ -290,7 +293,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
 	    	if (e == null)
 	    		return amt;
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity)) {
+	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity)) {
 	    		amt *= 2F;
 	    	}
 	    	return amt;
@@ -305,7 +308,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
 	    	if (e == null)
 	    		return false;
-	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, SeaToSeaMod.t2Battery.capacity);
+	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity);
 	    }
 	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
@@ -328,18 +331,18 @@ namespace ReikaKalseki.SeaToSea {
 	    	switch(p.GetTechType()) {
 	    		case TechType.StasisRifle:
 	    		case TechType.LaserCutter:
-	    			mix.defaultBattery = SeaToSeaMod.t2Battery.TechType;
+	    			mix.defaultBattery = C2CItems.t2Battery.TechType;
 	    			break;
 	    	}
 	    }
 	    
 	    public static void addT2BatteryAllowance(EnergyMixin mix) {
-	    	if (mix.compatibleBatteries.Contains(TechType.Battery) && !mix.compatibleBatteries.Contains(SeaToSeaMod.t2Battery.TechType)) {
-	    		mix.compatibleBatteries.Add(SeaToSeaMod.t2Battery.TechType);/*
+	    	if (mix.compatibleBatteries.Contains(TechType.Battery) && !mix.compatibleBatteries.Contains(C2CItems.t2Battery.TechType)) {
+	    		mix.compatibleBatteries.Add(C2CItems.t2Battery.TechType);/*
 	    		List<EnergyMixin.BatteryModels> arr = mix.batteryModels.ToList();
-	    		GameObject go = SeaToSeaMod.t2Battery.GetGameObject();
+	    		GameObject go = C2CItems.t2Battery.GetGameObject();
 	    		go.SetActive(false);
-	    		arr.Add(new EnergyMixin.BatteryModels{model = go, techType = SeaToSeaMod.t2Battery.TechType});
+	    		arr.Add(new EnergyMixin.BatteryModels{model = go, techType = C2CItems.t2Battery.TechType});
 	    		mix.batteryModels = arr.ToArray();*/
 	    	}
 	    }
@@ -359,7 +362,7 @@ namespace ReikaKalseki.SeaToSea {
 				List<TimeCapsuleItem> items = TimeCapsuleContentProvider.GetItems(tc.id);
 				if (items != null) {
 					foreach (TimeCapsuleItem tci in items) {
-						if (SeaToSeaMod.isTechGated(tci.techType) || SeaToSeaMod.isTechGated(tci.batteryType)) {
+						if (C2CProgression.instance.isTechGated(tci.techType) || C2CProgression.instance.isTechGated(tci.batteryType)) {
 							someBlocked = true;
 							continue;
 						}
@@ -407,18 +410,16 @@ namespace ReikaKalseki.SeaToSea {
 	   		Player p = dmg.target.GetComponentInParent<Player>();
 	   		if (p != null) {
 	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 20) {
-	   				dmg.amount = 0;
+	   				dmg.setValue(0);
 	   				return;
 	   			}
 	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
-	   			bool seal = suit != null && suit.item.GetTechType() == SeaToSeaMod.sealSuit.TechType;
+	   			bool seal = suit != null && suit.item.GetTechType() == C2CItems.sealSuit.TechType;
 	   			bool reinf = suit != null && suit.item.GetTechType() == TechType.ReinforcedDiveSuit;
 	   			if (seal || reinf) {
 		   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
-		   				dmg.amount *= seal ? 0.2F : 0.4F;
-		   				dmg.amount -= seal ? 10 : 7.5F;
-		   				if (dmg.amount < 0)
-		   					dmg.amount = 0;
+	   					dmg.setValue(dmg.getAmount() * (seal ? 0.2F : 0.4F));
+	   					dmg.setValue(dmg.getAmount() - (seal ? 10 : 7.5F));
 		   			}
 	   			}
 	   		}
@@ -430,16 +431,17 @@ namespace ReikaKalseki.SeaToSea {
 	   			if (s) {
 	   				if (dmg.type == DamageType.Electrical)
 	   					s.onHitWithElectricDefense();
-	   				dmg.amount *= 0.5F; //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
+	   				dmg.setValue(dmg.getAmount() * 0.5F); //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
 	   			}
 	   		}
 	   		if (dmg.type == DamageType.Electrical) {
 	   			VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.GetComponent<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
 	   			if (s) {
-	   				dmg.amount = 0F;
+	   				dmg.setValue(0);
+	   				dmg.lockValue();
 	   			}
 	   			if (!p && Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
-	   				dmg.amount = 0F;
+	   				dmg.setValue(0);
 	   			}
 	   		}
 		}
@@ -468,7 +470,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onItemPickedUp(Pickupable p) {
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
-				if (Inventory.main.equipment.GetCount(SeaToSeaMod.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
+				if (Inventory.main.equipment.GetCount(C2CItems.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
 					lv.TakeDamage(lv.maxHealth/4F, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
@@ -582,28 +584,29 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void getWaterTemperature(DIHooks.WaterTemperatureCalculation calc) {
 	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
-	    		calc.temperature = Mathf.Min(calc.temperature, 45);
+	    		calc.setValue(Mathf.Min(calc.getTemperature(), 45));
 	    		return;
 	    	}
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
-	    		calc.temperature = Mathf.Max(4, calc.temperature-poison*1.75F); //make LR cold, down to 4C (max water density point)
+	    		calc.setValue(Mathf.Max(4, calc.getTemperature()-poison*1.75F)); //make LR cold, down to 4C (max water density point)
 	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && calc.position.y <= -50)
-	    		calc.temperature = Mathf.Max(4, calc.temperature+(calc.position.y+50)/20F); //drop 1C per 20m below 50m, down to 4C around 550m
+	    		calc.setValue(Mathf.Max(4, calc.getTemperature()+(calc.position.y+50)/20F)); //drop 1C per 20m below 50m, down to 4C around 550m
 	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(calc.position, true);
 	    	if (dist <= 500)
-	    		calc.temperature = (float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, calc.temperature, true);
+	    		calc.setValue((float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, calc.getTemperature(), true));
 	    	if (VoidSpikesBiome.instance.isInBiome(calc.position)) {
-	    		calc.temperature = VoidSpikesBiome.waterTemperature;
+	    		calc.setValue(VoidSpikesBiome.waterTemperature);
+	    		calc.lockValue();
 	    		return;
 	    	}
 	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(calc.position);
 	    	if (dist <= 150)
-	    		calc.temperature = (float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, calc.temperature, true);
+	    		calc.setValue((float)MathUtil.linterpolate(dist, 0, 150, UnderwaterIslandsFloorBiome.waterTemperature, calc.getTemperature(), true));
 	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(calc.position))
-	    		calc.temperature += UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(calc.temperature, calc.position);
-	    	calc.temperature = Mathf.Max(calc.temperature, EnvironmentalDamageSystem.instance.getWaterTemperature(calc.position));
+	    		calc.setValue(calc.getTemperature()+UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(calc.getTemperature(), calc.position));
+	    	calc.setValue(Mathf.Max(calc.getTemperature(), EnvironmentalDamageSystem.instance.getWaterTemperature(calc.position)));
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {
@@ -667,7 +670,7 @@ namespace ReikaKalseki.SeaToSea {
 		    	}
 	    	}
 	    	else if (pi && pi.ClassId == "" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
-	    		GameObject go2 = ObjectUtil.createWorldObject(SeaToSeaMod.brokenOrangeTablet.ClassID);
+	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
@@ -737,21 +740,21 @@ namespace ReikaKalseki.SeaToSea {
 			for (int i = 0; i < sm.slotIDs.Length; i++) {
 				string slot = sm.slotIDs[i];
 				TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
-				if (techTypeInSlot == SeaToSeaMod.depth1300.TechType) {
-					sm.crushDamage.SetExtraCrushDepth(SeaToSeaMod.depth1300.depthBonus);
+				if (techTypeInSlot == C2CItems.depth1300.TechType) {
+					sm.crushDamage.SetExtraCrushDepth(C2CItems.depth1300.depthBonus);
 				}
 			}
 	    }
 	   
 		public static string getO2Tooltip(Oxygen ox) {
-	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType) {
+	   		if (ox.GetComponent<Pickupable>().GetTechType() == C2CItems.liquidTank.TechType) {
 	   			return ox.GetSecondsLeft()+"s fluid stored in supply tank";
 	   		}
 	   		return LanguageCache.GetOxygenText(ox.GetSecondsLeft());
 		}
 	   
 		public static string getBatteryTooltip(Battery ox) {
-	   		if (ox.GetComponent<Pickupable>().GetTechType() == SeaToSeaMod.liquidTank.TechType)
+	   		if (ox.GetComponent<Pickupable>().GetTechType() == C2CItems.liquidTank.TechType)
 	   			return Mathf.RoundToInt(ox.charge)+"s fluid stored in primary tank";
 	   		return Language.main.GetFormat<float, int, float>("BatteryCharge", ox.charge/ox.capacity, Mathf.RoundToInt(ox.charge), ox.capacity);
 		}

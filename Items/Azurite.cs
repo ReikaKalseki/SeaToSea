@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea {
 			light.range = Azurite.BASE_LIGHT_RANGE+0.5F*f;
 			if (dT > 0 && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
 	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
-	   			if (suit == null || (suit.item.GetTechType() != SeaToSeaMod.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
+	   			if (suit == null || (suit.item.GetTechType() != C2CItems.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
 					GameObject ep = Player.main.gameObject;
 					float distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 					if (distsq < 144) {

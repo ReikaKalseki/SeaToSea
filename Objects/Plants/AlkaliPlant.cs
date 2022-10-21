@@ -118,7 +118,7 @@ namespace ReikaKalseki.SeaToSea {
 					currentScale = 1;
 				currentScale = Mathf.Clamp(currentScale, 0.03F, 1);
 				float f = rootScale*currentScale;
-				float glow = SeaToSeaMod.alkali.glowIntensity*currentScale;
+				float glow = C2CItems.alkali.glowIntensity*currentScale;
 				if (glow <= 0.035)
 					glow = 0;
 				RenderUtil.setEmissivity(renderer, glow, "GlowStrength");

@@ -208,7 +208,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			dmg.liveMixin.TakeDamage(30*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
 	    		}
 	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
-	   			if (suit == null || (suit.item.GetTechType() != SeaToSeaMod.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
+	   			if (suit == null || (suit.item.GetTechType() != C2CItems.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
 		    		//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
 		    		float amt = getLRPoison(biome);
 		    		if (amt > 0) {
@@ -253,7 +253,7 @@ namespace ReikaKalseki.SeaToSea {
     		if (v.docked)
     			return 0;
     		float leak = 1;
-	    	if (InventoryUtil.vehicleHasUpgrade(v, SeaToSeaMod.powerSeal.TechType))
+	    	if (InventoryUtil.vehicleHasUpgrade(v, C2CItems.powerSeal.TechType))
 	    		leak *= 0.2F;
 			//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
 			if (v.playerSits)
@@ -305,7 +305,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SBUtil.writeToChat("heat: "+temp);
 	    		if (temp != null) {
 	    			//SBUtil.writeToChat("immune: "+immune);
-	    			if (!InventoryUtil.cyclopsHasUpgrade(sub, SeaToSeaMod.cyclopsHeat.TechType)) {
+	    			if (!InventoryUtil.cyclopsHasUpgrade(sub, C2CItems.cyclopsHeat.TechType)) {
 						dmg.liveMixin.TakeDamage(dmg.damagePerCrush*temp.damageScalar*0.15F, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.soundOnDamage) {
 							dmg.soundOnDamage.Play();
@@ -433,7 +433,7 @@ namespace ReikaKalseki.SeaToSea {
 				return 0;
 			float num = 1;
 			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting && isPlayerInOcean()) {
-				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType;
+				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType;
 				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
 				if (!hasRebreather) {
 					if (depthClass == 2) {
@@ -489,7 +489,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		List<EnviroAlert> li = new List<EnviroAlert>();
 	   		foreach (RebreatherDepthWarnings.DepthAlert a in warn.alerts) {
 	   			EnviroAlert e = new EnviroAlert(a);
-	   			e.preventiveItem.Add(SeaToSeaMod.rebreatherV2.TechType);
+	   			e.preventiveItem.Add(C2CItems.rebreatherV2.TechType);
 	   			li.Add(e);
 	   		}
 	   		warn.alerts.Clear();
@@ -504,7 +504,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		
 	   		EnviroAlert poison = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
 	   		poison.preventiveItem.Clear();
-	   		poison.preventiveItem.Add(SeaToSeaMod.sealSuit.TechType);
+	   		poison.preventiveItem.Add(C2CItems.sealSuit.TechType);
 	   		poison.preventiveItem.Add(TechType.ReinforcedDiveSuit);
 	   		warn.alerts.Add(poison);
 	   		
@@ -699,7 +699,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class O2IncreasingAlert : EnviroAlert {
 		
-		internal O2IncreasingAlert(RebreatherDepthWarnings warn) : base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType, null, null) {
+		internal O2IncreasingAlert(RebreatherDepthWarnings warn) : base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType, null, null) {
 			preventiveItem.Clear();
 		}
 		

@@ -41,7 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override TechCategory CategoryForPDA {
 			get {
-				return SeaToSeaMod.chemistryCategory;
+				return C2CItems.chemistryCategory;
 			}
 		}
 

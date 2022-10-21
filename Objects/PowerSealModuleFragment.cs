@@ -17,12 +17,12 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class PowerSealModuleFragment : Spawnable {
 	        
-	    internal PowerSealModuleFragment() : base("powersealmodulefragment", SeaToSeaMod.powerSeal.FriendlyName, SeaToSeaMod.powerSeal.Description) {
+	    internal PowerSealModuleFragment() : base("powersealmodulefragment", C2CItems.powerSeal.FriendlyName, C2CItems.powerSeal.Description) {
 			
 	    }
 			
 	    public override GameObject GetGameObject() {
-			GameObject world = ObjectUtil.createWorldObject(SeaToSeaMod.powerSeal.ClassID);
+			GameObject world = ObjectUtil.createWorldObject(C2CItems.powerSeal.ClassID);
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			ObjectUtil.removeComponent<WorldForces>(world);
@@ -36,10 +36,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void register() {
 			Patch();
-        	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){SeaToSeaMod.powerSeal.TechType});
+        	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){C2CItems.powerSeal.TechType});
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
 			e.key = TechType;
-			e.blueprint = SeaToSeaMod.powerSeal.TechType;
+			e.blueprint = C2CItems.powerSeal.TechType;
 			e.destroyAfterScan = true;
 			e.locked = true;
 			e.totalFragments = 1;

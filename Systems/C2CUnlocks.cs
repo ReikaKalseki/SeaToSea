@@ -21,12 +21,12 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly C2CUnlocks instance = new C2CUnlocks();
 		
 		private C2CUnlocks() {
-	    	foreach (SeaToSeaMod.IngotDefinition tt in SeaToSeaMod.getIngots()) {
+	    	foreach (C2CItems.IngotDefinition tt in C2CItems.getIngots()) {
 	    		TechnologyUnlockSystem.instance.addDirectUnlock(tt.material, tt.ingot);
 	    		TechnologyUnlockSystem.instance.addDirectUnlock(tt.material, tt.unpackingRecipe.TechType);
 	    	}
-	    	SeaToSeaMod.IngotDefinition qi = SeaToSeaMod.getIngot(TechType.Quartz);
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(qi.material, SeaToSeaMod.quartzIngotToGlass.TechType);
+	    	C2CItems.IngotDefinition qi = C2CItems.getIngot(TechType.Quartz);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(qi.material, C2CRecipes.getQuartzIngotToGlass().TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
@@ -35,16 +35,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
 	    	
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, SeaToSeaMod.getAlternateEnzyme().TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, C2CRecipes.getAlternateEnzyme().TechType);
 	    	
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
 	    	//addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType);
 	    	
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(SeaToSeaMod.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
 	    	
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(SeaToSeaMod.powerSeal.TechType, SeaToSeaMod.powerSeal.TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 	    	
 	    	//addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, SeaToSeaMod.powerSeal.TechType);
 	    	//addDirectUnlock(TechType.PrecursorIonPowerCell, SeaToSeaMod.powerSeal.TechType);

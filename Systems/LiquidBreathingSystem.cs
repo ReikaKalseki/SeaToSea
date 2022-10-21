@@ -79,7 +79,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private Battery getTankBattery() {
 	    	InventoryItem tank = Inventory.main.equipment.GetItemInSlot("Tank");
-	    	if (tank.item.GetTechType() != SeaToSeaMod.liquidTank.TechType)
+	    	if (tank.item.GetTechType() != C2CItems.liquidTank.TechType)
 	    		return null;
 	    	Battery b = tank.item.gameObject.GetComponent<Battery>();
 	    	return b;
@@ -150,11 +150,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool hasTankButNoMask() {
-	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == C2CItems.liquidTank.TechType;
 	    }
 	    
 	    public bool hasLiquidBreathing() {
-	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == SeaToSeaMod.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == SeaToSeaMod.liquidTank.TechType;
+	    	return Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == C2CItems.liquidTank.TechType;
 	    }
 	    
 	    public void checkLiquidBreathingSupport(OxygenArea a) {
@@ -218,7 +218,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public bool isO2BarFlashingRed() {
-	    	return Player.main.GetDepth() >= 400 && EnvironmentalDamageSystem.instance.isPlayerInOcean() && Inventory.main.equipment.GetTechTypeInSlot("Head") != SeaToSeaMod.rebreatherV2.TechType;
+	    	return Player.main.GetDepth() >= 400 && EnvironmentalDamageSystem.instance.isPlayerInOcean() && Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType;
 	    }
 	    
 	    public void applyToBasePipes(RebreatherRechargerLogic machine, Transform seabase) {

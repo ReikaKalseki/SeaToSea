@@ -30,6 +30,8 @@ namespace ReikaKalseki.SeaToSea
 	    };
 	    
 	    private float lastDunesEntry = -1;
+    
+    	private readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
 		
 		private C2CProgression() {
 	    	StoryHandler.instance.addListener(this);
@@ -61,6 +63,36 @@ namespace ReikaKalseki.SeaToSea
 			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new ProgressionTrigger(doDunesCheck)), new DunesPrompt());
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
+		
+			gatedTechnologies.Add(TechType.Kyanite);
+			gatedTechnologies.Add(TechType.Sulphur);
+			gatedTechnologies.Add(TechType.Nickel);
+			gatedTechnologies.Add(TechType.JellyPlant);
+			gatedTechnologies.Add(TechType.BloodOil);
+			gatedTechnologies.Add(TechType.WhiteMushroom);
+			gatedTechnologies.Add(TechType.SeaCrown);
+			gatedTechnologies.Add(TechType.Aerogel);
+			gatedTechnologies.Add(TechType.Seamoth);
+			gatedTechnologies.Add(TechType.Cyclops);
+			gatedTechnologies.Add(TechType.Exosuit);
+			gatedTechnologies.Add(TechType.ExosuitDrillArmModule);
+			gatedTechnologies.Add(TechType.ExoHullModule1);
+			gatedTechnologies.Add(TechType.ExoHullModule2);
+			gatedTechnologies.Add(TechType.VehicleHullModule2);
+			gatedTechnologies.Add(TechType.VehicleHullModule3);
+			gatedTechnologies.Add(TechType.CyclopsHullModule2);
+			gatedTechnologies.Add(TechType.CyclopsHullModule3);
+			gatedTechnologies.Add(TechType.CyclopsThermalReactorModule);
+			gatedTechnologies.Add(TechType.CyclopsFireSuppressionModule);
+			gatedTechnologies.Add(TechType.StasisRifle);
+			gatedTechnologies.Add(TechType.LaserCutter);
+			gatedTechnologies.Add(TechType.ReinforcedDiveSuit);
+			gatedTechnologies.Add(TechType.ReinforcedGloves);
+			gatedTechnologies.Add(TechType.PrecursorKey_Blue);
+			gatedTechnologies.Add(TechType.PrecursorKey_Red);
+			gatedTechnologies.Add(TechType.PrecursorKey_White);
+			gatedTechnologies.Add(TechType.PrecursorKey_Orange);
+			gatedTechnologies.Add(TechType.PrecursorKey_Purple);
 		}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
@@ -134,7 +166,7 @@ namespace ReikaKalseki.SeaToSea
 						Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
 					break;
 					case "drfwarperheat":
-						KnownTech.Add(SeaToSeaMod.cyclopsHeat.TechType);
+						KnownTech.Add(C2CItems.cyclopsHeat.TechType);
 					break;
 				}
 			}
@@ -143,6 +175,10 @@ namespace ReikaKalseki.SeaToSea
 		internal bool canTriggerPDAPrompt(Player ep) {
 	    	return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && (ep.IsSwimming() || ep.GetVehicle() != null) && ep.currentSub == null;
 		}
+    
+	    public bool isTechGated(TechType tt) {
+	    	return gatedTechnologies.Contains(tt);
+	    }
 	}
 	
 	internal class PDAPromptCondition : ProgressionTrigger {

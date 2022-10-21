@@ -186,7 +186,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float creationTime = 999999;
 		
 		void Start() {
-			SeaToSeaMod.kelp.prepareGameObject(gameObject, null);
+			C2CItems.kelp.prepareGameObject(gameObject, null);
 			creationTime = DayNightCycle.main.timePassedAsFloat;
 			if (gameObject.GetComponent<GrownPlant>()) {
     			gameObject.SetActive(true);

@@ -48,7 +48,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//GenUtil.registerWorldgen(atmoFX.ClassID, biomeCenter, Quaternion.identity, go => go.transform.localScale = Vector3.one*(biomeRadius+50));
 			
-			GenUtil.registerSlotWorldgen(SeaToSeaMod.kelp.ClassID, SeaToSeaMod.kelp.PrefabFileName, SeaToSeaMod.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
+			GenUtil.registerSlotWorldgen(C2CItems.kelp.ClassID, C2CItems.kelp.PrefabFileName, C2CItems.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 		}
 		/*
