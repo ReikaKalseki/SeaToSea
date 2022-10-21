@@ -417,20 +417,6 @@
 			voidlevi
 		</header>
 	</VoidSpikeLevi>
-	<GlowOil>
-		<name>
-			 Luma Oil
-		</name>
-		<desc>
-			
-		</desc>
-		<pda>
-			
-		</pda>
-		<header>
-			
-		</header>
-	</GlowOil>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module
