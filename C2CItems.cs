@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea
     internal static CyclopsHeatModule cyclopsHeat;
     internal static SeamothDepthModule depth1300;
     internal static SeamothPowerSealModule powerSeal;
+    internal static SeamothHeatSinkModule heatSinkModule;
     internal static CustomEquipable sealSuit;
     internal static CustomBattery t2Battery;
     
@@ -33,6 +34,7 @@ namespace ReikaKalseki.SeaToSea
     internal static LiquidTank liquidTank;
     
     internal static BreathingFluid breathingFluid;
+    internal static SeamothHeatSink heatSink;
     internal static CurativeBandage bandage;
     
     internal static AlkaliPlant alkali;
@@ -75,14 +77,16 @@ namespace ReikaKalseki.SeaToSea
 	    brokenBlueTablet = new BrokenTablet(TechType.PrecursorKey_Blue);
 	    
         voidStealth = new SeamothVoidStealthModule();        
-        depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);        
-        powerSeal = new SeamothPowerSealModule();        
+        depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
+        powerSeal = new SeamothPowerSealModule();
+        heatSinkModule = new SeamothHeatSinkModule();
         cyclopsHeat = new CyclopsHeatModule();        
 		sealSuit = new SealedSuit();		
 		t2Battery = new CustomBattery(SeaToSeaMod.itemLocale.getEntry("t2battery"), 750);		
         rebreatherV2 = new RebreatherV2();		
         liquidTank = new LiquidTank();        
-		breathingFluid = new BreathingFluid();        
+		breathingFluid = new BreathingFluid();
+		heatSink = new SeamothHeatSink();
 		bandage = new CurativeBandage();
    	}
    
@@ -90,14 +94,20 @@ namespace ReikaKalseki.SeaToSea
    		CraftingItems.addAll();
    	}
    
-   	internal static void addMainItems() {
-        voidStealth.Patch();
-        
+   	internal static void addMainItems() {        
         depth1300.preventNaturalUnlock();
         depth1300.Patch();
         
+        powerSeal.preventNaturalUnlock();
         powerSeal.Patch();
         
+        voidStealth.preventNaturalUnlock();
+        voidStealth.Patch();
+        
+        heatSinkModule.preventNaturalUnlock();
+        heatSinkModule.Patch();
+        
+        cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
         
         sealSuit.Patch();
@@ -110,6 +120,8 @@ namespace ReikaKalseki.SeaToSea
         liquidTank.Patch();
         
 		breathingFluid.Patch();
+		heatSink.unlockRequirement = heatSinkModule.TechType;
+		heatSink.Patch();
         
 		bandage.Patch();
 		CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];

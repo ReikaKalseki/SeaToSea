@@ -440,6 +440,28 @@
 			
 		</pda>
 	</SeamothPowerSeal>
+	<SeamothHeatSinkModule>
+		<name>
+			Seamoth Heat Sink Module
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeamothHeatSinkModule>
+	<SeamothHeatSink>
+		<name>
+			Seamoth Heat Sink
+		</name>
+		<desc>
+			A consumable item for the heat sink module to operate.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeamothHeatSink>
 	<t2battery>
 		<name>
 			Advanced Battery

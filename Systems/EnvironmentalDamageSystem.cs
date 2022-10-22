@@ -24,6 +24,10 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
+    	private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
+    	private readonly static double lavaPitEntranceRadius = 130;
+    	internal readonly static double lavaPitEntranceDepthStart = 900;
+    	internal readonly static double lavaPitEntranceDepthMaxTemp = 1100;
     	
     	//private readonly static Vector3 auroraPrawnBayCenter = new Vector3(996, 2.5F, -26.5F);//new Vector3(1003, 4, -18);
     	//private readonly static Vector3 auroraTopLeftBack = new Vector3(1010, 13, ?);
@@ -73,12 +77,13 @@ namespace ReikaKalseki.SeaToSea {
     		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 0.5F, 40, 9);
     		temperatures["ILZCorridorDeep"] = new TemperatureEnvironment(120, 9, 0.5F, 20, 12);
     		temperatures["ILZChamber"] = new TemperatureEnvironment(150, 10, 0.5F, 10, 15);
-    		temperatures["LavaPit"] = new TemperatureEnvironment(180, 12, 0.5F, 8, 20);
-    		temperatures["LavaFalls"] = new TemperatureEnvironment(200, 15, 0.5F, 5, 25);
-    		temperatures["LavaLakes"] = new TemperatureEnvironment(250, 18, 0.5F, 2, 40);
+    		temperatures["LavaPit"] = new TemperatureEnvironment(200, 12, 0.5F, 8, 20);
+    		temperatures["LavaFalls"] = new TemperatureEnvironment(300, 15, 0.5F, 5, 25);
+    		temperatures["LavaLakes"] = new TemperatureEnvironment(400, 18, 0.5F, 2, 40);
     		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0.5F, 0, 100); //in lava
     		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
+    		temperatures["LavaPitEntrance"] = new TemperatureEnvironment(320, 15, 0.5F, 5, 25);
     		
     		temperatures["AuroraPrawnBay"] = new TemperatureEnvironment(150, 10F, 2.5F, 9999, 0);
     		temperatures["AuroraPrawnBayDoor"] = new TemperatureEnvironment(200, 40F, 2.5F, 9999, 0);
@@ -181,6 +186,9 @@ namespace ReikaKalseki.SeaToSea {
 			    			playerHeatDamage = time; //this also covers the seamoth
 			    			if (v && v is SeaMoth) { //only trigger for seamoth
 			    				PDAManager.getPage("heatdamage").unlock();
+						   		if (!KnownTech.Contains(C2CItems.heatSink.TechType)) {
+						        	KnownTech.Add(C2CItems.heatSink.TechType);
+			    				}
 			    			}
 						}
 					}
@@ -240,10 +248,6 @@ namespace ReikaKalseki.SeaToSea {
 		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
 		    			if (!dmg.player)
 		    				vehiclePowerLeak = time;
-		    			/*
-				   		if (!KnownTech.Contains(SeaToSeaMod.powerSeal.TechType)) {
-				        	KnownTech.Add(SeaToSeaMod.powerSeal.TechType);
-				    	}*/
 		    		}
 		    	}
 			}
@@ -385,6 +389,8 @@ namespace ReikaKalseki.SeaToSea {
     			ret = "ILZCorridorDeep";
     		if (ret == "ILZChamber" && Vector3.Distance(lavaCastleCenter, pos) <= lavaCastleRadius)
     			ret = "LavaCastle";
+    		if (ret == "ILZChamber" && pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999))
+    			ret = "LavaPitEntrance";
     		if (string.IsNullOrEmpty(ret))
     			ret = "void";
     		if (isPlayerInAuroraPrawnBay(pos))
@@ -402,6 +408,9 @@ namespace ReikaKalseki.SeaToSea {
     		float ret = temp != null ? temp.temperature : -1000;
     		if (biome == "ILZCorridor" && pos.y <= -1100 && pos.y >= -1175) {
     			ret = (float)MathUtil.linterpolate(-pos.y, 1100, 1175, temperatures["ILZCorridor"].temperature, temperatures["ILZCorridorDeep"].temperature);
+    		}
+    		if (biome == "LavaPitEntrance" && pos.y >= -lavaPitEntranceDepthMaxTemp) {
+    			ret = (float)MathUtil.linterpolate(-pos.y, lavaPitEntranceDepthStart, lavaPitEntranceDepthMaxTemp, getWaterTemperature(lavaPitEntranceCenter.setY(-lavaPitEntranceDepthStart+5)), temperatures["LavaPitEntrance"].temperature);
     		}
     		return ret;
     	}

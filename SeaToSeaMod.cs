@@ -71,6 +71,8 @@ namespace ReikaKalseki.SeaToSea
     public static SoundManager.SoundData voidspikeLeviFX;
     public static SoundManager.SoundData voidspikeLeviAmbient;
     */
+   
+   internal static bool anywhereSeamothModuleCheatActive = false;
     
     [QModPrePatch]
     public static void PreLoad() {
@@ -292,6 +294,8 @@ namespace ReikaKalseki.SeaToSea
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doFlash);
+        
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
     }
     /*
     private static void spawnVentKelp(float dist) {

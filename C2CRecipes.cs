@@ -196,12 +196,14 @@ namespace ReikaKalseki.SeaToSea
 		
         C2CItems.voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(armor, 2);
-        C2CItems.powerSeal.addIngredient(TechType.Aerogel, 1).addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
+        C2CItems.powerSeal.addIngredient(TechType.Aerogel, 1).addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
+        C2CItems.heatSinkModule.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(TechType.Pipe, 5).addIngredient(motor, 1).addIngredient(TechType.Benzene, 2);
         C2CItems.cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 4);
         C2CItems.sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
         C2CItems.t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
         C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
+        C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Lithium, 2);
         C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
 		C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(C2CItems.healFlower.seed.TechType, 2).addIngredient(TechType.JellyPlant, 1);
 		C2CItems.addMainItems();

@@ -54,6 +54,9 @@ namespace ReikaKalseki.SeaToSea {
     	
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWFIRERATE, f => Mathf.Clamp(f, 0.75F, 1F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWLIFE, f => Mathf.Clamp(f, 0.5F, 2F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BOMBDMG, f => Mathf.Clamp(f, 0.5F, 2F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.ANCHORDMG, f => Mathf.Clamp(f, 0.25F, 1.5F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BLOODDMG, f => Mathf.Clamp(f, 1F, 3F));
     }
     
     public static void addPostCompat() {

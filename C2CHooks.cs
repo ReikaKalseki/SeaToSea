@@ -583,6 +583,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void getWaterTemperature(DIHooks.WaterTemperatureCalculation calc) {
+			//SNUtil.writeToChat("C2C: Checking water temp @ "+calc.position+" def="+calc.originalValue);
 	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
 	    		calc.setValue(Mathf.Min(calc.getTemperature(), 45));
 	    		return;
@@ -607,6 +608,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(calc.position))
 	    		calc.setValue(calc.getTemperature()+UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(calc.getTemperature(), calc.position));
 	    	calc.setValue(Mathf.Max(calc.getTemperature(), EnvironmentalDamageSystem.instance.getWaterTemperature(calc.position)));
+			foreach (HeatSinkTag lb in UnityEngine.Object.FindObjectsOfType<HeatSinkTag>()) {
+				if (lb) {
+					dist = Vector3.Distance(lb.transform.position, calc.position);
+					if (dist <= EjectedHeatSink.HEAT_RADIUS) {
+						float f = 1F-(float)(dist/EjectedHeatSink.HEAT_RADIUS);
+						//SNUtil.writeToChat("Found heat sink "+lb.transform.position+" at dist "+dist+" > "+f+" > "+(f*lb.getTemperature()));
+						calc.setValue(Mathf.Max(calc.getTemperature(), f*lb.getTemperature()));
+					}
+				}
+			}
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {
@@ -760,13 +771,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	   
 	   public static void onClickedVehicleUpgrades(VehicleUpgradeConsoleInput v) {
-			if (v.docked)
+			if (v.docked || SeaToSeaMod.anywhereSeamothModuleCheatActive)
 				v.OpenPDA();
 	   }
 	   
 		public static void onHoverVehicleUpgrades(VehicleUpgradeConsoleInput v) {
 			HandReticle main = HandReticle.main;
-		   	if (!v.docked) {
+		   	if (!v.docked && !SeaToSeaMod.anywhereSeamothModuleCheatActive) {
 				main.SetInteractText("DockToChangeVehicleUpgrades"); //locale key
 				main.SetIcon(HandReticle.IconType.HandDeny, 1f);
 		   	}
