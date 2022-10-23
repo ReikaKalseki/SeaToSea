@@ -17,11 +17,9 @@ namespace ReikaKalseki.SeaToSea {
 	public class SeamothHeatSink : BasicCraftingItem {
 		
 		public SeamothHeatSink() : base(SeaToSeaMod.itemLocale.getEntry("SeamothHeatSink"), "WorldEntities/Natural/CopperWire") {
-			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/HeatSink");
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/Seamothheatsink");
 			craftingSubCategory = "Tools";
 			craftingTime = 4;
-			
-			RecipeUtil.dumpCraftTree(CraftTree.Type.SeamothUpgrades);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

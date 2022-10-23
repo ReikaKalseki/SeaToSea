@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly float HEAT_RADIUS = 20;
 		internal static readonly float MAX_TEMPERATURE = 600;
 	        
-	    internal EjectedHeatSink(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
+	    internal EjectedHeatSink() : base("dumpedheatsink", "Ejected Heat Sink", "") {
 			
 	    }
 			
@@ -35,15 +35,15 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			HeatSinkTag g = world.EnsureComponent<HeatSinkTag>();
 			Light l = ObjectUtil.addLight(world);
-			l.bounceIntensity *= 3;
+			l.bounceIntensity *= 1.5F;
 			l.color = new Color(1F, 1F, 0.75F, 1F);
-			l.intensity = 3;
+			l.intensity = 2.5F;
 			l.range = 40;
 			Renderer r = world.GetComponentInChildren<Renderer>();
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/HeatSink");
-			r.materials[0].SetFloat("_SpecInt", 50);
-			r.materials[0].SetFloat("_Shininess", 0);
-			r.materials[0].SetFloat("_Fresnel", 1);
+			r.materials[0].SetFloat("_SpecInt", 20);
+			r.materials[0].SetFloat("_Shininess", 7);
+			r.materials[0].SetFloat("_Fresnel", 0.5F);
 			r.materials[0].SetColor("_Color", new Color(1, 1, 1, 1));
 			return world;
 	    }
@@ -77,11 +77,11 @@ namespace ReikaKalseki.SeaToSea {
 			if (!light)
 				light = GetComponentInChildren<Light>();
 			
-			transform.localScale = Vector3.one*2.5F;
+			transform.localScale = Vector3.one*1.5F;
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			
-			temperature = Mathf.Max(0, temperature-Time.deltaTime*40);
+			temperature = Mathf.Max(0, temperature-Time.deltaTime*20);
 			
 			if (time-lastPLayerDistanceCheckTime >= 0.5) {
 				lastPLayerDistanceCheckTime = time;
@@ -92,13 +92,16 @@ namespace ReikaKalseki.SeaToSea {
 			
 			float f = getIntensity();
 			if (light)
-				light.intensity = UnityEngine.Random.Range(2.8F, 3.2F)*f;
-			RenderUtil.setEmissivity(mainRender.materials[0], (0.25F+0.75F*f)*90, "GlowStrength");
+				light.intensity = UnityEngine.Random.Range(2.45F, 2.55F)*f;
+			RenderUtil.setEmissivity(mainRender.materials[0], (0.67F+0.33F*f)*80, "GlowStrength");
 			mainRender.materials[0].SetColor("_GlowColor", getColor(f));
 		}
 		
 		internal Color getColor(float f) {
-			return Color.Lerp(glowNew, glowFinal, 1-f);
+			if (f < 0.125F)
+				return Color.Lerp(Color.black, glowFinal, f*8);
+			else
+				return Color.Lerp(glowNew, glowFinal, 1-((f-0.125F)/0.875F));
 		}
 		
 		internal void onFired() {

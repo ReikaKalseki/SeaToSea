@@ -49,6 +49,8 @@ namespace ReikaKalseki.SeaToSea
     };
     
     public static TechnologyFragment lathingDroneFragment;
+    public static PowerSealModuleFragment powersealModuleFragment;
+    public static EjectedHeatSink ejectedHeatSink;
     
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
@@ -64,7 +66,6 @@ namespace ReikaKalseki.SeaToSea
     //public static Story.StoryGoal duneArchRadio;
     //public static Story.StoryGoal mountainPodRadio;
     
-    public static PowerSealModuleFragment powersealModuleFragment;
     /*
     public static SoundManager.SoundData voidspikeLeviRoar;
     public static SoundManager.SoundData voidspikeLeviBite;
@@ -125,6 +126,8 @@ namespace ReikaKalseki.SeaToSea
         C2CItems.addTablets();
 	    powersealModuleFragment = new PowerSealModuleFragment();
 	    powersealModuleFragment.register();
+	    ejectedHeatSink = new EjectedHeatSink();
+	    ejectedHeatSink.Patch();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
