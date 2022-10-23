@@ -27,17 +27,17 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject world = ObjectUtil.createWorldObject("bcb52360-f014-4ca1-9cf2-9e32504c645f");
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
-			//world.GetComponent<Rigidbody>().isKinematic = true;
+			Rigidbody rb = world.GetComponent<Rigidbody>();
+			rb.mass *= 9;
 			WorldForces wf = world.GetComponent<WorldForces>();
-			wf.underwaterGravity = 0F;
+			wf.underwaterGravity = 0.2F;
 			wf.underwaterDrag *= 2.5F;
 			ObjectUtil.removeComponent<Pickupable>(world);
 			world.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			HeatSinkTag g = world.EnsureComponent<HeatSinkTag>();
 			Light l = ObjectUtil.addLight(world);
-			l.bounceIntensity *= 1.5F;
 			l.color = new Color(1F, 1F, 0.75F, 1F);
-			l.intensity = 2.5F;
+			l.intensity = 1.5F;
 			l.range = 40;
 			Renderer r = world.GetComponentInChildren<Renderer>();
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/HeatSink");
@@ -61,6 +61,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float temperature;
 		
 		private static readonly Color glowNew = new Color(1F, 1F, 0.75F, 1F);
+		private static readonly Color glowMid = new Color(1F, 0.4F, 0.25F, 1);
 		private static readonly Color glowFinal = new Color(0.67F, 0.15F, 0.12F, 1);
 		
 		private float lastPLayerDistanceCheckTime;
@@ -81,7 +82,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			
-			temperature = Mathf.Max(0, temperature-Time.deltaTime*20);
+			temperature = Mathf.Max(0, temperature-Time.deltaTime*Mathf.Clamp(temperature/20F, 1, 20));
 			
 			if (time-lastPLayerDistanceCheckTime >= 0.5) {
 				lastPLayerDistanceCheckTime = time;
@@ -91,17 +92,26 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			float f = getIntensity();
-			if (light)
-				light.intensity = UnityEngine.Random.Range(2.45F, 2.55F)*f;
-			RenderUtil.setEmissivity(mainRender.materials[0], (0.67F+0.33F*f)*80, "GlowStrength");
+			if (light) {
+				light.intensity = UnityEngine.Random.Range(1.45F, 1.55F)*f;
+				light.color = getColor(f);
+			}
+			RenderUtil.setEmissivity(mainRender.materials[0], (0.67F+0.33F*f)*4F, "GlowStrength");
 			mainRender.materials[0].SetColor("_GlowColor", getColor(f));
 		}
 		
 		internal Color getColor(float f) {
-			if (f < 0.125F)
+			if (f < 0.125F) {
 				return Color.Lerp(Color.black, glowFinal, f*8);
-			else
-				return Color.Lerp(glowNew, glowFinal, 1-((f-0.125F)/0.875F));
+			}
+			else if (f < 0.5F) {
+				f = (f-0.125F)/0.375F;
+				return Color.Lerp(glowFinal, glowMid, f);
+			}
+			else {
+				f = (f-0.5F)*2;
+				return Color.Lerp(glowMid, glowNew, f);
+			}
 		}
 		
 		internal void onFired() {
@@ -114,7 +124,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal float getIntensity() {
-			return temperature/EjectedHeatSink.MAX_TEMPERATURE;
+			return Mathf.Clamp01(temperature/EjectedHeatSink.MAX_TEMPERATURE);
 		}
 		
 	}
