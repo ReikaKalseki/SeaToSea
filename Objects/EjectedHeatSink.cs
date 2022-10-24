@@ -16,7 +16,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class EjectedHeatSink : Spawnable {
 		
-		internal static readonly float HEAT_RADIUS = 20;
+		internal static readonly float HEAT_RADIUS = 12;
 		internal static readonly float MAX_TEMPERATURE = 600;
 	        
 	    internal EjectedHeatSink() : base("dumpedheatsink", "Ejected Heat Sink", "") {
