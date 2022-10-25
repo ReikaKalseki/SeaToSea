@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 			rb.mass *= 9;
 			WorldForces wf = world.GetComponent<WorldForces>();
 			wf.underwaterGravity = 0.2F;
-			wf.underwaterDrag *= 1F;
+			wf.underwaterDrag *= 0.33F;
 			ObjectUtil.removeComponent<Pickupable>(world);
 			world.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			HeatSinkTag g = world.EnsureComponent<HeatSinkTag>();
@@ -62,6 +62,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float temperature;
 		
+		private readonly List<ParticleSystem> bubbles = new List<ParticleSystem>();
+		
 		private static readonly Color glowNew = new Color(1F, 1F, 0.75F, 1F);
 		private static readonly Color glowMid = new Color(1F, 0.4F, 0.25F, 1);
 		private static readonly Color glowFinal = new Color(0.67F, 0.15F, 0.12F, 1);
@@ -80,6 +82,15 @@ namespace ReikaKalseki.SeaToSea {
 			if (!light)
 				light = GetComponentInChildren<Light>();
 			
+			while (bubbles.Count < 4) {
+				GameObject go = ObjectUtil.createWorldObject("0dbd3431-62cc-4dd2-82d5-7d60c71a9edf");
+				go.transform.SetParent(transform);
+				go.transform.localPosition = MathUtil.getRandomVectorAround(Vector3.zero, 0.05F);
+				go.transform.rotation = Quaternion.Euler(270, 0, 0); //not local - force to always be up
+				go.SetActive(true);
+				bubbles.Add(go.GetComponent<ParticleSystem>());
+			}
+			
 			transform.localScale = Vector3.one*1.5F;
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
@@ -94,6 +105,14 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			float f = getIntensity();
+			int bubN = (int)Mathf.Floor(bubbles.Count*f);
+			for (int i = 0; i < bubbles.Count; i++) {
+				if (i < bubN)
+					bubbles[i].Play();
+				else
+					bubbles[i].Stop(true, ParticleSystemStopBehavior.StopEmitting);
+				bubbles[i].transform.rotation = Quaternion.Euler(270, 0, 0); //not local - force to always be up
+			}
 			if (light) {
 				light.intensity = UnityEngine.Random.Range(1.45F, 1.55F)*f;
 				light.color = getColor(f);

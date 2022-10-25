@@ -591,6 +591,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void getWaterTemperature(DIHooks.WaterTemperatureCalculation calc) {
+	    	if (EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE >= 0) {
+	    		calc.setValue(EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE);
+	    		calc.lockValue();
+	    		return;
+	    	}
 			//SNUtil.writeToChat("C2C: Checking water temp @ "+calc.position+" def="+calc.originalValue);
 	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
 	    		calc.setValue(Mathf.Min(calc.getTemperature(), 45));
@@ -715,12 +720,23 @@ namespace ReikaKalseki.SeaToSea {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
 	    
-	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
+	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
+	    	if (added && tt == C2CItems.heatSinkModule.TechType) {
+	    		sm.torpedoSilos[slotID].SetActive(true);
+	    	}
+	    }
+	    
+	    public static void useSeamothModule(SeaMoth sm, TechType tt, int slotID) {
 			
 	    }
 	    
-	    public static void useSeamothModule(SeaMoth sm, TechType techType, int slotID) {
-			
+	    public static float getVehicleTemperature(Vehicle v) {
+	    	if (v is SeaMoth) {
+	    		C2CMoth cm = v.GetComponent<C2CMoth>();
+	    		if (cm)
+	    			return cm.getTemperature();
+	    	}
+	    	return WaterTemperatureSimulation.main.GetTemperature(v.transform.position);
 	    }
     
 	    public static bool isSpawnableVoid(string biome) {

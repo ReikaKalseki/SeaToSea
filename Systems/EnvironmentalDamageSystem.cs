@@ -54,7 +54,6 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly Bounds prisonAquariumExpanded;
 		
 		internal readonly SoundManager.SoundData pdaBeep;
-		internal readonly SoundManager.SoundData meltingSound;
 		
 		internal CustomHUDWarning lrPoisonHUDWarning;
 		internal CustomHUDWarning lrLeakHUDWarning;
@@ -69,8 +68,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float cyclopsPowerLeak;
 		private float vehiclePowerLeak;
-		
-		private float lastMeltingSoundTime = -1;
+    	
+    	internal float TEMPERATURE_OVERRIDE = -1;
     	
     	//private DepthRippleFX depthWarningFX1;
     	//private DepthDarkeningFX depthWarningFX2;
@@ -113,7 +112,6 @@ namespace ReikaKalseki.SeaToSea {
 		    prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
 		    
 			pdaBeep = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "pda_beep", "Sounds/pdabeep.ogg");
-			meltingSound = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/melt.ogg");
 		}
     	
     	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
@@ -190,23 +188,13 @@ namespace ReikaKalseki.SeaToSea {
 			    			if (v && v is SeaMoth) { //only trigger for seamoth
 			    				PDAManager.getPage("heatdamage").unlock();
 						   		if (!KnownTech.Contains(C2CItems.heatSink.TechType)) {
+						        	KnownTech.Add(C2CItems.heatSinkModule.TechType);
 						        	KnownTech.Add(C2CItems.heatSink.TechType);
 			    				}
 			    			}
 						}
 					}
 				}
-			}
-			
-			if (!dmg.player && time-playerHeatDamage <= 2) {
-				if (time-lastMeltingSoundTime >= 31.7F) {
-					SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, Mathf.Clamp01((temperature-75)/100F));
-		    		lastMeltingSoundTime = time;
-		    	}
-			}
-			else {
-				SoundManager.stopSound(meltingSound.id);
-				lastMeltingSoundTime = -1;
 			}
 			
 	    	if (dmg.player) {

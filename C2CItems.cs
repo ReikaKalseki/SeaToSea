@@ -94,7 +94,10 @@ namespace ReikaKalseki.SeaToSea
    		CraftingItems.addAll();
    	}
    
-   	internal static void addMainItems() {        
+   	internal static void addMainItems() {
+		breathingFluid.Patch();
+		heatSink.Patch();
+		
         depth1300.preventNaturalUnlock();
         depth1300.Patch();
         
@@ -118,10 +121,6 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.Patch();
 		
         liquidTank.Patch();
-        
-		breathingFluid.Patch();
-		heatSink.unlockRequirement = heatSinkModule.TechType;
-		heatSink.Patch();
         
 		bandage.Patch();
 		CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
