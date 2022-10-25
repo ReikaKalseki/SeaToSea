@@ -622,12 +622,12 @@ namespace ReikaKalseki.SeaToSea {
 						calc.setValue(Mathf.Max(calc.getTemperature(), f*lb.getTemperature()));
 					}
 				}
-			}
+			}/* Too expensive
 	    	Geyser g = WorldUtil.getClosest<Geyser>(calc.position);
 	    	if (g && g.erupting && calc.position.y > g.transform.position.y) {
 	    		calc.setValue(Mathf.Max(calc.getTemperature(), 800-10*Vector3.Distance(g.transform.position, calc.position)));
 	    	}
-	    	calc.setValue(C2CMoth.getOverrideTemperature(calc.getTemperature()));
+	    	calc.setValue(C2CMoth.getOverrideTemperature(calc.getTemperature()));*/
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {

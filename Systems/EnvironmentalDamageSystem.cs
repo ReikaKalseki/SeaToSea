@@ -23,8 +23,10 @@ namespace ReikaKalseki.SeaToSea {
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
     	
     	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
+    	private readonly static double lavaCastleInnerRadius = 75;
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
+    	private readonly static Vector3 lavaPitTunnelMid = new Vector3(145.8F, -1225F, 528F);
     	private readonly static double lavaPitEntranceRadius = 130;
     	internal readonly static double lavaPitEntranceDepthStart = 900;
     	internal readonly static double lavaPitEntranceDepthMaxTemp = 1100;
@@ -81,7 +83,8 @@ namespace ReikaKalseki.SeaToSea {
     		temperatures["LavaFalls"] = new TemperatureEnvironment(300, 15, 0.5F, 5, 25);
     		temperatures["LavaLakes"] = new TemperatureEnvironment(400, 18, 0.5F, 2, 40);
     		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0.5F, 0, 100); //in lava
-    		temperatures["LavaCastle"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
+    		temperatures["LavaCastle"] = new TemperatureEnvironment(270, 18, 0.5F, 4, 20);
+    		temperatures["LavaCastleInner"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
     		temperatures["LavaPitEntrance"] = new TemperatureEnvironment(320, 15, 0.5F, 5, 25);
     		
@@ -387,9 +390,14 @@ namespace ReikaKalseki.SeaToSea {
     		string ret = LargeWorld.main.GetBiome(pos);
     		if (ret == "ILZCorridor" && pos.y < -1175)
     			ret = "ILZCorridorDeep";
-    		if (ret == "ILZChamber" && Vector3.Distance(lavaCastleCenter, pos) <= lavaCastleRadius)
-    			ret = "LavaCastle";
-    		if (ret == "ILZChamber" && pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999))
+    		if (ret == "ILZChamber") {
+    			float rad = Vector3.Distance(lavaCastleCenter, pos);
+    			if (rad < lavaCastleInnerRadius)
+    				ret = "LavaCastleInner";
+    			else if (rad < lavaCastleRadius)
+    				ret = "LavaCastle";
+    		}
+    		if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
     			ret = "LavaPitEntrance";
     		if (string.IsNullOrEmpty(ret))
     			ret = "void";
@@ -410,7 +418,7 @@ namespace ReikaKalseki.SeaToSea {
     			ret = (float)MathUtil.linterpolate(-pos.y, 1100, 1175, temperatures["ILZCorridor"].temperature, temperatures["ILZCorridorDeep"].temperature);
     		}
     		if (biome == "LavaPitEntrance" && pos.y >= -lavaPitEntranceDepthMaxTemp) {
-    			ret = (float)MathUtil.linterpolate(-pos.y, lavaPitEntranceDepthStart, lavaPitEntranceDepthMaxTemp, getWaterTemperature(lavaPitEntranceCenter.setY(-lavaPitEntranceDepthStart+5)), temperatures["LavaPitEntrance"].temperature);
+    			ret = (float)MathUtil.linterpolate(-pos.y, lavaPitEntranceDepthStart, lavaPitEntranceDepthMaxTemp, WaterTemperatureSimulation.main.GetTemperature(lavaPitEntranceCenter.setY(-lavaPitEntranceDepthStart+5)), temperatures["LavaPitEntrance"].temperature);
     		}
     		return ret;
     	}

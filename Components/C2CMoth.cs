@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea
 			internal static bool useSeamothVehicleTemperature = true;
 		
 			private static readonly float TICK_RATE = 0.1F;
+			private static readonly float HOLD_LOW_TIME = 6F;
 			
 			public static float getOverrideTemperature(float temp) {
 				if (!useSeamothVehicleTemperature)
@@ -70,6 +71,10 @@ namespace ReikaKalseki.SeaToSea
 			internal void purgeHeat() {
 				purging = true;
 			}
+			
+			internal bool isPurgingHeat() {
+				return purging;
+			}
 
 			internal void tick() {
 				if (!seamoth)
@@ -86,7 +91,7 @@ namespace ReikaKalseki.SeaToSea
 					if (vehicleTemperature <= 5) {
 						vehicleTemperature = 5;
 						holdTempLowTime++;
-						if (holdTempLowTime >= 1.5F/TICK_RATE) //1.5s
+						if (holdTempLowTime >= HOLD_LOW_TIME/TICK_RATE)
 							purging = false;
 					}
 				}
@@ -97,9 +102,10 @@ namespace ReikaKalseki.SeaToSea
 					float dT = Tamb-vehicleTemperature;
 					float qDot = TICK_RATE*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(1, Math.Abs(dT)/25F));
 					vehicleTemperature += qDot;
-					//SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
+					SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
 				}
-				temperatureDamage.baseDamagePerSecond = baseDamageAmount*Mathf.Max(0, 1+(vehicleTemperature-100)/100F);
+				float factor = 1+Mathf.Max(0, vehicleTemperature-250)/25F;
+				temperatureDamage.baseDamagePerSecond = baseDamageAmount*Mathf.Min(40, Mathf.Pow(factor, 2.5F));
 				if (vehicleTemperature >= 90) {
 					damageFX.OnTakeDamage(new DamageInfo{damage = 1, type = DamageType.Heat});
 				}
