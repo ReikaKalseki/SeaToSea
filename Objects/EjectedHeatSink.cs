@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 			rb.mass *= 9;
 			WorldForces wf = world.GetComponent<WorldForces>();
 			wf.underwaterGravity = 0.2F;
-			wf.underwaterDrag *= 2.5F;
+			wf.underwaterDrag *= 1F;
 			ObjectUtil.removeComponent<Pickupable>(world);
 			world.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			HeatSinkTag g = world.EnsureComponent<HeatSinkTag>();
@@ -51,6 +51,8 @@ namespace ReikaKalseki.SeaToSea {
 	}
 		
 	class HeatSinkTag : MonoBehaviour {
+		
+		private static readonly SoundManager.SoundData fireSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "fireheatsink", "Sounds/fireheatsink.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 		
 		private Light light;
 		
@@ -117,6 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal void onFired() {
 			temperature = EjectedHeatSink.MAX_TEMPERATURE;
 			spawnTime = DayNightCycle.main.timePassedAsFloat;
+			SoundManager.playSoundAt(fireSound, transform.position, false, 40);
 		}
 		
 		public float getTemperature() {

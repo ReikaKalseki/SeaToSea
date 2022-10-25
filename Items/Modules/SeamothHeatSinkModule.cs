@@ -26,5 +26,20 @@ namespace ReikaKalseki.SeaToSea
 		{
 			return SpriteManager.Get(TechType.VehiclePowerUpgradeModule);
 		}*/
+
+		protected override float getMaxCharge() {
+			return base.getMaxCharge()*6;
+		}
+
+		public override void onFired(SeaMoth sm, int slotID, float charge) {
+			if (true) { //has heatsink
+				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
+				go.transform.position = sm.transform.position+sm.transform.forward*6;
+				go.GetComponent<Rigidbody>().AddForce(sm.transform.forward*20, ForceMode.VelocityChange);
+				go.GetComponent<HeatSinkTag>().onFired();
+				sm.GetComponent<C2CMoth>().purgeHeat();
+				//consumeHeatsink();
+			}
+		}
 	}
 }

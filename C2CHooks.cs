@@ -39,6 +39,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.getTemperatureEvent += getWaterTemperature;
 	    	
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
+	    	DIHooks.onSeamothTickEvent += tickSeamoth;
+	    	
+	    	DIHooks.onSeamothModulesChangedEvent += updateSeamothModules;
+	    	DIHooks.onSeamothModuleUsedEvent += useSeamothModule;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    }
@@ -190,6 +194,10 @@ namespace ReikaKalseki.SeaToSea {
 					}
 	    		}
 	    	}
+	    }
+	    
+	    public static void tickSeamoth(SeaMoth sm) {
+	    	
 	    }
 	    
 	    public static void onEquipmentAdded(string slot, InventoryItem item) {
@@ -586,7 +594,6 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("C2C: Checking water temp @ "+calc.position+" def="+calc.originalValue);
 	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
 	    		calc.setValue(Mathf.Min(calc.getTemperature(), 45));
-	    		return;
 	    	}
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
@@ -599,8 +606,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		calc.setValue((float)MathUtil.linterpolate(dist, 200, 500, VoidSpikesBiome.waterTemperature, calc.getTemperature(), true));
 	    	if (VoidSpikesBiome.instance.isInBiome(calc.position)) {
 	    		calc.setValue(VoidSpikesBiome.waterTemperature);
-	    		calc.lockValue();
-	    		return;
 	    	}
 	    	dist = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(calc.position);
 	    	if (dist <= 150)
@@ -618,6 +623,11 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
+	    	Geyser g = WorldUtil.getClosest<Geyser>(calc.position);
+	    	if (g && g.erupting && calc.position.y > g.transform.position.y) {
+	    		calc.setValue(Mathf.Max(calc.getTemperature(), 800-10*Vector3.Distance(g.transform.position, calc.position)));
+	    	}
+	    	calc.setValue(C2CMoth.getOverrideTemperature(calc.getTemperature()));
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {
@@ -670,7 +680,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
 	    	GameObject go = pk.gameObject;
-	    	PrefabIdentifier pi = go.GetComponentInParent<PrefabIdentifier>();
+	    	PrefabIdentifier pi = go.FindAncestor<PrefabIdentifier>();
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<C2CTreader>();
@@ -680,12 +690,15 @@ namespace ReikaKalseki.SeaToSea {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
 	    	}
-	    	else if (pi && pi.ClassId == "" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
+	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
 	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
 	    		return;
+	    	}
+	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
+	    		go.EnsureComponent<C2CMoth>();
 	    	}
 	    	/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
@@ -701,6 +714,14 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
+			
+	    }
+	    
+	    public static void useSeamothModule(SeaMoth sm, TechType techType, int slotID) {
+			
+	    }
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	return VoidSpikeLeviathanSystem.instance.isSpawnableVoid(biome);
@@ -745,16 +766,6 @@ namespace ReikaKalseki.SeaToSea {
 	            }
 	    	}
 	    	return values;
-	    }
-	    
-	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType techType, bool added) {
-			for (int i = 0; i < sm.slotIDs.Length; i++) {
-				string slot = sm.slotIDs[i];
-				TechType techTypeInSlot = sm.modules.GetTechTypeInSlot(slot);
-				if (techTypeInSlot == C2CItems.depth1300.TechType) {
-					sm.crushDamage.SetExtraCrushDepth(C2CItems.depth1300.depthBonus);
-				}
-			}
 	    }
 	   
 		public static string getO2Tooltip(Oxygen ox) {
