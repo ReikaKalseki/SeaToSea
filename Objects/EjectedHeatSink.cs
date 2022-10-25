@@ -87,8 +87,10 @@ namespace ReikaKalseki.SeaToSea {
 				go.transform.SetParent(transform);
 				go.transform.localPosition = MathUtil.getRandomVectorAround(Vector3.zero, 0.05F);
 				go.transform.rotation = Quaternion.Euler(270, 0, 0); //not local - force to always be up
+				ParticleSystem ps = go.GetComponent<ParticleSystem>();
+				ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 				go.SetActive(true);
-				bubbles.Add(go.GetComponent<ParticleSystem>());
+				bubbles.Add(ps);
 			}
 			
 			transform.localScale = Vector3.one*1.5F;
@@ -105,7 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			float f = getIntensity();
-			int bubN = (int)Mathf.Floor(bubbles.Count*f);
+			int bubN = Mathf.CeilToInt(bubbles.Count*f);
 			for (int i = 0; i < bubbles.Count; i++) {
 				if (i < bubN)
 					bubbles[i].Play();

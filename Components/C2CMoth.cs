@@ -125,7 +125,7 @@ namespace ReikaKalseki.SeaToSea
 				//SNUtil.writeToChat(vehicleTemperature+" > "+factor.ToString("00.0000")+" > "+f2.ToString("00.0000")+" > "+temperatureDamage.baseDamagePerSecond.ToString("0000.00"));
 				if (vehicleTemperature >= 90) {
 					damageFX.OnTakeDamage(new DamageInfo{damage = 1, type = DamageType.Heat});
-					//SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, Mathf.Clamp01((vehicleTemperature-90)/100F));
+					SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, Mathf.Clamp01((vehicleTemperature-90)/100F));
 				}
 			}
 			
