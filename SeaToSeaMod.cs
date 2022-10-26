@@ -301,6 +301,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
     }
     /*
     private static void spawnVentKelp(float dist) {

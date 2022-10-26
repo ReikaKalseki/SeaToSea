@@ -705,6 +705,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
 	    		go.EnsureComponent<C2CMoth>();
 	    	}
+	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
+	    		TemperatureDamage td = go.EnsureComponent<TemperatureDamage>();
+	    		td.minDamageTemperature = 300;
+	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond);
+	    		td.onlyLavaDamage = false;
+	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
+	    	}
 	    	/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
 	    		go.transform.position = auroraCyclopsModule.position;

@@ -20,7 +20,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override QuickSlotType QuickSlotType {
 			get {
-				return QuickSlotType.Chargeable;
+				return CraftData.GetQuickSlotType(TechType.SeamothElectricalDefense);
 			}
 		}
 		/*
@@ -36,9 +36,13 @@ namespace ReikaKalseki.SeaToSea
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 		}
+		
+		protected override float getChargingPowerCost() {
+			return 2;
+		}
 
 		protected override float getMaxCharge() {
-			return base.getMaxCharge()*6;
+			return base.getMaxCharge()*0.25F;
 		}
 		
 		public override float getUsageCooldown() {
@@ -48,11 +52,8 @@ namespace ReikaKalseki.SeaToSea
 		public override void onFired(SeaMoth sm, int slotID, float charge) {
 			SeamothStorageContainer sc = getStorage(sm, slotID);
 			if ((FREE_CHEAT || sc.container.GetCount(C2CItems.heatSink.TechType) > 0) && !sm.GetComponent<C2CMoth>().isPurgingHeat()) {
-				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
-				go.transform.position = sm.transform.position+sm.transform.forward*4;
-				go.GetComponent<Rigidbody>().AddForce(sm.transform.forward*10, ForceMode.VelocityChange);
-				go.GetComponent<HeatSinkTag>().onFired();
-				sm.GetComponent<C2CMoth>().purgeHeat();
+				C2CMoth c2c = sm.GetComponent<C2CMoth>();
+				c2c.purgeHeat(charge);
 				if (!FREE_CHEAT)
 					sc.container.DestroyItem(C2CItems.heatSink.TechType);
 			}

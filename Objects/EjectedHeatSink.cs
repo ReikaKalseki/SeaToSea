@@ -137,10 +137,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
-		internal void onFired() {
-			temperature = EjectedHeatSink.MAX_TEMPERATURE;
+		internal void onFired(float charge) {
+			temperature = EjectedHeatSink.MAX_TEMPERATURE*charge;
 			spawnTime = DayNightCycle.main.timePassedAsFloat;
-			SoundManager.playSoundAt(fireSound, transform.position, false, 40);
+			SoundManager.playSoundAt(fireSound, transform.position, false, 40, 2);
 		}
 		
 		public float getTemperature() {

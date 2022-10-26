@@ -219,11 +219,16 @@ namespace ReikaKalseki.SeaToSea {
 		   	if (leak > 0) {
 		   		bool used = false;
 		   		Vehicle v = dmg.player ? dmg.player.GetVehicle() : dmg.gameObject.FindAncestor<Vehicle>();
-		    	if (v)
-		    		leak *= getLRLeakFactor(v);
+		   		float innerLeakFactor = 1;
+		   		if (v) {
+		   			bool upgrade;
+		    		leak *= getLRLeakFactor(v, out upgrade);
+		    		if (upgrade)
+		    			innerLeakFactor = 0.5F;
+		   		}
 		    	if (leak > 0) {
 			    	if (dmg.player) {
-		    			used = triggerPowerLeakage(Inventory.main.container, leak);
+		    			used = triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
 						//used = true;
 			    	}
 			    	else if (v) {
@@ -232,7 +237,10 @@ namespace ReikaKalseki.SeaToSea {
 						used = true;
 						foreach (StorageContainer sc in v.GetComponentsInChildren<StorageContainer>(true))
 							if (!sc.gameObject.FindAncestor<Player>())
-								triggerPowerLeakage(sc.container, leak);
+								triggerPowerLeakage(sc.container, leak, innerLeakFactor);
+						foreach (SeamothStorageContainer sc in v.GetComponentsInChildren<SeamothStorageContainer>(true))
+							if (!sc.gameObject.FindAncestor<Player>())
+								triggerPowerLeakage(sc.container, leak, innerLeakFactor);
 			    	}
 		    		if (used) {
 		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
@@ -244,11 +252,14 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	 	}
     	
-    	private float getLRLeakFactor(Vehicle v) {
-    		if (v.docked)
+    	private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
+    		if (v.docked) {
+    			hasUpgrade = false;
     			return 0;
+    		}
     		float leak = 1;
-	    	if (InventoryUtil.vehicleHasUpgrade(v, C2CItems.powerSeal.TechType))
+    		hasUpgrade = InventoryUtil.vehicleHasUpgrade(v, C2CItems.powerSeal.TechType);
+	    	if (hasUpgrade)
 	    		leak *= 0.2F;
 			//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
 			if (v.playerSits)
@@ -261,19 +272,19 @@ namespace ReikaKalseki.SeaToSea {
 			   	if (mix && !Mathf.Approximately(mix.capacity, 1000))
 			   		fb++;
 			}
-			fb /= v.energyInterface.sources.Length;
+			//fb /= v.energyInterface.sources.Length;
 			leak *= fb;
 			return leak;
     	}
     	
-    	private bool triggerPowerLeakage(ItemsContainer c, float leak) {
+    	private bool triggerPowerLeakage(ItemsContainer c, float leak, float relativeFactor) {
     		bool found = false;
 			foreach (InventoryItem item in c) {
 	    		if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
 	    			Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
 	    			//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
 	    			if (b != null && b.capacity > 100) {
-	    				b.charge = Math.Max(b.charge-leak*0.1F, 0);
+	    				b.charge = Math.Max(b.charge-leak*b.capacity/200F*relativeFactor, 0);
 	    				//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
 			   			//used = true;
 			   			found = true;
@@ -336,8 +347,8 @@ namespace ReikaKalseki.SeaToSea {
 				    	cyclopsPowerLeak = time;
 					    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
 					    foreach (StorageContainer sc in sub.GetComponentsInChildren<StorageContainer>(true)) {
-					    	if (!sc.gameObject.FindAncestor<Vehicle>() && !sc.gameObject.FindAncestor<Player>())
-								triggerPowerLeakage(sc.container, leak);
+					    	if (/*!sc.gameObject.FindAncestor<Vehicle>() && */!sc.gameObject.FindAncestor<Player>())
+								triggerPowerLeakage(sc.container, leak, 1);
 					    }
 		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
 		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);

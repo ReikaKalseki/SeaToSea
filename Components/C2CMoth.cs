@@ -17,9 +17,11 @@ namespace ReikaKalseki.SeaToSea
 		internal class C2CMoth : MonoBehaviour {
 		
 			private static readonly SoundManager.SoundData donePurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "doneheatsink", "Sounds/doneheatsink.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
-			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		
 			internal static bool useSeamothVehicleTemperature = true;
+			
+			internal static bool temperatureDebugActive = false;
 		
 			private static readonly float TICK_RATE = 0.1F;
 			private static readonly float HOLD_LOW_TIME = 6F;
@@ -49,8 +51,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			private float vehicleTemperature = 0;
 			
-			private bool purging = false;
+			private float purgePower = -1;
 			private int holdTempLowTime = 0;
+			
+			private float lastMeltSound = -1;
         	
 			void Start() {
 				base.InvokeRepeating("tick", 0f, TICK_RATE);
@@ -71,12 +75,22 @@ namespace ReikaKalseki.SeaToSea
 				base.CancelInvoke("tick");
 			}
 			
-			internal void purgeHeat() {
-				purging = true;
+			internal void purgeHeat(float charge) {
+				purgePower = charge;
+				
+				//Invoke("fireHeatsink", 1.5F);
+				SoundManager.playSoundAt(donePurgingSound, transform.position, false, 40, 0.67F);
+			}
+			
+			internal void fireHeatsink() {
+				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
+				go.transform.position = seamoth.transform.position+seamoth.transform.forward*4;
+				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*10, ForceMode.VelocityChange);
+				go.GetComponent<HeatSinkTag>().onFired(purgePower);
 			}
 			
 			internal bool isPurgingHeat() {
-				return purging;
+				return purgePower > 0;
 			}
 			
 			public float getTemperature() {
@@ -93,19 +107,22 @@ namespace ReikaKalseki.SeaToSea
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
-				if (purging) {
-					vehicleTemperature -= TICK_RATE*150;
+				float time = DayNightCycle.main.timePassedAsFloat;
+				if (isPurgingHeat()) {
+					vehicleTemperature -= TICK_RATE*150*(0.2F+0.8F*purgePower);
 					if (vehicleTemperature <= 5) {
 						vehicleTemperature = 5;
 						holdTempLowTime++;
-						if (holdTempLowTime >= HOLD_LOW_TIME/TICK_RATE) {
-							purging = false;
-							SoundManager.playSoundAt(donePurgingSound, transform.position, false, 40, 0.67F);
+						if (holdTempLowTime >= HOLD_LOW_TIME/TICK_RATE*purgePower) {
+							fireHeatsink();
+							purgePower = -1;
 						}
 					}
 					else {
 						holdTempLowTime = 0;
 					}
+					if (temperatureDebugActive)
+						SNUtil.writeToChat("Purging: "+purgePower.ToString("0.000")+" > "+vehicleTemperature.ToString("0000.00")+" > "+holdTempLowTime.ToString("00.00"));
 				}
 				else {
 					holdTempLowTime = 0;
@@ -117,7 +134,8 @@ namespace ReikaKalseki.SeaToSea
 					float f1 = dT > 0 ? 5F : 1F;
 					float qDot = TICK_RATE*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
 					vehicleTemperature += qDot;
-					//SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
+					if (temperatureDebugActive)
+						SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
 				}
 				float factor = 1+Mathf.Max(0, vehicleTemperature-250)/25F;
 				float f2 = Mathf.Min(40, Mathf.Pow(factor, 2.5F));
@@ -125,7 +143,10 @@ namespace ReikaKalseki.SeaToSea
 				//SNUtil.writeToChat(vehicleTemperature+" > "+factor.ToString("00.0000")+" > "+f2.ToString("00.0000")+" > "+temperatureDamage.baseDamagePerSecond.ToString("0000.00"));
 				if (vehicleTemperature >= 90) {
 					damageFX.OnTakeDamage(new DamageInfo{damage = 1, type = DamageType.Heat});
-					SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, Mathf.Clamp01((vehicleTemperature-90)/100F));
+					if (time-lastMeltSound >= 0.5F && UnityEngine.Random.Range(0F, 1F) <= 0.25F) {
+						SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, 0.125F+Mathf.Clamp01((vehicleTemperature-90)/100F)*0.125F);
+						lastMeltSound = time;
+					}
 				}
 			}
 			

@@ -205,7 +205,7 @@ namespace ReikaKalseki.SeaToSea
         C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
         C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Lithium, 2);
         C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
-		C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(C2CItems.healFlower.seed.TechType, 2).addIngredient(TechType.JellyPlant, 1);
+		C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(C2CItems.healFlower.seed.TechType, 3).addIngredient(TechType.JellyPlant, 1);
 		C2CItems.addMainItems();
         /*
 		rec = RecipeUtil.createUncrafting(t2Battery.TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
