@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea {
 				else
 					sparker.Play(0);
 				isSparking = !isSparking;
-			}			
+			}/*
 			if (UnityEngine.Random.Range(0, 5) == 0) { //prevent burying under a resource
 				RaycastHit[] hit = Physics.SphereCastAll(gameObject.transform.position, 0.25F, new Vector3(1, 1, 1), 0.25F);
 				foreach (RaycastHit rh in hit) {
@@ -83,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 						}
 					}
 				}
-			}
+			}*/
 		}
 		
 	}
