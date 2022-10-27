@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea
 		
 			internal static bool useSeamothVehicleTemperature = true;
 			
-			internal static bool temperatureDebugActive = false;
+			public static bool temperatureDebugActive = false;
 		
 			private static readonly float TICK_RATE = 0.1F;
 			private static readonly float HOLD_LOW_TIME = 6F;
@@ -52,27 +52,25 @@ namespace ReikaKalseki.SeaToSea
 			private float vehicleTemperature = 0;
 			
 			private float purgePower = -1;
-			private int holdTempLowTime = 0;
+			private float holdTempLowTime = 0;
 			
 			private float lastMeltSound = -1;
+			
+			private float lastTickTime = -1;
         	
 			void Start() {
-				base.InvokeRepeating("tick", 0f, TICK_RATE);
 				useSeamothVehicleTemperature = false;
 				vehicleTemperature = WaterTemperatureSimulation.main.GetTemperature(transform.position);
 				useSeamothVehicleTemperature = true;
 			}
 			
 			void Update() {
-				
-			}
-
-			private void OnKill() {
-				UnityEngine.Object.Destroy(this);
-			}
-			
-			void OnDisable() {
-				base.CancelInvoke("tick");
+				float time = DayNightCycle.main.timePassedAsFloat;
+				float dT = time-lastTickTime;
+				if (dT >= TICK_RATE) {
+					tick(time, dT);
+					lastTickTime = time;
+				}
 			}
 			
 			internal void purgeHeat(float charge) {
@@ -97,7 +95,7 @@ namespace ReikaKalseki.SeaToSea
 				return vehicleTemperature;
 			}
 
-			internal void tick() {
+			internal void tick(float time, float tickTime) {
 				if (!seamoth)
 					seamoth = gameObject.GetComponent<SeaMoth>();
 				if (!temperatureDamage) {
@@ -107,13 +105,12 @@ namespace ReikaKalseki.SeaToSea
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
-				float time = DayNightCycle.main.timePassedAsFloat;
 				if (isPurgingHeat()) {
-					vehicleTemperature -= TICK_RATE*150*(0.2F+0.8F*purgePower);
+					vehicleTemperature -= tickTime*150*(0.2F+0.8F*purgePower);
 					if (vehicleTemperature <= 5) {
 						vehicleTemperature = 5;
-						holdTempLowTime++;
-						if (holdTempLowTime >= HOLD_LOW_TIME/TICK_RATE*purgePower) {
+						holdTempLowTime += tickTime;
+						if (holdTempLowTime >= HOLD_LOW_TIME*purgePower) {
 							fireHeatsink();
 							purgePower = -1;
 						}
@@ -132,7 +129,7 @@ namespace ReikaKalseki.SeaToSea
 					float dT = Tamb-vehicleTemperature;
 					float f0 = dT > 0 ? 4F : 25F;
 					float f1 = dT > 0 ? 5F : 1F;
-					float qDot = TICK_RATE*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
+					float qDot = tickTime*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
 					vehicleTemperature += qDot;
 					if (temperatureDebugActive)
 						SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));

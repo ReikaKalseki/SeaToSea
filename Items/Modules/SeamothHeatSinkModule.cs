@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea
 			SeamothStorageContainer sc = getStorage(sm, slotID);
 			if ((FREE_CHEAT || sc.container.GetCount(C2CItems.heatSink.TechType) > 0) && !sm.GetComponent<C2CMoth>().isPurgingHeat()) {
 				C2CMoth c2c = sm.GetComponent<C2CMoth>();
-				c2c.purgeHeat(charge);
+				c2c.purgeHeat(Mathf.Clamp01(charge+0.05F));
 				if (!FREE_CHEAT)
 					sc.container.DestroyItem(C2CItems.heatSink.TechType);
 			}
