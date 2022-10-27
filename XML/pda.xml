@@ -187,6 +187,20 @@
 		Sounds/bkelpbase2.ogg
 	</audio>
   </bkelpbase2>
+  <lrpowerseal>
+	<name>
+		Seamoth Debris Crew Log
+	</name>
+	<pda>
+		[Undecipherable screeching and impact sounds]
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		Sounds/lrpowersealpda.ogg
+	</audio>
+  </lrpowerseal>
   <treaderpod>
 	<name>
 		Lifepod 9 Crew Log

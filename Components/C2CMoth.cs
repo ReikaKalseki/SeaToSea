@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea
 			public static bool temperatureDebugActive = false;
 		
 			private static readonly float TICK_RATE = 0.1F;
-			private static readonly float HOLD_LOW_TIME = 6F;
+			private static readonly float HOLD_LOW_TIME = 30F;
 			
 			public static float getOverrideTemperature(float temp) {
 				if (!useSeamothVehicleTemperature)
@@ -68,7 +68,7 @@ namespace ReikaKalseki.SeaToSea
 				float time = DayNightCycle.main.timePassedAsFloat;
 				float dT = time-lastTickTime;
 				if (dT >= TICK_RATE) {
-					tick(time, dT);
+					tick(time, Mathf.Min(1, dT));
 					lastTickTime = time;
 				}
 			}
