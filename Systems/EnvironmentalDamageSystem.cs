@@ -177,7 +177,7 @@ namespace ReikaKalseki.SeaToSea {
 				//SNUtil.writeToChat(biome+" > "+temperature+" / "+dmg.minDamageTemperature+" > "+amt);
 				if (amt > 0) {
 					Vehicle v = dmg.gameObject.GetComponent<Vehicle>();
-					if (!v || !v.docked) {
+					if (!v || !(v.docked || v.precursorOutOfWater)) {
 						dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.player && !diveSuit) {
 							Survival s = Player.main.GetComponent<Survival>();
@@ -253,7 +253,7 @@ namespace ReikaKalseki.SeaToSea {
 	 	}
     	
     	private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
-    		if (v.docked) {
+    		if (v.docked || v.precursorOutOfWater) {
     			hasUpgrade = false;
     			return 0;
     		}

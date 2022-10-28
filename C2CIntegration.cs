@@ -68,11 +68,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
 		if (glowOil != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, 3);
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, 2);
 			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, 8);
 			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, 5);
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, 6);
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 1);
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
 		}
     }
 

@@ -710,8 +710,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
 	    		TemperatureDamage td = go.EnsureComponent<TemperatureDamage>();
-	    		td.minDamageTemperature = 300;
-	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond);
+	    		td.minDamageTemperature = 350;
+	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond)*0.5F;
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
 	    	}
