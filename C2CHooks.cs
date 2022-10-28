@@ -45,6 +45,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onSeamothModulesChangedEvent += updateSeamothModules;
 	    	DIHooks.onSeamothModuleUsedEvent += useSeamothModule;
 	    	
+	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    }
 	    
