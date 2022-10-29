@@ -154,8 +154,8 @@ namespace ReikaKalseki.SeaToSea
         rec = new TechData();
         rec.Ingredients.Add(new Ingredient(C2CItems.kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.5F)));
       	rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));
-       	rec.craftAmount = enzyK.numberCrafted*s;
        	item = new DuplicateRecipeDelegateWithRecipe(enzyK, rec);
+       	item.setRecipe(enzyK.numberCrafted*s);
        	item.craftTime = enzyK.craftingTime*s/2F;
        	item.ownerMod = SeaToSeaMod.modDLL;
        	item.Patch();
