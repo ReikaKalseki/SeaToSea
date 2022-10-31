@@ -743,12 +743,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getVehicleTemperature(Vehicle v) {
-	    	if (v is SeaMoth) {
-	    		C2CMoth cm = v.GetComponent<C2CMoth>();
-	    		if (cm)
-	    			return cm.getTemperature();
-	    	}
-	    	return WaterTemperatureSimulation.main.GetTemperature(v.transform.position);
+	    	return C2CMoth.getOverrideTemperature(v, WaterTemperatureSimulation.main.GetTemperature(v.transform.position));
 	    }
     
 	    public static bool isSpawnableVoid(string biome) {

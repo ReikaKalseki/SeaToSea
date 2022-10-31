@@ -98,28 +98,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool isLiquidBreathingActive(Player ep) {
-	    	if (ep.currentEscapePod && ep.currentEscapePod == EscapePod.main)
-	    		return false;
-	    	SubRoot sub = ep.currentSub;
-	    	if (sub && sub.powerRelay && sub.powerRelay.IsPowered())
-	    		return false;
-	    	return isUnderwater(ep);
-	    }
-	    
-	    public bool isO2BarShowingLiquidBreathing(Player ep) {
-	    	if (!hasLiquidBreathing())
-	    		return false;
-	    	SubRoot sub = ep.currentSub;
-	    	if (sub && sub.powerRelay && !sub.powerRelay.IsPowered())
+	    	if (isInPoweredArea(ep))
 	    		return false;
 	    	Vehicle v = ep.GetVehicle();
 	    	if (v && !v.IsPowered())
-	    		return false;
-	    	return true;
-	    }
-	    
-	    private bool isUnderwater(Player ep) {
-	    	return !ep.IsInsideWalkable() && ep.IsUnderwater() && ep.IsSwimming();
+	    		return true;
+	    	SubRoot sub = ep.currentSub;
+	    	if (sub && sub.powerRelay && !sub.powerRelay.IsPowered())
+	    		return true;
+	    	return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
 	    }
 	    
 	    public bool isO2BarAbleToFill(Player ep) {
@@ -204,7 +191,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//RenderUtil.dumpTexture("o2bar_bubble", baseO2BubbleTexture);
 	    	}	    	
 	    	
-			bool pink = isO2BarShowingLiquidBreathing(Player.main);
+			bool pink = hasLiquidBreathing();
 	    	
 	    	bar.edgeWidth = pink ? 0.25F : 0.2F;
 	    	bar.borderWidth = pink ? 0.1F : 0.2F;

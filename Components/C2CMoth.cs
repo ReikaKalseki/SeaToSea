@@ -35,6 +35,12 @@ namespace ReikaKalseki.SeaToSea
 				Vehicle v = ep.GetVehicle();
 				if (!v)
 					return temp;
+				return getOverrideTemperature(v, temp);
+			}
+			
+			public static float getOverrideTemperature(Vehicle v, float temp) {
+				if (!useSeamothVehicleTemperature)
+					return temp;
 				if (v is SeaMoth) {
 					C2CMoth cm = v.GetComponent<C2CMoth>();
 					if (cm)
@@ -124,11 +130,12 @@ namespace ReikaKalseki.SeaToSea
 				else {
 					holdTempLowTime = 0;
 					useSeamothVehicleTemperature = false;
-					float Tamb = WaterTemperatureSimulation.main.GetTemperature(transform.position);
+					float Tamb = temperatureDamage.GetTemperature();// this will call WaterTempSim, after the lava checks in DI
 					useSeamothVehicleTemperature = true;
 					float dT = Tamb-vehicleTemperature;
-					float f0 = dT > 0 ? 4F : 25F;
-					float f1 = dT > 0 ? 5F : 1F;
+					float excess = Mathf.Clamp01((vehicleTemperature-400)/400F);
+					float f0 = dT > 0 ? 4F : 25F-15*excess;
+					float f1 = dT > 0 ? 5F : 1F+1.5F*excess;
 					float qDot = tickTime*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
 					vehicleTemperature += qDot;
 					if (temperatureDebugActive)
