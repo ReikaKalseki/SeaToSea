@@ -52,6 +52,7 @@ namespace ReikaKalseki.SeaToSea
     public static PowerSealModuleFragment powersealModuleFragment;
     public static EjectedHeatSink ejectedHeatSink;
     public static UnmovingHeatBlade thermoblade;
+    public static MountainBaseCuredPeeper peeper;
     
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
@@ -131,6 +132,8 @@ namespace ReikaKalseki.SeaToSea
 	    ejectedHeatSink.Patch();
 	    thermoblade = new UnmovingHeatBlade();
 	    thermoblade.Patch();
+	    peeper = new MountainBaseCuredPeeper();
+	    peeper.Patch();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
@@ -157,6 +160,8 @@ namespace ReikaKalseki.SeaToSea
         
         addCommands();
         addOreGen();
+        
+        GenUtil.registerWorldgen(new PositionedPrefab(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID, Azurite.mountainBaseAzurite, Quaternion.Euler(0, 202.4F, 33.2F)));
         
         addSignalsAndRadio();
 		

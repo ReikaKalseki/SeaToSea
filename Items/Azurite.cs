@@ -17,6 +17,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly float BASE_LIGHT_RANGE = 2.5F;
 		
+		internal static readonly Vector3 mountainBaseAzurite = new Vector3(939.533630371094F, -347.903259277344F, 1443.25720214844F);
+		
 		public Azurite(string id, string name, string desc, VanillaResources template) : base(id, name, desc, template) {
 			
 		}
@@ -35,6 +37,9 @@ namespace ReikaKalseki.SeaToSea {
 	}
 	
 	class AzuriteTag : MonoBehaviour {
+		
+		static readonly float DAMAGE_RANGE = 12;
+		static readonly float DAMAGE_RANGE_MOUNTAIN = 6;
 		
 		private float lastTime;
 		
@@ -61,8 +66,13 @@ namespace ReikaKalseki.SeaToSea {
 	   			if (suit == null || (suit.item.GetTechType() != C2CItems.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
 					GameObject ep = Player.main.gameObject;
 					float distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
-					if (distsq < 144) {
-						float amt = 2.5F*dT*Mathf.Min(1, 1-distsq/144F);
+					bool isMountainBase = (transform.position-Azurite.mountainBaseAzurite).sqrMagnitude <= 0.0625F;
+					float r = isMountainBase ? DAMAGE_RANGE_MOUNTAIN : DAMAGE_RANGE;
+					r *= r;
+					if (distsq < r) {
+						float amt = 2.5F*dT*Mathf.Min(1, 1-distsq/r);
+						if (isMountainBase)
+							amt *= 0.5F;
 						//SNUtil.writeToChat(distsq+" & "+dT+" > "+amt);
 						//SNUtil.log(distsq+" & "+dT+" > "+amt);
 						ep.GetComponentInParent<LiveMixin>().TakeDamage(amt, ep.transform.position, DamageType.Electrical, gameObject);

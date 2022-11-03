@@ -489,7 +489,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				if (Inventory.main.equipment.GetCount(C2CItems.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
-					lv.TakeDamage(lv.maxHealth/4F, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
+	    			float dmg = lv.maxHealth/4F;
+	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
+	    				dmg *= 0.75F;
+					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
@@ -504,13 +507,6 @@ namespace ReikaKalseki.SeaToSea {
 						}
 					}
 				}
-	    	}
-	    	else if (tt == SeaToSeaMod.thermoblade.TechType) {
-	    		Inventory.main.container.DestroyItem(tt);
-	    		UnityEngine.Object.DestroyImmediate(p.gameObject);
-	    		GameObject go = UnityEngine.Object.Instantiate(CraftData.GetPrefabForTechType(TechType.HeatBlade));
-	    		go.SetActive(false);
-	    		Inventory.main.container.AddItem(go.GetComponent<Pickupable>());
 	    	}
 	    }
     

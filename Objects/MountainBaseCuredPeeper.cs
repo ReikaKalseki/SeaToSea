@@ -15,20 +15,21 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class UnmovingHeatBlade : PickedUpAsOtherItem {
+	public class MountainBaseCuredPeeper : PickedUpAsOtherItem {
 	        
-	    internal UnmovingHeatBlade() : base("UnmovingHeatBlade", TechType.HeatBlade) {
+	    internal MountainBaseCuredPeeper() : base("MountainBaseCuredPeeper", TechType.CuredPeeper) {
 			
 	    }
 			
 	    protected override void prepareGameObject(GameObject go) {
 			go.GetComponent<Rigidbody>().isKinematic = true;
-			go.EnsureComponent<UnmovingHeatBladeTag>();
+			go.EnsureComponent<MountainBaseCuredPeeperTag>();
+			ObjectUtil.removeComponent<EcoTarget>(go);
 	    }
 			
 	}
 		
-	class UnmovingHeatBladeTag : MonoBehaviour {
+	class MountainBaseCuredPeeperTag : MonoBehaviour {
 		
 		private Rigidbody body;
 		
