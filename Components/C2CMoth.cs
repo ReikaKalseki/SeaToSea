@@ -8,6 +8,7 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
@@ -99,6 +100,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			public float getTemperature() {
 				return vehicleTemperature;
+			}
+			
+			internal void onHitByLavaBomb(LavaBombTag bomb) {
+				vehicleTemperature = Mathf.Max(vehicleTemperature, bomb.getTemperature());
 			}
 
 			internal void tick(float time, float tickTime) {

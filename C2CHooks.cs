@@ -12,6 +12,7 @@ using SMLHelper.V2.Utility;
 using UnityEngine;
 
 using ReikaKalseki.AqueousEngineering;
+using ReikaKalseki.Ecocean;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
@@ -48,6 +49,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
+	    	
+	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -88,6 +91,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	Language.main.strings["BulkheadInoperable"] = SeaToSeaMod.miscLocale.getEntry("BulkheadInoperable").desc;
 			Language.main.strings["DockToChangeVehicleUpgrades"] = SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc;
 	    	Language.main.strings["Tooltip_"+TechType.MercuryOre.AsString()] = SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc;
+	    	
+			Language.main.strings[SeaToSeaMod.thermoblade.TechType.AsString()] = Language.main.strings[TechType.HeatBlade.AsString()];
+			Language.main.strings["Tooltip_"+SeaToSeaMod.thermoblade.TechType.AsString()] = Language.main.strings["Tooltip_"+TechType.HeatBlade.AsString()];
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
@@ -499,6 +505,13 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 	    	}
+	    	else if (tt == SeaToSeaMod.thermoblade.TechType) {
+	    		Inventory.main.container.DestroyItem(tt);
+	    		UnityEngine.Object.DestroyImmediate(p.gameObject);
+	    		GameObject go = UnityEngine.Object.Instantiate(CraftData.GetPrefabForTechType(TechType.HeatBlade));
+	    		go.SetActive(false);
+	    		Inventory.main.container.AddItem(go.GetComponent<Pickupable>());
+	    	}
 	    }
     
 	    public static float getReachDistance() {
@@ -772,6 +785,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		Vehicle v = ep.GetVehicle();
 	    		if (v && v is SeaMoth && VoidSpikesBiome.instance.isInBiome(ep.transform.position))
 	    			VoidSpikeLeviathanSystem.instance.tagSeamothSonar((SeaMoth)v);
+	    	}
+	    }
+	    
+	    public static void onLavaBombHit(LavaBombTag bomb, GameObject hit) {
+	    	C2CMoth cm = hit.GetComponent<C2CMoth>();
+	    	if (cm) {
+	    		cm.onHitByLavaBomb(bomb);
 	    	}
 	    }
 	    
