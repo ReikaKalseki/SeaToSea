@@ -92,8 +92,8 @@ namespace ReikaKalseki.SeaToSea {
 			Language.main.strings["DockToChangeVehicleUpgrades"] = SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc;
 	    	Language.main.strings["Tooltip_"+TechType.MercuryOre.AsString()] = SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc;
 	    	
-			Language.main.strings[SeaToSeaMod.thermoblade.TechType.AsString()] = Language.main.strings[TechType.HeatBlade.AsString()];
-			Language.main.strings["Tooltip_"+SeaToSeaMod.thermoblade.TechType.AsString()] = Language.main.strings["Tooltip_"+TechType.HeatBlade.AsString()];
+			Language.main.strings[SeaToSeaMod.locker.TechType.AsString()] = Language.main.strings[TechType.Locker.AsString()];
+			Language.main.strings["Tooltip_"+SeaToSeaMod.locker.TechType.AsString()] = Language.main.strings["Tooltip_"+TechType.Locker.AsString()];
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
