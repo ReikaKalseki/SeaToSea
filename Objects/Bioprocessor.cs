@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
 		
 		internal static readonly float POWER_COST_IDLE = 0.5F; //per second; was 1.5 then 2.5
-		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
+		//internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
@@ -47,21 +47,21 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static void addRecipes() {
-			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 1, 2);
-			addRecipe(TechType.AcidMushroom, CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 5, 2);
-			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 9, 2);
-			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 4);
-			addRecipe(C2CItems.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 5);
-			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 3, 5);
-			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 2);
-			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 6);
-			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 1, 4);
+			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 120, 1, 2);
+			addRecipe(TechType.AcidMushroom, CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 30, 5, 2);
+			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 400, 9, 2);
+			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 800, 4);
+			addRecipe(C2CItems.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 600, 5);
+			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 240, 3, 5);
+			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
+			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
+			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4);
 			
 			//addRecipe(SeaToSeaMod.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 3, 5);
 		}
 		
-		public static void addRecipe(TechType inp, TechType o, int salt = 5, float secs = 45, int inamt = 1, int outamt = 1) {
-			BioRecipe r = new BioRecipe(salt, secs, inp, o);
+		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1) {
+			BioRecipe r = new BioRecipe(enzy, secs, energy, inp, o);
 			recipes[r.inputItem] = r;
 			r.inputCount = inamt;
 			r.outputCount = outamt;
@@ -85,7 +85,7 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, SeaToSeaMod.processor.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
-			RecipeUtil.addIngredient(item.TechType, CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, r.saltCount);
+			RecipeUtil.addIngredient(item.TechType, CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, r.enzyCount);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
@@ -189,8 +189,8 @@ namespace ReikaKalseki.SeaToSea {
 	public class BioprocessorLogic : CustomMachineLogic {
 		
 		private BioRecipe currentOperation;
-		private int saltRequired;
-		private float nextSaltTimeRemaining;
+		private int enzyRequired;
+		private float nextEnzyTimeRemaining;
 		
 		private float operationCooldown = -1;
 		
@@ -240,25 +240,25 @@ namespace ReikaKalseki.SeaToSea {
 			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
-					if (consumePower(Bioprocessor.POWER_COST_ACTIVE-Bioprocessor.POWER_COST_IDLE, seconds)) {
+					if (consumePower(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE, seconds)) {
 						IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 						bool hasKelp = kelp != null && kelp.Count > 0;
 						setEmissiveColor(recipeStalledColor);
-						nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
-						//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
-						if (nextSaltTimeRemaining <= 0) {
-							IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
-							if (salt != null && salt.Count >= 1) {
-								ObjectUtil.removeItem(sc, salt[0]);
-								saltRequired--;
+						nextEnzyTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
+						//SNUtil.writeToChat("remaining: "+nextEnzyTimeRemaining);
+						if (nextEnzyTimeRemaining <= 0) {
+							IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+							if (enzy != null && enzy.Count >= 1) {
+								ObjectUtil.removeItem(sc, enzy[0]);
+								enzyRequired--;
 								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
-								setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
+								setEmissiveColor(workingColor, 1+currentOperation.secondsPerEnzyme);
 							}
 							else {
 								setRecipe(null);
 							}
-							nextSaltTimeRemaining = currentOperation.secondsPerSalt;
-							if (saltRequired <= 0) {
+							nextEnzyTimeRemaining = currentOperation.secondsPerEnzyme;
+							if (enzyRequired <= 0) {
 								//SNUtil.writeToChat("try craft");
 								IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
 								if (ing != null && ing.Count >= currentOperation.inputCount) {
@@ -339,8 +339,8 @@ namespace ReikaKalseki.SeaToSea {
 			//if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
 			//	return false;
 			IList<InventoryItem> ing = sc.container.GetItems(r.inputItem);
-			IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
-			return ing != null && salt != null && salt.Count >= r.saltCount && ing.Count >= r.inputCount;
+			IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+			return ing != null && enzy != null && enzy.Count >= r.enzyCount && ing.Count >= r.inputCount;
 		}
 		
 		private void setRecipe(BioRecipe r) {
@@ -348,8 +348,8 @@ namespace ReikaKalseki.SeaToSea {
 			bool had = currentOperation != null;
 			bool has = r != null;
 			currentOperation = r;
-			saltRequired = r != null ? r.saltCount : -1;
-			nextSaltTimeRemaining = r != null ? /*r.secondsPerSalt*/0.05F : -1;
+			enzyRequired = r != null ? r.enzyCount : -1;
+			nextEnzyTimeRemaining = r != null ? r.secondsPerEnzyme : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			if (has != had) {
 				SoundManager.playSoundAt(SoundManager.buildSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
@@ -366,20 +366,24 @@ namespace ReikaKalseki.SeaToSea {
 			
 		public readonly TechType inputItem;
 		public readonly TechType outputItem;
-		public readonly int saltCount;
+		public readonly int enzyCount;
 		public readonly float processTime;
+		public readonly float totalEnergyCost;
 		
-		public readonly float secondsPerSalt;
+		public readonly float secondsPerEnzyme;
+		public readonly float powerPerSecond;
 		
 		internal int inputCount = 1;
 		internal int outputCount = 1;
 		
-		internal BioRecipe(int s, float t, TechType inp, TechType o) {
+		internal BioRecipe(int s, float t, float e, TechType inp, TechType o) {
 			inputItem = inp;
 			outputItem = o;
-			saltCount = s;
+			enzyCount = s;
 			processTime = t;
-			secondsPerSalt = processTime/(float)saltCount;
+			totalEnergyCost = e;
+			secondsPerEnzyme = processTime/(float)enzyCount;
+			powerPerSecond = totalEnergyCost/processTime;
 		}
 		
 		public int getInputCount() {
@@ -392,7 +396,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override string ToString()
 		{
-			return string.Format("[BioRecipe InputItem={0}, OutputItem={1}, SaltCount={2}, ProcessTime={3}, SecondsPerSalt={4}, InputCount={5}, OutputCount={6}]", inputItem, outputItem, saltCount, processTime, secondsPerSalt, inputCount, outputCount);
+			return string.Format("[BioRecipe InputItem={0}, OutputItem={1}, enzyCount={2}, ProcessTime={3}, secondsPerEnzyme={4}, InputCount={5}, OutputCount={6}]", inputItem, outputItem, enzyCount, processTime, secondsPerEnzyme, inputCount, outputCount);
 		}
 
 		
