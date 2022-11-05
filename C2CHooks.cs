@@ -632,7 +632,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (UnderwaterIslandsFloorBiome.instance.isInBiome(calc.position))
 	    		calc.setValue(calc.getTemperature()+UnderwaterIslandsFloorBiome.instance.getTemperatureBoost(calc.getTemperature(), calc.position));
 	    	calc.setValue(Mathf.Max(calc.getTemperature(), EnvironmentalDamageSystem.instance.getWaterTemperature(calc.position)));
-			foreach (HeatSinkTag lb in UnityEngine.Object.FindObjectsOfType<HeatSinkTag>()) {
+			foreach (HeatSinkTag lb in UnityEngine.Object.FindObjectsOfType<HeatSinkTag>()) {*
 				if (lb) {
 					dist = Vector3.Distance(lb.transform.position, calc.position);
 					if (dist <= EjectedHeatSink.HEAT_RADIUS) {

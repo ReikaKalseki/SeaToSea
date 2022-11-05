@@ -74,6 +74,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, 5);
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, 6);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
+			SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 		}
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);

@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
 		
 		internal static readonly float POWER_COST_IDLE = 0.5F; //per second; was 1.5 then 2.5
-		internal static readonly float POWER_COST_ACTIVE = 16.0F; //per second
+		internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
 		
 		private static readonly string MACHINE_GO_NAME = "MachineModel";
 		
@@ -241,7 +241,7 @@ namespace ReikaKalseki.SeaToSea {
 					setEmissiveColor(recipeStalledColor);
 					nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
 					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
-					if (nextSaltTimeRemaining <= 0 && consumePower(Bioprocessor.POWER_COST_IDLE, seconds*((Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
+					if (nextSaltTimeRemaining <= 0 && consumePower(Bioprocessor.POWER_COST_IDLE, seconds*((**Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
 						IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 						if (salt != null && salt.Count >= 1) {
 							ObjectUtil.removeItem(sc, salt[0]);
