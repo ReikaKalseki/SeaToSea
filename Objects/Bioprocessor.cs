@@ -192,6 +192,8 @@ namespace ReikaKalseki.SeaToSea {
 		private int saltRequired;
 		private float nextSaltTimeRemaining;
 		
+		private float operationCooldown = -1;
+		
 		private static readonly Color offlineColor = new Color(0.1F, 0.1F, 0.1F);
 		private static readonly Color noRecipeColor = new Color(1, 0, 0);
 		private static readonly Color recipeStalledColor = new Color(1, 1, 0);
@@ -233,53 +235,61 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//soundLoop.attributes.position = transform.position.toFMODVector();
 			
+			if (operationCooldown > 0)
+				operationCooldown -= seconds;
 			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
-					IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
-					bool hasKelp = kelp != null && kelp.Count > 0;
-					setEmissiveColor(recipeStalledColor);
-					nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
-					//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
-					if (nextSaltTimeRemaining <= 0 && consumePower(Bioprocessor.POWER_COST_IDLE, seconds*((**Bioprocessor.POWER_COST_ACTIVE/Bioprocessor.POWER_COST_IDLE)-1))) {
-						IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
-						if (salt != null && salt.Count >= 1) {
-							ObjectUtil.removeItem(sc, salt[0]);
-							saltRequired--;
-							SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
-							setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
-						}
-						else {
-							setRecipe(null);
-						}
-						nextSaltTimeRemaining = currentOperation.secondsPerSalt;
-						if (saltRequired <= 0) {
-							//SNUtil.writeToChat("try craft");
-							IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
-							if (ing != null && ing.Count >= currentOperation.inputCount) {
-								//SNUtil.writeToChat("success");
-								for (int i = 0; i < currentOperation.inputCount; i++)
-									ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
-								int n = currentOperation.outputCount;
-								if (hasKelp) {
-									n *= 2;
-									ObjectUtil.removeItem(sc, kelp[0]);
-								}
-								for (int i = 0; i < n; i++) {
-									GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
-									item.SetActive(false);
-									sc.container.AddItem(item.GetComponent<Pickupable>());
-									colorCooldown = -1;
-									setEmissiveColor(completeColor, 4);
-									SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
-									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString());
-								}
-								setRecipe(null);
+					if (consumePower(Bioprocessor.POWER_COST_ACTIVE-Bioprocessor.POWER_COST_IDLE, seconds)) {
+						IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
+						bool hasKelp = kelp != null && kelp.Count > 0;
+						setEmissiveColor(recipeStalledColor);
+						nextSaltTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
+						//SNUtil.writeToChat("remaining: "+nextSaltTimeRemaining);
+						if (nextSaltTimeRemaining <= 0) {
+							IList<InventoryItem> salt = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+							if (salt != null && salt.Count >= 1) {
+								ObjectUtil.removeItem(sc, salt[0]);
+								saltRequired--;
+								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
+								setEmissiveColor(workingColor, 1+currentOperation.secondsPerSalt);
 							}
 							else {
 								setRecipe(null);
 							}
+							nextSaltTimeRemaining = currentOperation.secondsPerSalt;
+							if (saltRequired <= 0) {
+								//SNUtil.writeToChat("try craft");
+								IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
+								if (ing != null && ing.Count >= currentOperation.inputCount) {
+									//SNUtil.writeToChat("success");
+									for (int i = 0; i < currentOperation.inputCount; i++)
+										ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
+									int n = currentOperation.outputCount;
+									if (hasKelp) {
+										n *= 2;
+										ObjectUtil.removeItem(sc, kelp[0]);
+									}
+									for (int i = 0; i < n; i++) {
+										GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
+										item.SetActive(false);
+										sc.container.AddItem(item.GetComponent<Pickupable>());
+									}
+									setRecipe(null);
+									colorCooldown = -1;
+									setEmissiveColor(completeColor, 4);
+									SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
+									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+"x "+n);
+									operationCooldown = 2;
+								}
+								else {
+									abort(noRecipeColor);
+								}
+							}
 						}
+					}
+					else {
+						abort(offlineColor);
 					}
 				}
 				else {
@@ -298,11 +308,18 @@ namespace ReikaKalseki.SeaToSea {
 				//SNUtil.writeToChat("Insufficient power");
 				setEmissiveColor(offlineColor);
 			}
-			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length+0.1F) {
+			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length-0.1F) {
 				lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
 				//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 				SoundManager.playSoundAt(soundLoop.asset, gameObject.transform.position);
 			}
+		}
+		
+		private void abort(Color c) {
+			setRecipe(null);
+			colorCooldown = -1;
+			operationCooldown = 10;
+			setEmissiveColor(c, 2);
 		}
 		
 		private void setEmissiveColor(Color c, float cooldown = -1) {

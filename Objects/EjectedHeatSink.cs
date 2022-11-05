@@ -18,10 +18,20 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly float HEAT_RADIUS = 12;
 		internal static readonly float MAX_TEMPERATURE = 600;
+
+		internal static List<HeatSinkTag> activeHeatSinks = new List<HeatSinkTag>();
 	        
 	    internal EjectedHeatSink() : base("dumpedheatsink", "Ejected Heat Sink", "") {
 			
 	    }
+
+		internal static void iterateHeatSinks(Action<HeatSinkTag> a) {
+			foreach (HeatSinkTag h in activeHeatSinks) {
+				if (h) {
+					a(h);
+				}
+			}
+		}
 			
 	    public override GameObject GetGameObject() {
 			GameObject world = ObjectUtil.createWorldObject("bcb52360-f014-4ca1-9cf2-9e32504c645f");
@@ -50,7 +60,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 	}
 		
-	class HeatSinkTag : MonoBehaviour {
+	internal class HeatSinkTag : MonoBehaviour {
 		
 		private static readonly SoundManager.SoundData fireSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "fireheatsink", "Sounds/fireheatsink.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 		
@@ -101,8 +111,9 @@ namespace ReikaKalseki.SeaToSea {
 			
 			if (time-lastPLayerDistanceCheckTime >= 0.5) {
 				lastPLayerDistanceCheckTime = time;
-				if (Vector3.Distance(transform.position, Player.main.transform.position) > 250) {
+				if (Vector3.Distance(transform.position, Player.main.transform.position) > Mathf.Clamp(temperature*2, 50, 250)) {
 					UnityEngine.Object.DestroyImmediate(gameObject);
+					EjectedHeatSink.activeHeatSinks.Remove(this);
 				}
 			}
 			
@@ -123,6 +134,14 @@ namespace ReikaKalseki.SeaToSea {
 			mainRender.materials[0].SetColor("_GlowColor", getColor(f));
 		}
 		
+		void OnDestroy() {
+			EjectedHeatSink.activeHeatSinks.Remove(this);
+		}
+		
+		void OnDisable() {
+			EjectedHeatSink.activeHeatSinks.Remove(this);
+		}
+		
 		internal Color getColor(float f) {
 			if (f < 0.125F) {
 				return Color.Lerp(Color.black, glowFinal, f*8);
@@ -141,6 +160,7 @@ namespace ReikaKalseki.SeaToSea {
 			temperature = EjectedHeatSink.MAX_TEMPERATURE*charge;
 			spawnTime = DayNightCycle.main.timePassedAsFloat;
 			SoundManager.playSoundAt(fireSound, transform.position, false, 40, 2);
+			EjectedHeatSink.activeHeatSinks.Add(this);
 		}
 		
 		public float getTemperature() {
