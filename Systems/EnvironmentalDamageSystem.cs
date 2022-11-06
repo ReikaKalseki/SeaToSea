@@ -131,6 +131,8 @@ namespace ReikaKalseki.SeaToSea {
     	}
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
+    		if (DIHooks.getWorldAge() < 0.25F)
+    			return;
     		//depthWarningFX1 = Camera.main.gameObject.EnsureComponent<DepthRippleFX>();
     		//depthWarningFX2 = Camera.main.gameObject.EnsureComponent<DepthDarkeningFX>();
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
@@ -472,6 +474,9 @@ namespace ReikaKalseki.SeaToSea {
 		public void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
+	   		
+    		if (DIHooks.getWorldAge() < 0.25F)
+    			return;
 	   		
 	   		bool flagged = false;
 	   		bool inOcean = isPlayerInOcean();

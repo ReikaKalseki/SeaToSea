@@ -198,7 +198,7 @@ namespace ReikaKalseki.SeaToSea
    	}
     
     internal static void onTechUnlocked(TechType tech) {
-    	if (brokenTablets.ContainsKey(tech))
+   		if (brokenTablets.ContainsKey(tech) && DIHooks.getWorldAge() >= 0.25F)
     		SNUtil.triggerTechPopup(brokenTablets[tech]);
     }
     
