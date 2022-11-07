@@ -88,6 +88,9 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.LaserCutter);
 			gatedTechnologies.Add(TechType.ReinforcedDiveSuit);
 			gatedTechnologies.Add(TechType.ReinforcedGloves);
+			gatedTechnologies.Add(TechType.PrecursorIonCrystal);
+			gatedTechnologies.Add(TechType.PrecursorIonBattery);
+			gatedTechnologies.Add(TechType.PrecursorIonPowerCell);
 			gatedTechnologies.Add(TechType.PrecursorKey_Blue);
 			gatedTechnologies.Add(TechType.PrecursorKey_Red);
 			gatedTechnologies.Add(TechType.PrecursorKey_White);

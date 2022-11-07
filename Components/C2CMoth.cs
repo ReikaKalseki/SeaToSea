@@ -19,6 +19,7 @@ namespace ReikaKalseki.SeaToSea
 		
 			private static readonly SoundManager.SoundData donePurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "doneheatsink", "Sounds/doneheatsink.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+			private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		
 			internal static bool useSeamothVehicleTemperature = true;
 			
@@ -62,6 +63,7 @@ namespace ReikaKalseki.SeaToSea
 			private float holdTempLowTime = 0;
 			
 			private float lastMeltSound = -1;
+			private float lastPreEjectSound = -1;
 			
 			private float lastTickTime = -1;
         	
@@ -121,6 +123,11 @@ namespace ReikaKalseki.SeaToSea
 					if (vehicleTemperature <= 5) {
 						vehicleTemperature = 5;
 						holdTempLowTime += tickTime;
+						if (time-lastPreEjectSound >= 0.75F) {
+							float f = holdTempLowTime/(HOLD_LOW_TIME*purgePower);
+							SoundManager.playSoundAt(ejectionPrepareSound, Player.main.transform.position, false, -1, f*f);
+							lastPreEjectSound = time;
+						}
 						if (holdTempLowTime >= HOLD_LOW_TIME*purgePower) {
 							fireHeatsink();
 							purgePower = -1;

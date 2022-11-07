@@ -38,6 +38,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private ResourceTracker resource;
 		
+		private float spawnTime;
+		private float lastPLayerDistanceCheckTime;
+		
 		void Start() {
     		
 		}
@@ -47,6 +50,17 @@ namespace ReikaKalseki.SeaToSea {
 				resource = gameObject.GetComponent<ResourceTracker>();
 			float time = DayNightCycle.main.timePassedAsFloat;
 			float dT = time-lastTime;
+			if (spawnTime <= 0)
+				spawnTime = time;
+			if (spawnTime > 0 && time-lastPLayerDistanceCheckTime >= 0.5) {
+				lastPLayerDistanceCheckTime = time;
+				if (Player.main && Vector3.Distance(transform.position, Player.main.transform.position) > 250 && !gameObject.FindAncestor<StorageContainer>()) {
+					UnityEngine.Object.DestroyImmediate(gameObject);
+				}
+			}
+			if (spawnTime > 0 && time-spawnTime >= 600 && !currentStalker && !gameObject.FindAncestor<StorageContainer>()) {
+				UnityEngine.Object.DestroyImmediate(gameObject);
+			}
 			if (dT >= 1) {
 				gameObject.EnsureComponent<ResourceTrackerUpdater>().tracker = resource;
 			}
