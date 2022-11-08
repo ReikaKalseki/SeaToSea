@@ -496,15 +496,12 @@ namespace ReikaKalseki.SeaToSea {
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
-				RaycastHit[] hit = Physics.SphereCastAll(p.transform.position, 60, new Vector3(1, 1, 1), 60);
-				foreach (RaycastHit rh in hit) {
-					if (rh.transform != null && rh.transform.gameObject) {
-						DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
-						if (c && !c.currentlyHasPlatinum() && !c.gameObject.GetComponent<WaterParkCreature>()) {
-							float chance = Mathf.Clamp01(1F-Vector3.Distance(rh.transform.position, p.transform.position)/90F);
-							if (UnityEngine.Random.Range(0F, 1F) <= chance)
-								c.triggerPtAggro(Player.main.gameObject);
-						}
+	    		HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(p.transform.position, 60);
+				foreach (DeepStalkerTag c in set) {
+					if (!c.currentlyHasPlatinum() && !c.GetComponent<WaterParkCreature>()) {
+						float chance = Mathf.Clamp01(1F-Vector3.Distance(c.transform.position, p.transform.position)/90F);
+						if (UnityEngine.Random.Range(0F, 1F) <= chance)
+							c.triggerPtAggro(Player.main.gameObject);
 					}
 				}
 	    	}

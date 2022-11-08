@@ -59,14 +59,11 @@ namespace ReikaKalseki.SeaToSea
 						}
 					}
 					if (dist <= 120)  {
-						RaycastHit[] hit = Physics.SphereCastAll(transform.position, 60, new Vector3(1, 1, 1), 60);
+						HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(transform.position, 60);
 						int amt = 0;
-						foreach (RaycastHit rh in hit) {
-							if (rh.transform != null && rh.transform.gameObject) {
-								DeepStalkerTag c = rh.transform.gameObject.GetComponent<DeepStalkerTag>();
-								if (c && c.isAlive() && !c.gameObject.GetComponent<WaterParkCreature>()) {
-									amt++;
-								}
+						foreach (DeepStalkerTag c in set) {
+							if (c.isAlive() && !c.GetComponent<WaterParkCreature>()) {
+								amt++;
 							}
 						}
 						//int amt = stalkers.Count;

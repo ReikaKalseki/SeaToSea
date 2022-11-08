@@ -183,21 +183,19 @@ namespace ReikaKalseki.SeaToSea {
 						bindToTreader(WorldUtil.getClosest<SeaTreader>(gameObject));
 					List<GameObject> loosePlatinum = new List<GameObject>();
 					List<CollectShiny> stalkersWithPlatinum = new List<CollectShiny>();
-					RaycastHit[] hit = Physics.SphereCastAll(transform.position, 40, new Vector3(1, 1, 1), 40);
-					foreach (RaycastHit rh in hit) {
-						if (rh.transform != null && rh.transform.gameObject) {
-							PlatinumTag pt = rh.transform.GetComponent<PlatinumTag>();
-							if (pt && pt.getTimeOnGround() >= 2.5F) {
-								//collectorComponent.shinyTarget = pt.gameObject;
-								loosePlatinum.Add(pt.gameObject);
-							}
-							CollectShiny c = rh.transform.gameObject.GetComponent<CollectShiny>();
-							if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
-								//collectorComponent.shinyTarget = c.shinyTarget;
-								//triggerPtAggro(c.gameObject);
-								//break;
-								stalkersWithPlatinum.Add(c);
-							}
+					HashSet<GameObject> set = WorldUtil.getObjectsNear(transform.position, 40);
+					foreach (GameObject go in set) {
+						PlatinumTag pt = go.GetComponent<PlatinumTag>();
+						if (pt && pt.getTimeOnGround() >= 2.5F) {
+							//collectorComponent.shinyTarget = pt.gameObject;
+							loosePlatinum.Add(pt.gameObject);
+						}
+						CollectShiny c = go.GetComponent<CollectShiny>();
+						if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
+							//collectorComponent.shinyTarget = c.shinyTarget;
+							//triggerPtAggro(c.gameObject);
+							//break;
+							stalkersWithPlatinum.Add(c);
 						}
 					}
 					bool flag = false;
