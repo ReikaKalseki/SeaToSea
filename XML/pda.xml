@@ -463,4 +463,108 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </drfwarperheat>
+  <needlaunchcargo>
+	<name>
+		Alterra Desired Research Sample Manifest
+	</name>
+	<pda>
+		In order to be granted permission to use the Neptune rocket to return to Federation space, Alterra requires that you compensate the expenses incurred with equivalent value in the form of research specimens. These can be collected from the surrounding environment and stored in the lockers onboard the rocket's intermediary stage.
+		
+		The desired cargo includes:
+			-A large armored predator (x1)
+			
+			-A predator with electrical hunting mechanisms (x1)
+			
+			-A creature with extreme thermal resistance due to regular direct lava exposure (x1)
+			
+			-A symbiotic predator (x1)
+			
+			-An intelligent herbivore (x1)
+			
+			-A small ray species with vibration-detection capabilities, suitable for aquariums (x1)
+			
+			-A small but aggressive carrion feeder, with limited visual sensation (x2)
+			
+			-A large poisonous herbivore adapted to deep water (x1)
+			
+			-A semi-intelligent predator with a strong attraction to shiny objects, adapted for deep water (x1)
+			
+			-A fish with water filtering capabilities (x2)
+			
+			-A small herbivore using ionic charge to maneuver, suitable as small pets (x4)
+			
+			-A parasitic lifeform consisting of two symbiotic components, with buoyancy-related properties (x6)
+			
+			-Flora with a large bell filled with microbial and coral colonies (x1)
+			
+			-Flora with an internal bacteria-rich chamber (x1)
+			
+			-Flora exhibiting signs of genetic modification (x1)
+			
+			-An edible and low-density flora sample (x3)
+			
+			-Coral containing rare resource nodules (x4)
+			
+			-Flora with symbiotic chemosynethetic bacteria (x2)
+			
+			-Leaves coated in oils suitable for medical applications (x4)
+			
+			-Alien Power Storage Units (x3)
+			
+			-Aquatic Reproductive Stimulant (x2)
+			
+			-Diamond (x1)
+			
+			-Oil containing chemoluminescent seeds (x3)	
+			
+			-Purple Precursor Tablet (x1)
+			
+			-Orange Precursor Tablet (x1)
+			
+			-Blue Precursor Tablet (x1)
+			
+			-Red Precursor Tablet (x1)
+			
+			-White Precursor Tablet (x1)
+	</pda>
+	<category>
+		Advanced
+	</category>
+  </needlaunchcargo>
+  <notvisitedallbiomes>
+	<name>
+		Biome Survey Required
+	</name>
+	<pda>
+		Alterra requires you perform a basic survey of the ecological niches present in this region of 4546B in order to be granted permission to depart.
+		
+		To satisfy this requirement, you need to collect data by visiting the following ecological regions:
+		-A biome with a great deal of flora and fauna biodiversity, well-exposed to sunlight
+		
+		-A deep reef dominated by large luminescent coral unique to the biome
+		
+		-A deep sparse forest of a unique species of kelp
+		
+		-A hot-water zone with flora adapted for that environment
+		
+		-An open sandy region with numerous predatory megafauna
+		
+		-A low-biodiversity region lacking large fauna
+		
+		-A secluded cave system with unique species
+		
+		-A landmass buoyed by lifeforms and host to many land plants
+		
+		-A fairly barren region with high topographic variation and several thermal vents
+		
+		-A forest composed of many long-lived corals
+		
+		-Shallow kelp forests
+		
+		-Sunken outcrops of land in a region with high volcanic activity on the seafloor
+	</pda>
+	<category>
+		Advanced
+	</category>
+  </notvisitedallbiomes>
 </Root>

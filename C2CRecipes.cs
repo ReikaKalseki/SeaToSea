@@ -129,7 +129,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem fuel = CraftingItems.getItem(CraftingItems.Items.RocketFuel);
         fuel.craftingTime = 6;
-        fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
+        fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, 3).addIngredient(TechType.CrashPowder, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
         
         C2CItems.addCraftingItems();
         

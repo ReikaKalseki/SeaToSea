@@ -131,6 +131,28 @@
 		Sounds/radioprompt.ogg
 	</pda>
   </followradio>
+  <needlaunchcargo>
+	<name>
+		
+	</name>
+	<desc>
+		Further cargo required: Bring onboard research specimens to Alterra.
+	</desc>
+	<pda>
+		Sounds/cannot-launch-need-cargo.ogg
+	</pda>
+  </needlaunchcargo>
+  <notseenallbiomes>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting multiple unexplored ecological biomes. Your primary research task is to acquire further information.
+	</desc>
+	<pda>
+		Sounds/cannot-launch-missing-biomes.ogg
+	</pda>
+  </notseenallbiomes>
   <BulkheadInoperable>
 	<name>
 		

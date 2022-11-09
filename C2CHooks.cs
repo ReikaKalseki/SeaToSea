@@ -723,6 +723,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
 	    	}
+        	else if (pi && pi.classId == "8b113c46-c273-4112-b7ef-65c50d2591ed") { //rocket
+	        	foreach (RocketLocker cl in pi.GetComponentsInChildren<RocketLocker>()) {
+		        	StorageContainer sc = cl.GetComponent<StorageContainer>();
+		        	sc.Resize(6, 8);
+	        	}
+        	}
 	    	/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
 	    		go.transform.position = auroraCyclopsModule.position;
@@ -881,6 +887,27 @@ namespace ReikaKalseki.SeaToSea {
 	    		return false;
 	    	}
 	    	return s.Eat(go);
+	    }
+	    
+	    public static void tryLaunchRocket(LaunchRocket r) {
+			if (!r.IsRocketReady())
+				return;
+			if (LaunchRocket.launchStarted)
+				return;
+			if (!StoryGoalCustomEventHandler.main.gunDisabled && !r.forcedRocketReady) {
+				r.gunNotDisabled.Play();
+				return;
+			}
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded(r)) {
+				return;
+			}
+			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
+			//	return;
+			//}
+			LaunchRocket.SetLaunchStarted();
+			PlayerTimeCapsule.main.Submit(null);
+			r.StartCoroutine(r.StartEndCinematic());
+			HandReticle.main.RequestCrosshairHide();
 	    }
 	}
 }

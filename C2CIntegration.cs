@@ -75,9 +75,18 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, 6);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
 			SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
+			
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(glowOil.TechType, 3);
 		}
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
+		
+		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);
+		if (ghostRayEgg != null)
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.GhostRayBlue, 1);
+		CustomEgg blighterEgg = CustomEgg.getEgg(TechType.Blighter);
+		if (blighterEgg != null)
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2);
     }
 
   }

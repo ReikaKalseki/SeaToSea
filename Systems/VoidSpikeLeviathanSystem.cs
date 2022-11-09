@@ -181,21 +181,39 @@ namespace ReikaKalseki.SeaToSea {
 	    		spawnJustVisibleDistanceFX(ep);
 	    	}
 	    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
-	    		float chance = Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
-	    		if (UnityEngine.Random.Range(0F, 1F) <= chance)
+	    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
+	    		if (UnityEngine.Random.Range(0F, 1F) <= chance) {
+	    			Vector3 rel = getRandomVisibleDistantPosition(ep, 5, 3);
+	    			Vector3 pos = ep.transform.position+rel;
+	    			
+	    			spawnEMPBlast(pos);
 	    			shutdownSeamoth(ep.GetVehicle());
+	    		}
 	    	}
 	    }
 	    
-	    private void spawnJustVisibleDistanceFX(Player ep) {
+	    private void spawnEMPBlast(Vector3 pos) {
+			GameObject emp = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab);
+	    	emp.transform.position = pos;
+	    	emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();
+	    	emp.SetActive(true);
+	    }
+	    
+	    //Returns the relative position, not absolute
+	    private Vector3 getRandomVisibleDistantPosition(Player ep, float distSc, float fovSc = 1) {
 	    	float range = UnityEngine.Random.Range(30F, 40F);
-	    	DistantFX type = distantFXList[UnityEngine.Random.Range(0, distantFXList.Count)];
-	    	range *= type.distanceScalar;
+	    	range *= distSc;
 	    	Vector3 pos = ep.transform.position+/*ep.transform.forward*/MainCamera.camera.transform.forward.normalized*range;
-	    	pos = MathUtil.getRandomVectorAround(pos, 20);
+	    	pos = MathUtil.getRandomVectorAround(pos, 20*distSc*fovSc);
 	    	Vector3 dist = pos-ep.transform.position;
 	    	dist = dist.setLength(range);
-	    	pos = ep.transform.position+dist;
+	    	return dist;
+	    }
+	    
+	    private void spawnJustVisibleDistanceFX(Player ep) {
+	    	DistantFX type = distantFXList[UnityEngine.Random.Range(0, distantFXList.Count)];
+	    	Vector3 dist = getRandomVisibleDistantPosition(ep, type.distanceScalar);
+	    	Vector3 pos = ep.transform.position+dist;
 	    	GameObject go = getOrCreateSparkFX(type);
 	    	go.transform.position = pos;
 	    	go.transform.localScale = Vector3.one*UnityEngine.Random.Range(1.5F, 2.5F);
@@ -203,7 +221,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		type.modification(distantSparkFX);
 	    	VoidSparkFX fx = go.GetComponent<VoidSparkFX>();
 	    	fx.relativePosition = dist;
-	    	float speed = UnityEngine.Random.Range(2.5F, 10F)+(range-30)*0.5F;
+	    	float speed = UnityEngine.Random.Range(2.5F, 10F)+(dist.magnitude-30)*0.5F;
 	    	if (UnityEngine.Random.Range(0F, 1F) <= 0.2F)
 	    		speed *= 3;
 	    	speed *= type.speedScalar;

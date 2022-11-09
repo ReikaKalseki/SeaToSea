@@ -55,6 +55,7 @@ namespace ReikaKalseki.SeaToSea
     public static MountainBaseCuredPeeper peeper;
     public static SeaTreaderTunnelLocker locker;
     
+    //internal static VoidLeviElecSphere leviPulse;
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
     
@@ -137,6 +138,9 @@ namespace ReikaKalseki.SeaToSea
 	    peeper.Patch();
 	    locker = new SeaTreaderTunnelLocker();
 	    locker.Patch();
+	    
+	    //leviPulse = new VoidLeviElecSphere();
+	    //leviPulse.Patch();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
