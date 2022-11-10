@@ -183,9 +183,28 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"));
 		}
 	
-		internal class VoidSpikeLeviathanAI : MonoBehaviour {
+		public class VoidSpikeLeviathanAI : MonoBehaviour {
+	
+			private static readonly float EMP_CHARGE_TIME = 1.5F;
+			private static readonly float FLASH_CHARGE_TIME = 0.5F;
+			
+			private static readonly float MAX_EMISSIVITY_DELTA = 100F;
 	    	
+	    	private readonly SoundManager.SoundData empChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp-charge", "Sounds/voidlevi/emp-charge.ogg", SoundManager.soundMode3D);
+	   		private readonly SoundManager.SoundData flashChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-flash-charge", "Sounds/voidlevi/flash-charge.ogg", SoundManager.soundMode3D);
+	    
 	    	private Creature creatureClass;
+	    	
+	    	public Renderer creatureRenderer;
+	    	
+	    	private float empRamp = -1;
+	    	private float flashRamp = -1;
+	    	
+	    	private float nextPossibleEMPTime = 10;
+	    	private float nextPossibleFlashTime = 15;
+	    	
+	    	private float targetEmissivity;
+	    	private float currentEmissivity = 1;
 			
 	    	void Start() {
 	    		
@@ -194,13 +213,94 @@ namespace ReikaKalseki.SeaToSea {
 			void Update() {
 	    		if (!creatureClass)
 	    			creatureClass = GetComponent<Creature>();
+	    		if (!creatureRenderer)
+	    			creatureRenderer = GetComponentInChildren<Renderer>();
 	    		
-	    		if (creatureClass)
+	    		if (creatureClass) {
 	    			creatureClass.leashPosition = Player.main.transform.position;
+	    		
+		    		if (Story.StoryGoalManager.main.IsGoalComplete("??")) { //sea emperor befriend
+	    				creatureClass.Aggression.Add(-0.1F);
+		    		}
+	    		}
+	    		
+	    		float dT = Time.deltaTime;
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (isEMPInProgress()) {
+	    			empRamp = empRamp+dT/EMP_CHARGE_TIME;
+	    			if (empRamp >= 1) {
+	    				doEMP();
+	    				empRamp = -1;
+	    			}
+	    		}
+	    		else if (time >= nextPossibleEMPTime && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.1F) {
+	    			startEMP();
+	    		}
+	    		
+	    		if (isFlashInProgress()) {
+	    			flashRamp = flashRamp+dT/FLASH_CHARGE_TIME;
+	    			if (flashRamp >= 1) {
+	    				doFlash();
+	    				flashRamp = -1;
+	    			}
+	    		}
+	    		else if (time >= nextPossibleFlashTime && !isEMPInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.05F) {
+	    			startFlash();
+	    		}
+	    		
+	    		targetEmissivity = 1F+0.5F*Mathf.Sin(transform.position.magnitude*0.04F);
+	    		if (isEMPInProgress()) {
+	    			targetEmissivity = empRamp+UnityEngine.Random.Range(0F, 0.5F)+0.5F*Mathf.Sin(empRamp*20);
+	    		}
+	    		else if (isFlashInProgress()) {
+	    			targetEmissivity = flashRamp*flashRamp*100*(UnityEngine.Random.Range(0.5F, 1.5F)+0.5F*Mathf.Sin(flashRamp*5));
+	    		}
+	    		
+				if (currentEmissivity < targetEmissivity) {
+					currentEmissivity = Mathf.Min(targetEmissivity, currentEmissivity+dT*MAX_EMISSIVITY_DELTA);
+				}
+				else if (currentEmissivity > targetEmissivity) {
+					currentEmissivity = Mathf.Max(targetEmissivity, currentEmissivity-dT*MAX_EMISSIVITY_DELTA);
+				}
+	    		
+	    		if (creatureRenderer)
+	    			RenderUtil.setEmissivity(creatureRenderer.materials[0], Mathf.Max(0, currentEmissivity), "GlowStrength");
 			}
+	    	
+	    	internal void startEMP() {
+	    		if (isEMPInProgress() || isFlashInProgress())
+	    			return;
+	    		empRamp = 0;
+	    		SoundManager.playSoundAt(empChargeSound, transform.position, false, -1, 1);
+	    		nextPossibleEMPTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(30, 90);
+	    	}
+	    	
+	    	internal void startFlash() {
+	    		if (isEMPInProgress() || isFlashInProgress())
+	    			return;
+	    		flashRamp = 0;
+	    		SoundManager.playSoundAt(flashChargeSound, transform.position, false, -1, 1);
+	    		nextPossibleFlashTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60, 120);
+	    	}
+	    	
+	    	internal bool isEMPInProgress() {
+	    		return empRamp >= 0;
+	    	}
+	    	
+	    	internal bool isFlashInProgress() {
+	    		return flashRamp >= 0;
+	    	}
+	    	
+	    	private void doEMP() {
+	    		VoidSpikeLeviathanSystem.instance.spawnEMPBlast(transform.position);
+	    	}
+	    	
+	    	private void doFlash() {
+	    		VoidSpikeLeviathanSystem.instance.doFlash();
+	    	}
 			
 			void OnDisable() {
-	    		UnityEngine.Object.DestroyImmediate(gameObject);
+	    		UnityEngine.Object.Destroy(gameObject);
 			}
 			
 			void OnDestroy() {

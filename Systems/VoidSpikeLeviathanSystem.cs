@@ -30,9 +30,14 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
 	    
+	    private readonly SoundManager.SoundData empSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp", "Sounds/voidlevi/emp6.ogg", SoundManager.soundMode3D);
+	    private readonly SoundManager.SoundData empHitSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp-hit", "Sounds/voidlevi/emp-hit.ogg", SoundManager.soundMode3D);
+	    
 	    private float nextDistantRoarTime = -1;
 	    private float lastFlashTime = -1;
 	    private float currentFlashDuration = 0; //full blindness length; fade is (DAZZLE_FADE_LENGTH)x longer after that
+	    
+	    private float lastEMPHitSoundTime;
 	    
 	    private GameObject mainCamera;
 	    private MesmerizedScreenFXController mesmerController;
@@ -41,9 +46,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private readonly Vector4 dazzleColors = new Vector4(800, 800, 1000, 1);
 	    
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
-	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc"),
-	    	new DistantFX("6e4b4259-becc-4d2c-b56a-03ccedbc4672"),
-	    	new DistantFX("3274b205-b153-41b6-9736-f3972e38f0ad"),
+	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc", 2),
+	    	new DistantFX("6e4b4259-becc-4d2c-b56a-03ccedbc4672", 2),
+	    	new DistantFX("3274b205-b153-41b6-9736-f3972e38f0ad", 2),
 	    	new DistantFX("04781674-e27a-43ce-891f-a82781314c15", 2.5F, 5, 0.5F, go => {
 	    		go.transform.rotation = UnityEngine.Random.rotationUniform;
 	    		go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.75F, 1.5F);
@@ -76,13 +81,13 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    internal void deleteVoidLeviathan() {
 	    	if (voidLeviathan)
-	    		UnityEngine.Object.DestroyImmediate(voidLeviathan);
+	    		UnityEngine.Object.Destroy(voidLeviathan);
 	    	voidLeviathan = null;
 	    }
 	    
 	    internal void deleteGhostTarget() {
 	    	if (redirectedTarget)
-	    		UnityEngine.Object.DestroyImmediate(redirectedTarget);
+	    		UnityEngine.Object.Destroy(redirectedTarget);
 	    	redirectedTarget = null;
 	    }
 	    
@@ -205,7 +210,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    private void spawnEMPBlast(Vector3 pos) {
+	    internal void spawnEMPBlast(Vector3 pos) {
+	    	SoundManager.playSoundAt(empSound, pos, false, -1, 1);
 	    	GameObject pfb = ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab;
 	    	for (int i = 0; i < 180; i += 30) {
 				GameObject emp = UnityEngine.Object.Instantiate(pfb);
@@ -263,8 +269,14 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    internal void shutdownSeamoth(Vehicle v, bool disable, float factor = 1) {
 	    	if (v) {
-	    		if (v is SeaMoth)
+	    		if (v is SeaMoth) {
 	    			createSparkSphere((SeaMoth)v).SetActive(true);
+	    			float time = DayNightCycle.main.timePassedAsFloat;
+	    			if (time-lastEMPHitSoundTime > 1F) {
+	    				lastEMPHitSoundTime = time;
+	    				SoundManager.playSoundAt(empHitSound, v.transform.position, false, -1, 1);
+	    			}
+	    		}
 	    		v.ConsumeEnergy(UnityEngine.Random.Range(4F, 10F)*factor); //2-5% base
 	    		if (disable)
 	    			v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F)*factor);
