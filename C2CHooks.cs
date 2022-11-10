@@ -48,6 +48,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
 	    	
+	    	DIHooks.onEMPHitEvent += onEMPHit;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -908,6 +910,10 @@ namespace ReikaKalseki.SeaToSea {
 			PlayerTimeCapsule.main.Submit(null);
 			r.StartCoroutine(r.StartEndCinematic());
 			HandReticle.main.RequestCrosshairHide();
+	    }
+	    
+	    public static void onEMPHit(EMPBlast e, GameObject go) {
+	    	VoidSpikeLeviathanSystem.instance.onObjectEMPHit(e, go);
 	    }
 	}
 }

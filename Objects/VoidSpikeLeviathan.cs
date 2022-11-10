@@ -211,7 +211,7 @@ namespace ReikaKalseki.SeaToSea {
 				//SNUtil.writeToChat(this+" attacked "+target);
 				Vehicle v = target.GetComponent<Vehicle>();
 				if (v) {
-					VoidSpikeLeviathanSystem.instance.shutdownSeamoth(v, 6); //shut down for up to 30s, drain up to 25% power
+					VoidSpikeLeviathanSystem.instance.shutdownSeamoth(v, true, 6); //shut down for up to 30s, drain up to 25% power
 				}
 			}
 			

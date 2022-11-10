@@ -178,25 +178,55 @@ namespace ReikaKalseki.SeaToSea {
 	    		SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
 	    	if (forceSpark || inBiome) {
-	    		spawnJustVisibleDistanceFX(ep);
+	    		Vector3 pos = spawnJustVisibleDistanceFX(ep);
+		    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
+		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
+		    		if (UnityEngine.Random.Range(0F, 1F) <= chance) {/*
+		    			Vector3 rel = getRandomVisibleDistantPosition(ep, 3, 3);
+		    			Vector3 pos = ep.transform.position+rel;*/
+		    			Vector3 rel = pos-ep.transform.position;
+		    			pos = ep.transform.position+rel.normalized*150;
+		    			pos = MathUtil.getRandomVectorAround(pos, 15);
+		    			
+		    			if (forceEMP)
+		    				SNUtil.writeToChat("Spawning EMP blast @ "+pos);
+		    			spawnEMPBlast(pos);
+		    			//shutdownSeamoth(ep.GetVehicle(), false);
+		    		}
+		    	}
 	    	}
-	    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
-	    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
-	    		if (UnityEngine.Random.Range(0F, 1F) <= chance) {
-	    			Vector3 rel = getRandomVisibleDistantPosition(ep, 5, 3);
-	    			Vector3 pos = ep.transform.position+rel;
-	    			
-	    			spawnEMPBlast(pos);
-	    			shutdownSeamoth(ep.GetVehicle());
-	    		}
+	    }
+	    
+	    public void onObjectEMPHit(EMPBlast e, GameObject go) { //this might be called many times!
+	    	//SNUtil.writeToChat(">>"+e.gameObject.name+" > "+e.gameObject.name.StartsWith("VoidSpikeLevi_Pulse", StringComparison.InvariantCultureIgnoreCase)+" @ "+go.FindAncestor<Vehicle>());
+	    	if (e.gameObject.name.StartsWith("VoidSpikeLevi_Pulse", StringComparison.InvariantCultureIgnoreCase)) {
+	    		//SNUtil.writeToChat("Match");
+	    		shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
 	    	}
 	    }
 	    
 	    private void spawnEMPBlast(Vector3 pos) {
-			GameObject emp = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab);
-	    	emp.transform.position = pos;
-	    	emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();
-	    	emp.SetActive(true);
+	    	GameObject pfb = ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab;
+	    	for (int i = 0; i < 180; i += 30) {
+				GameObject emp = UnityEngine.Object.Instantiate(pfb);
+		    	emp.transform.position = pos;
+		    	emp.transform.localRotation = Quaternion.Euler(i, 0, 0);
+		    	//emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();
+		    	Renderer r = emp.GetComponentInChildren<Renderer>();
+		    	r.materials[0].color = new Color(0.8F, 0.33F, 1F, 1F);
+		    	r.materials[1].color = new Color(0.67F, 0.9F, 1F, 1F);
+		    	r.materials[0].SetColor("_ColorStrength", new Color(1, 1, 1000, 1));
+		    	r.materials[1].SetColor("_ColorStrength", new Color(1, 1, 100, 1));
+		    	EMPBlast e = emp.GetComponent<EMPBlast>();
+		    	ObjectUtil.removeComponent<VFXLerpColor>(emp);
+		    	e.blastRadius = AnimationCurve.Linear(0f, 0f, 1f, 400f);
+		    	e.blastHeight = AnimationCurve.Linear(0f, 0f, 1f, 300f);
+		    	e.lifeTime = 3.5F;
+		    	e.disableElectronicsTime = UnityEngine.Random.Range(1F, 5F);
+		    	emp.name = "VoidSpikeLevi_Pulse_"+i;
+		    	emp.SetActive(true);
+		    	//ObjectUtil.dumpObjectData(emp);
+	    	}
 	    }
 	    
 	    //Returns the relative position, not absolute
@@ -210,7 +240,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	return dist;
 	    }
 	    
-	    private void spawnJustVisibleDistanceFX(Player ep) {
+	    private Vector3 spawnJustVisibleDistanceFX(Player ep) {
 	    	DistantFX type = distantFXList[UnityEngine.Random.Range(0, distantFXList.Count)];
 	    	Vector3 dist = getRandomVisibleDistantPosition(ep, type.distanceScalar);
 	    	Vector3 pos = ep.transform.position+dist;
@@ -228,14 +258,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	fx.velocity = MathUtil.getRandomVectorAround(Vector3.zero, 1).normalized*speed;
 	    	go.SetActive(true);
 	    	UnityEngine.Object.Destroy(go, UnityEngine.Random.Range(0.33F, 0.75F)*type.lifeScalar);
+	    	return pos;
 	    }
 	    
-	    internal void shutdownSeamoth(Vehicle v, float factor = 1) {
+	    internal void shutdownSeamoth(Vehicle v, bool disable, float factor = 1) {
 	    	if (v) {
 	    		if (v is SeaMoth)
 	    			createSparkSphere((SeaMoth)v).SetActive(true);
-	    		v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F)*factor);
 	    		v.ConsumeEnergy(UnityEngine.Random.Range(4F, 10F)*factor); //2-5% base
+	    		if (disable)
+	    			v.energyInterface.DisableElectronicsForTime(UnityEngine.Random.Range(1F, 5F)*factor);
 	    	}
 	    }
 	    
