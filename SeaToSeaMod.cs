@@ -312,6 +312,7 @@ namespace ReikaKalseki.SeaToSea
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doFlash);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidLeviReefback", VoidSpikeLeviathan.makeReefbackTest);
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);

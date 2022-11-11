@@ -182,20 +182,32 @@ namespace ReikaKalseki.SeaToSea {
 			ESHooks.addLeviathan(TechType);
 			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"));
 		}
+		
+		public static void makeReefbackTest() {
+			GameObject go = ObjectUtil.createWorldObject(VanillaCreatures.REEFBACK.prefab);
+			VoidSpikeLeviathanAI ai = go.EnsureComponent<VoidSpikeLeviathanAI>();
+			ai.spawn();
+			GameObject inner = ObjectUtil.getChildObject(go, "Pivot/Reefback/Reefback");
+			ai.creatureRenderer = inner.GetComponent<Renderer>();
+			go.transform.position = Player.main.transform.position+Camera.main.transform.forward.normalized*80;
+			ai.isDebug = true;
+		}
 	
-		public class VoidSpikeLeviathanAI : MonoBehaviour {
+		internal class VoidSpikeLeviathanAI : MonoBehaviour {
 	
-			private static readonly float EMP_CHARGE_TIME = 1.5F;
-			private static readonly float FLASH_CHARGE_TIME = 0.5F;
+			private static readonly float EMP_CHARGE_TIME = 4F;
+			private static readonly float FLASH_CHARGE_TIME = 0.9F;
 			
 			private static readonly float MAX_EMISSIVITY_DELTA = 100F;
+			
+			internal bool isDebug = false;
 	    	
-	    	private readonly SoundManager.SoundData empChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp-charge", "Sounds/voidlevi/emp-charge.ogg", SoundManager.soundMode3D);
-	   		private readonly SoundManager.SoundData flashChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-flash-charge", "Sounds/voidlevi/flash-charge.ogg", SoundManager.soundMode3D);
+	    	private static readonly SoundManager.SoundData empChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp-charge", "Sounds/voidlevi/emp-charge-2.ogg", SoundManager.soundMode3D);
+	   		private static readonly SoundManager.SoundData flashChargeSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-flash-charge", "Sounds/voidlevi/flash-charge-2.ogg", SoundManager.soundMode3D);
 	    
 	    	private Creature creatureClass;
 	    	
-	    	public Renderer creatureRenderer;
+	    	internal Renderer creatureRenderer;
 	    	
 	    	private float empRamp = -1;
 	    	private float flashRamp = -1;
@@ -209,6 +221,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	void Start() {
 	    		
 	    	}
+	    	
+	    	internal void spawn() {
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		nextPossibleEMPTime = time+10;
+	    		nextPossibleFlashTime = time+15;
+	    	}
 			
 			void Update() {
 	    		if (!creatureClass)
@@ -218,6 +236,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		
 	    		if (creatureClass) {
 	    			creatureClass.leashPosition = Player.main.transform.position;
+	    			if (isDebug)
+	    				creatureClass.Aggression.Add(1);
 	    		
 		    		if (Story.StoryGoalManager.main.IsGoalComplete("??")) { //sea emperor befriend
 	    				creatureClass.Aggression.Add(-0.1F);
@@ -233,7 +253,7 @@ namespace ReikaKalseki.SeaToSea {
 	    				empRamp = -1;
 	    			}
 	    		}
-	    		else if (time >= nextPossibleEMPTime && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.1F) {
+	    		else if (time >= nextPossibleEMPTime && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.1F*creatureClass.Aggression.Value) {
 	    			startEMP();
 	    		}
 	    		
@@ -244,16 +264,16 @@ namespace ReikaKalseki.SeaToSea {
 	    				flashRamp = -1;
 	    			}
 	    		}
-	    		else if (time >= nextPossibleFlashTime && !isEMPInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.05F) {
+	    		else if (time >= nextPossibleFlashTime && !isEMPInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.05F*creatureClass.Aggression.Value) {
 	    			startFlash();
 	    		}
 	    		
-	    		targetEmissivity = 1F+0.5F*Mathf.Sin(transform.position.magnitude*0.04F);
+	    		targetEmissivity = 1F+0.5F*Mathf.Sin(transform.position.magnitude*0.075F);
 	    		if (isEMPInProgress()) {
-	    			targetEmissivity = empRamp+UnityEngine.Random.Range(0F, 0.5F)+0.5F*Mathf.Sin(empRamp*20);
+	    			targetEmissivity = Mathf.Max(0, empRamp*7.5F+UnityEngine.Random.Range(0F, 2.5F)+4F*Mathf.Sin(empRamp*8));
 	    		}
 	    		else if (isFlashInProgress()) {
-	    			targetEmissivity = flashRamp*flashRamp*100*(UnityEngine.Random.Range(0.5F, 1.5F)+0.5F*Mathf.Sin(flashRamp*5));
+	    			targetEmissivity = Mathf.Max(0, flashRamp*flashRamp*250*(UnityEngine.Random.Range(0.5F, 1.5F)+0.5F+2.5F*Mathf.Sin(flashRamp*2)));
 	    		}
 	    		
 				if (currentEmissivity < targetEmissivity) {
