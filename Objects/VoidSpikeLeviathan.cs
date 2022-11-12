@@ -196,7 +196,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal class VoidSpikeLeviathanAI : MonoBehaviour {
 	
 			private static readonly float EMP_CHARGE_TIME = 4F;
-			private static readonly float FLASH_CHARGE_TIME = 0.9F;
+			private static readonly float FLASH_CHARGE_TIME = 1.0F;
 			
 			private static readonly float MAX_EMISSIVITY_DELTA = 100F;
 			
@@ -212,8 +212,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	private float empRamp = -1;
 	    	private float flashRamp = -1;
 	    	
-	    	private float nextPossibleEMPTime = 10;
-	    	private float nextPossibleFlashTime = 15;
+	    	private float nextPossibleBurstTime = 10;
 	    	
 	    	private float targetEmissivity;
 	    	private float currentEmissivity = 1;
@@ -224,8 +223,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	internal void spawn() {
 	    		float time = DayNightCycle.main.timePassedAsFloat;
-	    		nextPossibleEMPTime = time+10;
-	    		nextPossibleFlashTime = time+15;
+	    		nextPossibleBurstTime = time+10;
 	    	}
 			
 			void Update() {
@@ -252,28 +250,28 @@ namespace ReikaKalseki.SeaToSea {
 	    				doEMP();
 	    				empRamp = -1;
 	    			}
-	    		}
-	    		else if (time >= nextPossibleEMPTime && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.1F*creatureClass.Aggression.Value) {
-	    			startEMP();
-	    		}
-	    		
-	    		if (isFlashInProgress()) {
+	    		}	    		
+	    		else if (isFlashInProgress()) {
 	    			flashRamp = flashRamp+dT/FLASH_CHARGE_TIME;
 	    			if (flashRamp >= 1) {
 	    				doFlash();
 	    				flashRamp = -1;
 	    			}
 	    		}
-	    		else if (time >= nextPossibleFlashTime && !isEMPInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.05F*creatureClass.Aggression.Value) {
-	    			startFlash();
+	    		else if (time >= nextPossibleBurstTime && !isEMPInProgress() && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.01F*creatureClass.Aggression.Value) {
+	    			float f = 0.15F+0.35F*creatureClass.Aggression.Value;
+	    			if (UnityEngine.Random.Range(0F, 1F) < f)
+	    				startFlash();
+	    			else
+	    				startEMP();
 	    		}
 	    		
 	    		targetEmissivity = 1F+0.5F*Mathf.Sin(transform.position.magnitude*0.075F);
 	    		if (isEMPInProgress()) {
-	    			targetEmissivity = Mathf.Max(0, empRamp*7.5F+UnityEngine.Random.Range(0F, 2.5F)+4F*Mathf.Sin(empRamp*8));
+	    			targetEmissivity = Mathf.Max(0, empRamp*4F+UnityEngine.Random.Range(0F, 2.5F)+4F*Mathf.Sin(empRamp*8));
 	    		}
 	    		else if (isFlashInProgress()) {
-	    			targetEmissivity = Mathf.Max(0, flashRamp*flashRamp*250*(UnityEngine.Random.Range(0.5F, 1.5F)+0.5F+2.5F*Mathf.Sin(flashRamp*2)));
+	    			targetEmissivity = Mathf.Max(0, flashRamp*flashRamp*50*(UnityEngine.Random.Range(0, 1F)/*+0.5F+15F*Mathf.Sin(flashRamp*50)*/));
 	    		}
 	    		
 				if (currentEmissivity < targetEmissivity) {
@@ -292,7 +290,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			return;
 	    		empRamp = 0;
 	    		SoundManager.playSoundAt(empChargeSound, transform.position, false, -1, 1);
-	    		nextPossibleEMPTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(30, 90);
+	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(30, 90);
 	    	}
 	    	
 	    	internal void startFlash() {
@@ -300,7 +298,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			return;
 	    		flashRamp = 0;
 	    		SoundManager.playSoundAt(flashChargeSound, transform.position, false, -1, 1);
-	    		nextPossibleFlashTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60, 120);
+	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60, 120);
 	    	}
 	    	
 	    	internal bool isEMPInProgress() {
@@ -316,7 +314,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	
 	    	private void doFlash() {
-	    		VoidSpikeLeviathanSystem.instance.doFlash();
+	    		VoidSpikeLeviathanSystem.instance.doFlash(transform.position);
 	    	}
 			
 			void OnDisable() {

@@ -203,35 +203,10 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void onObjectEMPHit(EMPBlast e, GameObject go) { //this might be called many times!
-	    	//SNUtil.writeToChat(">>"+e.gameObject.name+" > "+e.gameObject.name.StartsWith("VoidSpikeLevi_Pulse", StringComparison.InvariantCultureIgnoreCase)+" @ "+go.FindAncestor<Vehicle>());
-	    	if (e.gameObject.name.StartsWith("VoidSpikeLevi_Pulse", StringComparison.InvariantCultureIgnoreCase)) {
+	    	//SNUtil.writeToChat(">>"+e.gameObject.name+" > "+e.gameObject.name.StartsWith("VoidSpikeLevi_LightPulse", StringComparison.InvariantCultureIgnoreCase)+" @ "+go.FindAncestor<Player>());
+	    	if (e.gameObject.name.StartsWith("VoidSpikeLevi_EMPulse", StringComparison.InvariantCultureIgnoreCase)) {
 	    		//SNUtil.writeToChat("Match");
 	    		shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
-	    	}
-	    }
-	    
-	    internal void spawnEMPBlast(Vector3 pos) {
-	    	SoundManager.playSoundAt(empSound, pos, false, -1, 1);
-	    	GameObject pfb = ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab;
-	    	for (int i = 0; i < 180; i += 30) {
-				GameObject emp = UnityEngine.Object.Instantiate(pfb);
-		    	emp.transform.position = pos;
-		    	emp.transform.localRotation = Quaternion.Euler(i, 0, 0);
-		    	//emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();
-		    	Renderer r = emp.GetComponentInChildren<Renderer>();
-		    	r.materials[0].color = new Color(0.8F, 0.33F, 1F, 1F);
-		    	r.materials[1].color = new Color(0.67F, 0.9F, 1F, 1F);
-		    	r.materials[0].SetColor("_ColorStrength", new Color(1, 1, 1000, 1));
-		    	r.materials[1].SetColor("_ColorStrength", new Color(1, 1, 100, 1));
-		    	EMPBlast e = emp.GetComponent<EMPBlast>();
-		    	ObjectUtil.removeComponent<VFXLerpColor>(emp);
-		    	e.blastRadius = AnimationCurve.Linear(0f, 0f, 1f, 400f);
-		    	e.blastHeight = AnimationCurve.Linear(0f, 0f, 1f, 300f);
-		    	e.lifeTime = 3.5F;
-		    	e.disableElectronicsTime = UnityEngine.Random.Range(1F, 5F);
-		    	emp.name = "VoidSpikeLevi_Pulse_"+i;
-		    	emp.SetActive(true);
-		    	//ObjectUtil.dumpObjectData(emp);
 	    	}
 	    }
 	    
@@ -283,9 +258,72 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    internal void doFlash() {
+	    internal void spawnAoEBlast(Vector3 pos, string idName, Action<GameObject> modify = null) {
+	    	GameObject pfb = ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab;
+	    	for (int i = 0; i < 180; i += 30) {
+				GameObject emp = UnityEngine.Object.Instantiate(pfb);
+		    	emp.transform.position = pos;
+		    	emp.transform.localRotation = Quaternion.Euler(i, 0, 0);
+		    	//emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();
+		    	Renderer r = emp.GetComponentInChildren<Renderer>();
+		    	r.materials[0].color = new Color(0.8F, 0.33F, 1F, 1F);
+		    	r.materials[1].color = new Color(0.67F, 0.9F, 1F, 1F);
+		    	r.materials[0].SetColor("_ColorStrength", new Color(1, 1, 1000, 1));
+		    	r.materials[1].SetColor("_ColorStrength", new Color(1, 1, 100, 1));
+		    	EMPBlast e = emp.GetComponent<EMPBlast>();
+		    	ObjectUtil.removeComponent<VFXLerpColor>(emp);
+		    	e.blastRadius = AnimationCurve.Linear(0f, 0f, 1f, 400f);
+		    	e.blastHeight = AnimationCurve.Linear(0f, 0f, 1f, 300f);
+		    	e.lifeTime = 3.5F;
+		    	e.disableElectronicsTime = UnityEngine.Random.Range(1F, 5F);
+		    	if (modify != null)
+		    		modify(emp);
+		    	emp.name = idName+"_"+i;
+		    	emp.SetActive(true);
+		    	//ObjectUtil.dumpObjectData(emp);
+	    	}
+	    }
+	    
+	    internal void spawnEMPBlast(Vector3 pos) {
+	    	SoundManager.playSoundAt(empSound, pos, false, -1, 1);
+	    	spawnAoEBlast(pos, "VoidSpikeLevi_EMPulse");
+	    }
+	    
+	    internal void doDebugFlash() {
+	    	doFlash(Player.main.transform.position+MainCamera.camera.transform.forward.normalized*100);
+	    }
+	    
+	    internal void doFlash(Vector3 pos) {
+	    	Action<GameObject> a = e => {
+	    		FlashBurst f = e.EnsureComponent<FlashBurst>();
+	    		ObjectUtil.removeComponent<EMPBlast>(e);
+		    	Renderer r = e.GetComponentInChildren<Renderer>();
+		    	r.materials[0].color = Color.white;
+		    	r.materials[1].color = Color.white;
+		    	r.materials[0].SetColor("_ColorStrength", new Color(1000, 1000, 1000, 1));
+		    	r.materials[1].SetColor("_ColorStrength", new Color(100, 100, 100, 1));
+		    	foreach (OnTouch tt in e.GetComponentsInChildren<OnTouch>()) {
+					tt.onTouch = new OnTouch.OnTouchEvent();
+					tt.onTouch.RemoveAllListeners();
+					tt.onTouch.AddListener(f.OnTouch);
+		    	}
+	    	};
+	    	Action<GameObject> a2 = e => {
+	    		a(e);
+	    		e.EnsureComponent<FlashBurst>().lifeTime += 0.5F;
+	    	};
+	    	spawnAoEBlast(pos, "VoidSpikeLevi_LightPulse", a);
+	    	spawnAoEBlast(pos, "VoidSpikeLevi_LightPulse", a2);
+	    }
+	    
+	    internal void onFlashHit() {
 	    	lastFlashTime = DayNightCycle.main.timePassedAsFloat;
 	    	currentFlashDuration = UnityEngine.Random.Range(4F, 8F);
+	    }
+	    
+	    internal void resetFlash() {
+	    	lastFlashTime = -1;
+	    	currentFlashDuration = 0;
 	    }
     
 	    public bool isSpawnableVoid(string biome) {
@@ -412,6 +450,47 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	
 	    }
+	    
+	    private class FlashBurst : MonoBehaviour {
+			private void Start() {
+				startTime = Time.time;
+				SetProgress(0f);
+			}
+		
+			private void Update() {
+				float num = Mathf.InverseLerp(startTime, startTime + lifeTime, Time.time);
+				num = Mathf.Clamp01(num);
+				SetProgress(num);
+				if (Mathf.Approximately(num, 1)) {
+					UnityEngine.Object.Destroy(gameObject);
+				}
+			}
+		
+			private void SetProgress(float progress) {
+				currentBlastRadius = blastRadius.Evaluate(progress);
+				currentBlastHeight = blastHeight.Evaluate(progress);
+				transform.localScale = new Vector3(currentBlastRadius, currentBlastHeight, currentBlastRadius);
+			}
+		
+			public void OnTouch(Collider collider) {
+	    		Player ep = collider.gameObject.FindAncestor<Player>();
+	    		//SNUtil.writeToChat(collider+">"+ep);
+	    		if (ep)
+	    			VoidSpikeLeviathanSystem.instance.onFlashHit();
+			}
+		
+			public float lifeTime = 0.5F;
+		
+			public AnimationCurve blastRadius = AnimationCurve.Linear(0f, 0f, 1f, 200F);
+		
+			public AnimationCurve blastHeight = AnimationCurve.Linear(0f, 0f, 1f, 150F);
+		
+			private float startTime;
+		
+			private float currentBlastRadius;
+		
+			private float currentBlastHeight;
+		}
 		
 	}
 	
