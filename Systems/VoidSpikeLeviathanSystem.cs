@@ -39,11 +39,16 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private float lastEMPHitSoundTime;
 	    
-	    private GameObject mainCamera;
+	    private GameObject mainCamera;/*
 	    private MesmerizedScreenFXController mesmerController;
-	    private MesmerizedScreenFX mesmerShader;
-	    private Vector4 defaultMesmerShaderColors;
-	    private readonly Vector4 dazzleColors = new Vector4(800, 800, 1000, 1);
+	    private MesmerizedScreenFX mesmerShader;*/
+	    private CyclopsSmokeScreenFXController smokeController;
+	    private CyclopsSmokeScreenFX smokeShader;
+	    //private Vector4 defaultMesmerShaderColors;
+	    private Color defaultSmokeShaderColors;
+	    private readonly Color smokeDarkColors = new Color(-5, -5, -5, 1F);
+	    private readonly Color smokeDazzleColors = new Color(50, 50, 50, 1F);
+	    //private readonly Vector4 dazzleColors = new Vector4(800, 800, 1000, 1);
 	    
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
 	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc", 2),
@@ -114,15 +119,39 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    internal void tick(Player ep) {
 	    	if (!mainCamera) {
-	    		mainCamera = Camera.main.gameObject;
+	    		mainCamera = Camera.main.gameObject;/*
 	    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
 	    		mesmerShader = mainCamera.GetComponent<MesmerizedScreenFX>();
-	    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
+	    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");*/
+	    		
+	    		smokeController = mainCamera.GetComponent<CyclopsSmokeScreenFXController>();
+	    		smokeShader = mainCamera.GetComponent<CyclopsSmokeScreenFX>();
+	    		defaultSmokeShaderColors = smokeShader.mat.GetColor("_Color");
 	    	}
 	    	float time = DayNightCycle.main.timePassedAsFloat;
 	    	playDistantRoar(ep, time);
 	    	float dtf = time-lastFlashTime;
-	    	if (dtf <= currentFlashDuration*(1+DAZZLE_FADE_LENGTH)) {
+	    	float maxL = currentFlashDuration*(1+DAZZLE_FADE_LENGTH);
+	    	if (dtf <= maxL) {
+	    		float f1 = 0;
+	    		float f2 = 0;
+	    		if (dtf <= 0.33) {
+	    			f1 = dtf*3;
+	    			f2 = 0;
+	    		}
+	    		else if (dtf <= currentFlashDuration) { //4-78s
+	    			f1 = 1;
+	    			f2 = 0;
+	    		}
+	    		else if (dtf <= currentFlashDuration*2) {
+	    			f1 = 1;
+	    			f2 = (dtf-currentFlashDuration)/currentFlashDuration;
+	    		}
+	    		else {
+	    			f1 = (float)MathUtil.linterpolate(dtf, currentFlashDuration*2, maxL, 1, 0);
+	    			f2 = 1;
+	    		}
+	    		/*
 	    		float f = 0;
 	    		if (dtf <= 0.33) {
 	    			f = dtf*3;
@@ -141,11 +170,18 @@ namespace ReikaKalseki.SeaToSea {
 	    		mesmerController.enabled = false;
 	    		mesmerShader.enabled = true;
 	    		mesmerShader.amount = f;
-	    		mesmerShader.mat.SetVector("_ColorStrength", dazzleColors);
+	    		mesmerShader.mat.SetVector("_ColorStrength", dazzleColors);*/
+	    		SNUtil.log(time+" > "+dtf+" / "+currentFlashDuration+" > "+f1.ToString("0.00000")+" & "+f1.ToString("0.00000"));
+	    		smokeController.enabled = false;
+	    		smokeShader.enabled = true;
+	    		smokeShader.intensity = 1;
+	    		smokeShader.mat.SetColor("_Color", Color.Lerp(smokeDazzleColors, smokeDarkColors, f2).WithAlpha(f1));
 	    	}
 	    	else {
-	    		mesmerController.enabled = true;
-	    		mesmerShader.mat.SetVector("_ColorStrength", defaultMesmerShaderColors);
+	    		//mesmerController.enabled = true;
+	    		//mesmerShader.mat.SetVector("_ColorStrength", defaultMesmerShaderColors);
+	    		smokeController.enabled = true;
+	    		smokeShader.mat.SetColor("_Color", defaultSmokeShaderColors);
 	    	}
 	    }
 	    
