@@ -177,10 +177,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	
+	    	VoidSpikesBiome.instance.tickPlayer(ep);
+	    	UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
 	    	if (ep.currentSub == null && UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0) {
-	    		VoidSpikesBiome.instance.tickPlayer(ep);
-	    		UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
-	    		
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
 					IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.HeatArea, ep.transform.position, null, 3);
@@ -401,7 +400,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    }
 	    
-	    public static bool isPingVisible(PingInstance inst) {/*
+	    public static bool isPingVisible(PingInstance inst) {
+	    	if (VoidSpikeLeviathanSystem.instance.isVoidFlashActive(false))
+	    		return false;
+	    	/*
 	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position)) {
 	    		return inst.pingType == PingType.Seamoth;
 	    	}*/

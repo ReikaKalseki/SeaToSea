@@ -25,7 +25,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static GameObject distantSparkFX;
 	    
-	    private static readonly float DAZZLE_FADE_LENGTH = 5;
+	    private static readonly float DAZZLE_FADE_LENGTH = 3;
+	    private static readonly float DAZZLE_TOTAL_LENGTH = 6;
 	    private static readonly double MAXDEPTH = 2000;//800;
 	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
@@ -39,16 +40,17 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private float lastEMPHitSoundTime;
 	    
-	    private GameObject mainCamera;/*
+	    private GameObject mainCamera;
 	    private MesmerizedScreenFXController mesmerController;
-	    private MesmerizedScreenFX mesmerShader;*/
+	    private MesmerizedScreenFX mesmerShader;
 	    private CyclopsSmokeScreenFXController smokeController;
 	    private CyclopsSmokeScreenFX smokeShader;
-	    //private Vector4 defaultMesmerShaderColors;
+	    private Vector4 defaultMesmerShaderColors;
 	    private Color defaultSmokeShaderColors;
 	    private readonly Color smokeDarkColors = new Color(-5, -5, -5, 1F);
 	    private readonly Color smokeDazzleColors = new Color(50, 50, 50, 1F);
-	    //private readonly Vector4 dazzleColors = new Vector4(800, 800, 1000, 1);
+	    private readonly Vector4 mesmerDazzleColorsStart = new Vector4(600, 600, 1000, 0.67F);
+	    private readonly Vector4 mesmerDazzleColorsEnd = new Vector4(600, 600, 1000, 0.2F);
 	    
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
 	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc", 2),
@@ -119,10 +121,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    internal void tick(Player ep) {
 	    	if (!mainCamera) {
-	    		mainCamera = Camera.main.gameObject;/*
+	    		mainCamera = Camera.main.gameObject;
 	    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
 	    		mesmerShader = mainCamera.GetComponent<MesmerizedScreenFX>();
-	    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");*/
+	    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
 	    		
 	    		smokeController = mainCamera.GetComponent<CyclopsSmokeScreenFXController>();
 	    		smokeShader = mainCamera.GetComponent<CyclopsSmokeScreenFX>();
@@ -132,57 +134,67 @@ namespace ReikaKalseki.SeaToSea {
 	    	playDistantRoar(ep, time);
 	    	float dtf = time-lastFlashTime;
 	    	float maxL = currentFlashDuration*(1+DAZZLE_FADE_LENGTH);
+	    	float maxL2 = currentFlashDuration*(1+DAZZLE_TOTAL_LENGTH);
 	    	if (dtf <= maxL) {
-	    		float f1 = 0;
-	    		float f2 = 0;
+	    		float alpha = 0;
+	    		float colorMix = 0;
 	    		if (dtf <= 0.33) {
-	    			f1 = dtf*3;
-	    			f2 = 0;
+	    			alpha = dtf*3;
+	    			colorMix = 0;
 	    		}
-	    		else if (dtf <= currentFlashDuration) { //4-78s
-	    			f1 = 1;
-	    			f2 = 0;
+	    		else if (dtf <= 0.67) {
+	    			alpha = 1;
+	    			colorMix = 0;
 	    		}
-	    		else if (dtf <= currentFlashDuration*2) {
-	    			f1 = 1;
-	    			f2 = (dtf-currentFlashDuration)/currentFlashDuration;
+	    		else if (dtf <= 1) { //4-78s
+	    			alpha = 1;
+	    			colorMix = (float)MathUtil.linterpolate(dtf, 0.67F, 1, 0, 1);
+	    		}
+	    		else if (dtf <= currentFlashDuration) { //4-8s
+	    			alpha = 1;
+	    			colorMix = 1;
 	    		}
 	    		else {
-	    			f1 = (float)MathUtil.linterpolate(dtf, currentFlashDuration*2, maxL, 1, 0);
-	    			f2 = 1;
+	    			alpha = (float)MathUtil.linterpolate(dtf, currentFlashDuration, maxL, 1, 0);
+	    			colorMix = 1;
 	    		}
-	    		/*
-	    		float f = 0;
-	    		if (dtf <= 0.33) {
-	    			f = dtf*3;
-	    		}
-	    		else if (dtf <= currentFlashDuration) {
-	    			f = 1;
-	    		}
-	    		else {
-	    			float f2 = (dtf-currentFlashDuration)/(currentFlashDuration*DAZZLE_FADE_LENGTH);
-	    			f = 1-f2;
-	    			f *= f;
-	    			f = Mathf.Clamp01(f*1.2F-0.1F);
-	    		}
-	    		//SNUtil.writeToChat(dtf+" / "+currentFlashDuration+" > "+f.ToString("0.00000"));
-	    		//SNUtil.log(time+" > "+f.ToString("0.00000"), SeaToSeaMod.modDLL);
-	    		mesmerController.enabled = false;
-	    		mesmerShader.enabled = true;
-	    		mesmerShader.amount = f;
-	    		mesmerShader.mat.SetVector("_ColorStrength", dazzleColors);*/
-	    		SNUtil.log(time+" > "+dtf+" / "+currentFlashDuration+" > "+f1.ToString("0.00000")+" & "+f1.ToString("0.00000"));
+	    		//SNUtil.log(time+" > "+dtf+" / "+currentFlashDuration+" > A="+alpha.ToString("0.00000")+" & C="+colorMix.ToString("0.00000"));
 	    		smokeController.enabled = false;
 	    		smokeShader.enabled = true;
 	    		smokeShader.intensity = 1;
-	    		smokeShader.mat.SetColor("_Color", Color.Lerp(smokeDazzleColors, smokeDarkColors, f2).WithAlpha(f1));
+	    		smokeShader.mat.SetColor("_Color", Color.Lerp(smokeDazzleColors, smokeDarkColors, colorMix).WithAlpha(alpha));
 	    	}
 	    	else {
-	    		//mesmerController.enabled = true;
-	    		//mesmerShader.mat.SetVector("_ColorStrength", defaultMesmerShaderColors);
 	    		smokeController.enabled = true;
 	    		smokeShader.mat.SetColor("_Color", defaultSmokeShaderColors);
 	    	}
+	    	if (dtf <= maxL2) {
+	    		float f = 0;
+	    		if (dtf <= 0.5F) {
+	    			f = dtf*2;
+	    		}
+	    		else if (dtf <= maxL) {
+	    			f = 1;
+	    		}
+	    		else {
+	    			f = (float)MathUtil.linterpolate(dtf, maxL, maxL2, 1, 0);
+	    		}
+	    		mesmerController.enabled = false;
+	    		mesmerShader.enabled = true;
+	    		mesmerShader.amount = f*f*0.004F;
+	    		mesmerShader.mat.SetVector("_ColorStrength", Vector4.Lerp(mesmerDazzleColorsStart, mesmerDazzleColorsEnd, f));
+	    	}
+	    	else {
+	    		mesmerController.enabled = true;
+	    		mesmerShader.mat.SetVector("_ColorStrength", defaultMesmerShaderColors);
+	    	}
+	    }
+	    
+	    public bool isVoidFlashActive(bool any) { //false if only the blind part
+	    	if (currentFlashDuration <= 0)
+	    		return false;
+	    	float n = any ? DAZZLE_TOTAL_LENGTH : DAZZLE_FADE_LENGTH;
+	    	return DayNightCycle.main.timePassedAsFloat-lastFlashTime <= currentFlashDuration*(1+n);
 	    }
 	    
 	    internal void playDistantRoar(Player ep, float time) {
@@ -325,8 +337,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	spawnAoEBlast(pos, "VoidSpikeLevi_EMPulse");
 	    }
 	    
-	    internal void doDebugFlash() {
-	    	doFlash(Player.main.transform.position+MainCamera.camera.transform.forward.normalized*100);
+	    internal void doDebugFlash(bool usePulse) {
+	    	if (usePulse)
+	    		doFlash(Player.main.transform.position+MainCamera.camera.transform.forward.normalized*150);
+	    	else
+	    		onFlashHit();
 	    }
 	    
 	    internal void doFlash(Vector3 pos) {
@@ -346,7 +361,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	};
 	    	Action<GameObject> a2 = e => {
 	    		a(e);
-	    		e.EnsureComponent<FlashBurst>().lifeTime += 0.5F;
+	    		e.EnsureComponent<FlashBurst>().lifeTime += 0.075F;
 	    	};
 	    	spawnAoEBlast(pos, "VoidSpikeLevi_LightPulse", a);
 	    	spawnAoEBlast(pos, "VoidSpikeLevi_LightPulse", a2);

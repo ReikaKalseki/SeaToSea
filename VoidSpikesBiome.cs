@@ -120,39 +120,41 @@ namespace ReikaKalseki.SeaToSea {
 				AtmosphereDirector.main.PushSettings(AtmosphereDirector.main.defaultSettings);
 			}*/
 			VoidSpikeLeviathanSystem.instance.tick(ep);
-		   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
-				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
-					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
-		   	}
-			else {
-				float f1 = biomeVolumeRadius+25;
-				if (dist >= f1 && dist <= f1+20) {
-					Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
-					foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
-						if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, end500m) <= biomeVolumeRadius+50) {
-							Vector3 delta = sm.transform.position-end500m;
-							sm.transform.position = tgt+delta;
-						}
-					}
-					SNUtil.teleportPlayer(ep, tgt);
-		    		SNUtil.log("Teleported player back from biome: "+tgt);
-				}
+	    	if (ep.currentSub == null && UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0) {
+			   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
+					if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
+						PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
+			   	}
 				else {
-					dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
-					if (dist <= f1) {
-						Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
-						foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
-							Vector3 delta = levi.transform.position-tgt;
-							levi.transform.position = tgt+delta;
-						}
+					float f1 = biomeVolumeRadius+25;
+					if (dist >= f1 && dist <= f1+20) {
+						Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
 						foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
-							if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, voidEndpoint500m) <= biomeVolumeRadius+50) {
-								Vector3 delta = sm.transform.position-voidEndpoint500m;
+							if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, end500m) <= biomeVolumeRadius+50) {
+								Vector3 delta = sm.transform.position-end500m;
 								sm.transform.position = tgt+delta;
 							}
 						}
 						SNUtil.teleportPlayer(ep, tgt);
-			    		SNUtil.log("Teleported player to biome: "+tgt);
+			    		SNUtil.log("Teleported player back from biome: "+tgt);
+					}
+					else {
+						dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
+						if (dist <= f1) {
+							Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
+							foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
+								Vector3 delta = levi.transform.position-tgt;
+								levi.transform.position = tgt+delta;
+							}
+							foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
+								if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, voidEndpoint500m) <= biomeVolumeRadius+50) {
+									Vector3 delta = sm.transform.position-voidEndpoint500m;
+									sm.transform.position = tgt+delta;
+								}
+							}
+							SNUtil.teleportPlayer(ep, tgt);
+				    		SNUtil.log("Teleported player to biome: "+tgt);
+						}
 					}
 				}
 			}
