@@ -258,7 +258,7 @@ namespace ReikaKalseki.SeaToSea {
 	    				flashRamp = -1;
 	    			}
 	    		}
-	    		else if (time >= nextPossibleBurstTime && !isEMPInProgress() && !isFlashInProgress() && UnityEngine.Random.Range(0F, 1F) <= 0.01F*creatureClass.Aggression.Value) {
+	    		else if (time >= nextPossibleBurstTime && canStartAPulse() && UnityEngine.Random.Range(0F, 1F) <= 0.01F*creatureClass.Aggression.Value) {
 	    			float f = 0.15F+0.35F*creatureClass.Aggression.Value;
 	    			if (UnityEngine.Random.Range(0F, 1F) < f)
 	    				startFlash();
@@ -286,19 +286,19 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	
 	    	internal void startEMP() {
-	    		if (isEMPInProgress() || isFlashInProgress())
+	    		if (!canStartAPulse())
 	    			return;
 	    		empRamp = 0;
 	    		SoundManager.playSoundAt(empChargeSound, transform.position, false, -1, 1);
-	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(30, 90);
+	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(30, isDebug ? 31 : 90);
 	    	}
 	    	
 	    	internal void startFlash() {
-	    		if (isEMPInProgress() || isFlashInProgress())
+	    		if (!canStartAPulse())
 	    			return;
 	    		flashRamp = 0;
 	    		SoundManager.playSoundAt(flashChargeSound, transform.position, false, -1, 1);
-	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60, 120);
+	    		nextPossibleBurstTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60, isDebug ? 90 : 120);
 	    	}
 	    	
 	    	internal bool isEMPInProgress() {
@@ -307,6 +307,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	internal bool isFlashInProgress() {
 	    		return flashRamp >= 0;
+	    	}
+	    	
+	    	internal bool canStartAPulse() {
+	    		return !isFlashInProgress() && !isEMPInProgress() && !VoidSpikeLeviathanSystem.instance.isVoidFlashActive(true);
 	    	}
 	    	
 	    	private void doEMP() {

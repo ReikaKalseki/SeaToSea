@@ -555,9 +555,22 @@ namespace ReikaKalseki.SeaToSea {
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 			try {
-				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PingInstance", "visible");
-				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isPingVisible", false, typeof(PingInstance));
+				CodeInstruction refInsn = codes[InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PingInstance", "visible")-1];
+				for (int i = codes.Count-1; i >= 0; i--) {
+					if (codes[i].opcode == OpCodes.Callvirt) {
+					    MethodInfo m = (MethodInfo)codes[i].operand;
+					    if (m.Name == "SetIconAlpha" && m.DeclaringType.Name == "uGUI_Ping") {
+					    	injectHook(codes, i, refInsn, false);
+					    	i -= 4;
+					    }
+					    else if (m.Name == "SetTextAlpha" && m.DeclaringType.Name == "uGUI_Ping") {
+					    	injectHook(codes, i, refInsn, true);
+					    	i -= 4;
+					    }
+					}
+				}
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 			}
 			catch (Exception e) {
 				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
@@ -566,6 +579,13 @@ namespace ReikaKalseki.SeaToSea {
 				FileLog.Log(e.ToString());
 			}
 			return codes.AsEnumerable();
+		}
+		
+		static void injectHook(List<CodeInstruction> codes, int idx, CodeInstruction refInsn, bool isText) {
+			//int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "uGUI_Ping", "SetIconAlpha");
+			codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "setPingAlpha", false, typeof(uGUI_Ping), typeof(float), typeof(PingInstance), typeof(bool));
+			codes.InsertRange(idx, new CodeInstruction[]{new CodeInstruction(refInsn.opcode, refInsn.operand), new CodeInstruction(isText ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0)});
+			FileLog.Log("Injected ping alpha hook ("+isText+") @ "+idx);
 		}
 	}
 	

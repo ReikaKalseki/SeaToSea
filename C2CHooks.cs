@@ -400,14 +400,16 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    }
 	    
-	    public static bool isPingVisible(PingInstance inst) {
-	    	if (VoidSpikeLeviathanSystem.instance.isVoidFlashActive(false))
-	    		return false;
+	    public static void setPingAlpha(uGUI_Ping ico, float orig, PingInstance inst, bool text) {
 	    	/*
 	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position)) {
 	    		return inst.pingType == PingType.Seamoth;
 	    	}*/
-	    	return inst.visible;
+	    	float a = Mathf.Min(VoidSpikeLeviathanSystem.instance.getNetScreenVisibilityAfterFlash(), orig);
+	    	if (text)
+	    		ico.SetTextAlpha(a);
+	    	else
+	    		ico.SetIconAlpha(a);
 	    }
 	    
 	    public static Vector3 getApparentPingPosition(PingInstance inst) {
