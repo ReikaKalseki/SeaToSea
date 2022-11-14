@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static GameObject distantSparkFX;
 	    
 	    private static readonly float DAZZLE_FADE_LENGTH = 3;
-	    private static readonly float DAZZLE_TOTAL_LENGTH = 6;
+	    private static readonly float DAZZLE_TOTAL_LENGTH = 4.5F;
 	    private static readonly double MAXDEPTH = 2000;//800;
 	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private Color defaultSmokeShaderColors;
 	    private readonly Color smokeDarkColors = new Color(-5, -5, -5, 1F);
 	    private readonly Color smokeDazzleColors = new Color(50, 50, 50, 1F);
-	    private readonly Vector4 mesmerDazzleColorsStart = new Vector4(600, 600, 1000, 0.67F);
+	    private readonly Vector4 mesmerDazzleColorsStart = new Vector4(600, 600, 1000, 0.5F);
 	    private readonly Vector4 mesmerDazzleColorsEnd = new Vector4(600, 600, 1000, 0.2F);
 	    private float flashWashoutNetVisiblityFactor = 1;
 	    
@@ -202,7 +202,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	//SNUtil.log("pre mesmer fx");
 	    		mesmerController.enabled = false;
 	    		mesmerShader.enabled = true;
-	    		mesmerShader.amount = f*f*0.004F;
+	    		mesmerShader.amount = f*f*0.003F;
 	    	//SNUtil.log("pre mesmer mat");
 	    		if (mesmerShader.mat)
 	    			mesmerShader.mat.SetVector("_ColorStrength", Vector4.Lerp(mesmerDazzleColorsStart, mesmerDazzleColorsEnd, f));
