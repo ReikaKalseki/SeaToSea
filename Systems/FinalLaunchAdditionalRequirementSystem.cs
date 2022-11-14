@@ -14,6 +14,7 @@ using SMLHelper.V2.Utility;
 using Story;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
@@ -29,7 +30,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private FinalLaunchAdditionalRequirementSystem() {
 			requiredItems[TechType.BoneShark] = 1;
-			requiredItems[TechType.Shocker] = 1;
+			//requiredItems[TechType.Shocker] = 1;
+			requiredItems[TechType.Sandshark] = 1;
 			requiredItems[TechType.LavaLizard] = 1;
 			requiredItems[TechType.Crabsnake] = 1;
 			requiredItems[TechType.Cutefish] = 1;
@@ -38,6 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 			requiredItems[SeaToSeaMod.deepStalker.TechType] = 1;
 			
 			requiredItems[TechType.Bladderfish] = 2;
+			requiredItems[TechType.Peeper] = 2;
 			requiredItems[TechType.Hoverfish] = 4;
 			requiredItems[TechType.Floater] = 6;
 			
@@ -99,7 +102,24 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			//SNUtil.writeToChat("Missing cargo: "+need.toDebugString<TechType, int>());
-			return need.Count == 0;
+			if (need.Count > 0)
+				return false;
+			int hero = 0;
+			foreach (Creature c in root.GetComponentsInChildren<Creature>(true)) {
+				if (c is SandShark) {
+					InfectedMixin mix = c.GetComponent<InfectedMixin>();
+					//SNUtil.writeToChat("Sandshark is infected: "+(mix && mix.IsInfected()));
+					if (!(mix && (mix.IsInfected() || mix.IsHealedByPeeper()))) {
+						return false;
+					}
+				}
+				else if (c is Peeper) {
+					if (((Peeper)c).isHero)
+						hero++;
+				}
+			}
+			//SNUtil.writeToChat("Sparkle peepers: "+hero);
+			return hero >= 2;
 		}
 		
 		private void generateBiomeGoalList() {
