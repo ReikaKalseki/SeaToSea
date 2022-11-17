@@ -81,12 +81,19 @@ namespace ReikaKalseki.SeaToSea {
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 		
+		Spawnable scoop = ItemRegistry.instance.getItem("PlanktonScoop");
+		if (scoop != null) {
+			RecipeUtil.addIngredient(scoop.TechType, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1);
+			GenUtil.registerWorldgen(new PositionedPrefab(GenUtil.getOrCreateDatabox(scoop.TechType).ClassID, new Vector3(332.93F, -277.64F, -1435.6F)));
+		}
+		
 		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);
 		if (ghostRayEgg != null)
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.GhostRayBlue, 1);
 		CustomEgg blighterEgg = CustomEgg.getEgg(TechType.Blighter);
 		if (blighterEgg != null)
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2);
+		
     }
 
   }
