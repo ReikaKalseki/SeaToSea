@@ -87,6 +87,12 @@ namespace ReikaKalseki.SeaToSea {
 			GenUtil.registerWorldgen(new PositionedPrefab(GenUtil.getOrCreateDatabox(scoop.TechType).ClassID, new Vector3(332.93F, -277.64F, -1435.6F)));
 		}
 		
+		Spawnable plankton = ItemRegistry.instance.getItem("planktonItem");
+		if (plankton != null) {
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, plankton.TechType, 1);
+			RecipeUtil.addIngredient(C2CRecipes.getAlternateEnzyme().TechType, plankton.TechType, 3);
+		}
+		
 		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);
 		if (ghostRayEgg != null)
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.GhostRayBlue, 1);
