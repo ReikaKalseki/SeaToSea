@@ -41,7 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 			Patch();
 			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Carnivores", locale.pda, locale.getField<string>("header"), null);
 			
-			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, 0.25F, BiomeType.GrandReef_TreaderPath);
+			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, e => {e.eggProperties.growingPeriod = 2400;}, 0.25F, BiomeType.GrandReef_TreaderPath);
 	    
 	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.15F);
 	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);

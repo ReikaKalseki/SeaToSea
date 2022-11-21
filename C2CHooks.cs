@@ -50,6 +50,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onEMPHitEvent += onEMPHit;
 	    	
+	    	DIHooks.fogCalculateEvent += interceptChosenFog;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -918,6 +920,14 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onEMPHit(EMPBlast e, GameObject go) {
 	    	VoidSpikeLeviathanSystem.instance.onObjectEMPHit(e, go);
+	    }
+	    
+	    public static void interceptChosenFog(AtmosphereDirector atmo) {
+	    	double d = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(Camera.main.transform.position);
+	    	if (d <= 100) {
+	    		float f = d <= 0 ? 1 : (float)(1-d/100F);
+	    		-atmo.targetFog.color = Color.white;
+	    	}
 	    }
 	}
 }

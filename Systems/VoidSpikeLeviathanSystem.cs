@@ -121,7 +121,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    internal void tick(Player ep) {
-	    	if (!mainCamera) {
+	    	if (!mainCamera && Camera.main) {
 	    		mainCamera = Camera.main.gameObject;
 	    		if (mainCamera) {
 		    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
@@ -137,7 +137,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	DayNightCycle day = DayNightCycle.main;
-	    	if (!day)
+	    	if (!day || !smokeController || !smokeShader || !mesmerController || !mesmerShader)
 	    		return;
 	    	//SNUtil.log("========================");
 	    	//SNUtil.log("All non-null: "+mesmerShader+" x "+mesmerController+" x "+smokeShader+" x "+smokeController);
