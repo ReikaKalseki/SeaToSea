@@ -926,7 +926,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	double d = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(Camera.main.transform.position);
 	    	if (d <= 100) {
 	    		float f = d <= 0 ? 1 : (float)(1-d/100F);
-	    		-atmo.targetFog.color = Color.white;
 	    	}
 	    }
 	}

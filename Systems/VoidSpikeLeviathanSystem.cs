@@ -126,11 +126,19 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (mainCamera) {
 		    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
 		    		mesmerShader = mainCamera.GetComponent<MesmerizedScreenFX>();
-		    		defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
+		    		if (mesmerShader && mesmerShader.mat)
+		    			defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
+		    		else
+		    			mainCamera = null;
+		    		if (!mainCamera)
+		    			return;
 		    		
 		    		smokeController = mainCamera.GetComponent<CyclopsSmokeScreenFXController>();
 		    		smokeShader = mainCamera.GetComponent<CyclopsSmokeScreenFX>();
-		    		defaultSmokeShaderColors = smokeShader.mat.color;
+		    		if (smokeShader && smokeShader.mat)
+		    			defaultSmokeShaderColors = smokeShader.mat.color;
+		    		else
+		    			mainCamera = null;
 	    		}
 	    		else {
 	    			return;

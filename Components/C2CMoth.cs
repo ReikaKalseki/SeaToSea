@@ -148,10 +148,14 @@ namespace ReikaKalseki.SeaToSea
 					float excess = Mathf.Clamp01((vehicleTemperature-400)/400F);
 					float f0 = dT > 0 ? 4F : 25F-15*excess;
 					float f1 = dT > 0 ? 5F : 1F+1.5F*excess;
+					float speed = seamoth.useRigidbody.velocity.magnitude;
+					if (speed >= 2) {
+						f0 /= 1+(speed-2)/5F;
+					}
 					float qDot = tickTime*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
 					vehicleTemperature += qDot;
 					if (temperatureDebugActive)
-						SNUtil.writeToChat(Tamb+" > "+dT+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
+						SNUtil.writeToChat(Tamb+" > "+dT+" > "+speed.ToString("00.0")+" > "+f0.ToString("00.0000")+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
 				}
 				float factor = 1+Mathf.Max(0, vehicleTemperature-250)/25F;
 				float f2 = Mathf.Min(40, Mathf.Pow(factor, 2.5F));
