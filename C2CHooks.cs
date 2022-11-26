@@ -55,6 +55,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
+	    	PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -723,6 +724,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
 	    		go.EnsureComponent<C2CMoth>();
+	    		//go.EnsureComponent<VoidSpikeLeviathanSystem.SeamothStealthManager>();
 	    	}
 	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
 	    		TemperatureDamage td = go.EnsureComponent<TemperatureDamage>();
@@ -779,11 +781,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void pingSeamothSonar(SeaMoth sm) {
-	    	VoidSpikeLeviathanSystem.instance.tagSeamothSonar(sm);
+	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 30);
 	    }
 	    
 	    public static void pulseSeamothDefence(SeaMoth sm) {
-	    	VoidSpikeLeviathanSystem.instance.tagSeamothSonar(sm);
+	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 12);
 	    }
 	    
 	    public static void onBaseSonarPinged(GameObject go) {
@@ -791,7 +793,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		Player ep = Player.main;
 	    		Vehicle v = ep.GetVehicle();
 	    		if (v && v is SeaMoth && VoidSpikesBiome.instance.isInBiome(ep.transform.position))
-	    			VoidSpikeLeviathanSystem.instance.tagSeamothSonar((SeaMoth)v);
+	    			VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth((SeaMoth)v, 40);
 	    	}
 	    }
 	    
@@ -800,6 +802,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (cm) {
 	    		cm.onHitByLavaBomb(bomb);
 	    	}
+	    }
+	    
+	    public static void onPlanktonActivated(PlanktonCloudTag cloud, Collider hit) {
+	    	SeaMoth sm = hit.gameObject.FindAncestor<SeaMoth>();
+	    	if (sm)
+	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 20);
 	    }
 	    
 	    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {

@@ -499,8 +499,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private double getAvoidanceChance(Player ep, SeaMoth sm, bool edge, bool far) {
 	    	if (isLeviathanEnabled() && VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))
 	    		return 0;
-	    	SonarPinged pinged = sm.gameObject.GetComponentInParent<SonarPinged>();
-	    	if (pinged != null && pinged.getTimeSince() <= 30)
+	    	float time = DayNightCycle.main.timePassedAsFloat;
+	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
+	    	if (time < ping.nextStealthValidityTime)
 	    		return 0;
 	    	double minDist = double.PositiveInfinity;
 	    	foreach (GameObject go in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
@@ -519,18 +520,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	return 1D-Math.Max(frac, frac2);
 	    }
 	    
-	    public void tagSeamothSonar(SeaMoth sm) {
-	    	SonarPinged ping = sm.gameObject.EnsureComponent<SonarPinged>();
-	    	ping.lastPing = DayNightCycle.main.timePassedAsFloat;
+	    public void temporarilyDisableSeamothStealth(SeaMoth sm, float duration) {
+	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
+	    	ping.nextStealthValidityTime = Mathf.Max(ping.nextStealthValidityTime, DayNightCycle.main.timePassedAsFloat+duration);
 	    }
     
-	    private class SonarPinged : MonoBehaviour {
+	    private class SeamothStealthManager : MonoBehaviour {
 	    	
-	    	internal float lastPing;
+	    	internal float nextStealthValidityTime;
 	    	
-	    	internal float getTimeSince() {
-	    		return DayNightCycle.main.timePassedAsFloat-lastPing;
-	    	}
 	    }
 	    
 	    private class VoidSparkFX : MonoBehaviour {
