@@ -33,6 +33,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly string biomeName = "Void Spikes";
 		public static readonly float waterTemperature = 18;
 		
+		public static readonly Color waterColor = new Color(0.0F, 0.125F, 0.5F);
+		public static readonly float fogDensity = 2F;
+		
 		public static readonly int CLUSTER_COUNT = 104;//88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();

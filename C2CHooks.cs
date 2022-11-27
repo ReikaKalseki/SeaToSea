@@ -930,10 +930,20 @@ namespace ReikaKalseki.SeaToSea {
 	    	VoidSpikeLeviathanSystem.instance.onObjectEMPHit(e, go);
 	    }
 	    
-	    public static void interceptChosenFog(AtmosphereDirector atmo) {
-	    	double d = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(Camera.main.transform.position);
+	    public static void interceptChosenFog(DIHooks.WaterFogValues fog) {
+	    	double d = VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true)-VoidSpikesBiome.biomeVolumeRadius;
+	    	if (d <= 50) {
+	    		float f = d <= 0 ? 1 : (float)(1-d/50F);
+	    		fog.density = (float)MathUtil.linterpolate(f, 0, 1, fog.originalDensity, VoidSpikesBiome.fogDensity, true);
+	    		fog.color = Color.Lerp(fog.originalColor, VoidSpikesBiome.waterColor, f);
+	    		return;
+	    	}
+	    	d = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(Camera.main.transform.position);
 	    	if (d <= 100) {
 	    		float f = d <= 0 ? 1 : (float)(1-d/100F);
+	    		fog.density = (float)MathUtil.linterpolate(f, 0, 1, fog.originalDensity, UnderwaterIslandsFloorBiome.fogDensity, true);
+	    		fog.color = Color.Lerp(fog.originalColor, UnderwaterIslandsFloorBiome.waterColor, f);
+	    		return;
 	    	}
 	    }
 	}
