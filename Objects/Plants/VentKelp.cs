@@ -72,6 +72,10 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_01");
 			ObjectUtil.removeChildObject(go, "land_plant_middle_03_02");
 			ObjectUtil.removeChildObject(go, "coral_reef_plant_middle_12");
+			go.layer = LayerID.Useable;
+			foreach (Collider c in go.GetComponentsInChildren<Collider>(true)) {
+				c.isTrigger = true;
+			}
 		}
 		
 		private GameObject getOrCreateSubplant(string pfb, GameObject go, float h, string nm) {

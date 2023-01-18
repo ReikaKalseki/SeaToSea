@@ -739,6 +739,11 @@ namespace ReikaKalseki.SeaToSea {
 		        	sc.Resize(6, 8);
 	        	}
         	}
+	    	else if (pi && pi.classId == "d4be3a5d-67c3-4345-af25-7663da2d2898") { //cuddlefish
+	    		Pickupable p = go.EnsureComponent<Pickupable>();
+	    		p.isPickupable = true;
+	    		p.overrideTechType = TechType.Cutefish;
+	    	}
 	    	/*
 	    	else if (pi && pi.ClassId == auroraStorageModule.prefabName && Vector3.Distance(auroraStorageModule.position, go.transform.position) <= 0.2) {
 	    		go.transform.position = auroraCyclopsModule.position;

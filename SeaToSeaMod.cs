@@ -122,8 +122,8 @@ namespace ReikaKalseki.SeaToSea
 	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
 	    deepStalker.register();
 	    
-	    //voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
-	    //voidSpikeLevi.register();
+	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
+	    voidSpikeLevi.register();
 	    
         C2CItems.addFlora();
         C2CRecipes.addItemsAndRecipes();	
