@@ -60,7 +60,7 @@ namespace ReikaKalseki.SeaToSea {
 		}*/
 		
 		public override VanillaMusic[] getMusicOptions() {
-			return new VanillaMusic[]{VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM};
+			return new VanillaMusic[]{VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM, VanillaMusic.AURORA};
 		}
 		
 		public override Vector3 getFogColor(Vector3 orig) {
