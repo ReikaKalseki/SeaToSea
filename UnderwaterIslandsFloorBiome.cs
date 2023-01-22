@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class UnderwaterIslandsFloorBiome {
+	public class UnderwaterIslandsFloorBiome : Biome {
 		
 		public static readonly float minimumDepth = 375;
 		public static readonly float biomeRadius = 240;
@@ -34,11 +34,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly GlassForestAtmoFX atmoFX = new GlassForestAtmoFX();
 		
-		private UnderwaterIslandsFloorBiome() {
+		private UnderwaterIslandsFloorBiome() : base(biomeName) {
 			
 		}
 		
-		public void register() {
+		public override void register() {
         	GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
 			
 			atmoFX.Patch();
@@ -59,6 +59,22 @@ namespace ReikaKalseki.SeaToSea {
 			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
 		}*/
 		
+		public override VanillaMusic[] getMusicOptions() {
+			return new VanillaMusic[]{VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM};
+		}
+		
+		public override Vector3 getFogColor(Vector3 orig) {
+			return waterColor.toVector();
+		}
+		
+		public override float getSunIntensity(float orig) {
+			return orig*0.4F;
+		}
+		
+		public override float getFogDensity(float orig) {
+			return fogDensity;
+		}
+		
 		public void tickPlayer(Player ep) {
 			
 		}
@@ -67,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
-		public bool isInBiome(Vector3 pos) {
+		public override bool isInBiome(Vector3 pos) {
 			string orig = WaterBiomeManager.main.GetBiome(pos, false);
 			return isInBiome(orig, pos);
 		}
@@ -81,7 +97,7 @@ namespace ReikaKalseki.SeaToSea {
 			return orig.ToLowerInvariant().Contains("underwaterislands") && getDistanceToBiome(pos) < 5;
 		}
 		
-		public double getDistanceToBiome(Vector3 vec) {
+		public override double getDistanceToBiome(Vector3 vec) {
 			return Math.Max(0, Vector3.Distance(vec, biomeCenter)-biomeRadius);
 		}
 		

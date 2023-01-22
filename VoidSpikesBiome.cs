@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome { //FIXME: 3. disappearing spikes 4. custom levi
+	public class VoidSpikesBiome : Biome { //FIXME: 3. disappearing spikes 4. custom levi
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -51,7 +51,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private SignalManager.ModSignal signal;
 		
-		private VoidSpikesBiome() {
+		private VoidSpikesBiome() : base(biomeName) {
 			generator = new VoidSpikes((end500m+end900m)/2);
 	      	generator.count = CLUSTER_COUNT;
 	      	//generator.scaleXZ = 16;
@@ -67,7 +67,23 @@ namespace ReikaKalseki.SeaToSea {
 			debris = new VoidDebris(signalLocation+Vector3.down*0.2F);
 		}
 		
-		public void register() {
+		public override VanillaMusic[] getMusicOptions() {
+			return new VanillaMusic[]{VanillaMusic.DUNES, VanillaMusic.BKELP, VanillaMusic.KOOSH, VanillaMusic.DEEPGRAND};
+		}
+		
+		public override Vector3 getFogColor(Vector3 orig) {
+			return waterColor.toVector();
+		}
+		
+		public override float getSunIntensity(float orig) {
+			return orig*0.2F;
+		}
+		
+		public override float getFogDensity(float orig) {
+			return fogDensity;
+		}
+		
+		public override void register() {
 			//SpikeCache.load();
 			
 			//GenUtil.registerWorldgen(generator);
@@ -188,9 +204,13 @@ namespace ReikaKalseki.SeaToSea {
 			return isInBiome(vec) && GenUtil.allowableGenBounds.Contains(vec+new Vector3(0, 0, -40)); //safety buffer
 		}
 		
-		public bool isInBiome(Vector3 vec) {
+		public override bool isInBiome(Vector3 vec) {
 			//SNUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
 			return getDistanceToBiome(vec, false) <= biomeVolumeRadius+150;
+		}
+		
+		public override double getDistanceToBiome(Vector3 vec) {
+			return getDistanceToBiome(vec, true);
 		}
 		
 		public double getDistanceToBiome(Vector3 vec, bool includeVoidSide) {
