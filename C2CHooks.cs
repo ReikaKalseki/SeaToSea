@@ -23,13 +23,15 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
 	    private static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
 	    private static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
-	    private static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
+	    internal static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
 	    private static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
 	    private static Oxygen playerBaseO2;
+	    
+	    private static float nextBkelpBaseAmbTime = -1;
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -207,6 +209,11 @@ namespace ReikaKalseki.SeaToSea {
 					}
 	    		}
 	    	}
+	    	
+	    	if (DayNightCycle.main.timePassedAsFloat >= nextBkelpBaseAmbTime && Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+	    		VanillaMusic.WRECK.play();
+	    		nextBkelpBaseAmbTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60F, 90F);
+	    	}
 	    }
 	    
 	    public static void tickSeamoth(SeaMoth sm) {
@@ -259,7 +266,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(b.originalValue, b.position)) {
 	    		b.setValue(UnderwaterIslandsFloorBiome.biomeName);
 	    		b.lockValue();
-	    	}
+	    	}/*
+	   		if (Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
+	   			b.setValue(BKelpBaseBiome.biomeName);
+	    		b.lockValue();
+	   		}*/
 	    }
 	    
 	    public static float getSwimSpeed(float f) {
