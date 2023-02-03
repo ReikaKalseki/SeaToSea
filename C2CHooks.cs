@@ -84,7 +84,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		string k2 = k.ToLowerInvariant();
 	    		if (k2.Contains("tooltip") || k2.Contains("desc") || k2.Contains("ency"))
 	    			continue;
-	    		string s = Language.main.strings[k];
+	    		string s = Language.main.Get(k);
 	    		if (s.ToLowerInvariant().Contains("creepvine"))
 	    			continue;
 	    		s = s.Replace(" seed", " Sample");
@@ -92,15 +92,15 @@ namespace ReikaKalseki.SeaToSea {
 	    		s = s.Replace(" Seed", " Sample");
 	    		s = s.Replace(" Spore", " Sample");
 	    		//SNUtil.log("Updating seed naming for "+k);
-	    		Language.main.strings[k] = s;
+	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
-	    	Language.main.strings["BulkheadInoperable"] = SeaToSeaMod.miscLocale.getEntry("BulkheadInoperable").desc;
-			Language.main.strings["DockToChangeVehicleUpgrades"] = SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc;
-	    	Language.main.strings["Tooltip_"+TechType.MercuryOre.AsString()] = SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc;
+	    	LanguageHandler.SetLanguageLine("BulkheadInoperable", SeaToSeaMod.miscLocale.getEntry("BulkheadInoperable").desc);
+			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
-			Language.main.strings[SeaToSeaMod.locker.TechType.AsString()] = Language.main.strings[TechType.Locker.AsString()];
-			Language.main.strings["Tooltip_"+SeaToSeaMod.locker.TechType.AsString()] = Language.main.strings["Tooltip_"+TechType.Locker.AsString()];
+	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];

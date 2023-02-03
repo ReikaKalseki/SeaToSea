@@ -516,6 +516,17 @@
 			DownloadedData/Precursor/Scan
 		</category>
 	</whitekey>
+	<SMDEPTH4><!-- do not remove, used for Website generation -->
+		<name>
+			Seamoth Depth Module Mk4
+		</name>
+		<desc>
+			Raises depth limit to 1300m.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SMDEPTH4>
 	<enum>
 		<name>
 			

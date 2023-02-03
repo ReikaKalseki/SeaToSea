@@ -33,8 +33,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static void updateLocale() {
 			foreach (BrokenTablet d in tablets) {
-				Language.main.strings[d.TechType.AsString()] = "Broken "+Language.main.strings[d.tablet.AsString()];
-				Language.main.strings["Tooltip_"+d.TechType.AsString()] = "A shattered "+Language.main.strings[d.tablet.AsString()]+". Not very useful directly.";
+				LanguageHandler.SetLanguageLine(d.TechType.AsString(), "Broken "+Language.main.Get(d.tablet));
+				LanguageHandler.SetLanguageLine("Tooltip_"+d.TechType.AsString(), "A shattered "+Language.main.Get(d.tablet)+". Not very useful directly.");
+				SNUtil.log("Relocalized broken tablet "+d+" > "+d.tablet.AsString()+" > "+Language.main.Get(d.TechType), SNUtil.diDLL);
 			}
 		}
 		
