@@ -464,7 +464,7 @@
 	</SeamothHeatSink>
 	<t2battery>
 		<name>
-			Advanced Battery
+			Azurite Battery
 		</name>
 		<desc>
 			A better battery, with significantly greater storage density. Its material construction precludes being adapted into a vehicular power cell.

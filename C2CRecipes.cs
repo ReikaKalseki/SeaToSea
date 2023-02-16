@@ -159,7 +159,7 @@ namespace ReikaKalseki.SeaToSea
        	item.craftTime = enzyK.craftingTime*s/2F;
        	item.ownerMod = SeaToSeaMod.modDLL;
        	item.Patch();
-       	
+       	/*
         rec = new TechData();
         rec.Ingredients.Add(new Ingredient(acid.TechType, 9));
       	rec.Ingredients.Add(new Ingredient(TechType.Gold, 2));
@@ -176,7 +176,7 @@ namespace ReikaKalseki.SeaToSea
        	item.unlock = TechType.AcidMushroom;
        	//item.suffixName = " Traces";
        	item.ownerMod = SeaToSeaMod.modDLL;
-       	item.Patch();
+       	item.Patch();*/
        	
        	/*
         CraftData.itemSizes[TechType.AcidMushroom] = new Vector2int(1, 2);
@@ -259,6 +259,8 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         
+        RecipeUtil.addIngredient(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        
         RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
         RecipeUtil.addIngredient(TechType.RocketBase, TechType.Silicone, 8);
         RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4);
@@ -333,7 +335,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 4);
         RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Lubricant, 6);
         
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 2);
         
         RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {if (i.techType == TechType.Glass) i.amount *= 2; return false;});
        	RecipeUtil.getRecipe(TechType.EnameledGlass).craftAmount *= 2;

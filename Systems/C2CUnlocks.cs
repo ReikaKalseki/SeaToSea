@@ -44,6 +44,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
 	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.t2Battery.TechType, C2CItems.t2Battery.TechType);
+	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 	    	
 	    	//addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, SeaToSeaMod.powerSeal.TechType);

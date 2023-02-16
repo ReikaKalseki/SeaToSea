@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothPowerSealModule powerSeal;
     internal static SeamothHeatSinkModule heatSinkModule;
     internal static CustomEquipable sealSuit;
-    internal static CustomBattery t2Battery;
+    internal static AzuriteBattery t2Battery;
     
     internal static RebreatherV2 rebreatherV2;
     internal static LiquidTank liquidTank;
@@ -82,7 +82,7 @@ namespace ReikaKalseki.SeaToSea
         heatSinkModule = new SeamothHeatSinkModule();
         cyclopsHeat = new CyclopsHeatModule();        
 		sealSuit = new SealedSuit();		
-		t2Battery = new CustomBattery(SeaToSeaMod.itemLocale.getEntry("t2battery"), 750);		
+		t2Battery = new AzuriteBattery();		
         rebreatherV2 = new RebreatherV2();		
         liquidTank = new LiquidTank();        
 		breathingFluid = new BreathingFluid();
@@ -115,7 +115,6 @@ namespace ReikaKalseki.SeaToSea
         
         sealSuit.Patch();
 		
-		t2Battery.unlockRequirement = TechType.Unobtanium;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
 		t2Battery.Patch();
 		
         rebreatherV2.Patch();
