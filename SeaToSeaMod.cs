@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea
     public static UnmovingHeatBlade thermoblade;
     public static MountainBaseCuredPeeper peeper;
     public static SeaTreaderTunnelLocker locker;
+    public static SeaTreaderTunnelLight tunnelLight;
     
     //internal static VoidLeviElecSphere leviPulse;
     internal static DeepStalker deepStalker;
@@ -138,6 +139,8 @@ namespace ReikaKalseki.SeaToSea
 	    peeper.Patch();
 	    locker = new SeaTreaderTunnelLocker();
 	    locker.Patch();
+	    tunnelLight = new SeaTreaderTunnelLight();
+	    tunnelLight.Patch();
 	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();

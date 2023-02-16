@@ -54,7 +54,8 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.KooshCavePrompt, ep => Vector3.Distance(pod12Location, ep.transform.position) <= 75);
 			addPDAPrompt(PDAMessages.Messages.RedGrassCavePrompt, isNearSeacrownCave);
 			addPDAPrompt(PDAMessages.Messages.UnderwaterIslandsPrompt, isInUnderwaterIslands);
-			PDAPrompt kelp = addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.FollowRadioPrompt).key) && Vector3.Distance(pod3Location, ep.transform.position) <= 60));
+			addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, isNearKelpCave);
+			addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, hasMissedKelpCavePromptLate);
 			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));
@@ -103,6 +104,20 @@ namespace ReikaKalseki.SeaToSea
 	    	bool all = PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.RedGrassCavePrompt).key) && PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePrompt).key) && PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KooshCavePrompt).key);
 	    	return late && !all;
 	    }
+    	
+    	private bool isNearKelpCave(Player ep) {
+    		if (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePromptLate).key) && Vector3.Distance(ep.transform.position, pod3Location) <= 80)
+    			return true;
+    		return MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.FollowRadioPrompt).key) && Vector3.Distance(pod3Location, ep.transform.position) <= 60);
+    	}
+    	
+    	private bool hasMissedKelpCavePromptLate(Player ep) {
+    		if (!StoryGoalManager.main.completedGoals.Contains("OnPlayRadioGrassy25")) //pod 3 radio message play
+    			return false;
+    		bool late1 = StoryGoalManager.main.completedGoals.Contains("Goal_LocationAuroraDriveEntry") || StoryGoalManager.main.completedGoals.Contains("SunbeamCheckPlayerRange");
+    		bool late2 = KnownTech.knownTech.Contains(TechType.Workbench) || KnownTech.knownTech.Contains(TechType.StasisRifle) || KnownTech.knownTech.Contains(TechType.BaseMoonpool) || KnownTech.knownTech.Contains(TechType.HighCapacityTank);
+    		return late1 && late2 && ep.GetBiomeString().ToLowerInvariant().Contains("safe") && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePrompt).key);
+    	}
 	    
 	    private bool isInUnderwaterIslands(Player ep) {
 	    	return ep.transform.position.y <= -150 && (ep.transform.position-new Vector3(-112.3F, ep.transform.position.y, 990.3F)).magnitude <= 180 && ep.GetBiomeString().ToLowerInvariant().Contains("underwaterislands");

@@ -76,6 +76,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float platinumGrabTime = -1;
 		private float lastAreaCheck = -1;
+		private float lastDespawnCheck = -1;
 		
 		private float targetCooldown = 0;
 		
@@ -222,24 +223,36 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-			if (!currentForcedTarget && !GetComponent<WaterParkCreature>()) {
+			if (!GetComponent<WaterParkCreature>()) {
 				float distp = Vector3.Distance(transform.position, Player.main.transform.position);
 				if (distp >= 200) {
-					destroyFar();
+					destroyCreature();
 				}
 				else if (treaderTarget) {
 					float dist = Vector3.Distance(transform.position, treaderTarget.transform.position);
 					if (dist >= 150 && distp >= 30) {
-						destroyFar();
+						destroyCreature();
 					}
 					else if (dist >= 80) {
 						swimmer.SwimTo(treaderTarget.transform.position, 20);	
 					}
 				}
+				if (time >= lastDespawnCheck+2.5F && distp > 40) {
+					lastDespawnCheck = time;
+					HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(transform.position, 60);
+					int amt = 0;
+					foreach (DeepStalkerTag c in set) {
+						if (c.isAlive() && !c.GetComponent<WaterParkCreature>()) {
+							amt++;
+						}
+					}
+					if (amt > 5)
+						destroyCreature();
+				}
 			}
 		}
 		
-		private void destroyFar() {
+		private void destroyCreature() {
 			collectorComponent.DropShinyTarget();
 			UnityEngine.Object.DestroyImmediate(gameObject);
 		}
@@ -315,6 +328,7 @@ namespace ReikaKalseki.SeaToSea {
 		void OnDestroy() {
 			if (treaderTarget)
 				treaderTarget.gameObject.GetComponent<C2CTreader>().removeStalker(this);
+			collectorComponent.DropShinyTarget();
 		}
 
 		void OnDisable() {

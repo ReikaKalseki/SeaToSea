@@ -76,6 +76,17 @@
 		Sounds/kelpcaveprompt.ogg
 	</pda>
   </kelpcavedrone>
+  <kelpcavedronelate>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting technological artifacts in the vicinity of lifepod 3. Further exploration is recommended.
+	</desc>
+	<pda>
+		Sounds/kelpcavepromptlate.ogg
+	</pda>
+  </kelpcavedronelate>
   <redgrasscave>
 	<name>
 		

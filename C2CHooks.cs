@@ -101,6 +101,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
+	    	
+	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];

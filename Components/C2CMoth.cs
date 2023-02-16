@@ -143,6 +143,8 @@ namespace ReikaKalseki.SeaToSea
 					holdTempLowTime = 0;
 					useSeamothVehicleTemperature = false;
 					float Tamb = temperatureDamage.GetTemperature();// this will call WaterTempSim, after the lava checks in DI
+					if (seamoth.docked)
+						Tamb = 25;
 					useSeamothVehicleTemperature = true;
 					float dT = Tamb-vehicleTemperature;
 					float excess = Mathf.Clamp01((vehicleTemperature-400)/400F);
@@ -161,9 +163,9 @@ namespace ReikaKalseki.SeaToSea
 				float f2 = Mathf.Min(40, Mathf.Pow(factor, 2.5F));
 				temperatureDamage.baseDamagePerSecond = baseDamageAmount*f2;
 				//SNUtil.writeToChat(vehicleTemperature+" > "+factor.ToString("00.0000")+" > "+f2.ToString("00.0000")+" > "+temperatureDamage.baseDamagePerSecond.ToString("0000.00"));
-				if (vehicleTemperature >= 90) {
+				if (vehicleTemperature >= 90 && seamoth.GetPilotingMode()) {
 					damageFX.OnTakeDamage(new DamageInfo{damage = 1, type = DamageType.Heat});
-					if (time-lastMeltSound >= 0.5F && UnityEngine.Random.Range(0F, 1F) <= 0.25F) {
+					if (time-lastMeltSound >= 0.5F && !seamoth.docked && UnityEngine.Random.Range(0F, 1F) <= 0.25F) {
 						SoundManager.playSoundAt(meltingSound, Player.main.transform.position, false, -1, 0.125F+Mathf.Clamp01((vehicleTemperature-90)/100F)*0.125F);
 						lastMeltSound = time;
 					}
