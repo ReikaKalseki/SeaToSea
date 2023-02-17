@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<AzuriteTag>();
-			go.EnsureComponent<AzuriteSparker>().size = 1.2F;
+			go.EnsureComponent<AzuriteSparker>().size = 3.2F;
 			
 			Light l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;
@@ -41,24 +41,37 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private GameObject sparker;
 		
+		private ParticleSystem[] particles;
+		
+		internal float size = 1;
+		internal float activityLevel = 1;
+		internal Vector3 particleOrigin = Vector3.zero;
+		
 		void Update() {
 			if (!sparker) {
 				sparker = ObjectUtil.createWorldObject("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc");
 				sparker.transform.localScale = new Vector3(0.4F, 0.4F, 0.4F);
 				sparker.transform.parent = transform;
-				sparker.transform.localPosition = new Vector3(0, 0, -0.05F);
 				//sparker.transform.eulerAngles = new Vector3(325, 180, 0);
 				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
 				ObjectUtil.removeComponent<PlayerDistanceTracker>(sparker);
 			}
+			if (particles == null) {
+				particles = sparker.GetComponentsInChildren<ParticleSystem>();
+			}
 			if (gameObject.FindAncestor<Player>()) {
 				sparker.SetActive(false);
 			}
-			else if (UnityEngine.Random.Range(0, 20) == 0) {
+			else if (UnityEngine.Random.Range(0, 20) == 0 && Time.deltaTime > 0.01F) {
 				if (!sparker.activeSelf) {
 					sparker.SetActive(true);
+					sparker.transform.localPosition = particleOrigin;
+					foreach (ParticleSystem p in particles) {
+						ParticleSystem.MainModule pm = p.main;
+						pm.startSize = size*0.2F;
+					}
 				}
-				else if (UnityEngine.Random.Range(0, 2) == 0) {
+				else if (UnityEngine.Random.Range(0, 1F) > 0.5F*activityLevel) {
 					sparker.SetActive(false);
 				}
 			}

@@ -23,10 +23,14 @@ namespace ReikaKalseki.SeaToSea
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
-			go.EnsureComponent<AzuriteBatteryTag>();
+			AzuriteSparker az = go.EnsureComponent<AzuriteSparker>();
+			az.size = 0.67F;
+			az.activityLevel = 0.5F;
+			az.particleOrigin = new Vector3(0, 0, -0.05F);
+			//go.EnsureComponent<AzuriteBatteryTag>();
 		}
 	}
-		
+		/*
 	class AzuriteBatteryTag : MonoBehaviour {
 		
 		private GameObject sparker;
@@ -54,5 +58,5 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-	}
+	}*/
 }
