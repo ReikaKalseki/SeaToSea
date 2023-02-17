@@ -23,40 +23,14 @@ namespace ReikaKalseki.SeaToSea
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
-			AzuriteSparker az = go.EnsureComponent<AzuriteSparker>();
-			az.size = 0.67F;
-			az.activityLevel = 0.5F;
-			az.particleOrigin = new Vector3(0, 0, -0.05F);
+			AzuriteSparker az = go.EnsureComponent<AzuriteBatterySparker>();
 			//go.EnsureComponent<AzuriteBatteryTag>();
 		}
 	}
-		/*
-	class AzuriteBatteryTag : MonoBehaviour {
-		
-		private GameObject sparker;
-		
-		void Update() {
-			if (!sparker) {
-				sparker = ObjectUtil.createWorldObject("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc");
-				sparker.transform.localScale = new Vector3(0.4F, 0.4F, 0.4F);
-				sparker.transform.parent = transform;
-				sparker.transform.localPosition = new Vector3(0, 0, -0.05F);
-				//sparker.transform.eulerAngles = new Vector3(325, 180, 0);
-				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
-				ObjectUtil.removeComponent<PlayerDistanceTracker>(sparker);
-			}
-			if (gameObject.FindAncestor<Player>()) {
-				sparker.SetActive(false);
-			}
-			else if (UnityEngine.Random.Range(0, 20) == 0) {
-				if (!sparker.activeSelf) {
-					sparker.SetActive(true);
-				}
-				else if (UnityEngine.Random.Range(0, 2) == 0) {
-					sparker.SetActive(false);
-				}
-			}
-		}
-		
-	}*/
+	
+	class AzuriteBatterySparker : AzuriteSparker {
+		AzuriteBatterySparker() : base(0.67F, 0.5F, new Vector3(0, 0, -0.05F)) {
+			
+		}		
+	}
 }

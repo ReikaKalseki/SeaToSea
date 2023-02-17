@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<AzuriteTag>();
-			go.EnsureComponent<AzuriteSparker>().size = 3.2F;
+			go.EnsureComponent<AzuriteOreSparker>();
 			
 			Light l = ObjectUtil.addLight(go);
 			l.type = LightType.Point;
@@ -36,16 +36,28 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 	}
+	
+	internal class AzuriteOreSparker : AzuriteSparker {
+		AzuriteOreSparker() : base(3.2F, 1.8F) {
+			
+		}
+	}
 		
-	internal class AzuriteSparker : MonoBehaviour {
+	internal abstract class AzuriteSparker : MonoBehaviour {
 		
 		private GameObject sparker;
 		
 		private ParticleSystem[] particles;
 		
-		internal float size = 1;
-		internal float activityLevel = 1;
-		internal Vector3 particleOrigin = Vector3.zero;
+		private readonly float size;
+		private readonly float activityLevel;
+		private readonly Vector3 particleOrigin;
+		
+		internal AzuriteSparker(float s, float a, Vector3? orgn = null) {
+			size = s;
+			activityLevel = a;
+			particleOrigin = orgn != null && orgn.HasValue ? orgn.Value : Vector3.zero;
+		}
 		
 		void Update() {
 			if (!sparker) {
@@ -55,6 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 				//sparker.transform.eulerAngles = new Vector3(325, 180, 0);
 				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
 				ObjectUtil.removeComponent<PlayerDistanceTracker>(sparker);
+				ObjectUtil.removeChildObject(sparker, "ElecLight");
 			}
 			if (particles == null) {
 				particles = sparker.GetComponentsInChildren<ParticleSystem>();
@@ -64,14 +77,16 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (UnityEngine.Random.Range(0, 20) == 0 && Time.deltaTime > 0.01F) {
 				if (!sparker.activeSelf) {
-					sparker.SetActive(true);
-					sparker.transform.localPosition = particleOrigin;
-					foreach (ParticleSystem p in particles) {
-						ParticleSystem.MainModule pm = p.main;
-						pm.startSize = size*0.2F;
+					if (UnityEngine.Random.Range(0, 1F) < 0.5F*activityLevel) {
+						sparker.SetActive(true);
+						sparker.transform.localPosition = particleOrigin;
+						foreach (ParticleSystem p in particles) {
+							ParticleSystem.MainModule pm = p.main;
+							pm.startSize = size*0.2F;
+						}
 					}
 				}
-				else if (UnityEngine.Random.Range(0, 1F) > 0.5F*activityLevel) {
+				else if (UnityEngine.Random.Range(0, 1F) > 0.25F*activityLevel) {
 					sparker.SetActive(false);
 				}
 			}
