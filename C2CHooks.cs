@@ -54,6 +54,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.fogCalculateEvent += interceptChosenFog;
 	    	
+	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -964,6 +966,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		fog.color = Color.Lerp(fog.originalColor, UnderwaterIslandsFloorBiome.waterColor, f);
 	    		return;
 	    	}
+	    }
+	    
+	    public static float getRadiationLevel(DIHooks.RadiationCheck ch) {
+	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius+200)
+	    		return 0;
+	    	return ch.value;
 	    }
 	}
 }

@@ -13,11 +13,6 @@ using SMLHelper.V2.Utility;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Assets;
 
-using ReikaKalseki.Auroresource;
-using ReikaKalseki.Reefbalance;
-using ReikaKalseki.AqueousEngineering;
-using ReikaKalseki.Exscansion;
-
 namespace ReikaKalseki.SeaToSea
 {
   [QModCore]
