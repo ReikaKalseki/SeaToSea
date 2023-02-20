@@ -969,7 +969,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getRadiationLevel(DIHooks.RadiationCheck ch) {
-	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius+200)
+	    	//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));
+	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius+225)
 	    		return 0;
 	    	return ch.value;
 	    }

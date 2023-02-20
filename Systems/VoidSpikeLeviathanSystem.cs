@@ -114,12 +114,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	return distantSparkFX;
 	    }
 	    
-	    private GameObject createSparkSphere(SeaMoth sm) {
-			ElectricalDefense def = sm.seamothElectricalDefensePrefab.GetComponent<ElectricalDefense>();
-			GameObject sphere = def.fxElecSpheres[0];
-	    	return Utils.SpawnZeroedAt(sphere, sm.transform, false);
-	    }
-	    
 	    internal void tick(Player ep) {
 	    	if (!mainCamera && Camera.main) {
 	    		mainCamera = Camera.main.gameObject;
@@ -335,7 +329,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal void shutdownSeamoth(Vehicle v, bool disable, float factor = 1) {
 	    	if (v) {
 	    		if (v is SeaMoth) {
-	    			createSparkSphere((SeaMoth)v).SetActive(true);
+	    			ObjectUtil.createSeamothSparkSphere((SeaMoth)v);
 	    			float time = DayNightCycle.main.timePassedAsFloat;
 	    			if (time-lastEMPHitSoundTime > 1F) {
 	    				lastEMPHitSoundTime = time;
