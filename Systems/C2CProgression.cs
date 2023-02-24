@@ -17,10 +17,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		public static readonly C2CProgression instance = new C2CProgression();
 		
-	    private readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
-	    private readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
-	    private readonly Vector3 pod6Location = new Vector3(363, -110, 309);
-	    private readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
+	    internal readonly Vector3 pod12Location = new Vector3(1117, -268, 568);
+	    internal readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
+	    internal readonly Vector3 pod6Location = new Vector3(363, -110, 309);
+	    internal readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    
 	    private readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,

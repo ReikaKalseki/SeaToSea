@@ -20,11 +20,11 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public static class C2CHooks {
 	    
-	    private static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
-	    private static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
-	    private static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
+	    internal static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
+	    internal static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
+	    internal static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    internal static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
-	    private static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
+	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));

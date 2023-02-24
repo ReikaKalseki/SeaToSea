@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea {
     
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
     	
-    	private readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
+    	internal readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
     	private readonly static double lavaCastleInnerRadius = 75;
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
@@ -35,7 +35,7 @@ namespace ReikaKalseki.SeaToSea {
     	//private readonly static Vector3 auroraTopLeftBack = new Vector3(1010, 13, ?);
     	//private readonly static Vector3 auroraBottomRightFront = new Vector3(?, ?, ?);
     	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
-    	private readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
+    	internal readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
     	
     	private readonly static Vector3 auroraPrawnBayLineA1 = new Vector3(995, 2.6F, -38.6F);
     	private readonly static Vector3 auroraPrawnBayLineA2 = new Vector3(1023.5F, 2.6F, -12.7F);

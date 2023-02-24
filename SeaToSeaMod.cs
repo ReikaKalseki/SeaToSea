@@ -306,7 +306,6 @@ namespace ReikaKalseki.SeaToSea
     
     private static void addCommands() {
        // ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidsig", VoidSpikesBiome.instance.activateSignal);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("signalUnlock", unlockSignal);
         
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("spawnVKelp", spawnVentKelp);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
@@ -317,6 +316,8 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", unlockSignal);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cpoi", jumpToPOI);
     }
     /*
     private static void spawnVentKelp(float dist) {
@@ -339,6 +340,90 @@ namespace ReikaKalseki.SeaToSea
     			VoidSpikesBiome.instance.fireRadio();
     			break;
     	}
+    }
+    
+    private static void jumpToPOI(string name) {
+    	Vector3 pos = Vector3.zero;
+    	switch(name) {
+    		case "aurora":
+    			CrashedShipExploder.main.SwapModels(true);
+    			pos = new Vector3(1010, 38, 119);
+    			break;
+    		case "prawnbay":
+    			pos = new Vector3(992, 3, -4);
+    			break;
+    		case "cove":
+    			pos = new Vector3(-855, -881, 403);
+    			break;
+    		case "lavacastle":
+    			pos = new Vector3(-32, -1204, 142);
+    			break;
+    		case "degasi1":
+    			pos = new Vector3(85, -260, -356);
+    			break;
+    		case "degasi2":
+    			pos = new Vector3(-643, -505, -944.5F);
+    			break;
+    		case "treaderpod":
+    			pos = treaderSignal.initialPosition+Vector3.up*10;
+    			break;
+    		case "crashmesa":
+    			pos = C2CHooks.crashMesa;
+    			break;
+    		case "voidpod":
+    			pos = VoidSpikesBiome.signalLocation;
+    			break;
+    		case "pod6base":
+    			pos = new Vector3(338.5F, -110, 286.5F);
+    			break;
+    		case "bkelpbase":
+    			pos = C2CHooks.bkelpBaseGeoCenter+Vector3.up*30;
+    			break;
+    		case "mountainpod":
+    			pos = new Vector3(993, -260, 1379);
+    			break;
+    		case "mountainbase":
+    			pos = C2CHooks.mountainBaseGeoCenter;
+    			break;
+    		case "sunbeamsite":
+    			pos = new Vector3(301, 15, 1086);
+    			break;
+    		case "islandwreck":
+    			pos = new Vector3(-763, 20, -1104);
+    			break;
+    		case "cragwreck":
+    			pos = new Vector3(330, -266, -1451);
+    			break;
+    		case "mtnislandcave":
+    			pos = new Vector3(372, -90, 1039);
+    			break;
+    		case "treadertunnel":
+    			pos = new Vector3(-1250, -277, -725);
+    			break;
+    		case "redkey":
+    			pos = new Vector3(156.5F, -200, 951);
+    			break;
+    		case "drf":
+    			pos = new Vector3(-248, -800, 281);
+    			break;
+    		case "kooshcaves":
+    			pos = new Vector3(1223, -258, 527.5F);
+    			break;
+    		case "geysercave":
+    			pos = C2CProgression.instance.dronePDACaveEntrance+new Vector3(5, 0, 5);
+    			break;
+    		case "glassforest":
+    			pos = UnderwaterIslandsFloorBiome.wreckCtrPos1.setY(-480);
+    			break;
+    		case "voidspikes":
+    			pos = VoidSpikesBiome.end500m;
+    			break;
+    	}
+    	jumpTo(pos);
+    }
+    
+    private static void jumpTo(Vector3 pos) {
+    	Player.main.transform.position = pos;
     }
     
     private static void addPDAEntries() {
