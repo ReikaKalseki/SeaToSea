@@ -51,6 +51,8 @@ namespace ReikaKalseki.SeaToSea
     public static SeaTreaderTunnelLocker locker;
     public static SeaTreaderTunnelLight tunnelLight;
     
+    public static DataChit laserCutterBulkhead;
+    
     //internal static VoidLeviElecSphere leviPulse;
     internal static DeepStalker deepStalker;
     internal static VoidSpikeLeviathan voidSpikeLevi;
@@ -120,6 +122,10 @@ namespace ReikaKalseki.SeaToSea
 	    
 	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
 	    voidSpikeLevi.register();
+	    
+	    laserCutterBulkhead = new DataChit("bulkheadLaserCutterUpgrade", miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").pda);
+	    laserCutterBulkhead.renderColor = new Color(229/255F, 133/255F, 0);
+	    laserCutterBulkhead.Patch();
 	    
         C2CItems.addFlora();
         C2CRecipes.addItemsAndRecipes();	

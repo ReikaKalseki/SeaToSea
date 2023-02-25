@@ -418,6 +418,42 @@
 		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </islandcave>
+  <rescuepdalog>
+	<name>
+		Rescue/Salvage Crew Report
+	</name>
+	<pda>
+		Lifepod located, no sign of target passenger.
+		
+		Search of immediate surroundings yields no findings.
+		
+		Possible ejection prior to impact, or the site may have been disturbed by native fauna.
+		
+		Local environment features many alcoves and small cave systems. Proceeding to survey these locations.
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		
+	</audio>
+  </rescuepdalog>
+  <treepda>
+	<name>
+		Rescue/Salvage Crew Final Recording
+	</name>
+	<pda>
+		I've made the biggest - and last - mistake of my life. During my surveys around this large tree, I found an opening to a maze of internal passages. As a last resort before calling off the search, I decided to check the interior in case our VIP had somehow survived and found an air pocket.
+		
+		Not only has there been no sign of him in here, but the water movement through the tree creates strong currents at the chokepoints, and I couldn't push past it to make my way back out. All I could do was pass through even more currents, and now I'm lost, low on air, and have no good way out. And I'm spending my last minutes ranting into an audio log whose very location means that anyone who finds it is going to meet the same fate. I suppose there's some amount of irony in that...
+	</pda>
+	<category>
+		DownloadedData/AuroraSurvivors
+	</category>
+	<audio>
+		event:/player/story/VO/Ency_LifepodCrashZone2
+	</audio>
+  </treepda>
   <lostrivershortcircuit>
 	<name>
 		Hypersalinated Water

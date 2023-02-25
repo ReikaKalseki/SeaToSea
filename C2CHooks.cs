@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Reflection;
+using System.Text;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
 	    	
+	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -97,7 +100,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
-	    	LanguageHandler.SetLanguageLine("BulkheadInoperable", SeaToSeaMod.miscLocale.getEntry("BulkheadInoperable").desc);
+	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").desc);
 			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
@@ -973,6 +976,21 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius+225)
 	    		return 0;
 	    	return ch.value;
+	    }
+		
+		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {
+	    	if (tt == TechType.LaserCutter && hasLaserCutterUpgrade()) {
+				TooltipFactory.WriteDescription(sb, "\nCutting Temperature upgraded to allow cutting selected seabase structural elements");
+			}
+		}
+	    
+	    public static void interceptBulkheadLaserCutter(DIHooks.BulkheadLaserCutterHoverCheck ch) {
+	    	if (!hasLaserCutterUpgrade())
+	    		ch.refusalLocaleKey = "Need_laserCutterBulkhead_Chit";
+	    }
+	    
+	    public static bool hasLaserCutterUpgrade() {
+	    	return Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.laserCutterBulkhead.goal.key);
 	    }
 	}
 }

@@ -164,17 +164,17 @@
 		Sounds/cannot-launch-missing-biomes.ogg
 	</pda>
   </notseenallbiomes>
-  <BulkheadInoperable>
+  <NeedLaserCutterBulkheadUpgrade>
 	<name>
 		
 	</name>
 	<desc>
-		Bulkhead is inoperable
+		Reinforced bulkheads require increased cutting temperatures
 	</desc>
 	<pda>
-		
+		Laser cutter temperature upgrade
 	</pda>
-  </BulkheadInoperable>
+  </NeedLaserCutterBulkheadUpgrade>
   <DockToChangeVehicleUpgrades>
 	<name>
 		
