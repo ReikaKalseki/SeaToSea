@@ -57,6 +57,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
 	    	
+	    	DIHooks.itemTooltipEvent += generateItemTooltips;
 	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
@@ -100,7 +101,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
-	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").desc);
+	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").getField<string>("error"));
 			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	

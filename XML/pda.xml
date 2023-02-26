@@ -435,7 +435,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		
+		event:/player/story/VO/Ency_LifepodCrashZone2
 	</audio>
   </rescuepdalog>
   <treepda>
@@ -445,7 +445,11 @@
 	<pda>
 		I've made the biggest - and last - mistake of my life. During my surveys around this large tree, I found an opening to a maze of internal passages. As a last resort before calling off the search, I decided to check the interior in case our VIP had somehow survived and found an air pocket.
 		
-		Not only has there been no sign of him in here, but the water movement through the tree creates strong currents at the chokepoints, and I couldn't push past it to make my way back out. All I could do was pass through even more currents, and now I'm lost, low on air, and have no good way out. And I'm spending my last minutes ranting into an audio log whose very location means that anyone who finds it is going to meet the same fate. I suppose there's some amount of irony in that...
+		Not only has there been no sign of him in here, but the water movement through the tree creates strong currents at the chokepoints, and I couldn't push past it to make my way back out. All I could do was pass through even more currents, and now I'm lost, low on air, and have no good way out. And I'm spending my last minutes ranting into an audio log whose very location means that anyone who finds it is going to meet the same fate.
+		
+		If someone IS reading this, I lost a data card somewhere in this cave system. It's got a firmware upgrade on it for the laser cutter, makes it burn hotter so it can cut through thick reinforced plasteel. Can't count the number of times that came in handy during rescue and salvage operations. It won't help you cut your way out of here - trust me, I tried - but maybe if you do live to see the outside again you'll find it useful somewhere else.
+		
+		As for me, I'm gonna go try my luck with that current one last time.
 	</pda>
 	<category>
 		DownloadedData/AuroraSurvivors

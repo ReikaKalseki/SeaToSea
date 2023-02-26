@@ -68,6 +68,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
 		
+		//TreeBud.addDrop(CraftingItems.getItem(CraftingItems.Items.).TechType);
+		
 		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
 		if (glowOil != null) {
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, 2);

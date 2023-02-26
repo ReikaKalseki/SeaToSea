@@ -164,17 +164,20 @@
 		Sounds/cannot-launch-missing-biomes.ogg
 	</pda>
   </notseenallbiomes>
-  <NeedLaserCutterBulkheadUpgrade>
+  <bulkheadLaserCutterUpgrade>
 	<name>
-		
+		Laser Cutter Temperature Upgrade
 	</name>
 	<desc>
-		Reinforced bulkheads require increased cutting temperatures
+		&lt;color=#FFA622FF&gt;Laser Cutter&lt;/color&gt;\n&lt;color=#74C8F8FF&gt;Temperature Upgrade&lt;/color&gt;
 	</desc>
 	<pda>
-		Laser cutter temperature upgrade
+		Can now also cut reinforced plasteel
 	</pda>
-  </NeedLaserCutterBulkheadUpgrade>
+	<error>
+		Reinforced bulkheads require increased cutting temperatures
+	</error>
+  </bulkheadLaserCutterUpgrade>
   <DockToChangeVehicleUpgrades>
 	<name>
 		

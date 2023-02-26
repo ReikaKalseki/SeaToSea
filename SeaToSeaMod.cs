@@ -123,8 +123,8 @@ namespace ReikaKalseki.SeaToSea
 	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
 	    voidSpikeLevi.register();
 	    
-	    laserCutterBulkhead = new DataChit("bulkheadLaserCutterUpgrade", miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").pda);
-	    laserCutterBulkhead.renderColor = new Color(229/255F, 133/255F, 0);
+	    XMLLocale.LocaleEntry e = miscLocale.getEntry("bulkheadLaserCutterUpgrade");
+	    laserCutterBulkhead = new DataChit(e.key, e.name, e.desc, d => {d.controlText = e.pda; d.graphic = () => SNUtil.getTechPopupSprite(TechType.LaserCutter);});
 	    laserCutterBulkhead.Patch();
 	    
         C2CItems.addFlora();
@@ -425,11 +425,7 @@ namespace ReikaKalseki.SeaToSea
     			pos = VoidSpikesBiome.end500m;
     			break;
     	}
-    	jumpTo(pos);
-    }
-    
-    private static void jumpTo(Vector3 pos) {
-    	Player.main.transform.position = pos;
+    	SNUtil.teleportPlayer(Player.main, pos);
     }
     
     private static void addPDAEntries() {
