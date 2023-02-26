@@ -92,8 +92,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		Spawnable plankton = ItemRegistry.instance.getItem("planktonItem");
 		if (plankton != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, plankton.TechType, 1);
-			RecipeUtil.addIngredient(C2CRecipes.getAlternateEnzyme().TechType, plankton.TechType, 3);
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, plankton.TechType, 1);
+			//RecipeUtil.addIngredient(C2CRecipes.getAlternateEnzyme().TechType, plankton.TechType, 3);
+			
+			RecipeUtil.addIngredient(TechType.Polyaniline, plankton.TechType, 2);
 		}
 		
 		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);

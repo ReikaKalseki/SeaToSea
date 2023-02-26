@@ -44,7 +44,9 @@ namespace ReikaKalseki.SeaToSea
     };
     
     public static TechnologyFragment lathingDroneFragment;
-    public static PowerSealModuleFragment powersealModuleFragment;
+    
+    public static MushroomTreeBacterialColony mushroomBioFragment;    
+    public static PowerSealModuleFragment powersealModuleFragment;    
     public static EjectedHeatSink ejectedHeatSink;
     public static UnmovingHeatBlade thermoblade;
     public static MountainBaseCuredPeeper peeper;
@@ -143,13 +145,15 @@ namespace ReikaKalseki.SeaToSea
 	    tunnelLight = new SeaTreaderTunnelLight();
 	    tunnelLight.Patch();
 	    
+	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("MUSHROOM_COLONY"));
+	    mushroomBioFragment.register();
+	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
         
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
-        lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, go => {
+        lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, true, go => {
         	ObjectUtil.removeComponent<Pickupable>(go);
-        	//ObjectUtil.removeComponent<Collider>(go);
         	ObjectUtil.removeComponent<Rigidbody>(go);
         }); //it has its own model
         

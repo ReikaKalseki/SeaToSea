@@ -155,7 +155,18 @@
 	</LathingDrone>
 	<KelpEnzymes>
 		<name>
-			Bacterial Sample
+			Microbiotic Gel
+		</name>
+		<desc>
+			A compound harvested from inside deepvine leaves, designed to support bacterial growth and metabolism. Will enhance the efficiency of biochemical processing.
+		</desc>
+		<pda>
+			
+		</pda>
+	</KelpEnzymes>
+	<BacterialSample>
+		<name>
+			Bacterial Samples
 		</name>
 		<desc>
 			A quantity of bacteria, highly specialized for recombining organic compounds.
@@ -163,7 +174,7 @@
 		<pda>
 			
 		</pda>
-	</KelpEnzymes>
+	</BacterialSample>
 	<FuelTankWall>
 		<name>
 			Tank Wall
@@ -527,6 +538,17 @@
 			
 		</pda>
 	</SMDEPTH4>
+	<MUSHROOM_COLONY>
+		<name>
+			Bacterial Colony
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</MUSHROOM_COLONY>
 	<enum>
 		<name>
 			

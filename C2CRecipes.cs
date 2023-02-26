@@ -73,16 +73,21 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
         enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
-       
+       /*
         int kelpamt = 2;
         BasicCraftingItem enzyK = CraftingItems.getItem(CraftingItems.Items.KelpEnzymes);
         enzyK.craftingTime = 3;
         enzyK.addIngredient(C2CItems.kelp.seed.TechType, kelpamt);
+        */
+        BasicCraftingItem bacteria = CraftingItems.getItem(CraftingItems.Items.BacterialSample);
+        bacteria.craftingTime = 1;
+        bacteria.numberCrafted = 2;
+        bacteria.addIngredient(TechType.SeaCrownSeed, 2).addIngredient(enzyT, 2);//.addIngredient(TechType.TreeMushroomPiece, 1);
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
         enzy.craftingTime = 4;
         enzy.numberCrafted = 4;
-        enzy.addIngredient(TechType.Salt, 1).addIngredient(enzyT, 1).addIngredient(TechType.SeaCrownSeed, 2).addIngredient(TechType.DisinfectedWater, 1);
+        enzy.addIngredient(TechType.Salt, 1).addIngredient(bacteria, 2).addIngredient(TechType.DisinfectedWater, 1);
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
@@ -143,13 +148,15 @@ namespace ReikaKalseki.SeaToSea
         		i.amount *= 3;
         	}
         }
+        rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));
+        
        	enzymeAlternate = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
        	enzymeAlternate.ownerMod = SeaToSeaMod.modDLL;
        	enzymeAlternate.craftTime = enzy.craftingTime*2F;
        	enzymeAlternate.setRecipe(enzy.numberCrafted*3);
        	enzymeAlternate.unlock = TechType.Unobtanium;
        	enzymeAlternate.Patch();
-       	
+       	/*
         int s = 3;
         rec = new TechData();
         rec.Ingredients.Add(new Ingredient(C2CItems.kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.5F)));
@@ -158,7 +165,7 @@ namespace ReikaKalseki.SeaToSea
        	item.setRecipe(enzyK.numberCrafted*s);
        	item.craftTime = enzyK.craftingTime*s/2F;
        	item.ownerMod = SeaToSeaMod.modDLL;
-       	item.Patch();
+       	item.Patch();*/
        	/*
         rec = new TechData();
         rec.Ingredients.Add(new Ingredient(acid.TechType, 9));
