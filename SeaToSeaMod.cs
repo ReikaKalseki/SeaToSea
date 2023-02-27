@@ -29,6 +29,8 @@ namespace ReikaKalseki.SeaToSea
     internal static readonly XMLLocale signalLocale = new XMLLocale("XML/signals.xml");
     internal static readonly XMLLocale miscLocale = new XMLLocale("XML/misc.xml");
     
+    public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -145,7 +147,7 @@ namespace ReikaKalseki.SeaToSea
 	    tunnelLight = new SeaTreaderTunnelLight();
 	    tunnelLight.Patch();
 	    
-	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("MUSHROOM_COLONY"));
+	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();
 	    
 	    //leviPulse = new VoidLeviElecSphere();
@@ -170,7 +172,7 @@ namespace ReikaKalseki.SeaToSea
         
         addPDAEntries();
                  
-        new WorldgenDatabase().load();
+        worldgen.load();
         DataboxTypingMap.instance.load();
         
         addCommands();
@@ -193,6 +195,7 @@ namespace ReikaKalseki.SeaToSea
 		UnderwaterIslandsFloorBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
+		mushroomBioFragment.postRegister();
 		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);

@@ -396,6 +396,17 @@
 			SalveBush
 		</header>
 	</HEALING_FLOWER>
+	<TREE_BACTERIA>
+		<name>
+			Bacterial Colony
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</TREE_BACTERIA>
 	<DeepStalker>
 		<name>
 			Abyssal Stalker
@@ -538,17 +549,6 @@
 			
 		</pda>
 	</SMDEPTH4>
-	<MUSHROOM_COLONY>
-		<name>
-			Bacterial Colony
-		</name>
-		<desc>
-			
-		</desc>
-		<pda>
-			
-		</pda>
-	</MUSHROOM_COLONY>
 	<enum>
 		<name>
 			

@@ -197,8 +197,12 @@ namespace ReikaKalseki.SeaToSea
    	}
     
     internal static void onTechUnlocked(TechType tech) {
-   		if (brokenTablets.ContainsKey(tech) && DIHooks.getWorldAge() >= 0.25F)
-    		SNUtil.triggerTechPopup(brokenTablets[tech]);
+   		if (DIHooks.getWorldAge() < 0.25F)
+   			return;
+   		if (brokenTablets.ContainsKey(tech))
+   			SNUtil.triggerTechPopup(brokenTablets[tech]);
+   		else if (tech == CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType)
+   			SNUtil.triggerTechPopup(tech);
     }
     
     internal class IngotDefinition {
