@@ -38,20 +38,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, C2CRecipes.getAlternateEnzyme().TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
-	    	//addDirectUnlock(SeaToSeaMod.alkali.TechType, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.t2Battery.TechType, C2CItems.t2Battery.TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
-	    	
-	    	//addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, SeaToSeaMod.powerSeal.TechType);
-	    	//addDirectUnlock(TechType.PrecursorIonPowerCell, SeaToSeaMod.powerSeal.TechType);
-	    	
-	    	//addDirectUnlock(PDAManager.getPage("lostrivershortcircuit"), SeaToSeaMod.powerSeal.TechType);
 		}
 	}
 	

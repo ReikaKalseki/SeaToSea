@@ -18,6 +18,9 @@ namespace ReikaKalseki.SeaToSea {
 	public class MushroomTreeBacterialColony : Spawnable {
 		
 		private readonly XMLLocale.LocaleEntry locale;
+		
+		public static readonly Color BLUE_COLOR = new Color(0, 112/255F, 1, 1);
+		public static readonly Color PURPLE_COLOR = new Color(160/255F, 12/255F, 1);
 	        
 	    internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
@@ -31,50 +34,40 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject inner = ObjectUtil.getChildObject(child, "lost_river_plant_04");
 			GameObject shell = ObjectUtil.getChildObject(child, "lost_river_plant_04_membrane");
 			
-			inner.transform.localScale = new Vector3(1.8F, 1.9F, 1.8F);
-			shell.transform.localScale = new Vector3(1.0F, 1.0F, 1.1F);
+			//inner.transform.localScale = new Vector3(1.8F, 1.9F, 1.8F);
+			inner.SetActive(false);
+			shell.transform.localScale = new Vector3(0.9F, 0.9F, 1F);
+			shell.transform.localPosition = new Vector3(0, 0, -0.25F);
 			
-			Renderer r1 = inner.GetComponentInChildren<Renderer>();
 			Renderer r2 = shell.GetComponentInChildren<Renderer>();
-			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r1, "Textures/Plants/TreeColony");
-			RenderUtil.setEmissivity(r1, 1, "GlowStrength");
-			RenderUtil.setEmissivity(r2, 1, "GlowStrength");
-			
-			//RenderUtil.enableAlpha(r1.material);
-			r1.material.SetColor("_GlowColor", Color.white);
-			
-			r1.material.EnableKeyword("UWE_WAVING");
-			r1.material.SetFloat("_Shininess", 0F);
-			r1.material.SetFloat("_SpecInt", 0F);
-			r1.material.SetColor("_Color", Color.white);
-			r1.material.SetVector("_Scale", new Vector4(0.4F, 0.3F, 0.4F, 0.3F));
-			r1.material.SetVector("_Frequency", new Vector4(1.0F, 1.2F, 1.2F, 0.5F));
-			r1.material.SetVector("_Speed", new Vector4(0.05F, 0.05F, 0.0F, 0.0F));
-			r1.material.SetVector("_ObjectUp", new Vector4(0.25F, 0F, 1F, 0F));
-			r1.material.SetFloat("_WaveUpMin", 0F);
-			
+			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r2, "Textures/Plants/TreeColony");
+			RenderUtil.setEmissivity(r2, 2, "GlowStrength");
+			RenderUtil.disableTransparency(r2.material);
+			r2.material.SetColor("_GlowColor", Color.white);			
 			r2.material.EnableKeyword("UWE_WAVING");
-			r2.material.SetFloat("_Shininess", 15F);
-			r2.material.SetFloat("_SpecInt", 2F);
-			r2.material.SetFloat("_Fresnel", 0.75F);
+			r2.material.SetFloat("_Shininess", 0F);
+			r2.material.SetFloat("_SpecInt", 0F);
 			r2.material.SetColor("_Color", Color.white);
-			r2.material.SetVector("_Scale", new Vector4(0.3F, 0.1F, 0.3F, 0.15F));
-			r2.material.SetVector("_Frequency", new Vector4(1.0F, 1.2F, 1.2F, 0.5F));
-			r2.material.SetVector("_Speed", new Vector4(0.15F, 0.1F, 0.0F, 0.0F));
-			r2.material.SetVector("_ObjectUp", new Vector4(0.25F, 0F, 1F, 0F));
+			r2.material.SetVector("_Scale", new Vector4(0.1F, 0.05F, 0.1F, 0.005F));
+			r2.material.SetVector("_Frequency", new Vector4(3.0F, 4.0F, 4.0F, 25.0F));
+			r2.material.SetVector("_Speed", new Vector4(0.02F, 0.02F, 0.0F, 0.0F));
+			r2.material.SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
 			r2.material.SetFloat("_WaveUpMin", 0F);
 			world.EnsureComponent<TreeColonyTag>();
 			world.layer = LayerID.Useable;
 			
-			Color c = new Color(0.25F, 0.67F, 1F, 1F);
 			Light l = ObjectUtil.addLight(world);
 			l.range = 4;
-			l.intensity = 0.85F;
-			l.color = c;
+			l.intensity = 1F;
+			l.color = BLUE_COLOR;
+			l.gameObject.name = "WideLight";
+			l.gameObject.transform.localPosition = Vector3.up*1.5F;
 			l = ObjectUtil.addLight(world);
 			l.range = 1.5F;
-			l.intensity = 2.5F;
-			l.color = c;
+			l.intensity = 3F;
+			l.color = PURPLE_COLOR;
+			l.gameObject.name = "InnerLight";
+			l.gameObject.transform.localPosition = Vector3.up*1.5F;
 			
 			return world;
 	    }
@@ -107,12 +100,24 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float lastResize = -1;
 		
+		private Renderer render;
+		private Light innerLight;
+		
 		void Update() {
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time >= lastResize+1) {
 				lastResize = time;
 				transform.localScale = getRegionalScale();//new Vector3(0.5F, 0.25F, 0.5F);
 			}
+			if (!render)
+				render = GetComponentInChildren<Renderer>();
+			if (!innerLight)
+				innerLight = ObjectUtil.getChildObject(gameObject, "InnerLight").GetComponentInChildren<Light>();
+			float f = 0.5F+0.5F*Mathf.Sin(time*0.193F+transform.position.magnitude%1781);
+			innerLight.color = Color.Lerp(MushroomTreeBacterialColony.BLUE_COLOR, MushroomTreeBacterialColony.PURPLE_COLOR, 0.33F+0.67F*f);
+			innerLight.intensity = 3F+0.5F*(1-f);
+			render.material.SetColor("_GlowColor", new Color(f*1.5F, 1, 1, 1));
+			render.material.SetColor("_Color", new Color(0.75F+1.25F*f, 1, 1, 1));
 		}
 		
 		Vector3 getRegionalScale() {
