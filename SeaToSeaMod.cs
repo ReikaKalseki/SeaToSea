@@ -197,6 +197,10 @@ namespace ReikaKalseki.SeaToSea
 		AvoliteSpawner.instance.register();
 		mushroomBioFragment.postRegister();
 		
+		C2CItems.alkali.addNativeBiome(VanillaBiomes.MOUNTAINS, true).addNativeBiome(VanillaBiomes.TREADER, true).addNativeBiome(VanillaBiomes.KOOSH, true);
+		C2CItems.kelp.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
+		C2CItems.healFlower.addNativeBiome(VanillaBiomes.REDGRASS, true);
+		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
     }

@@ -37,7 +37,7 @@ namespace ReikaKalseki.SeaToSea {
 			//inner.transform.localScale = new Vector3(1.8F, 1.9F, 1.8F);
 			inner.SetActive(false);
 			shell.transform.localScale = new Vector3(0.9F, 0.9F, 1F);
-			shell.transform.localPosition = new Vector3(0, 0, -0.25F);
+			shell.transform.localPosition = new Vector3(0, -0.25F, 0);
 			
 			Renderer r2 = shell.GetComponentInChildren<Renderer>();
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r2, "Textures/Plants/TreeColony");

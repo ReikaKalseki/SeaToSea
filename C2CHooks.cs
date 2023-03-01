@@ -59,6 +59,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.itemTooltipEvent += generateItemTooltips;
 	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
+        
+	    	DIHooks.knifeHarvestEvent += interceptItemHarvest;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
@@ -992,6 +994,12 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool hasLaserCutterUpgrade() {
 	    	return Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.laserCutterBulkhead.goal.key);
+	    }
+	    
+	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
+	    	if (h.drops.Count > 0 && ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
+	        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
+	        }
 	    }
 	}
 }
