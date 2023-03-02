@@ -775,6 +775,22 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.position = auroraStorageModule.position;
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
+	    	if (ObjectUtil.isFarmedPlant(go) && WorldUtil.isPlantInNativeBiome(go)) {// not set at spawn time need component
+	        	FruitPlant fp = go.FindAncestor<FruitPlant>();
+	        	if (fp) {
+	        		float baseValue = -1;
+	        		switch(CraftData.GetTechType(go)) {
+	        			case TechType.BloodVine:
+	        				baseValue = 180F;
+	        			break;
+	        			case TechType.Creepvine:
+	        				baseValue = 240F;
+	        			break;
+	        		}
+	        		if (baseValue > 0)
+	        			fp.fruitSpawnInterval = baseValue/1.5F;
+	        	}
+	    	}
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {

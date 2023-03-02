@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VoidSpikesBiome : Biome { //FIXME: 3. disappearing spikes 4. custom levi
+	public class VoidSpikesBiome : CustomBiome { //FIXME: 3. disappearing spikes 4. custom levi
 		
 		public static readonly Vector3 end500m = new Vector3(360, -550, 320);//new Vector3(925, -550, -2050);//new Vector3(895, -500, -1995);
 		public static readonly Vector3 end900m = new Vector3(800, -950, -120);//new Vector3(400, -950, -2275);//new Vector3(457, -900, -2261);
@@ -122,6 +122,10 @@ namespace ReikaKalseki.SeaToSea {
 			debris.init();
 			
 			//IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
+		}
+		
+		public override bool isCaveBiome() {
+			return false;
 		}
 		
 		private void addAtmoFX(Vector3 pos) {

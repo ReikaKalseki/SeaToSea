@@ -15,7 +15,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class UnderwaterIslandsFloorBiome : Biome {
+	public class UnderwaterIslandsFloorBiome : CustomBiome {
 		
 		public static readonly float minimumDepth = 375;
 		public static readonly float biomeRadius = 240;
@@ -75,6 +75,10 @@ namespace ReikaKalseki.SeaToSea {
 			return fogDensity;
 		}
 		
+		public override bool isCaveBiome() {
+			return false;
+		}
+		
 		public void tickPlayer(Player ep) {
 			
 		}
@@ -94,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (orig == biomeName)
 				return true;
 			//bool match = string.Equals(orig, "underwaterislands", StringComparison.InvariantCultureIgnoreCase) || string.Equals(orig, "UnderwaterIslands_ValleyFloor", StringComparison.InvariantCultureIgnoreCase);
-			return orig.ToLowerInvariant().Contains("underwaterislands") && getDistanceToBiome(pos) < 5;
+			return orig.ToLowerInvariant().Contains("underwaterislands") && MathUtil.isPointInCylinder(biomeCenter.setY(-400), pos, biomeRadius, 150);//getDistanceToBiome(pos) < 5;
 		}
 		
 		public override double getDistanceToBiome(Vector3 vec) {
