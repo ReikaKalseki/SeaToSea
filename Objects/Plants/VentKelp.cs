@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r0) {
 			base.prepareGameObject(go, r0);
-			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
 			float h = 0;/*
 			int n = (int)Math.Min(9, 3+((1+heightNoiseField.getValue(go.transform.position))*8));
@@ -185,14 +185,42 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Color idleColor = new Color(0.1F, 0, 0.5F, 1);
 		internal static readonly Color activeColor = new Color(0.7F, 0.2F, 1, 1);
 		
-		private Renderer[] renderers;
+		private readonly List<KelpSegment> segments = new List<KelpSegment>();
+		private GrownPlant grown;
 		private bool redoRenderers;
 		private float creationTime = 999999;
+		private float lastAreaCheckTime = -1;
+		private float lastContinuityCheckTime = -1;
+		
+		private float intensity = 1;
+		
+		class KelpSegment {
+			
+			internal readonly Renderer renderer;
+			internal readonly LiveMixin live;
+			internal readonly GameObject obj;
+			internal readonly int index;
+			
+			internal KelpSegment(Renderer r) {
+				renderer = r;
+				live = r.gameObject.FindAncestor<LiveMixin>();
+				obj = r.transform.parent.gameObject;
+				string n = obj.name;
+				if (!string.IsNullOrEmpty(n) && n.Contains("leaf_aux")) {
+					index = int.Parse(n.Substring(n.Length-1));
+				}
+				else {
+					index = -1;
+				}
+			}
+			
+		}
 		
 		void Start() {
 			C2CItems.kelp.prepareGameObject(gameObject, null);
 			creationTime = DayNightCycle.main.timePassedAsFloat;
-			if (gameObject.GetComponent<GrownPlant>()) {
+			grown = gameObject.GetComponent<GrownPlant>();
+			if (grown) {
     			gameObject.SetActive(true);
     		}
     		else {
@@ -202,61 +230,68 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
-			bool isNew = DayNightCycle.main.timePassedAsFloat-creationTime <= 0.25F;
-			if (renderers == null || renderers.Length == 0 || isNew || redoRenderers)
-				renderers = gameObject.GetComponentsInChildren<Renderer>();
-			if (gameObject.GetComponent<GrownPlant>()) {
-    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
-    			if (isNew) {
-	    			foreach (Renderer r in renderers) {
-						r.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
-						r.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
-						r.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
-						r.materials[1].SetFloat("_WaveUpMin", 0F);
+			bool isNew = DayNightCycle.main.timePassedAsFloat-creationTime <= 0.1F;
+			if (segments.Count == 0 || isNew || redoRenderers) {
+				segments.Clear();
+				foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>()) {
+					segments.Add(new KelpSegment(r));
+				}
+			}
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastAreaCheckTime >= 0.25) {
+				lastAreaCheckTime = time;
+				intensity = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
+				if (grown) {
+	    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
+	    			if (isNew) {
+		    			foreach (KelpSegment s in segments) {
+							s.renderer.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
+							s.renderer.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
+							s.renderer.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
+							s.renderer.materials[1].SetFloat("_WaveUpMin", 0F);
+		    			}
 	    			}
-    			}
+				}
+				else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 12) {
+					//SNUtil.writeToChat("Destroying vent kelp @ "+transform.position.y);
+					SNUtil.log("Destroying vent kelp @ "+transform.position.y);
+					UnityEngine.Object.DestroyImmediate(gameObject);
+					return;
+				}
 			}
-			else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 12) {
-				//SNUtil.writeToChat("Destroying vent kelp @ "+transform.position.y);
-				SNUtil.log("Destroying vent kelp @ "+transform.position.y);
-				UnityEngine.Object.DestroyImmediate(gameObject);
-				return;
-			}
-			float f = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
 			bool kill = false;
-			List<int> presenceSet = new List<int>();
-			foreach (Renderer r in renderers) {
-				if (!r || !r.gameObject) {
-					kill = true;
-					continue;
+			if (time-lastContinuityCheckTime >= 1) {
+				lastContinuityCheckTime = time;
+				List<int> presenceSet = new List<int>();
+				foreach (KelpSegment s in segments) {
+					if (!s.renderer) {
+						kill = true;
+						continue;
+					}
+					//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
+					foreach (Material m in s.renderer.materials) {
+						m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
+					}
+					if (!s.live || s.live.health <= 0) {
+						kill = true;
+					}
+					if (s.obj.transform.position.y >= -3) {
+						UnityEngine.Object.DestroyImmediate(s.obj);
+						redoRenderers = true;
+						continue;
+					}
+					if (s.index >= 0) {
+						presenceSet.Add(s.index);
+					}
 				}
-				//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
-				foreach (Material m in r.materials) {
-					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, f*1.5F-0.5F));
+				presenceSet.Sort();
+				int last = -1;
+				foreach (int val in presenceSet) {
+					if (val-last > 1) {
+						kill = true;
+					}
+					last = val;
 				}
-				LiveMixin lv = r.gameObject.GetComponent<LiveMixin>();
-				if (lv && lv.health <= 0) {
-					kill = true;
-				}
-				GameObject go = r.transform.parent.gameObject;
-				if (go.transform.position.y >= -3) {
-					UnityEngine.Object.DestroyImmediate(go);
-					redoRenderers = true;
-					continue;
-				}
-				string n = go.name;
-				if (!string.IsNullOrEmpty(n) && n.Contains("leaf_aux")) {
-					int num = int.Parse(n.Substring(n.Length-1));
-					presenceSet.Add(num);
-				}
-			}
-			presenceSet.Sort();
-			int last = -1;
-			foreach (int val in presenceSet) {
-				if (val-last > 1) {
-					kill = true;
-				}
-				last = val;
 			}
 			if (kill && !isNew) {/*
 				Planter p = gameObject.GetComponentInParent<Planter>();

@@ -49,6 +49,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private ParticleSystem[] particles;
 		
+		private Rigidbody body;
+		
 		private readonly float size;
 		private readonly float activityLevel;
 		private readonly Vector3 particleOrigin;
@@ -72,7 +74,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (particles == null) {
 				particles = sparker.GetComponentsInChildren<ParticleSystem>();
 			}
-			if (gameObject.FindAncestor<Player>()) {
+			if (!body)
+				body = GetComponentInChildren<Rigidbody>();
+			if (Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>() || !body.isKinematic) {
 				sparker.SetActive(false);
 			}
 			else if (UnityEngine.Random.Range(0, 20) == 0 && Time.deltaTime > 0.01F) {
@@ -102,18 +106,20 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastTime;
 		
 		private Renderer render;
-		private Light light;
+		private Light light;		
+		private Rigidbody body;
 		
 		void Start() {
     		render = gameObject.GetComponentInChildren<Renderer>();
     		light = gameObject.GetComponentInChildren<Light>();
+			body = GetComponentInChildren<Rigidbody>();
 		}
 		
 		void Update() {
 			float time = DayNightCycle.main.timePassedAsFloat;
 			float dT = Time.deltaTime;
-			double phase = gameObject.GetHashCode();
-			double sp = 1+0.4*Math.Cos((0.02*gameObject.transform.position.magnitude)%(600*Math.PI)); //was 0.75 and 0.25
+			double phase = gameObject.GetInstanceID();
+			double sp = 1+0.4*Math.Cos((0.02*(body.isKinematic ? gameObject.transform.position.magnitude : 0))%(600*Math.PI)); //was 0.75 and 0.25
 			double tick = (sp*time+phase)%(200*Math.PI);
 			float lt = (float)Math.Sin(tick)+0.4F*(float)Math.Sin(tick*4.63-289.2);
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*lt;
