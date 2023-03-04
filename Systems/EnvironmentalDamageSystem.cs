@@ -140,10 +140,7 @@ namespace ReikaKalseki.SeaToSea {
 			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
 			if (aurora && !diveSuit && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key) && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key)) {
-				if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
-	    			PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key);
-	    		else
-	    			PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key);
+				triggerAuroraPrawnBayWarning();
 			}
 			if (dmg.player && !isPlayerInOcean() && !aurora)
 	   			return;
@@ -172,8 +169,10 @@ namespace ReikaKalseki.SeaToSea {
 				float num = temperature / dmg.minDamageTemperature;
 				num *= dmg.baseDamagePerSecond;
 				float amt = num*f*f0/ENVIRO_RATE_SCALAR;
-				if (aurora && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.gameObject.transform.position) <= 3)
+				if (aurora && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.transform.position) <= 3)
 					amt *= 2;
+				if (aurora && biome == "AuroraPrawnBay" && dmg.player.IsUnderwaterForSwimming())
+					amt *= 0.4F;
 				if (aurora && diveSuit)
 					amt = 0;
 				//SNUtil.writeToChat(biome+" > "+temperature+" / "+dmg.minDamageTemperature+" > "+amt);
@@ -253,6 +252,13 @@ namespace ReikaKalseki.SeaToSea {
 		    	}
 			}
 	 	}
+    	
+    	internal void triggerAuroraPrawnBayWarning() {
+			if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
+	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key);
+	    	else
+	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key);
+    	}
     	
     	private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
     		if (v.docked || v.precursorOutOfWater) {

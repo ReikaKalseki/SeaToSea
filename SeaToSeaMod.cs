@@ -364,10 +364,17 @@ namespace ReikaKalseki.SeaToSea
     	switch(name) {
     		case "aurora":
     			CrashedShipExploder.main.SwapModels(true);
+    			InventoryUtil.addItem(TechType.RadiationSuit);
+    			InventoryUtil.addItem(TechType.RadiationHelmet);
+    			InventoryUtil.addItem(TechType.RadiationGloves);
     			pos = new Vector3(1010, 38, 119);
     			break;
     		case "prawnbay":
-    			pos = new Vector3(992, 3, -4);
+    			pos = new Vector3(986, 4, -1.6F);
+    			CrashedShipExploder.main.SwapModels(true);
+    			InventoryUtil.addItem(TechType.RadiationSuit);
+    			InventoryUtil.addItem(TechType.RadiationHelmet);
+    			InventoryUtil.addItem(TechType.RadiationGloves);
     			break;
     		case "cove":
     			pos = new Vector3(-855, -881, 403);
@@ -422,6 +429,9 @@ namespace ReikaKalseki.SeaToSea
     			break;
     		case "drf":
     			pos = new Vector3(-248, -800, 281);
+    			break;
+    		case "stepcave":
+    			pos = new Vector3(64, -103, -611);
     			break;
     		case "kooshcaves":
     			pos = new Vector3(1223, -258, 527.5F);

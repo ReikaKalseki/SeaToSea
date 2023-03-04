@@ -103,7 +103,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
-	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("NeedLaserCutterBulkheadUpgrade").getField<string>("error"));
+	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
+			LanguageHandler.SetLanguageLine("PrawnBayDoorHeatWarn", SeaToSeaMod.miscLocale.getEntry("PrawnBayDoorHeatWarn").desc);
 			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
@@ -737,6 +738,25 @@ namespace ReikaKalseki.SeaToSea {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
 	    	}
+	    	else if (pi && pi.ClassId == "b86d345e-0517-4f6e-bea4-2c5b40f623b4" && pi.transform.parent && pi.transform.parent.name.Contains("ExoRoom_Weldable")) {
+	    		GameObject inner = ObjectUtil.getChildObject(go, "Starship_doors_manual_01/Starship_doors_automatic");
+	    		StarshipDoorLocked d = go.transform.parent.GetComponentInChildren<StarshipDoorLocked>();
+	    		Renderer r = inner.GetComponentInChildren<Renderer>();
+	    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/", new Dictionary<int, string>(){{0, "FireDoor"}, {1, "FireDoor"}});
+	    		d.lockedTexture = (Texture2D)r.materials[0].GetTexture(Shader.PropertyToID("_Illum")); //replace all since replaced the base texture too
+	    		d.unlockedTexture = TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/FireDoor2_Illum");
+	    		//WeldableWallPanelGeneric panel = go.transform.parent.GetComponentInChildren<WeldableWallPanelGeneric>();
+	    		PrawnBayDoorTriggers pt = /*panel.sendMessageFrom*/go.transform.parent.gameObject.EnsureComponent<PrawnBayDoorTriggers>();
+	    		pt.door = d.GetComponent<StarshipDoor>();
+	    		GenericHandTarget ht = inner.EnsureComponent<GenericHandTarget>();
+	    		pt.hoverHint = ht;
+				ht.onHandHover = new HandTargetEvent();
+				ht.onHandHover.AddListener(hte => {
+				    HandReticle.main.SetIcon(HandReticle.IconType.Info, 1f);
+				   	HandReticle.main.SetInteractText("PrawnBayDoorHeatWarn"); //is a locale key
+				});
+	    		return;
+	    	}
 	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
 	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
@@ -796,6 +816,28 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    class PrawnBayDoorTriggers : MonoBehaviour {
+	    	
+	    	internal GenericHandTarget hoverHint;
+	    	
+	    	internal StarshipDoor door;
+	    	
+	    	private bool wasOpen;
+	    	
+			public void UnlockDoor() {
+	    		if (hoverHint)
+	    			UnityEngine.Object.DestroyImmediate(hoverHint);
+			}
+	    	
+			private void Update() {
+	    		if (door && door.doorOpen && !wasOpen) {
+	    			wasOpen = true;
+	    			EnvironmentalDamageSystem.instance.triggerAuroraPrawnBayWarning();
+	    		}
+			}
+	    	
+	    }
 	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
 	    	if (added && tt == C2CItems.heatSinkModule.TechType) {

@@ -172,7 +172,7 @@
 		&lt;color=#FFA622FF&gt;Laser Cutter&lt;/color&gt;\n&lt;color=#74C8F8FF&gt;Temperature Upgrade&lt;/color&gt;
 	</desc>
 	<pda>
-		Can now also cut reinforced plasteel
+		Can now also cut reinforced titanium plating
 	</pda>
 	<error>
 		Reinforced bulkheads require increased cutting temperatures
@@ -189,12 +189,23 @@
 		
 	</pda>
   </DockToChangeVehicleUpgrades>
+  <PrawnBayDoorHeatWarn>
+	<name>
+		
+	</name>
+	<desc>
+		WARNING: Door is extremely hot
+	</desc>
+	<pda>
+		
+	</pda>
+  </PrawnBayDoorHeatWarn>
   <MercuryDesc>
 	<name>
 		
 	</name>
 	<desc>
-		Mercury is a valuable constituent of advanced circuit fabrication.
+		Mercury is a valuable constituent of advanced circuit fabrication, and its oxide is useful as a red dye.
 	</desc>
 	<pda>
 		

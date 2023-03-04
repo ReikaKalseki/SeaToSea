@@ -56,11 +56,11 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
 	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc", 2),
 	    	new DistantFX("6e4b4259-becc-4d2c-b56a-03ccedbc4672", 2),
-	    	new DistantFX("3274b205-b153-41b6-9736-f3972e38f0ad", 2),
+	    	new DistantFX("3274b205-b153-41b6-9736-f3972e38f0ad", 2),/*
 	    	new DistantFX("04781674-e27a-43ce-891f-a82781314c15", 2.5F, 5, 0.5F, go => {
 	    		go.transform.rotation = UnityEngine.Random.rotationUniform;
 	    		go.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.75F, 1.5F);
-	    	}), //lavafall base
+	    	}), //lavafall base*/
 	    };
 	    
 	    class DistantFX {
