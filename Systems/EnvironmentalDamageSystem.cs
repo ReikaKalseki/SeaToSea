@@ -71,25 +71,27 @@ namespace ReikaKalseki.SeaToSea {
     	
     	internal float TEMPERATURE_OVERRIDE = -1;
     	
+    	//private GameObject prawnBayHeatRippleCylinder;
+    	
     	//private DepthRippleFX depthWarningFX1;
     	//private DepthDarkeningFX depthWarningFX2;
 		
 		private EnvironmentalDamageSystem() {
-    		temperatures["ILZCorridor"] = new TemperatureEnvironment(90, 8, 0.5F, 40, 9);
-    		temperatures["ILZCorridorDeep"] = new TemperatureEnvironment(120, 9, 0.5F, 20, 12);
-    		temperatures["ILZChamber"] = new TemperatureEnvironment(150, 10, 0.5F, 10, 15);
-    		temperatures["LavaPit"] = new TemperatureEnvironment(200, 12, 0.5F, 8, 20);
-    		temperatures["LavaFalls"] = new TemperatureEnvironment(300, 15, 0.5F, 5, 25);
-    		temperatures["LavaLakes"] = new TemperatureEnvironment(400, 18, 0.5F, 2, 40);
-    		temperatures["ilzLava"] = new TemperatureEnvironment(1200, 24, 0.5F, 0, 100); //in lava
-    		temperatures["LavaCastle"] = new TemperatureEnvironment(270, 18, 0.5F, 4, 20);
-    		temperatures["LavaCastleInner"] = new TemperatureEnvironment(360, 18, 0.5F, 4, 20);
+    		registerBiomeEnvironment("ILZCorridor", 90, 8, 0.5F, 40, 9);
+    		registerBiomeEnvironment("ILZCorridorDeep", 120, 9, 0.5F, 20, 12);
+    		registerBiomeEnvironment("ILZChamber", 150, 10, 0.5F, 10, 15);
+    		registerBiomeEnvironment("LavaPit", 200, 12, 0.5F, 8, 20);
+    		registerBiomeEnvironment("LavaFalls", 300, 15, 0.5F, 5, 25);
+    		registerBiomeEnvironment("LavaLakes", 400, 18, 0.5F, 2, 40);
+    		registerBiomeEnvironment("ilzLava", 1200, 24, 0.5F, 0, 100); //in lava
+    		registerBiomeEnvironment("LavaCastle", 270, 18, 0.5F, 4, 20);
+    		registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
+    		registerBiomeEnvironment("LavaPitEntrance", 320, 15, 0.5F, 5, 25);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
-    		temperatures["LavaPitEntrance"] = new TemperatureEnvironment(320, 15, 0.5F, 5, 25);
     		
-    		temperatures["AuroraPrawnBay"] = new TemperatureEnvironment(150, 10F, 2.5F, 9999, 0);
-    		temperatures["AuroraPrawnBayDoor"] = new TemperatureEnvironment(200, 40F, 2.5F, 9999, 0);
-    		temperatures["AuroraFireCeilingTunnel"] = new TemperatureEnvironment(175, 5F, 1.5F, 9999, 0);
+    		registerBiomeEnvironment("AuroraPrawnBay", 150, 10F, 2.5F, 9999, 0);
+    		registerBiomeEnvironment("AuroraPrawnBayDoor", 200, 40F, 2.5F, 9999, 0);
+    		registerBiomeEnvironment("AuroraFireCeilingTunnel", 175, 5F, 1.5F, 9999, 0);
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 		   	lrLeakage["LostRiver_BonesField"] = 1;
@@ -114,6 +116,10 @@ namespace ReikaKalseki.SeaToSea {
 			pdaBeep = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "pda_beep", "Sounds/pdabeep.ogg");
 		}
     	
+    	private void registerBiomeEnvironment(string b, float t, float dmg, float w, int cf, float dmgC) {
+    		temperatures[b] = new TemperatureEnvironment(b, t, dmg, w, cf, dmgC);
+    	}
+    	
     	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
     		double d1 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineA1, auroraPrawnBayLineA2);
     		double d2 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineB1, auroraPrawnBayLineB2);
@@ -129,6 +135,20 @@ namespace ReikaKalseki.SeaToSea {
     		bool inStructure = inPrecursor || ep.currentWaterPark;
     		return inWater && !inStructure;
     	}
+    	/*
+    	private GameObject getRippleCylinder() {
+    		if (!prawnBayHeatRippleCylinder) {/*
+	    		GameObject go = ObjectUtil.lookupPrefab("3877d31d-37a5-4c94-8eef-881a500c58bc");
+	    		go = ObjectUtil.getChildObject(go, "Extinguishable_Fire_medium");
+	    		prawnBayHeatRippleCylinder = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(go, "x_Fire_Cylindrical"));
+	    		prawnBayHeatRippleCylinder.transform.localScale = new Vector3(0.1F, 0.5F, 0.1F);
+	    		Material m = prawnBayHeatRippleCylinder.GetComponentInChildren<Renderer>().materials[0];
+	    		m.color = new Color(0.07F, 0, 0, 0);
+	    		m.SetColor("_ColorStrength", Color.clear);
+	    		*//*
+    		}
+    		return prawnBayHeatRippleCylinder;
+       	}*/
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
     		if (DIHooks.getWorldAge() < 0.25F)
@@ -137,7 +157,8 @@ namespace ReikaKalseki.SeaToSea {
     		//depthWarningFX2 = Camera.main.gameObject.EnsureComponent<DepthDarkeningFX>();
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
 			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
-			bool aurora = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor" || biome == "AuroraFireCeilingTunnel";
+			bool prawn = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor";
+			bool aurora = prawn || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
 			if (aurora && !diveSuit && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key) && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key)) {
 				triggerAuroraPrawnBayWarning();
@@ -152,8 +173,22 @@ namespace ReikaKalseki.SeaToSea {
 			float time = DayNightCycle.main.timePassedAsFloat;
 			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 	    	if (dmg.player) {
-	    		f0 = !diveSuit ? 2.5F : 0.4F;
 	    		TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
+	    		/*GameObject ripple = getRippleCylinder();
+	    		if (ripple) {
+					ripple.SetActive(prawn || (te != null && te.isLavaZone && isPlayerInOcean()));
+					ripple.transform.position = Player.main.transform.position+Vector3.down*0.6F;
+	    		}*/
+	    		if ((prawn && !dmg.player.HasReinforcedSuit()) || (te != null && te.isLavaZone && isPlayerInOcean())) {
+	    			WBOIT wb = MainCamera.camera.GetComponent<WBOIT>();
+	    			wb.nextTemperatureUpdate = Time.time+1F;
+	    			wb.temperatureScalar = prawn ? 5 : 1;
+	    			wb.temperatureRefractEnabled = true;
+	    			wb.compositeMaterial.EnableKeyword("FX_TEMPERATURE_REFRACT");
+					//wb.compositeMaterial.SetTexture(wb.temperatureTexPropertyID, wb.temperatureRefractTex);
+					//wb.compositeMaterial.SetFloat(wb.temperaturePropertyID, wb.temperatureScalar);
+	    		}
+	    		f0 = !diveSuit ? 2.5F : 0.4F;
 	    		if (te != null) {
 		    		f = te.damageScalar;
 		    		temperature = te.temperature;
@@ -707,8 +742,12 @@ namespace ReikaKalseki.SeaToSea {
 		public readonly float waterScalar;
 		public readonly float damageScalarCyclops;
 		public readonly int cyclopsFireChance;
+		public readonly string biome;
+		public readonly bool isLavaZone;
 		
-		internal TemperatureEnvironment(float t, float dmg, float w, int cf, float dmgC) {
+		internal TemperatureEnvironment(string b, float t, float dmg, float w, int cf, float dmgC) {
+			biome = b;
+			isLavaZone = b.StartsWith("lava", StringComparison.InvariantCultureIgnoreCase) || b.StartsWith("ilz", StringComparison.InvariantCultureIgnoreCase) || b.StartsWith("alz", StringComparison.InvariantCultureIgnoreCase);
 			temperature = t;
 			damageScalar = dmg;
 			waterScalar = w;

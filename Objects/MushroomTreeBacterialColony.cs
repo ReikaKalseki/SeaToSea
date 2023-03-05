@@ -69,6 +69,8 @@ namespace ReikaKalseki.SeaToSea {
 			l.gameObject.name = "InnerLight";
 			l.gameObject.transform.localPosition = Vector3.up*1.5F;
 			
+			world.EnsureComponent<ImmuneToPropulsioncannon>().immuneToRepulsionCannon = true;
+			
 			return world;
 	    }
 		

@@ -754,7 +754,36 @@ namespace ReikaKalseki.SeaToSea {
 				ht.onHandHover.AddListener(hte => {
 				    HandReticle.main.SetIcon(HandReticle.IconType.Info, 1f);
 				   	HandReticle.main.SetInteractText("PrawnBayDoorHeatWarn"); //is a locale key
+				   	HandReticle.main.SetTargetDistance(8);
 				});
+				Vector3 p1 = new Vector3(991.1F, 1F, -3.2F);
+				Vector3 p2 = new Vector3(991.7F, 1F, -2.8F);/*
+				GameObject rippleHolder = new GameObject("ripples");
+				rippleHolder.transform.parent = go.transform.parent;
+				rippleHolder.transform.localPosition = Vector3.zero;
+				GameObject vent = ObjectUtil.lookupPrefab("5bbd405c-ca10-4da8-832b-87558c42f4dc");
+				GameObject bubble = ObjectUtil.getChildObject(vent, "xThermalVent_Dark_Big/xBubbles");
+				int n = 5;
+				for (int i = 0; i <= n; i++) {
+					GameObject p = UnityEngine.Object.Instantiate(bubble);
+					p.transform.parent = rippleHolder.transform;
+					p.transform.position = Vector3.Lerp(p1, p2, i/(float)n);
+					p.GetComponentInChildren<Renderer>().materials[0].color = new Color(-8, -8, -8, 0.3F);
+				}*/
+				foreach (GameObject go0 in UnityEngine.Object.FindObjectsOfType<GameObject>()) {
+					if (go0.activeInHierarchy && go0.name.ToLowerInvariant().Contains("fx")) {
+						ReikaKalseki.DIAlterra.SNUtil.log(go0.GetFullHierarchyPath(), ReikaKalseki.DIAlterra.SNUtil.diDLL);
+					}
+				}
+				GameObject fire = ObjectUtil.createWorldObject("3877d31d-37a5-4c94-8eef-881a500c58bc");
+				fire.transform.parent = go.transform;
+				fire.transform.position = Vector3.Lerp(p1, p2, 0.5F)+new Vector3(1.3F, -0.05F, -1.7F);
+				fire.transform.localScale = new Vector3(1.8F, 1, 1.8F);
+				//ObjectUtil.removeComponent<VFXExtinguishableFire>(fire);
+				LiveMixin lv = fire.GetComponent<LiveMixin>();
+				lv.invincible = true;
+				lv.data.maxHealth = 40000;
+				lv.health = lv.data.maxHealth;
 	    		return;
 	    	}
 	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
@@ -834,6 +863,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (door && door.doorOpen && !wasOpen) {
 	    			wasOpen = true;
 	    			EnvironmentalDamageSystem.instance.triggerAuroraPrawnBayWarning();
+	    			Player.main.liveMixin.TakeDamage(5, Player.main.transform.position, DamageType.Heat, gameObject);
 	    		}
 			}
 	    	
