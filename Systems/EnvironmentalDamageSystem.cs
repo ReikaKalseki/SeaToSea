@@ -182,7 +182,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		if ((prawn && !dmg.player.HasReinforcedSuit()) || (te != null && te.isLavaZone && isPlayerInOcean())) {
 	    			WBOIT wb = MainCamera.camera.GetComponent<WBOIT>();
 	    			wb.nextTemperatureUpdate = Time.time+1F;
-	    			wb.temperatureScalar = prawn ? 5 : 1;
+	    			wb.temperatureScalar = prawn ? 5 : 2F+Mathf.Clamp01(te.temperature-250/150F); //lava >2x only when the player is free swimming
 	    			wb.temperatureRefractEnabled = true;
 	    			wb.compositeMaterial.EnableKeyword("FX_TEMPERATURE_REFRACT");
 					//wb.compositeMaterial.SetTexture(wb.temperatureTexPropertyID, wb.temperatureRefractTex);

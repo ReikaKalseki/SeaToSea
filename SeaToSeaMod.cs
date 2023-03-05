@@ -203,6 +203,18 @@ namespace ReikaKalseki.SeaToSea
 		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+        
+        Vector3 ang = new Vector3(0, 317, 0);
+        Vector3 pos1 = new Vector3(-1226, -350, -1258);
+        Vector3 pos2 = new Vector3(-1327, -350, -1105);
+        Vector3 tgt = pos2+(pos2-pos1).setLength(40);
+        for (int i = 0; i <= 4; i++) {
+        	Vector3 pos = Vector3.Lerp(pos1, pos2, i/4F);
+        	GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.SEA_TREADER.prefab, pos, Quaternion.Euler(ang)), go => {
+        		go.GetComponent<TreaderMoveOnSurface>().timeNextTarget = Time.time+120;
+        		go.GetComponent<SeaTreader>().MoveTo(tgt);
+        	});
+        }
     }
     
     [QModPostPatch]
@@ -328,6 +340,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doDebugFlash);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidLeviReefback", VoidSpikeLeviathan.makeReefbackTest);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("relockRecipes", relockRecipes);
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
@@ -344,6 +357,12 @@ namespace ReikaKalseki.SeaToSea
 		  LargeWorld.main.streamer.cellManager.RegisterEntity(obj);
 		  obj.SetActive(true);
     }*/
+    
+    private static void relockRecipes() {
+    	foreach (TechType tt in C2CRecipes.getRemovedVanillaUnlocks()) {
+    		KnownTech.knownTech.Remove(tt);
+    	}
+    }
     
     private static void unlockSignal(string name) {
     	switch(name) {

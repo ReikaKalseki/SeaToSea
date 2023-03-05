@@ -20,6 +20,7 @@ namespace ReikaKalseki.SeaToSea {
 			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/Seamothheatsink");
 			craftingSubCategory = "Tools";
 			craftingTime = 4;
+			unlockRequirement = TechType.Unobtanium;
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

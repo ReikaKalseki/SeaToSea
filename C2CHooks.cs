@@ -770,11 +770,6 @@ namespace ReikaKalseki.SeaToSea {
 					p.transform.position = Vector3.Lerp(p1, p2, i/(float)n);
 					p.GetComponentInChildren<Renderer>().materials[0].color = new Color(-8, -8, -8, 0.3F);
 				}*/
-				foreach (GameObject go0 in UnityEngine.Object.FindObjectsOfType<GameObject>()) {
-					if (go0.activeInHierarchy && go0.name.ToLowerInvariant().Contains("fx")) {
-						ReikaKalseki.DIAlterra.SNUtil.log(go0.GetFullHierarchyPath(), ReikaKalseki.DIAlterra.SNUtil.diDLL);
-					}
-				}
 				GameObject fire = ObjectUtil.createWorldObject("3877d31d-37a5-4c94-8eef-881a500c58bc");
 				fire.transform.parent = go.transform;
 				fire.transform.position = Vector3.Lerp(p1, p2, 0.5F)+new Vector3(1.3F, -0.05F, -1.7F);
@@ -913,7 +908,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onLavaBombHit(LavaBombTag bomb, GameObject hit) {
-	    	C2CMoth cm = hit.GetComponent<C2CMoth>();
+	    	C2CMoth cm = hit ? hit.GetComponent<C2CMoth>() : null;
 	    	if (cm) {
 	    		cm.onHitByLavaBomb(bomb);
 	    	}

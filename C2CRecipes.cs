@@ -25,6 +25,8 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;    
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
     
+    private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
+    
     internal static void addItemsAndRecipes() {
        	TechData rec = new TechData();
       	rec.Ingredients.Add(new Ingredient(TechType.TitaniumIngot, 1));
@@ -69,10 +71,14 @@ namespace ReikaKalseki.SeaToSea
     	quartzIngotToGlass.sprite = SpriteManager.Get(TechType.Glass);
     	quartzIngotToGlass.ownerMod = SeaToSeaMod.modDLL;
     	quartzIngotToGlass.Patch();
+        
+        BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
+        acid.craftingTime = 0.5F;
+        acid.addIngredient(TechType.AcidMushroom, 4);
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
-        enzyT.addIngredient(TechType.SeaTreaderPoop, 1);
+        enzyT.addIngredient(TechType.SeaTreaderPoop, 1).addIngredient(acid, 1);
        /*
         int kelpamt = 2;
         BasicCraftingItem enzyK = CraftingItems.getItem(CraftingItems.Items.KelpEnzymes);
@@ -111,10 +117,6 @@ namespace ReikaKalseki.SeaToSea
         armor.numberCrafted = 2;
         armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 6);
         
-        BasicCraftingItem acid = CraftingItems.getItem(CraftingItems.Items.WeakAcid);
-        acid.craftingTime = 0.5F;
-        acid.addIngredient(TechType.AcidMushroom, 4);
-        
         BasicCraftingItem motor = CraftingItems.getItem(CraftingItems.Items.Motor);
         motor.craftingTime = 1;
         motor.addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Titanium, 2).addIngredient(TechType.Lubricant, 1).addIngredient(TechType.Gold, 1);
@@ -126,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem chlorine = CraftingItems.getItem(CraftingItems.Items.Chlorine);
         chlorine.craftingTime = 3;
         chlorine.numberCrafted = 2;
-        chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
+        chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3).addIngredient(acid, 1);
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
         tankWall.craftingTime = 2.5F;
@@ -390,11 +392,11 @@ namespace ReikaKalseki.SeaToSea
         Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = 6; //from 3
         Base.CellHullStrength[(int)Base.CellType.Foundation] = 5; //from 2
         
-        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule2);
-        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.VehicleHullModule3);
-        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.BaseReinforcement);
-        KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.HeatBlade); //force you to learn it from the mountain cave base
-        //KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(TechType.SeamothElectricalDefense);
+        removeVanillaUnlock(TechType.VehicleHullModule2);
+        removeVanillaUnlock(TechType.VehicleHullModule3);
+        removeVanillaUnlock(TechType.BaseReinforcement);
+        removeVanillaUnlock(TechType.HeatBlade); //force you to learn it from the mountain cave base
+        //removeVanillaUnlock(TechType.SeamothElectricalDefense);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
@@ -413,6 +415,15 @@ namespace ReikaKalseki.SeaToSea
         */
        
        	//RecipeUtil.logChangedRecipes();
+    }
+    
+    private static void removeVanillaUnlock(TechType tt) {
+    	KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(tt);
+    	removedVanillaUnlocks.Add(tt);
+    }
+    
+    public static IEnumerable<TechType> getRemovedVanillaUnlocks() {
+    	return new System.Collections.ObjectModel.ReadOnlyCollection<TechType>(removedVanillaUnlocks);
     }
     
     private static void createCompressedIngot(DIPrefab<VanillaResources> item, int amt = 10, string name = "Ingot") {

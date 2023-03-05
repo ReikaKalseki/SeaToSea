@@ -78,6 +78,8 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastAreaCheck = -1;
 		private float lastDespawnCheck = -1;
 		
+		private float lastTextureSwapTime;
+		
 		private float targetCooldown = 0;
 		
 		private GameObject currentForcedTarget;
@@ -131,9 +133,6 @@ namespace ReikaKalseki.SeaToSea {
 			
 			float dT = Time.deltaTime;
 			
-			if (render)
-				RenderUtil.swapTextures(SeaToSeaMod.modDLL, render, "Textures/Creature/DeepStalker");
-			
 			if (render && creatureComponent) {
 				float target = creatureComponent.Aggression.Value;
 				if (acuComponent) {
@@ -152,6 +151,11 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
+			
+			if (render && time > lastTextureSwapTime+1) {
+				lastTextureSwapTime = time;
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, render, "Textures/Creature/DeepStalker", null, true);
+			}
 			
 			if (time < targetCooldown) {
 				playerHuntComponent.lastTarget.SetTarget(null);
@@ -326,9 +330,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void OnDestroy() {
-			if (treaderTarget)
-				treaderTarget.gameObject.GetComponent<C2CTreader>().removeStalker(this);
-			collectorComponent.DropShinyTarget();
+			if (treaderTarget) {
+				C2CTreader c2c = treaderTarget.gameObject.GetComponent<C2CTreader>();
+				if (c2c)
+					c2c.removeStalker(this);
+			}
+			if (collectorComponent)
+				collectorComponent.DropShinyTarget();
 		}
 
 		void OnDisable() {

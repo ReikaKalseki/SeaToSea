@@ -55,25 +55,25 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 240, 3, 5);
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
-			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4);
+			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
 			addRecipe(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 2, 5, 8);
 		}
 		
-		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1) {
+		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
 			BioRecipe r = new BioRecipe(enzy, secs, energy, inp, o);
 			recipes[r.inputItem] = r;
 			r.inputCount = inamt;
 			r.outputCount = outamt;
-			createRecipeDelegate(r);
+			createRecipeDelegate(r, preventUnlock);
 		}
 		
-		private static TechType createRecipeDelegate(BioRecipe r) {			
+		private static TechType createRecipeDelegate(BioRecipe r, bool preventUnlock = false) {			
 			BasicCraftingItem to = CraftingItems.getItemByTech(r.outputItem);
 			string rec = " (x"+r.outputCount+")";
 			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;
-			item.unlock = r.inputItem;
+			item.unlock = preventUnlock ? TechType.Unobtanium : r.inputItem;
 			item.ownerMod = SeaToSeaMod.modDLL;
 			if (item.sprite == null && to != null)
 				item.sprite = to.getIcon();
@@ -96,6 +96,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static BioRecipe getDelegateRecipe(TechType tt) {
 			return recipes[delegates[tt]];
+		}
+		
+		public static TechType getRecipeReferenceItem(TechType input) {
+			return recipes[input].outputItem;
 		}
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {

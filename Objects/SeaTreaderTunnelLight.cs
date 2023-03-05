@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea {
 			l.intensity = BASE_BRIGHTNESS;
 			go.GetComponentInChildren<Rigidbody>().isKinematic = true;
 			go.EnsureComponent<SeaTreaderTunnelLightTag>();
-			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 		}
 			
 	}
