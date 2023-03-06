@@ -17,16 +17,16 @@ namespace ReikaKalseki.SeaToSea
 {
 		internal class C2CMoth : MonoBehaviour {
 		
-			private static readonly SoundManager.SoundData donePurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "doneheatsink", "Sounds/doneheatsink.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
+			private static readonly SoundManager.SoundData startPurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "startheatsink", "Sounds/startheatsink2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
-			private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+			//private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		
 			internal static bool useSeamothVehicleTemperature = true;
 			
 			public static bool temperatureDebugActive = false;
 		
 			private static readonly float TICK_RATE = 0.1F;
-			private static readonly float HOLD_LOW_TIME = 30F;
+			private static readonly float HOLD_LOW_TIME = 30.8F;
 			
 			public static float getOverrideTemperature(float temp) {
 				if (!useSeamothVehicleTemperature)
@@ -59,11 +59,12 @@ namespace ReikaKalseki.SeaToSea
 			
 			private float vehicleTemperature = 0;
 			
-			private float purgePower = -1;
 			private float holdTempLowTime = 0;
 			
+			private float temperatureAtPurge = -1;
+			
 			private float lastMeltSound = -1;
-			private float lastPreEjectSound = -1;
+			//private float lastPreEjectSound = -1;
 			
 			private float lastTickTime = -1;
         	
@@ -82,22 +83,23 @@ namespace ReikaKalseki.SeaToSea
 				}
 			}
 			
-			internal void purgeHeat(float charge) {
-				purgePower = charge;
-				
+			internal void purgeHeat() {
+				temperatureAtPurge = vehicleTemperature;
+				SNUtil.log("Starting heat purge ("+temperatureAtPurge+") @ "+DayNightCycle.main.timePassedAsFloat, SeaToSeaMod.modDLL);
 				//Invoke("fireHeatsink", 1.5F);
-				SoundManager.playSoundAt(donePurgingSound, transform.position, false, 40, 0.67F);
+				SoundManager.playSoundAt(startPurgingSound, transform.position, false, -1, 0.67F);
 			}
 			
-			internal void fireHeatsink() {
+			internal void fireHeatsink(float time) {
+				SNUtil.log("Heat purge complete @ "+time+" ("+holdTempLowTime+"/"+HOLD_LOW_TIME+"), firing heatsink", SeaToSeaMod.modDLL);
 				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
 				go.transform.position = seamoth.transform.position+seamoth.transform.forward*4;
 				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*10, ForceMode.VelocityChange);
-				go.GetComponent<HeatSinkTag>().onFired(purgePower);
+				go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge/250F)*0.25F+0.75F));
 			}
 			
 			internal bool isPurgingHeat() {
-				return purgePower > 0;
+				return temperatureAtPurge >= 0;
 			}
 			
 			public float getTemperature() {
@@ -119,25 +121,20 @@ namespace ReikaKalseki.SeaToSea
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
 				if (isPurgingHeat()) {
-					vehicleTemperature -= tickTime*150*(0.2F+0.8F*purgePower);
+					vehicleTemperature -= tickTime*150;
 					if (vehicleTemperature <= 5) {
 						vehicleTemperature = 5;
 						holdTempLowTime += tickTime;
-						if (time-lastPreEjectSound >= 0.75F) {
-							float f = holdTempLowTime/(HOLD_LOW_TIME*purgePower);
-							SoundManager.playSoundAt(ejectionPrepareSound, Player.main.transform.position, false, -1, f*f);
-							lastPreEjectSound = time;
-						}
-						if (holdTempLowTime >= HOLD_LOW_TIME*purgePower) {
-							fireHeatsink();
-							purgePower = -1;
+						if (holdTempLowTime >= HOLD_LOW_TIME) {
+							fireHeatsink(time);
+							temperatureAtPurge = -1;
 						}
 					}
 					else {
 						holdTempLowTime = 0;
 					}
 					if (temperatureDebugActive)
-						SNUtil.writeToChat("Purging: "+purgePower.ToString("0.000")+" > "+vehicleTemperature.ToString("0000.00")+" > "+holdTempLowTime.ToString("00.00"));
+						SNUtil.writeToChat("Purging: "+vehicleTemperature.ToString("0000.00")+" > "+holdTempLowTime.ToString("00.00"));
 				}
 				else {
 					holdTempLowTime = 0;

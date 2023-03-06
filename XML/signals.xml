@@ -13,7 +13,7 @@
 		This is lifepod 15. I came down WAY far from the crash site. I seem to be OK for now - everything's working OK, and I've not been attacked like some of the others. But if rescue comes, they're not gonna find me all the way out here, so can someone come bring me to the ship?
 	</radio>
 	<sound>
-		Sounds/radio_voidsignal.ogg
+		Sounds/vo/radio_voidsignal.ogg
 	</sound>
   </voidpod>
   <voidspike>
@@ -44,7 +44,7 @@
 		This is lifepod 9! My pods' floaters blew the moment I hit the water, so I've sunk to the bottom of this god-forsaken ocean. You guys are the ones who wanted to visit this planet and now I'm the one paying the price! Typical. How about you come help before I run out of power and therefore air, because there's not much light down here? That'll be the start of-[static]
 	</radio>
 	<sound>
-		Sounds/radio_treadersignal.ogg
+		Sounds/vo/radio_treadersignal.ogg
 	</sound>
   </treaderpod>
 </Root>

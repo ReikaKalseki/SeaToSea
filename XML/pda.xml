@@ -41,7 +41,7 @@
 		[second person] What guns? Didn't you hear about what happened on obrax- [cut off]
 	</radio>
 	<radioSound>
-		Sounds/radio_crashmesa.ogg
+		Sounds/vo/radio_crashmesa.ogg
 	</radioSound>
 	<header>
 		CrashMesaImage
@@ -83,7 +83,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/voidpod-pda.ogg
+		Sounds/vo/voidpod-pda.ogg
 	</audio>
   </voidpod>
   <voidspike>
@@ -105,7 +105,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/voidspike-pda.ogg
+		Sounds/vo/voidspike-pda.ogg
 	</audio>
   </voidspike>
   <dunearchhint>
@@ -140,7 +140,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/dunearch.ogg
+		Sounds/vo/dunearch.ogg
 	</audio>
   </dunearch>
   <bkelpbase>
@@ -154,7 +154,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/bkelp-pda-entry-bcg.ogg
+		Sounds/vo/bkelp-pda-entry-bcg.ogg
 	</audio>
   </bkelpbase>
   <bkelpbase2>
@@ -184,7 +184,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/bkelpbase2.ogg
+		Sounds/vo/bkelpbase2.ogg
 	</audio>
   </bkelpbase2>
   <lrpowerseal>
@@ -198,7 +198,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/lrpowersealpda.ogg
+		Sounds/vo/lrpowersealpda.ogg
 	</audio>
   </lrpowerseal>
   <cragdiegg>
@@ -237,7 +237,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/treaderpod.ogg
+		Sounds/vo/treaderpod.ogg
 	</audio>
   </treaderpod>
   <treadercave>
@@ -259,7 +259,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		Sounds/treadercave.ogg
+		Sounds/vo/treadercave.ogg
 	</audio>
   </treadercave>
   <crashmesa>
@@ -310,7 +310,7 @@
 		Lorenz: [pleased/exasperated] Best news I've had all day.
 	</pda>
 	<category>
-		DownloadedData/AuroraSurvivors
+		Sounds/vo/mountainpodearly.ogg
 	</category>
 	<audio>
 		event:/player/story/VO/Ency_LifepodCrashZone2
@@ -335,7 +335,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mountainpodlate.ogg
 	</audio>
   </mountainpodlate>
   <mountaincave>
@@ -357,7 +357,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mountainbase.ogg
 	</audio>
   </mountaincave>
   <islandpda>
@@ -391,7 +391,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mountainislandpda.ogg
 	</audio>
   </islandpda>
   <islandcave>
@@ -415,7 +415,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mountainislandcave.ogg
 	</audio>
   </islandcave>
   <rescuepdalog>
@@ -435,7 +435,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/khasarrescuepda.ogg
 	</audio>
   </rescuepdalog>
   <treepda>
@@ -455,7 +455,7 @@
 		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mushtreepda.ogg
 	</audio>
   </treepda>
   <lostrivershortcircuit>

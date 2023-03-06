@@ -20,7 +20,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override QuickSlotType QuickSlotType {
 			get {
-				return CraftData.GetQuickSlotType(TechType.SeamothElectricalDefense);
+				return CraftData.GetQuickSlotType(TechType.SeamothSonarModule);
 			}
 		}
 		/*
@@ -38,13 +38,13 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		protected override float getChargingPowerCost() {
-			return 2;
+			return CraftData.energyCost[TechType.SeamothSonarModule]*2.5F;//2;
 		}
-
+/*
 		protected override float getMaxCharge() {
 			return base.getMaxCharge()*0.25F;
 		}
-		
+		*/
 		public override float getUsageCooldown() {
 			return 30;
 		}
@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea
 			SeamothStorageContainer sc = getStorage(sm, slotID);
 			if ((FREE_CHEAT || sc.container.GetCount(C2CItems.heatSink.TechType) > 0) && !sm.GetComponent<C2CMoth>().isPurgingHeat()) {
 				C2CMoth c2c = sm.GetComponent<C2CMoth>();
-				c2c.purgeHeat(Mathf.Clamp01(charge+0.05F));
+				c2c.purgeHeat();
 				if (!FREE_CHEAT)
 					sc.container.DestroyItem(C2CItems.heatSink.TechType);
 			}

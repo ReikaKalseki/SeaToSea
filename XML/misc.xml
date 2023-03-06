@@ -7,7 +7,7 @@
 		Warning: Passing 500 meters. Extreme environmental pressure detected. Oxygen consumption at maximum tolerable level.
 	</desc>
 	<pda>
-		Sounds/500mwarn.ogg
+		Sounds/pdaprompt/500mwarn.ogg
 	</pda>
   </deepair>
   <lrpoison>
@@ -18,7 +18,7 @@
 		Emergency: Chemical trauma imminent. Evacuate this region immediately, or fabricate chemical shielding.
 	</desc>
 	<pda>
-		Sounds/lrpoisonwarn.ogg
+		Sounds/pdaprompt/lrpoisonwarn.ogg
 	</pda>
   </lrpoison>
   <voidspikeenter>
@@ -29,7 +29,7 @@
 		Short-range scans show an abundance of suspended land masses in the region below. Detecting unknown mineral deposits.
 	</desc>
 	<pda>
-		Sounds/voidspike.ogg
+		Sounds/pdaprompt/voidspike.ogg
 	</pda>
   </voidspikeenter>
   <aurorafire>
@@ -40,7 +40,7 @@
 		Caution: Hazardous fire levels detected. The radiation suit is not equipped for this environment.
 	</desc>
 	<pda>
-		Sounds/aurorafirewarn.ogg
+		Sounds/pdaprompt/aurorafirewarn.ogg
 	</pda>
   </aurorafire>
   <aurorafire_norad>
@@ -51,7 +51,7 @@
 		Caution: Hazardous fire levels detected.
 	</desc>
 	<pda>
-		Sounds/aurorafirewarn-norad.ogg
+		Sounds/pdaprompt/aurorafirewarn_norad.ogg
 	</pda>
   </aurorafire_norad>
   <underislandgeyserminerals>
@@ -62,7 +62,7 @@
 		Detecting intense volcanic activity on the seafloor in this region, resulting in high concentrations of mineral resources.
 	</desc>
 	<pda>
-		Sounds/underislandgeyserminerals.ogg
+		Sounds/pdaprompt/underislandgeyserminerals.ogg
 	</pda>
   </underislandgeyserminerals>
   <kelpcavedrone>
@@ -73,7 +73,7 @@
 		Detecting Alterra fabricator vehicle signatures in a nearby cave system, depth 80 meters. Caution is strongly advised around local volcanic activity.
 	</desc>
 	<pda>
-		Sounds/kelpcaveprompt.ogg
+		Sounds/pdaprompt/kelpcaveprompt.ogg
 	</pda>
   </kelpcavedrone>
   <kelpcavedronelate>
@@ -84,7 +84,7 @@
 		Detecting technological artifacts in the vicinity of lifepod 3. Further exploration is recommended.
 	</desc>
 	<pda>
-		Sounds/kelpcavepromptlate.ogg
+		Sounds/pdaprompt/kelpcavepromptlate.ogg
 	</pda>
   </kelpcavedronelate>
   <redgrasscave>
@@ -95,7 +95,7 @@
 		Scans indicate biological specimens in this cave system which may be used to synthesize new chemical materials.
 	</desc>
 	<pda>
-		Sounds/cavebioprompt.ogg
+		Sounds/pdaprompt/cavebioprompt.ogg
 	</pda>
   </redgrasscave>
   <kooshcave>
@@ -106,7 +106,7 @@
 		The local caves appear to contain high concentrations of unusual metal deposits.
 	</desc>
 	<pda>
-		Sounds/kooshcaveprompt.ogg
+		Sounds/pdaprompt/kooshcaveprompt.ogg
 	</pda>
   </kooshcave>
   <treaderpoo>
@@ -117,7 +117,7 @@
 		Unsavory biological materials may still be used for survival purposes.
 	</desc>
 	<pda>
-		Sounds/treaderpooprompt.ogg
+		Sounds/pdaprompt/treaderpooprompt.ogg
 	</pda>
   </treaderpoo>
   <dunearch>
@@ -128,7 +128,7 @@
 		Unknown radio transmission detected in the region. Unable to identify lifepod signature. Outputting results to databank.
 	</desc>
 	<pda>
-		Sounds/dunearchprompt.ogg
+		Sounds/pdaprompt/dunearchprompt.ogg
 	</pda>
   </dunearch>
   <followradio>
@@ -139,7 +139,7 @@
 		Exploration of radio transmissions originating from the Aurora's survivors may provide technologies and help ensure survival.
 	</desc>
 	<pda>
-		Sounds/radioprompt.ogg
+		Sounds/pdaprompt/radioprompt.ogg
 	</pda>
   </followradio>
   <needlaunchcargo>
@@ -150,7 +150,7 @@
 		Further cargo required: Bring onboard research specimens to Alterra.
 	</desc>
 	<pda>
-		Sounds/cannot-launch-need-cargo.ogg
+		Sounds/pdaprompt/cannot-launch-need-cargo.ogg
 	</pda>
   </needlaunchcargo>
   <notseenallbiomes>
@@ -161,7 +161,7 @@
 		Detecting multiple unexplored ecological biomes. Your primary research task is to acquire further information.
 	</desc>
 	<pda>
-		Sounds/cannot-launch-missing-biomes.ogg
+		Sounds/pdaprompt/cannot-launch-missing-biomes.ogg
 	</pda>
   </notseenallbiomes>
   <bulkheadLaserCutterUpgrade>
