@@ -12,6 +12,8 @@ using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
+using FMOD;
+using FMODUnity;
 
 namespace ReikaKalseki.SeaToSea
 {
@@ -66,7 +68,7 @@ namespace ReikaKalseki.SeaToSea
 			private float lastMeltSound = -1;
 			//private float lastPreEjectSound = -1;
 			
-			private FMOD.Studio.EventInstance heatsinkSoundEvent;
+			private Channel? heatsinkSoundEvent;
 			
 			private float lastTickTime = -1;
         	
@@ -89,8 +91,7 @@ namespace ReikaKalseki.SeaToSea
 				temperatureAtPurge = vehicleTemperature;
 				SNUtil.log("Starting heat purge ("+temperatureAtPurge+") @ "+DayNightCycle.main.timePassedAsFloat, SeaToSeaMod.modDLL);
 				//Invoke("fireHeatsink", 1.5F);
-				SoundManager.playSoundAt(startPurgingSound, transform.position, false, -1, 0.67F);
-				heatsinkSoundEvent = FMODUWE.GetEvent(startPurgingSound.asset);
+				heatsinkSoundEvent = SoundManager.playSoundAt(startPurgingSound, transform.position, false, -1, 0.67F);
 			}
 			
 			internal void fireHeatsink(float time) {
@@ -123,8 +124,10 @@ namespace ReikaKalseki.SeaToSea
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
-				if (heatsinkSoundEvent.hasHandle())
-					heatsinkSoundEvent.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform));
+				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {
+					ATTRIBUTES_3D attr = transform.position.To3DAttributes();
+					heatsinkSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
+				}
 				
 				if (isPurgingHeat()) {
 					vehicleTemperature -= tickTime*150;

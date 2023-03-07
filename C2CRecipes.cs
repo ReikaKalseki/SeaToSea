@@ -358,7 +358,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
         
         RecipeUtil.modifyIngredients(TechType.AdvancedWiringKit, i => {if (i.techType == TechType.WiringKit) i.amount *= 2; return false;});
-        RecipeUtil.modifyIngredients(TechType.WiringKit, i => {i.amount = 3; return false;});
+        RecipeUtil.modifyIngredients(TechType.WiringKit, i => {if (i.techType == TechType.Silver)i.amount = 3; return false;});
         
         RecipeUtil.getRecipe(TechType.DisinfectedWater).craftAmount = 3;
         RecipeUtil.addIngredient(TechType.Bleach, chlorine.TechType, 1);
@@ -381,7 +381,25 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, C2CItems.getIngot(TechType.Magnetite).ingot, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 6);
-        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);       
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);    
+
+        RecipeUtil.modifyIngredients(TechType.HatchingEnzymes, i => {
+            switch(i.techType) {
+            	case TechType.KooshChunk:
+        			i.amount = 2;
+            	break;
+            	case TechType.TreeMushroomPiece:
+        			i.amount = 4;
+            	break;
+            	case TechType.RedGreenTentacleSeed:
+        			i.amount = 3;
+            	break;
+            }
+        	return false;
+        });
+        RecipeUtil.addIngredient(TechType.HatchingEnzymes, TechType.ShellGrassSeed, 1);
+        CraftDataHandler.SetItemSize(TechType.ShellGrassSeed, new Vector2int(1, 1));
+        CraftDataHandler.SetItemSize(TechType.RedGreenTentacleSeed, new Vector2int(1, 2));
 
         RecipeUtil.ensureIngredient(TechType.Seamoth, TechType.PowerCell, 1);
         RecipeUtil.ensureIngredient(TechType.Exosuit, TechType.PowerCell, 2);

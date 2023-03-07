@@ -266,8 +266,10 @@ namespace ReikaKalseki.SeaToSea {
 								IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
 								if (ing != null && ing.Count >= currentOperation.inputCount) {
 									//SNUtil.writeToChat("success");
-									for (int i = 0; i < currentOperation.inputCount; i++)
+									for (int i = 0; i < currentOperation.inputCount; i++) {
+										SNUtil.log("Removing "+ing[0].item+" from bioproc inventory");
 										ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
+									}
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
 										n *= 2;
@@ -275,14 +277,15 @@ namespace ReikaKalseki.SeaToSea {
 									}
 									for (int i = 0; i < n; i++) {
 										GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
+										SNUtil.log("Adding "+item+" to bioproc inventory");
 										item.SetActive(false);
 										sc.container.AddItem(item.GetComponent<Pickupable>());
 									}
+									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+" x"+n);
 									setRecipe(null);
 									colorCooldown = -1;
 									setEmissiveColor(completeColor, 4);
 									SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/knife/heat_hit"), gameObject.transform.position);
-									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+"x "+n);
 									operationCooldown = 2;
 								}
 								else {
@@ -314,7 +317,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length-0.1F) {
 				lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
 				//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
-				SoundManager.playSoundAt(soundLoop.asset, gameObject.transform.position);
+				SoundManager.playSoundAt(Bioprocessor.workingSound, gameObject.transform.position);
 			}
 		}
 		
