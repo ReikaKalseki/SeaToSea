@@ -62,6 +62,8 @@ namespace ReikaKalseki.SeaToSea {
         
 	    	DIHooks.knifeHarvestEvent += interceptItemHarvest;
 	    	
+	    	DIHooks.onFruitPlantTickEvent += tickFruitPlant;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -819,27 +821,18 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.position = auroraStorageModule.position;
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
-	    	if (ObjectUtil.isFarmedPlant(go) && WorldUtil.isPlantInNativeBiome(go)) {// not set at spawn time need component
-	        	FruitPlant fp = go.FindAncestor<FruitPlant>();
-	        	if (fp) {
-	        		float baseValue = -1;
-	        		switch(CraftData.GetTechType(go)) {
-	        			case TechType.BloodVine:
-	        				baseValue = 180F;
-	        			break;
-	        			case TechType.Creepvine:
-	        				baseValue = 240F;
-	        			break;
-	        		}
-	        		if (baseValue > 0)
-	        			fp.fruitSpawnInterval = baseValue/1.5F;
-	        	}
-	    	}
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    public static void tickFruitPlant(DIHooks.FruitPlantTag fpt) {
+	    	FruitPlant fp = fpt.getPlant();
+	    	if (ObjectUtil.isFarmedPlant(fp.gameObject) && WorldUtil.isPlantInNativeBiome(fp.gameObject)) {
+	        	fp.fruitSpawnInterval = fpt.getBaseGrowthTime()/1.5F;
+	        }
+	    }
 	    
 	    class PrawnBayDoorTriggers : MonoBehaviour {
 	    	

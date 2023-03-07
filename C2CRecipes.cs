@@ -78,7 +78,7 @@ namespace ReikaKalseki.SeaToSea
        
         BasicCraftingItem enzyT = CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes);
         enzyT.craftingTime = 2;
-        enzyT.addIngredient(TechType.SeaTreaderPoop, 1).addIngredient(acid, 1);
+        enzyT.addIngredient(TechType.SeaTreaderPoop, 1).addIngredient(acid, 2);
        /*
         int kelpamt = 2;
         BasicCraftingItem enzyK = CraftingItems.getItem(CraftingItems.Items.KelpEnzymes);
@@ -128,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem chlorine = CraftingItems.getItem(CraftingItems.Items.Chlorine);
         chlorine.craftingTime = 3;
         chlorine.numberCrafted = 2;
-        chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3).addIngredient(acid, 1);
+        chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
         tankWall.craftingTime = 2.5F;
@@ -262,6 +262,11 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
+        
+        RecipeUtil.addIngredient(TechType.WiringKit, acid.TechType, 1);
+        RecipeUtil.addIngredient(TechType.ComputerChip, acid.TechType, 2);
+        
+        RecipeUtil.addIngredient(TechType.ReactorRod, TechType.HydrochloricAcid, 2);
         
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.Battery, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
