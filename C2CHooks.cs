@@ -1073,9 +1073,13 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
-	    	if (h.drops.Count > 0 && ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
-	        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
-	        }
+	    	if (h.drops.Count > 0) {
+	    		if (h.objectType == C2CItems.kelp.TechType)
+	    			h.drops[h.defaultDrop] = 2;
+		    	if (ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
+		        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
+		        }
+	    	}
 	    }
 	}
 }

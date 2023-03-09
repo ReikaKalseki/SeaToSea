@@ -14,10 +14,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public AzuriteBattery() : base(SeaToSeaMod.itemLocale.getEntry("t2battery"), 750) {
 			unlockRequirement = TechType.Unobtanium;//CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
-		}
-
-		public override Vector2int SizeInInventory {
-			get {return new Vector2int(1, 2);}
+			inventorySize = new Vector2int(1, 2);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 			craftingSubCategory = "Tools";
 			craftingTime = 4;
 			unlockRequirement = TechType.Unobtanium;
+			inventorySize = new Vector2int(1, 2);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
@@ -48,12 +49,6 @@ namespace ReikaKalseki.SeaToSea {
 		public override string[] StepsToFabricatorTab {
 			get {
 				return new string[]{"Torpedoes"};
-			}
-		}
-
-		public override Vector2int SizeInInventory {
-			get {
-				return new Vector2int(1, 2);
 			}
 		}
 		

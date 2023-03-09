@@ -33,6 +33,7 @@ namespace ReikaKalseki.SeaToSea
 						break;
 					case Materials.PHASE_CRYSTAL:
 						item.collectSound = "event:/loot/pickup_precursorioncrystal";
+						item.inventorySize = new Vector2int(2, 1);
 						break;
 					case Materials.PRESSURE_CRYSTALS:
 						item.collectSound = "event:/loot/pickup_quartz";

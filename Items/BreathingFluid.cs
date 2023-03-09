@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 			unlockRequirement = TechType.Unobtanium;//SeaToSeaMod.rebreatherV2.TechType;
 			craftingSubCategory = "C2Chemistry";
 			craftingTime = 15;
+			inventorySize = new Vector2int(3, 3);
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
@@ -48,12 +49,6 @@ namespace ReikaKalseki.SeaToSea {
 		public override string[] StepsToFabricatorTab {
 			get {
 				return new string[]{"Resources", "C2Chemistry"};
-			}
-		}
-
-		public override Vector2int SizeInInventory {
-			get {
-				return new Vector2int(3, 3);
 			}
 		}
 		

@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override Vector2int SizeInInventory {
-			get {return new Vector2int(1, 2);}
+			get {return new Vector2int(1, 1);}
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r0) {
@@ -260,6 +260,11 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			bool kill = false;
+			foreach (KelpSegment s in segments) {
+				foreach (Material m in s.renderer.materials) {
+					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
+				}
+			}
 			if (time-lastContinuityCheckTime >= 1) {
 				lastContinuityCheckTime = time;
 				List<int> presenceSet = new List<int>();
@@ -269,9 +274,6 @@ namespace ReikaKalseki.SeaToSea {
 						continue;
 					}
 					//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
-					foreach (Material m in s.renderer.materials) {
-						m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
-					}
 					if (!s.live || s.live.health <= 0) {
 						kill = true;
 					}

@@ -43,16 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r2, "Textures/Plants/TreeColony");
 			RenderUtil.setEmissivity(r2, 2, "GlowStrength");
 			RenderUtil.disableTransparency(r2.material);
-			r2.material.SetColor("_GlowColor", Color.white);			
-			r2.material.EnableKeyword("UWE_WAVING");
-			r2.material.SetFloat("_Shininess", 0F);
-			r2.material.SetFloat("_SpecInt", 0F);
-			r2.material.SetColor("_Color", Color.white);
-			r2.material.SetVector("_Scale", new Vector4(0.1F, 0.05F, 0.1F, 0.005F));
-			r2.material.SetVector("_Frequency", new Vector4(3.0F, 4.0F, 4.0F, 25.0F));
-			r2.material.SetVector("_Speed", new Vector4(0.02F, 0.02F, 0.0F, 0.0F));
-			r2.material.SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
-			r2.material.SetFloat("_WaveUpMin", 0F);
+			setupWave(r2);
 			world.EnsureComponent<TreeColonyTag>();
 			world.layer = LayerID.Useable;
 			
@@ -92,6 +83,26 @@ namespace ReikaKalseki.SeaToSea {
 			e.scanTime = 5;
 			PDAHandler.AddCustomScannerEntry(e);
 		}
+		
+		public static void setupWave(Renderer r2, float str = 1) {
+			r2.material.SetColor("_GlowColor", Color.white);			
+			r2.material.EnableKeyword("UWE_WAVING");
+			r2.material.SetFloat("_Shininess", 0F);
+			r2.material.SetFloat("_SpecInt", 0F);
+			r2.material.SetColor("_Color", Color.white);
+			r2.material.SetVector("_Scale", new Vector4(0.1F, 0.05F, 0.1F, 0.005F)*Mathf.Pow(str, 2.5F));
+			r2.material.SetVector("_Frequency", new Vector4(3.0F, 4.0F, 4.0F, 25.0F)*str);
+			r2.material.SetVector("_Speed", new Vector4(0.02F, 0.02F, 0.0F, 0.0F));
+			r2.material.SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+			r2.material.SetFloat("_WaveUpMin", 0F);
+		}
+		
+		public static float updateColors(MonoBehaviour c, Renderer r, float time) {
+			float f = 0.5F+0.5F*Mathf.Sin(time*0.193F+c.transform.position.magnitude%1781);
+			r.material.SetColor("_GlowColor", new Color(f*1.5F, 1, 1, 1));
+			r.material.SetColor("_Color", new Color(0.75F+1.25F*f, 1, 1, 1));
+			return f;
+		}
 			
 	}
 		
@@ -115,11 +126,9 @@ namespace ReikaKalseki.SeaToSea {
 				render = GetComponentInChildren<Renderer>();
 			if (!innerLight)
 				innerLight = ObjectUtil.getChildObject(gameObject, "InnerLight").GetComponentInChildren<Light>();
-			float f = 0.5F+0.5F*Mathf.Sin(time*0.193F+transform.position.magnitude%1781);
+			float f = MushroomTreeBacterialColony.updateColors(this, render, time);
 			innerLight.color = Color.Lerp(MushroomTreeBacterialColony.BLUE_COLOR, MushroomTreeBacterialColony.PURPLE_COLOR, 0.33F+0.67F*f);
 			innerLight.intensity = 3F+0.5F*(1-f);
-			render.material.SetColor("_GlowColor", new Color(f*1.5F, 1, 1, 1));
-			render.material.SetColor("_Color", new Color(0.75F+1.25F*f, 1, 1, 1));
 		}
 		
 		Vector3 getRegionalScale() {
