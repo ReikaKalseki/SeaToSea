@@ -90,7 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 			r2.material.SetFloat("_Shininess", 0F);
 			r2.material.SetFloat("_SpecInt", 0F);
 			r2.material.SetColor("_Color", Color.white);
-			r2.material.SetVector("_Scale", new Vector4(0.1F, 0.05F, 0.1F, 0.005F)*Mathf.Pow(str, 2.5F));
+			r2.material.SetVector("_Scale", new Vector4(0.1F, 0.05F, 0.1F, 0.005F)*Mathf.Pow(str, 2.2F));
 			r2.material.SetVector("_Frequency", new Vector4(3.0F, 4.0F, 4.0F, 25.0F)*str);
 			r2.material.SetVector("_Speed", new Vector4(0.02F, 0.02F, 0.0F, 0.0F));
 			r2.material.SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));

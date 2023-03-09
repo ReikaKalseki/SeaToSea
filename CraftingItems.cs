@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 				switch(m) {
 					case Items.Luminol:
 						//item.glowIntensity = 2;
-						item.renderModify = r => {RenderUtil.setPolyanilineColor(r, new Color(0.2F, 0.6F, 1F, 1)); RenderUtil.setEmissivity(r.materials[1], 2, "GlowStrength");};
+						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.2F, 0.6F, 1F, 1), 2);
 					break;
 					case Items.TreaderEnzymes:
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(107/255F, 80/255F, 62/255F, 1));
@@ -58,34 +58,75 @@ namespace ReikaKalseki.SeaToSea
 					break;
 					case Items.DenseAzurite:
 						item.glowIntensity = 2;
+						item.renderModify = r => r.transform.localScale = Vector3.one*2;
 					break;
 					case Items.CrystalLens:
 						item.inventorySize = new Vector2int(2, 2);
-						item.renderModify = r => r.gameObject.EnsureComponent<CrystalLensAnimator>();
+						item.renderModify = r => {
+							GameObject mdl = RenderUtil.setModel(r, ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("59381275-1f6e-4bb9-8b00-7bbe77f0df1c"), "Coral_reef_shell_01"));
+							r = mdl.GetComponentInChildren<Renderer>();
+							RenderUtil.swapToModdedTextures(r, item);
+							RenderUtil.makeTransparent(r);
+							r.gameObject.EnsureComponent<CrystalLensAnimator>();
+							r.transform.localScale = Vector3.one*0.5F;
+							
+							GameObject root = mdl.FindAncestor<PrefabIdentifier>().gameObject;
+							ObjectUtil.removeComponent<Collider>(root);
+							SphereCollider sc = root.EnsureComponent<SphereCollider>();
+							sc.radius = 0.25F;
+							sc.center = Vector3.zero;
+							
+							//r.materials[0].SetFloat("_SpecInt", 7.5F);
+							//r.materials[0].SetFloat("_Shininess", 12F);
+							//r.materials[0].SetFloat("_Fresnel", 0.5F);
+						};
 					break;
 					case Items.LathingDrone:
 						item.inventorySize = new Vector2int(2, 2);
+						item.glowIntensity = 1.5F;
 						item.renderModify = r => {
-							//GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb"), "Starship_control_terminal_01"));
+							GameObject vehicleBayPrefab = ObjectUtil.lookupPrefab("dd0298c1-49c2-44a0-8b32-da98e12228fb");
+							GameObject droneObj = vehicleBayPrefab.GetComponent<Constructor>().buildBotPrefab;
+							GameObject mdl = RenderUtil.setModel(r, ObjectUtil.getChildObject(droneObj, "model/constructor_drone"));
+							r = mdl.GetComponentInChildren<Renderer>();
+							//r.gameObject.transform.localScale
+							//RenderUtil.swapToModdedTextures(r, item);
+							
+							GameObject root = mdl.FindAncestor<PrefabIdentifier>().gameObject;
+							ObjectUtil.removeComponent<Collider>(root);
+							SphereCollider sc = root.EnsureComponent<SphereCollider>();
+							sc.radius = 0.25F;
+							sc.center = Vector3.zero;
+							
+							//r.materials[0].color = Color.clear;
+							//r.materials[3].color = Color.clear;
+							//RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(item), new Dictionary<int, string>{{1, ""}});
 						};
 					break;
-					case Items.HullPlating:
 					case Items.SmartPolymer:
 						item.inventorySize = new Vector2int(2, 1);
+					break;
+					case Items.HullPlating:
+						item.inventorySize = new Vector2int(2, 1);
+						item.renderModify = r => {r.materials[0].color = Color.white; r.materials[0].SetFloat("_SpecInt", 1.5F); r.materials[0].SetFloat("_Shininess", 0F);};
 					break;
 					case Items.FuelTankWall:
 						item.renderModify = r => {r.materials[0].SetFloat("_SpecInt", 0.5F); r.materials[0].SetFloat("_Shininess", 0F);};
 					break;
 					case Items.RocketFuel:
 						item.inventorySize = new Vector2int(1, 2);
-						item.renderModify = r => {r.gameObject.EnsureComponent<RocketFuelAnimator>(); RenderUtil.setEmissivity(r.materials[3], 2, "GlowStrength");};
+						item.renderModify = r => {
+							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(item), new Dictionary<int, string>{{1, ""}, {3, ""}});
+							r.gameObject.EnsureComponent<RocketFuelAnimator>();
+							RenderUtil.setEmissivity(r.materials[3], 2, "GlowStrength");
+						};
 						//item.glowIntensity = 2;
 					break;
 					case Items.BacterialSample:
 						item.renderModify = r => {
 							r.gameObject.EnsureComponent<BacteriaAnimator>(); MushroomTreeBacterialColony.setupWave(r, 2);
 							r.materials[0].SetFloat("_Fresnel", 0.6F);
-							r.materials[0].SetFloat("_Shininess", 15F);
+							r.materials[0].SetFloat("_Shininess", 20F);
 							r.materials[0].SetFloat("_SpecInt", 18F);
 							r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 						};
@@ -176,7 +217,14 @@ namespace ReikaKalseki.SeaToSea
 			if (!render) {
 				render = gameObject.GetComponent<Renderer>();
 			}
-			
+			float f = Mathf.Sin(DayNightCycle.main.timePassedAsFloat*0.17F+gameObject.GetInstanceID()*0.6943F);
+			float f2 = 0.5F+0.5F*Mathf.Sin(DayNightCycle.main.timePassedAsFloat*0.383F+gameObject.GetInstanceID()*0.357F);
+			render.materials[0].SetFloat("_SpecInt", 15F+10*f);
+			render.materials[0].SetFloat("_Shininess", 7.5F-2.5F*f);
+			render.materials[0].SetFloat("_Fresnel", 0.5F+0.4F*f);
+			Color c = new Color(f2, 0, 1, 1);
+			render.materials[0].SetColor("_GlowColor", c);
+			RenderUtil.setEmissivity(render, 1+f2, "GlowStrength");
 		}
 		
 	}
@@ -189,9 +237,12 @@ namespace ReikaKalseki.SeaToSea
 			if (!render) {
 				render = gameObject.GetComponent<Renderer>();
 			}
-			float f = Mathf.Sin(DayNightCycle.main.timePassedAsFloat*0.17F+gameObject.GetInstanceID()*0.6943F);
+			float f = Mathf.Sin(DayNightCycle.main.timePassedAsFloat*0.37F+gameObject.GetInstanceID()*0.6943F);
 			RenderUtil.setEmissivity(render.materials[3], 2.5F-f, "GlowStrength");
-			render.materials[0].SetColor("_GlowColor", new Color(0, f, 1, 1));
+			Color c = new Color(0, 0.33F+0.67F*f, 1, 1);
+			render.materials[3].color = c;
+			render.materials[3].SetColor("_SpecColor", c);
+			render.materials[3].SetColor("_GlowColor", c);
 		}
 		
 	}

@@ -31,13 +31,6 @@ namespace ReikaKalseki.SeaToSea
 					case Materials.PLATINUM:
 						item.collectSound = "event:/loot/pickup_diamond";
 						break;
-					case Materials.PHASE_CRYSTAL:
-						item.collectSound = "event:/loot/pickup_precursorioncrystal";
-						item.inventorySize = new Vector2int(2, 1);
-						break;
-					case Materials.PRESSURE_CRYSTALS:
-						item.collectSound = "event:/loot/pickup_quartz";
-						break;
 					case Materials.VENT_CRYSTAL:
 						item.collectSound = "event:/loot/pickup_uraninitecrystal";
 						break;
@@ -69,7 +62,7 @@ namespace ReikaKalseki.SeaToSea
 			[Material(typeof(Azurite), 			"URANIUM",	4F)]		VENT_CRYSTAL, //forms when superheated water is injected into cold water
 			[Material(typeof(Platinum),			"GOLD")]				PLATINUM,
 			[Material(typeof(PressureCrystals),	"TITANIUM",	1.2F)]		PRESSURE_CRYSTALS,
-			[Material(typeof(BasicCustomOre),	"KYANITE",	0.75F)]		PHASE_CRYSTAL,	
+			[Material(typeof(Avolite),			"KYANITE",	0.75F)]		PHASE_CRYSTAL,	
 			[Material(typeof(BasicCustomOre),	"SILVER")]				IRIDIUM,
 		}
 		
