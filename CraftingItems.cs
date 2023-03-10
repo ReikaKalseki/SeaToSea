@@ -119,6 +119,15 @@ namespace ReikaKalseki.SeaToSea
 							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(item), new Dictionary<int, string>{{1, ""}, {3, ""}});
 							r.gameObject.EnsureComponent<RocketFuelAnimator>();
 							RenderUtil.setEmissivity(r.materials[3], 2, "GlowStrength");
+							r.materials[3].EnableKeyword("FX_BUILDING");
+							r.materials[3].SetFloat("_Built", 0.1F);
+							r.materials[3].SetFloat("_BuildLinear", 0.55F);
+							r.materials[3].SetFloat("_NoiseThickness", 0.45F);
+							r.materials[3].SetFloat("_NoiseStr", 1F);
+							//r.materials[0].SetColor("_BorderColor", new Color(20, 2F, 1, 1));
+							r.materials[3].SetColor("_BorderColor", new Color(0.5F, 1, 1, 1));
+							r.materials[3].SetVector("_BuildParams", new Vector4(0, 1, 15F, 0.3F));
+							r.materials[3].SetInt("_Cutoff", 0);
 						};
 						//item.glowIntensity = 2;
 					break;
