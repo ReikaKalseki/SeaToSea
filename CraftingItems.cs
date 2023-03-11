@@ -7,6 +7,8 @@ using UnityEngine;
 
 using SMLHelper.V2.Handlers;
 
+using ReikaKalseki.AqueousEngineering;
+
 using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
@@ -88,7 +90,12 @@ namespace ReikaKalseki.SeaToSea
 							GameObject vehicleBayPrefab = ObjectUtil.lookupPrefab("dd0298c1-49c2-44a0-8b32-da98e12228fb");
 							GameObject droneObj = vehicleBayPrefab.GetComponent<Constructor>().buildBotPrefab;
 							GameObject mdl = RenderUtil.setModel(r, ObjectUtil.getChildObject(droneObj, "model/constructor_drone"));
+							mdl.name = "$DisplayRoot_offset=0.3";
+							ItemDisplay.setRendererBehavior(tt, new ItemDisplayRenderBehavior(){verticalOffset = 0.3F, getRenderObj = ItemDisplayRenderBehavior.getChildNamed(mdl.name)});
 							r = mdl.GetComponentInChildren<Renderer>();
+							r.transform.localRotation = Quaternion.identity;
+							r.transform.parent.localRotation = Quaternion.identity;
+							r.transform.parent.localPosition = Vector3.zero;
 							//r.gameObject.transform.localScale
 							//RenderUtil.swapToModdedTextures(r, item);
 							
@@ -133,7 +140,8 @@ namespace ReikaKalseki.SeaToSea
 					break;
 					case Items.BacterialSample:
 						item.renderModify = r => {
-							r.gameObject.EnsureComponent<BacteriaAnimator>(); MushroomTreeBacterialColony.setupWave(r, 2);
+							r.gameObject.EnsureComponent<BacteriaAnimator>();
+							MushroomTreeBacterialColony.setupWave(r, 2);
 							r.materials[0].SetFloat("_Fresnel", 0.6F);
 							r.materials[0].SetFloat("_Shininess", 20F);
 							r.materials[0].SetFloat("_SpecInt", 18F);
@@ -205,7 +213,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 	}
 	
-	class BacteriaAnimator : MonoBehaviour {
+	class BacteriaAnimator : AnimatorComponent {
 		
 		private Renderer render;
 		
@@ -218,7 +226,7 @@ namespace ReikaKalseki.SeaToSea
 		
 	}
 	
-	class CrystalLensAnimator : MonoBehaviour {
+	class CrystalLensAnimator : AnimatorComponent {
 		
 		private Renderer render;
 		
@@ -238,7 +246,7 @@ namespace ReikaKalseki.SeaToSea
 		
 	}
 	
-	class RocketFuelAnimator : MonoBehaviour {
+	class RocketFuelAnimator : AnimatorComponent {
 		
 		private Renderer render;
 		
