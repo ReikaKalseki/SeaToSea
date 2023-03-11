@@ -76,7 +76,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			if (!body)
 				body = GetComponentInChildren<Rigidbody>();
-			if (Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>() || !body.isKinematic) {
+			if (disableSparking()) {
 				sparker.SetActive(false);
 			}
 			else if (UnityEngine.Random.Range(0, 20) == 0 && Time.deltaTime > 0.01F) {
@@ -94,6 +94,12 @@ namespace ReikaKalseki.SeaToSea {
 					sparker.SetActive(false);
 				}
 			}
+		}
+			
+		public bool disableSparking() {
+			if (gameObject.FindAncestor<AqueousEngineering.ItemDisplayLogic>())
+				return false;
+			return !body.isKinematic || Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>();
 		}
 		
 	}

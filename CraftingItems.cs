@@ -7,8 +7,6 @@ using UnityEngine;
 
 using SMLHelper.V2.Handlers;
 
-using ReikaKalseki.AqueousEngineering;
-
 using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
@@ -17,6 +15,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly Dictionary<Items, BasicCraftingItem> mappings = new Dictionary<Items, BasicCraftingItem>();
 		private static readonly Dictionary<TechType, BasicCraftingItem> techs = new Dictionary<TechType, BasicCraftingItem>();
+		
+		public static readonly string LATHING_DRONE_RENDER_OBJ_NAME = "DroneModel";
 		
 		static CraftingItems() {
 			foreach (Items m in Enum.GetValues(typeof(Items))) {
@@ -90,9 +90,8 @@ namespace ReikaKalseki.SeaToSea
 							GameObject vehicleBayPrefab = ObjectUtil.lookupPrefab("dd0298c1-49c2-44a0-8b32-da98e12228fb");
 							GameObject droneObj = vehicleBayPrefab.GetComponent<Constructor>().buildBotPrefab;
 							GameObject mdl = RenderUtil.setModel(r, ObjectUtil.getChildObject(droneObj, "model/constructor_drone"));
-							mdl.name = "$DisplayRoot_offset=0.3";
-							ItemDisplay.setRendererBehavior(tt, new ItemDisplayRenderBehavior(){verticalOffset = 0.3F, getRenderObj = ItemDisplayRenderBehavior.getChildNamed(mdl.name)});
 							r = mdl.GetComponentInChildren<Renderer>();
+							mdl.name = LATHING_DRONE_RENDER_OBJ_NAME;
 							r.transform.localRotation = Quaternion.identity;
 							r.transform.parent.localRotation = Quaternion.identity;
 							r.transform.parent.localPosition = Vector3.zero;
@@ -112,10 +111,14 @@ namespace ReikaKalseki.SeaToSea
 					break;
 					case Items.SmartPolymer:
 						item.inventorySize = new Vector2int(2, 1);
+						item.renderModify = r => {r.transform.localScale = Vector3.one*2F;};
 					break;
 					case Items.HullPlating:
 						item.inventorySize = new Vector2int(2, 1);
 						item.renderModify = r => {r.materials[0].color = Color.white; r.materials[0].SetFloat("_SpecInt", 1.5F); r.materials[0].SetFloat("_Shininess", 0F);};
+					break;
+					case Items.Motor:
+						item.renderModify = r => {r.transform.localScale = Vector3.one*1.5F;};
 					break;
 					case Items.FuelTankWall:
 						item.renderModify = r => {r.materials[0].SetFloat("_SpecInt", 0.5F); r.materials[0].SetFloat("_Shininess", 0F);};
