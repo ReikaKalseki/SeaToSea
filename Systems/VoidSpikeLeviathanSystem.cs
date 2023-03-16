@@ -7,6 +7,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+using FMOD;
+using FMODUnity;
+
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
@@ -29,12 +32,19 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly float DAZZLE_TOTAL_LENGTH = 4.5F;
 	    private static readonly double MAXDEPTH = 2000;//800;
 	    
+	    private static readonly float SONAR_INTERFERENCE_LENGTH = 7.5F;
+	    private static readonly float SONAR_INTERFERENCE_DELAY = 1F;
+	    private static readonly float SONAR_INTERFERENCE_FADE_LENGTH_IN = 0.5F;
+	    private static readonly float SONAR_INTERFERENCE_FADE_LENGTH_OUT = 2.5F;
+	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
 	    
 	    private readonly SoundManager.SoundData empSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp", "Sounds/voidlevi/emp6.ogg", SoundManager.soundMode3D);
 	    private readonly SoundManager.SoundData empHitSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp-hit", "Sounds/voidlevi/emp-hit.ogg", SoundManager.soundMode3D);
+	    private readonly SoundManager.SoundData sonarBlockSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-sonarblock", "Sounds/voidlevi/sonarblock3.ogg", SoundManager.soundMode3D);
 	    
 	    private float nextDistantRoarTime = -1;
+	    
 	    private float lastFlashTime = -1;
 	    private float currentFlashDuration = 0; //full blindness length; fade is (DAZZLE_FADE_LENGTH)x longer after that
 	    
@@ -45,13 +55,25 @@ namespace ReikaKalseki.SeaToSea {
 	    private MesmerizedScreenFX mesmerShader;
 	    private CyclopsSmokeScreenFXController smokeController;
 	    private CyclopsSmokeScreenFX smokeShader;
+	    private RadiationsScreenFXController radiationController;
+	    private RadiationsScreenFX radiationShader;
+	    private SonarScreenFX sonarShader;
 	    private Vector4 defaultMesmerShaderColors;
 	    private Color defaultSmokeShaderColors;
+	    private Color defaultRadiationShaderColors;
+	    
 	    private readonly Color smokeDarkColors = new Color(-5, -5, -5, 1F);
 	    private readonly Color smokeDazzleColors = new Color(50, 50, 50, 1F);
 	    private readonly Vector4 mesmerDazzleColorsStart = new Vector4(600, 600, 1000, 0.5F);
 	    private readonly Vector4 mesmerDazzleColorsEnd = new Vector4(600, 600, 1000, 0.2F);
+	    
+	    private readonly Vector4 sonarInterferenceColor = new Vector4(-1, -1, -0.25F, 1F);
+	    
 	    private float flashWashoutNetVisiblityFactor = 1;
+	    
+	    private float lastSonarInterferenceTime = -1;
+	    
+	    private Channel? sonarSoundEvent;
 	    
 	    private static readonly List<DistantFX> distantFXList = new List<DistantFX>(){
 	    	new DistantFX("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc", 2),
@@ -118,31 +140,62 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!mainCamera && Camera.main) {
 	    		mainCamera = Camera.main.gameObject;
 	    		if (mainCamera) {
+	    			//SNUtil.log("Load cam");
 		    		mesmerController = mainCamera.GetComponent<MesmerizedScreenFXController>();
 		    		mesmerShader = mainCamera.GetComponent<MesmerizedScreenFX>();
 		    		if (mesmerShader && mesmerShader.mat)
 		    			defaultMesmerShaderColors = mesmerShader.mat.GetVector("_ColorStrength");
 		    		else
 		    			mainCamera = null;
-		    		if (!mainCamera)
+		    		if (!mainCamera) {
+	    				//SNUtil.log("Fail A");
 		    			return;
+		    		}
 		    		
 		    		smokeController = mainCamera.GetComponent<CyclopsSmokeScreenFXController>();
 		    		smokeShader = mainCamera.GetComponent<CyclopsSmokeScreenFX>();
-		    		if (smokeShader && smokeShader.mat)
-		    			defaultSmokeShaderColors = smokeShader.mat.color;
+		    		if (smokeShader) {
+		    			smokeShader.enabled = true;
+			    		if (smokeShader.mat)
+			    			defaultSmokeShaderColors = smokeShader.mat.color;
+			    		else
+			    			mainCamera = null;
+		    			smokeShader.enabled = false;
+		    		}
+		    		else
+		    			mainCamera = null;		    		
+		    		if (!mainCamera) {
+	    				//SNUtil.log("Fail B");
+		    			return;
+		    		}
+		    		
+		    		radiationController = mainCamera.GetComponent<RadiationsScreenFXController>();
+		    		radiationShader = mainCamera.GetComponent<RadiationsScreenFX>();
+		    		if (radiationShader)
+		    			defaultRadiationShaderColors = radiationShader.color;
 		    		else
 		    			mainCamera = null;
+		    		
+		    		if (!mainCamera) {
+	    				//SNUtil.log("Fail C");
+		    			return;
+		    		}
+		    		
+		    		sonarShader = mainCamera.GetComponent<SonarScreenFX>();
 	    		}
 	    		else {
 	    			return;
 	    		}
 	    	}
+	    	//SNUtil.log("========================");
+	    	//SNUtil.log("All non-null: "+mesmerShader+" x "+mesmerController+" x "+smokeShader+" x "+smokeController);
+	    	if (sonarSoundEvent != null && sonarSoundEvent.Value.hasHandle()) {
+				ATTRIBUTES_3D attr = mainCamera.transform.position.To3DAttributes();
+				sonarSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
+	    	}
 	    	DayNightCycle day = DayNightCycle.main;
 	    	if (!day || !smokeController || !smokeShader || !mesmerController || !mesmerShader)
 	    		return;
-	    	//SNUtil.log("========================");
-	    	//SNUtil.log("All non-null: "+mesmerShader+" x "+mesmerController+" x "+smokeShader+" x "+smokeController);
 	    	float time = day.timePassedAsFloat;
 	    	playDistantRoar(ep, time);
 	    	float dtf = time-lastFlashTime;
@@ -218,6 +271,51 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	//SNUtil.log("end");
 	    	//SNUtil.log("==============================");
+	    	//SNUtil.log(radiationController+"");
+	    	//SNUtil.log(radiationShader+"");
+	    	//SNUtil.log(sonarShader+"");
+	    	
+	    	if (radiationController && radiationShader) {
+	    		float dt = time-lastSonarInterferenceTime;
+	    		float f = 0;
+	    		if (dt <= SONAR_INTERFERENCE_LENGTH) {
+	    			if (dt <= SONAR_INTERFERENCE_DELAY)
+	    				f = 0.02F;
+	    			else if (dt <= SONAR_INTERFERENCE_FADE_LENGTH_IN+SONAR_INTERFERENCE_DELAY)
+	    				f = 0.02F+0.98F*(dt-SONAR_INTERFERENCE_DELAY)/SONAR_INTERFERENCE_FADE_LENGTH_IN;
+	    			else if (dt > SONAR_INTERFERENCE_LENGTH-SONAR_INTERFERENCE_FADE_LENGTH_OUT)
+	    				f = 1-((dt-(SONAR_INTERFERENCE_LENGTH-SONAR_INTERFERENCE_FADE_LENGTH_OUT))/SONAR_INTERFERENCE_FADE_LENGTH_OUT);
+	    			else
+	    				f = 1;
+	    		}
+	    		//SNUtil.log("f="+f);
+	    		if (f > 0) {
+		    		radiationController.enabled = false;
+		    		radiationShader.enabled = true;
+		    		radiationShader.noiseFactor = f*f*0.6F;
+		    		radiationShader.color = sonarInterferenceColor.asColor();
+	    		//SNUtil.log("postcolorset");
+		    		if (sonarShader)
+		    			sonarShader.enabled = false;
+	    		}
+	    		else {
+	    			radiationController.enabled = true;
+		    		radiationShader.color = defaultRadiationShaderColors;
+		    	}
+	    	}
+	    }
+	    
+	    public void triggerEMInterference() { //TODO excessive sonar pings could increase aggro once it's actually implemented
+	    	lastSonarInterferenceTime = DayNightCycle.main.timePassedAsFloat;
+	    	Vector3 pos = mainCamera.transform.position;
+	    	sonarSoundEvent = SoundManager.playSoundAt(sonarBlockSound, pos, false, -1, 1);
+	    	spawnJustVisibleDistanceFX(mainCamera.transform);
+	    	//if (UnityEngine.Random.Range(0F, 1F) < 0.4F)
+	    	//	SoundManager.playSoundAt(distantRoars[UnityEngine.Random.Range(1, distantRoars.Count-1)], MathUtil.getRandomVectorAround(pos, 100), false, -1, 1);
+	    }
+	    
+	    public bool isSonarInterferenceActive() {
+	    	return DayNightCycle.main.timePassedAsFloat-lastSonarInterferenceTime <= SONAR_INTERFERENCE_LENGTH;
 	    }
 	    
 	    public bool isVoidFlashActive(bool any) { //false if only the blind part
@@ -267,7 +365,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
 	    	if (forceSpark || inBiome) {
-	    		Vector3 pos = spawnJustVisibleDistanceFX(ep);
+	    		Vector3 pos = spawnJustVisibleDistanceFX(ep.transform);
 		    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
 		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
 		    		if (UnityEngine.Random.Range(0F, 1F) <= chance) {/*
@@ -295,20 +393,20 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    //Returns the relative position, not absolute
-	    private Vector3 getRandomVisibleDistantPosition(Player ep, float distSc, float fovSc = 1) {
+	    private Vector3 getRandomVisibleDistantPosition(Transform cam, float distSc, float fovSc = 1) {
 	    	float range = UnityEngine.Random.Range(30F, 40F);
 	    	range *= distSc;
-	    	Vector3 pos = ep.transform.position+/*ep.transform.forward*/MainCamera.camera.transform.forward.normalized*range;
+	    	Vector3 pos = cam.position+/*ep.transform.forward*/MainCamera.camera.transform.forward.normalized*range;
 	    	pos = MathUtil.getRandomVectorAround(pos, 20*distSc*fovSc);
-	    	Vector3 dist = pos-ep.transform.position;
+	    	Vector3 dist = pos-cam.position;
 	    	dist = dist.setLength(range);
 	    	return dist;
 	    }
 	    
-	    private Vector3 spawnJustVisibleDistanceFX(Player ep) {
+	    private Vector3 spawnJustVisibleDistanceFX(Transform cam) {
 	    	DistantFX type = distantFXList[UnityEngine.Random.Range(0, distantFXList.Count)];
-	    	Vector3 dist = getRandomVisibleDistantPosition(ep, type.distanceScalar);
-	    	Vector3 pos = ep.transform.position+dist;
+	    	Vector3 dist = getRandomVisibleDistantPosition(cam, type.distanceScalar);
+	    	Vector3 pos = cam.position+dist;
 	    	GameObject go = getOrCreateSparkFX(type);
 	    	go.transform.position = pos;
 	    	go.transform.localScale = Vector3.one*UnityEngine.Random.Range(1.5F, 2.5F);

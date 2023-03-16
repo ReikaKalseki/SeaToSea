@@ -449,6 +449,12 @@ namespace ReikaKalseki.SeaToSea
     		case "drf":
     			pos = new Vector3(-248, -800, 281);
     			break;
+    		case "khasar":
+    			pos = new Vector3(-925, -178, 500);
+    			break;
+    		case "mushtree":
+    			pos = new Vector3(-870, -93, 591);
+    			break;
     		case "stepcave":
     			pos = new Vector3(64, -103, -611);
     			break;

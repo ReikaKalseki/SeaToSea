@@ -51,6 +51,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
 	    	
+	    	DIHooks.onSonarUsedEvent += pingAnySonar;
+	    	
 	    	DIHooks.onEMPHitEvent += onEMPHit;
 	    	
 	    	DIHooks.fogCalculateEvent += interceptChosenFog;
@@ -887,6 +889,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 30);
 	    }
 	    
+	    public static void pingAnySonar(SNCameraRoot cam) {
+	    	if (VoidSpikesBiome.instance.isInBiome(cam.transform.position)) {
+	    		VoidSpikeLeviathanSystem.instance.triggerEMInterference();
+	    	}
+	    }
+	    
 	    public static void pulseSeamothDefence(SeaMoth sm) {
 	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 12);
 	    }
@@ -943,13 +951,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	   
 	   public static void onClickedVehicleUpgrades(VehicleUpgradeConsoleInput v) {
-			if (v.docked || SeaToSeaMod.anywhereSeamothModuleCheatActive)
+			if (v.docked || SeaToSeaMod.anywhereSeamothModuleCheatActive || GameModeUtils.currentEffectiveMode == GameModeOption.Creative)
 				v.OpenPDA();
 	   }
 	   
 		public static void onHoverVehicleUpgrades(VehicleUpgradeConsoleInput v) {
 			HandReticle main = HandReticle.main;
-		   	if (!v.docked && !SeaToSeaMod.anywhereSeamothModuleCheatActive) {
+		   	if (!v.docked && !SeaToSeaMod.anywhereSeamothModuleCheatActive && GameModeUtils.currentEffectiveMode != GameModeOption.Creative) {
 				main.SetInteractText("DockToChangeVehicleUpgrades"); //locale key
 				main.SetIcon(HandReticle.IconType.HandDeny, 1f);
 		   	}

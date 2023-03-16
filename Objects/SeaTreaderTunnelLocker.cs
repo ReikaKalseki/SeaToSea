@@ -68,9 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 					int has = container.container.GetCount(kvp.Key);
 					if (has < kvp.Value) {
 						for (int i = 0; i < kvp.Value-has; i++) {
-							GameObject go = CraftData.GetPrefabForTechType(kvp.Key);
-							go = UnityEngine.Object.Instantiate(go);
-							go.SetActive(false);
+							GameObject go = ObjectUtil.createWorldObject(kvp.Key, true, false);
 							container.container.AddItem(go.GetComponent<Pickupable>());
 						}
 					}
