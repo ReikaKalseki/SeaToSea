@@ -66,6 +66,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onFruitPlantTickEvent += tickFruitPlant;
 	    	
+	    	DIHooks.reaperGrabVehicleEvent += onReaperGrab;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -1088,6 +1090,14 @@ namespace ReikaKalseki.SeaToSea {
 		        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
 		        }
 	    	}
+	    }
+	    
+	    public static void onReaperGrab(ReaperLeviathan r, Vehicle v) {
+	    	SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
+	    	
+		   	if (!KnownTech.Contains(TechType.SeamothElectricalDefense)) {
+		       	KnownTech.Add(TechType.SeamothElectricalDefense);
+		    }
 	    }
 	}
 }
