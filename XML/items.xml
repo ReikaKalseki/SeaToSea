@@ -197,6 +197,17 @@
 			
 		</pda>
 	</RocketFuel>
+	<BrokenT2Battery>
+		<name>
+			Damaged Azurite Battery
+		</name>
+		<desc>
+			A damaged azurite battery. Can be restored to full functionality with some component replacements, at a reduced cost compared to crafting a fresh battery.
+		</desc>
+		<pda>
+			
+		</pda>
+	</BrokenT2Battery>
 	<breathfluid>
 		<name>
 			Breathing Fluid

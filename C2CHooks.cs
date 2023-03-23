@@ -1007,6 +1007,8 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool stalkerTryDropTooth(Stalker s) {
 	    	if (s.GetComponent<DeepStalkerTag>() && UnityEngine.Random.Range(0F, 1F) <= 0.8)
 	    		return false;
+	    	if (s.GetComponent<WaterParkCreature>() && !PDAScanner.complete.Contains(TechType.StalkerTooth))
+	    		return false;
 	    	return s.LoseTooth();
 	    }
 	    

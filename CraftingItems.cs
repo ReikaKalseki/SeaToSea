@@ -152,6 +152,14 @@ namespace ReikaKalseki.SeaToSea
 						};
 						item.glowIntensity = 1;
 					break;
+					case Items.BrokenT2Battery:
+						item.renderModify = r => {
+							r.gameObject.EnsureComponent<AzuriteBatterySparker>();
+							r.gameObject.FindAncestor<PrefabIdentifier>().transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
+							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(C2CItems.t2Battery));
+						};
+						item.glowIntensity = 1;
+					break;
 				}
 				if (item.sprite == null)
 					item.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/"+id);
@@ -185,6 +193,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(Bioprocessed),			TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]KelpEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/Silicone")]FuelTankWall,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/benzene")]RocketFuel,
+			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
 		}
 		
 		private static Item getAttr(Items key) {

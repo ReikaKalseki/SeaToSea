@@ -24,6 +24,7 @@ namespace ReikaKalseki.SeaToSea
     
     private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;    
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
+    private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
     
@@ -230,6 +231,31 @@ namespace ReikaKalseki.SeaToSea
        	t2un.craftTime = 6;
        	t2un.ownerMod = SeaToSeaMod.modDLL;
 		t2un.Patch();
+		
+		rec = RecipeUtil.copyRecipe(C2CItems.t2Battery.getRecipe());
+		for (int idx = rec.Ingredients.Count-1; idx >= 0; idx--) {
+			Ingredient i = rec.Ingredients[idx];
+			if (i.techType == TechType.Polyaniline || i.techType == TechType.Battery || i.techType == TechType.Silicone) {
+				rec.Ingredients.RemoveAt(idx);
+			}
+			else if (i.techType == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
+				i.techType = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType;
+				i.amount = 3;
+			}
+		}
+		rec.Ingredients.Insert(0, new Ingredient(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery).TechType, 1));
+       	t2BatteryRepair = new DuplicateRecipeDelegateWithRecipe(C2CItems.t2Battery, rec);
+       	t2BatteryRepair.setRecipe();
+       	CraftData.GetCraftTime(C2CItems.t2Battery.TechType, out t2BatteryRepair.craftTime);
+       	t2BatteryRepair.category = C2CItems.t2Battery.CategoryForPDA;
+       	t2BatteryRepair.group = C2CItems.t2Battery.GroupForPDA;
+       	t2BatteryRepair.craftingType = C2CItems.t2Battery.FabricatorType;
+       	t2BatteryRepair.craftingMenuTree = C2CItems.t2Battery.StepsToFabricatorTab;
+       	t2BatteryRepair.unlock = TechType.Unobtanium;
+       	t2BatteryRepair.ownerMod = SeaToSeaMod.modDLL;
+       	t2BatteryRepair.suffixName = " Repair";
+       	t2BatteryRepair.Patch();
+		
 		//SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
         
         RecipeUtil.startLoggingRecipeChanges();
@@ -493,6 +519,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getQuartzIngotToGlass() {
     	return quartzIngotToGlass;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getT2BatteryRepair() {
+    	return t2BatteryRepair;
     }
 
   }

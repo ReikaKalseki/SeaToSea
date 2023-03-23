@@ -51,7 +51,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
 	    	
-	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.t2Battery.TechType, C2CItems.t2Battery.TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery).TechType, C2CRecipes.getT2BatteryRepair().TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery).TechType, C2CItems.t2Battery.TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 		}

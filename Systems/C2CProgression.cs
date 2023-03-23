@@ -81,6 +81,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.ExoHullModule2);
 			gatedTechnologies.Add(TechType.VehicleHullModule2);
 			gatedTechnologies.Add(TechType.VehicleHullModule3);
+			gatedTechnologies.Add(TechType.SeamothElectricalDefense);
 			gatedTechnologies.Add(TechType.CyclopsHullModule2);
 			gatedTechnologies.Add(TechType.CyclopsHullModule3);
 			gatedTechnologies.Add(TechType.CyclopsThermalReactorModule);
@@ -97,6 +98,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.PrecursorKey_White);
 			gatedTechnologies.Add(TechType.PrecursorKey_Orange);
 			gatedTechnologies.Add(TechType.PrecursorKey_Purple);
+			gatedTechnologies.Add(TechType.HeatBlade);
 		}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
