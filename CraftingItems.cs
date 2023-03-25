@@ -154,8 +154,10 @@ namespace ReikaKalseki.SeaToSea
 					break;
 					case Items.BrokenT2Battery:
 						item.renderModify = r => {
+							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
+							ObjectUtil.removeComponent<Battery>(root);
 							r.gameObject.EnsureComponent<AzuriteBatterySparker>();
-							r.gameObject.FindAncestor<PrefabIdentifier>().transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
+							root.transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
 							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(C2CItems.t2Battery));
 						};
 						item.glowIntensity = 1;

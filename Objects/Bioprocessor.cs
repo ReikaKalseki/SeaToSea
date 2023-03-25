@@ -20,7 +20,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class Bioprocessor : CustomMachine<BioprocessorLogic> {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
-		internal static readonly Dictionary<TechType, TechType> delegates = new Dictionary<TechType, TechType>();
+		internal static readonly Dictionary<TechType, DuplicateRecipeDelegate> delegates = new Dictionary<TechType, DuplicateRecipeDelegate>();
 		
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
@@ -75,6 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 			item.group = TechGroup.Resources;
 			item.unlock = preventUnlock ? TechType.Unobtanium : r.inputItem;
 			item.ownerMod = SeaToSeaMod.modDLL;
+			item.allowUnlockPopups = true;
 			if (item.sprite == null && to != null)
 				item.sprite = to.getIcon();
 			if (item.sprite == null)
@@ -90,16 +91,16 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, rightArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
-			delegates[item.TechType] = r.inputItem;
+			delegates[r.inputItem] = item;
 			return item.TechType;
 		}
 		
-		public static BioRecipe getDelegateRecipe(TechType tt) {
-			return recipes[delegates[tt]];
+		public static TechType getRecipeOutput(TechType input) {
+			return recipes[input].outputItem;
 		}
 		
 		public static TechType getRecipeReferenceItem(TechType input) {
-			return recipes[input].outputItem;
+			return delegates[input].TechType;
 		}
 		
 		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
