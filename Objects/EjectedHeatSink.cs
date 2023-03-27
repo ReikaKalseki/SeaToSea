@@ -50,13 +50,17 @@ namespace ReikaKalseki.SeaToSea {
 			l.intensity = 1.5F;
 			l.range = 40;
 			Renderer r = world.GetComponentInChildren<Renderer>();
+			setTexture(r);
+			return world;
+	    }
+		
+		internal static void setTexture(Renderer r) {
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/HeatSink");
 			r.materials[0].SetFloat("_SpecInt", 20);
 			r.materials[0].SetFloat("_Shininess", 7);
 			r.materials[0].SetFloat("_Fresnel", 0.5F);
 			r.materials[0].SetColor("_Color", new Color(1, 1, 1, 1));
-			return world;
-	    }
+		}
 			
 	}
 		

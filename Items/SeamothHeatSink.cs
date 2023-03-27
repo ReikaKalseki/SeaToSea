@@ -22,6 +22,9 @@ namespace ReikaKalseki.SeaToSea {
 			craftingTime = 4;
 			unlockRequirement = TechType.Unobtanium;
 			inventorySize = new Vector2int(1, 2);
+			renderModify = r => {
+				EjectedHeatSink.setTexture(r);
+			};
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

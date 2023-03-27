@@ -76,6 +76,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.Seamoth);
 			gatedTechnologies.Add(TechType.Cyclops);
 			gatedTechnologies.Add(TechType.Exosuit);
+			gatedTechnologies.Add(TechType.Polyaniline);
 			gatedTechnologies.Add(TechType.ExosuitDrillArmModule);
 			gatedTechnologies.Add(TechType.ExoHullModule1);
 			gatedTechnologies.Add(TechType.ExoHullModule2);

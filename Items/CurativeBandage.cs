@@ -17,6 +17,12 @@ namespace ReikaKalseki.SeaToSea
 			unlockRequirement = TechType.Workbench;//SeaToSeaMod.healFlower.TechType;
 			craftingTime = 6;
 			inventorySize = new Vector2int(1, 2);
+			renderModify = r => {
+				r.transform.localScale = new Vector3(1, 3, 1);
+				r.materials[0].SetFloat("_Shininess", 7.5F);
+				r.materials[0].SetFloat("_SpecInt", 10F);
+				r.materials[0].SetFloat("_Fresnel", 0.5F);
+			};
 		}
 
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

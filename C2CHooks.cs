@@ -68,6 +68,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.reaperGrabVehicleEvent += onReaperGrab;
 	    	
+	    	//DIHooks.onSoundPlayedEvent += onSoundPlayed;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
@@ -610,7 +612,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (UnityEngine.Random.Range(0F, 1F) < 0.88)
 	    		return;
 	    	int near = 0;
-			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 4F)) {
+			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 40F)) {
 				if (!c || !c.gameObject) {
 					continue;
 				}
@@ -738,6 +740,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<C2CTreader>();
+	    	}
+			else if (pi && pi.ClassId == VanillaCreatures.REAPER.prefab) {
+				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+				go.EnsureComponent<C2CReaper>();
 	    	}
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
@@ -1095,11 +1101,22 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onReaperGrab(ReaperLeviathan r, Vehicle v) {
-	    	SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
-	    	
 		   	if (!KnownTech.Contains(TechType.SeamothElectricalDefense)) {
 		       	KnownTech.Add(TechType.SeamothElectricalDefense);
+	    		SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
 		    }
+	    }
+	    
+	    public static void onSoundPlayed(FMOD_CustomEmitter emit) {
+	    	if (emit.asset != null)
+	    		SNUtil.writeToChat("firing sound "+emit.asset.path+" in "+emit.gameObject+" ("+emit.GetType()+")");
+	    	if (emit.asset != null && emit.asset.path.Contains("idle") && emit.gameObject.FindAncestor<ReaperLeviathan>()) {
+	    		ReaperLeviathan r = emit.gameObject.FindAncestor<ReaperLeviathan>();
+		    	if (r) {
+	    			SNUtil.writeToChat("Reaper "+r+" @ "+r.transform.position+" is roaring");
+	    			r.gameObject.GetComponent<C2CReaper>().fireRoar();
+		    	}
+	    	}
 	    }
 	}
 }
