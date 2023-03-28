@@ -13,6 +13,7 @@ namespace ReikaKalseki.SeaToSea
 		public enum ConfigEntries {
 			[ConfigEntry("Additional Exploration Prompts", true)]PROMPTS,
 			[ConfigEntry("Platinum Theft Chance", typeof(float), 0.5F, 0.25F, 1F, 0)]PLATTHEFT,
+			[ConfigEntry("Hard Mode", false)]HARDMODE,
 		}
 	}
 }

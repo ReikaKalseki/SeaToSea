@@ -106,6 +106,8 @@ namespace ReikaKalseki.SeaToSea
         }
         
         CustomPrefab.addPrefabNamespace("ReikaKalseki.SeaToSea");
+        
+        C2CIntegration.injectLoad();
                 
         itemLocale.load();
         pdaLocale.load();

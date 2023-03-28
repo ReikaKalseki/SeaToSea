@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea {
         EcoceanMod.config.load();
         
     	SNUtil.log("Overriding config entries in support mods", SeaToSeaMod.modDLL);
+		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
     	
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.CHEAP_GLASS, false);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.CHEAP_HUDCHIP, false);
@@ -40,11 +41,11 @@ namespace ReikaKalseki.SeaToSea {
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_SEEDS, false);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.REINF_GLASS, true);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LARGE_CYCLOCKER, true);
-    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LANTERN_SPEED, 0.4F);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LANTERN_SPEED, hard ? 0.2F : 0.4F);
     	
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
     	
-    	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, 4F));
+    	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASERANGE, 200);
@@ -54,15 +55,39 @@ namespace ReikaKalseki.SeaToSea {
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASESPEED, 18);
     	
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWFIRERATE, f => Mathf.Clamp(f, 0.75F, 1F));
-    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWLIFE, f => Mathf.Clamp(f, 0.5F, 2F));
-    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWCOUNT, 3);
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWLIFE, f => Mathf.Clamp(f, 0.5F, hard ? 1F : 2F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWCOUNT, hard ? 2 : 3);
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BOMBDMG, f => Mathf.Clamp(f, 0.5F, 2F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.ANCHORDMG, f => Mathf.Clamp(f, 0.25F, 1.5F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BLOODDMG, f => Mathf.Clamp(f, 1F, 3F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.PLANKTONRATE, f => Mathf.Clamp(f, 1.5F, 3F));
-    	//if (hard)
-    	//EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOBALCOMPASS, f => Mathf.Clamp(f, 0.5F, 1F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOBALCOMPASS, f => Mathf.Clamp(f, hard ? 0.75F : 0.25F, 1F));
     }
+		
+	public static void injectLoad() {
+		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+		ReefbalanceMod.scanCountOverrides[TechType.ConstructorFragment] = hard ? 12 : 8;
+		ReefbalanceMod.scanCountOverrides[TechType.LaserCutterFragment] = hard ? 10 : 5;
+		ReefbalanceMod.scanCountOverrides[TechType.WorkbenchFragment] = hard ? 8 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.SeaglideFragment] = hard ? 5 : 3;
+		ReefbalanceMod.scanCountOverrides[TechType.StasisRifleFragment] = hard ? 4 : 2;
+		ReefbalanceMod.scanCountOverrides[TechType.SeamothFragment] = hard ? 6 : 4; //normally 3
+		
+		ReefbalanceMod.scanCountOverrides[TechType.BaseNuclearReactorFragment] = hard ? 6 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.BaseBioReactorFragment] = hard ? 6 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.MoonpoolFragment] = hard ? 6 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.BaseFiltrationMachineFragment] = hard ? 4 : 2;
+		
+		ReefbalanceMod.scanCountOverrides[TechType.CyclopsHullFragment] = hard ? 6 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.CyclopsEngineFragment] = hard ? 6 : 4;
+		ReefbalanceMod.scanCountOverrides[TechType.CyclopsBridgeFragment] = hard ? 6 : 4;
+		
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitDrillArmFragment] = hard ? 8 : 5;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitGrapplingArmFragment] = hard ? 8 : 5;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitPropulsionArmFragment] = hard ? 8 : 5;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitTorpedoArmFragment] = hard ? 8 : 5;
+		
+	}
     
     public static void addPostCompat() {
 		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");

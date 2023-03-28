@@ -282,9 +282,14 @@ namespace ReikaKalseki.SeaToSea {
 			if (target == Player.main.gameObject) {
 				lastPlayerBiteTime = DayNightCycle.main.timePassedAsFloat;
 				Pickupable p = Inventory.main.container.RemoveItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
-				if (p && UnityEngine.Random.Range(0F, 1F) < Mathf.Clamp(SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.PLATTHEFT), 0.25F, 1F)) {
-					Inventory.main.InternalDropItem(p, false);
-					grab(p.gameObject);
+				if (p) {
+					float ch = Mathf.Clamp(SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.PLATTHEFT), 0.25F, 1F);
+					if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+						ch *= 3;
+					if (UnityEngine.Random.Range(0F, 1F) < ch) {
+						Inventory.main.InternalDropItem(p, false);
+						grab(p.gameObject);
+					}
 				}
 			}
 			else {

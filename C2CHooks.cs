@@ -68,7 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.reaperGrabVehicleEvent += onReaperGrab;
 	    	
-	    	//DIHooks.onSoundPlayedEvent += onSoundPlayed;
+	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
@@ -741,10 +741,6 @@ namespace ReikaKalseki.SeaToSea {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<C2CTreader>();
 	    	}
-			else if (pi && pi.ClassId == VanillaCreatures.REAPER.prefab) {
-				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
-				go.EnsureComponent<C2CReaper>();
-	    	}
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
@@ -1074,6 +1070,21 @@ namespace ReikaKalseki.SeaToSea {
 	    		return 0;
 	    	return ch.value;
 	    }
+	    
+	    public static float getSolarEfficiencyLevel(DIHooks.SolarEfficiencyCheck ch) {
+	    	if (!SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+	    		return ch.value;
+	    	//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));
+	    	float depth = Ocean.main.GetDepthOf(ch.panel.gameObject);
+	    	float effectiveDepth = depth;
+	    	if (depth > 150)
+	    		effectiveDepth = Mathf.Max(depth, 250);
+	    	else if (depth > 100)
+	    		effectiveDepth = (float)MathUtil.linterpolate(depth, 100, 150, 125, 250, true);
+	    	else if (depth > 50)
+	    		effectiveDepth = (float)MathUtil.linterpolate(depth, 50, 100, 50, 125, true);
+	    	return ch.panel.depthCurve.Evaluate(effectiveDepth);
+	    }
 		
 		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {
 	    	if (tt == TechType.LaserCutter && hasLaserCutterUpgrade()) {
@@ -1107,16 +1118,10 @@ namespace ReikaKalseki.SeaToSea {
 		    }
 	    }
 	    
-	    public static void onSoundPlayed(FMOD_CustomEmitter emit) {
-	    	if (emit.asset != null)
-	    		SNUtil.writeToChat("firing sound "+emit.asset.path+" in "+emit.gameObject+" ("+emit.GetType()+")");
-	    	if (emit.asset != null && emit.asset.path.Contains("idle") && emit.gameObject.FindAncestor<ReaperLeviathan>()) {
-	    		ReaperLeviathan r = emit.gameObject.FindAncestor<ReaperLeviathan>();
-		    	if (r) {
-	    			SNUtil.writeToChat("Reaper "+r+" @ "+r.transform.position+" is roaring");
-	    			r.gameObject.GetComponent<C2CReaper>().fireRoar();
-		    	}
-	    	}
+	    public static bool chargerConsumeEnergy(IPowerInterface pi, float amt, out float consumed, Charger c) {
+	    	if (c is PowerCellCharger && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+	    		amt *= 1.5F;
+	    	return pi.ConsumeEnergy(amt, out consumed);
 	    }
 	}
 }

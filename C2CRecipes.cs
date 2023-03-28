@@ -29,6 +29,8 @@ namespace ReikaKalseki.SeaToSea
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
     
     internal static void addItemsAndRecipes() {
+    	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+    	
        	TechData rec = new TechData();
       	rec.Ingredients.Add(new Ingredient(TechType.TitaniumIngot, 1));
        	DuplicateRecipeDelegateWithRecipe item = new DuplicateRecipeDelegateWithRecipe(TechType.Titanium, rec);
@@ -445,7 +447,6 @@ namespace ReikaKalseki.SeaToSea
         removeVanillaUnlock(TechType.VehicleHullModule3);
         removeVanillaUnlock(TechType.BaseReinforcement);
         removeVanillaUnlock(TechType.HeatBlade); //force you to learn it from the mountain cave base
-        removeVanillaUnlock(TechType.SeamothElectricalDefense);
         
         RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
@@ -462,6 +463,11 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.JellyPlant, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.JellyPlantSeed, new Vector2int(2, 2));
         */
+       
+       	if (hard) {
+			RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
+        	removeVanillaUnlock(TechType.SeamothElectricalDefense);
+       	}
        
        	//RecipeUtil.logChangedRecipes();
     }

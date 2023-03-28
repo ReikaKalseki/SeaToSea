@@ -56,7 +56,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
 			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
 			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
-			addRecipe(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 6, 3, 8);
+			addRecipe(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 180, 3, 8);
 		}
 		
 		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
@@ -244,9 +244,11 @@ namespace ReikaKalseki.SeaToSea {
 			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
+					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");
 					if (consumePower(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE, seconds)) {
 						IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 						bool hasKelp = kelp != null && kelp.Count > 0;
+						//SNUtil.writeToChat("has kelp: "+(kelp == null ? 0 : kelp.Count));
 						setEmissiveColor(recipeStalledColor);
 						nextEnzyTimeRemaining -= seconds*(hasKelp ? 1.5F : 1);
 						//SNUtil.writeToChat("remaining: "+nextEnzyTimeRemaining);
@@ -296,6 +298,7 @@ namespace ReikaKalseki.SeaToSea {
 						}
 					}
 					else {
+						//SNUtil.writeToChat("Insufficient power - only had ");
 						abort(offlineColor);
 					}
 				}
@@ -323,6 +326,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void abort(Color c) {
+			//SNUtil.writeToChat("aborting operation");
 			setRecipe(null);
 			colorCooldown = -1;
 			operationCooldown = 10;
@@ -388,9 +392,13 @@ namespace ReikaKalseki.SeaToSea {
 			outputItem = o;
 			enzyCount = s;
 			processTime = t;
+			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+				e *= 2.5F;
 			totalEnergyCost = e;
 			secondsPerEnzyme = processTime/(float)enzyCount;
 			powerPerSecond = totalEnergyCost/processTime;
+			if (powerPerSecond < Bioprocessor.POWER_COST_IDLE)
+				throw new Exception("Recipe "+this+" uses too little energy!");
 		}
 		
 		public int getInputCount() {
@@ -403,7 +411,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override string ToString()
 		{
-			return string.Format("[BioRecipe InputItem={0}, OutputItem={1}, enzyCount={2}, ProcessTime={3}, secondsPerEnzyme={4}, InputCount={5}, OutputCount={6}]", inputItem, outputItem, enzyCount, processTime, secondsPerEnzyme, inputCount, outputCount);
+			return string.Format("[BioRecipe InputItem={0}, OutputItem={1}, enzyCount={2}, ProcessTime={3}, secondsPerEnzyme={4}, InputCount={5}, OutputCount={6}, totalEnergyCost={7}, powerPerSecond={8}]", inputItem, outputItem, enzyCount, processTime, secondsPerEnzyme, inputCount, outputCount, totalEnergyCost, powerPerSecond);
 		}
 
 		
