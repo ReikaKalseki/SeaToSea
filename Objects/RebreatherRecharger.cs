@@ -115,7 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
 			
-			isPowered = consumePower(RebreatherRecharger.POWER_COST, seconds);
+			isPowered = consumePower(RebreatherRecharger.POWER_COST*seconds);
 			if (isPowered) {
 				speed = Math.Min(speed*1.05F+0.15F, 150);
 				secsNoPwr = 0;

@@ -609,7 +609,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onTreaderChunkSpawn(SinkingGroundChunk chunk) {
-	    	if (UnityEngine.Random.Range(0F, 1F) < 0.88)
+	    	if (UnityEngine.Random.Range(0F, 1F) < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.92 : 0.88))
 	    		return;
 	    	int near = 0;
 			foreach (Collider c in Physics.OverlapSphere(chunk.gameObject.transform.position, 40F)) {
@@ -1112,7 +1112,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onReaperGrab(ReaperLeviathan r, Vehicle v) {
-		   	if (!KnownTech.Contains(TechType.SeamothElectricalDefense)) {
+	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && KnownTech.Contains(TechType.BaseUpgradeConsole) && !KnownTech.Contains(TechType.SeamothElectricalDefense)) {
 		       	KnownTech.Add(TechType.SeamothElectricalDefense);
 	    		SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
 		    }

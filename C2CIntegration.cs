@@ -82,14 +82,15 @@ namespace ReikaKalseki.SeaToSea {
 		ReefbalanceMod.scanCountOverrides[TechType.CyclopsEngineFragment] = hard ? 6 : 4;
 		ReefbalanceMod.scanCountOverrides[TechType.CyclopsBridgeFragment] = hard ? 6 : 4;
 		
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitDrillArmFragment] = hard ? 8 : 5;
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitGrapplingArmFragment] = hard ? 8 : 5;
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitPropulsionArmFragment] = hard ? 8 : 5;
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitTorpedoArmFragment] = hard ? 8 : 5;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitDrillArmFragment] = hard ? 20 : 10; //these are EVERYWHERE
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitGrapplingArmFragment] = hard ? 12 : 6;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
+		ReefbalanceMod.scanCountOverrides[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
 		
 	}
     
     public static void addPostCompat() {
+		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");
 		if (miniPoo != null)
 			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
@@ -100,10 +101,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
 		if (glowOil != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, 2);
-			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, 8);
-			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, 5);
-			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, 6);
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, hard ? 9 : 5);
+			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, hard ? 12 : 8);
+			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, hard ? 8 : 5);
+			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, hard ? 6 : 4);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
 			SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 			

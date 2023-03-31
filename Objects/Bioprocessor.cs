@@ -241,11 +241,12 @@ namespace ReikaKalseki.SeaToSea {
 			
 			if (operationCooldown > 0)
 				operationCooldown -= seconds;
-			if (consumePower(Bioprocessor.POWER_COST_IDLE, seconds)) {
+			if (consumePower(Bioprocessor.POWER_COST_IDLE*seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");
-					if (consumePower(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE, seconds)) {
+					float drain = (currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds;
+					if (consumePower(drain)) {
 						IList<InventoryItem> kelp = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 						bool hasKelp = kelp != null && kelp.Count > 0;
 						//SNUtil.writeToChat("has kelp: "+(kelp == null ? 0 : kelp.Count));
@@ -255,7 +256,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (nextEnzyTimeRemaining <= 0) {
 							IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 							if (enzy != null && enzy.Count >= 1) {
-								ObjectUtil.removeItem(sc, enzy[0]);
+								InventoryUtil.removeItem(sc, enzy[0]);
 								enzyRequired--;
 								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 								setEmissiveColor(workingColor, 1+currentOperation.secondsPerEnzyme);
@@ -271,19 +272,14 @@ namespace ReikaKalseki.SeaToSea {
 									//SNUtil.writeToChat("success");
 									for (int i = 0; i < currentOperation.inputCount; i++) {
 										SNUtil.log("Removing "+ing[0].item+" from bioproc inventory");
-										ObjectUtil.removeItem(sc, ing[0]); //list is updated in realtime
+										InventoryUtil.removeItem(sc, ing[0]); //list is updated in realtime
 									}
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
 										n *= 2;
-										ObjectUtil.removeItem(sc, kelp[0]);
+										InventoryUtil.removeItem(sc, kelp[0]);
 									}
-									for (int i = 0; i < n; i++) {
-										GameObject item = ObjectUtil.createWorldObject(CraftData.GetClassIdForTechType(currentOperation.outputItem), true, false);
-										SNUtil.log("Adding "+item+" to bioproc inventory");
-										item.SetActive(false);
-										sc.container.AddItem(item.GetComponent<Pickupable>());
-									}
+									addItemToInventory(currentOperation.outputItem, n);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+" x"+n);
 									setRecipe(null);
 									colorCooldown = -1;
@@ -292,6 +288,7 @@ namespace ReikaKalseki.SeaToSea {
 									operationCooldown = 2;
 								}
 								else {
+									SNUtil.log("Bioprocessor shutdown due to invalid ingredients");
 									abort(noRecipeColor);
 								}
 							}
@@ -299,6 +296,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					else {
 						//SNUtil.writeToChat("Insufficient power - only had ");
+						SNUtil.log("Bioprocessor shutdown due to insufficient power during operation; wanted "+drain+", relay has "+getSub().powerRelay.GetPower());
 						abort(offlineColor);
 					}
 				}
@@ -317,6 +315,7 @@ namespace ReikaKalseki.SeaToSea {
 				setRecipe(null);
 				//SNUtil.writeToChat("Insufficient power");
 				setEmissiveColor(offlineColor);
+				operationCooldown = 5;
 			}
 			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length-0.1F) {
 				lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
@@ -327,6 +326,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private void abort(Color c) {
 			//SNUtil.writeToChat("aborting operation");
+			if (currentOperation != null) {
+				int n = currentOperation.enzyCount-enzyRequired;
+				if (n > 0) {
+					SNUtil.log("Refunding "+n+" enzymes");
+					addItemToInventory(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, n);
+				}
+			}
 			setRecipe(null);
 			colorCooldown = -1;
 			operationCooldown = 10;

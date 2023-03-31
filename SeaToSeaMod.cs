@@ -424,6 +424,9 @@ namespace ReikaKalseki.SeaToSea
     		case "bkelpbase":
     			pos = C2CHooks.bkelpBaseGeoCenter+Vector3.up*30;
     			break;
+    		case "dunearch":
+    			pos = new Vector3(-1610, -334, 92);
+    			break;
     		case "mountainpod":
     			pos = new Vector3(993, -260, 1379);
     			break;
