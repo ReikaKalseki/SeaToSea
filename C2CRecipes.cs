@@ -55,6 +55,7 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Magnetite, 6, "Bar");
        	createCompressedIngot(TechType.Nickel);
        	createCompressedIngot(TechType.Kyanite, 6, "Boule");
+       	createCompressedIngot(TechType.Salt, 8, "Block");
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM));
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 8);
        	
@@ -491,7 +492,8 @@ namespace ReikaKalseki.SeaToSea
     }
     
     private static void createCompressedIngot(TechType item, string refName, int amt = 10, string name = "Ingot", Atlas.Sprite spr = null) {
-    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, refName+" "+name, "An ingot of compressed "+refName.ToLowerInvariant(), "41919ae1-1471-4841-a524-705feb9c2d20");
+    	string pref = name[0] == 'A' || name[0] == 'E' || name[0] == 'I' || name[0] == 'O' || name[0] == 'U' ? "An " : "A ";
+    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, refName+" "+name, pref+name.ToLowerInvariant()+" of compressed "+refName.ToLowerInvariant()+".", "41919ae1-1471-4841-a524-705feb9c2d20");
     	ingot.addIngredient(item, amt);
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];

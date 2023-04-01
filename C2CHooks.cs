@@ -1074,8 +1074,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static float getSolarEfficiencyLevel(DIHooks.SolarEfficiencyCheck ch) {
 	    	if (!SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
 	    		return ch.value;
-	    	//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));
-	    	float depth = Ocean.main.GetDepthOf(ch.panel.gameObject);
+	    	float depth = Mathf.Max(0F, Ocean.main.GetDepthOf(ch.panel.gameObject));
 	    	float effectiveDepth = depth;
 	    	if (depth > 150)
 	    		effectiveDepth = Mathf.Max(depth, 250);
@@ -1083,7 +1082,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		effectiveDepth = (float)MathUtil.linterpolate(depth, 100, 150, 125, 250, true);
 	    	else if (depth > 50)
 	    		effectiveDepth = (float)MathUtil.linterpolate(depth, 50, 100, 50, 125, true);
-	    	return ch.panel.depthCurve.Evaluate(effectiveDepth);
+	    	float f = Mathf.Clamp01((ch.panel.maxDepth-effectiveDepth)/ch.panel.maxDepth);
+	    	//SNUtil.writeToChat(depth+" > "+effectiveDepth+" > "+f+" > "+ch.panel.depthCurve.Evaluate(f));
+	    	return ch.panel.depthCurve.Evaluate(f);
 	    }
 		
 		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {
