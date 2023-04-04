@@ -56,6 +56,8 @@ namespace ReikaKalseki.SeaToSea
     public static SeaTreaderTunnelLight tunnelLight;
     
     public static DataChit laserCutterBulkhead;
+    public static DataChit bioProcessorBoost;
+   // public static DataChit vehicleSpeedBoost;
     
     //internal static VoidLeviElecSphere leviPulse;
     internal static DeepStalker deepStalker;
@@ -132,6 +134,9 @@ namespace ReikaKalseki.SeaToSea
 	    XMLLocale.LocaleEntry e = miscLocale.getEntry("bulkheadLaserCutterUpgrade");
 	    laserCutterBulkhead = new DataChit(e.key, e.name, e.desc, d => {d.controlText = e.pda; d.graphic = () => SNUtil.getTechPopupSprite(TechType.LaserCutter);});
 	    laserCutterBulkhead.Patch();
+	    e = miscLocale.getEntry("bioprocessorBoost");
+	    bioProcessorBoost = new DataChit(e.key, e.name, e.desc, d => {d.controlText = e.pda;});
+	    bioProcessorBoost.Patch();
 	    
         C2CItems.addFlora();
         C2CRecipes.addItemsAndRecipes();	

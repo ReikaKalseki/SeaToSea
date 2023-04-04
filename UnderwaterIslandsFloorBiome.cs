@@ -27,8 +27,8 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Color waterColor = new Color(0.75F, 0.125F, 1F);
 		public static readonly float fogDensity = 1.5F;
     
-	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-122, -506, 913);
-	    public static readonly Vector3 wreckCtrPos2 = new Vector3(-112, -506, 896);
+	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-110.76F, -499F, 940.19F);
+	    public static readonly Vector3 wreckCtrPos2 = new Vector3(-138.38F, -497F, 932.69F);
 		
 		public static readonly UnderwaterIslandsFloorBiome instance = new UnderwaterIslandsFloorBiome();
 		

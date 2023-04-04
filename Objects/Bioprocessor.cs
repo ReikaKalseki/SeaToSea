@@ -376,6 +376,10 @@ namespace ReikaKalseki.SeaToSea {
 					;//soundLoop.Stop();
 			}
 		}
+	    
+	    public static bool hasBioprocessorUpgrade() {
+	    	return Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.bioProcessorBoost.goal.key);
+	    }
 		
 	}
 	

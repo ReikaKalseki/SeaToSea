@@ -71,6 +71,8 @@ namespace ReikaKalseki.SeaToSea
 			private Channel? heatsinkSoundEvent;
 			
 			private float lastTickTime = -1;
+			
+			private float speedBonus;
         	
 			void Start() {
 				useSeamothVehicleTemperature = false;
@@ -98,8 +100,12 @@ namespace ReikaKalseki.SeaToSea
 				SNUtil.log("Heat purge complete @ "+time+" ("+holdTempLowTime+"/"+HOLD_LOW_TIME+"), firing heatsink", SeaToSeaMod.modDLL);
 				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
 				go.transform.position = seamoth.transform.position+seamoth.transform.forward*4;
-				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*10, ForceMode.VelocityChange);
+				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*-20, ForceMode.VelocityChange);
 				go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge/250F)*0.25F+0.75F));
+			}
+			
+			internal void applySpeedBoost() {
+				speedBonus = 1;
 			}
 			
 			internal bool isPurgingHeat() {
@@ -123,6 +129,9 @@ namespace ReikaKalseki.SeaToSea
 				}
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
+				
+				if (speedBonus > 0)
+					speedBonus *= 0.925F;
 				
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {
 					ATTRIBUTES_3D attr = transform.position.To3DAttributes();

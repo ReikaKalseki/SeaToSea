@@ -473,6 +473,17 @@
 			
 		</pda>
 	</SeamothPowerSeal>
+	<SeaMothSpeed>
+		<name>
+			Seamoth Propulsion Module
+		</name>
+		<desc>
+			An upgrade for the seamoth propulsor that increases base speed and allows for short bursts of even higher speed.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeaMothSpeed>
 	<SeamothHeatSinkModule>
 		<name>
 			Seamoth Heat Sink Module

@@ -252,7 +252,7 @@ namespace ReikaKalseki.SeaToSea {
 		    			}
 	    			}
 				}
-				else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 12) {
+				else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 15) {
 					//SNUtil.writeToChat("Destroying vent kelp @ "+transform.position.y);
 					SNUtil.log("Destroying vent kelp @ "+transform.position.y);
 					UnityEngine.Object.DestroyImmediate(gameObject);

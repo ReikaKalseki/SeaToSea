@@ -27,6 +27,7 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothDepthModule depth1300;
     internal static SeamothPowerSealModule powerSeal;
     internal static SeamothHeatSinkModule heatSinkModule;
+    internal static SeamothSpeedModule speedModule;
     internal static CustomEquipable sealSuit;
     internal static AzuriteBattery t2Battery;
     
@@ -80,6 +81,7 @@ namespace ReikaKalseki.SeaToSea
         depth1300 = new SeamothDepthModule("SMDepth4", "Seamoth Depth Module MK4", "Increases crush depth to 1300m.", 1300);
         powerSeal = new SeamothPowerSealModule();
         heatSinkModule = new SeamothHeatSinkModule();
+        speedModule = new SeamothSpeedModule();
         cyclopsHeat = new CyclopsHeatModule();        
 		sealSuit = new SealedSuit();		
 		t2Battery = new AzuriteBattery();		
@@ -109,6 +111,9 @@ namespace ReikaKalseki.SeaToSea
         
         heatSinkModule.preventNaturalUnlock();
         heatSinkModule.Patch();
+        
+        speedModule.preventNaturalUnlock();
+        speedModule.Patch();
         
         cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
