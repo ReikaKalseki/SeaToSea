@@ -178,6 +178,17 @@
 		Reinforced bulkheads require increased cutting temperatures
 	</error>
   </bulkheadLaserCutterUpgrade>
+  <bioprocessorBoost>
+	<name>
+		Bioprocessor Efficiency Upgrade
+	</name>
+	<desc>
+		&lt;color=#FFA622FF&gt;Bioprocessor&lt;/color&gt;\n&lt;color=#74C8F8FF&gt;Efficiency Upgrade&lt;/color&gt;
+	</desc>
+	<pda>
+		Now completes recipes with 33% less energy required
+	</pda>
+  </bioprocessorBoost>
   <DockToChangeVehicleUpgrades>
 	<name>
 		

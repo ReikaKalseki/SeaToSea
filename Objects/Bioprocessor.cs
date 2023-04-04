@@ -259,12 +259,12 @@ namespace ReikaKalseki.SeaToSea {
 								InventoryUtil.removeItem(sc, enzy[0]);
 								enzyRequired--;
 								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
-								setEmissiveColor(workingColor, 1+currentOperation.secondsPerEnzyme);
+								setEmissiveColor(workingColor, 1+getOperationTime(currentOperation.secondsPerEnzyme));
 							}
 							else {
 								setRecipe(null);
 							}
-							nextEnzyTimeRemaining = currentOperation.secondsPerEnzyme;
+							nextEnzyTimeRemaining = getOperationTime(currentOperation.secondsPerEnzyme);
 							if (enzyRequired <= 0) {
 								//SNUtil.writeToChat("try craft");
 								IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
@@ -324,6 +324,12 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		private float getOperationTime(float val) {
+			if (hasBioprocessorUpgrade())
+				val *= 0.67F;
+			return val;
+		}
+		
 		private void abort(Color c) {
 			//SNUtil.writeToChat("aborting operation");
 			if (currentOperation != null) {
@@ -366,7 +372,7 @@ namespace ReikaKalseki.SeaToSea {
 			bool has = r != null;
 			currentOperation = r;
 			enzyRequired = r != null ? r.enzyCount : -1;
-			nextEnzyTimeRemaining = r != null ? r.secondsPerEnzyme : -1;
+			nextEnzyTimeRemaining = r != null ? getOperationTime(r.secondsPerEnzyme) : -1;
 			setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			if (has != had) {
 				SoundManager.playSoundAt(SoundManager.buildSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
