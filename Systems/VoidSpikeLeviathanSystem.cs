@@ -613,6 +613,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void temporarilyDisableSeamothStealth(SeaMoth sm, float duration) {
+	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+	    		duration *= 1.5F;
 	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
 	    	ping.nextStealthValidityTime = Mathf.Max(ping.nextStealthValidityTime, DayNightCycle.main.timePassedAsFloat+duration);
 	    }

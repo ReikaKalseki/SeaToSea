@@ -20,7 +20,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly LiquidBreathingSystem instance = new LiquidBreathingSystem();
 		
-		internal static readonly float ITEM_VALUE = 30*60; //seconds
+		internal static readonly float ITEM_VALUE = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 1200 : 1800; //seconds
 		internal static readonly float TANK_CHARGE = 10*60; //how much time you can spend (total) of liquid before returning to a base with a charger
 		internal static readonly float TANK_CAPACITY = 2.5F*60; //per "air tank" before you need to go back to a powered air-filled space
 		

@@ -503,10 +503,31 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 				if (depthClass >= 3) {
+					bool liquid = LiquidBreathingSystem.instance.hasLiquidBreathing();
 					float depth = Player.main.GetDepth();
-					if ((depth >= depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing()) || (depth >= highO2UsageStart && !hasRebreatherV2)) {
-						num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-highO2UsageStart)/10F);
+					float increaseStart = highO2UsageStart;
+					float rate = 10F;
+					if (liquid) {
+						increaseStart = 99999;
 					}
+					else if (hasRebreatherV2) {
+						increaseStart = depthDamageStart;
+						rate = 4F;
+					}
+					else {
+						rate = depth > depthDamageStart ? 8F : 10F;
+					}
+					bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+					if (hard) {
+						rate *= 0.8F; //do NOT adjust the depth
+					}
+					if (depth >= increaseStart) {
+						num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-increaseStart)/rate);
+					}
+					else if (hard && depth > highO2UsageStart && !liquid) {
+						num *= (float)MathUtil.linterpolate(depth, highO2UsageStart, depthDamageStart, 1, 1.5F, true);
+					}
+					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+increaseStart+"&"+rate+">"+num.ToString("00.000"));
 				}
 			}
 			return breathingInterval * num;

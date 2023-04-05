@@ -56,6 +56,7 @@ namespace ReikaKalseki.SeaToSea
 			private SeaMoth seamoth;
 			private TemperatureDamage temperatureDamage;
 			private VFXVehicleDamages damageFX;
+			private VehicleAccelerationModifier speedModifier;
 			
 			private float baseDamageAmount;
 			
@@ -105,7 +106,7 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			internal void applySpeedBoost() {
-				speedBonus = 1;
+				speedBonus = 2F;
 			}
 			
 			internal bool isPurgingHeat() {
@@ -123,6 +124,10 @@ namespace ReikaKalseki.SeaToSea
 			internal void tick(float time, float tickTime) {
 				if (!seamoth)
 					seamoth = gameObject.GetComponent<SeaMoth>();
+				if (!speedModifier) {
+					speedModifier = seamoth.gameObject.AddComponent<VehicleAccelerationModifier>();
+					seamoth.accelerationModifiers = seamoth.gameObject.GetComponentsInChildren<VehicleAccelerationModifier>();
+				}
 				if (!temperatureDamage) {
 					temperatureDamage = gameObject.GetComponent<TemperatureDamage>();
 					baseDamageAmount = temperatureDamage.baseDamagePerSecond;
@@ -130,8 +135,13 @@ namespace ReikaKalseki.SeaToSea
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
-				if (speedBonus > 0)
-					speedBonus *= 0.925F;
+				float minSpeedBonus = InventoryUtil.isVehicleUpgradeSelected(seamoth, C2CItems.speedModule.TechType) ? 0.25F : 0;
+				if (speedBonus > minSpeedBonus)
+					speedBonus *= 0.933F;
+				else
+					speedBonus = Mathf.Min(minSpeedBonus, speedBonus+0.1F);
+				speedModifier.accelerationMultiplier = 1+speedBonus;
+				//SNUtil.writeToChat(speedBonus.ToString("0.000"));
 				
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {
 					ATTRIBUTES_3D attr = transform.position.To3DAttributes();
