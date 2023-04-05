@@ -315,6 +315,11 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.125F, 1);
     	
+    	new MercuryLootSpawner().Patch();
+    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(908.7F, -235.1F, 615.7F), Quaternion.identity, new Vector3(2, 4, 2)));
+    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(904.3F, -247F, 668.8F), Quaternion.identity, new Vector3(1, 3, 1)));
+    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(915.1F, -246.8F, 651.2F), Quaternion.identity, new Vector3(2, 6, 2)));
+    	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Mountains_CaveFloor, 0.05F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.ActiveLavaZone_Falls_Wall, 0.25F, 1);
