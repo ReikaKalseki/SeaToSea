@@ -95,8 +95,8 @@ namespace ReikaKalseki.SeaToSea {
 			return item.TechType;
 		}
 		
-		public static TechType getRecipeOutput(TechType input) {
-			return recipes[input].outputItem;
+		public static BioRecipe getRecipe(TechType input) {
+			return recipes[input];
 		}
 		
 		public static TechType getRecipeReferenceItem(TechType input) {

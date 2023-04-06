@@ -33,6 +33,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static Oxygen playerBaseO2;
 	    
 	    private static float nextBkelpBaseAmbTime = -1;
+	    private static float nextCameraEMPTime = -1;
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -156,6 +157,11 @@ namespace ReikaKalseki.SeaToSea {
 	    				break;
 	    			}
 	    		}
+	    	}
+	    	
+	    	if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
+	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
+	    			WaterBiomeManager.main.GetComponent<WaterscapeVolume>().fogEnabled = true;
 	    	}
 	    	
 	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
@@ -1123,6 +1129,21 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (c is PowerCellCharger && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
 	    		amt *= 1.5F;
 	    	return pi.ConsumeEnergy(amt, out consumed);
+	    }
+	    
+	    public static void tickScannerCamera(MapRoomCamera cam) {
+	    	Vector3 campos = cam.transform.position;
+	    	if (VoidSpikesBiome.instance.getDistanceToBiome(campos, true) < 200) {
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (time > nextCameraEMPTime) {
+		    		float d = UnityEngine.Random.Range(96F, 150F);
+		    		Vector3 pos = campos+cam.transform.forward*d;
+		    		pos = MathUtil.getRandomVectorAround(pos, 45);
+		    		pos = cam.transform.position+((pos-campos).setLength(d));
+		    		VoidSpikeLeviathanSystem.instance.spawnEMPBlast(pos);
+		    		nextCameraEMPTime = time+UnityEngine.Random.Range(1.2F, 2.5F);
+	    		}
+	    	}
 	    }
 	}
 }

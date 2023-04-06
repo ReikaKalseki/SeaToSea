@@ -387,8 +387,15 @@ namespace ReikaKalseki.SeaToSea {
 	    public void onObjectEMPHit(EMPBlast e, GameObject go) { //this might be called many times!
 	    	//SNUtil.writeToChat(">>"+e.gameObject.name+" > "+e.gameObject.name.StartsWith("VoidSpikeLevi_LightPulse", StringComparison.InvariantCultureIgnoreCase)+" @ "+go.FindAncestor<Player>());
 	    	if (e.gameObject.name.StartsWith("VoidSpikeLevi_EMPulse", StringComparison.InvariantCultureIgnoreCase)) {
-	    		//SNUtil.writeToChat("Match");
-	    		shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
+		    	//SNUtil.writeToChat("Match");
+		    	MapRoomCamera cam = go.FindAncestor<MapRoomCamera>();
+	    		if (cam) {
+		    		go.FindAncestor<LiveMixin>().TakeDamage(999999, go.transform.position, DamageType.Electrical, e.gameObject);
+		    		//cam.energyMixin.ConsumeEnergy(99999); //completely kill it
+	    		}
+	    		else {
+		    		shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
+	    		}
 	    	}
 	    }
 	    

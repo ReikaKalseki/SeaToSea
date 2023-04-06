@@ -92,8 +92,10 @@ namespace ReikaKalseki.SeaToSea {
     public static void addPostCompat() {
 		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");
-		if (miniPoo != null)
-			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 10, 6, 4);
+		if (miniPoo != null) {
+			BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
+			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
+		}
 		
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
 		
