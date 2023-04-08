@@ -310,10 +310,10 @@
 		Lorenz: [pleased/exasperated] Best news I've had all day.
 	</pda>
 	<category>
-		Sounds/vo/mountainpodearly.ogg
+		DownloadedData/AuroraSurvivors
 	</category>
 	<audio>
-		event:/player/story/VO/Ency_LifepodCrashZone2
+		Sounds/vo/mountainpodearly.ogg
 	</audio>
   </mountainpodearly>
   <mountainpodlate>

@@ -91,7 +91,7 @@ namespace ReikaKalseki.SeaToSea
         */
         BasicCraftingItem bacteria = CraftingItems.getItem(CraftingItems.Items.BacterialSample);
         bacteria.craftingTime = 1;
-        bacteria.numberCrafted = 2;
+        bacteria.numberCrafted = hard ? 2 : 3;
         bacteria.addIngredient(TechType.SeaCrownSeed, 2).addIngredient(enzyT, 2);//.addIngredient(TechType.TreeMushroomPiece, 1);
        
         BasicCraftingItem enzy = CraftingItems.getItem(CraftingItems.Items.BioEnzymes);
@@ -101,7 +101,7 @@ namespace ReikaKalseki.SeaToSea
        
         BasicCraftingItem comb = CraftingItems.getItem(CraftingItems.Items.HoneycombComposite);
         comb.craftingTime = 12;
-        comb.addIngredient(TechType.AramidFibers, 3).addIngredient(TechType.PlasteelIngot, 1);
+        comb.addIngredient(TechType.AramidFibers, hard ? 3 : 2).addIngredient(TechType.PlasteelIngot, 1);
         
         BasicCraftingItem gem = CraftingItems.getItem(CraftingItems.Items.DenseAzurite);
         gem.craftingTime = 4;
@@ -131,7 +131,7 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem chlorine = CraftingItems.getItem(CraftingItems.Items.Chlorine);
         chlorine.craftingTime = 3;
-        chlorine.numberCrafted = 2;
+        chlorine.numberCrafted = hard ? 2 : 3;
         chlorine.addIngredient(TechType.Salt, 3).addIngredient(TechType.GasPod, 3);
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);

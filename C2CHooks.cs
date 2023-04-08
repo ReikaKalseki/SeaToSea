@@ -122,6 +122,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
+	    	
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule2.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule2.AsString().Replace("maximum", "900m")));
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
@@ -927,8 +929,11 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onPlanktonActivated(PlanktonCloudTag cloud, Collider hit) {
 	    	SeaMoth sm = hit.gameObject.FindAncestor<SeaMoth>();
-	    	if (sm)
-	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 20);
+	    	if (sm) {
+	    		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+	    		float amt = UnityEngine.Random.Range(hard ? 15 : 8, hard ? 25 : 15);
+	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, amt);
+	    	}
 	    }
 	    
 	    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {

@@ -600,7 +600,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		return 0;
 	    	float time = DayNightCycle.main.timePassedAsFloat;
 	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
-	    	if (time < ping.nextStealthValidityTime)
+	    	if (ping.nextStealthValidityTime >= 0 && time < ping.nextStealthValidityTime)
 	    		return 0;
 	    	double minDist = double.PositiveInfinity;
 	    	foreach (GameObject go in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
@@ -628,7 +628,7 @@ namespace ReikaKalseki.SeaToSea {
     
 	    private class SeamothStealthManager : MonoBehaviour {
 	    	
-	    	internal float nextStealthValidityTime;
+	    	internal float nextStealthValidityTime = -1;
 	    	
 	    }
 	    

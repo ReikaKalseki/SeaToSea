@@ -421,7 +421,10 @@ namespace ReikaKalseki.SeaToSea {
     	}
    
 		public float getLRPowerLeakage(string biome) {
-    		return biome != null && lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
+    		float ret = biome != null && lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
+    		if (ret > 0 && !SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+    			ret *= 0.8F;
+    		return ret;
 		}
     	
     	public string getBiome(GameObject go) {
