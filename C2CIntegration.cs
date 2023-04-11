@@ -54,13 +54,13 @@ namespace ReikaKalseki.SeaToSea {
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.SPDAMT, 6);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASESPEED, 18);
     	
-    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWFIRERATE, f => Mathf.Clamp(f, 0.75F, 1F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWFIRERATE, f => hard ? Mathf.Clamp(f, 0.33F, 0.67F) : Mathf.Clamp(f, 0.75F, 1F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWLIFE, f => Mathf.Clamp(f, 0.5F, hard ? 1F : 2F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWCOUNT, hard ? 2 : 3);
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BOMBDMG, f => Mathf.Clamp(f, 0.5F, 2F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.ANCHORDMG, f => Mathf.Clamp(f, 0.25F, 1.5F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BLOODDMG, f => Mathf.Clamp(f, 1F, 3F));
-    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.PLANKTONRATE, f => Mathf.Clamp(f, 1.5F, 3F));
+    	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.PLANKTONRATE, f => Mathf.Clamp(f, 2F, 4F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOBALCOMPASS, f => Mathf.Clamp(f, hard ? 0.75F : 0.25F, 1F));
     }
 		
@@ -76,6 +76,8 @@ namespace ReikaKalseki.SeaToSea {
 		ReefbalanceMod.scanCountOverrides[TechType.BaseNuclearReactorFragment] = hard ? 6 : 4;
 		ReefbalanceMod.scanCountOverrides[TechType.BaseBioReactorFragment] = hard ? 6 : 4;
 		ReefbalanceMod.scanCountOverrides[TechType.MoonpoolFragment] = hard ? 6 : 4;
+		if (hard)
+			ReefbalanceMod.scanCountOverrides[TechType.ScannerRoomFragment] = 5;
 		ReefbalanceMod.scanCountOverrides[TechType.BaseFiltrationMachineFragment] = hard ? 4 : 2;
 		
 		ReefbalanceMod.scanCountOverrides[TechType.CyclopsHullFragment] = hard ? 6 : 4;
@@ -103,8 +105,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
 		if (glowOil != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, hard ? 9 : 5);
-			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, hard ? 12 : 8);
+			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, hard ? 6 : 3);
+			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, hard ? 8 : 6);
 			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, hard ? 8 : 5);
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, hard ? 6 : 4);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
@@ -124,7 +126,7 @@ namespace ReikaKalseki.SeaToSea {
 		Spawnable plankton = ItemRegistry.instance.getItem("planktonItem");
 		if (plankton != null) {
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, plankton.TechType, 1);
-			//RecipeUtil.addIngredient(C2CRecipes.getAlternateEnzyme().TechType, plankton.TechType, 3);
+			RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, plankton.TechType, 2);
 			
 			RecipeUtil.addIngredient(TechType.Polyaniline, plankton.TechType, 2);
 		}

@@ -22,7 +22,8 @@ namespace ReikaKalseki.SeaToSea
 {
   public static class C2CRecipes {	  
     
-    private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;    
+    private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;  
+    private static DuplicateRecipeDelegateWithRecipe bacteriaAlternate;  
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
@@ -144,6 +145,23 @@ namespace ReikaKalseki.SeaToSea
         
         C2CItems.addCraftingItems();
         
+        rec = RecipeUtil.copyRecipe(bacteria.getRecipe());
+        foreach (Ingredient i in rec.Ingredients) {
+        	if (i.techType == enzyT.TechType) {
+        		i.amount *= 2;
+        	}
+        	else if (i.techType == TechType.SeaCrownSeed) {
+        		i.amount = 3;
+        	}
+        }
+        rec.Ingredients.Add(new Ingredient(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 2));
+       	bacteriaAlternate = new DuplicateRecipeDelegateWithRecipe(bacteria, rec);
+       	bacteriaAlternate.ownerMod = SeaToSeaMod.modDLL;
+       	bacteriaAlternate.craftTime = bacteria.craftingTime*2F;
+       	bacteriaAlternate.setRecipe(bacteria.numberCrafted*3);
+       	bacteriaAlternate.unlock = TechType.Unobtanium;
+       	bacteriaAlternate.Patch();
+        
         rec = RecipeUtil.copyRecipe(enzy.getRecipe());
         foreach (Ingredient i in rec.Ingredients) {
         	if (i.techType == TechType.DisinfectedWater) {
@@ -154,8 +172,7 @@ namespace ReikaKalseki.SeaToSea
         		i.amount *= 3;
         	}
         }
-        rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));
-        
+        rec.Ingredients.Add(new Ingredient(TechType.TreeMushroomPiece, 1));        
        	enzymeAlternate = new DuplicateRecipeDelegateWithRecipe(enzy, rec);
        	enzymeAlternate.ownerMod = SeaToSeaMod.modDLL;
        	enzymeAlternate.craftTime = enzy.craftingTime*2F;
@@ -298,10 +315,12 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.addIngredient(TechType.ReactorRod, TechType.HydrochloricAcid, 2);
         
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.Battery, 1);
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
+        RecipeUtil.removeIngredient(TechType.PrecursorIonPowerCell, TechType.Silicone);
         
         RecipeUtil.addIngredient(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
@@ -440,10 +459,10 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.BaseReinforcement, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.Lead, 2);
         RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.FiberMesh, 1);
-        Base.FaceHullStrength[(int)Base.FaceType.Reinforcement] = 25; //from 7
-        Base.FaceHullStrength[(int)Base.FaceType.BulkheadOpened] = 6; //from 3
-        Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = 6; //from 3
-        Base.CellHullStrength[(int)Base.CellType.Foundation] = 5; //from 2
+        Base.FaceHullStrength[(int)Base.FaceType.Reinforcement] = hard ? 25 : 36; //from 7
+        Base.FaceHullStrength[(int)Base.FaceType.BulkheadOpened] = hard ? 8 : 12; //from 3
+        Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = hard ? 8 : 12; //from 3
+        Base.CellHullStrength[(int)Base.CellType.Foundation] = hard ? 5 : 6; //from 2
         
         removeVanillaUnlock(TechType.VehicleHullModule2);
         removeVanillaUnlock(TechType.VehicleHullModule3);
@@ -524,6 +543,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getAlternateEnzyme() {
     	return enzymeAlternate;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getAlternateBacteria() {
+    	return bacteriaAlternate;
     }
     
     public static DuplicateRecipeDelegateWithRecipe getQuartzIngotToGlass() {

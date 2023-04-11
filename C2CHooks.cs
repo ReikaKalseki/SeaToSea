@@ -63,6 +63,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.itemTooltipEvent += generateItemTooltips;
 	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
         
+	    	DIHooks.onKnifedEvent += onKnifed;
 	    	DIHooks.knifeHarvestEvent += interceptItemHarvest;
 	    	
 	    	DIHooks.onFruitPlantTickEvent += tickFruitPlant;
@@ -811,7 +812,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
 	    		TemperatureDamage td = go.EnsureComponent<TemperatureDamage>();
 	    		td.minDamageTemperature = 350;
-	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond)*0.5F;
+	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond)*0.33F;
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
 	    	}
@@ -983,7 +984,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public static bool isObjectKnifeable(LiveMixin lv) {
-	    	if (!lv)
+	    	if (!lv || CraftData.GetTechType(lv.gameObject) == TechType.BlueAmoeba)
 	    		return true;
 	    	AlkaliPlantTag a = lv.GetComponent<AlkaliPlantTag>();
 	    	if (a) {
@@ -1112,6 +1113,11 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool hasLaserCutterUpgrade() {
 	    	return Story.StoryGoalManager.main.completedGoals.Contains(SeaToSeaMod.laserCutterBulkhead.goal.key);
 	    }
+	    
+		public static void onKnifed(GameObject go) {
+	    	if (CraftData.GetTechType(go) == TechType.BlueAmoeba)
+	    		InventoryUtil.addItem(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType);
+		}
 	    
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
 	    	if (h.drops.Count > 0) {

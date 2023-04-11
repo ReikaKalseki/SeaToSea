@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
     	
     	internal readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
-    	private readonly static double lavaCastleInnerRadius = 75;
+    	private readonly static double lavaCastleInnerRadius = 65;//75;
     	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
     	private readonly static Vector3 lavaPitTunnelMid = new Vector3(145.8F, -1225F, 528F);
@@ -84,7 +84,7 @@ namespace ReikaKalseki.SeaToSea {
     		registerBiomeEnvironment("LavaFalls", 300, 15, 0.5F, 5, 25);
     		registerBiomeEnvironment("LavaLakes", 400, 18, 0.5F, 2, 40);
     		registerBiomeEnvironment("ilzLava", 1200, 24, 0.5F, 0, 100); //in lava
-    		registerBiomeEnvironment("LavaCastle", 270, 18, 0.5F, 4, 20);
+    		registerBiomeEnvironment("LavaCastle", 240, 18, 0.5F, 4, 20);
     		registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
     		registerBiomeEnvironment("LavaPitEntrance", 320, 15, 0.5F, 5, 25);
     		temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
@@ -95,6 +95,7 @@ namespace ReikaKalseki.SeaToSea {
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 		   	lrLeakage["LostRiver_BonesField"] = 1;
+		   	lrLeakage["LostRiver_BonesField_LakePit"] = 1.5F;
 		   	lrLeakage["LostRiver_Junction"] = 1;
 		   	lrLeakage["LostRiver_TreeCove"] = 0.9F;
 		   	lrLeakage["LostRiver_Corridor"] = 1;
@@ -129,11 +130,13 @@ namespace ReikaKalseki.SeaToSea {
     	
     	public bool isPlayerInOcean() {
     		Player ep = Player.main;
-    		string biome = getBiome(ep.gameObject).ToLowerInvariant();
     		bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
-    		bool inPrecursor = biome.Contains("prison") || biome.Contains("precursor") || prisonAquariumExpanded.Contains(ep.transform.position);
-    		bool inStructure = inPrecursor || ep.currentWaterPark;
-    		return inWater && !inStructure;
+    		return inWater && !ep.currentWaterPark && !isInPrecursor(ep.gameObject);
+    	}
+    	
+    	public bool isInPrecursor(GameObject go) {
+    		string biome = getBiome(go).ToLowerInvariant();
+    		return biome.Contains("prison") || biome.Contains("precursor") || prisonAquariumExpanded.Contains(go.transform.position);
     	}
     	/*
     	private GameObject getRippleCylinder() {
@@ -359,7 +362,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (dmg.soundOnDamage) {
 							dmg.soundOnDamage.Play();
 						}
-						//DO NOT SPAWN HEAT https://i.imgur.com/S0Rg7KX.jpgPDA PAGE
+						//DO NOT SPAWN HEAT PDA PAGE
 						if (temp.cyclopsFireChance <= 0 || UnityEngine.Random.Range(0, temp.cyclopsFireChance) == 0) {
 							CyclopsRooms key = (CyclopsRooms)UnityEngine.Random.Range(0, Enum.GetNames(typeof(CyclopsRooms)).Length);
 							SubFire fire = dmg.gameObject.GetComponentInParent<SubFire>();
@@ -432,10 +435,15 @@ namespace ReikaKalseki.SeaToSea {
     	}
     	
     	public string getBiome(Vector3 pos) {
-    		string ret = LargeWorld.main.GetBiome(pos);
+    		string ret = WaterBiomeManager.main.GetBiome(pos);
+    		//SNUtil.writeToChat(ret);
+    		if (ret.ToLowerInvariant().Contains("precursor"))
+    			return ret;
     		if (ret == "ILZCorridor" && pos.y < -1175)
     			ret = "ILZCorridorDeep";
-    		if (ret == "ILZChamber") {
+    		if (ret == "ILZCastleChamber")
+    			ret = "LavaCastleInner";
+    		if (ret.StartsWith("ILZ", StringComparison.InvariantCultureIgnoreCase)) {
     			float rad = Vector3.Distance(lavaCastleCenter, pos);
     			if (rad < lavaCastleInnerRadius)
     				ret = "LavaCastleInner";

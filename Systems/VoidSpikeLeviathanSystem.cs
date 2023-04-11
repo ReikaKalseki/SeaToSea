@@ -364,7 +364,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
 	    		SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
-	    	if (forceSpark || inBiome) {
+	    	if (forceSpark || (inBiome && !Story.StoryGoalManager.main.IsGoalComplete(?))) {
 	    		Vector3 pos = spawnJustVisibleDistanceFX(ep.transform);
 		    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
 		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);

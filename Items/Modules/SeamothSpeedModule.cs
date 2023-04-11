@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override float getUsageCooldown() {
-			return 2;
+			return 5;
 		}
 		
 		public override void onFired(SeaMoth sm, int slotID, float charge) { //charge is 0-1

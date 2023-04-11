@@ -162,6 +162,30 @@ namespace ReikaKalseki.SeaToSea
 						};
 						item.glowIntensity = 1;
 					break;
+					case Items.AmoeboidSample:
+						item.inventorySize = new Vector2int(1, 1);
+						item.renderModify = r => {
+							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
+							ObjectUtil.removeComponent<Eatable>(root);
+							
+							RenderUtil.swapToModdedTextures(r, item);
+							RenderUtil.makeTransparent(r);
+							r.transform.localScale = Vector3.one*1.5F;
+							r.materials[0].SetFloat("_Fresnel", 0.55F);
+							r.materials[0].SetFloat("_Shininess", 20F);
+							r.materials[0].SetFloat("_SpecInt", 12F);
+							
+							r.material.EnableKeyword("UWE_WAVING");
+							r.material.SetColor("_Color", Color.white);
+							r.material.SetColor("_SpecColor", Color.white);
+							r.material.SetVector("_Scale", new Vector4(0.03F, 0.03F, 0.03F, 0.03F));
+							r.material.SetVector("_Frequency", new Vector4(12.0F, 12.0F, 12.0F, 12.0F));
+							r.material.SetVector("_Speed", new Vector4(0.08F, 0.08F, 0.0F, 0.0F));
+							r.material.SetVector("_ObjectUp", new Vector4(0F, 0F, 1F, 0F));
+							r.material.SetFloat("_WaveUpMin", 10F);
+						};
+						//item.glowIntensity = 2;
+					break;
 				}
 				if (item.sprite == null)
 					item.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/"+id);
@@ -196,6 +220,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/Silicone")]FuelTankWall,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/benzene")]RocketFuel,
 			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
+			[Item(typeof(Bioprocessed),			TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Seeds/CreepvinePiece")]AmoeboidSample, //not craftable
 		}
 		
 		private static Item getAttr(Items key) {

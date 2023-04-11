@@ -208,6 +208,17 @@
 			
 		</pda>
 	</BrokenT2Battery>
+	<AmoeboidSample>
+		<name>
+			Amoeboid Samples
+		</name>
+		<desc>
+			Strands of colonial bacteria, evolved to leach minerals from rock.
+		</desc>
+		<pda>
+			
+		</pda>
+	</AmoeboidSample>
 	<breathfluid>
 		<name>
 			Breathing Fluid

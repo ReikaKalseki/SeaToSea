@@ -21,6 +21,7 @@ namespace ReikaKalseki.SeaToSea
 		
 			private static readonly SoundManager.SoundData startPurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "startheatsink", "Sounds/startheatsink2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+			private static readonly SoundManager.SoundData boostSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothboost", "Sounds/seamothboost.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 			//private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		
 			internal static bool useSeamothVehicleTemperature = true;
@@ -60,7 +61,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			private float baseDamageAmount;
 			
-			private float vehicleTemperature = 0;
+			private float vehicleTemperature = 25;
 			
 			private float holdTempLowTime = 0;
 			
@@ -70,6 +71,7 @@ namespace ReikaKalseki.SeaToSea
 			//private float lastPreEjectSound = -1;
 			
 			private Channel? heatsinkSoundEvent;
+			private Channel? boostSoundEvent;
 			
 			private float lastTickTime = -1;
 			
@@ -101,12 +103,18 @@ namespace ReikaKalseki.SeaToSea
 				SNUtil.log("Heat purge complete @ "+time+" ("+holdTempLowTime+"/"+HOLD_LOW_TIME+"), firing heatsink", SeaToSeaMod.modDLL);
 				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
 				go.transform.position = seamoth.transform.position+seamoth.transform.forward*4;
-				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*-20, ForceMode.VelocityChange);
+				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*20, ForceMode.VelocityChange);
+				seamoth.GetComponent<Rigidbody>().AddForce(-seamoth.transform.forward*5, ForceMode.VelocityChange);
 				go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge/250F)*0.25F+0.75F));
 			}
 			
 			internal void applySpeedBoost() {
+				if (speedBonus > 0.5F)
+					return;
 				speedBonus = 2F;
+				seamoth.ConsumeEnergy(5);
+				boostSoundEvent = SoundManager.playSoundAt(boostSound, transform.position, false, -1, 1);
+				seamoth.screenEffectModel.SetActive(true);
 			}
 			
 			internal bool isPurgingHeat() {
@@ -135,6 +143,8 @@ namespace ReikaKalseki.SeaToSea
 				if (!damageFX)
 					damageFX = gameObject.GetComponent<VFXVehicleDamages>();
 				
+				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+				
 				float minSpeedBonus = InventoryUtil.isVehicleUpgradeSelected(seamoth, C2CItems.speedModule.TechType) ? 0.25F : 0;
 				if (speedBonus > minSpeedBonus)
 					speedBonus *= 0.933F;
@@ -146,6 +156,10 @@ namespace ReikaKalseki.SeaToSea
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {
 					ATTRIBUTES_3D attr = transform.position.To3DAttributes();
 					heatsinkSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
+				}
+				if (boostSoundEvent != null && boostSoundEvent.Value.hasHandle()) {
+					ATTRIBUTES_3D attr = transform.position.To3DAttributes();
+					boostSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
 				}
 				
 				if (isPurgingHeat()) {
@@ -168,7 +182,7 @@ namespace ReikaKalseki.SeaToSea
 					holdTempLowTime = 0;
 					useSeamothVehicleTemperature = false;
 					float Tamb = temperatureDamage.GetTemperature();// this will call WaterTempSim, after the lava checks in DI
-					if (seamoth.docked)
+					if (seamoth.docked || seamoth.IsInsideAquarium() || EnvironmentalDamageSystem.instance.isInPrecursor(gameObject))
 						Tamb = 25;
 					useSeamothVehicleTemperature = true;
 					float dT = Tamb-vehicleTemperature;
@@ -177,15 +191,21 @@ namespace ReikaKalseki.SeaToSea
 					float f1 = dT > 0 ? 5F : 1F+1.5F*excess;
 					float speed = seamoth.useRigidbody.velocity.magnitude;
 					if (speed >= 2) {
-						f0 /= 1+(speed-2)/5F;
+						f0 /= 1+(speed-2)/8F;
 					}
 					float qDot = tickTime*Math.Sign(dT)*Mathf.Min(Math.Abs(dT), Mathf.Max(f1, Math.Abs(dT)/f0));
+					if (qDot > 0) {
+						if (Tamb < 300)
+							qDot *= hard ? 0.33F : 0.25F;
+						else
+							qDot *= hard ? 0.8F : 0.67F;
+					}
 					vehicleTemperature += qDot;
 					if (temperatureDebugActive)
 						SNUtil.writeToChat(Tamb+" > "+dT+" > "+speed.ToString("00.0")+" > "+f0.ToString("00.0000")+" > "+qDot.ToString("00.0000")+" > "+vehicleTemperature.ToString("0000.00"));
 				}
 				float factor = 1+Mathf.Max(0, vehicleTemperature-250)/25F;
-				float f2 = Mathf.Min(40, Mathf.Pow(factor, 2.5F));
+				float f2 = Mathf.Min(hard ? 36 : 32, Mathf.Pow(factor, 2.5F));
 				temperatureDamage.baseDamagePerSecond = baseDamageAmount*f2;
 				//SNUtil.writeToChat(vehicleTemperature+" > "+factor.ToString("00.0000")+" > "+f2.ToString("00.0000")+" > "+temperatureDamage.baseDamagePerSecond.ToString("0000.00"));
 				if (vehicleTemperature >= 90 && seamoth.GetPilotingMode()) {
