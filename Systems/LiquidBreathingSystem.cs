@@ -37,6 +37,8 @@ namespace ReikaKalseki.SeaToSea {
 	    private float rechargingTintStrength = 0;
 	    
 	    private float forceAllowO2 = 0;
+	    
+	    private float lastUnequippedTime = -1;
 		
 		private LiquidBreathingSystem() {
 			
@@ -47,8 +49,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void onUnequip() {
-	    	Player.main.oxygenMgr.RemoveOxygen(Player.main.oxygenMgr.GetOxygenAvailable()/*-1*/);
+	    	float amt = Player.main.oxygenMgr.GetOxygenAvailable();
+	    	lastUnequippedTime = DayNightCycle.main.timePassedAsFloat;
+	    	Player.main.oxygenMgr.RemoveOxygen(amt/*-1*/);
+	    	//SNUtil.writeToChat("Removed "+amt+" oxygen, player now has "+Player.main.oxygenMgr.GetOxygenAvailable());
 	    	SoundManager.playSoundAt(SoundManager.buildSound(Player.main.IsUnderwater() ? "event:/player/Puke_underwater" : "event:/player/Puke"), Player.main.lastPosition, false, 12);
+	    }
+	    
+	    public float getLastUnequippedTime() {
+	    	return lastUnequippedTime;
 	    }
 	    
 	    public void refreshGui() {

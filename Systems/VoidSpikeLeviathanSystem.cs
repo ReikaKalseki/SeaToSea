@@ -30,12 +30,14 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static readonly float DAZZLE_FADE_LENGTH = 3;
 	    private static readonly float DAZZLE_TOTAL_LENGTH = 4.5F;
-	    private static readonly double MAXDEPTH = 2000;//800;
+	    private static readonly double MAXDEPTH = 1500;//800;
 	    
 	    private static readonly float SONAR_INTERFERENCE_LENGTH = 7.5F;
 	    private static readonly float SONAR_INTERFERENCE_DELAY = 1F;
 	    private static readonly float SONAR_INTERFERENCE_FADE_LENGTH_IN = 0.5F;
 	    private static readonly float SONAR_INTERFERENCE_FADE_LENGTH_OUT = 2.5F;
+	    
+	    public static readonly string PASSIVATION_GOAL = "SeaEmperorBabiesHatched";//"PrecusorPrisonAquariumIncubatorActive";
 	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
 	    
@@ -44,6 +46,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private readonly SoundManager.SoundData sonarBlockSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-sonarblock", "Sounds/voidlevi/sonarblock3.ogg", SoundManager.soundMode3D);
 	    
 	    private float nextDistantRoarTime = -1;
+	    
+	    private float nextCyclopsEMPTime = -1;
+	    private float nextCyclopsEMPAbleTime = -1;
 	    
 	    private float lastFlashTime = -1;
 	    private float currentFlashDuration = 0; //full blindness length; fade is (DAZZLE_FADE_LENGTH)x longer after that
@@ -364,7 +369,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
 	    		SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 	    	}
-	    	if (forceSpark || (inBiome && !Story.StoryGoalManager.main.IsGoalComplete(?))) {
+	    	if (forceSpark || (inBiome && !Story.StoryGoalManager.main.completedGoals.Contains(PASSIVATION_GOAL))) {
 	    		Vector3 pos = spawnJustVisibleDistanceFX(ep.transform);
 		    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
 		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
@@ -394,7 +399,19 @@ namespace ReikaKalseki.SeaToSea {
 		    		//cam.energyMixin.ConsumeEnergy(99999); //completely kill it
 	    		}
 	    		else {
-		    		shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
+		    		SubRoot sub = go.FindAncestor<SubRoot>();
+		    		if (sub && sub.isCyclops) {
+		    			if (DayNightCycle.main.timePassedAsFloat >= nextCyclopsEMPAbleTime) {
+		    				sub.EndSubShielded();
+			    			float trash;
+			    			sub.powerRelay.ConsumeEnergy(Mathf.Max(300, sub.powerRelay.GetPower()*0.25F), out trash);
+			    			go.FindAncestor<LiveMixin>().TakeDamage(250, go.transform.position, DamageType.Electrical, e.gameObject);
+			    			nextCyclopsEMPAbleTime = DayNightCycle.main.timePassedAsFloat+2.5F;
+		    			}
+		    		}
+		    		else {
+		    			shutdownSeamoth(go.FindAncestor<Vehicle>(), true);
+		    		}
 	    		}
 	    	}
 	    }
@@ -608,11 +625,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		minDist = Math.Min(dist, minDist);
 	    	}
 	    	double frac2 = double.IsPositiveInfinity(minDist) || double.IsNaN(minDist) ? 0 : Math.Max(0, 1-minDist/120D);
+	    	//SNUtil.writeToChat(minDist.ToString("000.0")+" > "+frac2.ToString("0.0000"));
 	    	if (frac2 >= 1)
 	    		return 0;
 	    	double depth = -sm.transform.position.y;
 	    	if (depth < MAXDEPTH)
-	    		return 1;
+	    		return Math.Pow(1-frac2, 2);
 	    	double over = depth-MAXDEPTH;
 	    	double fade = sm.lightsActive ? 100 : 200;
 	    	double frac = Math.Min(1, over/fade);
@@ -624,6 +642,17 @@ namespace ReikaKalseki.SeaToSea {
 	    		duration *= 1.5F;
 	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
 	    	ping.nextStealthValidityTime = Mathf.Max(ping.nextStealthValidityTime, DayNightCycle.main.timePassedAsFloat+duration);
+	    }
+	    
+	    public void triggerCyclopsEMP(SubRoot sub, float time) {
+	    	if (time > nextCyclopsEMPTime) {
+		    	nextCyclopsEMPTime = time+UnityEngine.Random.Range(10F, 30F);
+		    	float d = UnityEngine.Random.Range(96F, 150F);
+		    	Vector3 pos = sub.transform.position+Camera.main.transform.forward*d;
+		    	pos = MathUtil.getRandomVectorAround(pos, 45);
+		    	pos = sub.transform.position+((pos-sub.transform.position).setLength(d));
+		    	spawnEMPBlast(pos);
+	    	}
 	    }
     
 	    private class SeamothStealthManager : MonoBehaviour {

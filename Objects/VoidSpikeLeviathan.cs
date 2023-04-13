@@ -237,7 +237,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			if (isDebug)
 	    				creatureClass.Aggression.Add(1);
 	    		
-		    		if (Story.StoryGoalManager.main.IsGoalComplete("??")) { //sea emperor befriend
+		    		if (Story.StoryGoalManager.main.completedGoals.Contains(VoidSpikeLeviathanSystem.PASSIVATION_GOAL)) { //sea emperor befriend
 	    				creatureClass.Aggression.Add(-0.1F);
 		    		}
 	    		}

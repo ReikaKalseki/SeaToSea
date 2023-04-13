@@ -31,6 +31,19 @@ namespace ReikaKalseki.SeaToSea
     
     public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
     
+    private static readonly Dictionary<Vector3, Tuple<float, int, float>> mercurySpawners = new Dictionary<Vector3, Tuple<float, int, float>>(){
+    	{new Vector3(908.7F, -235.1F, 615.7F), Tuple.Create(2F, 4, 32F)},
+    	{new Vector3(904.3F, -247F, 668.8F), Tuple.Create(1F, 3, 32F)},
+    	{new Vector3(915.1F, -246.8F, 651.2F), Tuple.Create(2F, 6, 32F)},
+    	{new Vector3(1273, -290, 604.3F), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(1254, -293.3F, 606.3F), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(1239, -286.4F, 617), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(1245, -308.2F, 555.8F), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(-1216, -299.1F, 510.3F), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(1278, -276.4F, 497.5F), Tuple.Create(2F, 3, 32F)},
+    	{new Vector3(1228, -275.6F, 483.9F), Tuple.Create(2F, 3, 32F)}
+    };
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
@@ -316,9 +329,13 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.125F, 1);
     	
     	new MercuryLootSpawner().Patch();
-    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(908.7F, -235.1F, 615.7F), Quaternion.identity, new Vector3(2, 4, 2)));
-    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(904.3F, -247F, 668.8F), Quaternion.identity, new Vector3(1, 3, 1)));
-    	GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", new Vector3(915.1F, -246.8F, 651.2F), Quaternion.identity, new Vector3(2, 6, 2)));
+    	foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in mercurySpawners) {
+    		Tuple<float, int, float> vals = kvp.Value; //exclusion radius, target count, max range
+    		int count = vals.Item2;
+    		if (config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+    			count = Math.Max(1, count*2/3);
+    		GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
+    	}
     	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Mountains_CaveFloor, 0.05F, 1);
@@ -475,6 +492,15 @@ namespace ReikaKalseki.SeaToSea
     			break;
     		case "kooshcaves":
     			pos = new Vector3(1223, -258, 527.5F);
+    			break;
+    		case "prison":
+    			pos = Creature.prisonAquriumBounds.center;
+    			break;
+    		case "meteor":
+    			pos = new Vector3(-1125, -360, 1130);
+    			break;
+    		case "lavadome":
+    			pos = new Vector3(-273, -1355, -152);
     			break;
     		case "geysercave":
     			pos = C2CProgression.instance.dronePDACaveEntrance+new Vector3(5, 0, 5);

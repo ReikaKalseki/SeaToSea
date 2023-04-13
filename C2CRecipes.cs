@@ -328,11 +328,9 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.RocketBase, TechType.Silicone, 8);
         RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4);
         RecipeUtil.modifyIngredients(TechType.RocketBase, i => {
-      		if (i.techType == TechType.TitaniumIngot)
-      			i.techType = TechType.PlasteelIngot;
-      		else if (i.techType == TechType.Lead)
+      		if (i.techType == TechType.Lead)
       			i.amount = 6;
-      		return i.techType == TechType.ComputerChip;
+      		return i.techType == TechType.TitaniumIngot || i.techType == TechType.ComputerChip;
         });
         RecipeUtil.addIngredient(TechType.RocketBaseLadder, TechType.WiringKit, 4);
         RecipeUtil.modifyIngredients(TechType.RocketStage1, i => i.techType != TechType.PlasteelIngot);
@@ -422,8 +420,9 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
         RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
-        CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(2, 2));
-        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);        
+        CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(3, 3));
+        CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
+        CraftDataHandler.SetItemSize(TechType.PrecursorKey_Blue, new Vector2int(2, 2));
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
         RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);

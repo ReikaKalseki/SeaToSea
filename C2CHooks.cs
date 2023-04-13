@@ -162,6 +162,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	
+	    	float time = DayNightCycle.main.timePassedAsFloat;
+	    	
 	    	if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
 	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
 	    			WaterBiomeManager.main.GetComponent<WaterscapeVolume>().fogEnabled = true;
@@ -173,6 +175,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		ep.oxygenMgr.UnregisterSource(playerBaseO2);
 	    	}	    	
 	    	else if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
+	    		//SNUtil.writeToChat("Tick liquid breathing: "+LiquidBreathingSystem.instance.isLiquidBreathingActive(ep));
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
 	    		if (LiquidBreathingSystem.instance.isLiquidBreathingActive(ep)) {
 	    			ep.oxygenMgr.UnregisterSource(playerBaseO2);
@@ -190,6 +193,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else {
 	    		ep.oxygenMgr.RegisterSource(playerBaseO2);
+	    		if (time-LiquidBreathingSystem.instance.getLastUnequippedTime() < 0.5)
+	    			ep.oxygenMgr.RemoveOxygen(ep.oxygenMgr.GetOxygenAvailable());
 	    	}
 	    	
 	    	float dist = Vector3.Distance(ep.transform.position, crashMesa);
@@ -239,7 +244,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	
-	    	if (DayNightCycle.main.timePassedAsFloat >= nextBkelpBaseAmbTime && Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+	    	if (time >= nextBkelpBaseAmbTime && Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+	    		SNUtil.log("Queuing bkelp base ambience @ "+ep.transform.position);
 	    		VanillaMusic.WRECK.play();
 	    		nextBkelpBaseAmbTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60F, 90F);
 	    	}
@@ -900,6 +906,12 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void pingSeamothSonar(SeaMoth sm) {
 	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 30);
+	    	if (VanillaBiomes.VOID.isInBiome(sm.transform.position)) {
+	    		for (int i = VoidGhostLeviathansSpawner.main.spawnedCreatures.Count; i < VoidGhostLeviathansSpawner.main.maxSpawns; i++) {
+		    		VoidGhostLeviathansSpawner.main.timeNextSpawn = 0.1F;
+		    		VoidGhostLeviathansSpawner.main.UpdateSpawn(); //trigger spawn and time recalc
+	    		}
+	    	}
 	    }
 	    
 	    public static void pingAnySonar(SNCameraRoot cam) {
@@ -1150,11 +1162,25 @@ namespace ReikaKalseki.SeaToSea {
 		    		float d = UnityEngine.Random.Range(96F, 150F);
 		    		Vector3 pos = campos+cam.transform.forward*d;
 		    		pos = MathUtil.getRandomVectorAround(pos, 45);
-		    		pos = cam.transform.position+((pos-campos).setLength(d));
+		    		pos = campos+((pos-campos).setLength(d));
 		    		VoidSpikeLeviathanSystem.instance.spawnEMPBlast(pos);
 		    		nextCameraEMPTime = time+UnityEngine.Random.Range(1.2F, 2.5F);
 	    		}
 	    	}
+	    }
+	    
+	    public static float getCrushDamage(CrushDamage dmg) {
+	    	float f = 1;
+	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+	    		float ratio = dmg.GetDepth()/dmg.crushDepth;
+	    		if (ratio > 1) {
+	    			f += Mathf.Pow(ratio, 4)-1; //so at 1700 with a limit of 1300 it is ~3x as much damage; at 1200 with a 900 limit it is 3.2x, at 900 with 500 it is 10.5x
+	    			ratio = (dmg.GetDepth()-900)/300F; //add another +33% per 100m over 900m
+	    			if (ratio > 0)
+	    				f += ratio;
+	    		} //net result: 1700 @ 1300 = 5.6x, 1200 @ 900 = 2.8x, 900 @ 500 = 7x, 300 @ 200 = 3.3x
+	    	}
+	    	return dmg.damagePerCrush*f;
 	    }
 	}
 }

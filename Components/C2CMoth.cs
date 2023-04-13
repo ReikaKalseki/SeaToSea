@@ -58,6 +58,7 @@ namespace ReikaKalseki.SeaToSea
 			private TemperatureDamage temperatureDamage;
 			private VFXVehicleDamages damageFX;
 			private VehicleAccelerationModifier speedModifier;
+			private Rigidbody body;
 			
 			private float baseDamageAmount;
 			
@@ -104,7 +105,7 @@ namespace ReikaKalseki.SeaToSea
 				GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.ejectedHeatSink.ClassID);
 				go.transform.position = seamoth.transform.position+seamoth.transform.forward*4;
 				go.GetComponent<Rigidbody>().AddForce(seamoth.transform.forward*20, ForceMode.VelocityChange);
-				seamoth.GetComponent<Rigidbody>().AddForce(-seamoth.transform.forward*5, ForceMode.VelocityChange);
+				body.AddForce(-seamoth.transform.forward*5, ForceMode.VelocityChange);
 				go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge/250F)*0.25F+0.75F));
 			}
 			
@@ -115,6 +116,7 @@ namespace ReikaKalseki.SeaToSea
 				seamoth.ConsumeEnergy(5);
 				boostSoundEvent = SoundManager.playSoundAt(boostSound, transform.position, false, -1, 1);
 				seamoth.screenEffectModel.SetActive(true);
+				ECHooks.attractToSoundPing(seamoth, false, 0.33F);
 			}
 			
 			internal bool isPurgingHeat() {
@@ -132,6 +134,8 @@ namespace ReikaKalseki.SeaToSea
 			internal void tick(float time, float tickTime) {
 				if (!seamoth)
 					seamoth = gameObject.GetComponent<SeaMoth>();
+				if (!body)
+					body = seamoth.GetComponent<Rigidbody>();
 				if (!speedModifier) {
 					speedModifier = seamoth.gameObject.AddComponent<VehicleAccelerationModifier>();
 					seamoth.accelerationModifiers = seamoth.gameObject.GetComponentsInChildren<VehicleAccelerationModifier>();
@@ -162,6 +166,22 @@ namespace ReikaKalseki.SeaToSea
 					boostSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
 				}
 				
+				bool kooshCave = false;
+				
+				if (VanillaBiomes.KOOSH.isInBiome(transform.position)) {
+					string biome = WaterBiomeManager.main.GetBiome(transform.position, false);
+					if (biome != null && biome.ToLowerInvariant().Contains("cave")) {
+						kooshCave = true;
+						Vector3 vel = body.velocity;
+						Vector3 vec = Vector3.zero;
+						if (vel.magnitude < 0.2)
+							vec = MathUtil.getRandomVectorAround(Vector3.zero, 1).setLength(0.6F);
+						else
+							vec = MathUtil.rotateVectorAroundAxis(Vector3.Cross(vel, Vector3.up), seamoth.transform.forward, UnityEngine.Random.Range(0F, 360F)).setLength(0.8F);
+						body.AddForce(vec, ForceMode.VelocityChange);
+					}
+				}
+				
 				if (isPurgingHeat()) {
 					vehicleTemperature -= tickTime*150;
 					if (vehicleTemperature <= 5) {
@@ -184,6 +204,8 @@ namespace ReikaKalseki.SeaToSea
 					float Tamb = temperatureDamage.GetTemperature();// this will call WaterTempSim, after the lava checks in DI
 					if (seamoth.docked || seamoth.IsInsideAquarium() || EnvironmentalDamageSystem.instance.isInPrecursor(gameObject))
 						Tamb = 25;
+					else if (kooshCave)
+						Tamb = 95;
 					useSeamothVehicleTemperature = true;
 					float dT = Tamb-vehicleTemperature;
 					float excess = Mathf.Clamp01((vehicleTemperature-400)/400F);

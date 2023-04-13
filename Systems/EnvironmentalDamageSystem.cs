@@ -82,7 +82,8 @@ namespace ReikaKalseki.SeaToSea {
     		registerBiomeEnvironment("ILZChamber", 150, 10, 0.5F, 10, 15);
     		registerBiomeEnvironment("LavaPit", 200, 12, 0.5F, 8, 20);
     		registerBiomeEnvironment("LavaFalls", 300, 15, 0.5F, 5, 25);
-    		registerBiomeEnvironment("LavaLakes", 400, 18, 0.5F, 2, 40);
+    		registerBiomeEnvironment("LavaLakes", 350, 18, 0.5F, 2, 40);
+    		registerBiomeEnvironment("LavaLakes_LavaPool", 400, 18, 0.5F, 2, 40);
     		registerBiomeEnvironment("ilzLava", 1200, 24, 0.5F, 0, 100); //in lava
     		registerBiomeEnvironment("LavaCastle", 240, 18, 0.5F, 4, 20);
     		registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
@@ -345,7 +346,7 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			}
 			if (dmg.GetCanTakeCrushDamage() && dmg.GetDepth() > dmg.crushDepth) {
-				dmg.liveMixin.TakeDamage(dmg.damagePerCrush, dmg.transform.position, DamageType.Pressure, null);
+				dmg.liveMixin.TakeDamage(C2CHooks.getCrushDamage(dmg), dmg.transform.position, DamageType.Pressure, null);
 				if (dmg.soundOnDamage) {
 					dmg.soundOnDamage.Play();
 				}
@@ -353,6 +354,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	SubRoot sub = dmg.gameObject.GetComponentInParent<SubRoot>();
 	    	if (sub != null && sub.isCyclops) {
 	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (VanillaBiomes.VOID.isInBiome(sub.transform.position) && VoidSpikesBiome.instance.getDistanceToBiome(sub.transform.position, true) < 750) {
+	    			if (sub.powerRelay.GetPower() > 0)
+	    				VoidSpikeLeviathanSystem.instance.triggerCyclopsEMP(sub, time);
+	    		}
 	    		TemperatureEnvironment temp = getLavaHeatDamage(dmg.gameObject);
 	    		//SBUtil.writeToChat("heat: "+temp);
 	    		if (temp != null) {

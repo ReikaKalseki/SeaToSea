@@ -239,9 +239,10 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//soundLoop.attributes.position = transform.position.toFMODVector();
 			
-			if (operationCooldown > 0)
+			if (operationCooldown > 0) {
 				operationCooldown -= seconds;
-			if (consumePower(Bioprocessor.POWER_COST_IDLE*seconds)) {
+			}
+			else if (consumePower(Bioprocessor.POWER_COST_IDLE*seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");

@@ -48,6 +48,8 @@ namespace ReikaKalseki.SeaToSea {
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
+    	if (hard)
+    		ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.TOOTHSCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASERANGE, 200);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.MAXRANGE, 600);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RANGEAMT, 200);
@@ -129,7 +131,11 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, plankton.TechType, 2);
 			
 			RecipeUtil.addIngredient(TechType.Polyaniline, plankton.TechType, 2);
-		}
+		}		
+		
+		Spawnable baseglass = ItemRegistry.instance.getItem("BaseGlass");
+		int amt = RecipeUtil.removeIngredient(TechType.BaseWaterPark, baseglass != null ? baseglass.TechType : TechType.Glass).amount;
+		RecipeUtil.addIngredient(TechType.BaseWaterPark, TechType.EnameledGlass, amt);
 		
 		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);
 		if (ghostRayEgg != null)
