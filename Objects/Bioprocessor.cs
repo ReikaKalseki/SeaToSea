@@ -44,6 +44,13 @@ namespace ReikaKalseki.SeaToSea {
 			spacer.Patch();
 			bioprocCategory = TechCategoryHandler.Main.AddTechCategory("bioprocessor", "Bioprocessor");
 			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, bioprocCategory);
+			/*
+			ItemRegistry.instance.addListener(item => {
+			    if (item.ClassID == "MiniPoop") {
+					BioRecipe rec = getRecipe(TechType.SeaTreaderPoop);
+					addRecipe(item.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);                   	
+			    }
+			});*/
 		}
 		
 		public static void addRecipes() {
@@ -60,6 +67,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
+			if (inp == TechType.None)
+				throw new Exception("You may not register a recipe using null!");
+			if (o == TechType.None)
+				throw new Exception("You may not register a recipe making null!");
 			BioRecipe r = new BioRecipe(enzy, secs, energy, inp, o);
 			recipes[r.inputItem] = r;
 			r.inputCount = inamt;

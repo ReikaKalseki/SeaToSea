@@ -205,22 +205,22 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]CrystalLens,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Magnesium")]HullPlating, //was wiring kit
-			[Item(typeof(Bioprocessed), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]Sealant,
+			[Item(typeof(NotFabricable), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]Sealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]SealFabric,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
-			[Item(typeof(Bioprocessed),			TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
-			[Item(typeof(Bioprocessed),			TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/FiberMesh")]SmartPolymer,
+			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/FiberMesh")]SmartPolymer,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.AcidMushroom,		"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Lubricant,			"WorldEntities/Natural/Lubricant")]Motor,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.SeaTreaderPoop,	"WorldEntities/Natural/polyaniline")]TreaderEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/CrashPowder")]BacterialSample,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]BioEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]LathingDrone,
-			[Item(typeof(Bioprocessed),			TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]KelpEnzymes,
+			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]KelpEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/Silicone")]FuelTankWall,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/benzene")]RocketFuel,
-			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
-			[Item(typeof(Bioprocessed),			TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Seeds/CreepvinePiece")]AmoeboidSample, //not craftable
+			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
+			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Seeds/CreepvinePiece")]AmoeboidSample,
 		}
 		
 		private static Item getAttr(Items key) {

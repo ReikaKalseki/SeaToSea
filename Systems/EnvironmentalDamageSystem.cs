@@ -208,9 +208,9 @@ namespace ReikaKalseki.SeaToSea {
 				float num = temperature / dmg.minDamageTemperature;
 				num *= dmg.baseDamagePerSecond;
 				float amt = num*f*f0/ENVIRO_RATE_SCALAR;
-				if (aurora && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.transform.position) <= 3)
+				if (aurora && dmg.player && biome == "AuroraPrawnBay" && Vector3.Distance(auroraPrawnBayDoor, dmg.player.transform.position) <= 3)
 					amt *= 2;
-				if (aurora && biome == "AuroraPrawnBay" && dmg.player.IsUnderwaterForSwimming())
+				if (aurora && dmg.player && biome == "AuroraPrawnBay" && dmg.player.IsUnderwaterForSwimming())
 					amt *= 0.4F;
 				if (aurora && diveSuit)
 					amt = 0;
@@ -218,12 +218,18 @@ namespace ReikaKalseki.SeaToSea {
 				if (amt > 0) {
 					Vehicle v = dmg.gameObject.GetComponent<Vehicle>();
 					if (!v || !(v.docked || v.precursorOutOfWater)) {
+						if (v && v is Exosuit) {
+							foreach (TechType tt in InventoryUtil.getVehicleUpgrades(v)) {
+								float f2 = getHeatDamageModuleFactor(tt);
+									amt *= f2;
+							}
+						}
 						dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.player && !diveSuit) {
 							Survival s = Player.main.GetComponent<Survival>();
 							s.water = Mathf.Clamp(s.water-amt*fw, 0f, 100f);
 						}
-						if (temperature >= 90) {//do not do at vents
+						if (temperature > 105) {//do not do at vents/geysers
 			    			playerHeatDamage = time; //this also covers the seamoth
 			    			if (v && v is SeaMoth) { //only trigger for seamoth
 			    				PDAManager.getPage("heatdamage").unlock();
@@ -291,6 +297,14 @@ namespace ReikaKalseki.SeaToSea {
 		    	}
 			}
 	 	}
+	 	
+		internal float getHeatDamageModuleFactor(TechType tt) {
+			if (tt == TechType.ExosuitThermalReactorModule)
+				return 0.8F;
+			if (tt+"" == "ExosuitThermalModuleMk2")
+				return 0.67F;
+			return 1;
+		}
     	
     	internal void triggerAuroraPrawnBayWarning() {
 			if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)

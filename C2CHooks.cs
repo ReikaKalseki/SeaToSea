@@ -32,6 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static Oxygen playerBaseO2;
 	    
+	    private static float nextBkelpBaseAmbCheckTime = -1;
 	    private static float nextBkelpBaseAmbTime = -1;
 	    private static float nextCameraEMPTime = -1;
 	    
@@ -244,10 +245,18 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    	}
 	    	
-	    	if (time >= nextBkelpBaseAmbTime && Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
-	    		SNUtil.log("Queuing bkelp base ambience @ "+ep.transform.position);
-	    		VanillaMusic.WRECK.play();
-	    		nextBkelpBaseAmbTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60F, 90F);
+	    	if (time >= nextBkelpBaseAmbCheckTime) {
+	    		nextBkelpBaseAmbCheckTime = time+UnityEngine.Random.Range(0.5F, 2.5F);
+		    	if (Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+			    	if (time >= nextBkelpBaseAmbTime) {
+			    		SNUtil.log("Queuing bkelp base ambience @ "+ep.transform.position);
+			    		VanillaMusic.WRECK.play();
+			    		nextBkelpBaseAmbTime = DayNightCycle.main.timePassedAsFloat+UnityEngine.Random.Range(60F, 90F);
+			    	}
+		    	}
+		    	else {
+	    			VanillaMusic.WRECK.disable();
+		    	}
 	    	}
 	    }
 	    
