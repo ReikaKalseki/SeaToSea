@@ -167,6 +167,7 @@ namespace ReikaKalseki.SeaToSea
 						item.renderModify = r => {
 							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
 							ObjectUtil.removeComponent<Eatable>(root);
+							ObjectUtil.removeComponent<Plantable>(root);
 							
 							RenderUtil.swapToModdedTextures(r, item);
 							RenderUtil.makeTransparent(r);

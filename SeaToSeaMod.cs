@@ -65,7 +65,7 @@ namespace ReikaKalseki.SeaToSea
     public static EjectedHeatSink ejectedHeatSink;
     public static UnmovingHeatBlade thermoblade;
     public static MountainBaseCuredPeeper peeper;
-    public static SeaTreaderTunnelLocker locker;
+    //public static SeaTreaderTunnelLocker locker;
     public static SeaTreaderTunnelLight tunnelLight;
     
     public static DataChit laserCutterBulkhead;
@@ -120,6 +120,8 @@ namespace ReikaKalseki.SeaToSea
 			FileLog.Log(ex.ToString());
         }
         
+        ModVersionCheck.getFromGitVsInstall("Sea To Sea", modDLL, "SeaToSea").register();
+        
         CustomPrefab.addPrefabNamespace("ReikaKalseki.SeaToSea");
         
         C2CIntegration.injectLoad();
@@ -162,8 +164,8 @@ namespace ReikaKalseki.SeaToSea
 	    thermoblade.Patch();
 	    peeper = new MountainBaseCuredPeeper();
 	    peeper.Patch();
-	    locker = new SeaTreaderTunnelLocker();
-	    locker.Patch();
+	    //locker = new SeaTreaderTunnelLocker();
+	    //locker.Patch();
 	    tunnelLight = new SeaTreaderTunnelLight();
 	    tunnelLight.Patch();
 	    
@@ -191,9 +193,6 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
         addPDAEntries();
-                 
-        worldgen.load();
-        DataboxTypingMap.instance.load();
         
         addCommands();
         addOreGen();
@@ -239,6 +238,9 @@ namespace ReikaKalseki.SeaToSea
     
     [QModPostPatch]
     public static void PostLoad() {
+        worldgen.load(); //load in post because some cross-mod TTs may not exist yet
+        DataboxTypingMap.instance.load();
+        
     	C2CIntegration.addPostCompat();
     }
     

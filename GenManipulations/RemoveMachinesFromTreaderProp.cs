@@ -28,9 +28,11 @@ namespace ReikaKalseki.SeaToSea
 		static RemoveMachinesFromTreaderProp() {
 			objects.Add("BaseCell/Coral");
 			objects.Add("BaseCell/Decals");
-			objects.Add("Fabricator");
+			//objects.Add("Fabricator");
 			objects.Add("Workbench");
-			objects.Add("Bench");
+			//objects.Add("Bench");
+			objects.Add("Locker(Clone)/model/submarine_Storage_locker_big_01/submarine_Storage_locker_big_01_hinges_L");
+			objects.Add("Locker(Clone)/model/submarine_Storage_locker_big_01/submarine_Storage_locker_big_01_hinges_R");
 		}
 		
 		public override void applyToObject(GameObject go) {

@@ -225,10 +225,9 @@ namespace ReikaKalseki.SeaToSea {
 			return Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
 		}
 		
-		bool isItemMapRoomDetectable(ResourceTracker rt) {
-			if (rt.techType == spawnerObject.TechType || rt.overrideTechType == spawnerObject.TechType)
-				return PDAManager.getPage("sunbeamdebrishint").isUnlocked();
-			return true;
+		void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {
+			if (rt.resource.techType == spawnerObject.TechType || rt.resource.overrideTechType == spawnerObject.TechType)
+				rt.isDetectable = PDAManager.getPage("sunbeamdebrishint").isUnlocked();
 		}
 		
 		class SunbeamDebrisObject : Spawnable {

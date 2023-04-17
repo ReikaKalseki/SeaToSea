@@ -48,6 +48,7 @@ namespace ReikaKalseki.SeaToSea {
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RESSCAN, true);
     	if (hard)
     		ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.TOOTHSCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASERANGE, 200);
@@ -67,29 +68,31 @@ namespace ReikaKalseki.SeaToSea {
     }
 		
 	public static void injectLoad() {
-		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
-		ReefbalanceMod.scanCountOverrides[TechType.ConstructorFragment] = hard ? 12 : 8;
-		ReefbalanceMod.scanCountOverrides[TechType.LaserCutterFragment] = hard ? 10 : 5;
-		ReefbalanceMod.scanCountOverrides[TechType.WorkbenchFragment] = hard ? 8 : 4;
-		ReefbalanceMod.scanCountOverrides[TechType.SeaglideFragment] = hard ? 5 : 3;
-		ReefbalanceMod.scanCountOverrides[TechType.StasisRifleFragment] = hard ? 4 : 2;
-		ReefbalanceMod.scanCountOverrides[TechType.SeamothFragment] = hard ? 6 : 4; //normally 3
-		
-		ReefbalanceMod.scanCountOverrides[TechType.BaseNuclearReactorFragment] = hard ? 6 : 4;
-		ReefbalanceMod.scanCountOverrides[TechType.BaseBioReactorFragment] = hard ? 6 : 4;
-		ReefbalanceMod.scanCountOverrides[TechType.MoonpoolFragment] = hard ? 6 : 4;
-		if (hard)
-			ReefbalanceMod.scanCountOverrides[TechType.ScannerRoomFragment] = 5;
-		ReefbalanceMod.scanCountOverrides[TechType.BaseFiltrationMachineFragment] = hard ? 4 : 2;
-		
-		ReefbalanceMod.scanCountOverrides[TechType.CyclopsHullFragment] = hard ? 6 : 4;
-		ReefbalanceMod.scanCountOverrides[TechType.CyclopsEngineFragment] = hard ? 6 : 4;
-		ReefbalanceMod.scanCountOverrides[TechType.CyclopsBridgeFragment] = hard ? 6 : 4;
-		
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitDrillArmFragment] = hard ? 20 : 10; //these are EVERYWHERE
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitGrapplingArmFragment] = hard ? 12 : 6;
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
-		ReefbalanceMod.scanCountOverrides[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
+		ReefbalanceMod.scanCountOverridesCalculation += map => {
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+			map[TechType.ConstructorFragment] = hard ? 12 : 8;
+			map[TechType.LaserCutterFragment] = hard ? 10 : 5;
+			map[TechType.WorkbenchFragment] = hard ? 8 : 4;
+			map[TechType.SeaglideFragment] = hard ? 5 : 3;
+			map[TechType.StasisRifleFragment] = hard ? 4 : 2;
+			map[TechType.SeamothFragment] = hard ? 6 : 4; //normally 3
+			
+			map[TechType.BaseNuclearReactorFragment] = hard ? 6 : 4;
+			map[TechType.BaseBioReactorFragment] = hard ? 6 : 4;
+			map[TechType.MoonpoolFragment] = hard ? 6 : 4;
+			if (hard)
+				map[TechType.ScannerRoomFragment] = 5;
+			map[TechType.BaseFiltrationMachineFragment] = hard ? 4 : 2;
+			
+			map[TechType.CyclopsHullFragment] = hard ? 6 : 4;
+			map[TechType.CyclopsEngineFragment] = hard ? 6 : 4;
+			map[TechType.CyclopsBridgeFragment] = hard ? 6 : 4;
+			
+			map[TechType.ExosuitDrillArmFragment] = hard ? 20 : 10; //these are EVERYWHERE
+			map[TechType.ExosuitGrapplingArmFragment] = hard ? 12 : 6;
+			map[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
+			map[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
+		};
 		
 	}
     
@@ -112,7 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, hard ? 8 : 5);
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, hard ? 6 : 4);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
-			SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
+			//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 			
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(glowOil.TechType, 3);
 		}

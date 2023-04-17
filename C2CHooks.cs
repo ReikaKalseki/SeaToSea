@@ -12,9 +12,10 @@ using SMLHelper.V2.Utility;
 
 using UnityEngine;
 
+using ReikaKalseki.DIAlterra;
 using ReikaKalseki.AqueousEngineering;
 using ReikaKalseki.Ecocean;
-using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Exscansion;
 using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
@@ -29,6 +30,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
+	    
+	    private static readonly HashSet<TechType> scanToScannerRoom = new HashSet<TechType>();
 	    
 	    private static Oxygen playerBaseO2;
 	    
@@ -77,6 +80,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
 	    	PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
+	    	
+	    	ESHooks.scannabilityEvent += isItemMapRoomDetectable;
+	    	
+	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
+	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType);
+	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType);
+	    	scanToScannerRoom.Add(SeaToSeaMod.voidSpikeLevi.TechType);
+	    	scanToScannerRoom.Add(C2CItems.alkali.TechType);
+	    	scanToScannerRoom.Add(C2CItems.healFlower.TechType);
+	    	scanToScannerRoom.Add(C2CItems.kelp.TechType);
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
@@ -119,8 +132,8 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
-	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
-	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
+	    	//LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
+	    	//LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
@@ -1176,6 +1189,11 @@ namespace ReikaKalseki.SeaToSea {
 		    		nextCameraEMPTime = time+UnityEngine.Random.Range(1.2F, 2.5F);
 	    		}
 	    	}
+	    	float temp = EnvironmentalDamageSystem.instance.getWaterTemperature(campos);
+	    	if (temp >= 100) {
+	    		float amt = 5*(1+(temp-100)/100F);
+	    		cam.liveMixin.TakeDamage(amt*Time.deltaTime, campos, DamageType.Heat);
+	    	}
 	    }
 	    
 	    public static float getCrushDamage(CrushDamage dmg) {
@@ -1191,5 +1209,17 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	return dmg.damagePerCrush*f;
 	    }
+		
+		static void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {
+	    	if (rt.resource.techType == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
+	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType) || Story.StoryGoalManager.main.completedGoals.Contains("Precursor_LavaCastle_Log2"); //mentions lava castle
+	    	}
+	    	else if (rt.resource.techType == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
+	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType) || PDAManager.getPage("sunbeamdebrishint").isUnlocked();
+	    	}
+	    	else if (scanToScannerRoom.Contains(rt.resource.techType)) {
+	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
+	    	}
+		}
 	}
 }

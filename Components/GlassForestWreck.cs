@@ -90,10 +90,10 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 pos = transform.position;
 			
 			//keep the vents clear
-			if (Vector3.Distance(pos, vent1) <= 1.2F)
-				body.AddForce((pos-vent1).normalized, ForceMode.VelocityChange);
-			if (Vector3.Distance(pos, vent2) <= 1.2F)
-				body.AddForce((pos-vent2).normalized, ForceMode.VelocityChange);
+			if (Vector3.Distance(pos, vent1) <= 1.8F)
+				body.AddForce((pos-vent1).normalized*3, ForceMode.VelocityChange);
+			if (Vector3.Distance(pos, vent2) <= 1.8F)
+				body.AddForce((pos-vent2).normalized*3, ForceMode.VelocityChange);
 				
 			if (time > 1.5F && body.velocity.magnitude < 0.1)
 				fixInPlace();
