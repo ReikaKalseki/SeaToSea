@@ -771,6 +771,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
+	    public static void onSpawnLifepod(EscapePod pod) {
+	    	pod.gameObject.EnsureComponent<C2CLifepod>();
+	    }
+	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
 	    	GameObject go = pk.gameObject;
 	    	PrefabIdentifier pi = go.FindAncestor<PrefabIdentifier>();
