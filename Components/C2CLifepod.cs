@@ -18,6 +18,7 @@ namespace ReikaKalseki.SeaToSea
 		
 			private Simplex1DGenerator pathVariation;
 		
+			private EscapePod pod;
 			private Rigidbody body;
 			private Stabilizer stabilizer;
 			private WorldForces forces;
@@ -25,11 +26,18 @@ namespace ReikaKalseki.SeaToSea
 		
 			private Vector3 rotationSpeed;
 			
+			private Vector3 lastPosition;
+			private Vector3 travelDistanceLastSecond;
+			
+			private float lastTravelDistanceReset = -1;
+			
 			private BiomeBase currentBiome;
 		
 			private static readonly float MAX_ROTATE_SPEED = 2F;
 			
 			void FixedUpdate() {
+				if (!pod)
+					pod = GetComponent<EscapePod>();
 				if (!body)
 					body = GetComponent<Rigidbody>();
 				if (!stabilizer)
@@ -38,22 +46,29 @@ namespace ReikaKalseki.SeaToSea
 					forces = GetComponent<WorldForces>();
 				if (!live)
 					live = GetComponent<LiveMixin>();
-				if (body && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+				if (body && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PODFAIL)) {
 					currentBiome = BiomeBase.getBiome(WaterBiomeManager.main.GetBiome(transform.position.setY(Mathf.Min(-3, transform.position.y-10)), false));
-					body.constraints = RigidbodyConstraints.None;
-					body.drag = 0;
-					body.angularDrag = 0;
 					float sp = getMovementSpeed();
 					float dT = Time.fixedDeltaTime;
 					if (pathVariation == null)
 						getOrCreateNoise();
 					if (sp > 0) {
+						body.constraints = RigidbodyConstraints.None;
+						body.drag = 0;
+						body.angularDrag = 0;
 						stabilizer.enabled = false;
 						forces.enabled = false;
 						float sp2 = sp < 1 ? sp*sp : sp;
-						if (currentBiome == VanillaBiomes.DUNES)
+						if (currentBiome == VanillaBiomes.DUNES) {
+							sp2 *= 2F;
+						}
+						else if (currentBiome == VanillaBiomes.SPARSE || currentBiome == VanillaBiomes.GRANDREEF || currentBiome == VanillaBiomes.TREADER) {
 							sp2 *= 1.5F;
-						Vector3 force = 0.2F*new Vector3(-1F, 0, 1.8F*(float)pathVariation.getValue(new Vector3(DayNightCycle.main.timePassedAsFloat, 0, 0)))*sp2;
+						}
+						else if (currentBiome == VanillaBiomes.MUSHROOM) {
+							sp2 *= 1.25F;
+						}
+						Vector3 force = 0.2F*new Vector3(-1F, 0, 0.25F+1.8F*(float)pathVariation.getValue(new Vector3(DayNightCycle.main.timePassedAsFloat, 0, 0)))*sp2;
 						//SNUtil.writeToChat(sp.ToString("0.000")+">"+force.ToString("F4"));
 						body.velocity = force;
 						
@@ -70,7 +85,7 @@ namespace ReikaKalseki.SeaToSea
 					float depth = -transform.position.y;
 					float tgt = getTargetDepth();
 					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+tgt.ToString("000.0"));
-					if (tgt > depth) {
+					if (tgt > 0.1F && tgt > depth) {
 						float sink = 0.25F;
 						if (tgt-depth > 80 || tgt >= 150)
 							sink = 0.75F;
@@ -84,9 +99,28 @@ namespace ReikaKalseki.SeaToSea
 						//SNUtil.writeToChat(body.velocity.ToString("F4"));
 					}
 					else if (depth > 10 && tgt < depth) {
-						body.velocity = body.velocity.setY(0.2F);
+						float rise = 0.2F;
+						if (travelDistanceLastSecond.setY(0).magnitude <= 0.25F)
+							rise = 1F;
+						body.velocity = body.velocity.setY(rise);
 					}
 				}
+				if (transform.position.y < -900) {
+					float delay = 0F;
+					if (Player.main.currentEscapePod == pod) {
+						//delay = 2.5F;
+						SoundManager.playSoundAt(SoundManager.buildSound("event:/sub/cyclops/explode"), transform.position);
+						Player.main.liveMixin.Kill(DamageType.Explosive);
+					}
+					UnityEngine.Object.Destroy(gameObject, delay);
+				}
+				travelDistanceLastSecond += transform.position-lastPosition;
+				float time = DayNightCycle.main.timePassedAsFloat;
+				if (time-lastTravelDistanceReset >= 1) {
+					lastTravelDistanceReset = time;
+					travelDistanceLastSecond = new Vector3(0, 0, 0);
+				}
+				lastPosition = transform.position;
 			}
 		
 			private void getOrCreateNoise() {
@@ -97,9 +131,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			private float getPassedDays() {
+				if (!Story.StoryGoalManager.main.completedGoals.Contains("Goal_Builder"))
+					return 0;
 				float time = DayNightCycle.main.timePassedAsFloat-0.4F;
 				//SNUtil.writeToChat((time*10/DayNightCycle.kDayLengthSeconds).ToString("00.00"));
-				return time*10/DayNightCycle.kDayLengthSeconds;
+				return time/DayNightCycle.kDayLengthSeconds-3; //subtract 3 days as that is the assumed time to build a builder tool
 			}
 			
 			private float getMovementSpeed() {
@@ -116,20 +152,25 @@ namespace ReikaKalseki.SeaToSea
 			
 			private float getTargetDepth() {
 				float days = getPassedDays();
+				if (days < 20)
+					return 0;
+				days -= 20;
+				if (travelDistanceLastSecond.setY(0).magnitude <= 0.25F)
+					return 0;
 				if (currentBiome == VanillaBiomes.SHALLOWS)
-					return (float)MathUtil.linterpolate(days, 3, 20, -2, 8, true);
+					return Mathf.Min(1, days/15F)*10;
 				if (currentBiome == VanillaBiomes.KELP)
-					return 36;
+					return Mathf.Min(1, days/10F)*36;
 				if (currentBiome == VanillaBiomes.REDGRASS)
-					return 80;
+					return Mathf.Min(1, days/10F)*80;
 				if (currentBiome == VanillaBiomes.BLOODKELP)
-					return 120;
+					return Mathf.Min(1, days/8F)*120;
 				if (currentBiome == VanillaBiomes.MUSHROOM)
-					return 150;
+					return Mathf.Min(1, days/6F)*150;
 				if (currentBiome == VanillaBiomes.SPARSE)
-					return 180;
-				if (currentBiome == VanillaBiomes.DUNES || currentBiome == VanillaBiomes.SPARSE || currentBiome == VanillaBiomes.GRANDREEF)
-					return 220;
+					return Mathf.Min(1, days/6F)*180;
+				if (currentBiome == VanillaBiomes.DUNES || currentBiome == VanillaBiomes.SPARSE || currentBiome == VanillaBiomes.GRANDREEF || currentBiome == VanillaBiomes.TREADER)
+					return Mathf.Min(1, days/4F)*220;
 				if (currentBiome == VanillaBiomes.VOID)
 					return 9999;
 				return -transform.position.y;

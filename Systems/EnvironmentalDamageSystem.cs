@@ -450,6 +450,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
     	
     	public string getBiome(GameObject go) {
+			if (!go)
+				return null;
     		return getBiome(go.transform.position);
     	}
     	
@@ -635,6 +637,8 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private bool isLeakingLRPower() {
     		Player ep = Player.main;
+    		if (!ep)
+    			return false;
     		if (ep.GetVehicle() || (ep.currentSub && ep.currentSub.isCyclops)) {
 	    		if (getLRPowerLeakage(ep.gameObject) <= 0)
 	    			return false;
@@ -646,6 +650,8 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private bool isTakingHeatDamage() {
     		Player ep = Player.main;
+    		if (!ep)
+    			return false;
 	    	if (getLavaHeatDamage(ep.gameObject) == null)
 	    		return false;
 		   	float time = DayNightCycle.main.timePassedAsFloat;

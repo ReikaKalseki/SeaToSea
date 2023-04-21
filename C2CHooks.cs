@@ -97,6 +97,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	        
 	    	BrokenTablet.updateLocale();
+	    	
+	    	Player.main.playerRespawnEvent.AddHandler(Player.main, new UWE.Event<Player>.HandleFunction(ep => {
+	    	     if (!ep.lastValidSub && !ep.lastEscapePod && !EscapePod.main) {
+					ep.SetPosition(new Vector3(0, -5, 0));
+					ep.SetMotorMode(Player.MotorMode.Dive);
+	    	     }
+	    	}));
 	    	/*
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
 	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
