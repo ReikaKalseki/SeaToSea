@@ -24,7 +24,8 @@ namespace ReikaKalseki.SeaToSea
 			private LiveMixin live;
 		
 			private Vector3 rotationSpeed;
-			private float sinkRate = 0;
+			
+			private BiomeBase currentBiome;
 		
 			private static readonly float MAX_ROTATE_SPEED = 2F;
 			
@@ -38,6 +39,7 @@ namespace ReikaKalseki.SeaToSea
 				if (!live)
 					live = GetComponent<LiveMixin>();
 				if (body && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+					currentBiome = BiomeBase.getBiome(WaterBiomeManager.main.GetBiome(transform.position.setY(Mathf.Min(-3, transform.position.y-10)), false));
 					body.constraints = RigidbodyConstraints.None;
 					body.drag = 0;
 					body.angularDrag = 0;
@@ -49,7 +51,9 @@ namespace ReikaKalseki.SeaToSea
 						stabilizer.enabled = false;
 						forces.enabled = false;
 						float sp2 = sp < 1 ? sp*sp : sp;
-						Vector3 force = 0.2F*new Vector3(-1F, 0, 1.2F*(float)pathVariation.getValue(new Vector3(DayNightCycle.main.timePassedAsFloat, 0, 0)))*sp2;
+						if (currentBiome == VanillaBiomes.DUNES)
+							sp2 *= 1.5F;
+						Vector3 force = 0.2F*new Vector3(-1F, 0, 1.8F*(float)pathVariation.getValue(new Vector3(DayNightCycle.main.timePassedAsFloat, 0, 0)))*sp2;
 						//SNUtil.writeToChat(sp.ToString("0.000")+">"+force.ToString("F4"));
 						body.velocity = force;
 						
@@ -65,10 +69,22 @@ namespace ReikaKalseki.SeaToSea
 					}
 					float depth = -transform.position.y;
 					float tgt = getTargetDepth();
-					SNUtil.writeToChat(depth.ToString("000.0")+"/"+tgt.ToString("000.0"));
+					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+tgt.ToString("000.0"));
 					if (tgt > depth) {
-						body.velocity = body.velocity.setY(-0.25F);
-						SNUtil.writeToChat(body.velocity.ToString("F4"));
+						float sink = 0.25F;
+						if (tgt-depth > 80 || tgt >= 150)
+							sink = 0.75F;
+						else if (tgt-depth > 40 || tgt >= 80)
+							sink = 0.5F;
+						if (currentBiome == VanillaBiomes.VOID)
+							sink = 2.5F;
+						if (currentBiome == VanillaBiomes.DUNES)
+							sink = 1F;
+						body.velocity = body.velocity.setY(-sink);
+						//SNUtil.writeToChat(body.velocity.ToString("F4"));
+					}
+					else if (depth > 10 && tgt < depth) {
+						body.velocity = body.velocity.setY(0.2F);
 					}
 				}
 			}
@@ -76,7 +92,7 @@ namespace ReikaKalseki.SeaToSea
 			private void getOrCreateNoise() {
 				long use = SaveLoadManager.main.firstStart;
 				if (pathVariation == null || pathVariation.seed != use) {
-					pathVariation = (Simplex1DGenerator)new Simplex1DGenerator(use).setFrequency(0.02F);
+					pathVariation = (Simplex1DGenerator)new Simplex1DGenerator(use).setFrequency(0.004F);
 				}
 			}
 			
@@ -99,19 +115,22 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			private float getTargetDepth() {
-				BiomeBase biome = BiomeBase.getBiome(WaterBiomeManager.main.GetBiome(transform.position.setY(Mathf.Min(-3, transform.position.y-10)), false));
 				float days = getPassedDays();
-				if (biome == VanillaBiomes.SHALLOWS)
+				if (currentBiome == VanillaBiomes.SHALLOWS)
 					return (float)MathUtil.linterpolate(days, 3, 20, -2, 8, true);
-				if (biome == VanillaBiomes.KELP)
-					return 25;
-				if (biome == VanillaBiomes.REDGRASS || biome == VanillaBiomes.BLOODKELP)
-					return 50;
-				if (biome == VanillaBiomes.MUSHROOM)
-					return 100;
-				if (biome == VanillaBiomes.DUNES || biome == VanillaBiomes.SPARSE || biome == VanillaBiomes.GRANDREEF)
-					return 200;
-				if (biome == VanillaBiomes.VOID)
+				if (currentBiome == VanillaBiomes.KELP)
+					return 36;
+				if (currentBiome == VanillaBiomes.REDGRASS)
+					return 80;
+				if (currentBiome == VanillaBiomes.BLOODKELP)
+					return 120;
+				if (currentBiome == VanillaBiomes.MUSHROOM)
+					return 150;
+				if (currentBiome == VanillaBiomes.SPARSE)
+					return 180;
+				if (currentBiome == VanillaBiomes.DUNES || currentBiome == VanillaBiomes.SPARSE || currentBiome == VanillaBiomes.GRANDREEF)
+					return 220;
+				if (currentBiome == VanillaBiomes.VOID)
 					return 9999;
 				return -transform.position.y;
 			}
