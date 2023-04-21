@@ -113,7 +113,7 @@ namespace ReikaKalseki.SeaToSea
 					UnityEngine.Object.Destroy(gameObject, delay);
 				}
 				movementSpeedXZ.addValue(Vector3.Distance(transform.position.setY(lastPosition.y), lastPosition));
-				SNUtil.writeToChat(movementSpeedXZ.getAverage().ToString("00.0000"));
+				//SNUtil.writeToChat(movementSpeedXZ.getAverage().ToString("00.0000"));
 				lastPosition = transform.position;
 			}
 		
