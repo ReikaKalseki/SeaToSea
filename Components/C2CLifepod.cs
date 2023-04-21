@@ -27,9 +27,7 @@ namespace ReikaKalseki.SeaToSea
 			private Vector3 rotationSpeed;
 			
 			private Vector3 lastPosition;
-			private Vector3 travelDistanceLastSecond;
-			
-			private float lastTravelDistanceReset = -1;
+			private MovingAverage movementSpeedXZ = new MovingAverage(90);
 			
 			private BiomeBase currentBiome;
 		
@@ -100,8 +98,8 @@ namespace ReikaKalseki.SeaToSea
 					}
 					else if (depth > 10 && tgt < depth) {
 						float rise = 0.2F;
-						if (travelDistanceLastSecond.setY(0).magnitude <= 0.25F)
-							rise = 1F;
+						if (isStuck())
+							rise = 1.5F*(float)Math.Max(0.1, 1-movementSpeedXZ.getAverage()*100);
 						body.velocity = body.velocity.setY(rise);
 					}
 				}
@@ -114,12 +112,8 @@ namespace ReikaKalseki.SeaToSea
 					}
 					UnityEngine.Object.Destroy(gameObject, delay);
 				}
-				travelDistanceLastSecond += transform.position-lastPosition;
-				float time = DayNightCycle.main.timePassedAsFloat;
-				if (time-lastTravelDistanceReset >= 1) {
-					lastTravelDistanceReset = time;
-					travelDistanceLastSecond = new Vector3(0, 0, 0);
-				}
+				movementSpeedXZ.addValue(Vector3.Distance(transform.position.setY(lastPosition.y), lastPosition));
+				SNUtil.writeToChat(movementSpeedXZ.getAverage().ToString("00.0000"));
 				lastPosition = transform.position;
 			}
 		
@@ -155,7 +149,7 @@ namespace ReikaKalseki.SeaToSea
 				if (days < 20)
 					return 0;
 				days -= 20;
-				if (travelDistanceLastSecond.setY(0).magnitude <= 0.25F)
+				if (isStuck())
 					return 0;
 				if (currentBiome == VanillaBiomes.SHALLOWS)
 					return Mathf.Min(1, days/15F)*10;
@@ -176,12 +170,9 @@ namespace ReikaKalseki.SeaToSea
 				return -transform.position.y;
 			}
 			
-		}
+			private bool isStuck() {
+				return movementSpeedXZ.getAverage() <= 0.01F;
+			}
 			
-		enum PodPhases {
-			STABLE,
-			DRIFTING,
-			SINKING,
-			UNRECOVERABLE,
 		}
 }
