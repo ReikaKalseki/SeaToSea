@@ -77,6 +77,8 @@ namespace ReikaKalseki.SeaToSea
 			private float lastTickTime = -1;
 			
 			private float speedBonus;
+			
+			internal bool teleportOnNextEnter;
         	
 			void Start() {
 				useSeamothVehicleTemperature = false;

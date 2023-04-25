@@ -155,9 +155,9 @@ namespace ReikaKalseki.SeaToSea
 					case Items.BrokenT2Battery:
 						item.renderModify = r => {
 							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
+							r.transform.localScale = new Vector3(3F, 2.4F, 2.4F);
 							ObjectUtil.removeComponent<Battery>(root);
-							r.gameObject.EnsureComponent<AzuriteBatterySparker>();
-							root.transform.localScale = new Vector3(1.2F, 1.2F, 1.5F);
+							root.gameObject.EnsureComponent<BrokenAzuriteBatterySparker>();
 							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(C2CItems.t2Battery));
 						};
 						item.glowIntensity = 1;
@@ -251,6 +251,12 @@ namespace ReikaKalseki.SeaToSea
 				template = temp;
 			}
 		}
+	}
+	
+	class BrokenAzuriteBatterySparker : AzuriteSparker {
+		BrokenAzuriteBatterySparker() : base(1.5F, 1.0F, new Vector3(0, 0, -0.05F)) {
+			
+		}		
 	}
 	
 	class BacteriaAnimator : AnimatorComponent {
