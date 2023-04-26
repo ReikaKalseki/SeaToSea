@@ -74,6 +74,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.reaperGrabVehicleEvent += onReaperGrab;
 	    	
+	    	DIHooks.vehicleEnterEvent += onVehicleEnter;
+	    	
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
@@ -1232,5 +1234,11 @@ namespace ReikaKalseki.SeaToSea {
 	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
 	    	}
 		}
+	    
+	    static void onVehicleEnter(Vehicle v, Player ep) {
+	    	if (v is SeaMoth) {
+	    		VoidSpikesBiome.instance.onSeamothEntered((SeaMoth)v, ep);
+	    	}
+	    }
 	}
 }

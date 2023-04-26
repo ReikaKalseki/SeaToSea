@@ -50,6 +50,9 @@ namespace ReikaKalseki.SeaToSea {
 		private VoidSpikes.SpikeCluster entryPoint;
 		
 		private SignalManager.ModSignal signal;
+			
+		private bool delayTeleportOutUntilEnterSeamoth = false;
+		private bool delayTeleportInUntilEnterSeamoth = false;
 		
 		private VoidSpikesBiome() : base(biomeName) {
 			generator = new VoidSpikes((end500m+end900m)/2);
@@ -134,7 +137,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void tickPlayer(Player ep) {
 			Vector3 pos = ep.transform.position;
-			double dist = getDistanceToBiome(pos, false);
 			//SNUtil.writeToChat("Dist @ "+pos+" = "+dist);
 			/*
 			if (dist < biomeVolumeRadius+75) {
@@ -149,42 +151,77 @@ namespace ReikaKalseki.SeaToSea {
 						PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
 			   	}
 				else {
-					float f1 = biomeVolumeRadius+25;
-					if (dist >= f1 && dist <= f1+20) {
-						Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
-						foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
-							if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, end500m) <= biomeVolumeRadius+50) {
-								Vector3 delta = sm.transform.position-end500m;
-								sm.transform.position = tgt+delta;
-							}
+					tickTeleportCheck(ep);
+				}
+			}
+		}
+		
+		internal void tickTeleportCheck(MonoBehaviour go) {
+			Vector3 pos = go.transform.position;
+			double dist = getDistanceToBiome(pos, false);
+			float f1 = biomeVolumeRadius+25;
+			if (dist >= f1 && dist <= f1+20) {
+				Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
+				if (go is Player && !delayTeleportOutUntilEnterSeamoth) {
+					SNUtil.teleportPlayer((Player)go, tgt);
+				  	SNUtil.log("Teleported player back from biome: "+tgt);
+				}
+				else if (go is C2CMoth) {
+					delayTeleportOutUntilEnterSeamoth = true;
+				}
+			}
+			else {
+				dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
+				if (dist <= f1) {
+					Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
+					if (go is Player && !delayTeleportInUntilEnterSeamoth) {
+						SNUtil.teleportPlayer((Player)go, tgt);
+				   		SNUtil.log("Teleported player to biome: "+tgt);
+						foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
+							Vector3 delta = levi.transform.position-tgt;
+							levi.transform.position = tgt+delta;
 						}
-						SNUtil.teleportPlayer(ep, tgt);
-			    		SNUtil.log("Teleported player back from biome: "+tgt);
 					}
-					else {
-						dist = MathUtil.getDistanceToLineSegment(pos, voidEndpoint500m, voidEndpoint900m);
-						if (dist <= f1) {
-							Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
-							foreach (GameObject levi in VoidGhostLeviathansSpawner.main.spawnedCreatures) {
-								Vector3 delta = levi.transform.position-tgt;
-								levi.transform.position = tgt+delta;
-							}
-							foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
-								if (!sm.GetPilotingMode() && Vector3.Distance(sm.transform.position, voidEndpoint500m) <= biomeVolumeRadius+50) {
-									Vector3 delta = sm.transform.position-voidEndpoint500m;
-									sm.transform.position = tgt+delta;
-								}
-							}
-							SNUtil.teleportPlayer(ep, tgt);
-				    		SNUtil.log("Teleported player to biome: "+tgt);
-						}
+					else if (go is C2CMoth) {
+						delayTeleportInUntilEnterSeamoth = true;
 					}
 				}
 			}
 		}
 		
+		public void onSeamothEntered(SeaMoth sm, Player ep) {
+			Vector3 pos = sm.transform.position;
+			if (delayTeleportInUntilEnterSeamoth) {
+				Vector3 tgt = (voidEndpoint500m+(pos-end500m).addLength(30)).setY(pos.y);
+				//SNUtil.writeToChat("Delayed tele in");
+				ep.transform.position = tgt;
+				sm.transform.position = tgt;
+				SNUtil.log("Teleported player to biome: "+tgt);
+				delayTeleportInUntilEnterSeamoth = false;
+			}
+			else if (delayTeleportOutUntilEnterSeamoth) {
+				//SNUtil.writeToChat("Delayed tele out");
+				Vector3 tgt = (end500m+(pos-voidEndpoint500m).addLength(-30)).setY(pos.y);
+				ep.transform.position = tgt;
+				sm.transform.position = tgt;
+				SNUtil.log("Teleported player back from biome: "+tgt);
+				delayTeleportOutUntilEnterSeamoth = false;
+			}
+		}
+		
 		public void onWorldStart() {
 			//AtmosphereDirector.main.debug = true;
+			if (isInBiome(Player.main.transform.position) && !anySeamothsInBiome()) {
+				delayTeleportOutUntilEnterSeamoth = true;
+			}
+		}
+		
+		internal bool anySeamothsInBiome() {
+			foreach (SeaMoth sm in UnityEngine.Object.FindObjectsOfType<SeaMoth>()) {
+				if (Vector3.Distance(sm.transform.position, end500m) <= biomeVolumeRadius+40)
+					return true;
+			}
+			return false;
 		}
 		
 		public void activateSignal() {

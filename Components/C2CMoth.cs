@@ -77,8 +77,6 @@ namespace ReikaKalseki.SeaToSea
 			private float lastTickTime = -1;
 			
 			private float speedBonus;
-			
-			internal bool teleportOnNextEnter;
         	
 			void Start() {
 				useSeamothVehicleTemperature = false;
@@ -182,6 +180,9 @@ namespace ReikaKalseki.SeaToSea
 							vec = MathUtil.rotateVectorAroundAxis(Vector3.Cross(vel, Vector3.up), seamoth.transform.forward, UnityEngine.Random.Range(0F, 360F)).setLength(0.8F);
 						body.AddForce(vec, ForceMode.VelocityChange);
 					}
+				}
+				else if (!seamoth.GetPilotingMode()) {
+					VoidSpikesBiome.instance.tickTeleportCheck(this);
 				}
 				
 				if (isPurgingHeat()) {
