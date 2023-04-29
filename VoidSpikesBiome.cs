@@ -247,7 +247,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override bool isInBiome(Vector3 vec) {
 			//SNUtil.log("Checking spike validity @ "+vec+" (dist = "+dist+")/200; D500="+Vector3.Distance(end500m, vec)+"; D900="+Vector3.Distance(end900m, vec));
-			return getDistanceToBiome(vec, false) <= biomeVolumeRadius+150;
+			return vec.y < -320 && getDistanceToBiome(vec, false) <= biomeVolumeRadius+150;
 		}
 		
 		public override double getDistanceToBiome(Vector3 vec) {

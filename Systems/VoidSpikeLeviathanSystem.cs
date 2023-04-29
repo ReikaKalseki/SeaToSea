@@ -547,13 +547,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!far && !edge)
 	    		return false;
 	    	if (ep.inSeamoth) {
-	    		SeaMoth sm = (SeaMoth)ep.GetVehicle();
-	    		double ch = getAvoidanceChance(ep, sm, edge, far);
-	    		//SNUtil.writeToChat(ch+" @ "+sm.transform.position);
-	    		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
-	    			if (InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
-	    				return false;
-	    			//SNUtil.writeToChat("Tried and failed");
+	    		SeaMoth sm = ep.GetVehicle() as SeaMoth; //not cast in case of modded vehicle
+	    		if (sm) {
+		    		double ch = getAvoidanceChance(ep, sm, edge, far);
+		    		//SNUtil.writeToChat(ch+" @ "+sm.transform.position);
+		    		if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
+		    			if (InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
+		    				return false;
+		    			//SNUtil.writeToChat("Tried and failed");
+		    		}
 	    		}
 	    	}
 	    	return true;
