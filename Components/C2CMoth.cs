@@ -77,6 +77,8 @@ namespace ReikaKalseki.SeaToSea
 			private float lastTickTime = -1;
 			
 			private float speedBonus;
+			
+			private int stuckCells = 0;
         	
 			void Start() {
 				useSeamothVehicleTemperature = false;
@@ -149,12 +151,24 @@ namespace ReikaKalseki.SeaToSea
 				
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				
+				if (UnityEngine.Random.Range(0F, 1F) < 0.5F) {
+					//stuckCells = GetComponentsInChildren<VoidBubbleTag>().Length;
+					stuckCells = 0;
+					foreach (VoidBubbleTag vb in WorldUtil.getObjectsNearWithComponent<VoidBubbleTag>(transform.position, 24)) {
+						if (vb.isStuckTo(body))
+							stuckCells++;
+					}
+				}
+				
 				float minSpeedBonus = InventoryUtil.isVehicleUpgradeSelected(seamoth, C2CItems.speedModule.TechType) ? 0.25F : 0;
 				if (speedBonus > minSpeedBonus)
 					speedBonus *= 0.933F;
 				else
 					speedBonus = Mathf.Min(minSpeedBonus, speedBonus+0.1F);
 				speedModifier.accelerationMultiplier = 1+speedBonus;
+				if (stuckCells > 0) {
+					speedModifier.accelerationMultiplier *= Mathf.Exp(-stuckCells*0.2F);
+				}
 				//SNUtil.writeToChat(speedBonus.ToString("0.000"));
 				
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {

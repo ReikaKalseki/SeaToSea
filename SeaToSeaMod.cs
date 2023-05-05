@@ -513,6 +513,12 @@ namespace ReikaKalseki.SeaToSea
     		case "voidspikes":
     			pos = VoidSpikesBiome.end500m;
     			break;
+    		case "deepvoid":
+    			pos = ((VoidSpikesBiome.signalLocation+VoidSpikesBiome.voidEndpoint500m)/2F).setY(-950);
+    			SubConsoleCommand.main.SpawnSub("cyclops", pos+new Vector3(10, 0, 0), Quaternion.identity);
+    			InventoryUtil.addItem(TechType.CyclopsHullModule3);
+    			InventoryUtil.addItem(TechType.CyclopsShieldModule);
+    			break;
     	}
     	SNUtil.teleportPlayer(Player.main, pos);
     }

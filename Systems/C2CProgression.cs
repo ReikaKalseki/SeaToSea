@@ -54,7 +54,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.KooshCavePrompt, ep => Vector3.Distance(pod12Location, ep.transform.position) <= 75);
 			addPDAPrompt(PDAMessages.Messages.RedGrassCavePrompt, isNearSeacrownCave);
 			addPDAPrompt(PDAMessages.Messages.UnderwaterIslandsPrompt, isInUnderwaterIslands);
-			addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, isNearKelpCave);
+			addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => isNearKelpCave(ep) && !isJustStarting(ep));
 			addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, hasMissedKelpCavePromptLate);
 			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
@@ -112,6 +112,16 @@ namespace ReikaKalseki.SeaToSea
     		if (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePromptLate).key) && Vector3.Distance(ep.transform.position, pod3Location) <= 80)
     			return true;
     		return MathUtil.isPointInCylinder(dronePDACaveEntrance.setY(-40), ep.transform.position, 60, 40) || (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.FollowRadioPrompt).key) && Vector3.Distance(pod3Location, ep.transform.position) <= 60);
+    	}
+    	
+    	private bool isJustStarting(Player ep) {
+    		if (Inventory.main.equipment.GetTechTypeInSlot("Head") != TechType.None || KnownTech.knownTech.Contains(TechType.Seamoth) || KnownTech.knownTech.Contains(TechType.BaseMapRoom) || KnownTech.knownTech.Contains(TechType.BaseRoom))
+    			return false;
+    		if (StoryGoalManager.main.completedGoals.Contains("OnPlayRadioGrassy25")) //pod 3 radio message play
+    			return false;
+    		//if (StoryGoalManager.main.completedGoals.Contains("Goal_Builder") || StoryGoalManager.main.completedGoals.Contains("Goal_Seaglide")) //craft build tool or seaglide
+    		//	return false;
+    		return true;
     	}
     	
     	private bool hasMissedKelpCavePromptLate(Player ep) {

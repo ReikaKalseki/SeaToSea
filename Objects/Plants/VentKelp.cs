@@ -261,6 +261,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			bool kill = false;
 			foreach (KelpSegment s in segments) {
+				if (grown && s.index >= 2) {
+					UnityEngine.Object.DestroyImmediate(s.obj);
+					continue;
+				}
 				foreach (Material m in s.renderer.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
 				}

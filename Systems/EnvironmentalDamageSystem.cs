@@ -456,7 +456,11 @@ namespace ReikaKalseki.SeaToSea {
     	}
     	
     	public string getBiome(Vector3 pos) {
+			if (!WaterBiomeManager.main)
+				return "";
     		string ret = WaterBiomeManager.main.GetBiome(pos);
+    		if (string.IsNullOrEmpty(ret))
+    			ret = "void";
     		//SNUtil.writeToChat(ret);
     		if (ret.ToLowerInvariant().Contains("precursor"))
     			return ret;
@@ -473,8 +477,6 @@ namespace ReikaKalseki.SeaToSea {
     		}
     		if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
     			ret = "LavaPitEntrance";
-    		if (string.IsNullOrEmpty(ret))
-    			ret = "void";
     		if (isPlayerInAuroraPrawnBay(pos))
     			ret = "AuroraPrawnBay";
     		if (Vector3.Distance(auroraPrawnBayDoor, pos) <= 3)

@@ -77,6 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.vehicleEnterEvent += onVehicleEnter;
 	    	
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
+	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
@@ -122,6 +123,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	moveToExploitable("PurpleVasePlant");
 	    
 	    	foreach (string k in new List<String>(Language.main.strings.Keys)) {
+	    		//SNUtil.log(k+" :>");
+	    		//SNUtil.log(Language.main.Get(k));
 	    		string k2 = k.ToLowerInvariant();
 	    		if (k2.Contains("tooltip") || k2.Contains("desc") || k2.Contains("ency"))
 	    			continue;
@@ -135,6 +138,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.log("Updating seed naming for "+k);
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
+	    	
+	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods"));
 	    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
 			LanguageHandler.SetLanguageLine("PrawnBayDoorHeatWarn", SeaToSeaMod.miscLocale.getEntry("PrawnBayDoorHeatWarn").desc);
@@ -510,6 +515,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static void recalculateDamage(DIHooks.DamageToDeal dmg) {
 	   		//if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
 	   		//	return 0;
+	   		//SNUtil.writeToChat(dmg.target.name);
 	   		Player p = dmg.target.GetComponentInParent<Player>();
 	   		if (p != null) {
 	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 20) {
@@ -1238,6 +1244,13 @@ namespace ReikaKalseki.SeaToSea {
 	    static void onVehicleEnter(Vehicle v, Player ep) {
 	    	if (v is SeaMoth) {
 	    		VoidSpikesBiome.instance.onSeamothEntered((SeaMoth)v, ep);
+	    	}
+	    }
+	    
+	    public static void getCompassDepthLevel(DIHooks.DepthCompassCheck ch) {
+	    	if (VoidSpikeLeviathanSystem.instance.isVoidFlashActive(true)) {
+	    		ch.value = VoidSpikeLeviathanSystem.instance.getRandomDepthForDisplay();
+	    		ch.crushValue = 1000-ch.value;
 	    	}
 	    }
 	}

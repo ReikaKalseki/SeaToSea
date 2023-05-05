@@ -28,8 +28,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static GameObject distantSparkFX;
 	    
-	    private static readonly float DAZZLE_FADE_LENGTH = 3;
-	    private static readonly float DAZZLE_TOTAL_LENGTH = 4.5F;
+	    private static readonly float DAZZLE_FADE_LENGTH = 2;
+	    private static readonly float DAZZLE_TOTAL_LENGTH = 3.5F;
 	    private static readonly double MAXDEPTH = 1500;//800;
 	    
 	    private static readonly float SONAR_INTERFERENCE_LENGTH = 7.5F;
@@ -54,6 +54,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private float currentFlashDuration = 0; //full blindness length; fade is (DAZZLE_FADE_LENGTH)x longer after that
 	    
 	    private float lastEMPHitSoundTime;
+	    
+	    private int randomDepth;
+	    private float timeSinceRandomDepthChange;
 	    
 	    private GameObject mainCamera;
 	    private MesmerizedScreenFXController mesmerController;
@@ -208,6 +211,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	float maxL2 = currentFlashDuration*(1+DAZZLE_TOTAL_LENGTH);
 	    	//SNUtil.log("L calc done");
 	    	if (dtf <= maxL) {
+	    		bool blind = dtf < currentFlashDuration+1.5F;
+	    		Player.main.GetPDA().SetIgnorePDAInput(blind);
+	    		if (blind)
+	    			Player.main.GetPDA().Close();
 	    		float alpha = 0;
 	    		float colorMix = 0;
 	    		if (dtf <= 0.33) {
@@ -324,6 +331,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool isVoidFlashActive(bool any) { //false if only the blind part
+	    	//SNUtil.writeToChat(DayNightCycle.main.timePassedAsFloat.ToString("00000.00")+"/"+lastFlashTime.ToString("00000.00")+"/"+currentFlashDuration.ToString("00.00"));
 	    	if (currentFlashDuration <= 0)
 	    		return false;
 	    	float n = any ? DAZZLE_TOTAL_LENGTH : DAZZLE_FADE_LENGTH;
@@ -334,6 +342,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (currentFlashDuration <= 0)
 	    		return 1;
 	    	return flashWashoutNetVisiblityFactor;
+	    }
+	    
+	    public int getRandomDepthForDisplay() {
+	    	timeSinceRandomDepthChange += Time.deltaTime;
+	    	if (timeSinceRandomDepthChange > 0.05F) {
+	    		randomDepth = UnityEngine.Random.Range(100, 1000);
+	    		timeSinceRandomDepthChange = 0;
+	    	}
+	    	return randomDepth;
 	    }
 	    
 	    internal void playDistantRoar(Player ep, float time) {
@@ -528,6 +545,8 @@ namespace ReikaKalseki.SeaToSea {
 	    internal void onFlashHit() {
 	    	lastFlashTime = DayNightCycle.main.timePassedAsFloat;
 	    	currentFlashDuration = UnityEngine.Random.Range(4F, 8F);
+	    	Player.main.GetPDA().Close();
+	    	Player.main.GetPDA().SetIgnorePDAInput(true);
 	    }
 	    
 	    internal void resetFlash() {
