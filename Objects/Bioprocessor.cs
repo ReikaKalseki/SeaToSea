@@ -232,6 +232,24 @@ namespace ReikaKalseki.SeaToSea {
 			setEmissiveColor(new Color(0, 0, 1));
 		}
 		
+		protected override void load(System.Xml.XmlElement data) {
+			operationCooldown = (float)data.getFloat("cooldown", float.NaN);
+			
+			string rec = data.getProperty("recipe");
+			TechType inp = string.IsNullOrEmpty(rec) ? TechType.None : SNUtil.getTechType(rec);
+			currentOperation = inp == TechType.None ? null : Bioprocessor.recipes[inp];
+			nextEnzyTimeRemaining = (float)data.getFloat("countdown", float.NaN);
+			enzyRequired = data.getInt("required", 0, false);
+		}
+		
+		protected override void save(System.Xml.XmlElement data) {
+			data.addProperty("cooldown", operationCooldown);
+			
+			data.addProperty("recipe", currentOperation != null ? currentOperation.inputItem+"" : null);
+			data.addProperty("countdown", nextEnzyTimeRemaining);
+			data.addProperty("required", enzyRequired);
+		}
+		
 		protected override void updateEntity(float seconds) {
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();

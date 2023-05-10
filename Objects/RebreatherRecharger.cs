@@ -92,6 +92,14 @@ namespace ReikaKalseki.SeaToSea {
 			SeaToSeaMod.rebreatherCharger.initializeMachine(gameObject);
 		}
 		
+		protected override void load(System.Xml.XmlElement data) {
+			available = (float)data.getFloat("fuel", float.NaN);
+		}
+		
+		protected override void save(System.Xml.XmlElement data) {
+			data.addProperty("fuel", available);
+		}
+		
 		protected override void updateEntity(float seconds) {
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();

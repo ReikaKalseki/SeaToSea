@@ -19,7 +19,9 @@ namespace ReikaKalseki.SeaToSea {
 	public class VoidLeviElecSphere : Spawnable {
 	        
 	    internal VoidLeviElecSphere() : base("levipulse", "", "") {
-			
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<HeatSinkTag>().addField("spawnTime"));
+			};
 	    }
 			
 	    public override GameObject GetGameObject() {/*

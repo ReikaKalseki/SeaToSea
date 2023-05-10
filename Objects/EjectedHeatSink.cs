@@ -22,7 +22,9 @@ namespace ReikaKalseki.SeaToSea {
 		internal static List<HeatSinkTag> activeHeatSinks = new List<HeatSinkTag>();
 	        
 	    internal EjectedHeatSink() : base("dumpedheatsink", "Ejected Heat Sink", "") {
-			
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<HeatSinkTag>().addField("temperature").addField("spawnTime"));
+			};
 	    }
 
 		internal static void iterateHeatSinks(Action<HeatSinkTag> a) {

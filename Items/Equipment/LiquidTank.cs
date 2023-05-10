@@ -15,6 +15,9 @@ namespace ReikaKalseki.SeaToSea
 		public LiquidTank() : base(SeaToSeaMod.itemLocale.getEntry("LiquidTank"), "WorldEntities/Tools/HighCapacityTank") {
 			isArmor = true;
 			preventNaturalUnlock();
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<Battery>().addField("_charge"));
+			};
 		}
 
 		public override Vector2int SizeInInventory {
