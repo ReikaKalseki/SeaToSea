@@ -23,11 +23,11 @@ namespace ReikaKalseki.SeaToSea
     //public static readonly ModLogger logger = new ModLogger();
 	public static readonly Assembly modDLL = Assembly.GetExecutingAssembly();
     
-    internal static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>();
-    internal static readonly XMLLocale itemLocale = new XMLLocale("XML/items.xml");
-    internal static readonly XMLLocale pdaLocale = new XMLLocale("XML/pda.xml");
-    internal static readonly XMLLocale signalLocale = new XMLLocale("XML/signals.xml");
-    internal static readonly XMLLocale miscLocale = new XMLLocale("XML/misc.xml");
+    internal static readonly Config<C2CConfig.ConfigEntries> config = new Config<C2CConfig.ConfigEntries>(modDLL);
+    internal static readonly XMLLocale itemLocale = new XMLLocale(modDLL, "XML/items.xml");
+    internal static readonly XMLLocale pdaLocale = new XMLLocale(modDLL, "XML/pda.xml");
+    internal static readonly XMLLocale signalLocale = new XMLLocale(modDLL, "XML/signals.xml");
+    internal static readonly XMLLocale miscLocale = new XMLLocale(modDLL, "XML/misc.xml");
     
     public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
     
@@ -121,6 +121,7 @@ namespace ReikaKalseki.SeaToSea
         }
         
         ModVersionCheck.getFromGitVsInstall("Sea To Sea", modDLL, "SeaToSea").register();
+        SNUtil.checkModHash(modDLL);
         
         CustomPrefab.addPrefabNamespace("ReikaKalseki.SeaToSea");
         

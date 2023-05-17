@@ -70,7 +70,7 @@
 			Chlorine
 		</name>
 		<desc>
-			A highly poisonous gas which dissolves easily in water. Good for killing microorganisms.
+			Cl. A highly poisonous gas which dissolves easily in water. Good for killing microorganisms.
 		</desc>
 		<pda>
 			
@@ -81,7 +81,7 @@
 			Luminol
 		</name>
 		<desc>
-			A luminous fluid, colorless in small amounts and pale blue in large quantities.
+			C8H7N3O2. A luminous fluid, colorless in small amounts and pale blue in large quantities.
 		</desc>
 		<pda>
 			
@@ -103,7 +103,7 @@
 			Carboxylic Acid
 		</name>
 		<desc>
-			A dilute organic acid, suitable for use in basic electronics.
+			CH3(CH2)xCOOH. A dilute organic acid, suitable for use in basic electronics.
 		</desc>
 		<pda>
 			
@@ -224,7 +224,7 @@
 			Breathing Fluid
 		</name>
 		<desc>
-			A nontoxic solvent saturated with oxygen, suitable for liquid-based respiration.
+			CFx•Oy. A nontoxic solvent saturated with oxygen, suitable for liquid-based respiration.
 		</desc>
 		<pda>
 			
@@ -283,7 +283,7 @@
 			Azurite
 		</name>
 		<desc>
-			A luminous gemstone with exquisite optical properties and electromagnetic conductivity.
+			Cu3(CO3)2(OH)2•8-. A luminous gemstone with exquisite optical properties and electromagnetic conductivity.
 		</desc>
 		<pda>
 			Found exclusively around certain thermal vents, these exotic crystals, despite having a similar gross molecular structure to common quartz, have electron distributions more commonly seen in metallic elements.
@@ -303,7 +303,7 @@
 			Platinum
 		</name>
 		<desc>
-			A dense, valuable, rare metal with extreme resistance to corrosion. In addition to being useful for creating alloys, it is also useful as a chemical catalyst with organic compounds.
+			Pt. A dense, valuable, rare metal with extreme resistance to corrosion. In addition to being useful for creating alloys, it is also useful as a chemical catalyst with organic compounds.
 		</desc>
 		<pda>
 			Rarer and more valuable even than gold, platinum is a transition metal whose chief property is its extremely low chemical reactivity. This makes it all but impervious to corrosion, and allows it to mediate many chemical reactions without being consumed itself. In particular it is well-suited to rearranging the components of organic molecules.
@@ -355,7 +355,7 @@
 			Iridium
 		</name>
 		<desc>
-			An exotic and dense metal not typically found in most geologic strata.
+			Ir. An exotic and dense metal not typically found in most geologic strata.
 		</desc>
 		<pda>
 			Iridium is not typically present in detectable quantities in planetary crusts, instead often only being found in meteorite deposits. High concentrations of this rare and dense metal are often indicators that the area is geologically linked with such an impactor.
