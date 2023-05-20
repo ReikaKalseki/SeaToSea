@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea
 				if (!live)
 					live = GetComponent<LiveMixin>();
 				if (body && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PODFAIL)) {
-					currentBiome = BiomeBase.getBiome(WaterBiomeManager.main.GetBiome(transform.position.setY(Mathf.Min(-3, transform.position.y-10)), false));
+					currentBiome = BiomeBase.getBiome(transform.position.setY(Mathf.Min(-3, transform.position.y-10)));
 					float sp = getMovementSpeed();
 					float dT = Time.fixedDeltaTime;
 					if (pathVariation == null)

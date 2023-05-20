@@ -254,7 +254,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else if (transform.position.y >= -400 || MathUtil.getDistanceToLineSegment(transform.position, UnderwaterIslandsFloorBiome.wreckCtrPos1, UnderwaterIslandsFloorBiome.wreckCtrPos2) <= 15) {
 					//SNUtil.writeToChat("Destroying vent kelp @ "+transform.position.y);
-					SNUtil.log("Destroying vent kelp @ "+transform.position.y);
+					SNUtil.log("Destroying shallow/near-wreck vent kelp @ "+transform.position);
 					UnityEngine.Object.DestroyImmediate(gameObject);
 					return;
 				}
@@ -263,6 +263,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (KelpSegment s in segments) {
 				if (grown && s.index >= 2) {
 					UnityEngine.Object.DestroyImmediate(s.obj);
+					SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position);
 					continue;
 				}
 				foreach (Material m in s.renderer.materials) {
@@ -282,7 +283,10 @@ namespace ReikaKalseki.SeaToSea {
 						kill = true;
 					}
 					if (s.obj.transform.position.y >= -3) {
+						if (grown)
+							s.obj.GetComponentInParent<Planter>().RemoveItem(grown.seed);
 						UnityEngine.Object.DestroyImmediate(s.obj);
+						SNUtil.log("Destroying surface vent kelp @ "+transform.position);
 						redoRenderers = true;
 						continue;
 					}
@@ -309,6 +313,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				UnityEngine.Object.DestroyImmediate(gameObject);*/
 				gameObject.GetComponentInParent<LiveMixin>().TakeDamage(99999F);
+				SNUtil.log("Killing incomplete/killed vent kelp @ "+transform.position);
 			}
 		}
 		
