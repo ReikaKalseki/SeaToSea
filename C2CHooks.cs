@@ -946,8 +946,9 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void pingSeamothSonar(SeaMoth sm) {
-	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 30);
-	    	if (VanillaBiomes.VOID.isInBiome(sm.transform.position)) {
+	    	bool vv = VanillaBiomes.VOID.isInBiome(sm.transform.position);
+	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, vv ? 30 : 10);
+	    	if (vv) {
 	    		for (int i = VoidGhostLeviathansSpawner.main.spawnedCreatures.Count; i < VoidGhostLeviathansSpawner.main.maxSpawns; i++) {
 		    		VoidGhostLeviathansSpawner.main.timeNextSpawn = 0.1F;
 		    		VoidGhostLeviathansSpawner.main.UpdateSpawn(); //trigger spawn and time recalc
@@ -986,7 +987,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (sm) {
 	    		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 	    		float amt = UnityEngine.Random.Range(hard ? 15 : 8, hard ? 25 : 15);
-	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, amt);
+	    		if (VanillaBiomes.VOID.isInBiome(sm.transform.position))
+	    			VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, amt);
 	    	}
 	    }
 	    
@@ -1252,6 +1254,18 @@ namespace ReikaKalseki.SeaToSea {
 	    		ch.value = VoidSpikeLeviathanSystem.instance.getRandomDepthForDisplay();
 	    		ch.crushValue = 1000-ch.value;
 	    	}
+	    }
+	    
+	    public static void onStasisFreeze(StasisSphere s, Collider c) {
+	    	PrefabIdentifier pi = c.gameObject.FindAncestor<PrefabIdentifier>();
+	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID)
+	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnFreeze(s.time);
+	    }
+	    
+	    public static void onStasisUnFreeze(StasisSphere s, Collider c) {/*
+	    	PrefabIdentifier pi = c.gameObject.FindAncestor<PrefabIdentifier>(true);
+	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID)
+	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnUnfreeze();*/
 	    }
 	}
 }

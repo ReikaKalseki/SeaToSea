@@ -67,6 +67,7 @@ namespace ReikaKalseki.SeaToSea
     public static MountainBaseCuredPeeper peeper;
     //public static SeaTreaderTunnelLocker locker;
     public static SeaTreaderTunnelLight tunnelLight;
+    public static FallingGlassForestWreck gfWreckProp;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -169,6 +170,8 @@ namespace ReikaKalseki.SeaToSea
 	    //locker.Patch();
 	    tunnelLight = new SeaTreaderTunnelLight();
 	    tunnelLight.Patch();
+	    gfWreckProp = new FallingGlassForestWreck();
+	    gfWreckProp.Patch();
 	    
 	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();

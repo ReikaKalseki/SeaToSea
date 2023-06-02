@@ -78,29 +78,50 @@ namespace ReikaKalseki.SeaToSea {
 		private float currentScale = 1;
 		private bool currentlyHiding = false;
 		
+		private float timePlayerStationary = 0;
+		
+		private bool isFrozen;
+		
 		void Start() {
 			isGrown = gameObject.GetComponent<GrownPlant>() != null;
 			currentScale = 1;
 			rootScale = UnityEngine.Random.Range(2, 2.5F);
-    		if (gameObject.transform.position.y > -10)
-    			UnityEngine.Object.Destroy(gameObject);
-    		else if (isGrown) {
+    		if (isGrown) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
     		}
+			else if (gameObject.transform.position.y > -10) {
+    			UnityEngine.Object.Destroy(gameObject);
+			}
     		else {
     			gameObject.transform.localScale = Vector3.one*rootScale;
     		}
+		}
+		
+		public void OnFreeze(float time) {
+			if (time <= 2)
+				return;
+			isFrozen = true;
+			Invoke("OnUnfreeze", time-2);
+		}
+		
+		public void OnUnfreeze() {
+			isFrozen = false;
 		}
 		
 		void Update() {
 			if (!renderer)
 				renderer = GetComponentInChildren<Renderer>();
 			Player ep = Player.main;
-			if (ep && !isGrown) {
+			if (!isFrozen && ep && (!isGrown || Vector3.Distance(transform.position, C2CHooks.mountainBaseGeoCenter) <= 30)) {
 				float dT = Time.deltaTime;
+				Vehicle v = ep.GetVehicle();
+				if ((v && v.useRigidbody ? v.useRigidbody : ep.rigidBody).velocity.magnitude > 0.05F)
+					timePlayerStationary = 0;
+				else
+					timePlayerStationary += dT;
 				float dd = Vector3.Distance(ep.transform.position, transform.position);
-				if (dd <= 15F && canSeePlayer(ep))
+				if (dd <= (v ? 25F : 15F) && canSeePlayer(ep) && timePlayerStationary < (v ? 20 : 30*999))
 					timeVisible += dT;
 				else
 					timeVisible = 0;
@@ -109,7 +130,7 @@ namespace ReikaKalseki.SeaToSea {
 					float sp = 1F*dT;
 					if (dd <= 8)
 						sp *= 1.5F;
-					currentScale = Mathf.Max(0.03F, currentScale-sp);
+					currentScale = Mathf.Max(0.045F, currentScale-sp);
 				}
 				else {
 					currentScale = Mathf.Min(1, currentScale+0.15F*dT);
@@ -132,7 +153,7 @@ namespace ReikaKalseki.SeaToSea {
 				return false;
 			Vehicle v = ep.GetVehicle();
 			if (v)
-				return Vector3.Distance(v.transform.position, transform.position) <= 4 || (v.useRigidbody && v.GetComponent<Rigidbody>().velocity.magnitude > 0.1);
+				return Vector3.Distance(v.transform.position, transform.position) <= 4 || (v.useRigidbody && v.useRigidbody.velocity.magnitude > 0.05F);
 			Vector3 pos1 = ep.transform.position;
 			Vector3 pos2 = transform.position+transform.up.normalized*0.5F;
 			if (WorldUtil.lineOfSight(ep.gameObject, gameObject, pos1, pos2))
@@ -144,7 +165,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isHarvestable() {
-			return currentScale >= 0.75F;
+			return currentScale >= 0.75F && canSeePlayer(Player.main);
 		}
 		
 	}
