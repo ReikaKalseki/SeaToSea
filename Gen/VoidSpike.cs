@@ -486,6 +486,10 @@ namespace ReikaKalseki.SeaToSea
 				currentRenderers = currentOre.gameObject.GetComponentsInChildren<Renderer>(true);
 				
 				foreach (Renderer r in currentRenderers) {
+					if (r is MeshRenderer) {
+						((MeshRenderer)r).shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+						((MeshRenderer)r).receiveShadows = false;
+					}
 					foreach (Material m in r.materials) {
 						m.EnableKeyword("FX_BUILDING");
 						//material2.SetTexture(ShaderPropertyID._EmissiveTex, this._EmissiveTex);

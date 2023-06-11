@@ -157,6 +157,8 @@ namespace ReikaKalseki.SeaToSea {
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
     		if (DIHooks.getWorldAge() < 0.25F)
     			return;
+    		if (GameModeUtils.currentEffectiveMode == GameModeOption.Creative)
+    			return;
     		//depthWarningFX1 = Camera.main.gameObject.EnsureComponent<DepthRippleFX>();
     		//depthWarningFX2 = Camera.main.gameObject.EnsureComponent<DepthDarkeningFX>();
 	   		//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
