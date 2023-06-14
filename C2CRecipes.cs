@@ -46,19 +46,19 @@ namespace ReikaKalseki.SeaToSea
        	
        	C2CItems.addIngot(TechType.Titanium, TechType.TitaniumIngot, item, 10);
        	
-       	createCompressedIngot(TechType.Quartz, 5, "Boule");
-       	createCompressedIngot(TechType.AluminumOxide, "Ruby", 8, "Boule");
-       	createCompressedIngot(TechType.Copper);
-       	createCompressedIngot(TechType.Silver);
-       	createCompressedIngot(TechType.Gold);
-       	createCompressedIngot(TechType.Lead);
-       	createCompressedIngot(TechType.Lithium, 10, "Plate");
-       	createCompressedIngot(TechType.Magnetite, 6, "Bar");
-       	createCompressedIngot(TechType.Nickel);
-       	createCompressedIngot(TechType.Kyanite, 6, "Boule");
-       	createCompressedIngot(TechType.Salt, 8, "Block");
-       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM));
-       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 8);
+       	createCompressedIngot(TechType.Quartz, "41919ae1-1471-4841-a524-705feb9c2d20", 18, 6, 0.6F, 5, "Boule");
+       	createCompressedIngot(TechType.AluminumOxide, "41919ae1-1471-4841-a524-705feb9c2d20", 30, 3, 0.4F, "Ruby", 8, "Boule");
+       	createCompressedIngot(TechType.Copper, "41919ae1-1471-4841-a524-705feb9c2d20", 6.5F, 4, 0.4F);
+       	createCompressedIngot(TechType.Silver, "41919ae1-1471-4841-a524-705feb9c2d20", 24, 8, 0);
+       	createCompressedIngot(TechType.Gold, "4ae90608-40da-45ce-8480-e2f0133f96b2", 12, 5, 0);
+       	createCompressedIngot(TechType.Lead, "4ae90608-40da-45ce-8480-e2f0133f96b2", 25, 2, 0);
+       	createCompressedIngot(TechType.Lithium, "c483f597-c78a-42e9-bad5-3be9ef47aa81", 2.5F, 6, 0.5F, 10, "Plate");
+       	createCompressedIngot(TechType.Magnetite, "a06157cc-8de8-4fec-85a6-76b2aee1e263", 30, 7, 0.5F, 6, "Bar");
+       	createCompressedIngot(TechType.Nickel, "41919ae1-1471-4841-a524-705feb9c2d20", 8, 8, 0.6F);
+       	createCompressedIngot(TechType.Kyanite, "41919ae1-1471-4841-a524-705feb9c2d20", 30, 3, 0.7F, 6, "Boule");
+       	createCompressedIngot(TechType.Salt, "b334fbb1-224b-4082-bb69-d4a39051aaca", 6, 1, 0.6F, 8, "Block");
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), "4ae90608-40da-45ce-8480-e2f0133f96b2", 18, 2, 0.25F);
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), "a06157cc-8de8-4fec-85a6-76b2aee1e263", 40, 5, 0.8F, 8, "Ingot");
        	
        	C2CItems.IngotDefinition qi = C2CItems.getIngot(TechType.Quartz);
        	TechData glassRec = RecipeUtil.getRecipe(TechType.Glass);
@@ -501,23 +501,33 @@ namespace ReikaKalseki.SeaToSea
     	return new System.Collections.ObjectModel.ReadOnlyCollection<TechType>(removedVanillaUnlocks);
     }
     
-    private static void createCompressedIngot(DIPrefab<VanillaResources> item, int amt = 10, string name = "Ingot") {
+    private static void createCompressedIngot(DIPrefab<VanillaResources> item, string pfbMdl, float specInt, float shiny, float fresnel, int amt = 10, string name = "Ingot") {
     	string n = ((ModPrefab)item).ClassID;
-    	createCompressedIngot(((ModPrefab)item).TechType, n.Substring(0, 1)+n.Substring(1).ToLowerInvariant(), amt, name, item.getIcon());
+    	createCompressedIngot(((ModPrefab)item).TechType, pfbMdl, specInt, shiny, fresnel, n.Substring(0, 1)+n.Substring(1).ToLowerInvariant(), amt, name, item.getIcon());
     }
     
-    private static void createCompressedIngot(TechType item, int amt = 10, string name = "Ingot") {
-    	createCompressedIngot(item, ""+item, amt, name);
+    private static void createCompressedIngot(TechType item, string pfbMdl, float specInt, float shiny, float fresnel, int amt = 10, string name = "Ingot") {
+    	createCompressedIngot(item, pfbMdl, specInt, shiny, fresnel, ""+item, amt, name);
     }
     
-    private static void createCompressedIngot(TechType item, string refName, int amt = 10, string name = "Ingot", Atlas.Sprite spr = null) {
+    private static void createCompressedIngot(TechType item, string pfbMdl, float specInt, float shiny, float fresnel, string refName, int amt = 10, string name = "Ingot", Atlas.Sprite spr = null) {
     	string pref = name[0] == 'A' || name[0] == 'E' || name[0] == 'I' || name[0] == 'O' || name[0] == 'U' ? "An " : "A ";
-    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, refName+" "+name, pref+name.ToLowerInvariant()+" of compressed "+refName.ToLowerInvariant()+".", "41919ae1-1471-4841-a524-705feb9c2d20");
+    	BasicCraftingItem ingot = new BasicCraftingItem("ingot_"+item, refName+" "+name, pref+name.ToLowerInvariant()+" of compressed "+refName.ToLowerInvariant()+".", pfbMdl);
     	ingot.addIngredient(item, amt);
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
     	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/ingot_"+refName.ToLowerInvariant());
+    	ingot.renderModify = r => {
+    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Items/World/Ingot/"+item);
+    		RenderUtil.setGlossiness(r, specInt, shiny, fresnel);
+    		if (item == TechType.Quartz)
+    			RenderUtil.makeTransparent(r);
+    		if (item == TechType.Quartz || item == TechType.AluminumOxide || item == TechType.Kyanite) {
+    			float f = item == TechType.Quartz ? 0.3F : (item == TechType.Kyanite ? 9 : 6);
+    			RenderUtil.setEmissivity(r, f*0.67F, f);
+    		}
+    	};
        	//ingot.ownerMod = modDLL;
     	ingot.Patch();
     	SNUtil.log("Added compressed ingot for "+refName+": "+ingot.TechType+" @ "+ingot.FabricatorType+" > "+string.Join("/", ingot.StepsToFabricatorTab));

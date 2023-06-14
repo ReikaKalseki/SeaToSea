@@ -128,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
 						item.renderModify = r => {
 							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(item), new Dictionary<int, string>{{1, ""}, {3, ""}});
 							r.gameObject.EnsureComponent<RocketFuelAnimator>();
-							RenderUtil.setEmissivity(r.materials[3], 2, "GlowStrength");
+							RenderUtil.setEmissivity(r.materials[3], 2);
 							r.materials[3].EnableKeyword("FX_BUILDING");
 							r.materials[3].SetFloat("_Built", 0.1F);
 							r.materials[3].SetFloat("_BuildLinear", 0.55F);
@@ -287,7 +287,7 @@ namespace ReikaKalseki.SeaToSea
 			render.materials[0].SetFloat("_Fresnel", 0.5F+0.4F*f);
 			Color c = new Color(f2, 0, 1, 1);
 			render.materials[0].SetColor("_GlowColor", c);
-			RenderUtil.setEmissivity(render, 1+f2, "GlowStrength");
+			RenderUtil.setEmissivity(render, 1+f2);
 		}
 		
 	}
@@ -301,7 +301,7 @@ namespace ReikaKalseki.SeaToSea
 				render = gameObject.GetComponent<Renderer>();
 			}
 			float f = Mathf.Sin(DayNightCycle.main.timePassedAsFloat*0.37F+gameObject.GetInstanceID()*0.6943F);
-			RenderUtil.setEmissivity(render.materials[3], 2.5F-f, "GlowStrength");
+			RenderUtil.setEmissivity(render.materials[3], 2.5F-f);
 			Color c = new Color(0, 0.33F+0.67F*f, 1, 1);
 			render.materials[3].color = c;
 			render.materials[3].SetColor("_SpecColor", c);

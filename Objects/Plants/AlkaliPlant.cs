@@ -142,7 +142,7 @@ namespace ReikaKalseki.SeaToSea {
 				float glow = C2CItems.alkali.glowIntensity*currentScale;
 				if (glow <= 0.035)
 					glow = 0;
-				RenderUtil.setEmissivity(renderer, glow, "GlowStrength");
+				RenderUtil.setEmissivity(renderer, glow);
 				transform.localScale = new Vector3(0.33F+f*0.67F, f, 0.33F+f*0.67F);//Vector3.one*f;//new Vector3(0.75F+f*0.25F, f, 0.75F+f*0.25F);
 				GetComponent<LiveMixin>().data.knifeable = isHarvestable();
 			}

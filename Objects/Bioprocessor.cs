@@ -167,7 +167,7 @@ namespace ReikaKalseki.SeaToSea {
 			Renderer r = machineMdl.GetComponentInChildren<Renderer>();
 			//SNUtil.dumpTextures(r);
 			RenderUtil.swapToModdedTextures(r, this);
-			RenderUtil.setEmissivity(r, 2, "GlowStrength");
+			RenderUtil.setEmissivity(r, 2);
 			r.materials[0].EnableKeyword("MARMO_EMISSION");
 			r.sharedMaterial.EnableKeyword("MARMO_EMISSION");
 			r.materials[0].SetFloat("_Shininess", 8);

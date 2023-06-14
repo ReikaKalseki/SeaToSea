@@ -129,7 +129,7 @@ namespace ReikaKalseki.SeaToSea {
 			double tick = (sp*time+phase)%(200*Math.PI);
 			float lt = (float)Math.Sin(tick)+0.4F*(float)Math.Sin(tick*4.63-289.2);
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*lt;
-			RenderUtil.setEmissivity(render, f, "GlowStrength");
+			RenderUtil.setEmissivity(render, f);
 			light.range = Azurite.BASE_LIGHT_RANGE+0.5F*f;
 			if (dT > 0 && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
 	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");

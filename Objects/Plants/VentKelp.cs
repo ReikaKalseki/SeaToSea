@@ -134,7 +134,7 @@ namespace ReikaKalseki.SeaToSea {
 				r.materials[0].SetColor("_GlowColor", GlowKelpTag.idleColor);
 				r.materials[1].SetColor("_GlowColor", GlowKelpTag.idleColor);
 				RenderUtil.makeTransparent(r, leavesOnly ? new HashSet<int>{0, 1} : new HashSet<int>{1});
-				RenderUtil.setEmissivity(r, 8, "GlowStrength", new HashSet<int>{1});
+				RenderUtil.setEmissivity(r, 8, new HashSet<int>{1});
 				RenderUtil.swapToModdedTextures(r, this);
 			}
 		}

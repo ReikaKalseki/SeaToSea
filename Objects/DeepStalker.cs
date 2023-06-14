@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			DeepStalkerTag kc = world.EnsureComponent<DeepStalkerTag>();
 			foreach (Renderer r in world.GetComponentsInChildren<Renderer>()) {
-				RenderUtil.setEmissivity(r, 1.25F, "GlowStrength");
+				RenderUtil.setEmissivity(r, 1.25F);
 				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
 				r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 			}

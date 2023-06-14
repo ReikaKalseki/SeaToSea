@@ -41,7 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			Renderer r2 = shell.GetComponentInChildren<Renderer>();
 			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r2, "Textures/Plants/TreeColony");
-			RenderUtil.setEmissivity(r2, 2, "GlowStrength");
+			RenderUtil.setEmissivity(r2, 2);
 			RenderUtil.disableTransparency(r2.material);
 			setupWave(r2);
 			world.EnsureComponent<TreeColonyTag>();

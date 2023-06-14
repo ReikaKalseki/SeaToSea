@@ -104,7 +104,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
 			StorageContainer sc = getStorage();
-			if (sc == null) {
+			if (!sc) {
 				return;
 			}
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
@@ -128,8 +128,10 @@ namespace ReikaKalseki.SeaToSea {
 				speed = Math.Min(speed*1.05F+0.15F, 150);
 				secsNoPwr = 0;
 				sound.Play();
-				if (available < 6000 && sc.container.RemoveItem(C2CItems.breathingFluid.TechType) != null)
+				if (available < 6000 && sc.container.GetCount(C2CItems.breathingFluid.TechType) > 0) {
 					available += LiquidBreathingSystem.ITEM_VALUE;
+					sc.container.DestroyItem(C2CItems.breathingFluid.TechType);
+				}
 			}
 			else {
 				speed = Math.Max(speed*0.98F-0.02F, 0);

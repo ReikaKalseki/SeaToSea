@@ -136,7 +136,7 @@ namespace ReikaKalseki.SeaToSea {
 				light.intensity = UnityEngine.Random.Range(1.45F, 1.55F)*f;
 				light.color = getColor(f);
 			}
-			RenderUtil.setEmissivity(mainRender.materials[0], (0.67F+0.33F*f)*4F, "GlowStrength");
+			RenderUtil.setEmissivity(mainRender.materials[0], (0.67F+0.33F*f)*4F);
 			mainRender.materials[0].SetColor("_GlowColor", getColor(f));
 		}
 		

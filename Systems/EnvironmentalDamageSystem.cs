@@ -102,15 +102,30 @@ namespace ReikaKalseki.SeaToSea {
 		   	lrLeakage["LostRiver_Corridor"] = 1;
 		   	lrLeakage["LostRiver_GhostTree_Lower"] = 1;
 		   	lrLeakage["LostRiver_GhostTree"] = 1;
+		   	lrLeakage["LostRiver_GhostTree_Skeleton"] = 1;
 		   	lrLeakage["LostRiver_Canyon"] = 1.75F;
-		   	
+		   			   	
 		   	lrPoisonDamage["LostRiver_BonesField_Corridor"] = 8;
 		    lrPoisonDamage["LostRiver_GhostTree"] = 8;
+		    lrPoisonDamage["LostRiver_GhostTree_Skeleton"] = 8;
 		    lrPoisonDamage["LostRiver_Corridor"] = 8;
 		    lrPoisonDamage["LostRiver_Canyon"] = 10;
 		    lrPoisonDamage["LostRiver_BonesField"] = 15;
+		    lrPoisonDamage["LostRiver_BonesField_Skeleton"] = 15;
 		    lrPoisonDamage["LostRiver_Junction"] = 15;
+		    lrPoisonDamage["LostRiver_Junction_Skeleton"] = 15;
 		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
+		    
+		    foreach (string kvp in new HashSet<string>(lrLeakage.Keys)) {
+		    	lrLeakage[kvp+"_Water"] = lrLeakage[kvp]*1.5F;
+		    	lrLeakage[kvp+"_Lake"] = lrLeakage[kvp]*1.5F;
+		    	lrLeakage[kvp+"_LakePit"] = lrLeakage[kvp]*1.5F;
+		    }
+		    foreach (string kvp in new HashSet<string>(lrPoisonDamage.Keys)) {
+		    	lrPoisonDamage[kvp+"_Water"] = lrPoisonDamage[kvp]*1.5F;
+		    	lrPoisonDamage[kvp+"_Lake"] = lrPoisonDamage[kvp]*1.5F;
+		    	lrPoisonDamage[kvp+"_LakePit"] = lrPoisonDamage[kvp]*1.5F;
+		    }
 		    
 		    prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents*2);
 		    prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));

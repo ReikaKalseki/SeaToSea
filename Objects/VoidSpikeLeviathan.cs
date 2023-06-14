@@ -282,7 +282,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 	    		
 	    		if (creatureRenderer)
-	    			RenderUtil.setEmissivity(creatureRenderer.materials[0], Mathf.Max(0, currentEmissivity), "GlowStrength");
+	    			RenderUtil.setEmissivity(creatureRenderer.materials[0], Mathf.Max(0, currentEmissivity));
 			}
 	    	
 	    	internal void startEMP() {
