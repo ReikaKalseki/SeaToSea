@@ -206,7 +206,7 @@ namespace ReikaKalseki.SeaToSea
    			return;
    		if (brokenTablets.ContainsKey(tech))
    			SNUtil.triggerTechPopup(brokenTablets[tech]);
-   		else if (tech == CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType)
+   		else if (tech == CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType || tech == CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType)
    			SNUtil.triggerTechPopup(tech);
     }
     

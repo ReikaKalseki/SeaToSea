@@ -99,43 +99,30 @@ namespace ReikaKalseki.SeaToSea {
     
     public static void addPostCompat() {
 		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
-		Spawnable miniPoo = ItemRegistry.instance.getItem("MiniPoop");
-		if (miniPoo != null) {
-			BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
-			Bioprocessor.addRecipe(miniPoo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
-		}
+		BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
+		Bioprocessor.addRecipe(AqueousEngineeringMod.poo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
 		
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
 		
-		//TreeBud.addDrop(CraftingItems.getItem(CraftingItems.Items.).TechType);
-		
-		Spawnable glowOil = ItemRegistry.instance.getItem("GlowOil");
-		if (glowOil != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, glowOil.TechType, hard ? 6 : 3);
-			RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, glowOil.TechType, hard ? 8 : 6);
-			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, glowOil.TechType, hard ? 8 : 5);
-			RecipeUtil.addIngredient(TechType.PrecursorKey_White, glowOil.TechType, hard ? 6 : 4);
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, glowOil.TechType, 3);
-			//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
+		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
+		RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 6);
+		RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 5);
+		RecipeUtil.addIngredient(TechType.PrecursorKey_White, EcoceanMod.glowOil.TechType, hard ? 6 : 4);
+		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, EcoceanMod.glowOil.TechType, 3);
+		//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 			
-			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(glowOil.TechType, 3);
-		}
+		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3);
+		
+		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.lavaShroom.seed.TechType, 2);
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 		
-		Spawnable scoop = ItemRegistry.instance.getItem("PlanktonScoop");
-		if (scoop != null) {
-			RecipeUtil.addIngredient(scoop.TechType, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1);
-			GenUtil.registerWorldgen(new PositionedPrefab(GenUtil.getOrCreateDatabox(scoop.TechType).ClassID, new Vector3(332.93F, -277.64F, -1435.6F)));
-		}
+		RecipeUtil.addIngredient(EcoceanMod.planktonScoop.TechType, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1);
+		GenUtil.registerWorldgen(new PositionedPrefab(GenUtil.getOrCreateDatabox(EcoceanMod.planktonScoop.TechType).ClassID, new Vector3(332.93F, -277.64F, -1435.6F)));
 		
-		Spawnable plankton = ItemRegistry.instance.getItem("planktonItem");
-		if (plankton != null) {
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, plankton.TechType, 1);
-			RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, plankton.TechType, 2);
-			
-			RecipeUtil.addIngredient(TechType.Polyaniline, plankton.TechType, 2);
-		}		
+		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
+		RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
+		RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
 		
 		Spawnable baseglass = ItemRegistry.instance.getItem("BaseGlass");
 		int amt = RecipeUtil.removeIngredient(TechType.BaseWaterPark, baseglass != null ? baseglass.TechType : TechType.Glass).amount;

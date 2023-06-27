@@ -152,6 +152,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
 	    	
+	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
+	    	
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule2.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule2.AsString().Replace("maximum", "900m")));
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway

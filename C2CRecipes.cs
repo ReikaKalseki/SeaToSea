@@ -527,6 +527,8 @@ namespace ReikaKalseki.SeaToSea
     			float f = item == TechType.Quartz ? 0.3F : (item == TechType.Kyanite ? 9 : 6);
     			RenderUtil.setEmissivity(r, f*0.67F, f);
     		}
+    		PrefabIdentifier pi = r.gameObject.FindAncestor<PrefabIdentifier>();
+    		ObjectUtil.removeComponent<Eatable>(pi.gameObject);
     	};
        	//ingot.ownerMod = modDLL;
     	ingot.Patch();
