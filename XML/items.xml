@@ -262,6 +262,7 @@
 		<desc>
 			A breathing apparatus that uses an oxygen-saturated perfluorocarbon liquid instead of air.
 			Allows for respiration at extreme depths and pressures without risk of barotrauma or toxicity from gas mixtures.
+			Requires a compatible facemask to function.
 		</desc>
 		<pda>
 			

@@ -131,12 +131,14 @@ namespace ReikaKalseki.SeaToSea {
 			float f = CustomMaterials.getMaterial(CustomMaterials.Materials.VENT_CRYSTAL).glow-1.5F+2F*lt;
 			RenderUtil.setEmissivity(render, f);
 			light.range = Azurite.BASE_LIGHT_RANGE+0.5F*f;
-			if (dT > 0 && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
+			bool isMountainBase = (transform.position-Azurite.mountainBaseAzurite).sqrMagnitude <= 0.0625F;
+			if (isMountainBase)
+				body.isKinematic = true;
+			if (dT > 0 && body.isKinematic && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
 	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
 	   			if (suit == null || (suit.item.GetTechType() != C2CItems.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
 					GameObject ep = Player.main.gameObject;
 					float distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
-					bool isMountainBase = (transform.position-Azurite.mountainBaseAzurite).sqrMagnitude <= 0.0625F;
 					float r = isMountainBase ? DAMAGE_RANGE_MOUNTAIN : DAMAGE_RANGE;
 					r *= r;
 					if (distsq < r) {

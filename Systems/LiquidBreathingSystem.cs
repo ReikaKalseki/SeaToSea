@@ -115,7 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	SubRoot sub = ep.currentSub;
 	    	if (sub && sub.powerRelay && !sub.powerRelay.IsPowered())
 	    		return true;
-	    	return !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
+	    	return /*!ep.IsInsideWalkable() && */(ep.IsUnderwater() || ep.IsSwimming());
 	    }
 	    
 	    public bool isO2BarAbleToFill(Player ep) {
@@ -126,6 +126,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public bool isInPoweredArea(Player p) {
 	    	if (!p)
+	    		return false;
+	    	if (p.IsUnderwater() || p.IsSwimming())
 	    		return false;
 	    	if (p.currentEscapePod && p.currentEscapePod == EscapePod.main && Story.StoryGoalManager.main && EscapePod.main.fixPanelGoal != null && Story.StoryGoalManager.main.IsGoalComplete(EscapePod.main.fixPanelGoal.key))
 	    		return true;

@@ -1259,6 +1259,34 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(Vehicle))]
+	[HarmonyPatch("ApplyPhysicsMove")]
+	public static class SeamothThreeAxisRemoval {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "UnityEngine.Transform", "get_rotation", true, new Type[0]);
+				//idx = InstructionHandlers.getLastOpcodeBefore(codes, idx, OpCodes.Stloc_2);
+				idx = InstructionHandlers.getInstruction(codes, idx, 0, OpCodes.Ldloc_2)+1;
+				List<CodeInstruction> li = new List<CodeInstruction>();
+				li.Add(new CodeInstruction(OpCodes.Ldarg_0));
+				li.Add(new CodeInstruction(OpCodes.Ldloc_1));
+				li.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "get3AxisSpeed", false, typeof(float), typeof(Vehicle), typeof(Vector3)));
+				codes.InsertRange(idx, li);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	/*
 	[HarmonyPatch(typeof(CrushDamage))]
 	[HarmonyPatch("CrushDamageUpdate")]

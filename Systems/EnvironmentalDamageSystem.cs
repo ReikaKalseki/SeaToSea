@@ -92,7 +92,7 @@ namespace ReikaKalseki.SeaToSea {
     		
     		registerBiomeEnvironment("AuroraPrawnBay", 150, 10F, 2.5F, 9999, 0);
     		registerBiomeEnvironment("AuroraPrawnBayDoor", 200, 40F, 2.5F, 9999, 0);
-    		registerBiomeEnvironment("AuroraFireCeilingTunnel", 175, 5F, 1.5F, 9999, 0);
+    		registerBiomeEnvironment("AuroraFireCeilingTunnel", 175, 2.5F, 1.5F, 9999, 0);
     		
     		lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 		   	lrLeakage["LostRiver_BonesField"] = 1;

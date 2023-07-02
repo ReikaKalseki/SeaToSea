@@ -221,7 +221,6 @@ namespace ReikaKalseki.SeaToSea
 		UnderwaterIslandsFloorBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
-		mushroomBioFragment.postRegister();
 		
 		C2CItems.alkali.addNativeBiome(VanillaBiomes.MOUNTAINS, true).addNativeBiome(VanillaBiomes.TREADER, true).addNativeBiome(VanillaBiomes.KOOSH, true);
 		C2CItems.kelp.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
@@ -246,6 +245,7 @@ namespace ReikaKalseki.SeaToSea
     [QModPostPatch]
     public static void PostLoad() {
         worldgen.load(); //load in post because some cross-mod TTs may not exist yet
+		mushroomBioFragment.postRegister();
         DataboxTypingMap.instance.load();
         
     	C2CIntegration.addPostCompat();
@@ -369,6 +369,8 @@ namespace ReikaKalseki.SeaToSea
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
     		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
     	}
+    	
+    	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_DIAMOND.prefab, BiomeType.Mountains_IslandCaveFloor, 0.33F, 1);
     }
     
     private static void addCommands() {

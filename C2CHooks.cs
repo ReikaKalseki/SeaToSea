@@ -154,7 +154,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
 	    	
-	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule2.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule2.AsString().Replace("maximum", "900m")));
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule3.AsString().Replace("maximum", "900m")));
 			
 	    	/* does not contain the mouse bit, and it is handled automatically anyway
 	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
@@ -227,18 +227,18 @@ namespace ReikaKalseki.SeaToSea {
 	    			ep.oxygenMgr.RemoveOxygen(ep.oxygenMgr.GetOxygenAvailable());
 	    	}
 	    	
-	    	float dist = Vector3.Distance(ep.transform.position, crashMesa);
-	    	if (dist < 5 || (dist <= 200 && UnityEngine.Random.Range(0F, 1F) <= 0.04F*Time.timeScale*(dist <= 75 ? 2.5F : 1))) {
+	    	float dist = Vector3.Distance(ep.transform.position, crashMesa)-20;
+	    	if (dist < 25 || (dist <= 250 && UnityEngine.Random.Range(0F, 1F) <= 0.075F*Time.timeScale*(dist <= 100 ? 2.5F : 1))) {
 	    		IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
 	    		if (tgt != null && Vector3.Distance(tgt.GetPosition(), crashMesa) >= Mathf.Max(dist, 15)) {
 	    			GameObject go = tgt.GetGameObject();
 	    			Vehicle v = ep.GetVehicle();
 	    			GameObject hit = v ? v.gameObject : ep.gameObject;
-	    			Vector3 pos = dist <= 40 ? hit.transform.position : MathUtil.getRandomVectorAround(crashMesa, 45).setY(crashMesa.y);
-	    			if (Vector3.Distance(go.transform.position, pos) >= 30)
+	    			Vector3 pos = dist <= 50 ? hit.transform.position : MathUtil.getRandomVectorAround(crashMesa, 40).setY(crashMesa.y);
+	    			if (Vector3.Distance(go.transform.position, pos) >= 40)
 	    				go.GetComponent<SwimBehaviour>().SwimTo(pos, 20);
 	    			ReaperLeviathan r = go.GetComponent<ReaperLeviathan>();
-	    			r.Aggression.Add(0.5F);
+	    			r.Aggression.Add(0.75F);
 	    			r.leashPosition = pos;
 	    			go.GetComponent<ReaperMeleeAttack>().lastTarget.SetTarget(hit);
 	    			foreach (AggressiveWhenSeeTarget a in go.GetComponents<AggressiveWhenSeeTarget>())
@@ -555,6 +555,11 @@ namespace ReikaKalseki.SeaToSea {
 	   				dmg.setValue(0);
 	   			}
 	   		}
+	   		if (dmg.type == DamageType.Normal) {
+	   			SeaMoth sm = dmg.target.gameObject.FindAncestor<SeaMoth>();
+	   			if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
+	   				dmg.setValue(dmg.getAmount()*1.5F);
+	   		}
 		}
 	   
 	   	public static float getVehicleRechargeAmount(Vehicle v) {
@@ -583,7 +588,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				if (Inventory.main.equipment.GetCount(C2CItems.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
 	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
-	    			float dmg = lv.maxHealth/4F;
+	    			float dmg = lv.maxHealth*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.3F : 0.2F);
 	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
 	    				dmg *= 0.75F;
 					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
@@ -708,7 +713,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0)
-	    		calc.setValue(Mathf.Max(4, calc.getTemperature()-poison*1.75F)); //make LR cold, down to 4C (max water density point)
+	    		calc.setValue(Mathf.Max(-10, calc.getTemperature()-poison*3.0F)); //make LR cold, down to -10C (4C is max water density point, but not for saltwater)
+	    	else if (VanillaBiomes.COVE.isInBiome(calc.position))
+	    		calc.setValue(calc.getTemperature()-10);
 	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && calc.position.y <= -50)
 	    		calc.setValue(Mathf.Max(4, calc.getTemperature()+(calc.position.y+50)/20F)); //drop 1C per 20m below 50m, down to 4C around 550m
 	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(calc.position, true);
@@ -803,7 +810,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
-	    	}
+	    	}/*
+	    	else if (pi && pi.ClassId == VanillaCreatures.GHOST_LEVIATHAN && pi.GetComponentInChildren<GhostLeviatanVoid>()) {
+	    		***
+	    	}*/
 	    	else if (pi && pi.ClassId == "b86d345e-0517-4f6e-bea4-2c5b40f623b4" && pi.transform.parent && pi.transform.parent.name.Contains("ExoRoom_Weldable")) {
 	    		GameObject inner = ObjectUtil.getChildObject(go, "Starship_doors_manual_01/Starship_doors_automatic");
 	    		StarshipDoorLocked d = go.transform.parent.GetComponentInChildren<StarshipDoorLocked>();
@@ -1268,6 +1278,21 @@ namespace ReikaKalseki.SeaToSea {
 	    	PrefabIdentifier pi = c.gameObject.FindAncestor<PrefabIdentifier>(true);
 	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID)
 	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnUnfreeze();*/
+	    }
+	    
+	    public static float get3AxisSpeed(float orig, Vehicle v, Vector3 input) {
+	    	if (orig <= 0 || input.magnitude < 0.01F)
+	    		return orig;
+	    	//vanilla is float d = Mathf.Abs(vector.x) * this.sidewardForce + Mathf.Max(0f, vector.z) * this.forwardForce + Mathf.Max(0f, -vector.z) * this.backwardForce + Mathf.Abs(vector.y * this.verticalForce);
+	    	float netForward = Mathf.Max(0, input.z) * v.forwardForce + Mathf.Max(0, -input.z) * v.backwardForce;
+	    	float inputFracX = Mathf.Pow(Mathf.Abs(input.x/input.magnitude), 0.75F);
+	    	float inputFracY = Mathf.Pow(Mathf.Abs(input.y/input.magnitude), 0.75F);
+	    	float inputFracZ = Mathf.Pow(Mathf.Abs(input.z/input.magnitude), 0.75F);
+	    	float origX = Mathf.Abs(input.x) * v.sidewardForce;
+	    	float origY = Mathf.Abs(input.y * v.verticalForce);
+	    	float ret = netForward*inputFracZ+origX*inputFracX+origY*inputFracY; //multiply each component by its component of the input vector rather than a blind sum
+	    	//SNUtil.writeToChat("Input vector "+input+" > speeds "+orig.ToString("00.0000")+" & "+ret.ToString("00.0000"));
+	    	return ret;
 	    }
 	}
 }

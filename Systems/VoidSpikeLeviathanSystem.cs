@@ -592,7 +592,19 @@ namespace ReikaKalseki.SeaToSea {
 	    		return go;
 	    	}
 	    	else {
-	    		return UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
+	    		GameObject go = UnityEngine.Object.Instantiate<GameObject>(spawner.ghostLeviathanPrefab, pos, Quaternion.identity);
+	    		foreach (Collider c in go.GetComponentsInChildren<Collider>()) {
+	    			if (c is BoxCollider)
+	    				((BoxCollider)c).size = ((BoxCollider)c).size*1.5F;
+	    			if (c is SphereCollider)
+	    				((SphereCollider)c).radius = ((SphereCollider)c).radius*1.5F;
+	    			if (c is CapsuleCollider) {
+	    				CapsuleCollider cc = ((CapsuleCollider)c);
+	    				cc.radius = cc.radius*1.5F;
+	    				cc.height = cc.height*1.2F;
+	    			}
+	    		}
+	    		return go;
 	    	}
 	    }
 	    

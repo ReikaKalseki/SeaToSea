@@ -135,7 +135,7 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				if (ep && Vector3.Distance(ep.transform.position, transform.position) <= 30) {
 					//LOS
-					if (WorldUtil.lineOfSight(gameObject, ep.gameObject) && ObjectUtil.isOnScreen(gameObject, Camera.main)) {
+					if (WorldUtil.lineOfSight(gameObject, ep.gameObject, r => !r.collider.gameObject.FindAncestor<Vehicle>()) && ObjectUtil.isOnScreen(gameObject, Camera.main)) {
 						startFall();
 					}
 				}
