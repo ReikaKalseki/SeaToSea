@@ -104,8 +104,9 @@ namespace ReikaKalseki.SeaToSea
 					//SNUtil.log("Success, spike @ "+vec);
 					if (depthCallback != null)
 						vec.y = (float)depthCallback(vec);
+					float f = ((float)MathUtil.getDistanceToLineSegment(vec, VoidSpikesBiome.end500m, VoidSpikesBiome.end900m))/VoidSpikesBiome.biomeVolumeRadius;
 					//SNUtil.log("Re-y spike @ "+vec);
-					SpikeCluster s = new SpikeCluster(vec, generateAux);
+					SpikeCluster s = new SpikeCluster(vec, generateAux, 1-f);
 					s.spawner = spawner;
 					spikes.Add(s);
 				}
@@ -198,12 +199,14 @@ namespace ReikaKalseki.SeaToSea
 			private readonly List<VoidSpike> auxSpikes = new List<VoidSpike>();
 			
 			private float centralScale;
+			private float edgeFactor;
 			
 			public Action<List<GameObject>> additionalGen = null;
 						
-			internal SpikeCluster(Vector3 vec, bool aux) : base(vec) {
-				terraceSpikeCount = UnityEngine.Random.Range(4, 8);
-				auxSpikeCount = UnityEngine.Random.Range(3, 9);
+			internal SpikeCluster(Vector3 vec, bool aux, float f) : base(vec) {
+				edgeFactor = f;
+				terraceSpikeCount = (int)Mathf.Round(UnityEngine.Random.Range(Mathf.Lerp(3F, 4F, edgeFactor), Mathf.Lerp(3F, 8F, edgeFactor)));
+				auxSpikeCount = (int)Mathf.Round(UnityEngine.Random.Range(Mathf.Lerp(2F, 3F, edgeFactor), Mathf.Lerp(2F, 9F, edgeFactor)));
 				generateAux = aux;
 				
 				centralScale = UnityEngine.Random.Range(1.8F, 2.5F);
@@ -214,12 +217,14 @@ namespace ReikaKalseki.SeaToSea
 					generateAux = e.getBoolean("generateAux");
 				terraceSpikeCount = e.getInt("terraceSpikeCount", terraceSpikeCount);
 				auxSpikeCount = e.getInt("auxSpikeCount", auxSpikeCount);
+				edgeFactor = (float)e.getFloat("edgeFactor", edgeFactor);
 			}
 			
 			public override void saveToXML(XmlElement e) {
 				e.addProperty("generateAux", generateAux);
 				e.addProperty("terraceSpikeCount", terraceSpikeCount);
 				e.addProperty("auxSpikeCount", auxSpikeCount);
+				e.addProperty("edgeFactor", edgeFactor);
 			}
 			
 			public Vector3 getRootLocation() {

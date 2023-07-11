@@ -39,6 +39,9 @@ namespace ReikaKalseki.SeaToSea {
 	    private static float nextBkelpBaseAmbTime = -1;
 	    private static float nextCameraEMPTime = -1;
 	    
+	    private static float foodToRestore;
+	    private static float waterToRestore;
+	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
 	    	DIHooks.onDamageEvent += recalculateDamage;
@@ -78,6 +81,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
+	    	
+	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
@@ -504,7 +509,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (inst.pingType == SeaToSeaMod.voidSpikeDirectionHint.signalType) {
 	    		pos = VoidSpikesBiome.instance.getPDALocation()+VoidSpikesBiome.voidEndpoint500m-VoidSpikesBiome.end500m;//VoidSpikesBiome.voidEndpoint500m;
 	    	}
-	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position) && Vector3.Distance(Player.main.transform.position, pos) > 2) {
+	    	if (Player.main != null && VoidSpikesBiome.instance.isInBiome(Player.main.transform.position) && !VoidSpikesBiome.instance.isInBiome(pos) && Vector3.Distance(Player.main.transform.position, pos) > 2) {
 	    		pos += VoidSpikesBiome.end500m-VoidSpikesBiome.voidEndpoint500m;
 	    	}
 	    	return pos;
@@ -932,7 +937,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
-	    	if (added && tt == C2CItems.heatSinkModule.TechType) {
+	    	if (added && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
 	    		sm.torpedoSilos[slotID].SetActive(true);
 	    	}
 	    }
@@ -1293,6 +1298,17 @@ namespace ReikaKalseki.SeaToSea {
 	    	float ret = netForward*inputFracZ+origX*inputFracX+origY*inputFracY; //multiply each component by its component of the input vector rather than a blind sum
 	    	//SNUtil.writeToChat("Input vector "+input+" > speeds "+orig.ToString("00.0000")+" & "+ret.ToString("00.0000"));
 	    	return ret;
+	    }
+	    
+	    public static void onPlayerRespawned(Survival s, Player ep, bool post) {
+	    	if (post) {
+	    		s.water = Mathf.Max(5, waterToRestore);
+	    		s.food = Mathf.Max(5, foodToRestore);
+	    	}
+	    	else {
+	    		waterToRestore = s.water;
+	    		foodToRestore = s.food;
+	    	}
 	    }
 	}
 }
