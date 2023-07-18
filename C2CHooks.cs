@@ -87,6 +87,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
+	    	ExplodingAnchorPod.onExplodingAnchorPodDamageEvent += onAnchorPodExplode;
 	    	PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
 	    	
 	    	ESHooks.scannabilityEvent += isItemMapRoomDetectable;
@@ -340,10 +341,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (VoidSpikesBiome.instance.isInBiome(b.position)) {
 	    		b.setValue(VoidSpikesBiome.biomeName);
 	    		b.lockValue();
+	    		//if (BiomeBase.logBiomeFetch)
+	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+VoidSpikesBiome.biomeName);
 	    	}
 	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(b.originalValue, b.position)) {
 	    		b.setValue(UnderwaterIslandsFloorBiome.biomeName);
 	    		b.lockValue();
+	    		//if (BiomeBase.logBiomeFetch)
+	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
 	    	}/*
 	   		if (Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
 	   			b.setValue(BKelpBaseBiome.biomeName);
@@ -458,7 +463,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static GameObject onSpawnBatteryForEnergyMixin(GameObject go) {
-	    	SNUtil.writeToChat("Spawned a "+go);
+	    	//SNUtil.writeToChat("Spawned a "+go);
 	    	go.SetActive(false);
 	    	return go;
 	    }
@@ -525,17 +530,23 @@ namespace ReikaKalseki.SeaToSea {
 	   		//SNUtil.writeToChat(dmg.target.name);
 	   		Player p = dmg.target.GetComponentInParent<Player>();
 	   		if (p != null) {
-	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 20) {
+	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 27) {
 	   				dmg.setValue(0);
 	   				return;
 	   			}
-	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
-	   			bool seal = suit != null && suit.item.GetTechType() == C2CItems.sealSuit.TechType;
-	   			bool reinf = suit != null && suit.item.GetTechType() == TechType.ReinforcedDiveSuit;
-	   			if (seal || reinf) {
+	   			bool seal;
+	   			bool reinf;
+	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
 		   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
-	   					dmg.setValue(dmg.getAmount() * (seal ? 0.2F : 0.4F));
-	   					dmg.setValue(dmg.getAmount() - (seal ? 10 : 7.5F));
+	   					string biome = WaterBiomeManager.main.GetBiome(p.transform.position, false);
+	   					bool brine = biome != null && biome.Contains("LostRiver") && (biome.Contains("Lake") || biome.Contains("Stream") || biome.Contains("Water"));
+	   					if (brine) {
+	   						dmg.setValue(dmg.getAmount() * (seal ? 0.5F : 0.75F));
+	   					}
+	   					else {
+		   					dmg.setValue(dmg.getAmount() * (seal ? 0.2F : 0.4F));
+		   					dmg.setValue(dmg.getAmount() - (seal ? 10 : 7.5F));
+	   					}
 		   			}
 	   			}
 	   		}
@@ -591,7 +602,9 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onItemPickedUp(Pickupable p) {
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
-				if (Inventory.main.equipment.GetCount(C2CItems.sealSuit.TechType) == 0 && Inventory.main.equipment.GetCount(TechType.ReinforcedDiveSuit) == 0) {
+	   			bool seal;
+	   			bool reinf;
+	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
 	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
 	    			float dmg = lv.maxHealth*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.3F : 0.2F);
 	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
@@ -717,8 +730,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
-	    	if (poison > 0)
-	    		calc.setValue(Mathf.Max(-10, calc.getTemperature()-poison*3.0F)); //make LR cold, down to -10C (4C is max water density point, but not for saltwater)
+	    	if (poison > 0) { //make LR cold, down to -10C (4C is max water density point, but not for saltwater), except around vents
+	    		float temp = calc.getTemperature();
+	    		float cooling = poison*Mathf.Max(0, 3F-Mathf.Max(0, temp-30)/10F);
+	    		calc.setValue(Mathf.Max(-10, temp-cooling));
+	    	}
 	    	else if (VanillaBiomes.COVE.isInBiome(calc.position))
 	    		calc.setValue(calc.getTemperature()-10);
 	    	if (biome == null || biome.ToLowerInvariant().Contains("void") && calc.position.y <= -50)
@@ -999,6 +1015,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void onAnchorPodExplode(ExplodingAnchorPodDamage dmg) {
+	    	if (VoidSpikesBiome.instance.isInBiome(dmg.toDamage.transform.position) && dmg.toDamage.gameObject.FindAncestor<Player>()) {
+	    		dmg.damageAmount *= 0.67F;
+	    	}
+	    }
+	    
 	    public static void onPlanktonActivated(PlanktonCloudTag cloud, Collider hit) {
 	    	SeaMoth sm = hit.gameObject.FindAncestor<SeaMoth>();
 	    	if (sm) {
@@ -1140,9 +1162,11 @@ namespace ReikaKalseki.SeaToSea {
 	    		return;
 	    	}
 	    	d = UnderwaterIslandsFloorBiome.instance.getDistanceToBiome(Camera.main.transform.position);
+	    	//SNUtil.writeToChat(d.ToString("0.000"));
 	    	if (d <= 100 && d > 0) {
 	    		float f = (float)(1-d/100F);
 	    		fog.density = (float)MathUtil.linterpolate(f, 0, 1, fog.originalDensity, UnderwaterIslandsFloorBiome.fogDensity, true);
+	    		fog.sunValue = (float)MathUtil.linterpolate(f, 0, 1, fog.originalSunValue, UnderwaterIslandsFloorBiome.sunIntensity, true);
 	    		fog.color = Color.Lerp(fog.originalColor, UnderwaterIslandsFloorBiome.waterColor, f);
 	    		return;
 	    	}
@@ -1302,8 +1326,9 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onPlayerRespawned(Survival s, Player ep, bool post) {
 	    	if (post) {
-	    		s.water = Mathf.Max(5, waterToRestore);
-	    		s.food = Mathf.Max(5, foodToRestore);
+	    		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+	    		s.water = Mathf.Max(hard ? 5 : 15, waterToRestore);
+	    		s.food = Mathf.Max(hard ? 5 : 15, foodToRestore);
 	    	}
 	    	else {
 	    		waterToRestore = s.water;

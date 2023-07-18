@@ -24,8 +24,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly string biomeName = "Glass Forest";
 		public static readonly float waterTemperature = 35;
 		
-		public static readonly Color waterColor = new Color(0.75F, 0.125F, 1F);
-		public static readonly float fogDensity = 1.5F;
+		public static Color waterColor = new Color(0.75F, 0.125F, 1F);
+		public static readonly float fogDensity = 1.75F;
+		public static readonly float sunIntensity = 20F;
     
 	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-110.76F, -499F, 940.19F);
 	    public static readonly Vector3 wreckCtrPos2 = new Vector3(-138.38F, -497F, 932.69F);
@@ -68,7 +69,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override float getSunIntensity(float orig) {
-			return orig*0.4F;
+			return sunIntensity;
 		}
 		
 		public override float getFogDensity(float orig) {
@@ -93,16 +94,18 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isInBiome(string orig, Vector3 pos) {
-			if (orig == null || pos.y > -minimumDepth)
-				return false;
 			if (orig == biomeName)
 				return true;
-			//bool match = string.Equals(orig, "underwaterislands", StringComparison.InvariantCultureIgnoreCase) || string.Equals(orig, "UnderwaterIslands_ValleyFloor", StringComparison.InvariantCultureIgnoreCase);
-			return orig.ToLowerInvariant().Contains("underwaterislands") && MathUtil.isPointInCylinder(biomeCenter.setY(-400), pos, biomeRadius, 150);//getDistanceToBiome(pos) < 5;
+			if (orig == null || pos.y > -minimumDepth)
+				return false;
+			return VanillaBiomes.UNDERISLANDS.containsID(orig) && MathUtil.isPointInCylinder(biomeCenter.setY(-400), pos, biomeRadius, 150);//getDistanceToBiome(pos) < 5;
 		}
 		
 		public override double getDistanceToBiome(Vector3 vec) {
-			return Math.Max(0, Vector3.Distance(vec, biomeCenter)-biomeRadius);
+			float ret = Math.Max(0, Vector3.Distance(vec, biomeCenter)-biomeRadius);
+			if (vec.y >= -minimumDepth)
+				ret = Math.Max(ret, vec.y+minimumDepth);
+			return ret;
 		}
 		
 		public float getTemperatureBoost(float baseline, Vector3 pos) {

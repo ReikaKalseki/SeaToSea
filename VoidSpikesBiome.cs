@@ -34,9 +34,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly float waterTemperature = 18;
 		
 		public static readonly Color waterColor = new Color(0.0F, 0.125F, 0.5F);
-		public static readonly float fogDensity = 2F;
+		public static readonly float fogDensity = 1.5F;
 		
-		public static readonly int CLUSTER_COUNT = 104;//88;
+		public static readonly int CLUSTER_COUNT = 120;//104;//88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
@@ -270,7 +270,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Vector3 getSpikeLocation() {
 			Vector3 init = MathUtil.interpolate(end500m, end900m, UnityEngine.Random.Range(0F, 1F));
-			if (UnityEngine.Random.Range(0, 7) == 0)
+			if (UnityEngine.Random.Range(0, 9) == 0)
 				init = end900m;
 			return MathUtil.getRandomVectorAround(init, new Vector3(160, 40, 160));
 		}

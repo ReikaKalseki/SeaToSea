@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		private string avo;
 		
 		private readonly Vector3 eventCenter = new Vector3(215, 425.6F, 2623.6F);
+		private readonly Vector3 gunCenter = new Vector3(460.6F, -99, 1208.4F);
 		private readonly Vector3 eventUITargetLocation = new Vector3(297.2F, 3.5F, 1101);
 		private readonly Vector3 mountainCenter = new Vector3(359.9F, 29F, 985.9F);
 		private readonly Vector3 biomeCenter = new Vector3(800, 0, 1300);//new Vector3(966, 0, 1336);
@@ -73,6 +74,12 @@ namespace ReikaKalseki.SeaToSea {
 			addItem(TechType.ComputerChip, 3);
 			addItem(TechType.WiringKit, 6);
 			addItem(TechType.CopperWire, 20);
+			
+			addItem(TechType.Cap1, 2);
+			addItem(TechType.Cap2, 3);
+			addItem("dfabc84e-c4c5-45d9-8b01-ca0eaeeb8e65", 3);
+			addItem(TechType.ArcadeGorgetoy, 2);
+			addItem(TechType.PurpleVegetable, 3);
 			
 			addItem(CraftingItems.getItem(CraftingItems.Items.LathingDrone).ClassID, 1);
 			addItem(CraftingItems.getItem(CraftingItems.Items.Motor).ClassID, 2);
@@ -222,7 +229,7 @@ namespace ReikaKalseki.SeaToSea {
 			string biome = WaterBiomeManager.main.GetBiome(pos, false);
 			if (!string.Equals(biome, "mountains", StringComparison.InvariantCultureIgnoreCase))
 				return false;
-			return Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
+			return pos.x >= gunCenter.x && Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), gunCenter.setY(0)) >= 200 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
 		}
 		
 		void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {

@@ -10,15 +10,21 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public sealed class SealedSuit : CustomEquipable {
+	public sealed class SealedGloves : CustomEquipable {
 		
-		public SealedSuit() : base(SeaToSeaMod.itemLocale.getEntry("SealedSuit"), "WorldEntities/Tools/ReinforcedDiveSuit") {
+		public SealedGloves() : base(SeaToSeaMod.itemLocale.getEntry("SealedGloves"), "WorldEntities/Tools/ReinforcedGloves") {
 			isArmor = true;
 			preventNaturalUnlock();
 		}
 
 		public override Vector2int SizeInInventory {
 			get {return new Vector2int(2, 2);}
+		}
+
+		public override CraftTree.Type FabricatorType {
+			get {
+				return CraftTree.Type.None;
+			}
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
@@ -27,12 +33,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override sealed EquipmentType EquipmentType {
 			get {
-				return EquipmentType.Body;
+				return EquipmentType.Gloves;
 			}
-		}
-		
-		public override List<TechType> getAuxCrafted() {
-			return new List<TechType>{C2CItems.sealGloves.TechType};
 		}
 	}
 }

@@ -28,7 +28,8 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothPowerSealModule powerSeal;
     internal static SeamothHeatSinkModule heatSinkModule;
     internal static SeamothSpeedModule speedModule;
-    internal static CustomEquipable sealSuit;
+    internal static SealedSuit sealSuit;
+    internal static SealedGloves sealGloves;
     internal static AzuriteBattery t2Battery;
     
     internal static RebreatherV2 rebreatherV2;
@@ -83,7 +84,8 @@ namespace ReikaKalseki.SeaToSea
         heatSinkModule = new SeamothHeatSinkModule();
         speedModule = new SeamothSpeedModule();
         cyclopsHeat = new CyclopsHeatModule();        
-		sealSuit = new SealedSuit();		
+		sealSuit = new SealedSuit();   
+		sealGloves = new SealedGloves();				
 		t2Battery = new AzuriteBattery();		
         rebreatherV2 = new RebreatherV2();		
         liquidTank = new LiquidTank();        
@@ -118,6 +120,7 @@ namespace ReikaKalseki.SeaToSea
         cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
         
+        sealGloves.Patch(); //has to be before suit since suit references this in craft
         sealSuit.Patch();
 		
 		t2Battery.Patch();
@@ -247,6 +250,18 @@ namespace ReikaKalseki.SeaToSea
 		RecipeUtil.changeRecipePath(item, "Resources", "C2Chemistry");
 		RecipeUtil.setItemCategory(item, TechGroup.Resources, chemistryCategory);
     }
+   
+   public static bool hasSealedOrReinforcedSuit(out bool isSealed, out bool isReinf) {
+	   	InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
+	   	InventoryItem glove = Inventory.main.equipment.GetItemInSlot("Gloves");
+	   	bool sealSuit = suit != null && suit.item.GetTechType() == C2CItems.sealSuit.TechType;
+	   	bool reinfSuit = suit != null && suit.item.GetTechType() == TechType.ReinforcedDiveSuit;
+	   	bool sealGlove = glove != null && glove.item.GetTechType() == C2CItems.sealGloves.TechType;
+	   	bool reinfGlove = glove != null && glove.item.GetTechType() == TechType.ReinforcedGloves;
+	   	isSealed = sealSuit && sealGlove;
+	   	isReinf = reinfSuit && reinfGlove;
+	   	return (sealSuit || reinfSuit) && (sealGlove || reinfGlove);
+   }
 
   }
 }

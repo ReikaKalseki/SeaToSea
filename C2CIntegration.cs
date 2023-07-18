@@ -103,6 +103,7 @@ namespace ReikaKalseki.SeaToSea {
 		Bioprocessor.addRecipe(AqueousEngineeringMod.poo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
 		
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
+		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
 		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
 		RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 6);

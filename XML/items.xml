@@ -242,6 +242,17 @@
 			
 		</pda>
 	</SealedSuit>
+	<SealedGloves>
+		<name>
+			Electrochemical Gloves
+		</name>
+		<desc>
+			Because wearing a protective suit but grabbing things with your bare hands would work about as well as punching out a reaper.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SealedGloves>
 	<RebreatherV2>
 		<name>
 			Recirculation Mask
@@ -345,7 +356,7 @@
 			
 			This mineral demonstrates behavior analogous to the piezoelectric effect, except on a far larger scale, dragging spacetime itself as it warps when subjected to electromagnetic fields.
 			
-			This ability to manipulate space and time makes these crystals are an integral part of both interstellar propulsion systems and phase gates, and as a result Avolite is one of the most prized minerals in existence.
+			This ability to manipulate space and time makes these crystals an integral part of both interstellar propulsion systems and phase gates, and as a result Avolite is one of the most prized minerals in existence.
 		</pda>
 		<header>
 			avolite

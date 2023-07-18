@@ -135,8 +135,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (isMountainBase)
 				body.isKinematic = true;
 			if (dT > 0 && body.isKinematic && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
-	   			InventoryItem suit = Inventory.main.equipment.GetItemInSlot("Body");
-	   			if (suit == null || (suit.item.GetTechType() != C2CItems.sealSuit.TechType && suit.item.GetTechType() != TechType.ReinforcedDiveSuit)) {
+	   			bool seal;
+	   			bool reinf;
+	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
 					GameObject ep = Player.main.gameObject;
 					float distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 					float r = isMountainBase ? DAMAGE_RANGE_MOUNTAIN : DAMAGE_RANGE;

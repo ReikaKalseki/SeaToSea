@@ -302,6 +302,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
         RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, C2CItems.sealSuit.TechType, 1);
+        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, C2CItems.sealGloves.TechType, 1);
         
         RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
         

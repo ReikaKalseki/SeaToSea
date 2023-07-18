@@ -178,7 +178,7 @@ namespace ReikaKalseki.SeaToSea
 		private bool isTooClose(Vector3 pos) {
 			foreach (SpikeCluster s in spikes) {
 				Vector3 dist = s.position-pos;
-				if (dist.x*dist.x+dist.z*dist.z <= 625) {
+				if (dist.x*dist.x+dist.z*dist.z <= 900) {
 					return true;
 				}
 			}

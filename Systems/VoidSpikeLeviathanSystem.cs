@@ -389,7 +389,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (forceSpark || (inBiome && !Story.StoryGoalManager.main.completedGoals.Contains(PASSIVATION_GOAL))) {
 	    		Vector3 pos = spawnJustVisibleDistanceFX(ep.transform);
 		    	if (forceEMP || (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))) {
-		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.33F, (ep.GetDepth()-600)/900);
+		    		float chance = forceEMP ? 0.5F : Mathf.Min(0.1667F, (ep.GetDepth()-600F)/1800F);
 		    		if (UnityEngine.Random.Range(0F, 1F) <= chance) {/*
 		    			Vector3 rel = getRandomVisibleDistantPosition(ep, 3, 3);
 		    			Vector3 pos = ep.transform.position+rel;*/

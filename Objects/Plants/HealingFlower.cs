@@ -27,6 +27,10 @@ namespace ReikaKalseki.SeaToSea {
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<HealingFlowerTag>();
+			//SphereCollider sc = go.EnsureComponent<SphereCollider>();
+			//sc.radius = 0.25F;
+			//sc.isTrigger = true;
+			go.GetComponentInChildren<Collider>().gameObject.EnsureComponent<HealingFlowerColliderTag>();
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
@@ -45,10 +49,13 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class HealingFlowerTag : MonoBehaviour {
 		
+		private bool isGrown;
+		
 		void Start() {
+			isGrown = gameObject.GetComponent<GrownPlant>() != null;
     		//if (gameObject.transform.position.y > -10)
     		//	UnityEngine.Object.Destroy(gameObject);
-    		if (gameObject.GetComponent<GrownPlant>() != null) {
+    		if (isGrown) {
     			gameObject.SetActive(true);
     			//gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
     		}
@@ -60,6 +67,28 @@ namespace ReikaKalseki.SeaToSea {
 		void Update() {
 			
 		}
+		
+	}
+	
+	class HealingFlowerColliderTag : MonoBehaviour {
+		
+		private bool isGrown;
+		private LiveMixin live;
+		
+		void Start() {
+			isGrown = gameObject.FindAncestor<GrownPlant>() != null;
+    		live = gameObject.FindAncestor<LiveMixin>();
+		}
+		
+	    void OnTriggerStay(Collider other) {
+			if (!other.isTrigger && other.gameObject.FindAncestor<Player>()) {
+				float dt = Time.deltaTime;
+				if (other.gameObject.FindAncestor<LiveMixin>().AddHealth((isGrown ? 0.33F : 0.75F)*dt) > 0.0001F) {
+					if (isGrown && live != null)
+						live.TakeDamage(0.67F*dt, transform.position);
+				}
+			}
+	    }
 		
 	}
 }
