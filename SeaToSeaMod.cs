@@ -69,6 +69,7 @@ namespace ReikaKalseki.SeaToSea
     public static SeaTreaderTunnelLight tunnelLight;
     public static FallingGlassForestWreck gfWreckProp;
     public static DeadMelon deadMelon;
+    public static BloodKelpBaseNuclearReactorMelter reactorMelter;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -175,6 +176,8 @@ namespace ReikaKalseki.SeaToSea
 	    gfWreckProp.Patch();
 	    deadMelon = new DeadMelon();
 	    deadMelon.Patch();
+	    reactorMelter = new BloodKelpBaseNuclearReactorMelter();
+	    reactorMelter.Patch();
 	    
 	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();
@@ -240,6 +243,10 @@ namespace ReikaKalseki.SeaToSea
         		go.GetComponent<SeaTreader>().MoveTo(tgt);
         	});
         }
+        
+        SNUtil.addScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
+        SNUtil.addScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
+        SNUtil.addScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
     }
     
     [QModPostPatch]

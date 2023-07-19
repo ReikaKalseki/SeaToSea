@@ -32,6 +32,49 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(BlueprintHandTarget))]
+	[HarmonyPatch("HoverBlueprint")]
+	public static class DataboxRepairTooltipHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				InstructionHandlers.patchEveryReturnPre(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxTooltipCalculate", false, typeof(BlueprintHandTarget)));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(BlueprintHandTarget))]
+	[HarmonyPatch("UnlockBlueprint")]
+	public static class DataboxRepairClickHook {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "BlueprintHandTarget", "used");
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxClick", false, typeof(BlueprintHandTarget));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	[HarmonyPatch(typeof(PDAScanner.ScanTarget))]
 	[HarmonyPatch("Initialize")]
 	public static class FragmentScanHook {
@@ -876,6 +919,73 @@ namespace ReikaKalseki.SeaToSea {
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldloc_S, 9);
 				codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getScannerSpeed", false, typeof(float)));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(PropulsionCannon))]
+	[HarmonyPatch("FixedUpdate")]
+	public static class PropulsionCannonForce {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PropulsionCannon", "attractionForce");
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getPropulsionCannonForce", false, typeof(PropulsionCannon));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(PropulsionCannon))]
+	[HarmonyPatch("OnShoot")]
+	public static class PropulsionCannonShootForce {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PropulsionCannon", "shootForce");
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getPropulsionCannonThrowForce", false, typeof(PropulsionCannon));
+				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(RepulsionCannon))]
+	[HarmonyPatch("OnToolUseAnim")]
+	public static class RepulsionCannonShootForce {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 70F);
+				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRepulsionCannonThrowForce", false, typeof(RepulsionCannon));
+				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}

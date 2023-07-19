@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
 	    internal static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    internal static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
+	    internal static readonly Vector3 bkelpBaseNuclearReactor = new Vector3(-1325.67F, -660.60F, -392.70F);
 	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
@@ -41,6 +42,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static float foodToRestore;
 	    private static float waterToRestore;
+	    
+	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
+	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
+	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -81,6 +86,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
+	    	DIHooks.propulsibilityEvent += modifyPropulsibility;
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	
@@ -145,11 +151,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
-	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods"));
+	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
 	    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
-			LanguageHandler.SetLanguageLine("PrawnBayDoorHeatWarn", SeaToSeaMod.miscLocale.getEntry("PrawnBayDoorHeatWarn").desc);
-			LanguageHandler.SetLanguageLine("DockToChangeVehicleUpgrades", SeaToSeaMod.miscLocale.getEntry("DockToChangeVehicleUpgrades").desc);
+			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(dockUpgradesLocaleKey, SeaToSeaMod.miscLocale.getEntry(dockUpgradesLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(needRepairDataboxLocaleKey, SeaToSeaMod.miscLocale.getEntry(needRepairDataboxLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
 	    	//LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
@@ -394,34 +401,52 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static float getLaserCutterSpeed(LaserCutter lc) { //25 by default
 	    	float amt = lc.healthPerWeld;
-	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
-	    	if (e == null)
-	    		return amt;
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity)) {
+	    	if (isHeldToolAzuritePowered())
 	    		amt *= 1.5F;
-	    	}
 	    	return amt;
 	    }
 	    
 	    public static float getRepairSpeed(Welder lc) { //10 by default
 	    	float amt = lc.healthPerWeld;
-	    	EnergyMixin e = lc.gameObject.GetComponent<EnergyMixin>();
-	    	if (e == null)
-	    		return amt;
-	    	if (e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity)) {
+	    	if (isHeldToolAzuritePowered())
 	    		amt *= 2F;
-	    	}
 	    	return amt;
+	    }
+	    
+	    public static float getPropulsionCannonForce(PropulsionCannon prop) {
+	    	float ret = prop.attractionForce;
+	    	if (isHeldToolAzuritePowered())
+	    		ret *= 3;
+	    	return ret;
+	    }
+	    
+	    public static float getPropulsionCannonThrowForce(PropulsionCannon prop) {
+	    	float ret = prop.shootForce;
+	    	if (isHeldToolAzuritePowered())
+	    		ret *= 1.5F;
+	    	return ret;
+	    }
+	    
+	    public static float getRepulsionCannonThrowForce(RepulsionCannon prop) {
+	    	float ret = RepulsionCannon.shootForce;
+	    	if (isHeldToolAzuritePowered())
+	    		ret *= 4;
+	    	return ret;
+	    }
+	    
+	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
+	    	if (ch.value < 99999 && isHeldToolAzuritePowered())
+	    		ch.value *= 6;
 	    }
 	    
 	    public static bool isHeldToolAzuritePowered() {
 	    	if (Inventory.main == null)
 	    		return false;
 	    	Pickupable held = Inventory.main.GetHeld();
-	    	if (held == null || held.gameObject == null)
+	    	if (!held || !held.gameObject)
 	    		return false;
 	    	EnergyMixin e = held.gameObject.GetComponent<EnergyMixin>();
-	    	if (e == null)
+	    	if (!e)
 	    		return false;
 	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity);
 	    }
@@ -728,6 +753,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (Vector3.Distance(calc.position, mountainBaseGeoCenter) <= 20) {
 	    		calc.setValue(Mathf.Min(calc.getTemperature(), 45));
 	    	}
+	    	else {
+				float bdist = Vector3.Distance(calc.position, bkelpBaseNuclearReactor);
+				if (bdist <= 12)
+	    			calc.setValue(Mathf.Max(calc.getTemperature(), 90-bdist*6F));
+	    	}
 	    	string biome = EnvironmentalDamageSystem.instance.getBiome(calc.position);
 	    	float poison = EnvironmentalDamageSystem.instance.getLRPoison(biome);
 	    	if (poison > 0) { //make LR cold, down to -10C (4C is max water density point, but not for saltwater), except around vents
@@ -850,7 +880,7 @@ namespace ReikaKalseki.SeaToSea {
 				ht.onHandHover = new HandTargetEvent();
 				ht.onHandHover.AddListener(hte => {
 				    HandReticle.main.SetIcon(HandReticle.IconType.Info, 1f);
-				   	HandReticle.main.SetInteractText("PrawnBayDoorHeatWarn"); //is a locale key
+				   	HandReticle.main.SetInteractText(prawnBayLocaleKey);
 				   	HandReticle.main.SetTargetDistance(8);
 				});
 				Vector3 p1 = new Vector3(991.1F, 1F, -3.2F);
@@ -916,6 +946,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.position = auroraStorageModule.position;
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
+	    	else if (pi && pi.GetComponent<BlueprintHandTarget>()) {
+	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
+	    	}
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
@@ -1068,7 +1101,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static void onHoverVehicleUpgrades(VehicleUpgradeConsoleInput v) {
 			HandReticle main = HandReticle.main;
 		   	if (!v.docked && !SeaToSeaMod.anywhereSeamothModuleCheatActive && GameModeUtils.currentEffectiveMode != GameModeOption.Creative) {
-				main.SetInteractText("DockToChangeVehicleUpgrades"); //locale key
+				main.SetInteractText(dockUpgradesLocaleKey); //locale key
 				main.SetIcon(HandReticle.IconType.HandDeny, 1f);
 		   	}
 			else if (v.equipment != null) {
@@ -1176,6 +1209,18 @@ namespace ReikaKalseki.SeaToSea {
 	    	//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));
 	    	if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius+225)
 	    		return 0;
+	    	float dd = Vector3.Distance(ch.position, bkelpBaseGeoCenter);
+	    	if (dd <= 80) {
+	    		float ret = (float)MathUtil.linterpolate(dd, 60, 80, 0.25F, 0, true);
+				if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
+					ret -= 0.17F;
+				//do not require, as need rebreather v2 if (Inventory.main.equipment.GetCount(TechType.RadiationHelmet) > 0)
+				//	ret -= 0.12F;
+				if (Inventory.main.equipment.GetCount(TechType.RadiationGloves) > 0)
+					ret -= 0.08F;
+				if (ret > 0)
+					return ret;
+	    	}
 	    	return ch.value;
 	    }
 	    
@@ -1282,6 +1327,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (scanToScannerRoom.Contains(rt.resource.techType)) {
 	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
 	    	}
+	    	if (rt.resource.GetComponent<Drillable>() && !Story.StoryGoalManager.main.completedGoals.Contains("OnConstructExosuit")) {
+	    		rt.isDetectable = false;
+	    	}
 		}
 	    
 	    static void onVehicleEnter(Vehicle v, Player ep) {
@@ -1334,6 +1382,21 @@ namespace ReikaKalseki.SeaToSea {
 	    		waterToRestore = s.water;
 	    		foodToRestore = s.food;
 	    	}
+	    }
+	    
+	    public static void onDataboxTooltipCalculate(BlueprintHandTarget tgt) {
+	    	LiveMixin lv = tgt.GetComponent<LiveMixin>();
+	    	if (lv && lv.health < lv.maxHealth) {
+		    	HandReticle.main.SetInteractText(needRepairDataboxLocaleKey);
+				HandReticle.main.SetIcon(HandReticle.IconType.HandDeny, 1f);
+	    	}
+	    }
+	    
+	    public static bool onDataboxClick(BlueprintHandTarget tgt) { //return true to prevent use
+	    	if (tgt.used)
+	    		return true;
+	    	LiveMixin lv = tgt.GetComponent<LiveMixin>();
+	    	return lv && lv.health < lv.maxHealth;
 	    }
 	}
 }

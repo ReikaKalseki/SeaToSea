@@ -211,6 +211,17 @@
 		
 	</pda>
   </PrawnBayDoorHeatWarn>
+  <NeedRepairDataBox>
+	<name>
+		
+	</name>
+	<desc>
+		Repair databox to recover blueprint
+	</desc>
+	<pda>
+		
+	</pda>
+  </NeedRepairDataBox>
   <MercuryDesc>
 	<name>
 		
