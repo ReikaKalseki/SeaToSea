@@ -54,6 +54,17 @@
 			
 		</pda>
 	</Sealant>
+	<HeatSealant>
+		<name>
+			Heat Sealant
+		</name>
+		<desc>
+			An advanced compound designed to not just insulate materials against chemical attack, but thermally isolate them as well.
+		</desc>
+		<pda>
+			
+		</pda>
+	</HeatSealant>
 	<SealFabric>
 		<name>
 			Sealed Fabric
@@ -109,6 +120,17 @@
 			
 		</pda>
 	</WeakAcid>
+	<SulfurAcid>
+		<name>
+			Sulfuric Acid
+		</name>
+		<desc>
+			H2SO4. A concentrated inorganic acid. Useful to catalyze chemical reactions.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SulfurAcid>
 	<Motor>
 		<name>
 			Electric Motor
@@ -430,6 +452,22 @@
 			SalveBush
 		</header>
 	</HEALING_FLOWER>
+	<MOUNTAIN_GLOW>
+		<name>
+			Pyropod Pitcher
+		</name>
+		<desc>
+			Plant pods containing a complex mix of biological compounds, encased in a tough fibrous shell capable of withstanding high temperatures.
+		</desc>
+		<pda>
+			Like several other apparent species on 4546B, pyropods are in fact two distinct organisms, but - unusually for species encountered thus far - this relationship is not in fact symbiotic, but instead unquestionably parasitic. The host plant's most notable characteristic is the hard vaselike structure it forms around itself; this is perhaps an attempt at armoring itself against the parasite, though it is quite ineffective if this is in fact its purpose.
+			
+			The other plant takes the form of several glowing pods, each containing a noxious soup of chemicals. When attached to the host plant, the parasite consumes its leaves and injects these compounds into the host plant, triggering rapid chemical breakdown of its internal structures into nutrients which the parasite can then consume. The resultant reaction heats the interior of the base to the point of measurably raising the surrounding water temperature.
+		</pda>
+		<header>
+			MountainGlow
+		</header>
+	</MOUNTAIN_GLOW>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony

@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			void Update() {
 				BaseNuclearReactorGeometry go = WorldUtil.getClosest<BaseNuclearReactorGeometry>(C2CHooks.bkelpBaseNuclearReactor);
-		    	if (Vector3.Distance(go.transform.position, C2CHooks.bkelpBaseNuclearReactor) < 5F) {
+		    	if (go && Vector3.Distance(go.transform.position, C2CHooks.bkelpBaseNuclearReactor) < 5F) {
 		    		GameObject child = ObjectUtil.getChildObject(go.gameObject, "UI/Canvas/Text");
 		    		child.GetComponent<Text>().text = "<color=#ff0000>OPERATOR ERROR\n\nMOLTEN CORE WARNING\nTEMP AT SPIKEVALUE \n999999999999999</color>";
 		    		/*

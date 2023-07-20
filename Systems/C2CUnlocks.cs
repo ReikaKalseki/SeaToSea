@@ -47,6 +47,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.kelp.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.mountainGlow.TechType, C2CRecipes.getAlternateFiber().TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.mountainGlow.seed.TechType, C2CRecipes.getAlternateFiber().TechType);
+	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);

@@ -15,7 +15,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class HealingFlower : BasicCustomPlant {
 		
-		public HealingFlower() : base(SeaToSeaMod.itemLocale.getEntry("HEALING_FLOWER"), VanillaFlora.VOXEL, "6f932b93-65e8-4c89-a63b-d105203ab84c", "Leaves") {
+		public HealingFlower() : base(SeaToSeaMod.itemLocale.getEntry("HEALING_FLOWER"), new FloraPrefabFetch(VanillaFlora.VOXEL), "6f932b93-65e8-4c89-a63b-d105203ab84c", "Leaves") {
 			glowIntensity = 1.5F;
 			finalCutBonus = 1;
 		}

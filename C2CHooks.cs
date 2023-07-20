@@ -91,6 +91,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
+	    	BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
 	    	
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
 	    	ExplodingAnchorPod.onExplodingAnchorPodDamageEvent += onAnchorPodExplode;
@@ -435,8 +436,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
+	    	if (ch.obj.FindAncestor<Drillable>())
+	    		ch.value = 999999;
 	    	if (ch.value < 99999 && isHeldToolAzuritePowered())
 	    		ch.value *= 6;
+	    	SNUtil.writeToChat("Modifying propulsibility of "+ch.obj+">"+ch.value);
 	    }
 	    
 	    public static bool isHeldToolAzuritePowered() {
@@ -848,6 +852,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onSpawnLifepod(EscapePod pod) {
 	    	pod.gameObject.EnsureComponent<C2CLifepod>();
+	    	pod.gameObject.EnsureComponent<Magnetic>();
 	    }
 	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
@@ -949,6 +954,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.GetComponent<BlueprintHandTarget>()) {
 	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
 	    	}
+	    	
+	    	if (go.FindAncestor<SubRoot>() || go.FindAncestor<Vehicle>()) {
+	    		go.EnsureComponent<Magnetic>();
+	    	}
+	    	if (go.FindAncestor<Drillable>()) {
+	    		Rigidbody rb = go.FindAncestor<Rigidbody>();
+	    		if (rb)
+	    			rb.mass = Mathf.Max(1200, rb.mass);
+	    	}
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
@@ -1038,6 +1052,16 @@ namespace ReikaKalseki.SeaToSea {
 	    		Vehicle v = ep.GetVehicle();
 	    		if (v && v is SeaMoth && VoidSpikesBiome.instance.isInBiome(ep.transform.position))
 	    			VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth((SeaMoth)v, 40);
+	    	}
+	    }
+	    
+	    public static void getGrinderDrillableDrop(DrillableGrindingResult res) {
+	    	if (res.materialTech == TechType.Sulphur) {
+	    		//SNUtil.writeToChat("Intercepting grinding sulfur");
+	    		Vector3 pos = res.drop.transform.position;
+	    		UnityEngine.Object.DestroyImmediate(res.drop);
+	    		res.drop = ObjectUtil.createWorldObject(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).ClassID);
+	    		res.drop.transform.position = pos;
 	    	}
 	    }
 	    

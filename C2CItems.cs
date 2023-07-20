@@ -42,6 +42,7 @@ namespace ReikaKalseki.SeaToSea
     internal static AlkaliPlant alkali;
     internal static VentKelp kelp;
     internal static HealingFlower healFlower;
+    internal static MountainGlow mountainGlow;
     
     public static BrokenTablet brokenRedTablet;
     public static BrokenTablet brokenWhiteTablet;
@@ -159,9 +160,19 @@ namespace ReikaKalseki.SeaToSea
 		SNUtil.log(" > "+healFlower);
 		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Near, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
 		
+		mountainGlow = new MountainGlow();
+		mountainGlow.Patch();	
+		e = SeaToSeaMod.itemLocale.getEntry(mountainGlow.ClassID);
+		mountainGlow.addPDAEntry(e.pda, 8, e.getField<string>("header"));
+		SNUtil.log(" > "+mountainGlow);
+		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Grass, 1, 0.5F);
+		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Rock, 1, 0.1F);
+		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Sand, 1, 0.3F);
+		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
-		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*1.5F);
+		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*0.8F);
 		BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));
+		BioReactorHandler.Main.SetBioReactorCharge(mountainGlow.seed.TechType, BaseBioReactor.GetCharge(TechType.Oculus)*2.4F);
 		BioReactorHandler.Main.SetBioReactorCharge(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, BaseBioReactor.GetCharge(TechType.CreepvinePiece));
    	}
    

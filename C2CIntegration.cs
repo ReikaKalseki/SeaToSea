@@ -105,8 +105,8 @@ namespace ReikaKalseki.SeaToSea {
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
 		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
 		
+		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, EcoceanMod.glowOil.TechType, hard ? 3 : 2);
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
-		RecipeUtil.addIngredient(C2CItems.cyclopsHeat.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 6);
 		RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 5);
 		RecipeUtil.addIngredient(TechType.PrecursorKey_White, EcoceanMod.glowOil.TechType, hard ? 6 : 4);
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, EcoceanMod.glowOil.TechType, 3);
@@ -140,6 +140,7 @@ namespace ReikaKalseki.SeaToSea {
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.2F});
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, TechType.Benzene);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, TechType.HydrochloricAcid);
+		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).TechType, TechType.HydrochloricAcid);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, TechType.Polyaniline);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, TechType.Polyaniline);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, TechType.Polyaniline);

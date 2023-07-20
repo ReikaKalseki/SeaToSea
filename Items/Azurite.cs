@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea {
 	}
 	
 	internal class AzuriteOreSparker : AzuriteSparker {
-		AzuriteOreSparker() : base(3.2F, 1.8F) {
+		AzuriteOreSparker() : base(3.2F, 1.8F, false) {
 			
 		}
 	}
@@ -51,12 +51,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Rigidbody body;
 		
+		private readonly bool keepLight;
 		private readonly float size;
 		private readonly float activityLevel;
 		private readonly Vector3 particleOrigin;
 		
-		internal AzuriteSparker(float s, float a, Vector3? orgn = null) {
+		internal AzuriteSparker(float s, float a, bool l, Vector3? orgn = null) {
 			size = s;
+			keepLight = l;
 			activityLevel = a;
 			particleOrigin = orgn != null && orgn.HasValue ? orgn.Value : Vector3.zero;
 		}
@@ -69,7 +71,8 @@ namespace ReikaKalseki.SeaToSea {
 				//sparker.transform.eulerAngles = new Vector3(325, 180, 0);
 				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
 				ObjectUtil.removeComponent<PlayerDistanceTracker>(sparker);
-				ObjectUtil.removeChildObject(sparker, "ElecLight");
+				if (!keepLight)
+					ObjectUtil.removeChildObject(sparker, "ElecLight");
 			}
 			if (particles == null) {
 				particles = sparker.GetComponentsInChildren<ParticleSystem>();
@@ -99,7 +102,7 @@ namespace ReikaKalseki.SeaToSea {
 		public bool disableSparking() {
 			if (gameObject.FindAncestor<AqueousEngineering.ItemDisplayLogic>())
 				return false;
-			return !body.isKinematic || Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>();
+			return (body && !body.isKinematic) || Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>();
 		}
 		
 	}

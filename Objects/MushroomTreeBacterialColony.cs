@@ -24,6 +24,10 @@ namespace ReikaKalseki.SeaToSea {
 	        
 	    internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
+			
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<TreeColonyTag>().addField("scanned"));
+			};
 	    }
 			
 	    public override GameObject GetGameObject() {
@@ -99,9 +103,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static float updateColors(MonoBehaviour c, Renderer r, float time) {
 			float f = 0.5F+0.5F*Mathf.Sin(time*0.193F+c.transform.position.magnitude%1781);
+			setColors(r, f);
+			return f;
+		}
+		
+		internal static void setColors(Renderer r, float f) {
 			r.material.SetColor("_GlowColor", new Color(f*1.5F, 1, 1, 1));
 			r.material.SetColor("_Color", new Color(0.75F+1.25F*f, 1, 1, 1));
-			return f;
 		}
 			
 	}
@@ -112,6 +120,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Simplex3DGenerator sizeZNoise = (Simplex3DGenerator)new Simplex3DGenerator(-1376491).setFrequency(0.8);
 		
 		private float lastResize = -1;
+		private bool scanned = false;
+		private float scannedFade = 0;
 		
 		private Renderer render;
 		private Light innerLight;
@@ -123,17 +133,34 @@ namespace ReikaKalseki.SeaToSea {
 				transform.localScale = getRegionalScale();//new Vector3(0.5F, 0.25F, 0.5F);
 			}
 			if (!render)
-				render = GetComponentInChildren<Renderer>();
+				render = ObjectUtil.getChildObject(gameObject, "lost_river_plant_04/lost_river_plant_04_membrane").GetComponentInChildren<Renderer>();
 			if (!innerLight)
 				innerLight = ObjectUtil.getChildObject(gameObject, "InnerLight").GetComponentInChildren<Light>();
+			
 			float f = MushroomTreeBacterialColony.updateColors(this, render, time);
-			innerLight.color = Color.Lerp(MushroomTreeBacterialColony.BLUE_COLOR, MushroomTreeBacterialColony.PURPLE_COLOR, 0.33F+0.67F*f);
-			innerLight.intensity = 3F+0.5F*(1-f);
+			float f2 = 3F+0.5F*(1-f);
+			if (scanned)
+				scannedFade = Mathf.Min(scannedFade+0.5F*Time.deltaTime, 1);
+			
+			Color c = Color.Lerp(MushroomTreeBacterialColony.BLUE_COLOR, MushroomTreeBacterialColony.PURPLE_COLOR, 0.33F+0.67F*f);
+			if (scannedFade > 0) {
+				f += 2.5F*scannedFade;
+				f2 += 1.5F*scannedFade;
+				c = Color.Lerp(c, new Color(1, 0, 0), scannedFade);
+				MushroomTreeBacterialColony.setupWave(render, 1+scannedFade*0.004F);
+				MushroomTreeBacterialColony.setColors(render, f);
+			}
+			innerLight.color = c;
+			innerLight.intensity = f2;
 		}
 		
 		Vector3 getRegionalScale() {
 			Vector3 pos = transform.position;
 			return new Vector3(0.5F+0.2F*(float)sizeXNoise.getValue(pos), 0.25F, 0.5F+0.2F*(float)sizeZNoise.getValue(pos));
+		}
+		
+		void OnScanned() {
+			scanned = true;
 		}
 		
 	}

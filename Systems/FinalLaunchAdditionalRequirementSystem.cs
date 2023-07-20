@@ -36,6 +36,8 @@ namespace ReikaKalseki.SeaToSea {
 			requiredItems[TechType.Crabsnake] = 1;
 			requiredItems[TechType.Cutefish] = 1;
 			requiredItems[TechType.RabbitRay] = 1;
+			requiredItems[TechType.SpineEel] = 1;
+			requiredItems[TechType.Shuttlebug] = 2;
 			
 			requiredItems[SeaToSeaMod.deepStalker.TechType] = 1;
 			

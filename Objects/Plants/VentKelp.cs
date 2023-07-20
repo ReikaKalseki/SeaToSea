@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<VanillaFlora> {
+	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<FloraPrefabFetch> {
 		
 		public static float minTemperature = 25;
 		public static float idealTemperature = 60;
@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static bool leavesOnlyRendering;
 		
-		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), VanillaFlora.FERN_PALM, "afba45cf-00f9-4d80-a203-429d6ce7ff62", "Samples") {
+		public VentKelp() : base(SeaToSeaMod.itemLocale.getEntry("VENT_KELP"), new FloraPrefabFetch(VanillaFlora.FERN_PALM), "afba45cf-00f9-4d80-a203-429d6ce7ff62", "Samples") {
 			glowIntensity = 0.8F;
 			finalCutBonus = 2;
 		}

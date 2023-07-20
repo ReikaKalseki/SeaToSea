@@ -189,6 +189,7 @@ namespace ReikaKalseki.SeaToSea
         lathingDroneFragment = TechnologyFragment.createFragment("6e0f4652-c439-4540-95be-e61384e27692", drone.TechType, drone.FriendlyName, 3, 2, true, go => {
         	ObjectUtil.removeComponent<Pickupable>(go);
         	ObjectUtil.removeComponent<Rigidbody>(go);
+			go.EnsureComponent<LathingDroneSparker>();
         }); //it has its own model
         
         processor = new Bioprocessor();
@@ -245,6 +246,7 @@ namespace ReikaKalseki.SeaToSea
         }
         
         SNUtil.addScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
+        SNUtil.addScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);
         SNUtil.addScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
         SNUtil.addScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
     }

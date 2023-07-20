@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea
 	}
 	
 	class AzuriteBatterySparker : AzuriteSparker {
-		AzuriteBatterySparker() : base(0.67F, 0.5F, new Vector3(0, 0, -0.05F)) {
+		AzuriteBatterySparker() : base(0.67F, 0.5F, false, new Vector3(0, 0, -0.05F)) {
 			
 		}		
 	}
