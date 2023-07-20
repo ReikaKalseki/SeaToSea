@@ -56,10 +56,10 @@
 	</Sealant>
 	<HeatSealant>
 		<name>
-			Heat Sealant
+			Heat-sealed Fabric
 		</name>
 		<desc>
-			An advanced compound designed to not just insulate materials against chemical attack, but thermally isolate them as well.
+			An advanced textile designed to not just insulate materials against chemical attack, but thermally isolate them as well.
 		</desc>
 		<pda>
 			

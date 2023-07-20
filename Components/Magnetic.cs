@@ -19,11 +19,21 @@ namespace ReikaKalseki.SeaToSea
 		private Rigidbody body;
 		private Vehicle vehicle;
 		
+		private bool searched = false;
+		
 		void FixedUpdate() {
-			if (!body)
-				body = GetComponentInChildren<Rigidbody>();
-			if (!vehicle)
-				vehicle = GetComponentInChildren<Vehicle>();
+			if (!searched) {
+				try {
+					if (!body)
+						body = GetComponentInChildren<Rigidbody>();
+					if (!vehicle)
+						vehicle = GetComponentInChildren<Vehicle>();
+				}
+				catch (Exception e) {
+					SNUtil.log("Magnetic threw exception on search: "+e, SeaToSeaMod.modDLL);
+				}
+				searched = true;
+			}
 			float dT = Time.deltaTime;			
 			if (dT > 0 && body && !body.isKinematic && !vehicle) {
 				HashSet<Magnetic> set = WorldUtil.getObjectsNearWithComponent<Magnetic>(transform.position, 18);

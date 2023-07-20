@@ -954,8 +954,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.GetComponent<BlueprintHandTarget>()) {
 	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
 	    	}
+	    	else if (pi && (pi.ClassId == VanillaResources.MAGNETITE.prefab || pi.ClassId == VanillaResources.LARGE_MAGNETITE.prefab)) {
+	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
+	    	}
 	    	
-	    	if (go.FindAncestor<SubRoot>() || go.FindAncestor<Vehicle>()) {
+	    	if (go.GetComponent<SubRoot>() || go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
 	    		go.EnsureComponent<Magnetic>();
 	    	}
 	    	if (go.FindAncestor<Drillable>()) {
