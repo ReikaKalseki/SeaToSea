@@ -37,7 +37,8 @@ namespace ReikaKalseki.SeaToSea {
 			requiredItems[TechType.Cutefish] = 1;
 			requiredItems[TechType.RabbitRay] = 1;
 			requiredItems[TechType.SpineEel] = 1;
-			requiredItems[TechType.Shuttlebug] = 2;
+			requiredItems[TechType.Mesmer] = 1;
+			requiredItems[TechType.Jumper] = 2;
 			
 			requiredItems[SeaToSeaMod.deepStalker.TechType] = 1;
 			
@@ -55,9 +56,10 @@ namespace ReikaKalseki.SeaToSea {
 			
 			requiredItems[C2CItems.kelp.seed.TechType] = 2;
 			requiredItems[C2CItems.healFlower.seed.TechType] = 4;
+			requiredItems[C2CItems.mountainGlow.seed.TechType] = 1;
 			
 			requiredItems[TechType.PrecursorIonCrystal] = 3;
-			requiredItems[TechType.HatchingEnzymes] = 2;
+			//requiredItems[TechType.HatchingEnzymes] = 2;
 			requiredItems[TechType.Diamond] = 1;
 			
 			requiredItems[TechType.PrecursorKey_Purple] = 1;
@@ -87,7 +89,7 @@ namespace ReikaKalseki.SeaToSea {
 			requiredItems[tt] = amt;
 		}
 		
-		private bool hasAllCargo(LaunchRocket r) {
+		internal string hasAllCargo(LaunchRocket r) {
 			Dictionary<TechType, int> need = new Dictionary<TechType, int>(requiredItems);
 			Rocket root = r.gameObject.FindAncestor<Rocket>();
 			foreach (RocketLocker l in root.GetComponentsInChildren<RocketLocker>()) {
@@ -103,16 +105,15 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-			//SNUtil.writeToChat("Missing cargo: "+need.toDebugString<TechType, int>());
 			if (need.Count > 0)
-				return false;
+				return "Missing cargo "+need.toDebugString<TechType, int>();
 			int hero = 0;
 			foreach (Creature c in root.GetComponentsInChildren<Creature>(true)) {
 				if (c is SandShark) {
 					InfectedMixin mix = c.GetComponent<InfectedMixin>();
 					//SNUtil.writeToChat("Sandshark is infected: "+(mix && mix.IsInfected()));
-					if (!(mix && (mix.IsInfected() || mix.IsHealedByPeeper()))) {
-						return false;
+					if (!mix || !mix.IsInfected() || mix.IsHealedByPeeper()) {
+						return "Sandshark not infected: "+mix+" & "+(mix ? mix.IsInfected()+"+"+mix.IsHealedByPeeper() : "null");
 					}
 				}
 				else if (c is Peeper) {
@@ -121,7 +122,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			//SNUtil.writeToChat("Sparkle peepers: "+hero);
-			return hero >= 2;
+			return hero < 2 ? "Insufficient ("+hero+") sparkle peepers" : null;
 		}
 		
 		private void generateBiomeGoalList() {
@@ -148,8 +149,19 @@ namespace ReikaKalseki.SeaToSea {
 			return true;
 		}
 		
+		internal void forceLaunch() {
+			forceLaunch(UnityEngine.Object.FindObjectOfType<LaunchRocket>());
+		}
+		
+		internal void forceLaunch(LaunchRocket r) {
+			LaunchRocket.SetLaunchStarted();
+			PlayerTimeCapsule.main.Submit(null);
+			r.StartCoroutine(r.StartEndCinematic());
+			HandReticle.main.RequestCrosshairHide();
+		}
+		
 		public bool checkIfFullyLoaded(LaunchRocket r) {
-			return checkConditionAndShowPDAAndVoicelogIfNot(hasAllCargo(r), "needlaunchcargo", PDAMessages.Messages.NeedLaunchCargoMessage);
+			return checkConditionAndShowPDAAndVoicelogIfNot(hasAllCargo(r) == null, "needlaunchcargo", PDAMessages.Messages.NeedLaunchCargoMessage);
 		}
 		
 		public bool checkIfVisitedAllBiomes() {

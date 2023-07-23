@@ -23,6 +23,12 @@ namespace ReikaKalseki.SeaToSea
 				return CraftData.GetQuickSlotType(TechType.SeamothSonarModule);
 			}
 		}
+		
+		public override Vector2int SizeInInventory {
+			get {
+				return new Vector2int(2, 1);
+			}
+		}
 		/*
 		protected override Atlas.Sprite GetItemSprite()
 		{

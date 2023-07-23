@@ -63,6 +63,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class MountainGlowTag : MonoBehaviour {
 		
+		private static float lastDamageTime; //static so global, so does not stack lag OR damage
+		
 		private bool isGrown;
 		
 		private FruitPlant fruiter;
@@ -79,6 +81,9 @@ namespace ReikaKalseki.SeaToSea {
     		if (isGrown) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
+    			foreach (PickPrefab pp in seeds) {
+    				pp.SetPickedUp();
+    			}
     		}
     		else {
     			
@@ -128,8 +133,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 	    void OnTriggerStay(Collider other) {
-			if (!other.isTrigger && other.gameObject.FindAncestor<Player>()) {
-				other.gameObject.FindAncestor<LiveMixin>().TakeDamage(Time.deltaTime*0.5F, transform.position, DamageType.Heat);
+			if (DayNightCycle.main.timePassedAsFloat-lastDamageTime >= 0.05F && !other.isTrigger && other.gameObject.FindAncestor<Player>()) {
+				other.gameObject.FindAncestor<LiveMixin>().TakeDamage(Time.deltaTime*1.5F, transform.position, DamageType.Heat);
+				lastDamageTime = DayNightCycle.main.timePassedAsFloat;
 			}
 	    }
 		

@@ -46,9 +46,6 @@ namespace ReikaKalseki.SeaToSea
 					case Items.BioEnzymes:
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(1F, 170/255F, 0F, 1));
 					break;
-					case Items.HeatSealant:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.7F, 0.6F, 1, 1));
-					break;
 					case Items.KelpEnzymes:
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.5F, 0.0F, 1F, 1));
 					break;
@@ -212,7 +209,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Magnesium")]HullPlating, //was wiring kit
 			[Item(typeof(NotFabricable), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]Sealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]SealFabric,
-			[Item(typeof(BasicCraftingItem), 	TechCategory.VehicleUpgrades,	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]HeatSealant,
+			[Item(typeof(BasicCraftingItem), 	TechCategory.AdvancedMaterials,	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]HeatSealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/FiberMesh")]SmartPolymer,

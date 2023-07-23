@@ -79,6 +79,7 @@ namespace ReikaKalseki.SeaToSea
 			private float speedBonus;
 			
 			private int stuckCells = 0;
+			private PredatoryBloodvine holdingBloodKelp;
         	
 			void Start() {
 				useSeamothVehicleTemperature = false;
@@ -119,7 +120,13 @@ namespace ReikaKalseki.SeaToSea
 				boostSoundEvent = SoundManager.playSoundAt(boostSound, transform.position, false, -1, 1);
 				seamoth.screenEffectModel.SetActive(true);
 				ECHooks.attractToSoundPing(seamoth, false, 0.33F);
+				if (holdingBloodKelp)
+					holdingBloodKelp.release();
 			}
+			
+			public void OnBloodKelpGrab(PredatoryBloodvine c) {
+				holdingBloodKelp = c;
+		    }
 			
 			internal bool isPurgingHeat() {
 				return temperatureAtPurge >= 0;

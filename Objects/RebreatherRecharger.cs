@@ -16,7 +16,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class RebreatherRecharger : CustomMachine<RebreatherRechargerLogic> {
 		
-		internal static readonly float POWER_COST = 1.5F; //per second
+		internal static readonly float POWER_COST_IDLE = 0.5F; //per second
+		internal static readonly float POWER_COST_ACTIVE = 2.5F; //per second
 		internal static readonly float MAX_RATE = 7.5F; //seconds per second
 		
 		static RebreatherRecharger() {
@@ -81,6 +82,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal GameObject turbine;
 		internal FMOD_CustomLoopingEmitter sound;
 		
+		private bool inUse;
 		private bool isPowered;
 		private float secsNoPwr = 0;
 		private float speed = 0;
@@ -123,7 +125,8 @@ namespace ReikaKalseki.SeaToSea {
 				LiquidBreathingSystem.instance.applyToBasePipes(this, seabase);
 			}
 			
-			isPowered = consumePower(RebreatherRecharger.POWER_COST*seconds);
+			float cost = inUse ? RebreatherRecharger.POWER_COST_ACTIVE : RebreatherRecharger.POWER_COST_IDLE;
+			isPowered = consumePower(cost*seconds);
 			if (isPowered) {
 				speed = Math.Min(speed*1.05F+0.15F, 150);
 				secsNoPwr = 0;
@@ -159,6 +162,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float consumeUpTo(float amt, float seconds) {
 			float use = Mathf.Min(amt, available, RebreatherRecharger.MAX_RATE*seconds);
 			available -= use;
+			inUse |= use > 0;
 			return use;
 		}		
 	}

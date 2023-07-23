@@ -4,7 +4,7 @@
 		Possible salvageable materials
 	</name>
 	<pda>
-		The destruction of the Sunbeam trading ship may have resulted in some of its cargo and construction materials being scattered over the areas near where it was attempting to land. This may provide access to materials not normally available on the surface of 4546B.
+		The destruction of the Sunbeam trading ship may have resulted in some of its cargo and construction materials being scattered over the areas near where it was attempting to land, or along its approach path (or an extension thereof). This may provide access to materials not normally available on the surface of 4546B.
 		
 		However, these materials are scattered over a wide area, and the local fauna make a manual search highly inadvisable.
 	</pda>
@@ -538,6 +538,8 @@
 			
 			-A highly intelligent herbivore (x1)
 			
+			-A predator that uses psychological manipulation (x1)
+			
 			-A small ray species with vibration-detection capabilities, suitable for aquariums (x1)
 			
 			-A small but aggressive carrion feeder, with limited visual sensation (x2)
@@ -554,7 +556,7 @@
 			
 			-Enzyme host peeper (x2)
 			
-			-A small herbivore using ionic charge to maneuver, suitable as small pets (x4)
+			-A small herbivore using ionic charge to maneuver, suitable as a small pet (x4)
 			
 			-A parasitic lifeform consisting of two symbiotic components (x6)
 			
@@ -570,17 +572,17 @@
 			
 			-Coral containing rare resource nodules (x4)
 			
-			-Flora with symbiotic chemosynethetic bacteria (x2)
+			-Flora with symbiotic chemosynethetic bacteria in the leaves (x2)
 			
 			-Leaves coated in oils suitable for medical applications (x4)
 			
 			-Alien Power Storage Units (x3)
 			
-			-Aquatic Reproductive Stimulant (x2)
-			
 			-Diamond (x1)
 			
 			-Oil containing frequency-discriminating chemoluminescent seeds (x3)	
+			
+			-Aggressively parasitic flora that eats its host from within (x1)
 			
 			-Purple Precursor Tablet (x1)
 			

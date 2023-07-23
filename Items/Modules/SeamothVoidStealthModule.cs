@@ -21,6 +21,12 @@ namespace ReikaKalseki.SeaToSea
 				return QuickSlotType.Passive;
 			}
 		}
+		
+		public override Vector2int SizeInInventory {
+			get {
+				return new Vector2int(2, 2);
+			}
+		}
 		/*
 		protected override Atlas.Sprite GetItemSprite()
 		{

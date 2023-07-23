@@ -154,7 +154,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			if (render && time > lastTextureSwapTime+1) {
 				lastTextureSwapTime = time;
-				RenderUtil.swapTextures(SeaToSeaMod.modDLL, render, "Textures/Creature/DeepStalker", null, true);
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, render, "Textures/Creature/DeepStalker", null);
 			}
 			
 			if (time < targetCooldown) {

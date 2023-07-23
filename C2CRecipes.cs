@@ -25,7 +25,8 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;  
     private static DuplicateRecipeDelegateWithRecipe bacteriaAlternate;  
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
-    private static DuplicateRecipeDelegateWithRecipe altFiber;
+    private static DuplicateRecipeDelegateWithRecipe altFiberMesh;
+    private static DuplicateRecipeDelegateWithRecipe altSulfurAcid;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
@@ -58,6 +59,8 @@ namespace ReikaKalseki.SeaToSea
        	createCompressedIngot(TechType.Nickel, "41919ae1-1471-4841-a524-705feb9c2d20", 8, 8, 0.6F);
        	createCompressedIngot(TechType.Kyanite, "41919ae1-1471-4841-a524-705feb9c2d20", 30, 3, 0.7F, 6, "Boule");
        	createCompressedIngot(TechType.Salt, "b334fbb1-224b-4082-bb69-d4a39051aaca", 6, 1, 0.6F, 8, "Block");
+       	createCompressedIngot(TechType.Sulphur, "b334fbb1-224b-4082-bb69-d4a39051aaca", 0.5F, 0, 1.0F, 6, "Block");
+       	createCompressedIngot(TechType.Diamond, "41919ae1-1471-4841-a524-705feb9c2d20", 24, 0, 1.2F, 5, "Boule");
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), "4ae90608-40da-45ce-8480-e2f0133f96b2", 18, 2, 0.25F);
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), "a06157cc-8de8-4fec-85a6-76b2aee1e263", 40, 5, 0.8F, 8, "Ingot");
        	
@@ -191,17 +194,33 @@ namespace ReikaKalseki.SeaToSea
        	rec = RecipeUtil.copyRecipe(RecipeUtil.getRecipe(TechType.FiberMesh));
         rec.Ingredients[0].amount = 3;
         rec.Ingredients.Add(new Ingredient(C2CItems.mountainGlow.seed.TechType, 2));
-       	altFiber = new DuplicateRecipeDelegateWithRecipe(TechType.FiberMesh, rec);
-       	altFiber.category = TechCategory.BasicMaterials;
-       	altFiber.group = TechGroup.Resources;
-       	altFiber.craftingType = CraftTree.Type.Fabricator;
-       	altFiber.craftingMenuTree = new string[]{"Resources", "BasicMaterials"};
-       	altFiber.ownerMod = SeaToSeaMod.modDLL;
-       	altFiber.craftTime = 6;
-       	altFiber.setRecipe(4);
-       	altFiber.unlock = TechType.Unobtanium;
-       	altFiber.allowUnlockPopups = true;
-       	altFiber.Patch();
+       	altFiberMesh = new DuplicateRecipeDelegateWithRecipe(TechType.FiberMesh, rec);
+       	altFiberMesh.category = TechCategory.BasicMaterials;
+       	altFiberMesh.group = TechGroup.Resources;
+       	altFiberMesh.craftingType = CraftTree.Type.Fabricator;
+       	altFiberMesh.craftingMenuTree = new string[]{"Resources", "BasicMaterials"};
+       	altFiberMesh.ownerMod = SeaToSeaMod.modDLL;
+       	altFiberMesh.craftTime = 6;
+       	altFiberMesh.setRecipe(4);
+       	altFiberMesh.unlock = TechType.Unobtanium;
+       	altFiberMesh.allowUnlockPopups = true;
+       	altFiberMesh.Patch();
+       	
+       	rec = new TechData();
+        rec.Ingredients.Add(new Ingredient(TechType.Sulphur, 5));
+        rec.Ingredients.Add(new Ingredient(TechType.DisinfectedWater, 2));
+        rec.Ingredients.Add(new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
+       	altSulfurAcid = new DuplicateRecipeDelegateWithRecipe(CraftingItems.getItem(CraftingItems.Items.SulfurAcid), rec);
+       	altSulfurAcid.category = C2CItems.chemistryCategory;
+       	altSulfurAcid.group = TechGroup.Resources;
+       	altSulfurAcid.craftingType = CraftTree.Type.Fabricator;
+       	altSulfurAcid.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
+       	altSulfurAcid.ownerMod = SeaToSeaMod.modDLL;
+       	altSulfurAcid.craftTime = 9;
+       	altSulfurAcid.setRecipe(2);
+       	altSulfurAcid.unlock = TechType.Sulphur;
+       	altSulfurAcid.allowUnlockPopups = true;
+       	altSulfurAcid.Patch();
        	/*
         int s = 3;
         rec = new TechData();
@@ -521,6 +540,11 @@ namespace ReikaKalseki.SeaToSea
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
        	}
        
+        CraftDataHandler.SetItemSize(TechType.Jumper, new Vector2int(1, 1));
+        CraftDataHandler.SetItemSize(TechType.ExosuitDrillArmModule, new Vector2int(2, 2));
+        CraftDataHandler.SetItemSize(TechType.ExosuitPropulsionArmModule, new Vector2int(2, 2));
+        CraftDataHandler.SetItemSize(C2CItems.depth1300.TechType, new Vector2int(2, 2));
+       
        	//RecipeUtil.logChangedRecipes();
     }
     
@@ -553,8 +577,10 @@ namespace ReikaKalseki.SeaToSea
     	ingot.renderModify = r => {
     		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Items/World/Ingot/"+item);
     		RenderUtil.setGlossiness(r, specInt, shiny, fresnel);
-    		if (item == TechType.Quartz)
+    		if (item == TechType.Quartz || item == TechType.Diamond) {
     			RenderUtil.makeTransparent(r);
+    			r.materials[0].EnableKeyword("UWE_DETAILMAP");
+    		}
     		if (item == TechType.Quartz || item == TechType.AluminumOxide || item == TechType.Kyanite) {
     			float f = item == TechType.Quartz ? 0.3F : (item == TechType.Kyanite ? 9 : 6);
     			RenderUtil.setEmissivity(r, f*0.67F, f);
@@ -594,7 +620,11 @@ namespace ReikaKalseki.SeaToSea
     }
     
     public static DuplicateRecipeDelegateWithRecipe getAlternateFiber() {
-    	return altFiber;
+    	return altFiberMesh;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getAltSulfurAcid() {
+    	return altSulfurAcid;
     }
     
     public static DuplicateRecipeDelegateWithRecipe getAlternateBacteria() {

@@ -437,10 +437,9 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
 	    	if (ch.obj.FindAncestor<Drillable>())
-	    		ch.value = 999999;
-	    	if (ch.value < 99999 && isHeldToolAzuritePowered())
-	    		ch.value *= 6;
-	    	SNUtil.writeToChat("Modifying propulsibility of "+ch.obj+">"+ch.value);
+	    		ch.value = 99999999;
+	    	if (isHeldToolAzuritePowered())
+	    		ch.value *= (ch.isMass ? 6 : 4);
 	    }
 	    
 	    public static bool isHeldToolAzuritePowered() {
@@ -930,6 +929,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		td.baseDamagePerSecond = Mathf.Max(10, td.baseDamagePerSecond)*0.33F;
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
+	    		//ObjectUtil.removeComponent<ImmuneToPropulsioncannon>(go);
 	    	}
         	else if (pi && pi.classId == "8b113c46-c273-4112-b7ef-65c50d2591ed") { //rocket
 	        	foreach (RocketLocker cl in pi.GetComponentsInChildren<RocketLocker>()) {
@@ -955,7 +955,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
 	    	}
 	    	else if (pi && (pi.ClassId == VanillaResources.MAGNETITE.prefab || pi.ClassId == VanillaResources.LARGE_MAGNETITE.prefab)) {
-	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
+	    		go.EnsureComponent<Magnetic>();
 	    	}
 	    	
 	    	if (go.GetComponent<SubRoot>() || go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
@@ -964,7 +964,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (go.FindAncestor<Drillable>()) {
 	    		Rigidbody rb = go.FindAncestor<Rigidbody>();
 	    		if (rb)
-	    			rb.mass = Mathf.Max(1200, rb.mass);
+	    			rb.mass = Mathf.Max(2400, rb.mass);
 	    	}
 	    }/*
 	    
@@ -1063,8 +1063,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.writeToChat("Intercepting grinding sulfur");
 	    		Vector3 pos = res.drop.transform.position;
 	    		UnityEngine.Object.DestroyImmediate(res.drop);
-	    		res.drop = ObjectUtil.createWorldObject(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).ClassID);
-	    		res.drop.transform.position = pos;
+	    		res.drop = ObjectUtil.lookupPrefab(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).ClassID);
+	    		res.dropCount = UnityEngine.Random.Range(0F, 1F) < 0.33F ? 2 : 1;
 	    	}
 	    }
 	    
@@ -1203,10 +1203,7 @@ namespace ReikaKalseki.SeaToSea {
 			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
 			//	return;
 			//}
-			LaunchRocket.SetLaunchStarted();
-			PlayerTimeCapsule.main.Submit(null);
-			r.StartCoroutine(r.StartEndCinematic());
-			HandReticle.main.RequestCrosshairHide();
+			FinalLaunchAdditionalRequirementSystem.instance.forceLaunch(r);
 	    }
 	    
 	    public static void onEMPHit(EMPBlast e, GameObject go) {
@@ -1354,8 +1351,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (scanToScannerRoom.Contains(rt.resource.techType)) {
 	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
 	    	}
-	    	if (rt.resource.GetComponent<Drillable>() && !Story.StoryGoalManager.main.completedGoals.Contains("OnConstructExosuit")) {
-	    		rt.isDetectable = false;
+	    	if (rt.resource.GetComponent<Drillable>()) {
+	    		rt.isDetectable = Story.StoryGoalManager.main.completedGoals.Contains("OnConstructExosuit") || KnownTech.knownTech.Contains(AqueousEngineeringMod.grinderBlock.TechType);
 	    	}
 		}
 	    

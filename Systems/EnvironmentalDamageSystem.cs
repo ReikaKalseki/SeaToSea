@@ -359,7 +359,7 @@ namespace ReikaKalseki.SeaToSea {
     	private bool triggerPowerLeakage(ItemsContainer c, float leak, float relativeFactor) {
     		bool found = false;
 			foreach (InventoryItem item in c) {
-	    		if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery) {
+	    		if (item != null && item.item.GetTechType() != TechType.PrecursorIonPowerCell && item.item.GetTechType() != TechType.PrecursorIonBattery && item.item.GetTechType() != C2CItems.t2Battery.TechType) {
 	    			Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
 	    			//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
 	    			if (b != null && b.capacity > 100) {
