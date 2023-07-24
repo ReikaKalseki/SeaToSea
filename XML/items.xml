@@ -241,6 +241,17 @@
 			
 		</pda>
 	</AmoeboidSample>
+	<TraceMetals>
+		<name>
+			Rare Elements
+		</name>
+		<desc>
+			Trace quantities of rare metal and semimetal elements, used in advanced fabrication.
+		</desc>
+		<pda>
+			
+		</pda>
+	</TraceMetals>
 	<breathfluid>
 		<name>
 			Breathing Fluid

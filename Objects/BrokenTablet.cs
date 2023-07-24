@@ -80,6 +80,40 @@ namespace ReikaKalseki.SeaToSea {
 						idx++;
 					}
 				}
+				switch(tablet) {
+					case TechType.PrecursorKey_Orange: {
+						Light l = ObjectUtil.addLight(world);
+						l.intensity = 0.4F;
+						l.range = 18F;
+						l.color = new Color(1F, 0.63F, 0F, 1);
+						l.transform.localPosition = new Vector3(0, 0.03F, 0);
+						l.shadows = LightShadows.Soft;
+						break;
+					}
+					case TechType.PrecursorKey_Red: {
+						Light l = ObjectUtil.addLight(world);
+						l.intensity = 1F;
+						l.range = 10F;
+						l.color = new Color(1F, 0.33F, 0.33F, 1);
+						l.transform.localPosition = new Vector3(-0.25F, 0.3F, 0);
+						FlickeringLight f = l.gameObject.EnsureComponent<FlickeringLight>();
+						f.dutyCycle = 0.67F;
+						f.updateRate = 0.25F;
+						break;
+					}
+					case TechType.PrecursorKey_White: {
+						Light l = ObjectUtil.addLight(world);
+						l.intensity = 0.8F;
+						l.range = 36F;
+						l.color = new Color(216F/255F, 247F/255F, 1F, 1);
+						l.shadows = LightShadows.Soft;
+						l.transform.localPosition = new Vector3(0, 1.25F, 0);
+						FlickeringLight f = l.gameObject.EnsureComponent<FlickeringLight>();
+						f.dutyCycle = 0.3F;
+						f.updateRate = 0.08F;
+						break;
+					}
+				}
 				return world;
 			}
 			else {

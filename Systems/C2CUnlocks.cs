@@ -60,6 +60,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.BlueAmoeba, C2CRecipes.getAlternateBacteria().TechType);
+	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).TechType, C2CRecipes.getAltTraceMetal().TechType);
 		}
 	}
 	

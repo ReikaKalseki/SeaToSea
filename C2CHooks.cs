@@ -436,8 +436,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
-	    	if (ch.obj.FindAncestor<Drillable>())
-	    		ch.value = 99999999;
+	    	if (ch.obj.FindAncestor<Drillable>()) {
+				SpecialDrillable s = ch.obj.FindAncestor<SpecialDrillable>();
+				if (!s || s.canBeMoved())
+	    			ch.value = 99999999;
+	    	}
 	    	if (isHeldToolAzuritePowered())
 	    		ch.value *= (ch.isMass ? 6 : 4);
 	    }

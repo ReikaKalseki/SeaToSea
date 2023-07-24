@@ -25,6 +25,7 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe quartzIngotToGlass;  
     private static DuplicateRecipeDelegateWithRecipe bacteriaAlternate;  
     private static DuplicateRecipeDelegateWithRecipe enzymeAlternate;
+    private static DuplicateRecipeDelegateWithRecipe traceMetalAlternate;
     private static DuplicateRecipeDelegateWithRecipe altFiberMesh;
     private static DuplicateRecipeDelegateWithRecipe altSulfurAcid;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
@@ -130,6 +131,11 @@ namespace ReikaKalseki.SeaToSea
         motor.craftingTime = 1;
         motor.addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Titanium, 2).addIngredient(TechType.Lubricant, 1).addIngredient(TechType.Gold, 1);
         
+        BasicCraftingItem traceMetal = CraftingItems.getItem(CraftingItems.Items.TraceMetals);
+        traceMetal.craftingTime = 1;
+        traceMetal.numberCrafted = 3;
+        traceMetal.addIngredient(TechType.JeweledDiskPiece, 4);
+        
         BasicCraftingItem drone = CraftingItems.getItem(CraftingItems.Items.LathingDrone);
         drone.craftingTime = 4;
         drone.addIngredient(motor, 1).addIngredient(TechType.Titanium, 1).addIngredient(TechType.ComputerChip, 1).addIngredient(TechType.PowerCell, 1);
@@ -190,6 +196,17 @@ namespace ReikaKalseki.SeaToSea
        	enzymeAlternate.setRecipe(enzy.numberCrafted*3);
        	enzymeAlternate.unlock = TechType.Unobtanium;
        	enzymeAlternate.Patch();
+        
+       	rec = new TechData();
+        rec.Ingredients.Add(new Ingredient(TechType.JeweledDiskPiece, 4));
+        rec.Ingredients.Add(new Ingredient(sulfurAcid.TechType, 1));
+       	traceMetalAlternate = new DuplicateRecipeDelegateWithRecipe(traceMetal, rec);
+       	traceMetalAlternate.ownerMod = SeaToSeaMod.modDLL;
+       	traceMetalAlternate.craftTime = 2.5F;
+       	traceMetalAlternate.setRecipe(5);
+       	traceMetalAlternate.unlock = TechType.Unobtanium;
+       	traceMetalAlternate.allowUnlockPopups = true;
+       	traceMetalAlternate.Patch();
        	
        	rec = RecipeUtil.copyRecipe(RecipeUtil.getRecipe(TechType.FiberMesh));
         rec.Ingredients[0].amount = 3;
@@ -408,12 +425,23 @@ namespace ReikaKalseki.SeaToSea
         	{TechType.VendingMachine, 1},
         	{TechType.ExosuitDrillArmModule, 2},
         	{TechType.Exosuit, 3},
+        };        
+        Dictionary<TechType, int> replaceTableCoral = new Dictionary<TechType, int>(){
+        	{TechType.ComputerChip, 2},
+        	{TechType.Fabricator, 1},
+        	{TechType.BaseMapRoom, hard ? 2 : 1},
         };
         
         foreach (KeyValuePair<TechType, int> kvp in addMotors) {
         	int amt = -1;
         	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
         	RecipeUtil.addIngredient(kvp.Key, motor.TechType, Math.Max(kvp.Value, amt));
+        }
+        
+        foreach (KeyValuePair<TechType, int> kvp in replaceTableCoral) {
+        	int amt = -1;
+        	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.JeweledDiskPiece){amt = i.amount; return true;} else {return false;}});
+        	RecipeUtil.addIngredient(kvp.Key, traceMetal.TechType, Math.Max(kvp.Value, amt));
         }
         
         RecipeUtil.addIngredient(TechType.Cyclops, armor.TechType, 4);
@@ -540,6 +568,9 @@ namespace ReikaKalseki.SeaToSea
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
        	}
        
+      	if (hard)
+        	CraftDataHandler.SetItemSize(TechType.PowerCell, new Vector2int(1, 2));
+        CraftDataHandler.SetItemSize(TechType.PrecursorIonPowerCell, new Vector2int(1, 2));
         CraftDataHandler.SetItemSize(TechType.Jumper, new Vector2int(1, 1));
         CraftDataHandler.SetItemSize(TechType.ExosuitDrillArmModule, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.ExosuitPropulsionArmModule, new Vector2int(2, 2));
@@ -625,6 +656,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getAltSulfurAcid() {
     	return altSulfurAcid;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getAltTraceMetal() {
+    	return traceMetalAlternate;
     }
     
     public static DuplicateRecipeDelegateWithRecipe getAlternateBacteria() {

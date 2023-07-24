@@ -85,6 +85,9 @@ namespace ReikaKalseki.SeaToSea {
     				pp.SetPickedUp();
     			}
     		}
+			else if (gameObject.transform.position.y > -120) {
+    			UnityEngine.Object.Destroy(gameObject);
+			}
     		else {
     			
     		}

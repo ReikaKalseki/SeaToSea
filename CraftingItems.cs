@@ -152,6 +152,15 @@ namespace ReikaKalseki.SeaToSea
 						};
 						item.glowIntensity = 1;
 					break;
+					case Items.TraceMetals:
+						item.renderModify = r => {
+							r.materials[0].SetFloat("_Fresnel", 2F);
+							r.materials[0].SetFloat("_Shininess", 20F);
+							r.materials[0].SetFloat("_SpecInt", 90F);
+							r.transform.localScale = new Vector3(1, 1, 2F);
+						};
+						item.glowIntensity = 1;
+					break;
 					case Items.BrokenT2Battery:
 						item.renderModify = r => {
 							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
@@ -206,6 +215,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/hydrochloricacid")]SulfurAcid,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]CrystalLens,
+			[Item(typeof(BasicCraftingItem),	TechCategory.BasicMaterials, 	TechType.JeweledDiskPiece,	"WorldEntities/Natural/CrashPowder")]TraceMetals,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Magnesium")]HullPlating, //was wiring kit
 			[Item(typeof(NotFabricable), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]Sealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]SealFabric,
