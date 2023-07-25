@@ -31,6 +31,8 @@ namespace ReikaKalseki.SeaToSea
     
     public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
     
+    private static Dictionary<string, Dictionary<string, Texture2D>> degasiBaseTextures = new Dictionary<string, Dictionary<string, Texture2D>>();
+    
     private static readonly Dictionary<Vector3, Tuple<float, int, float>> mercurySpawners = new Dictionary<Vector3, Tuple<float, int, float>>(){
     	{new Vector3(908.7F, -235.1F, 615.7F), Tuple.Create(2F, 4, 32F)},
     	{new Vector3(904.3F, -247F, 668.8F), Tuple.Create(1F, 3, 32F)},
@@ -70,6 +72,7 @@ namespace ReikaKalseki.SeaToSea
     public static FallingGlassForestWreck gfWreckProp;
     public static DeadMelon deadMelon;
     public static BloodKelpBaseNuclearReactorMelter reactorMelter;
+    public static TrailerBaseConverter bioBreaker;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -178,6 +181,8 @@ namespace ReikaKalseki.SeaToSea
 	    deadMelon.Patch();
 	    reactorMelter = new BloodKelpBaseNuclearReactorMelter();
 	    reactorMelter.Patch();
+	    bioBreaker = new TrailerBaseConverter();
+	    bioBreaker.Patch();
 	    
 	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();
@@ -258,6 +263,74 @@ namespace ReikaKalseki.SeaToSea
         DataboxTypingMap.instance.load();
         
     	C2CIntegration.addPostCompat();
+    	
+    	dumpAbandonedBaseTextures();
+    }
+    
+    private static void dumpAbandonedBaseTextures() {
+    	string[] prefabs = new string[]{
+    		"026c39c1-d0cc-442c-aa42-e574c9c281b2",
+			"0e394d55-da8c-4b3e-b038-979477ce77c1",
+			"255ed3c3-1973-40c0-9917-d16dd9a7018d",
+			"256a06d3-b861-487a-b8ac-050daa0d683d",
+			"2921736c-c898-4213-9615-ea1a72e28178",
+			"569f22e0-274d-49b0-ae5e-21ef0ce907ca",
+			"99b164ac-dfb4-4a14-b305-8666fa227717",
+			"c1139534-b3b9-4750-b60b-a77ca054b3dd",
+			"dd923ae3-20f6-47e0-87c0-ae2bc386607a"
+    	};
+    	string rootCachePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "DegasiBaseTex");
+    	if (Directory.Exists(rootCachePath)) {
+    		foreach (string file in Directory.EnumerateFiles(rootCachePath)) {
+    			string name = Path.GetFileNameWithoutExtension(file);
+    			int idx = name.LastIndexOf('_');
+    			string type = name.Substring(idx);
+    			string obj = name.Substring(0, idx);
+    			if (!degasiBaseTextures.ContainsKey(obj))
+    				degasiBaseTextures[obj] = new Dictionary<string, Texture2D>();
+    			degasiBaseTextures[obj][type] = ImageUtils.LoadTextureFromFile(file);
+    		}
+    		SNUtil.log("Loaded degasi base textures: "+degasiBaseTextures.Keys.toDebugString(), modDLL);
+    	}
+    	else {
+    		HashSet<string> exported = new HashSet<string>();
+	    	foreach (string s in prefabs) {
+	    		GameObject go = ObjectUtil.lookupPrefab(s);
+	    		if (go) {
+	    			Renderer[] rr = go.GetComponentsInChildren<Renderer>(true);
+	    			SNUtil.log("Exporting degasi base textures from "+s+": "+rr.Length+":"+string.Join(", ", rr.Select(r2 => r2.name)), modDLL);
+	    			foreach (Renderer r in rr) {
+						foreach (Material m in r.materials) {
+							string n = m.mainTexture.name.Replace(" (Instance)", "");
+							if (!exported.Contains(n)) {
+								exported.Add(n);
+								string n2 = n.ToLowerInvariant();
+								if (n2.Contains("rusted") || n2.Contains("abandoned")) {
+									degasiBaseTextures[n] = new Dictionary<string, Texture2D>();
+									foreach (string tex in m.GetTexturePropertyNames()) {
+										string fn = (n+tex).ToLowerInvariant();
+										if (!File.Exists(fn)) {
+											Texture2D img = (Texture2D)m.GetTexture(tex);
+											RenderUtil.dumpTexture(SNUtil.diDLL, fn, img, rootCachePath);
+											SNUtil.log("Exporting degasi base texture from "+r.gameObject.GetFullHierarchyPath()+" to "+rootCachePath+"/"+fn, modDLL);
+											degasiBaseTextures[n][tex] = img;
+										}
+									}
+								}
+							}
+						}
+	    			}
+	    		}
+	    	}
+    	}
+    }
+    
+    public static bool hasDegasiBaseTextures(string n) {
+    	return degasiBaseTextures.ContainsKey(n);
+    }
+    
+    public static Texture2D getDegasiBaseTexture(string n, string type) {
+    	return degasiBaseTextures[n].ContainsKey(type) ? degasiBaseTextures[n][type] : null;
     }
     
     private static void addSignalsAndRadio() {			
@@ -472,6 +545,9 @@ namespace ReikaKalseki.SeaToSea
     			break;
     		case "bkelpbase":
     			pos = C2CHooks.bkelpBaseGeoCenter+Vector3.up*30;
+    			break;
+    		case "trailerbase":
+    			pos = C2CHooks.trailerBaseBioreactor+Vector3.up*20;
     			break;
     		case "dunearch":
     			pos = new Vector3(-1610, -334, 92);

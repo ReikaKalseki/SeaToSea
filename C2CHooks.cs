@@ -27,6 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    internal static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
 	    internal static readonly Vector3 bkelpBaseNuclearReactor = new Vector3(-1325.67F, -660.60F, -392.70F);
+	    internal static readonly Vector3 trailerBaseBioreactor = new Vector3(1314.94F, -80.2F, -412.97F);
 	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));

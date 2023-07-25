@@ -137,7 +137,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	SubRoot sub = p.currentSub;
 	    	if (sub && sub.powerRelay && sub.powerRelay.IsPowered())
 	    		return true;
-	    	return false;
+	    	return p.precursorOutOfWater;
 	    }
 	    
 	    public bool tryFillPlayerO2Bar(Player p, ref float amt, bool force = false) {

@@ -31,11 +31,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		class BloodKelpBaseNuclearReactorMelterTag : MonoBehaviour {
 			
+			private bool triggered = false;
+			
 			void Update() {
+				if (triggered)
+					return;
 				BaseNuclearReactorGeometry go = WorldUtil.getClosest<BaseNuclearReactorGeometry>(C2CHooks.bkelpBaseNuclearReactor);
 		    	if (go && Vector3.Distance(go.transform.position, C2CHooks.bkelpBaseNuclearReactor) < 5F) {
-		    		GameObject child = ObjectUtil.getChildObject(go.gameObject, "UI/Canvas/Text");
-		    		child.GetComponent<Text>().text = "<color=#ff0000>OPERATOR ERROR\n\nMOLTEN CORE WARNING\nTEMP AT SPIKEVALUE \n999999999999999</color>";
 		    		/*
 		    		LeakingRadiation lr = go.EnsureComponent<LeakingRadiation>();
 		    		lr.leaks = new List<RadiationLeak>();
@@ -49,6 +51,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		lr.radiatePlayerInRange = go.EnsureComponent<RadiatePlayerInRange>();
 		    		*/
 		    		go.gameObject.EnsureComponent<BloodKelpBaseNuclearReactorGlower>();
+		    		triggered = true;
 		    	}
 			}
 			
@@ -57,6 +60,7 @@ namespace ReikaKalseki.SeaToSea {
 	    class BloodKelpBaseNuclearReactorGlower : MonoBehaviour {
 	    	
 	    	private bool textured;
+	    	private Text text;
 		
 			private readonly List<ParticleSystem> bubbles = new List<ParticleSystem>();
 	    	
@@ -66,6 +70,12 @@ namespace ReikaKalseki.SeaToSea {
 	    			foreach (Renderer r in GetComponentsInChildren<Renderer>())
 	    				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/bkelpreactor");
 	    		}
+		    	
+				if (!text) {
+					GameObject child = ObjectUtil.getChildObject(gameObject, "UI/Canvas/Text");
+					text = child.GetComponent<Text>();
+				}
+		    	text.text = "<color=#ff0000>OPERATOR ERROR\n\nMOLTEN CORE WARNING\nTEMP AT SPIKEVALUE \n999999999999999</color>";
 			
 				while (bubbles.Count < 11) {
 					GameObject go = ObjectUtil.createWorldObject("0dbd3431-62cc-4dd2-82d5-7d60c71a9edf");

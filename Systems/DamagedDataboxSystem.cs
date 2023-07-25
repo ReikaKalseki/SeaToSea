@@ -27,6 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private DamagedDataboxSystem() {
 			data[C2CHooks.crashMesa] = new DamagedDatabox(15, 0, 10);
+			data[C2CHooks.trailerBaseBioreactor] = new DamagedDatabox(40, 0, 30);
 			data[VoidSpikesBiome.signalLocation] = new DamagedDatabox(20, 0.67F, 10);
 			data[SeaToSeaMod.treaderSignal.initialPosition] = new DamagedDatabox(30, 0.15F, 10);
 			data[new Vector3(-114.6F, -234.5F, 854)] = new DamagedDatabox(20, 0.4F); //autofarmer
