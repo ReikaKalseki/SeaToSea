@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<SanctuaryPlantTag>();
+			RenderUtil.setEmissivity(go.GetComponentInChildren<Renderer>(), 2);
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
@@ -63,9 +64,9 @@ namespace ReikaKalseki.SeaToSea {
 				light = GetComponentInChildren<Light>();
 			if (mainRender == null)
 				mainRender = GetComponentInChildren<Renderer>();
-			light.transform.localPosition = Vector3.up*0.75F;
+			light.transform.localPosition = Vector3.up*0.91F;
 			light.intensity = 1.6F;
-			light.range = 48;
+			light.range = 24;
 			light.color = new Color(26/255F, 231/255F, 220/255F, 1);
 		}
 		
