@@ -32,6 +32,16 @@ namespace ReikaKalseki.SeaToSea {
 		
 		class TrailerBaseConverterTag : MonoBehaviour {
 			
+			private static readonly HashSet<string> darken = new HashSet<string>(){
+				"BaseCorridorRoomGenericInteriorConnection",
+				"BaseRoomGenericInteriorCoverTop01",
+				"BaseInteriorRoomGenericWallmods02",
+				//"Bio_Reactor_mesh_geo",
+				"BaseRoomGenericInteriorCeilingmods02",
+				"BaseCorridorXShapeInterior",
+				"BaseRoomCoverTop",
+			};
+			
 			private Text text;
 			private Renderer[] baseParts = null;
 			
@@ -53,7 +63,11 @@ namespace ReikaKalseki.SeaToSea {
 						foreach (Material m in r.materials) {
 							if (!m)
 								continue;
-							if (r.name == "BaseCorridorRoomGenericInteriorConnection" || r.name == "BaseRoomGenericInteriorCeilingmods02") {
+							string rn = r.name;
+							if (rn == "LODs")
+								rn = r.transform.parent.name;
+							rn = rn.Replace("(Clone)", "");
+							if (darken.Contains(rn) || (r.name == "Bio_Reactor_mesh_geo" && m.name == "Bio_Reactor (Instance)")) {
 								m.SetColor("_SpecColor", Color.black);
 								m.SetColor("_Color", new Color(0.38F, 0.43F, 0.48F, 1));
 							}
@@ -62,14 +76,16 @@ namespace ReikaKalseki.SeaToSea {
 							if (refName != null) {
 								refName = refName.Replace(" (Instance)", "").Replace("_LOD1", "").Replace("_LOD2", "").Replace("_LOD3", "").ToLowerInvariant();
 								refName = refName.Replace("base", "base_abandoned").Replace("submarine", "submarine_abandoned");
-								refName = refName.Replace("exterrior", "exterior").Replace("wallmods", "generic_wallmods");
+								//refName = refName.Replace("exterrior", "exterior").Replace("wallmods", "generic_wallmods");
 							}
 							if (m.IsKeywordEnabled("MARMO_SIMPLE_GLASS")) {
 								if (m.mainTexture == null) {
 									switch(r.transform.parent.name) {
 										case "BaseRoomGenericInteriorWindowSide01":
-										case "BaseCorridorhIShapeGlass01Exterior":
 											refName = "base_abandoned_interior_room_generic_window_side_01_glass";
+											break;
+										case "BaseCorridorhIShapeGlass01Exterior":
+											//refName = "base_abandoned_interior_room_generic_window_side_01_glass";
 											break;
 									}
 								}
@@ -77,19 +93,32 @@ namespace ReikaKalseki.SeaToSea {
 									refName = "base_abandoned_interior_room_generic_window_side_01_glass";
 								}
 							}
-							if (refName == "base_abandoned_interior_room_generic_window_side_01_glass") {
+							if (refName == "starship_work_desk_01") {
+								refName = "starship_work_desk_01_empty";
+							}
+							else if (refName == "base_abandoned_interior_room_generic_window_side_01_glass") {
+								float a = 0;
 								switch(UnityEngine.Random.Range(0, 3)) {
 									case 0:
+										a = 0.33F;
+										refName = "base_interior_window_side_01_glass";
 										break;
 									case 1:
-										refName = "base_abandoned_exterior_room_generic_wall_frame_02_glass";
+										a = 1.5F;
+										refName = "base_abandoned_room_generic_wall_frame_02_glass";
 										break;
 									case 2:
-										refName = "base_abandoned_exterior_room_generic_wall_frame_02_glass_broken";
+										a = 1.25F;
+										refName = "base_abandoned_room_generic_wall_frame_02_glass_broken";
 										break;
 								}
+								SNUtil.log("Set glass ref tex to "+refName);
+								if (a > 0) {
+									Color c = m.GetColor("_Color");
+									m.SetColor("_Color", new Color(c.r, c.g, c.b, a));
+								}
 							}
-							if (refName != null) {
+							if (!string.IsNullOrEmpty(refName)) {
 								//SNUtil.log("Checking for decayed textures for "+r.gameObject.GetFullHierarchyPath()+" >>> "+refName, SNUtil.diDLL);
 								if (SeaToSeaMod.hasDegasiBaseTextures(refName)) {
 									HashSet<string> found = new HashSet<string>();
@@ -104,11 +133,12 @@ namespace ReikaKalseki.SeaToSea {
 										SNUtil.log("Found no decayed textures of "+refName+", even with mappings");
 									//SNUtil.log("Decayed textures of "+refName+" in "+r.gameObject.GetFullHierarchyPath()+": "+found.toDebugString());
 								}
-							}
-							else if (refName != null) {
-								SNUtil.log("Found no decayed textures of "+refName);
+								else {
+									SNUtil.log("Found no decayed textures of "+refName);
+								}
 							}
 						}
+						r.UpdateGIMaterials();
 					}
 		    	}
 			}

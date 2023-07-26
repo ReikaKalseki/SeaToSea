@@ -65,14 +65,18 @@ namespace ReikaKalseki.SeaToSea
     public static MushroomTreeBacterialColony mushroomBioFragment;    
     public static PowerSealModuleFragment powersealModuleFragment;    
     public static EjectedHeatSink ejectedHeatSink;
+    
     public static UnmovingHeatBlade thermoblade;
     public static MountainBaseCuredPeeper peeper;
     //public static SeaTreaderTunnelLocker locker;
     public static SeaTreaderTunnelLight tunnelLight;
     public static FallingGlassForestWreck gfWreckProp;
     public static DeadMelon deadMelon;
-    public static BloodKelpBaseNuclearReactorMelter reactorMelter;
-    public static TrailerBaseConverter bioBreaker;
+    
+    private static BloodKelpBaseNuclearReactorMelter reactorMelter;
+    private static TrailerBaseConverter bioBreaker;
+    private static MercuryLootSpawner mercuryLootSpawner;
+    internal static CrashZoneSanctuarySpawner crashSanctuarySpawner;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -187,6 +191,11 @@ namespace ReikaKalseki.SeaToSea
 	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();
 	    
+	    mercuryLootSpawner = new MercuryLootSpawner();
+	    mercuryLootSpawner.Patch();
+	    crashSanctuarySpawner = new CrashZoneSanctuarySpawner();
+	    crashSanctuarySpawner.Patch();
+	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
         
@@ -228,6 +237,7 @@ namespace ReikaKalseki.SeaToSea
        
 		VoidSpikesBiome.instance.register();
 		UnderwaterIslandsFloorBiome.instance.register();
+		CrashZoneSanctuaryBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
 		
@@ -279,50 +289,29 @@ namespace ReikaKalseki.SeaToSea
 			"c1139534-b3b9-4750-b60b-a77ca054b3dd",
 			"dd923ae3-20f6-47e0-87c0-ae2bc386607a"
     	};
-    	string rootCachePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "DegasiBaseTex");
-    	if (Directory.Exists(rootCachePath)) {
-    		foreach (string file in Directory.EnumerateFiles(rootCachePath)) {
-    			string name = Path.GetFileNameWithoutExtension(file);
-    			int idx = name.LastIndexOf('_');
-    			string type = name.Substring(idx);
-    			string obj = name.Substring(0, idx);
-    			if (!degasiBaseTextures.ContainsKey(obj))
-    				degasiBaseTextures[obj] = new Dictionary<string, Texture2D>();
-    			degasiBaseTextures[obj][type] = ImageUtils.LoadTextureFromFile(file);
-    		}
-    		SNUtil.log("Loaded degasi base textures: "+degasiBaseTextures.Keys.toDebugString(), modDLL);
-    	}
-    	else {
-    		HashSet<string> exported = new HashSet<string>();
-	    	foreach (string s in prefabs) {
-	    		GameObject go = ObjectUtil.lookupPrefab(s);
-	    		if (go) {
-	    			Renderer[] rr = go.GetComponentsInChildren<Renderer>(true);
-	    			SNUtil.log("Exporting degasi base textures from "+s+": "+rr.Length+":"+string.Join(", ", rr.Select(r2 => r2.name)), modDLL);
-	    			foreach (Renderer r in rr) {
-						foreach (Material m in r.materials) {
-							string n = m.mainTexture.name.Replace(" (Instance)", "");
+    	HashSet<string> exported = new HashSet<string>();
+	    foreach (string s in prefabs) {
+	    	GameObject go = ObjectUtil.lookupPrefab(s);
+	    	if (go) {
+	    		Renderer[] rr = go.GetComponentsInChildren<Renderer>(true);
+	    		//SNUtil.log("Exporting degasi base textures from "+s+": "+rr.Length+":"+string.Join(", ", rr.Select(r2 => r2.name)), modDLL);
+	    		foreach (Renderer r in rr) {
+					foreach (Material m in r.materials) {
+	    				if (m && m.mainTexture != null && m.mainTexture.name != null) {
+		    				string n = m.mainTexture.name.Replace(" (Instance)", "").ToLowerInvariant();
 							if (!exported.Contains(n)) {
-								exported.Add(n);
-								string n2 = n.ToLowerInvariant();
-								if (n2.Contains("rusted") || n2.Contains("abandoned")) {
-									degasiBaseTextures[n] = new Dictionary<string, Texture2D>();
-									foreach (string tex in m.GetTexturePropertyNames()) {
-										string fn = (n+tex).ToLowerInvariant();
-										if (!File.Exists(fn)) {
-											Texture2D img = (Texture2D)m.GetTexture(tex);
-											RenderUtil.dumpTexture(SNUtil.diDLL, fn, img, rootCachePath);
-											SNUtil.log("Exporting degasi base texture from "+r.gameObject.GetFullHierarchyPath()+" to "+rootCachePath+"/"+fn, modDLL);
-											degasiBaseTextures[n][tex] = img;
-										}
-									}
-								}
+								SNUtil.log("Exporting degasi base textures from "+r.gameObject.GetFullHierarchyPath()+": "+n, modDLL);
+								degasiBaseTextures[n] = new Dictionary<string, Texture2D>();
+								foreach (string tex in m.GetTexturePropertyNames())
+									degasiBaseTextures[n][tex] = (Texture2D)m.GetTexture(tex);
+								if (degasiBaseTextures[n].Count > 0)
+									exported.Add(n);
 							}
-						}
-	    			}
+	    				}
+					}
 	    		}
 	    	}
-    	}
+	    }
     }
     
     public static bool hasDegasiBaseTextures(string n) {
@@ -419,13 +408,12 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.KooshZone_Geyser, 0.125F, 1);
     	
-    	new MercuryLootSpawner().Patch();
     	foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in mercurySpawners) {
     		Tuple<float, int, float> vals = kvp.Value; //exclusion radius, target count, max range
     		int count = vals.Item2;
     		if (config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
     			count = Math.Max(1, count*2/3);
-    		GenUtil.registerWorldgen(new PositionedPrefab("MercuryLootSpawner", kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
+    		GenUtil.registerWorldgen(new PositionedPrefab(mercuryLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
     	}
     	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
@@ -608,6 +596,9 @@ namespace ReikaKalseki.SeaToSea
     			break;
     		case "voidspikes":
     			pos = VoidSpikesBiome.end500m;
+    			break;
+    		case "sanctuary":
+    			pos = CrashZoneSanctuaryBiome.biomeCenter+Vector3.up*30;
     			break;
     		case "deepvoid":
     			pos = ((VoidSpikesBiome.signalLocation+VoidSpikesBiome.voidEndpoint500m)/2F).setY(-950);

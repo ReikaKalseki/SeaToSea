@@ -43,6 +43,7 @@ namespace ReikaKalseki.SeaToSea
     internal static VentKelp kelp;
     internal static HealingFlower healFlower;
     internal static MountainGlow mountainGlow;
+    internal static SanctuaryPlant sanctuaryPlant;
     
     public static BrokenTablet brokenRedTablet;
     public static BrokenTablet brokenWhiteTablet;
@@ -169,10 +170,17 @@ namespace ReikaKalseki.SeaToSea
 		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Rock, 1, 0.1F);
 		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Sand, 1, 0.3F);
 		
+		sanctuaryPlant = new SanctuaryPlant();
+		sanctuaryPlant.Patch();	
+		e = SeaToSeaMod.itemLocale.getEntry(sanctuaryPlant.ClassID);
+		sanctuaryPlant.addPDAEntry(e.pda, 10, e.getField<string>("header"));
+		SNUtil.log(" > "+sanctuaryPlant);
+		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*0.8F);
 		BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));
 		BioReactorHandler.Main.SetBioReactorCharge(mountainGlow.seed.TechType, BaseBioReactor.GetCharge(TechType.Oculus)*2.4F);
+		BioReactorHandler.Main.SetBioReactorCharge(sanctuaryPlant.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBasketPlantSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, BaseBioReactor.GetCharge(TechType.CreepvinePiece));
    	}
    

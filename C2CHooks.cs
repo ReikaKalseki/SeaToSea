@@ -363,6 +363,12 @@ namespace ReikaKalseki.SeaToSea {
 	   			b.setValue(BKelpBaseBiome.biomeName);
 	    		b.lockValue();
 	   		}*/
+	    	else if (CrashZoneSanctuaryBiome.instance.isInBiome(b.position)) {
+	    		b.setValue(CrashZoneSanctuaryBiome.biomeName);
+	    		b.lockValue();
+	    		//if (BiomeBase.logBiomeFetch)
+	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
+	    	}
 	    }
 	    
 	    public static float getSwimSpeed(float f) {

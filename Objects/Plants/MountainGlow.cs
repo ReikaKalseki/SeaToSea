@@ -74,6 +74,8 @@ namespace ReikaKalseki.SeaToSea {
 		private Light light;
 		private SphereCollider aoe;
 		
+		private bool needsAngling;
+		
 		void Start() {
 			isGrown = gameObject.GetComponent<GrownPlant>() != null;
     		//if (gameObject.transform.position.y > -10)
@@ -85,11 +87,11 @@ namespace ReikaKalseki.SeaToSea {
     				pp.SetPickedUp();
     			}
     		}
-			else if (gameObject.transform.position.y > -120) {
+    		else if (transform.position.y > -120 || Vector3.Angle(transform.up, Vector3.up) >= 45) {
     			UnityEngine.Object.Destroy(gameObject);
 			}
     		else {
-    			
+    			needsAngling = true;
     		}
 		}
 		
@@ -128,6 +130,13 @@ namespace ReikaKalseki.SeaToSea {
 				fruiter.fruits = seeds;
 				fruiter.fruitSpawnEnabled = true;
 				fruiter.fruitSpawnInterval = 300;
+			}
+			if (needsAngling && Vector3.Distance(transform.position, Player.main.transform.position) <= 200) {
+				RaycastHit? hit = WorldUtil.getTerrainVectorAt(transform.position, 2);
+				if (hit.HasValue) {
+    				transform.up = (hit.Value.normal+Vector3.up)*0.5F;
+					needsAngling = false;
+				}
 			}
 			light.intensity = Mathf.Lerp(1.4F, 2.2F, 1F-DayNightCycle.main.GetLightScalar())*(1F-(fruiter.inactiveFruits.Count/(float)seeds.Length));
 			aoe.isTrigger = true;

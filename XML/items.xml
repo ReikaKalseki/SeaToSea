@@ -481,6 +481,20 @@
 			MountainGlow
 		</header>
 	</MOUNTAIN_GLOW>
+	<SANCTUARY_PLANT>
+		<name>
+			???
+		</name>
+		<desc>
+			A plant with a glowing core comprised of electrically reactive gel.
+		</desc>
+		<pda>
+			I need to be written
+		</pda>
+		<header>
+			SanctuaryPlant
+		</header>
+	</SANCTUARY_PLANT>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony
