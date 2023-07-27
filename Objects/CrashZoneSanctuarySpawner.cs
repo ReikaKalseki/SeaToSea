@@ -17,21 +17,19 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class CrashZoneSanctuarySpawner : Spawnable {
 		
-		private static readonly WeightedRandom<PrefabReference> prefabs = new WeightedRandom<PrefabReference>();
+		private static readonly WeightedRandom<SpawnedPlant> plants = new WeightedRandom<SpawnedPlant>();
+		//private static readonly WeightedRandom<SpawnedPrefab> resources = new WeightedRandom<SpawnedPrefab>();
 		
 		static CrashZoneSanctuarySpawner() {
-			prefabs.addEntry(VanillaFlora.HORNGRASS, 60);
-			prefabs.addEntry(VanillaFlora.REGRESS, 40);
-			prefabs.addEntry(VanillaFlora.ACID_MUSHROOM, 120);
-			prefabs.addEntry(VanillaFlora.BLUE_PALM, 60);
-			prefabs.addEntry(VanillaFlora.GELSACK, 30);
-			prefabs.addEntry(VanillaFlora.PAPYRUS, 40);
-			prefabs.addEntry(VanillaFlora.SPOTTED_DOCKLEAF, 60);
-			prefabs.addEntry(VanillaFlora.VEINED_NETTLE, 40);
-			prefabs.addEntry(VanillaFlora.ROUGE_CRADLE, 10);
-			prefabs.addEntry(VanillaResources.SHALE, 10);
-			prefabs.addEntry(VanillaResources.SANDSTONE, 30);
-			prefabs.addEntry(VanillaResources.LIMESTONE, 60);
+			plants.addEntry(new SpawnedPlant(VanillaFlora.HORNGRASS, 2).setAngle(0.125F), 60);
+			plants.addEntry(new SpawnedPlant(VanillaFlora.ACID_MUSHROOM, 0.5F, 6).setRadiusScale(0.1F).setAngle(0.75F).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 120);
+			plants.addEntry(new SpawnedPlant(VanillaFlora.GELSACK, 1.2F, 1.5F).setRadiusScale(0.15F).setAngle(1).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 30);
+			plants.addEntry(new SpawnedPlant(VanillaFlora.PAPYRUS, 2, 1.75F).setAngle(0.25F), 40);
+			plants.addEntry(new SpawnedPlant(VanillaFlora.SPOTTED_DOCKLEAF, 2, 1.75F).setRadiusScale(0.7F), 60);
+			
+			//resources.addEntry(new SpawnedPrefab(VanillaResources.SHALE, 0.8F), 10);
+			//resources.addEntry(new SpawnedPrefab(VanillaResources.SANDSTONE, 0.6F), 30);
+			//resources.addEntry(new SpawnedPrefab(VanillaResources.LIMESTONE, 0.4F), 60);
 		}
 	        
 		internal CrashZoneSanctuarySpawner() : base("CrashZoneSanctuarySpawner", "", "") {
@@ -50,67 +48,131 @@ namespace ReikaKalseki.SeaToSea {
 			
 			private float age;
 			
-			void Update() {/*
-				if (CrashZoneSanctuaryBiome.instance.isInBiome(transform.position)) {
-					string pfb = CrashZoneSanctuarySpawner.prefabs.getRandomEntry().getPrefabID();
-					GameObject go = pfb == null ? null : ObjectUtil.lookupPrefab(pfb);
-					if (go) {
-						go = UnityEngine.Object.Instantiate(go);
-						go.transform.position = transform.position;
-						go.transform.rotation = transform.rotation;
-						go.transform.SetParent(transform.parent);
-					}
-				}*/
+			void Update() {
 				if (Vector3.Distance(Player.main.transform.position, transform.position) < 100)
 					age += Time.deltaTime;
-				if (age < 4)
+				if (age < 2)
 					return;
-				for (int i = 0; i < 2400; i++) {
+				SNUtil.log("Spawning sanctuary plants @ "+transform.position);
+				List<Vector3> ends = new List<Vector3>();
+				//List<RaycastHit> terrainHits = new List<RaycastHit>();
+				for (int i = 0; i < 90; i++) {
 					Vector3 pos = MathUtil.getRandomVectorAround(transform.position, new Vector3(CrashZoneSanctuaryBiome.biomeRadius, 0, CrashZoneSanctuaryBiome.biomeRadius)).setY(-300);
-					if (!CrashZoneSanctuaryBiome.instance.isInBiome(pos))
+					RaycastHit? root = WorldUtil.getTerrainVectorAt(pos, 90);
+					if (!root.HasValue || Vector3.Angle(root.Value.normal, Vector3.up) > 20 || !CrashZoneSanctuaryBiome.instance.isInBiome(root.Value.point)) {
+						i--;
 						continue;
-					Ray ray = new Ray(pos, Vector3.down);
-					int found = UWE.Utils.RaycastIntoSharedBuffer(ray, 90, Voxeland.GetTerrainLayerMask());
-					SNUtil.log("Ray at "+pos+" found: "+found+" : "+(found > 0 ? UWE.Utils.sharedHitBuffer[0].point.ToString() : "null"));
-					if (found > 0) {
-						RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
-						if (hit.transform != null) {
-							pos = hit.point;
-							bool tilted = Vector3.Angle(transform.up, Vector3.up) >= 20;
-							PrefabReference pfb = CrashZoneSanctuarySpawner.prefabs.getRandomEntry();
-							if (tilted) {
-								while (pfb is VanillaFlora) {
-									pfb = CrashZoneSanctuarySpawner.prefabs.getRandomEntry();
-								}
-							}
-							bool plant = pfb is VanillaFlora;
-							GameObject go = pfb == null ? null : ObjectUtil.lookupPrefab(pfb.getPrefabID());
-							if (go) {
-								if (plant) {
-									int nn = UnityEngine.Random.Range(1, 5);
-									for (int n = 0; n < nn; n++) {
-										Vector3 pos2 = MathUtil.getRandomVectorAround(pos, new Vector3(5, 0, 5)).setY(pos.y+5);
-										ray = new Ray(pos2, Vector3.down);
-										found = UWE.Utils.RaycastIntoSharedBuffer(ray, 15, Voxeland.GetTerrainLayerMask());
-										if (found > 0 && Vector3.Angle(UWE.Utils.sharedHitBuffer[0].normal, Vector3.up) < 20) {
-											go = UnityEngine.Object.Instantiate(go);
-											go.transform.position = UWE.Utils.sharedHitBuffer[0].point;
-											go.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
-											go.transform.SetParent(transform.parent);
-										}
-									}
-								}
-								else {
-									go = UnityEngine.Object.Instantiate(go);
-									go.transform.position = pos;
-									go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
-									go.transform.SetParent(transform.parent);
+					}
+					//terrainHits.Add(root.Value);
+					pos = root.Value.point;
+					bool close = false;
+					foreach (Vector3 has in ends) {
+						if (Vector3.Distance(has, pos) < 12) {
+							close = true;
+							break;
+						}
+					}
+					if (close) {
+						i--;
+						continue;
+					}
+					ends.Add(pos);
+					GameObject go = ObjectUtil.createWorldObject(C2CItems.sanctuaryPlant.ClassID);
+					go.transform.position = pos;
+					go.transform.rotation = MathUtil.unitVecToRotation(root.Value.normal);
+					go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);
+					SpawnedPlant pfb = CrashZoneSanctuarySpawner.plants.getRandomEntry();
+					int amt = (int)(UnityEngine.Random.Range(9, 19)*pfb.countScale*1.5F);
+					List<RaycastHit> li = WorldUtil.getTerrainMountedPositionsAround(pos, 12F, amt);
+					//SNUtil.log("Found sanctuary hits @ "+pos+" "+li.toDebugString());
+					List<Vector3> spawned = new List<Vector3>();
+					foreach (RaycastHit hit in li) {
+						close = WorldUtil.getObjectsNearWithComponent<SanctuaryPlantTag>(hit.point, 7.5F).Count > 0;
+						//if (close)
+						//	SNUtil.log("too close to an eye flame, cancelling "+hit.point);
+						if (!close) {
+							foreach (Vector3 has in spawned) {
+								if (Vector3.Distance(has, hit.point) < pfb.minSeparation) {
+									close = true;
+									//SNUtil.log("too close to another point "+has+", cancelling "+hit.point);
+									break;
 								}
 							}
 						}
+						if (close)
+							continue;
+						pfb.spawn(hit).transform.SetParent(transform.parent);
+						spawned.Add(hit.point);
+						if (spawned.Count == 0) {
+							age = 0;
+							return;
+						}
 					}
-				}
+					//SNUtil.log("Spawned sanctuary hits @ "+pos+" "+spawned.toDebugString());
+				}/*
+				foreach (RaycastHit hit in terrainHits) {
+					Renderer[] rr = hit.transform.parent.GetComponentsInChildren<Renderer>();
+					SNUtil.writeToChat(rr.toDebugString());
+				}*/
+				/* TODO do as a bunch of separate scattered generators
+				for (float i = -CrashZoneSanctuaryBiome.biomeRadius; i <= CrashZoneSanctuaryBiome.biomeRadius; i += 0.25F) {
+					for (float k = -CrashZoneSanctuaryBiome.biomeRadius; k <= CrashZoneSanctuaryBiome.biomeRadius; k += 0.25F) {
+						Vector3 pos = MathUtil.getRandomVectorAround(CrashZoneSanctuaryBiome.biomeCenter+new Vector3(i, 30, k), 0.25F);
+						if (CrashZoneSanctuaryBiome.instance.isInBiome(pos)) {
+							RaycastHit? hit = WorldUtil.getTerrainVectorAt(pos, 90);
+							if (hit.HasValue) {
+								GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.crashSanctuaryGrass.ClassID);
+								go.transform.position = hit.Value.point;
+								go.transform.rotation = MathUtil.unitVecToRotation(hit.Value.normal);
+								go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);
+							}
+						}
+					}
+				}*/
 				UnityEngine.Object.DestroyImmediate(gameObject);
+			}
+			
+		}
+		
+		class SpawnedPlant {
+			
+			private readonly VanillaFlora prefab;
+			internal readonly float minSeparation;
+			internal readonly float countScale;
+			
+			internal float angleFactor = 0;
+			internal float radiusScale = 1;
+			internal Action<GameObject> modify = null;
+			
+			internal SpawnedPlant(VanillaFlora pr, float r, float cs = 1) {
+				prefab = pr;
+				minSeparation = r;
+				countScale = cs;
+			}
+			
+			internal SpawnedPlant setModify(Action<GameObject> a) {
+				modify = a;
+				return this;
+			}
+			
+			internal SpawnedPlant setAngle(float a) {
+				angleFactor = a;
+				return this;
+			}
+			
+			internal SpawnedPlant setRadiusScale(float r) {
+				radiusScale = r;
+				return this;
+			}
+			
+			internal GameObject spawn(RaycastHit hit) {
+				GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(prefab.getRandomPrefab(true)));
+				go.transform.position = hit.point;
+				go.transform.rotation = angleFactor > 0 ? MathUtil.unitVecToRotation(hit.normal*angleFactor+(1-angleFactor)*Vector3.up) : Quaternion.identity;
+				go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);
+				if (modify != null)
+					modify.Invoke(go);
+				return go;
 			}
 			
 		}

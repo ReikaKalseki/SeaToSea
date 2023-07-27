@@ -222,6 +222,28 @@
 		
 	</pda>
   </NeedRepairDataBox>
+  <SanctuaryPlantGrowing>
+	<name>
+		
+	</name>
+	<desc>
+		Growing a new core
+	</desc>
+	<pda>
+		
+	</pda>
+  </SanctuaryPlantGrowing>
+  <SanctuaryPlantClick>
+	<name>
+		
+	</name>
+	<desc>
+		Harvest core
+	</desc>
+	<pda>
+		
+	</pda>
+  </SanctuaryPlantClick>
   <MercuryDesc>
 	<name>
 		

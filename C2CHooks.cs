@@ -47,6 +47,8 @@ namespace ReikaKalseki.SeaToSea {
 	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
 	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
 	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
+	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
+	    public static readonly string sanctuaryPlantClickLocaleKey = "SanctuaryPlantClick";
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -159,6 +161,8 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(dockUpgradesLocaleKey, SeaToSeaMod.miscLocale.getEntry(dockUpgradesLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(needRepairDataboxLocaleKey, SeaToSeaMod.miscLocale.getEntry(needRepairDataboxLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(sanctuaryPlantClickLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantClickLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(sanctuaryPlantGrowingLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantGrowingLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	
 	    	//LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));

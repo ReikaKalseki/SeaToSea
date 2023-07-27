@@ -483,13 +483,19 @@
 	</MOUNTAIN_GLOW>
 	<SANCTUARY_PLANT>
 		<name>
-			???
+			Eye Flame
 		</name>
 		<desc>
-			A plant with a glowing core comprised of electrically reactive gel.
+			The glowing core harvested from an eye flame. Generates a voltage when subjected to mechanical or chemical stimulation.
 		</desc>
 		<pda>
-			I need to be written
+			Only encountered in a small ecological niche in a remote corner of the crash zone, this floral species may have once been far more abundant; the remaining area where these plants are found may only be a small remnant of what was once a larger region before the crash, but has since been replaced with a sandy wasteland.
+			
+			The main body of the plant consists of two layered bowls of upwards-facing violet petals, set atop a flat ring of wide, firm, waxy leaves. While these leaves exhibit some luminescence and texture, they are not the most remarkable aspect of this species.
+			
+			At the center of the organism, lies a soft sac of electrochemically active  - and extraordinarily luminescent - tissue. When subjected to mechanical or chemical stimulation, such as flexion or a change in ambient pH, the cells in this organ start to generate an electrical potential, which over the entire body of the organ can amount to a significant voltage. The utility of this mechanism is unknown, but it may serve some role in the plant's reproductive lifecycle, perhaps signaling to the embedded seeds to begin the development process.
+			
+			Assessment: Applications in fabrication of electrically active materials
 		</pda>
 		<header>
 			SanctuaryPlant
