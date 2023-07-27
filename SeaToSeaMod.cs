@@ -77,6 +77,7 @@ namespace ReikaKalseki.SeaToSea
     private static TrailerBaseConverter bioBreaker;
     private static MercuryLootSpawner mercuryLootSpawner;
     internal static CrashZoneSanctuarySpawner crashSanctuarySpawner;
+    internal static SanctuaryGrassSpawner sanctuaryGrassSpawner;
     internal static CrashZoneSanctuaryGrass crashSanctuaryGrass;
     
     public static DataChit laserCutterBulkhead;
@@ -196,6 +197,8 @@ namespace ReikaKalseki.SeaToSea
 	    mercuryLootSpawner.Patch();
 	    crashSanctuarySpawner = new CrashZoneSanctuarySpawner();
 	    crashSanctuarySpawner.Patch();
+	    sanctuaryGrassSpawner = new SanctuaryGrassSpawner();
+	    sanctuaryGrassSpawner.Patch();
 	    crashSanctuaryGrass = new CrashZoneSanctuaryGrass();
 	    crashSanctuaryGrass.Patch();
 	    

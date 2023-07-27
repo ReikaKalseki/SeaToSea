@@ -23,17 +23,21 @@ namespace ReikaKalseki.SeaToSea {
 			
 	    public override GameObject GetGameObject() {
 			GameObject go = ObjectUtil.createWorldObject(VanillaFlora.VEINED_NETTLE.getRandomPrefab(false));
-			ObjectUtil.removeComponent<LiveMixin>();
-			ObjectUtil.removeComponent<Collider>();
-			Renderer r = go.GetComponentInChildren<Renderer>();
-			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/SanctuaryGrass", new Dictionary<int, string>{{0, ""}, {1, ""}, {2, ""}, {3, ""}});
-			r.materials[0].DisableKeyword("MARMO_EMISSION");
-			r.materials[1].DisableKeyword("MARMO_EMISSION");
-			GameObject r2 = UnityEngine.Object.Instantiate(r.gameObject);
-			r2.transform.SetParent(r.transform.parent);
+			ObjectUtil.removeComponent<LiveMixin>(go);
+			ObjectUtil.removeComponent<Collider>(go);
+			Renderer main = null;
+			foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
+				if (!r.name.Contains("LOD"))
+					main = r;
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/SanctuaryGrass", new Dictionary<int, string>{{0, ""}, {1, ""}, {2, ""}, {3, ""}});
+				r.materials[0].DisableKeyword("MARMO_EMISSION");
+				r.materials[1].DisableKeyword("MARMO_EMISSION");
+			}
+			GameObject r2 = UnityEngine.Object.Instantiate(main.gameObject);
+			r2.transform.SetParent(main.transform.parent);
 			r2.transform.localPosition = Vector3.zero;
 			r2.transform.localScale = Vector3.one;
-			r2.transform.localRotation = Quaternion.Euler(270, UnityEngine.Random.Range(30, 150), 0);
+			r2.transform.localRotation = Quaternion.Euler(270, UnityEngine.Random.Range(50, 130), 0);
 			return go;
 	    }
 			

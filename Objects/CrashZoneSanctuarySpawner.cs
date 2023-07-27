@@ -18,14 +18,15 @@ namespace ReikaKalseki.SeaToSea {
 	public class CrashZoneSanctuarySpawner : Spawnable {
 		
 		private static readonly WeightedRandom<SpawnedPlant> plants = new WeightedRandom<SpawnedPlant>();
+		private static HashSet<string> plantIDs = new HashSet<string>();
 		//private static readonly WeightedRandom<SpawnedPrefab> resources = new WeightedRandom<SpawnedPrefab>();
 		
 		static CrashZoneSanctuarySpawner() {
-			plants.addEntry(new SpawnedPlant(VanillaFlora.HORNGRASS, 2).setAngle(0.125F), 60);
-			plants.addEntry(new SpawnedPlant(VanillaFlora.ACID_MUSHROOM, 0.5F, 6).setRadiusScale(0.1F).setAngle(0.75F).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 120);
-			plants.addEntry(new SpawnedPlant(VanillaFlora.GELSACK, 1.2F, 1.5F).setRadiusScale(0.15F).setAngle(1).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 30);
-			plants.addEntry(new SpawnedPlant(VanillaFlora.PAPYRUS, 2, 1.75F).setAngle(0.25F), 40);
-			plants.addEntry(new SpawnedPlant(VanillaFlora.SPOTTED_DOCKLEAF, 2, 1.75F).setRadiusScale(0.7F), 60);
+			addPlant(new SpawnedPlant(VanillaFlora.HORNGRASS, 2).setAngle(0.125F), 60);
+			addPlant(new SpawnedPlant(VanillaFlora.ACID_MUSHROOM, 0.5F, 6).setRadiusScale(0.33F).setAngle(0.75F).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 120);
+			addPlant(new SpawnedPlant(VanillaFlora.GELSACK, 1.2F, 1.5F).setRadiusScale(0.5F).setAngle(1).setModify(go => go.transform.Rotate(new Vector3(-90, 0, 0), Space.Self)), 30);
+			addPlant(new SpawnedPlant(VanillaFlora.PAPYRUS, 2, 1.75F).setAngle(0.25F), 40);
+			addPlant(new SpawnedPlant(VanillaFlora.SPOTTED_DOCKLEAF, 2, 1.75F).setRadiusScale(0.8F), 60);
 			
 			//resources.addEntry(new SpawnedPrefab(VanillaResources.SHALE, 0.8F), 10);
 			//resources.addEntry(new SpawnedPrefab(VanillaResources.SANDSTONE, 0.6F), 30);
@@ -35,6 +36,15 @@ namespace ReikaKalseki.SeaToSea {
 		internal CrashZoneSanctuarySpawner() : base("CrashZoneSanctuarySpawner", "", "") {
 			
 	    }
+		
+		private static void addPlant(SpawnedPlant p, double weight) {
+			plants.addEntry(p, weight);
+			plantIDs.AddRange(p.prefab.getPrefabs(true, true));
+		}
+		
+		public static bool spawnsPlant(string id) {
+			return plantIDs.Contains(id);
+		}
 			
 	    public override GameObject GetGameObject() {
 			GameObject go = new GameObject();
@@ -56,7 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 				SNUtil.log("Spawning sanctuary plants @ "+transform.position);
 				List<Vector3> ends = new List<Vector3>();
 				//List<RaycastHit> terrainHits = new List<RaycastHit>();
-				for (int i = 0; i < 90; i++) {
+				for (int i = 0; i < 60; i++) {
 					Vector3 pos = MathUtil.getRandomVectorAround(transform.position, new Vector3(CrashZoneSanctuaryBiome.biomeRadius, 0, CrashZoneSanctuaryBiome.biomeRadius)).setY(-300);
 					RaycastHit? root = WorldUtil.getTerrainVectorAt(pos, 90);
 					if (!root.HasValue || Vector3.Angle(root.Value.normal, Vector3.up) > 20 || !CrashZoneSanctuaryBiome.instance.isInBiome(root.Value.point)) {
@@ -77,26 +87,25 @@ namespace ReikaKalseki.SeaToSea {
 						continue;
 					}
 					ends.Add(pos);
+					foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(pos, 2.5F)) {
+						UnityEngine.Object.DestroyImmediate(pi.gameObject);
+					}
 					GameObject go = ObjectUtil.createWorldObject(C2CItems.sanctuaryPlant.ClassID);
 					go.transform.position = pos;
 					go.transform.rotation = MathUtil.unitVecToRotation(root.Value.normal);
 					go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);
 					SpawnedPlant pfb = CrashZoneSanctuarySpawner.plants.getRandomEntry();
 					int amt = (int)(UnityEngine.Random.Range(9, 19)*pfb.countScale*1.5F);
-					List<RaycastHit> li = WorldUtil.getTerrainMountedPositionsAround(pos, 12F, amt);
+					List<RaycastHit> li = WorldUtil.getTerrainMountedPositionsAround(pos, 12F*pfb.radiusScale, amt);
 					//SNUtil.log("Found sanctuary hits @ "+pos+" "+li.toDebugString());
 					List<Vector3> spawned = new List<Vector3>();
 					foreach (RaycastHit hit in li) {
-						close = WorldUtil.getObjectsNearWithComponent<SanctuaryPlantTag>(hit.point, 7.5F).Count > 0;
-						//if (close)
-						//	SNUtil.log("too close to an eye flame, cancelling "+hit.point);
-						if (!close) {
-							foreach (Vector3 has in spawned) {
-								if (Vector3.Distance(has, hit.point) < pfb.minSeparation) {
-									close = true;
-									//SNUtil.log("too close to another point "+has+", cancelling "+hit.point);
-									break;
-								}
+						close = false;
+						foreach (Vector3 has in spawned) {
+							if (Vector3.Distance(has, hit.point) < pfb.minSeparation) {
+								close = true;
+								//SNUtil.log("too close to another point "+has+", cancelling "+hit.point);
+								break;
 							}
 						}
 						if (close)
@@ -136,7 +145,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		class SpawnedPlant {
 			
-			private readonly VanillaFlora prefab;
+			internal readonly VanillaFlora prefab;
 			internal readonly float minSeparation;
 			internal readonly float countScale;
 			

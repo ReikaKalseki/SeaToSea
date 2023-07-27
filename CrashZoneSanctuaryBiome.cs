@@ -29,12 +29,15 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
-		public override void register() {/*		
-			is both not dense enough and is eating all the slots throughout the biome	
-			GenUtil.registerSlotWorldgen(SeaToSeaMod.crashSanctuarySpawner.ClassID, SeaToSeaMod.crashSanctuarySpawner.PrefabFileName, SeaToSeaMod.crashSanctuarySpawner.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.CrashZone_Rock, 1, 6F);
-			GenUtil.registerSlotWorldgen(SeaToSeaMod.crashSanctuarySpawner.ClassID, SeaToSeaMod.crashSanctuarySpawner.PrefabFileName, SeaToSeaMod.crashSanctuarySpawner.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.CrashZone_Sand, 1, 6F);
-			*/
+		public override void register() {
 			GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.crashSanctuarySpawner.ClassID, biomeCenter));
+			
+			UnityEngine.Random.InitState(873451871);
+			for (int i = 0; i < 120; i++) {
+				Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)).setY(-300);
+				if (isInBiome(pos))
+					GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.sanctuaryGrassSpawner.ClassID, pos));
+			}
 		}
 		
 		public override VanillaMusic[] getMusicOptions() {
