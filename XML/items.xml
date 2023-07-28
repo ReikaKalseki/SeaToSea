@@ -665,6 +665,50 @@
 			
 		</pda>
 	</SMDEPTH4>
+	<bioprocessor>
+		<name>
+			Bioprocessor
+		</name>
+		<desc>
+			Decomposes and recombines organic matter into useful raw chemicals.
+		</desc>
+		<pda>
+			some stuff goes here
+		</pda>
+	</bioprocessor>
+	<rebreathercharger>
+		<name>
+			Liquid Breathing Recharger
+		</name>
+		<desc>
+			Refills liquid breathing systems in proximity.
+		</desc>
+		<pda>
+			
+		</pda>
+	</rebreathercharger>
+	<enum>
+		<name>
+			
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</enum>
+	<enum>
+		<name>
+			
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</enum>
 	<enum>
 		<name>
 			

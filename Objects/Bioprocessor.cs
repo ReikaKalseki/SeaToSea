@@ -114,7 +114,7 @@ namespace ReikaKalseki.SeaToSea {
 			return delegates[input].TechType;
 		}
 		
-		public Bioprocessor() : base("bioprocessor", "Bioprocessor", "Decomposes and recombines organic matter into useful raw chemicals.", "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
+		public Bioprocessor(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc, "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
 			addIngredient(TechType.TitaniumIngot, 1);
 			addIngredient(TechType.Magnetite, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 6);

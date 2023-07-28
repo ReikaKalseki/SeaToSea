@@ -76,9 +76,12 @@ namespace ReikaKalseki.SeaToSea
     private static BloodKelpBaseNuclearReactorMelter reactorMelter;
     private static TrailerBaseConverter bioBreaker;
     private static MercuryLootSpawner mercuryLootSpawner;
+    
     internal static CrashZoneSanctuarySpawner crashSanctuarySpawner;
     internal static SanctuaryGrassSpawner sanctuaryGrassSpawner;
     internal static CrashZoneSanctuaryGrass crashSanctuaryGrass;
+    internal static CrashZoneSanctuaryGrassBump sanctuaryGrassBump;
+    internal static CrashZoneSanctuaryCoralSheet sanctuaryCoral;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -201,6 +204,10 @@ namespace ReikaKalseki.SeaToSea
 	    sanctuaryGrassSpawner.Patch();
 	    crashSanctuaryGrass = new CrashZoneSanctuaryGrass();
 	    crashSanctuaryGrass.Patch();
+	    sanctuaryGrassBump = new CrashZoneSanctuaryGrassBump();
+	    sanctuaryGrassBump.Patch();
+	    sanctuaryCoral = new CrashZoneSanctuaryCoralSheet();
+	    sanctuaryCoral.Patch();
 	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
@@ -212,15 +219,19 @@ namespace ReikaKalseki.SeaToSea
 			go.EnsureComponent<LathingDroneSparker>();
         }); //it has its own model
         
-        processor = new Bioprocessor();
+       	e = itemLocale.getEntry("bioprocessor");
+        processor = new Bioprocessor(e);
         processor.Patch();       
         SNUtil.log("Registered custom machine "+processor);
+        processor.addPDAPage(e.pda);
         processor.addFragments(4, 5, bioprocFragments);
         Bioprocessor.addRecipes();
         
-        rebreatherCharger = new RebreatherRecharger();
+        e = itemLocale.getEntry("rebreathercharger");
+        rebreatherCharger = new RebreatherRecharger(e);
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
+        rebreatherCharger.addPDAPage(e.pda);
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
         addPDAEntries();
@@ -250,6 +261,7 @@ namespace ReikaKalseki.SeaToSea
 		C2CItems.alkali.addNativeBiome(VanillaBiomes.MOUNTAINS, true).addNativeBiome(VanillaBiomes.TREADER, true).addNativeBiome(VanillaBiomes.KOOSH, true);
 		C2CItems.kelp.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
 		C2CItems.healFlower.addNativeBiome(VanillaBiomes.REDGRASS, true);
+		C2CItems.sanctuaryPlant.addNativeBiome(CrashZoneSanctuaryBiome.instance);
 		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);

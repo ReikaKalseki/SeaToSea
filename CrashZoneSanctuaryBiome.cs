@@ -29,31 +29,19 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 		
-		public override void register() {
+		public override void register() {/*
 			GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.crashSanctuarySpawner.ClassID, biomeCenter));
 			
 			UnityEngine.Random.InitState(873451871);
-			for (int i = 0; i < 120; i++) {
+			for (int i = 0; i < 180; i++) {
 				Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)).setY(-300);
 				if (isInBiome(pos))
 					GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.sanctuaryGrassSpawner.ClassID, pos));
-			}
+			}*/
 		}
 		
 		public override VanillaMusic[] getMusicOptions() {
 			return new VanillaMusic[]{VanillaMusic.COVE};
-		}
-		
-		public override Vector3 getFogColor(Vector3 orig) {
-			return waterColor.toVector();
-		}
-		
-		public override float getSunIntensity(float orig) {
-			return orig;
-		}
-		
-		public override float getFogDensity(float orig) {
-			return orig*1.5F;
 		}
 		
 		public override bool isCaveBiome() {
@@ -66,6 +54,99 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override double getDistanceToBiome(Vector3 vec) {
 			return Math.Max(0, Vector3.Distance(vec, biomeCenter)-biomeRadius);
+		}
+		
+		public override float getMurkiness(float orig) {
+			return 0.99F;
+		}
+		
+		public override float getScatteringFactor(float orig) {
+			return orig;
+		}
+		
+		public override Vector3 getColorFalloff(Vector3 orig) {
+			return new Vector3(40, 3.2F, 2.5F)*0.8F;
+		}
+		
+		public override float getFogStart(float orig) {
+			return 18;
+		}
+		
+		public override float getScatterFactor(float orig) {
+			return orig;
+		}
+		
+		public override Color getWaterColor(Color orig) {
+			return orig;
+		}
+		
+		public override float getSunScale(float orig) {
+			return 0.5F;
+		}
+		
+		public static void cleanPlantOverlap() { //called manually to compute prebaked positions
+			HashSet<Vector3> positions = new HashSet<Vector3>();
+			foreach (SanctuaryPlantTag sp in UnityEngine.Object.FindObjectsOfType<SanctuaryPlantTag>()) {
+				Vector3 pos = sp.transform.position;
+				if (!instance.isInBiome(pos))
+					continue;
+				positions.Add(pos);
+				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(pos, 2.5F)) { //does not find the grass because no collider
+					if (CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId))
+						UnityEngine.Object.DestroyImmediate(pi.gameObject);
+				}
+			}
+			HashSet<Vector3> satellitePositions = new HashSet<Vector3>();
+			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+				if (pi && CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId))
+					satellitePositions.Add(pi.transform.position);
+			}
+			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+				if (pi && (pi.ClassId == SeaToSeaMod.crashSanctuaryGrass.ClassID || pi.ClassId == SeaToSeaMod.sanctuaryGrassBump.ClassID)) {
+					foreach (Vector3 pos in positions) {
+						if (Vector3.Distance(pos, pi.transform.position) <= 3.75F) {
+							UnityEngine.Object.DestroyImmediate(pi.gameObject);
+							break;
+						}
+					}
+					if (!pi || !pi.transform)
+						continue;
+					foreach (Vector3 pos in satellitePositions) {
+						if (Vector3.Distance(pos, pi.transform.position) <= 2F) {
+							UnityEngine.Object.DestroyImmediate(pi.gameObject);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		public static void dumpPlantData() {
+			string path = BuildingHandler.instance.getDumpFile("sanctuary_plants");
+			XmlDocument doc = new XmlDocument();
+			XmlElement rootnode = doc.CreateElement("Root");
+			doc.AppendChild(rootnode);
+			
+			foreach (SanctuaryPlantTag sp in UnityEngine.Object.FindObjectsOfType<SanctuaryPlantTag>()) {
+				Vector3 pos = sp.transform.position;
+				if (!instance.isInBiome(pos))
+					continue;
+				PositionedPrefab pfb = new PositionedPrefab(sp.GetComponent<PrefabIdentifier>());				
+				XmlElement e = doc.CreateElement("object");
+				pfb.saveToXML(e);
+				doc.DocumentElement.AppendChild(e);
+			}
+			
+			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+				if (pi && (pi.ClassId == SeaToSeaMod.crashSanctuaryGrass.ClassID || pi.ClassId == SeaToSeaMod.sanctuaryGrassBump.ClassID)) {
+					PositionedPrefab pfb = new PositionedPrefab(pi);				
+					XmlElement e = doc.CreateElement("grass");
+					pfb.saveToXML(e);
+					doc.DocumentElement.AppendChild(e);
+				}
+			}
+			
+			doc.Save(path);
 		}
 	}
 }

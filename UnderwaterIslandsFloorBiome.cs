@@ -23,10 +23,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly string biomeName = "Glass Forest";
 		public static readonly float waterTemperature = 35;
-		
-		public static Color waterColor = new Color(0.75F, 0.125F, 1F);
-		public static readonly float fogDensity = 1.75F;
-		public static readonly float sunIntensity = 20F;
     
 	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-110.76F, -499F, 940.19F);
 	    public static readonly Vector3 wreckCtrPos2 = new Vector3(-138.38F, -497F, 932.69F);
@@ -64,16 +60,24 @@ namespace ReikaKalseki.SeaToSea {
 			return new VanillaMusic[]{VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM, VanillaMusic.AURORA};
 		}
 		
-		public override Vector3 getFogColor(Vector3 orig) {
-			return waterColor.toVector();
+		public override float getSunScale(float orig) {
+			return 0;
 		}
 		
-		public override float getSunIntensity(float orig) {
-			return sunIntensity;
+		public override float getFogStart(float orig) {
+			return orig;
 		}
 		
-		public override float getFogDensity(float orig) {
-			return fogDensity;
+		public override float getMurkiness(float orig) {
+			return orig;
+		}
+		
+		public override Vector3 getColorFalloff(Vector3 orig) {
+			return orig;
+		}
+		
+		public override Color getWaterColor(Color orig) {
+			return orig;
 		}
 		
 		public override bool isCaveBiome() {

@@ -33,9 +33,6 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly string biomeName = "Void Spikes";
 		public static readonly float waterTemperature = 18;
 		
-		public static readonly Color waterColor = new Color(0.0F, 0.125F, 0.5F);
-		public static readonly float fogDensity = 1.5F;
-		
 		public static readonly int CLUSTER_COUNT = 120;//104;//88;
 		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
@@ -74,16 +71,24 @@ namespace ReikaKalseki.SeaToSea {
 			return new VanillaMusic[]{VanillaMusic.DUNES, VanillaMusic.BKELP, VanillaMusic.KOOSH, VanillaMusic.DEEPGRAND};
 		}
 		
-		public override Vector3 getFogColor(Vector3 orig) {
-			return waterColor.toVector();
+		public override float getSunScale(float orig) {
+			return 0;
 		}
 		
-		public override float getSunIntensity(float orig) {
-			return orig*0.2F;
+		public override float getFogStart(float orig) {
+			return orig;
 		}
 		
-		public override float getFogDensity(float orig) {
-			return fogDensity;
+		public override float getMurkiness(float orig) {
+			return orig;
+		}
+		
+		public override Vector3 getColorFalloff(Vector3 orig) {
+			return orig;
+		}
+		
+		public override Color getWaterColor(Color orig) {
+			return orig;
 		}
 		
 		public override void register() {

@@ -71,7 +71,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onEMPHitEvent += onEMPHit;
 	    	
-	    	DIHooks.fogCalculateEvent += interceptChosenFog;
+	    	//DIHooks.fogCalculateEvent += interceptChosenFog;
 	    	
 	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
 	    	
@@ -1223,7 +1223,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onEMPHit(EMPBlast e, GameObject go) {
 	    	VoidSpikeLeviathanSystem.instance.onObjectEMPHit(e, go);
 	    }
-	    
+	    /*
 	    public static void interceptChosenFog(DIHooks.WaterFogValues fog) {
 	    	double d = VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true)-VoidSpikesBiome.biomeVolumeRadius;
 	    	if (d <= 50 && d > 0) {
@@ -1241,7 +1241,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		fog.color = Color.Lerp(fog.originalColor, UnderwaterIslandsFloorBiome.waterColor, f);
 	    		return;
 	    	}
-	    }
+	    }*/
 	    
 	    public static float getRadiationLevel(DIHooks.RadiationCheck ch) {
 	    	//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));

@@ -38,6 +38,7 @@ namespace ReikaKalseki.SeaToSea {
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<SanctuaryPlantTag>();
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			RenderUtil.setEmissivity(go.GetComponentInChildren<Renderer>(), 2);
 		}
 		
@@ -62,7 +63,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastHarvest = -1;
 		bool prevHarvested;
 		
-		private float lastAreaCheck = -1;
+		//private float lastAreaCheck = -1;
 		
 		private static readonly float GROW_TIME = 1200; //20 min
 		
@@ -87,14 +88,14 @@ namespace ReikaKalseki.SeaToSea {
 			if (mainRender == null)
 				mainRender = GetComponentInChildren<Renderer>();
 			light.transform.localPosition = Vector3.up*0.91F;
-			
+			/*
 			if (!isGrown && DayNightCycle.main.timePassedAsFloat-lastAreaCheck >= 1 && CrashZoneSanctuaryBiome.instance.isInBiome(transform.position)) {
 				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(transform.position, 2.0F)) {
-					if (CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId))
+					if (pi.classId == SeaToSeaMod.crashSanctuaryGrass.ClassID || CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId))
 						UnityEngine.Object.DestroyImmediate(pi.gameObject);
 				}
 				lastAreaCheck = DayNightCycle.main.timePassedAsFloat;
-			}
+			}*/
 			
 			bool harvested = isHarvested();
 			if (harvested != prevHarvested) {
