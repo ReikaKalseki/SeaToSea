@@ -123,7 +123,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
 		RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
-		RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
+		//RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
 		
 		Spawnable baseglass = ItemRegistry.instance.getItem("BaseGlass");
 		int amt = RecipeUtil.removeIngredient(TechType.BaseWaterPark, baseglass != null ? baseglass.TechType : TechType.Glass).amount;

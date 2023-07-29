@@ -269,10 +269,11 @@
 		</name>
 		<desc>
 			A suit made of molecularly impenetrable fabric.
-			Stops almost all electrical and chemical penetration, but does little against radiation or thermal hazards.
 		</desc>
 		<pda>
+			An upgrade for the basic AEP suit, the electrochemical suit is woven from a dense, chemically-sealed mesh of treated fibers, and confers great resistance against both electrical and chemical hazards, allowing for survival in toxic or highly charged environments.
 			
+			Disclaimer: Stops almost all electrical and chemical penetration, but does little against radiation or thermal hazards. Not rated for acid exposure.
 		</pda>
 	</SealedSuit>
 	<SealedGloves>
@@ -292,11 +293,11 @@
 		</name>
 		<desc>
 			A motorized face mask equipped with the ability to actively pump a breathing medium from storage and either recirculate it back to the tank or force waste gas out against very high pressures.
-			
-			A requirement for liquid breathing hardware to function.
 		</desc>
 		<pda>
+			At depths where the rebreather can no longer suffice, causing oxygen consumption to increase to ever more unmanageable levels, the recirculation mask becomes a highly valuable piece of survival equipment. Motorized gas delivery and exhaust mechanisms overcome these pressures and eliminate most of the wasted source gas, greatly extending the maximum practical duration of a dive.
 			
+			A requirement for liquid breathing hardware to function.
 		</pda>
 	</RebreatherV2>
 	<LiquidTank>
@@ -305,11 +306,15 @@
 		</name>
 		<desc>
 			A breathing apparatus that uses an oxygen-saturated perfluorocarbon liquid instead of air.
-			Allows for respiration at extreme depths and pressures without risk of barotrauma or toxicity from gas mixtures.
-			Requires a compatible facemask to function.
 		</desc>
 		<pda>
+			At great depths, the extreme water pressure makes freediving impossible with normal respiratory mechanisms. The liquid breathing system solves that limitation, and allows for respiration at extreme depths and pressures without risk of barotrauma or toxicity from gas mixtures.
 			
+			Note:
+			- Requires a compatible facemask to function
+			- Contains a main tank and a small (150 second) supply tank, only the latter of which is able to be directly drawn upon during diving
+			- Main tank can only refill the supply tank when in a powered space
+			- Consumes breathing fluid to refill the main tank, and requires a compatible fluid pump module installed in a seabase to do so
 		</pda>
 	</LiquidTank>
 	<CurativeBandage>
@@ -486,7 +491,7 @@
 			Eye Flame
 		</name>
 		<desc>
-			The glowing core harvested from an eye flame. Generates a voltage when subjected to mechanical or chemical stimulation.
+			The glowing core harvested from an eye flame. Generates a voltage when subjected to mechanical, thermal, or chemical stimulation.
 		</desc>
 		<pda>
 			Only encountered in a small ecological niche in a remote corner of the crash zone, this floral species may have once been far more abundant; the remaining area where these plants are found may only be a small remnant of what was once a larger region before the crash, but has since been replaced with a sandy wasteland.
@@ -673,7 +678,13 @@
 			Decomposes and recombines organic matter into useful raw chemicals.
 		</desc>
 		<pda>
-			some stuff goes here
+			This advanced machine is a key component of any main fabrication facility, and is capable of processing a multitude of biological materials into useful chemical products for use in more standard fabricator-based processes.
+			
+			In addition to several units of the base material, it requires some quantity of enzymatic reagents to facilitate the process, which will be gradually consumed over the duration of the production cycle. To conduct these reactions in a reasonable length of time - though note that for some reactions this can still be a subtantial duration - it will consume large quantities of power to maintain high temperatures and aggressive mechanical mixing.
+			
+			Efficiency can be increased in two ways:
+			- Power consumption firmware upgrades, capable of reducing the power cost per production cycle (sold separately: not available in standard models)
+			- Addition of a microbiotic component to increase yields for the same quantity of input ingredients
 		</pda>
 	</bioprocessor>
 	<rebreathercharger>
@@ -684,7 +695,7 @@
 			Refills liquid breathing systems in proximity.
 		</desc>
 		<pda>
-			
+			This pump will distribute fresh liquid breathing mix into any compatible equipped unit worn within the base, thanks to an advanced network of pipes embedded in the walls of the seabase. Features a large distribution tank which can be refilled at will.
 		</pda>
 	</rebreathercharger>
 	<enum>

@@ -79,9 +79,9 @@ namespace ReikaKalseki.SeaToSea
     
     internal static CrashZoneSanctuarySpawner crashSanctuarySpawner;
     internal static SanctuaryGrassSpawner sanctuaryGrassSpawner;
-    internal static CrashZoneSanctuaryGrass crashSanctuaryGrass;
-    internal static CrashZoneSanctuaryGrassBump sanctuaryGrassBump;
-    internal static CrashZoneSanctuaryCoralSheet sanctuaryCoral;
+    internal static CrashZoneSanctuaryFern crashSanctuaryFern;
+    //internal static CrashZoneSanctuaryGrassBump sanctuaryGrassBump;
+    //internal static CrashZoneSanctuaryCoralSheet sanctuaryCoral;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -97,6 +97,7 @@ namespace ReikaKalseki.SeaToSea
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
     //public static SignalManager.ModSignal duneArchWreckSignal;
+    public static SignalManager.ModSignal sanctuaryDirectionHint;
     
     public static Story.StoryGoal crashMesaRadio;
     //public static Story.StoryGoal duneArchRadio;
@@ -202,12 +203,12 @@ namespace ReikaKalseki.SeaToSea
 	    crashSanctuarySpawner.Patch();
 	    sanctuaryGrassSpawner = new SanctuaryGrassSpawner();
 	    sanctuaryGrassSpawner.Patch();
-	    crashSanctuaryGrass = new CrashZoneSanctuaryGrass();
-	    crashSanctuaryGrass.Patch();
-	    sanctuaryGrassBump = new CrashZoneSanctuaryGrassBump();
-	    sanctuaryGrassBump.Patch();
-	    sanctuaryCoral = new CrashZoneSanctuaryCoralSheet();
-	    sanctuaryCoral.Patch();
+	    crashSanctuaryFern = new CrashZoneSanctuaryFern();
+	    crashSanctuaryFern.Patch();
+	    //sanctuaryGrassBump = new CrashZoneSanctuaryGrassBump();
+	    //sanctuaryGrassBump.Patch();
+	    //sanctuaryCoral = new CrashZoneSanctuaryCoralSheet();
+	    //sanctuaryCoral.Patch();
 	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
@@ -223,7 +224,7 @@ namespace ReikaKalseki.SeaToSea
         processor = new Bioprocessor(e);
         processor.Patch();       
         SNUtil.log("Registered custom machine "+processor);
-        processor.addPDAPage(e.pda);
+        processor.addPDAPage(e.pda, "Bioprocessor");
         processor.addFragments(4, 5, bioprocFragments);
         Bioprocessor.addRecipes();
         
@@ -231,7 +232,7 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger = new RebreatherRecharger(e);
         rebreatherCharger.Patch();
         SNUtil.log("Registered custom machine "+rebreatherCharger);
-        rebreatherCharger.addPDAPage(e.pda);
+        rebreatherCharger.addPDAPage(e.pda, "RebreatherCharger");
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
         addPDAEntries();
@@ -358,6 +359,11 @@ namespace ReikaKalseki.SeaToSea
 		voidSpikeDirectionHint.setStoryGate(PDAManager.getPage("voidpod").id);
 		voidSpikeDirectionHint.register("4c10bbd6-5100-4632-962e-69306b09222f", SpriteManager.Get(SpriteManager.Group.Pings, "Sunbeam"), VoidSpikesBiome.end500m);
 		voidSpikeDirectionHint.addWorldgen();
+		
+        e = SeaToSeaMod.signalLocale.getEntry("sanctuary");
+		sanctuaryDirectionHint = SignalManager.createSignal(e);
+		sanctuaryDirectionHint.register("4c10bbd6-5100-4632-962e-69306b09222f", SpriteManager.Get(SpriteManager.Group.Pings, "Sunbeam"), CrashZoneSanctuaryBiome.biomeCenter.setY(-360));
+		sanctuaryDirectionHint.addWorldgen();
 		
 		e = pdaLocale.getEntry("crashmesahint");
 		crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"));

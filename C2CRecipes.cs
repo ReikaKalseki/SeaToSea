@@ -353,6 +353,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Constructor, drone.TechType, 4);
         
         //RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
+        RecipeUtil.addIngredient(TechType.Polyaniline, C2CItems.sanctuaryPlant.seed.TechType, 1);
         
         RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 6);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
@@ -379,6 +380,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 1);
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
         RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, sulfurAcid.TechType, 1);
@@ -387,6 +389,9 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.addIngredient(TechType.Stillsuit, C2CItems.mountainGlow.seed.TechType, 3);
         
         RecipeUtil.addIngredient(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        
+        RecipeUtil.addIngredient(TechType.CyclopsThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        RecipeUtil.addIngredient(TechType.ExosuitThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
         
         RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
         RecipeUtil.addIngredient(TechType.RocketBase, TechType.Silicone, 8);

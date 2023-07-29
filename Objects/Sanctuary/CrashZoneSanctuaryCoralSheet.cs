@@ -15,6 +15,7 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
+	[Obsolete]
 	public class CrashZoneSanctuaryCoralSheet : Spawnable {
 	        
 	    internal CrashZoneSanctuaryCoralSheet() : base("CrashZoneSanctuaryCoralSheet", "", "") {

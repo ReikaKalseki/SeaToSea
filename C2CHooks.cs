@@ -246,7 +246,14 @@ namespace ReikaKalseki.SeaToSea {
 	    			ep.oxygenMgr.RemoveOxygen(ep.oxygenMgr.GetOxygenAvailable());
 	    	}
 	    	
+	    	if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key))
+	    		SeaToSeaMod.sanctuaryDirectionHint.deactivate();
+	    	if (!VoidSpikesBiome.instance.isRadioFired())
+	    		SeaToSeaMod.voidSpikeDirectionHint.deactivate();
 	    	float dist = Vector3.Distance(ep.transform.position, crashMesa)-20;
+	    	if (dist < 50 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
+	    		Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("triggerSanctuary", 20);
+	    	}
 	    	if (dist < 25 || (dist <= 250 && UnityEngine.Random.Range(0F, 1F) <= 0.075F*Time.timeScale*(dist <= 100 ? 2.5F : 1))) {
 	    		IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
 	    		if (tgt != null && Vector3.Distance(tgt.GetPosition(), crashMesa) >= Mathf.Max(dist, 15)) {
@@ -874,6 +881,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<C2CTreader>();
+	    	}
+			else if (pi && pi.ClassId == VanillaCreatures.CAVECRAWLER.prefab) {
+	    		go.EnsureComponent<C2Crawler>();
 	    	}
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {

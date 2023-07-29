@@ -18,26 +18,48 @@ namespace ReikaKalseki.SeaToSea {
 	public class CrashZoneSanctuaryBiome : CustomBiome {
 		
 		public static readonly float biomeRadius = 120;
+		private static readonly float radiusFuzz = 24;
 		public static readonly Vector3 biomeCenter = new Vector3(1111.16F, -360.5F, -985F);
+		private static readonly Simplex3DGenerator edgeFuzz = (Simplex3DGenerator)new Simplex3DGenerator(2376547).setFrequency(0.1);
 		
 		public static Color waterColor = new Color(0.25F, 0.75F, 1F);
 		public static readonly string biomeName = "Sanctuary";
 		
 		public static readonly CrashZoneSanctuaryBiome instance = new CrashZoneSanctuaryBiome();
 		
+		private readonly Dictionary<VanillaCreatures, int> creatureCounts = new Dictionary<VanillaCreatures, int>();
+		
 		private CrashZoneSanctuaryBiome() : base(biomeName) {
+			creatureCounts[VanillaCreatures.BLADDERFISH] = 36;
+			creatureCounts[VanillaCreatures.BOOMERANG] = 48;
+			creatureCounts[VanillaCreatures.CAVECRAWLER] = 27;
+			creatureCounts[VanillaCreatures.GASOPOD] = 4;
+			creatureCounts[VanillaCreatures.HOOPFISH] = 90;
+			creatureCounts[VanillaCreatures.MESMER] = 6;
 			
+			creatureCounts[VanillaCreatures.SCHOOL_HOOPFISH] = 6;
+			creatureCounts[VanillaCreatures.SCHOOL_HOLEFISH] = 3;
+			creatureCounts[VanillaCreatures.SCHOOL_BOOMERANG] = 6;
+			creatureCounts[VanillaCreatures.SCHOOL_BLADDERFISH] = 3;
 		}
 		
-		public override void register() {/*
+		public override void register() {/* prebaked
 			GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.crashSanctuarySpawner.ClassID, biomeCenter));
 			
 			UnityEngine.Random.InitState(873451871);
-			for (int i = 0; i < 180; i++) {
-				Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)).setY(-300);
+			for (int i = 0; i < 160; i++) {
+				Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)*0.8F).setY(-300);
 				if (isInBiome(pos))
 					GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.sanctuaryGrassSpawner.ClassID, pos));
-			}*/
+			}
+			*/
+			foreach (KeyValuePair<VanillaCreatures, int> kvp in creatureCounts) {
+				for (int i = 0; i < kvp.Value; i++) {
+					Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)*0.67F).setY(-340);
+					if (isInBiome(pos))
+						GenUtil.registerWorldgen(new PositionedPrefab(kvp.Key.getPrefabID(), pos));
+				}
+			}
 		}
 		
 		public override VanillaMusic[] getMusicOptions() {
@@ -49,7 +71,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override bool isInBiome(Vector3 pos) {
-			return Vector3.Distance(pos, biomeCenter) <= biomeRadius;
+			float dist = Vector3.Distance(pos, biomeCenter);
+			if (dist > biomeRadius+radiusFuzz)
+				return false;
+			return biomeRadius+edgeFuzz.getValue(pos)*radiusFuzz <= biomeRadius;
 		}
 		
 		public override double getDistanceToBiome(Vector3 vec) {
@@ -101,8 +126,9 @@ namespace ReikaKalseki.SeaToSea {
 				if (pi && CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId))
 					satellitePositions.Add(pi.transform.position);
 			}
+			HashSet<Vector3> fernPositions = new HashSet<Vector3>();
 			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
-				if (pi && (pi.ClassId == SeaToSeaMod.crashSanctuaryGrass.ClassID || pi.ClassId == SeaToSeaMod.sanctuaryGrassBump.ClassID)) {
+				if (pi && pi.ClassId == SeaToSeaMod.crashSanctuaryFern.ClassID) {
 					foreach (Vector3 pos in positions) {
 						if (Vector3.Distance(pos, pi.transform.position) <= 3.75F) {
 							UnityEngine.Object.DestroyImmediate(pi.gameObject);
@@ -117,6 +143,17 @@ namespace ReikaKalseki.SeaToSea {
 							break;
 						}
 					}
+					if (!pi || !pi.transform)
+						continue;
+					foreach (Vector3 pos in fernPositions) {
+						if (Vector3.Distance(pos, pi.transform.position) <= 0.3F) {
+							UnityEngine.Object.DestroyImmediate(pi.gameObject);
+							break;
+						}
+					}
+					if (!pi || !pi.transform)
+						continue;
+					fernPositions.Add(pi.transform.position);
 				}
 			}
 		}
@@ -128,19 +165,27 @@ namespace ReikaKalseki.SeaToSea {
 			doc.AppendChild(rootnode);
 			
 			foreach (SanctuaryPlantTag sp in UnityEngine.Object.FindObjectsOfType<SanctuaryPlantTag>()) {
-				Vector3 pos = sp.transform.position;
-				if (!instance.isInBiome(pos))
+				if (!instance.isInBiome(sp.transform.position))
 					continue;
-				PositionedPrefab pfb = new PositionedPrefab(sp.GetComponent<PrefabIdentifier>());				
-				XmlElement e = doc.CreateElement("object");
+				PositionedPrefab pfb = new PositionedPrefab(sp.GetComponent<PrefabIdentifier>());
+				XmlElement e = doc.CreateElement("flame");
 				pfb.saveToXML(e);
 				doc.DocumentElement.AppendChild(e);
 			}
 			
 			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
-				if (pi && (pi.ClassId == SeaToSeaMod.crashSanctuaryGrass.ClassID || pi.ClassId == SeaToSeaMod.sanctuaryGrassBump.ClassID)) {
+				if (pi && CrashZoneSanctuarySpawner.spawnsPlant(pi.ClassId) && instance.isInBiome(pi.transform.position)) {
+					PositionedPrefab pfb = new PositionedPrefab(pi);
+					XmlElement e = doc.CreateElement("plant");
+					pfb.saveToXML(e);
+					doc.DocumentElement.AppendChild(e);
+				}
+			}
+			
+			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+				if (pi && pi.ClassId == SeaToSeaMod.crashSanctuaryFern.ClassID) {
 					PositionedPrefab pfb = new PositionedPrefab(pi);				
-					XmlElement e = doc.CreateElement("grass");
+					XmlElement e = doc.CreateElement("fern");
 					pfb.saveToXML(e);
 					doc.DocumentElement.AppendChild(e);
 				}

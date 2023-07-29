@@ -15,6 +15,7 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
+	[Obsolete]
 	public class CrashZoneSanctuaryGrassBump : Spawnable {
 	        
 	    internal CrashZoneSanctuaryGrassBump() : base("CrashZoneSanctuaryGrassBump", "", "") {

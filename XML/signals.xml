@@ -30,6 +30,20 @@
 		
 	</sound>
   </voidspike>
+  <sanctuary>
+	<name>
+		Location
+	</name>
+	<desc>
+		Ecological Anomaly (360m)
+	</desc>
+	<pda>
+		
+	</pda>
+	<sound>
+		
+	</sound>
+  </sanctuary>
   <treaderpod>
 	<name>
 		Signal

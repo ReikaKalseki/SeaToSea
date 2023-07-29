@@ -262,6 +262,13 @@ namespace ReikaKalseki.SeaToSea
 			PDAManager.getPage("crashmesahint").unlock(false);
 		}
 		
+		void triggerSanctuary() {
+			if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key)) {
+				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key);
+				SeaToSeaMod.sanctuaryDirectionHint.activate(7);
+			}
+		}
+		
 	}
 		
 }

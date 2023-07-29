@@ -131,7 +131,7 @@ namespace ReikaKalseki.SeaToSea {
 					Renderer[] rr = hit.transform.parent.GetComponentsInChildren<Renderer>();
 					SNUtil.writeToChat(rr.toDebugString());
 				}*/
-				/* TODO do as a bunch of separate scattered generators
+				/* 
 				for (float i = -CrashZoneSanctuaryBiome.biomeRadius; i <= CrashZoneSanctuaryBiome.biomeRadius; i += 0.25F) {
 					for (float k = -CrashZoneSanctuaryBiome.biomeRadius; k <= CrashZoneSanctuaryBiome.biomeRadius; k += 0.25F) {
 						Vector3 pos = MathUtil.getRandomVectorAround(CrashZoneSanctuaryBiome.biomeCenter+new Vector3(i, 30, k), 0.25F);

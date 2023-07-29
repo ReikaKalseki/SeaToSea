@@ -46,43 +46,22 @@ namespace ReikaKalseki.SeaToSea {
 					age = 0;
 					return;
 				}
-				List<RaycastHit> li = WorldUtil.getTerrainMountedPositionsAround(at.Value.point, 24F, 900);
+				List<RaycastHit> li = WorldUtil.getTerrainMountedPositionsAround(at.Value.point, 24F, 240);
 				if (li.Count < 30) {
 					//SNUtil.log("Grass spawner @ "+at.Value.point+" found too few hits, only "+li.Count);
 					age = 0;
 					return;
 				}
-				int i = 0;
 				foreach (RaycastHit hit in li) {
 					if (Vector3.Angle(hit.normal, Vector3.up) >= 30)
 						continue;
-					GameObject go;
-					if (UnityEngine.Random.Range(0F, 1F) <= 0.3F) {
-						go = ObjectUtil.createWorldObject(SeaToSeaMod.sanctuaryGrassBump.ClassID);
-						go.transform.position = hit.point;
-						go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
-						go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);	
-						go.transform.localScale = new Vector3(UnityEngine.Random.Range(1.5F, 3.2F), 0.25F, UnityEngine.Random.Range(1.5F, 3.2F));
-					}
-					
-					if (i >= 450 || densityNoise.getValue(hit.point) <= 0.2)
+					if (densityNoise.getValue(hit.point) <= 0.25)
 						continue;
-					go = ObjectUtil.createWorldObject(SeaToSeaMod.crashSanctuaryGrass.ClassID);
+					GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.crashSanctuaryFern.ClassID);
 					go.transform.position = hit.point;
 					go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
 					go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);	
 					go.transform.position = go.transform.position+go.transform.up*-0.25F;
-					
-					i++;
-				}
-				
-				li = WorldUtil.getTerrainMountedPositionsAround(at.Value.point, CrashZoneSanctuaryBiome.biomeRadius/2, 10);
-				li.Clear();
-				foreach (RaycastHit hit in li) {
-					GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.sanctuaryCoral.ClassID);
-					go.transform.position = hit.point;
-					go.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0);
-					go.transform.localScale = new Vector3(10, 1, 10);
 				}
 				
 				UnityEngine.Object.DestroyImmediate(gameObject);

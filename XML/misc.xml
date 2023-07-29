@@ -109,6 +109,17 @@
 		Sounds/pdaprompt/kooshcaveprompt.ogg
 	</pda>
   </kooshcave>
+  <sanctuaryprompt>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting unknown ecological signature in the region, and possibly unique lifeforms.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/sanctuaryprompt.ogg
+	</pda>
+  </sanctuaryprompt>
   <treaderpoo>
 	<name>
 		
