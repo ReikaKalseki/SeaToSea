@@ -573,8 +573,10 @@ namespace ReikaKalseki.SeaToSea
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
        	}
        
-      	if (hard)
+       	if (hard) {
         	CraftDataHandler.SetItemSize(TechType.PowerCell, new Vector2int(1, 2));
+        	CraftDataHandler.SetItemSize(TechType.LaserCutter, new Vector2int(2, 1));
+       	}
         CraftDataHandler.SetItemSize(TechType.PrecursorIonPowerCell, new Vector2int(1, 2));
         CraftDataHandler.SetItemSize(TechType.Jumper, new Vector2int(1, 1));
         CraftDataHandler.SetItemSize(TechType.ExosuitDrillArmModule, new Vector2int(2, 2));
@@ -584,7 +586,7 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
-    private static void removeVanillaUnlock(TechType tt) {
+    public static void removeVanillaUnlock(TechType tt) {
     	KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(tt);
     	removedVanillaUnlocks.Add(tt);
     }

@@ -114,7 +114,7 @@
 		
 	</name>
 	<desc>
-		Detecting unknown ecological signature in the region, and possibly unique lifeforms.
+		Detecting unknown ecological signature in the region, and possibly unique lifeforms. It is imperative that you acquire live specimens before radiation levels make survival unlikely.
 	</desc>
 	<pda>
 		Sounds/pdaprompt/sanctuaryprompt.ogg
@@ -211,6 +211,17 @@
 		
 	</pda>
   </DockToChangeVehicleUpgrades>
+  <ItemNotDroppable>
+	<name>
+		
+	</name>
+	<desc>
+		This item can be stored but cannot be dropped.
+	</desc>
+	<pda>
+		
+	</pda>
+  </ItemNotDroppable>
   <PrawnBayDoorHeatWarn>
 	<name>
 		

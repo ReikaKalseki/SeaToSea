@@ -149,7 +149,7 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.log(objectCountsToGo[pfb.prefabName]+" remaining of "+pfb.prefabName+" from "+max);
 		}
 		
-		private PositionedPrefab allocateItem(Transform t) {
+		private GameObject allocateItem(Transform t) {
 			string pfb = tryFindItem(t.position);
 			if (pfb == null)
 				return null;
@@ -163,7 +163,7 @@ namespace ReikaKalseki.SeaToSea {
 				rb.isKinematic = true;
 			go.transform.position = go.transform.position+Vector3.up*0.05F;
 			addObject(ret);
-			return ret;
+			return go;
 		}
 		
 		private int getCount(string pfb) {
@@ -172,7 +172,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private string tryFindItem(Vector3 pos) {
 			//SNUtil.log("Avo count = "+getCount(avo));
-			if (getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 160) {
+			if (UnityEngine.Random.Range(0, 2) == 0 && getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 160) {
 				return avo;
 			}
 			if (objectCountsToGo.Count == 0 || UnityEngine.Random.Range(0, 5) == 0) {
@@ -227,7 +227,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (pos.y >= -100 || pos.y <= -400)
 				return false;
 			string biome = WaterBiomeManager.main.GetBiome(pos, false);
-			if (!string.Equals(biome, "mountains", StringComparison.InvariantCultureIgnoreCase))
+			if (!VanillaBiomes.MOUNTAINS.isInBiome(pos))
 				return false;
 			return pos.x >= gunCenter.x && Vector3.Distance(pos.setY(0), biomeCenter.setY(0)) <= 600 && Vector3.Distance(pos.setY(0), gunCenter.setY(0)) >= 200 && Vector3.Distance(pos.setY(0), mountainCenter.setY(0)) >= 360;
 		}
@@ -235,6 +235,28 @@ namespace ReikaKalseki.SeaToSea {
 		void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {
 			if (rt.resource.techType == spawnerObject.TechType || rt.resource.overrideTechType == spawnerObject.TechType)
 				rt.isDetectable = PDAManager.getPage("sunbeamdebrishint").isUnlocked();
+		}
+		
+		internal void cleanPickedUp(Pickupable pp) {
+			SunbeamDebris s = pp.GetComponentInChildren<SunbeamDebris>();
+			if (s)
+				UnityEngine.Object.DestroyImmediate(s.gameObject);
+		}
+		
+		internal void tickMapRoom(MapRoomFunctionality map) {
+			if (VanillaBiomes.MOUNTAINS.isInBiome(map.transform.position)) {
+				float r = map.GetScanRange();
+				//HashSet<SunbeamDebris> arr = WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.transform.position, r); cannot use because no collider
+				IEnumerable<SunbeamDebris> arr = UnityEngine.Object.FindObjectsOfType<SunbeamDebris>();
+				SNUtil.writeToChat("Scanner room @ "+map.transform.position+" found "+arr.Count()+" debris in range "+r);
+				foreach (SunbeamDebris s in arr) {
+					SNUtil.log("Trying to convert sunbeam debris at "+s.transform.position);
+					s.tryConvert();
+				}
+			}
+			else {
+				SNUtil.writeToChat("Scanner room @ "+map.transform.position+" is not in mountains, is in "+BiomeBase.getBiome(map.transform.position));
+			}
 		}
 		
 		class SunbeamDebrisObject : Spawnable {
@@ -248,12 +270,17 @@ namespace ReikaKalseki.SeaToSea {
 				go.SetActive(false);
 				ObjectUtil.removeComponent<Pickupable>(go);
 				ObjectUtil.removeComponent<Collider>(go);
+				ObjectUtil.removeChildObject(go, "collider");
+				ObjectUtil.removeChildObject(go, "kyanite_small_03");
 				//ObjectUtil.removeComponent<ResourceTrackerUpdater>(go);
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
-				go.EnsureComponent<SunbeamDebris>();
+				go.EnsureComponent<SunbeamDebris>();/*
 				foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
-					r.enabled = false;
-				}
+					if (r) {
+						r.enabled = false;
+						UnityEngine.Object.Destroy(r.gameObject);
+					}
+				}*/
 				ResourceTracker rt = go.EnsureComponent<ResourceTracker>();
 				rt.techType = TechType;
 				rt.overrideTechType = TechType;
@@ -264,23 +291,45 @@ namespace ReikaKalseki.SeaToSea {
 		
 		class SunbeamDebris : MonoBehaviour {
 			
+			//private float lastConversionCheck = -1;
+			
 			void Update() {
 				//SNUtil.writeToChat("SunbeamCheckPlayerRange > "+Story.StoryGoalManager.main.IsGoalComplete("SunbeamCheckPlayerRange"));
 				//SNUtil.writeToChat("sunbeamdebrishint > "+Story.StoryGoalManager.main.IsGoalComplete("sunbeamdebrishint"));
 				if (!instance.isValidPosition(transform.position)) {
 					SNUtil.log("Invalid sunbeam debris location, deleting @ "+transform.position);
 					UnityEngine.Object.DestroyImmediate(gameObject);
-				}
-				else if (PDAManager.getPage("sunbeamdebrishint").isUnlocked()) {
-					PositionedPrefab pfb = instance.allocateItem(gameObject.transform);
-					if (pfb != null) {
-						SNUtil.log("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb.prefabName);
+				}/*
+				else if (DayNightCycle.main.timePassedAsFloat-lastConversionCheck >= 1) {
+					lastConversionCheck = DayNightCycle.main.timePassedAsFloat;
+					if (PDAManager.getPage("sunbeamdebrishint").isUnlocked() && !transform.parent.GetComponent<Pickupable>()) {
+						GameObject pfb = instance.allocateItem(gameObject.transform);
+						if (pfb != null) {
+							SNUtil.log("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb);
+							transform.parent = pfb.transform;
+						}
+						else {
+							SNUtil.log("Item set exhausted, deleting @ "+transform.position);
+						}
+						enabled = false;
+						//UnityEngine.Object.DestroyImmediate(gameObject); do not destroy immediately, do that when the bound item is collected/destroyed
+					}
+				}*/
+			}
+			
+			internal void tryConvert() {
+				if (PDAManager.getPage("sunbeamdebrishint").isUnlocked() && !transform.parent.GetComponent<Pickupable>()) {
+					GameObject pfb = instance.allocateItem(gameObject.transform);
+					if (pfb) {
+						SNUtil.log("Converted sunbeam debris placeholder @ "+transform.position+" to "+pfb);
+						transform.parent = pfb.transform;
 					}
 					else {
 						SNUtil.log("Item set exhausted, deleting @ "+transform.position);
+						UnityEngine.Object.DestroyImmediate(gameObject);
 					}
 					enabled = false;
-					UnityEngine.Object.DestroyImmediate(gameObject);
+					//UnityEngine.Object.DestroyImmediate(gameObject); do not destroy immediately, do that when the bound item is collected/destroyed
 				}
 			}
 			

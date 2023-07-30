@@ -167,6 +167,7 @@ namespace ReikaKalseki.SeaToSea
 							r.transform.localScale = new Vector3(3F, 2.4F, 2.4F);
 							ObjectUtil.removeComponent<Battery>(root);
 							root.gameObject.EnsureComponent<BrokenAzuriteBatterySparker>();
+							root.GetComponent<Pickupable>().destroyOnDeath = false;
 							RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(C2CItems.t2Battery));
 						};
 						item.glowIntensity = 1;

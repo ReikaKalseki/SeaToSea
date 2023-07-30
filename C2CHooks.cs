@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 bkelpBaseNuclearReactor = new Vector3(-1325.67F, -660.60F, -392.70F);
 	    internal static readonly Vector3 trailerBaseBioreactor = new Vector3(1314.94F, -80.2F, -412.97F);
 	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
+	    internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -45,6 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static float waterToRestore;
 	    
 	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
+	    public static readonly string itemNotDroppableLocaleKey = "ItemNotDroppable";
 	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
 	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
 	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
@@ -87,9 +89,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.vehicleEnterEvent += onVehicleEnter;
 	    	
+	    	DIHooks.scannerRoomTickEvent += AvoliteSpawner.instance.tickMapRoom;
+	    	
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
 	    	DIHooks.propulsibilityEvent += modifyPropulsibility;
+	    	DIHooks.droppabilityEvent += modifyDroppability;
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	
@@ -251,7 +256,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!VoidSpikesBiome.instance.isRadioFired())
 	    		SeaToSeaMod.voidSpikeDirectionHint.deactivate();
 	    	float dist = Vector3.Distance(ep.transform.position, crashMesa)-20;
-	    	if (dist < 50 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
+	    	if (dist < 50 || Vector3.Distance(ep.transform.position, auroraFront) < 144 || Vector3.Distance(ep.transform.position, trailerBaseBioreactor) < 200 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
 	    		Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("triggerSanctuary", 20);
 	    	}
 	    	if (dist < 25 || (dist <= 250 && UnityEngine.Random.Range(0F, 1F) <= 0.075F*Time.timeScale*(dist <= 100 ? 2.5F : 1))) {
@@ -475,6 +480,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity);
 	    }
 	    
+	    public static void modifyDroppability(DIHooks.DroppabilityCheck check) {
+	    	if (check.item.GetTechType() == CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery).TechType) {
+	    		check.allow = false;
+	    		check.error = Language.main.Get(itemNotDroppableLocaleKey);
+	    	}
+	    }
+	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
 	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp()) {
 		    	float o2ToAdd = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
@@ -649,6 +661,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
     
 	    public static void onItemPickedUp(Pickupable p) {
+	    	AvoliteSpawner.instance.cleanPickedUp(p);
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 	   			bool seal;
@@ -1041,7 +1054,14 @@ namespace ReikaKalseki.SeaToSea {
 	    }
     
 	    public static bool isSpawnableVoid(string biome) {
-	    	return VoidSpikeLeviathanSystem.instance.isSpawnableVoid(biome);
+	    	bool ret = VoidSpikeLeviathanSystem.instance.isSpawnableVoid(biome);
+	    	if (ret && Player.main.IsSwimming()) {
+	    		Pickupable held = Inventory.main.GetHeld();
+	    		if (held && isHeldToolAzuritePowered()) {
+	    			VoidGhostLeviathansSpawner.main.timeNextSpawn -= 0.5F*Time.deltaTime;
+	    		}
+	    	}
+	    	return ret;
 	    }
 	    
 	    public static GameObject getVoidLeviathan(VoidGhostLeviathansSpawner spawner, Vector3 pos) {

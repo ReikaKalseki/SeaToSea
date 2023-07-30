@@ -132,7 +132,7 @@ namespace ReikaKalseki.SeaToSea {
 				fruiter.fruitSpawnInterval = 300;
 			}
 			if (needsAngling && Vector3.Distance(transform.position, Player.main.transform.position) <= 200) {
-				RaycastHit? hit = WorldUtil.getTerrainVectorAt(transform.position, 2);
+				RaycastHit? hit = WorldUtil.getTerrainVectorAt(transform.position+Vector3.up*2F, 4);
 				if (hit.HasValue) {
     				transform.up = (hit.Value.normal+Vector3.up)*0.5F;
 					needsAngling = false;

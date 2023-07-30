@@ -40,6 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 				"BaseRoomGenericInteriorCeilingmods02",
 				"BaseCorridorXShapeInterior",
 				"BaseRoomCoverTop",
+				"BaseCorridorInteriorWallHatch",
 			};
 			
 			private Text text;

@@ -136,6 +136,8 @@ namespace ReikaKalseki.SeaToSea {
 		if (blighterEgg != null)
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2);
 		
+		C2CRecipes.removeVanillaUnlock(EcoceanMod.planktonScoop.TechType);
+		
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.3F, getRenderObj = ItemDisplayRenderBehavior.getChildNamed("model/"+CraftingItems.LATHING_DRONE_RENDER_OBJ_NAME)});
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.2F});
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, TechType.Benzene);

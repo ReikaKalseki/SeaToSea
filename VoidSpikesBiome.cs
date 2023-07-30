@@ -32,6 +32,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly string biomeName = "Void Spikes";
 		public static readonly float waterTemperature = 18;
+	    
+	    //public static Color? waterColor;
+	    public static readonly Vector3 waterColorFalloff = new Vector3(8, 4, 1);
+	    public static readonly float murkiness = 4.0F;
+	    public static readonly float fogStart = 20;
 		
 		public static readonly int CLUSTER_COUNT = 120;//104;//88;
 		
@@ -76,15 +81,15 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override float getFogStart(float orig) {
-			return orig;
+			return fogStart;
 		}
 		
 		public override float getMurkiness(float orig) {
-			return orig;
+			return murkiness;
 		}
 		
 		public override Vector3 getColorFalloff(Vector3 orig) {
-			return orig;
+			return waterColorFalloff;
 		}
 		
 		public override Color getWaterColor(Color orig) {

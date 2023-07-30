@@ -26,6 +26,11 @@ namespace ReikaKalseki.SeaToSea {
     
 	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-110.76F, -499F, 940.19F);
 	    public static readonly Vector3 wreckCtrPos2 = new Vector3(-138.38F, -497F, 932.69F);
+	    
+	   // public static Color? waterColor;
+	    public static readonly Vector3 waterColorFalloff = new Vector3(4, 10F, 2.0F);//new Vector3(5, 12.3F, 2.5F);
+	    public static readonly float murkiness = 1.75F;//1.4F;
+	    public static readonly float fogStart = 0;
 		
 		public static readonly UnderwaterIslandsFloorBiome instance = new UnderwaterIslandsFloorBiome();
 		
@@ -65,19 +70,19 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override float getFogStart(float orig) {
-			return orig;
+			return fogStart;
 		}
 		
 		public override float getMurkiness(float orig) {
-			return orig;
+			return murkiness;
 		}
 		
 		public override Vector3 getColorFalloff(Vector3 orig) {
-			return orig;
+			return waterColorFalloff;
 		}
 		
 		public override Color getWaterColor(Color orig) {
-			return orig;
+			return Color.white;//waterColor.Value;
 		}
 		
 		public override bool isCaveBiome() {

@@ -32,9 +32,10 @@ namespace ReikaKalseki.SeaToSea
 
 			internal void tick() {
 				BiomeBase at = BiomeBase.getBiome(transform.position);
-				if (at != biome) {
-					foreach (Renderer r in GetComponentsInChildren<Renderer>())
+				if (at != biome && (at == VanillaBiomes.BLOODKELP || at == CrashZoneSanctuaryBiome.instance)) {
+					foreach (Renderer r in GetComponentsInChildren<Renderer>()) {
 	    				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/CaveCrawlerBlue");
+					}
 				}
 				biome = at;
 			}

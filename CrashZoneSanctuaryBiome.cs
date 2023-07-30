@@ -22,8 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Vector3 biomeCenter = new Vector3(1111.16F, -360.5F, -985F);
 		private static readonly Simplex3DGenerator edgeFuzz = (Simplex3DGenerator)new Simplex3DGenerator(2376547).setFrequency(0.1);
 		
-		public static Color waterColor = new Color(0.25F, 0.75F, 1F);
-		public static readonly string biomeName = "Sanctuary";
+		public static readonly string biomeName = "Glowing Sanctuary";
 		
 		public static readonly CrashZoneSanctuaryBiome instance = new CrashZoneSanctuaryBiome();
 		
@@ -74,7 +73,7 @@ namespace ReikaKalseki.SeaToSea {
 			float dist = Vector3.Distance(pos, biomeCenter);
 			if (dist > biomeRadius+radiusFuzz)
 				return false;
-			return biomeRadius+edgeFuzz.getValue(pos)*radiusFuzz <= biomeRadius;
+			return dist <= biomeRadius+edgeFuzz.getValue(pos)*radiusFuzz;
 		}
 		
 		public override double getDistanceToBiome(Vector3 vec) {
@@ -90,7 +89,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override Vector3 getColorFalloff(Vector3 orig) {
-			return new Vector3(40, 3.2F, 2.5F)*0.8F;
+			return new Vector3(40, 3.12F, 2.75F)*0.875F;
 		}
 		
 		public override float getFogStart(float orig) {
