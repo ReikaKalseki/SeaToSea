@@ -367,7 +367,8 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
         
-        RecipeUtil.modifyIngredients(TechType.PlasteelIngot, i => {if (i.techType == TechType.Lithium) i.amount = i.amount*3/2; return false;});
+        RecipeUtil.modifyIngredients(TechType.PlasteelIngot, i => {if (i.techType == TechType.Lithium) i.amount = i.amount*3/2; return false;});        
+        RecipeUtil.addIngredient(TechType.PlasteelIngot, CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType, 1);
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
         RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);

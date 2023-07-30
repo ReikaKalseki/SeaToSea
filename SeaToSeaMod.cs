@@ -63,6 +63,7 @@ namespace ReikaKalseki.SeaToSea
     public static TechnologyFragment lathingDroneFragment;
     
     public static MushroomTreeBacterialColony mushroomBioFragment;    
+    public static GeyserCoral geyserCoral;    
     public static PowerSealModuleFragment powersealModuleFragment;    
     public static EjectedHeatSink ejectedHeatSink;
     
@@ -93,6 +94,7 @@ namespace ReikaKalseki.SeaToSea
     
     internal static Bioprocessor processor;
     internal static RebreatherRecharger rebreatherCharger;
+    internal static GeyserFilter geyserFilter;
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
@@ -235,6 +237,15 @@ namespace ReikaKalseki.SeaToSea
         rebreatherCharger.addPDAPage(e.pda, "RebreatherCharger");
         rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
         
+        e = itemLocale.getEntry("geyserfilter");
+        geyserFilter = new GeyserFilter(e);
+        geyserFilter.Patch();
+        SNUtil.log("Registered custom machine "+geyserFilter);
+        geyserFilter.addPDAPage(e.pda, "GeyserFilter");
+	    
+	    geyserCoral = new GeyserCoral(itemLocale.getEntry("GEYSER_CORAL"));
+	    geyserCoral.register();
+        
         addPDAEntries();
         
         addCommands();
@@ -289,6 +300,7 @@ namespace ReikaKalseki.SeaToSea
     public static void PostLoad() {
         worldgen.load(); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
+		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
         
     	C2CIntegration.addPostCompat();

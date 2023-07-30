@@ -235,6 +235,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/benzene")]RocketFuel,
 			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
 			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Seeds/CreepvinePiece")]AmoeboidSample,
+			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/CrashPowder")]GeyserMinerals,
 		}
 		
 		private static Item getAttr(Items key) {

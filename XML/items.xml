@@ -252,6 +252,17 @@
 			
 		</pda>
 	</TraceMetals>
+	<GeyserMinerals>
+		<name>
+			Volcanic Traces
+		</name>
+		<desc>
+			Small quantities of igneous materials, filtered from geyser output.
+		</desc>
+		<pda>
+			
+		</pda>
+	</GeyserMinerals>
 	<breathfluid>
 		<name>
 			Breathing Fluid
@@ -517,6 +528,17 @@
 			
 		</pda>
 	</TREE_BACTERIA>
+	<GEYSER_CORAL>
+		<name>
+			Geyser Coral
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</GEYSER_CORAL>
 	<DeepStalker>
 		<name>
 			Abyssal Stalker
@@ -698,6 +720,17 @@
 			This pump will distribute fresh liquid breathing mix into any compatible equipped unit worn within the base, thanks to an advanced network of pipes embedded in the walls of the seabase. Features a large distribution tank which can be refilled at will.
 		</pda>
 	</rebreathercharger>
+	<geyserfilter>
+		<name>
+			Geyser Particulate Filter
+		</name>
+		<desc>
+			Collects certain trace minerals from volcanic activity.
+		</desc>
+		<pda>
+			The geyser particulate filter uses a mesh of platinum-coated, electrically-charged wire to attract certain trace minerals present in the output of volcanic geysers, collecting them for use in fabrication. An essential component of plasteel production, this device - or conceptual analogues - has been a mainstay of deep-space outposts, be they scientific, military, or colony.
+		</pda>
+	</geyserfilter>
 	<enum>
 		<name>
 			
