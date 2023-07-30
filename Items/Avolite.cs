@@ -33,7 +33,12 @@ namespace ReikaKalseki.SeaToSea {
 				r.materials[0].SetColor("_BorderColor", new Color(1, 0.1F, 0, 1));
 				r.materials[0].SetVector("_BuildParams", new Vector4(1, 1, 0.35F, 0.1F));
 			}
+			go.EnsureComponent<AvoliteTag>();
 		}
 		
+	}
+		
+	class AvoliteTag : MonoBehaviour {
+			
 	}
 }

@@ -88,10 +88,8 @@ namespace ReikaKalseki.SeaToSea {
 			
 			spawnerObject.Patch();
 			
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 0.8F);
-			//GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Rock, 1, 0.75F);
-			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 0.55F);
-			//LootDistributionHandler.EditLootDistributionData(spawnerObject, BiomeType.Mountains_ThermalVent, 0.2F, 1);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Grass, 1, 0.5F);
+			GenUtil.registerOreWorldgen(spawnerObject, false, BiomeType.Mountains_Sand, 1, 0.3F);
 		
 			IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
@@ -172,7 +170,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private string tryFindItem(Vector3 pos) {
 			//SNUtil.log("Avo count = "+getCount(avo));
-			if (UnityEngine.Random.Range(0, 2) == 0 && getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 160) {
+			if (UnityEngine.Random.Range(0, 2) == 0 && getCount(avo) < AVOLITE_COUNT && getClosest(avo, pos) >= 120 && WorldUtil.getObjectsNearWithComponent<AvoliteTag>(pos, 120).Count == 0) {
 				return avo;
 			}
 			if (objectCountsToGo.Count == 0 || UnityEngine.Random.Range(0, 5) == 0) {
@@ -244,18 +242,28 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void tickMapRoom(MapRoomFunctionality map) {
-			if (VanillaBiomes.MOUNTAINS.isInBiome(map.transform.position)) {
+			if (VanillaBiomes.MOUNTAINS.isInBiome(map.transform.position)) {/*
 				float r = map.GetScanRange();
 				//HashSet<SunbeamDebris> arr = WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.transform.position, r); cannot use because no collider
 				IEnumerable<SunbeamDebris> arr = UnityEngine.Object.FindObjectsOfType<SunbeamDebris>();
-				SNUtil.writeToChat("Scanner room @ "+map.transform.position+" found "+arr.Count()+" debris in range "+r);
+				//SNUtil.writeToChat("Scanner room @ "+map.transform.position+" found "+arr.Count()+" debris in range "+r);
 				foreach (SunbeamDebris s in arr) {
-					SNUtil.log("Trying to convert sunbeam debris at "+s.transform.position);
+					//SNUtil.log("Trying to convert sunbeam debris at "+s.transform.position);
 					s.tryConvert();
+				}*/
+				if (map.scanActive && ResourceTracker.resources.ContainsKey(spawnerObject.TechType) && map.typeToScan == spawnerObject.TechType && map.resourceNodes.Count > 0) {
+					//SNUtil.writeToChat("Scanner room is scanning and has "+map.resourceNodes.Count+" hits");
+					//Dictionary<string, ResourceTracker.ResourceInfo> info = ResourceTracker.resources[spawnerObject.TechType];
+					/*
+					HashSet<SunbeamDebris> set = WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.resourceNodes[UnityEngine.Random.Range(0, map.resourceNodes.Count)].position, 4);
+					if (set.Count > 0)
+						set.First().tryConvert();*/
+					foreach (SunbeamDebris s in WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.transform.position, map.GetScanRange()))
+						s.tryConvert();
 				}
 			}
 			else {
-				SNUtil.writeToChat("Scanner room @ "+map.transform.position+" is not in mountains, is in "+BiomeBase.getBiome(map.transform.position));
+				//SNUtil.writeToChat("Scanner room @ "+map.transform.position+" is not in mountains, is in "+BiomeBase.getBiome(map.transform.position));
 			}
 		}
 		
@@ -274,6 +282,10 @@ namespace ReikaKalseki.SeaToSea {
 				ObjectUtil.removeChildObject(go, "kyanite_small_03");
 				//ObjectUtil.removeComponent<ResourceTrackerUpdater>(go);
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+				SphereCollider trigger = go.EnsureComponent<SphereCollider>(); //this is so can be found with a SphereCast
+				trigger.isTrigger = true;
+				trigger.radius = 0.1F;
+				trigger.center = Vector3.zero;
 				go.EnsureComponent<SunbeamDebris>();/*
 				foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 					if (r) {

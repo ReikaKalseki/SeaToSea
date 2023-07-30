@@ -43,7 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 			Light l = ObjectUtil.addLight(go);
 			l.color = new Color(1, 0.1F, 0.2F);
 			l.intensity = 1.6F;
-			l.range = 4;
+			l.range = 1.5F;
 			l.transform.localPosition = new Vector3(0, 1, 0);
 		}
 		
@@ -138,7 +138,7 @@ namespace ReikaKalseki.SeaToSea {
 					needsAngling = false;
 				}
 			}
-			light.intensity = Mathf.Lerp(1.4F, 2.2F, 1F-DayNightCycle.main.GetLightScalar())*(1F-(fruiter.inactiveFruits.Count/(float)seeds.Length));
+			light.intensity = 1.6F*Mathf.Lerp(1.4F, 2.2F, 1F-DayNightCycle.main.GetLightScalar())*(1F-(fruiter.inactiveFruits.Count/(float)seeds.Length));
 			aoe.isTrigger = true;
 			aoe.radius = 4F;
 			aoe.center = Vector3.zero;
