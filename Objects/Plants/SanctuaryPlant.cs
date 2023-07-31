@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea {
 			base.prepareGameObject(go, r);
 			go.EnsureComponent<SanctuaryPlantTag>();
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
-			RenderUtil.setEmissivity(go.GetComponentInChildren<Renderer>(), 2);
+			RenderUtil.setEmissivity(go.GetComponentInChildren<Renderer>(), 1);
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {

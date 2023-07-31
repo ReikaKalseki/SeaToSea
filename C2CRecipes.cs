@@ -572,6 +572,7 @@ namespace ReikaKalseki.SeaToSea
        	if (hard) {
 			RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
+        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.Polyaniline, 1);
        	}
        
        	if (hard) {

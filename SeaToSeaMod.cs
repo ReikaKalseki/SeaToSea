@@ -609,6 +609,9 @@ namespace ReikaKalseki.SeaToSea
     		case "mushtree":
     			pos = new Vector3(-870, -93, 591);
     			break;
+    		case "mushkoosh":
+    			pos = new Vector3(712.84F, -222.55F, 532.76F);
+    			break;
     		case "stepcave":
     			pos = new Vector3(64, -103, -611);
     			break;

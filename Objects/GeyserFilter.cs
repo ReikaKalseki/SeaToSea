@@ -14,7 +14,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class GeyserFilter : CustomMachine<GeyserFilterLogic> {
+	public class GeyserFilter : CustomMachine<GeyserFilterLogic>, MultiTexturePrefab<StringPrefabContainer> {
 		
 		internal static readonly float POWER_COST = 1.5F; //per second
 		internal static readonly float PRODUCTION_RATE = 45F; //seconds per item
@@ -41,6 +41,10 @@ namespace ReikaKalseki.SeaToSea {
 			return true;
 		}
 		
+		public Dictionary<int, string> getTextureLayers(Renderer r) {
+			return new Dictionary<int, string>{{0, ""}, {1, ""}};
+		}
+		
 		public override void initializeMachine(GameObject go) {
 			base.initializeMachine(go);
 			ObjectUtil.removeComponent<Trashcan>(go);
@@ -63,10 +67,14 @@ namespace ReikaKalseki.SeaToSea {
 			mdl.transform.localScale = new Vector3(w, t, w);
 			Constructable c = go.GetComponent<Constructable>();
 			c.model = mdl;
-			c.allowedOnCeiling = true;
+			c.allowedOnCeiling = false;
 			c.allowedOnGround = true;
-			c.allowedOnWall = true;
-			c.allowedOnConstructables = true;
+			c.allowedOnWall = false;
+			c.allowedOnConstructables = false;
+			c.allowedInBase = false;
+			c.allowedInSub = false;
+			c.allowedOutside = true;
+			c.forceUpright = true;
 			
 			GameObject mdl2 = UnityEngine.Object.Instantiate(mdl);
 			mdl2.transform.SetParent(mdl.transform.parent);
@@ -79,6 +87,8 @@ namespace ReikaKalseki.SeaToSea {
 			box.center = Vector3.down*t*1.5F;
 			
 			Renderer[] r = mdl.GetComponentsInChildren<Renderer>();
+			RenderUtil.swapToModdedTextures(r, this);
+			r = mdl2.GetComponentsInChildren<Renderer>();
 			RenderUtil.swapToModdedTextures(r, this);
 		}
 		
@@ -107,13 +117,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		protected override void updateEntity(float seconds) {
-			if (!mainRenderers)
+			if (mainRenderers == null)
 				mainRenderers = GetComponentsInChildren<Renderer>();
 			if (!geyser && seconds > 0)
 				geyser = WorldUtil.getClosest<Geyser>(transform.position);
 			if (geyser && (geyser.transform.position.y > transform.position.y || Vector3.Distance(geyser.transform.position, transform.position) >= 30))
 				geyser = null;
-			SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
+			//SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
 			if (!geyser)
 				return;
 			StorageContainer sc = getStorage();

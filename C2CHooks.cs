@@ -73,6 +73,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.onEMPHitEvent += onEMPHit;
 	    	
+	    	DIHooks.constructabilityEvent += applyGeyserFilterBuildability;
+	    	
 	    	//DIHooks.fogCalculateEvent += interceptChosenFog;
 	    	
 	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
@@ -1465,6 +1467,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		return true;
 	    	LiveMixin lv = tgt.GetComponent<LiveMixin>();
 	    	return lv && lv.health < lv.maxHealth;
+	    }
+	    
+	    public static void applyGeyserFilterBuildability(DIHooks.BuildabilityCheck check) {
+			if (Builder.constructableTechType == SeaToSeaMod.geyserFilter.TechType && !check.placeOn) {
+	   			check.placeable = true;
+				//check.ignoreSpaceRequirements = true;
+		   	}
 	    }
 	}
 }
