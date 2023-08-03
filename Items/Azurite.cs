@@ -64,6 +64,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			foreach (PlayerDistanceTracker p in GetComponentsInChildren<PlayerDistanceTracker>())
+				UnityEngine.Object.DestroyImmediate(p.gameObject);
 			if (!sparker) {
 				sparker = ObjectUtil.createWorldObject("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc");
 				sparker.transform.localScale = new Vector3(0.4F, 0.4F, 0.4F);

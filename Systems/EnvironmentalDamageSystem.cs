@@ -170,6 +170,8 @@ namespace ReikaKalseki.SeaToSea {
        	}*/
 		
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
+	    	if (C2CHooks.skipEnviroDamage)
+	    		return;
     		if (DIHooks.getWorldAge() < 0.25F)
     			return;
     		if (GameModeUtils.currentEffectiveMode == GameModeOption.Creative)
@@ -374,6 +376,8 @@ namespace ReikaKalseki.SeaToSea {
     	}
     	
     	public void tickCyclopsDamage(CrushDamage dmg) {
+	    	if (C2CHooks.skipEnviroDamage)
+	    		return;
 			if (!dmg.gameObject.activeInHierarchy || !dmg.enabled) {
 				return;
 			}
@@ -518,6 +522,8 @@ namespace ReikaKalseki.SeaToSea {
     	}
     	
 		public float getPlayerO2Rate(Player ep) {
+	    	if (C2CHooks.skipO2)
+	    		return 3F;
 			Player.Mode mode = ep.mode;
 			if (mode != Player.Mode.Normal && mode - Player.Mode.Piloting <= 1) {
 				return 3f;
@@ -540,6 +546,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
+	    	if (C2CHooks.skipO2)
+	    		return 1;
 			if (!GameModeUtils.RequiresOxygen())
 				return 0;
 			float num = 1;
@@ -586,6 +594,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	   
 		public void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
+	    	if (C2CHooks.skipEnviroDamage)
+	    		return;
 	   		if (!(warn.alerts[0] is EnviroAlert))
 	   			upgradeAlertSystem(warn);
 	   		

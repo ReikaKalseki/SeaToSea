@@ -27,6 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<TrailerBaseConverterTag>();
 			go.EnsureComponent<TechTag>().type = TechType;
 			go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			return go;
 	    }
 		

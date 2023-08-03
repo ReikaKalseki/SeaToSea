@@ -44,6 +44,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 
 			internal void tick() {
+		    	if (C2CHooks.skipTreaderTick)
+		    		return;
 				Player ep = Player.main;
 				if (ep) {
 					float dist = Vector3.Distance(ep.transform.position, transform.position+transform.forward*10+transform.up*0);

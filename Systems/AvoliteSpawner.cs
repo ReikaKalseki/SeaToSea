@@ -242,6 +242,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void tickMapRoom(MapRoomFunctionality map) {
+	    	if (C2CHooks.skipScannerTick)
+	    		return;
 			if (VanillaBiomes.MOUNTAINS.isInBiome(map.transform.position)) {/*
 				float r = map.GetScanRange();
 				//HashSet<SunbeamDebris> arr = WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.transform.position, r); cannot use because no collider

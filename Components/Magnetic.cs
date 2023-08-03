@@ -22,6 +22,8 @@ namespace ReikaKalseki.SeaToSea
 		private bool searched = false;
 		
 		void FixedUpdate() {
+	    	if (C2CHooks.skipMagnetic)
+	    		return;
 			if (!searched) {
 				try {
 					if (!body)

@@ -31,6 +31,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 
 			internal void tick() {
+		    	if (C2CHooks.skipCrawlerTick)
+		    		return;
 				BiomeBase at = BiomeBase.getBiome(transform.position);
 				if (at != biome && (at == VanillaBiomes.BLOODKELP || at == CrashZoneSanctuaryBiome.instance)) {
 					foreach (Renderer r in GetComponentsInChildren<Renderer>()) {

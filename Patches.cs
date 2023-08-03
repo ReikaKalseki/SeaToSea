@@ -714,12 +714,6 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return codes.AsEnumerable();
 		}
-	
-		private static void injectCallback(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFarmedPlantGrowDone", false, typeof(GrowingPlant), typeof(GameObject)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_0));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-		}
 	}
 	
 	[HarmonyPatch(typeof(OxygenManager))]

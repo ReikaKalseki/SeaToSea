@@ -38,6 +38,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static Oxygen playerBaseO2;
 	    
+	    private static float nextSanctuaryPromptCheckTime = -1;
 	    private static float nextBkelpBaseAmbCheckTime = -1;
 	    private static float nextBkelpBaseAmbTime = -1;
 	    private static float nextCameraEMPTime = -1;
@@ -52,6 +53,30 @@ namespace ReikaKalseki.SeaToSea {
 	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
 	    public static readonly string sanctuaryPlantClickLocaleKey = "SanctuaryPlantClick";
 	    
+	    public static readonly bool skipPlayerTick = false;
+	    public static readonly bool skipBiomeCheck = false;
+	    public static readonly bool skipTemperatureCheck = false;
+	    public static readonly bool skipSkyApplierSpawn = false;
+	    public static readonly bool skipRadiationLevel = false;
+	    public static readonly bool skipFruitPlantTick = false;
+	    public static readonly bool skipScannerTick = false;
+	    public static readonly bool skipCompassCalc = false;
+	    public static readonly bool skipPodTick = false;
+	    public static readonly bool skipSeamothTick = false;
+	    public static readonly bool skipCrawlerTick = false;
+	    public static readonly bool skipTreaderTick = false;
+	    public static readonly bool skipVoidLeviTick = false;
+	    public static readonly bool skipMagnetic = false;
+	    public static readonly bool skipWaveBob = false;
+	    public static readonly bool skipRaytrace = false;
+	    public static readonly bool skipReach = false;
+	    public static readonly bool skipResourceSpawn = false;
+	    public static readonly bool skipEnviroDamage = false;
+	    public static readonly bool skipO2 = false;
+	    public static readonly bool skipWorldForces = false;
+	    public static readonly bool skipStalkerShiny = false;
+	    public static readonly bool skipRocketTick = false;
+	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
 	    	DIHooks.onDamageEvent += recalculateDamage;
@@ -62,7 +87,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.getTemperatureEvent += getWaterTemperature;
 	    	
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
-	    	DIHooks.onSeamothTickEvent += tickSeamoth;
 	    	
 	    	DIHooks.onSeamothModulesChangedEvent += updateSeamothModules;
 	    	DIHooks.onSeamothModuleUsedEvent += useSeamothModule;
@@ -77,7 +101,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	//DIHooks.fogCalculateEvent += interceptChosenFog;
 	    	
-	    	DIHooks.radiationCheckEvent += (ch) => ch.value = getRadiationLevel(ch);
+	    	DIHooks.radiationCheckEvent += (ch) => {if (!skipRadiationLevel) ch.value = getRadiationLevel(ch);};
 	    	
 	    	DIHooks.itemTooltipEvent += generateItemTooltips;
 	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
@@ -171,6 +195,8 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine(sanctuaryPlantClickLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantClickLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(sanctuaryPlantGrowingLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantGrowingLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
+	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_White.AsString(), SeaToSeaMod.itemLocale.getEntry("whitekey").desc);
 	    	
 	    	//LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
 	    	//LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
@@ -207,6 +233,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
+	    	if (skipPlayerTick)
+	    		return;
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
 	    	if (playerBaseO2 == null) {
@@ -257,17 +285,22 @@ namespace ReikaKalseki.SeaToSea {
 	    		SeaToSeaMod.sanctuaryDirectionHint.deactivate();
 	    	if (!VoidSpikesBiome.instance.isRadioFired())
 	    		SeaToSeaMod.voidSpikeDirectionHint.deactivate();
-	    	float dist = Vector3.Distance(ep.transform.position, crashMesa)-20;
-	    	if (dist < 50 || Vector3.Distance(ep.transform.position, auroraFront) < 144 || Vector3.Distance(ep.transform.position, trailerBaseBioreactor) < 200 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
-	    		Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("triggerSanctuary", 20);
+	    	
+	    	float distsq = (ep.transform.position-crashMesa).sqrMagnitude-400;
+	    	if (time >= nextSanctuaryPromptCheckTime && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key)) {
+	    		nextSanctuaryPromptCheckTime = time+1;
+	    		if (distsq < 2500 || Vector3.Distance(ep.transform.position, auroraFront) < 144 || Vector3.Distance(ep.transform.position, trailerBaseBioreactor) < 200 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
+	    			Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("triggerSanctuary", 20);
+	    		}
 	    	}
-	    	if (dist < 25 || (dist <= 250 && UnityEngine.Random.Range(0F, 1F) <= 0.075F*Time.timeScale*(dist <= 100 ? 2.5F : 1))) {
+	    	
+	    	if (distsq < 25*25 || (distsq <= 250*250 && UnityEngine.Random.Range(0F, 1F) <= 0.075F*Time.timeScale*(distsq <= 10000 ? 2.5F : 1))) {
 	    		IEcoTarget tgt = EcoRegionManager.main.FindNearestTarget(EcoTargetType.Leviathan, crashMesa, eco => eco.GetGameObject().GetComponent<ReaperLeviathan>(), 6);
-	    		if (tgt != null && Vector3.Distance(tgt.GetPosition(), crashMesa) >= Mathf.Max(dist, 15)) {
+	    		if (tgt != null && (tgt.GetPosition()-crashMesa).sqrMagnitude >= Mathf.Max(distsq, 225)) {
 	    			GameObject go = tgt.GetGameObject();
 	    			Vehicle v = ep.GetVehicle();
 	    			GameObject hit = v ? v.gameObject : ep.gameObject;
-	    			Vector3 pos = dist <= 50 ? hit.transform.position : MathUtil.getRandomVectorAround(crashMesa, 40).setY(crashMesa.y);
+	    			Vector3 pos = distsq <= 2500 ? hit.transform.position : MathUtil.getRandomVectorAround(crashMesa, 40).setY(crashMesa.y);
 	    			if (Vector3.Distance(go.transform.position, pos) >= 40)
 	    				go.GetComponent<SwimBehaviour>().SwimTo(pos, 20);
 	    			ReaperLeviathan r = go.GetComponent<ReaperLeviathan>();
@@ -322,10 +355,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void tickSeamoth(SeaMoth sm) {
-	    	
-	    }
-	    
 	    public static void onEquipmentAdded(string slot, InventoryItem item) {
 	    	if (item.item.GetTechType() == C2CItems.liquidTank.TechType)
 	    		LiquidBreathingSystem.instance.onEquip();
@@ -337,14 +366,20 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickO2Bar(uGUI_OxygenBar gui) {
+	    	if (skipO2)
+	    		return;
 	    	LiquidBreathingSystem.instance.updateOxygenGUI(gui);
 	    }
 	    
 	    public static float getO2RedPulseTime(float orig) {
+	    	if (skipO2)
+	    		return orig;
 	    	return LiquidBreathingSystem.instance.isO2BarFlashingRed() ? 6 : orig;
 	    }
 	    
 	    public static bool canPlayerBreathe(bool orig, Player p) {
+	    	if (skipO2)
+	    		return true;
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
 	    	if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(p))
 	    		return false;
@@ -352,12 +387,16 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
+	    	if (skipO2)
+	    		return f;
 	   		if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(Player.main))
 	   			f = 0;
 	   		return f;
 	    }
 	    
 	    public static void addOxygenAtSurfaceMaybe(OxygenManager mgr, float time) {
+	    	if (skipO2)
+	    		return;
 	    	if (LiquidBreathingSystem.instance.isO2BarAbleToFill(Player.main)) {
 	    		//SNUtil.writeToChat("Add surface O2");
 	    		mgr.AddOxygenAtSurface(time);
@@ -365,6 +404,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void getBiomeAt(DIHooks.BiomeCheck b) {
+	    	if (skipBiomeCheck)
+	    		return;
 	    	if (VoidSpikesBiome.instance.isInBiome(b.position)) {
 	    		b.setValue(VoidSpikesBiome.biomeName);
 	    		b.lockValue();
@@ -689,10 +730,14 @@ namespace ReikaKalseki.SeaToSea {
 	    }
     
 	    public static float getReachDistance() {
+	    	if (skipRaytrace)
+	    		return 2;
 	    	return Player.main.GetVehicle() == null && VoidSpikesBiome.instance.isInBiome(Player.main.gameObject.transform.position) ? 3.5F : 2;
 	    }
 	    
 	    public static bool checkTargetingSkip(bool orig, Transform obj) {
+	    	if (skipRaytrace)
+	    		return orig;
 	    	if (!obj || !obj.gameObject)
 	    		return orig;
 	    	PrefabIdentifier id = obj.gameObject.FindAncestor<PrefabIdentifier>();
@@ -771,7 +816,9 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onResourceSpawn(ResourceTracker p) {
-	    	PrefabIdentifier pi = p.gameObject.GetComponent<PrefabIdentifier>();
+	    	if (skipResourceSpawn)
+	    		return;
+	    	PrefabIdentifier pi = p.GetComponent<PrefabIdentifier>();
 	    	if (pi && pi.ClassId == VanillaResources.LARGE_SULFUR.prefab) {
 	    		p.overrideTechType = TechType.Sulphur;
 	    		p.techType = TechType.Sulphur;
@@ -783,6 +830,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void getWaterTemperature(DIHooks.WaterTemperatureCalculation calc) {
+	    	if (skipTemperatureCheck)
+	    		return;
 	    	if (EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE >= 0) {
 	    		calc.setValue(EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE);
 	    		calc.lockValue();
@@ -838,6 +887,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickWorldForces(WorldForces wf) {
+	    	if (skipWorldForces)
+	    		return;
 	    	if (wf == null || wf.gameObject == null || !wf.gameObject.activeInHierarchy || !wf.enabled) {
 	    		//WorldForcesManager.instance.RemoveWorldForces(wf);
 	    		//SNUtil.log("Disabling invalid WF tick in "+wf);
@@ -891,6 +942,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onSkyApplierSpawn(SkyApplier pk) {
+	    	if (skipSkyApplierSpawn)
+	    		return;
 	    	GameObject go = pk.gameObject;
 	    	PrefabIdentifier pi = go.FindAncestor<PrefabIdentifier>();
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
@@ -971,10 +1024,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//ObjectUtil.removeComponent<ImmuneToPropulsioncannon>(go);
 	    	}
         	else if (pi && pi.classId == "8b113c46-c273-4112-b7ef-65c50d2591ed") { //rocket
-	        	foreach (RocketLocker cl in pi.GetComponentsInChildren<RocketLocker>()) {
-		        	StorageContainer sc = cl.GetComponent<StorageContainer>();
-		        	sc.Resize(6, 8);
-	        	}
+	    		go.EnsureComponent<C2CRocket>();
         	}
 	    	else if (pi && pi.classId == "d4be3a5d-67c3-4345-af25-7663da2d2898") { //cuddlefish
 	    		Pickupable p = go.EnsureComponent<Pickupable>();
@@ -1012,6 +1062,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }*/
 	    
 	    public static void tickFruitPlant(DIHooks.FruitPlantTag fpt) {
+	    	if (skipFruitPlantTick)
+	    		return;
 	    	FruitPlant fp = fpt.getPlant();
 	    	if (ObjectUtil.isFarmedPlant(fp.gameObject) && WorldUtil.isPlantInNativeBiome(fp.gameObject)) {
 	        	fp.fruitSpawnInterval = fpt.getBaseGrowthTime()/1.5F;
@@ -1057,11 +1109,8 @@ namespace ReikaKalseki.SeaToSea {
     
 	    public static bool isSpawnableVoid(string biome) {
 	    	bool ret = VoidSpikeLeviathanSystem.instance.isSpawnableVoid(biome);
-	    	if (ret && Player.main.IsSwimming()) {
-	    		Pickupable held = Inventory.main.GetHeld();
-	    		if (held && isHeldToolAzuritePowered()) {
-	    			VoidGhostLeviathansSpawner.main.timeNextSpawn -= 0.5F*Time.deltaTime;
-	    		}
+	    	if (ret && Player.main.IsSwimming() && !Player.main.GetVehicle() && VoidGhostLeviathansSpawner.main.spawnedCreatures.Count < 3 && !VoidSpikesBiome.instance.isInBiome(Player.main.transform.position)) {
+	    		VoidGhostLeviathansSpawner.main.timeNextSpawn = Time.time-1;
 	    	}
 	    	return ret;
 	    }
@@ -1071,6 +1120,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickVoidLeviathan(GhostLeviatanVoid gv) {
+	    	if (skipVoidLeviTick)
+	    		return;
 	    	VoidSpikeLeviathanSystem.instance.tickVoidLeviathan(gv);
 	    }
 	    
@@ -1194,6 +1245,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static GameObject getStalkerShinyTarget(GameObject def, CollectShiny cc) {
+	    	if (skipStalkerShiny)
+	    		return def;
 	    	if (cc.shinyTarget && cc.GetComponent<DeepStalkerTag>()) {
 	    		bool hasPlat = cc.shinyTarget.GetComponent<PlatinumTag>();
 	    		bool lookingAtPlat = def.GetComponent<PlatinumTag>();
@@ -1208,6 +1261,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onShinyTargetIsCurrentlyHeldByStalker(CollectShiny cc) {
+	    	if (skipStalkerShiny)
+	    		return;
 	    	if (cc.shinyTarget && cc.shinyTarget.GetComponent<PlatinumTag>()) {
 	    		DeepStalkerTag ds = cc.GetComponent<DeepStalkerTag>();
 	    		ds.tryStealFrom(cc.shinyTarget.GetComponentInParent<Stalker>());
@@ -1243,7 +1298,7 @@ namespace ReikaKalseki.SeaToSea {
 				r.gunNotDisabled.Play();
 				return;
 			}
-			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded(r)) {
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
 			}
 			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
@@ -1409,6 +1464,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void getCompassDepthLevel(DIHooks.DepthCompassCheck ch) {
+	    	if (skipCompassCalc)
+	    		return;
 	    	if (VoidSpikeLeviathanSystem.instance.isVoidFlashActive(true)) {
 	    		ch.value = VoidSpikeLeviathanSystem.instance.getRandomDepthForDisplay();
 	    		ch.crushValue = 1000-ch.value;

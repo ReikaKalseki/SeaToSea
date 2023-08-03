@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<BloodKelpBaseNuclearReactorMelterTag>();
 			go.EnsureComponent<TechTag>().type = TechType;
 			go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			return go;
 	    }
 		

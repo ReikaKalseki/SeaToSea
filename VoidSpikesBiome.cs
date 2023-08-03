@@ -298,9 +298,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal static WaveBob checkAndAddWaveBob(GameObject go, bool force) {
+	    	if (C2CHooks.skipWaveBob)
+	    		return null;
 			if (!force) {
-				double dist = Vector3.Distance(go.transform.position, signalLocation);
-				if (dist > 18)
+				double distsq = (go.transform.position-signalLocation).sqrMagnitude;
+				if (distsq > 18*18)
 					return null;
 				if (go.GetComponentInParent<Creature>() != null || go.GetComponentInParent<Player>() != null)
 					return null;

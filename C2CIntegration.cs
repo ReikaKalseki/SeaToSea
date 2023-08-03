@@ -112,9 +112,8 @@ namespace ReikaKalseki.SeaToSea {
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, EcoceanMod.glowOil.TechType, 3);
 		//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 			
-		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3);
-		
-		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.lavaShroom.seed.TechType, 2);
+		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3, "Oil containing frequency-discriminating chemoluminescent seeds");		
+		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.lavaShroom.seed.TechType, 2, "Flora adapted for and frequently becoming sources of extreme heat");
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 		
@@ -131,10 +130,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		CustomEgg ghostRayEgg = CustomEgg.getEgg(TechType.GhostRayBlue);
 		if (ghostRayEgg != null)
-			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.GhostRayBlue, 1);
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.GhostRayBlue, 1, "A large poisonous herbivore adapted to deep water");
 		CustomEgg blighterEgg = CustomEgg.getEgg(TechType.Blighter);
 		if (blighterEgg != null)
-			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2);
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2, "A small but aggressive carrion feeder, with limited visual sensation");
 		
 		C2CRecipes.removeVanillaUnlock(EcoceanMod.planktonScoop.TechType);
 		

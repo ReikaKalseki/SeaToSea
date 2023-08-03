@@ -88,6 +88,8 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			void Update() {
+		    	if (C2CHooks.skipSeamothTick)
+		    		return;
 				float time = DayNightCycle.main.timePassedAsFloat;
 				float dT = time-lastTickTime;
 				if (dT >= TICK_RATE) {

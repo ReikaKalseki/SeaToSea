@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<MercuryLootSpawnerTag>();
 			go.EnsureComponent<TechTag>().type = TechType;
 			go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
 			return go;
 	    }
 		

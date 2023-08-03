@@ -34,6 +34,8 @@ namespace ReikaKalseki.SeaToSea
 			private static readonly float MAX_ROTATE_SPEED = 2F;
 			
 			void FixedUpdate() {
+		    	if (C2CHooks.skipPodTick)
+		    		return;
 				if (!pod)
 					pod = GetComponent<EscapePod>();
 				if (!body)
