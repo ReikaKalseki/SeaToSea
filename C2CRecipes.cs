@@ -612,7 +612,7 @@ namespace ReikaKalseki.SeaToSea
     	ingot.craftingSubCategory = "C2CIngots";
     	ingot.craftingTime = CraftData.craftingTimes[TechType.TitaniumIngot];
     	ingot.unlockRequirement = TechType.Unobtanium;
-    	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/ingot_"+refName.ToLowerInvariant());
+    	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/Ingot/"+refName.ToLowerInvariant());
     	ingot.renderModify = r => {
     		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Items/World/Ingot/"+item);
     		RenderUtil.setGlossiness(r, specInt, shiny, fresnel);

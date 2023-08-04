@@ -288,6 +288,17 @@
 		
 	</pda>
   </CampfireClick>
+  <SmokedNoExpire>
+	<name>
+		
+	</name>
+	<desc>
+		Remains good indefinitely.
+	</desc>
+	<pda>
+		
+	</pda>
+  </SmokedNoExpire>
   <MercuryDesc>
 	<name>
 		

@@ -35,6 +35,26 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Near;
 			go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			go.EnsureComponent<TechTag>().type = TechType;
+			/*
+			Vector3[] pos = new Vector3[]{lid.transform.localPosition};
+			Vector3[] rot = new Vector3[]{Vector3.zero};
+			for (int i = 0; i < pos.Length; i++) {
+				GameObject par = new GameObject("Marshmallow");
+				GameObject cyl = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+				par.transform.localScale = new Vector3(0.2F, 0.4F, 0.2F);
+				cyl.name = "Marshmallow";
+				par.transform.SetParent(go.transform);
+				cyl.transform.SetParent(par.transform);
+				par.transform.localPosition = pos[i];
+				par.transform.localRotation = Quaternion.Euler(rot[i]);
+				cyl.transform.localScale = Vector3.one;
+				cyl.transform.localPosition = Vector3.zero;
+				cyl.transform.localRotation = Quaternion.identity;
+				ObjectUtil.removeComponent<Collider>(cyl);
+				ECCLibrary.ECCHelpers.ApplySNShaders(cyl, new ECCLibrary.UBERMaterialProperties(0, 2, 0));
+				Renderer r = cyl.GetComponentInChildren<Renderer>();
+				RenderUtil.setGlossiness(r, 2, 0, 1);
+			}*/
 			return go;
 	    }
 			

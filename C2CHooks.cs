@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static readonly string sanctuaryPlantClickLocaleKey = "SanctuaryPlantClick";
 	    public static readonly string campfireCookingLocaleKey = "CampfireCooking";
 	    public static readonly string campfireUseLocaleKey = "CampfireClick";
+	    public static readonly string smokedNoExpireLocaleKey = "SmokedNoExpire";
 	    
 	    public static readonly bool skipPlayerTick = false;
 	    public static readonly bool skipBiomeCheck = false;
@@ -192,10 +193,13 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine(sanctuaryPlantGrowingLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantGrowingLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(campfireUseLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireUseLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(campfireCookingLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireCookingLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(smokedNoExpireLocaleKey, SeaToSeaMod.miscLocale.getEntry(smokedNoExpireLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	LanguageHandler.SetLanguageLine("EncyDesc_Mercury", SeaToSeaMod.miscLocale.getEntry("MercuryDesc").pda);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_White.AsString(), SeaToSeaMod.itemLocale.getEntry("whitekey").desc);
+	    	
+	    	Campfire.updateLocale(); //call after the above locale init
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));

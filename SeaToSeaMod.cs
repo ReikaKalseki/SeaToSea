@@ -125,7 +125,7 @@ namespace ReikaKalseki.SeaToSea
     }
 
     [QModPatch]
-    public static void Load() {        
+    public static void Load() {
         Harmony harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
         FileLog.logPath = Path.Combine(Path.GetDirectoryName(modDLL.Location), "harmony-log.txt");
@@ -315,6 +315,30 @@ namespace ReikaKalseki.SeaToSea
     	C2CIntegration.addPostCompat();
     	
     	dumpAbandonedBaseTextures();
+    	
+    	Dictionary<string, bool> modsWithIssues = new Dictionary<string, bool>(){
+    		{"CyclopsNuclearUpgrades", false},
+    		{"CyclopsBioReactor", false},
+    		{"RedBaron", true},
+    		{"SeamothArms", true},
+    		{"MoreSeamothDepth", true},
+    		{"CustomCraft2", true},
+    		{"FCSAlterraHub", false},
+    		{"Socknautica", false},
+    		{"SlotExtender", false}
+    	};
+    	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
+    		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
+    			if (kvp.Value) {
+    				throw new Exception("Mod '"+kvp.Key+"' detected. This mod is not compatible with SeaToSea, and cannot be used alongside it.");
+    			}
+    			else {
+    				string msg = "SeaToSea: Mod '"+kvp.Key+"' detected. This mod will significantly alter the balance of your pack and risks completely breaking C2C progression.";
+    				SNUtil.createPopupWarning(msg);
+    				SNUtil.log(msg+" You should remove this mod if possible when using SeaToSea.");
+    			}
+    		}
+    	}
     }
     
     private static void dumpAbandonedBaseTextures() {
