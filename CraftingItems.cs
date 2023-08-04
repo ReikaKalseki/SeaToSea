@@ -78,6 +78,10 @@ namespace ReikaKalseki.SeaToSea
 							sc.radius = 0.25F;
 							sc.center = Vector3.zero;
 							
+							VFXFabricating fab = root.GetComponentInChildren<VFXFabricating>();
+							fab.posOffset = new Vector3(0, 0.3F, 0.1F);
+							fab.localMinY = -0.4F;
+							
 							//r.materials[0].SetFloat("_SpecInt", 7.5F);
 							//r.materials[0].SetFloat("_Shininess", 12F);
 							//r.materials[0].SetFloat("_Fresnel", 0.5F);
@@ -104,6 +108,10 @@ namespace ReikaKalseki.SeaToSea
 							sc.radius = 0.25F;
 							sc.center = Vector3.zero;
 							
+							VFXFabricating fab = root.GetComponentInChildren<VFXFabricating>();
+							fab.eulerOffset = new Vector3(180, 0, 0);
+							//fab.posOffset = new Vector3(0, 0.5F, 0);
+							
 							//r.materials[0].color = Color.clear;
 							//r.materials[3].color = Color.clear;
 							//RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/"+item.getTextureFolder()+"/"+ObjectUtil.formatFileName(item), new Dictionary<int, string>{{1, ""}});
@@ -118,7 +126,12 @@ namespace ReikaKalseki.SeaToSea
 						item.renderModify = r => {r.materials[0].color = Color.white; r.materials[0].SetFloat("_SpecInt", 1.5F); r.materials[0].SetFloat("_Shininess", 0F);};
 					break;
 					case Items.Motor:
-						item.renderModify = r => {r.transform.localScale = Vector3.one*1.5F;};
+						item.renderModify = r => {
+							r.transform.localScale = new Vector3(1.5F, 0.85F, 1.5F);
+							r.materials[0].SetColor("_Color", Color.white);
+							r.materials[0].SetFloat("_SpecInt", 7F);
+							r.materials[0].SetFloat("_Shininess", 4F);
+						};
 					break;
 					case Items.FuelTankWall:
 						item.renderModify = r => {r.materials[0].SetFloat("_SpecInt", 0.5F); r.materials[0].SetFloat("_Shininess", 0F);};

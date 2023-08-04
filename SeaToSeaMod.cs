@@ -73,6 +73,7 @@ namespace ReikaKalseki.SeaToSea
     public static SeaTreaderTunnelLight tunnelLight;
     public static FallingGlassForestWreck gfWreckProp;
     public static DeadMelon deadMelon;
+    public static Campfire campfire;
     
     private static BloodKelpBaseNuclearReactorMelter reactorMelter;
     private static TrailerBaseConverter bioBreaker;
@@ -191,6 +192,8 @@ namespace ReikaKalseki.SeaToSea
 	    gfWreckProp.Patch();
 	    deadMelon = new DeadMelon();
 	    deadMelon.Patch();
+	    campfire = new Campfire();
+	    campfire.Patch();
 	    reactorMelter = new BloodKelpBaseNuclearReactorMelter();
 	    reactorMelter.Patch();
 	    bioBreaker = new TrailerBaseConverter();

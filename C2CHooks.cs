@@ -52,6 +52,8 @@ namespace ReikaKalseki.SeaToSea {
 	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
 	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
 	    public static readonly string sanctuaryPlantClickLocaleKey = "SanctuaryPlantClick";
+	    public static readonly string campfireCookingLocaleKey = "CampfireCooking";
+	    public static readonly string campfireUseLocaleKey = "CampfireClick";
 	    
 	    public static readonly bool skipPlayerTick = false;
 	    public static readonly bool skipBiomeCheck = false;
@@ -154,12 +156,7 @@ namespace ReikaKalseki.SeaToSea {
 					ep.SetMotorMode(Player.MotorMode.Dive);
 	    	     }
 	    	}));
-	    	/*
-	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.locationGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
-	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.compoundGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
-	    	SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.biomeGoalTracker.goals.Select<Story.StoryGoal, string>(g => g.key+" of "+g.goalType).ToArray()));
-			SNUtil.log(string.Join(", ", Story.StoryGoalManager.main.onGoalUnlockTracker.goalUnlocks.Values.Select<Story.OnGoalUnlock, string>(g => g.goal).ToArray()));
-	    	*/
+	    	
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    	UnderwaterIslandsFloorBiome.instance.onWorldStart();
         
@@ -182,7 +179,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		s = s.Replace(" spore", " Sample");
 	    		s = s.Replace(" Seed", " Sample");
 	    		s = s.Replace(" Spore", " Sample");
-	    		//SNUtil.log("Updating seed naming for "+k);
 	    		LanguageHandler.SetLanguageLine(k, s);
 		    }
 	    	
@@ -194,12 +190,11 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine(needRepairDataboxLocaleKey, SeaToSeaMod.miscLocale.getEntry(needRepairDataboxLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(sanctuaryPlantClickLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantClickLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(sanctuaryPlantGrowingLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantGrowingLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(campfireUseLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireUseLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(campfireCookingLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireCookingLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_White.AsString(), SeaToSeaMod.itemLocale.getEntry("whitekey").desc);
-	    	
-	    	//LanguageHandler.SetLanguageLine(SeaToSeaMod.locker.TechType.AsString(), Language.main.Get(TechType.Locker));
-	    	//LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.locker.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.Locker.AsString()));
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
@@ -207,12 +202,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
 	    	
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule3.AsString().Replace("maximum", "900m")));
-			
-	    	/* does not contain the mouse bit, and it is handled automatically anyway
-	    	string ttip = Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()];
-	    	string hkit = Language.main.strings["Tooltip_"+TechType.FirstAidKit.AsString()];
-			Language.main.strings["Tooltip_"+SeaToSeaMod.bandage.TechType.AsString()] = ttip+"\n\n"+hkit;*/
-	    	
 	    }
 	    
 	    private static void moveToExploitable(string key) {

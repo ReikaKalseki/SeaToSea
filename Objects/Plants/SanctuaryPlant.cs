@@ -15,6 +15,8 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class SanctuaryPlant : BasicCustomPlant {
 		
+		public static readonly Color BASE_COLOR = new Color(26/255F, 231/255F, 220/255F, 1);
+		
 		public SanctuaryPlant() : base(SeaToSeaMod.itemLocale.getEntry("SANCTUARY_PLANT"), new FloraPrefabFetch("99bbd145-d50e-4afb-bff0-27b33243642b"), "ce20c267-b52b-4866-8134-f3f78072af3e", "Core") {
 			glowIntensity = 1F;
 			collectionMethod = HarvestType.None;
@@ -40,6 +42,29 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<SanctuaryPlantTag>();
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			RenderUtil.setEmissivity(go.GetComponentInChildren<Renderer>(), 1);
+		}
+		
+		public override void modifySeed(GameObject go) {
+			go.GetComponent<WorldForces>().underwaterGravity = 4;
+			ObjectUtil.removeComponent<Collider>(go);
+			ObjectUtil.removeChildObject(go, "Generic_plant_seed");
+			
+			GameObject pfb = ObjectUtil.lookupPrefab(TechType.SeaTreaderPoop);
+			GameObject collider = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(pfb, "Sphere"));
+			GameObject render = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(pfb, "sea_treader_poop_01"));
+			render.transform.SetParent(go.transform);
+			collider.transform.SetParent(go.transform);
+			
+			go.GetComponent<Rigidbody>().copyObject(pfb.GetComponent<Rigidbody>());
+			
+			Renderer r = render.GetComponentInChildren<Renderer>();
+			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Plants/Sanctuary_Seed");
+			RenderUtil.makeTransparent(r);
+			Light l = ObjectUtil.addLight(go);
+			l.color = BASE_COLOR;
+			l.intensity = 1.4F;
+			l.range = 8;
+			l.shadows = LightShadows.Soft;
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {
@@ -73,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
     		//	UnityEngine.Object.Destroy(gameObject);
     		if (isGrown) {
     			gameObject.SetActive(true);
-    			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
+    			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.7F, 1.0F);
     		}
     		else {
     			gameObject.transform.localScale = Vector3.one*3;	
@@ -81,8 +106,14 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			gameObject.layer = LayerID.Useable;
 			if (!light)
 				light = GetComponentInChildren<Light>();
+			if (!light) {
+				GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab("99bbd145-d50e-4afb-bff0-27b33243642b").GetComponentInChildren<Light>().gameObject);
+				go.transform.SetParent(transform);
+				light = go.GetComponent<Light>();
+			}
 			if (!bounds)
 				bounds = GetComponentInChildren<SphereCollider>();
 			if (mainRender == null)
@@ -107,9 +138,10 @@ namespace ReikaKalseki.SeaToSea {
 			bounds.radius = 0.3F;
 			bounds.center = Vector3.up*0.25F;
 			light.transform.localPosition = Vector3.up*(harvested ? 1.4F : 0.91F);
-			light.intensity = harvested ? 0.75F : 1.6F;
+			light.intensity = harvested ? 0.75F : (isGrown ? 1.25F : 1.6F);
 			light.range = harvested ? 7 : 24;
-			light.color = harvested ? new Color(130/255F, 134/255F, 1, 1) : new Color(26/255F, 231/255F, 220/255F, 1);
+			light.color = harvested ? new Color(130/255F, 134/255F, 1, 1) : SanctuaryPlant.BASE_COLOR;
+			light.shadows = LightShadows.Soft;
 		}
 		
 		internal bool isHarvested() {

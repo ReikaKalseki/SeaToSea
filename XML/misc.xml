@@ -266,6 +266,28 @@
 		
 	</pda>
   </SanctuaryPlantClick>
+  <CampfireCooking>
+	<name>
+		
+	</name>
+	<desc>
+		Smoking fish
+	</desc>
+	<pda>
+		
+	</pda>
+  </CampfireCooking>
+  <CampfireClick>
+	<name>
+		
+	</name>
+	<desc>
+		Supply a raw fish to smoke
+	</desc>
+	<pda>
+		
+	</pda>
+  </CampfireClick>
   <MercuryDesc>
 	<name>
 		
