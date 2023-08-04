@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeComponent<Pickupable>(go);
 			ObjectUtil.removeComponent<PickPrefab>(go);
 			ObjectUtil.removeComponent<LiveMixin>(go);
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Near;
 			return go;
 	    }
 

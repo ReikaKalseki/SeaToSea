@@ -48,6 +48,20 @@ namespace ReikaKalseki.SeaToSea {
 			l.color = new Color(1, 0.5F, 0, 1);
 			l.range = 12;
 			l.transform.localPosition = new Vector3(0, 0.5F, 0);
+			
+			GameObject pot = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(ObjectUtil.lookupPrefab(TechType.PlanterPot), "model/Base_interior_Planter_Pot_01"));
+			ObjectUtil.removeChildObject(pot, "pot_generic_plant_01");
+			GameObject cone = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(ObjectUtil.lookupPrefab(TechType.HangingFruit), "Fruit_03"));
+			pot.transform.SetParent(go.transform);
+			pot.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+			pot.transform.localPosition = Vector3.down*0.15F;
+			cone.transform.SetParent(go.transform);
+			cone.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+			cone.transform.localPosition = Vector3.up*0.45F;
+			cone.transform.localScale = new Vector3(0.04F, 0.04F, 0.02F);
+			Renderer r = cone.GetComponentInChildren<Renderer>();
+			RenderUtil.setGlossiness(r, 2, 0, 0.5F);
+			RenderUtil.setEmissivity(r, 120);
 			return go;
 	    }
 			
@@ -60,6 +74,8 @@ namespace ReikaKalseki.SeaToSea {
 		private LiveMixin live;
 		private Light light;
 		
+		private GameObject fire;
+		
 		private float cookProgress;
 		private SmokingRecipe cooking;
 		
@@ -70,6 +86,13 @@ namespace ReikaKalseki.SeaToSea {
 				light = GetComponentInChildren<Light>();
 			live.health = live.maxHealth;
 			live.invincible = true;
+			
+			if (!fire) {
+				fire = ObjectUtil.getChildObject(gameObject, "Extinguishable_Fire_small(Clone)");
+				fire.transform.localPosition = Vector3.up*0.23F;
+				fire.transform.localRotation = Quaternion.identity;
+				fire.transform.localScale = new Vector3(0.5F, 1, 0.5F);
+			}
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			light.range = 12+1.2F*Mathf.Sin(time*9.917F)+0.5F*Mathf.Sin(time*14.371F+217F)+0.2F*Mathf.Sin(time*35.713F+62F);

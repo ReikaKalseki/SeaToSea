@@ -193,6 +193,7 @@ namespace ReikaKalseki.SeaToSea {
 			LanguageHandler.SetLanguageLine(campfireUseLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireUseLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(campfireCookingLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireCookingLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
+	    	LanguageHandler.SetLanguageLine("EncyDesc_Mercury", SeaToSeaMod.miscLocale.getEntry("MercuryDesc").pda);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_White.AsString(), SeaToSeaMod.itemLocale.getEntry("whitekey").desc);
 	    	
