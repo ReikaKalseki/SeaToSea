@@ -124,6 +124,8 @@ namespace ReikaKalseki.SeaToSea
 				ECHooks.attractToSoundPing(seamoth, false, 0.33F);
 				if (holdingBloodKelp)
 					holdingBloodKelp.release();
+				if (seamoth.liveMixin.GetHealthFraction() < 0.67F)
+					seamoth.liveMixin.TakeDamage(5);
 			}
 			
 			public void OnBloodKelpGrab(PredatoryBloodvine c) {
@@ -169,6 +171,8 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				
+				float health = seamoth.liveMixin.GetHealthFraction();
+				
 				float minSpeedBonus = InventoryUtil.isVehicleUpgradeSelected(seamoth, C2CItems.speedModule.TechType) ? 0.25F : 0;
 				if (speedBonus > minSpeedBonus)
 					speedBonus *= 0.933F;
@@ -178,6 +182,7 @@ namespace ReikaKalseki.SeaToSea
 				if (stuckCells > 0) {
 					speedModifier.accelerationMultiplier *= Mathf.Exp(-stuckCells*0.2F);
 				}
+				speedModifier.accelerationMultiplier *= Mathf.Max(0.1F, health);
 				//SNUtil.writeToChat(speedBonus.ToString("0.000"));
 				
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {
@@ -190,6 +195,11 @@ namespace ReikaKalseki.SeaToSea
 				}
 				
 				bool kooshCave = false;
+				
+				if (health < 0.5F) {
+					float force = 1+Mathf.Pow((0.5F-health)*2, 1.5F)*9;
+					body.AddForce(Vector3.down*tickTime*50, ForceMode.Acceleration);
+				}
 				
 				if (VanillaBiomes.KOOSH.isInBiome(transform.position)) {
 					string biome = WaterBiomeManager.main.GetBiome(transform.position, false);

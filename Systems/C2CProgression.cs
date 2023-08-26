@@ -100,6 +100,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.PrecursorKey_Orange);
 			gatedTechnologies.Add(TechType.PrecursorKey_Purple);
 			gatedTechnologies.Add(TechType.HeatBlade);
+			gatedTechnologies.Add(TechType.ReactorRod);
 		}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {

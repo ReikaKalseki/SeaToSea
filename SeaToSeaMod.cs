@@ -292,7 +292,6 @@ namespace ReikaKalseki.SeaToSea
 		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
         
         Vector3 ang = new Vector3(0, 317, 0);
         Vector3 pos1 = new Vector3(-1226, -350, -1258);
@@ -319,6 +318,9 @@ namespace ReikaKalseki.SeaToSea
 		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
         
+        POITeleportSystem.instance.populate();
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
+        
     	C2CIntegration.addPostCompat();
     	
     	dumpAbandonedBaseTextures();
@@ -331,7 +333,6 @@ namespace ReikaKalseki.SeaToSea
     		{"MoreSeamothDepth", true},
     		{"CustomCraft2", true},
     		{"FCSAlterraHub", false},
-    		{"Socknautica", false},
     		{"SlotExtender", false},
     		{"WarpChip", true},
     		{"Socknautica", true},

@@ -32,6 +32,9 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
 	    internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
 	    
+	    internal static readonly Vector3 OZZY_FORK_DEEP_ROOM_POS = new Vector3(-645.6F, -102.7F, -16.2F);
+	    internal static readonly string OZZY_FORK_DEEP_ROOM_GOAL = "ozzyforkdeeproom";
+	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
@@ -127,6 +130,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.droppabilityEvent += modifyDroppability;
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
+	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
@@ -335,6 +339,10 @@ namespace ReikaKalseki.SeaToSea {
 			    			}
 			    		}
 					}
+	    		}
+	    		
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(OZZY_FORK_DEEP_ROOM_GOAL) && Vector3.Distance(OZZY_FORK_DEEP_ROOM_POS, ep.transform.position) <= 12) {
+	    			Story.StoryGoal.Execute(OZZY_FORK_DEEP_ROOM_GOAL, Story.GoalType.Story);
 	    		}
 	    	}
 	    	
@@ -678,7 +686,12 @@ namespace ReikaKalseki.SeaToSea {
 	   			}
 	   			bool seal;
 	   			bool reinf;
-	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+	   			bool flag = C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf);
+	   			if (!reinf && dmg.type == DamageType.Heat && WaterTemperatureSimulation.main.GetTemperature(p.transform.position) > 270) {
+	   				dmg.setValue(dmg.getAmount()*1.25F);
+	   				return;
+	   			}
+	   			else if (flag) {
 		   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
 	   					string biome = WaterBiomeManager.main.GetBiome(p.transform.position, false);
 	   					bool brine = biome != null && biome.Contains("LostRiver") && (biome.Contains("Lake") || biome.Contains("Stream") || biome.Contains("Water"));
@@ -772,6 +785,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Avolite", Story.GoalType.Story);
+	    	}
+	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType && VanillaBiomes.ILZ.isInBiome(Player.main.transform.position)) {
+	    		bool reinf;
+	    		bool seal;
+	    		C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf);
+	    		if (!reinf) {
+		    		LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
+		    		float dmg = 40+(WaterTemperatureSimulation.main.GetTemperature(Player.main.transform.position)-90)/3;
+		    		lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Heat, Player.main.gameObject);
+	    		}
 	    	}
 	    }
     
@@ -1207,8 +1230,6 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void getGrinderDrillableDrop(DrillableGrindingResult res) {
 	    	if (res.materialTech == TechType.Sulphur) {
 	    		//SNUtil.writeToChat("Intercepting grinding sulfur");
-	    		Vector3 pos = res.drop.transform.position;
-	    		UnityEngine.Object.DestroyImmediate(res.drop);
 	    		res.drop = ObjectUtil.lookupPrefab(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).ClassID);
 	    		res.dropCount = UnityEngine.Random.Range(0F, 1F) < 0.33F ? 2 : 1;
 	    	}
@@ -1557,6 +1578,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	else {
 	    		waterToRestore = s.water;
 	    		foodToRestore = s.food;
+	    	}
+	    }
+	    
+	    public static void onItemsLost() {
+	    	foreach (InventoryItem ii in ((IEnumerable<InventoryItem>)Inventory.main.container)) {
+	    		if (ii != null && ii.item.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
+	    			ii.item.destroyOnDeath = true;
+	    		}
 	    	}
 	    }
 	    
