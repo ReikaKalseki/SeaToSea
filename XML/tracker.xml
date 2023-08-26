@@ -1,0 +1,565 @@
+<Root>
+  <DEGASIEND>
+	<name>
+		Deep Degasi Base
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<end>
+		A recording of the demise of the Degasi survivors as a result of Marguerit Maida bringing an injured leviathan, attracting another which attacked the base.
+	</end>
+	<tablet>
+		A broken orange tablet in the same general design of the purple variant, with unknown usage.
+	</tablet>
+	<rebreather>
+		The final fragments to create a construction blueprint for a machine to recharge liquid breathing systems.
+	</rebreather>
+  </DEGASIEND>
+  <VOID>
+	<name>
+		Crater Edge
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<destroy>
+		Audio of the final moments of lifepod 15 as it was destroyed by a ghost leviathan.
+	</destroy>
+	<end>
+		A log from the occupant of lifepod 15 as they examined their limited options and discussed visiting an unknown deep region further away from the main crater.
+	</end>
+	<databox>
+		The blueprint for tough metal plating to build advanced vehicles.
+	</databox>
+	<items>
+		Strange crystals formed under extreme pressure, with commensurate fabrication applications.
+	</items>
+	<levi>
+		A large aggressive creature that makes use of light and electricity based attacks.
+	</levi>
+  </VOID>
+  <POD3>
+	<name>
+		Northern Kelp Forest
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </POD3>
+  <POD19>
+	<name>
+		Keen's Lifepod
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </POD19>
+  <POD17>
+	<name>
+		Western Grassy Plateaus
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </POD17>
+  <POD6>
+	<name>
+		Eastern Grassy Plateaus
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </POD6>
+  <JELLYSHROOM>
+	<name>
+		Jellyshroom Caves
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </JELLYSHROOM>
+  <DEGASI1>
+	<name>
+		Underwater Degasi Base
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </DEGASI1>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+  <NAAAAAAAAME>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </NAAAAAAAAME>
+</Root>

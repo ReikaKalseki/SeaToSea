@@ -29,13 +29,30 @@ namespace ReikaKalseki.SeaToSea
 	    	StoryHandler.instance.addListener(this);
 	    	LanguageHandler.SetLanguageLine("EncyPath_Findings", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getField<string>("category"));
 	    	
-	    	addPage(TrackerPages.POD3, new StoryTrigger("OnPlayRadioGrassy25")).addFinding("databox", Finding.fromUnlock(TechType.Compass)).addFinding("geyser", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType));
-	    	addPage(TrackerPages.POD19, new PositionTrigger(new Vector3(-808.72F, -299.31F, -872.53F), 50)).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy("LifepodKeenLog")).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1"));
-	    	addPage(TrackerPages.POD17, new PositionTrigger(new Vector3(-515.56F, -98.79F, -56.18F), 30)).addFinding("pda", Finding.fromEncy("LifepodSeaglide")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("modstation", Finding.fromEncy("ModificationStation")).addFinding("lasercutter", Finding.fromEncy("LaserCutter")).addFinding("battcharge", Finding.fromUnlock(TechType.BatteryCharger));
-	    	addPage(TrackerPages.POD6, new PositionTrigger(pod6Base, 80)).addFinding("pda", Finding.fromEncy("LifepodCrashZone2")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("modstation", Finding.fromEncy("ModificationStation")).addFinding("lasercutter", Finding.fromEncy("LaserCutter")).addFinding("battcharge", Finding.fromUnlock(TechType.BatteryCharger));
+	    	TrackerPage p = addPage(TrackerPages.DEGASI1, new PositionTrigger(POITeleportSystem.instance.getPosition("degasi1")));
+	    	p.addFinding("pda", Finding.fromEncy("JellyPDARoom2Desk")).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("water", Finding.fromUnlock(TechType.BaseFiltrationMachine)).addFinding("breathcharge", Finding.fromEncy(SeaToSeaMod.rebreatherCharger.getPDAPage().id)).addFinding("azurite", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType));
 	    	
-	    	addPage(TrackerPages.DEGASIEND, new BiomeTrigger(VanillaBiomes.DEEPGRAND)).addFinding("end", Finding.fromEncy("DeepPDA3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(SeaToSeaMod.rebreatherCharger.TechType));
-	    	addPage(TrackerPages.VOID, new PositionTrigger(VoidSpikesBiome.signalLocation, 30)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType)).addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi.TechType));
+	    	p = addPage(TrackerPages.JELLYSHROOM, new BiomeTrigger(VanillaBiomes.JELLYSHROOM));
+	    	p.addFinding("mushroom", Finding.fromScan(TechType.SnakeMushroom)).addFinding("magnetite", Finding.fromScan(TechType.Magnetite)).addFinding("degasi", Finding.fromTracker(TrackerPages.DEGASI1));
+	    	
+	    	p = addPage(TrackerPages.POD3, new StoryTrigger("OnPlayRadioGrassy25"));
+	    	p.addFinding("databox", Finding.fromUnlock(TechType.Compass)).addFinding("geyser", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType));
+	    	
+	    	p = addPage(TrackerPages.POD19, new PositionTrigger(new Vector3(-808.72F, -299.31F, -872.53F), 50));
+	    	p.addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy("LifepodKeenLog")).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1"));
+	    	
+	    	p = addPage(TrackerPages.POD17, new PositionTrigger(new Vector3(-515.56F, -98.79F, -56.18F), 30));
+	    	p.addFinding("pda", Finding.fromEncy("LifepodSeaglide")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("terminal", Finding.fromStory("Story_AuroraConsole1")).addFinding("jelly", Finding.fromTracker(TrackerPages.JELLYSHROOM)).addFinding("room", Finding.fromStory(C2CHooks.OZZY_FORK_DEEP_ROOM_GOAL));
+	    	
+	    	p = addPage(TrackerPages.POD6, new PositionTrigger(pod6Base, 80));
+	    	p.addFinding("pda", Finding.fromEncy("LifepodCrashZone2")).addFinding("seacrown", Finding.fromScan(TechType.SeaCrown)).addFinding("salve", Finding.fromScan(C2CItems.healFlower.TechType));
+	    	
+	    	
+	    	p = addPage(TrackerPages.DEGASIEND, new BiomeTrigger(VanillaBiomes.DEEPGRAND));
+	    	p.addFinding("end", Finding.fromEncy("DeepPDA3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(SeaToSeaMod.rebreatherCharger.TechType));
+	    	
+	    	p = addPage(TrackerPages.VOID, new PositionTrigger(VoidSpikesBiome.signalLocation, 30));
+	    	p.addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType)).addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi.TechType));
 		}
 		
 		private TrackerPage addPage(TrackerPages pgs, ProgressionTrigger firstAppear) {
@@ -53,6 +70,10 @@ namespace ReikaKalseki.SeaToSea
 			return page;
 		}
 		
+		internal string getEncyKey(TrackerPages pg) {
+			return pages[pg].encyPage.id;
+		}
+		
 		public void NotifyGoalComplete(string key) {
 			
 		}
@@ -67,10 +88,10 @@ namespace ReikaKalseki.SeaToSea
 		}
 	}
 	
-	enum TrackerPages {
+	internal enum TrackerPages {
 		POD3, //compass databox, geyser cave [nanolathing drones]; pod3 radio
 		POD19, //highcap br, pda to floatisland, precursor cache; pod 19 radio
-        POD17, //pda, jellyshroom, seamoth fragment, large nearby wreck (gibberish console [Story_AuroraConsole1], that deep room (-645.6, -102.7, -16.2) prox); pod 17 prox
+        POD17, //pda, jellyshroom page, seamoth fragment, large nearby wreck (gibberish console [Story_AuroraConsole1], that deep room (-645.6, -102.7, -16.2) prox); pod 17 prox
 		POD6, //pda, seacrown, salvebush; pod6 prox
 		KOOSH, //pod 12, koosh caves (mercury, scan or collect), reinf suit, mushkoosh cave [scan 1 geyser coral]; koosh biome OR kooshcaveprompt
 		DUNECENTRAL, //sealed suit databox, azurite, lumenshrooms; dunes biome
@@ -171,6 +192,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal static Func<bool> fromEncy(string ency) {
 			return () => PDAEncyclopedia.entries.ContainsKey(ency);
+		}
+		
+		internal static Func<bool> fromTracker(TrackerPages pg) {
+			return () => PDAEncyclopedia.entries.ContainsKey(ExplorationTrackerPages.instance.getEncyKey(pg));
 		}
 		
 		internal static Func<bool> fromStory(string key) {

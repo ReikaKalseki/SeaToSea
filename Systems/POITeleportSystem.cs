@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		}
 		
-		private void populate() { //lazyload because some of these come later
+		internal void populate() { //lazyload because some of these come later
 			addPOI("origin", Vector3.zero);
 			addPOI("aurora", new Vector3(1010, 38, 119)).setActions(prepareAurora);
 			addPOI("prawnbay", new Vector3(986, 4, -1.6F)).setActions(prepareAurora);
@@ -72,6 +72,10 @@ namespace ReikaKalseki.SeaToSea {
 			});
 		}
 		
+		public Vector3 getPosition(string key) {
+			return data[key].position;
+		}
+		
 		private void prepareAurora() {
     		CrashedShipExploder.main.SwapModels(true);
     		InventoryUtil.addItem(TechType.RadiationSuit);
@@ -86,8 +90,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void jumpToPOI(string name) {
-			if (data.Count == 0)
-				populate();
 			POI p = data.ContainsKey(name) ? data[name] : null;
 			if (p != null) {
 				SNUtil.teleportPlayer(Player.main, p.position);

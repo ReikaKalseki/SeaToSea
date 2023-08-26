@@ -299,6 +299,23 @@
 		
 	</pda>
   </SmokedNoExpire>
+  <TrackerPage>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		Found in this area:
+	</pda>
+	<category>
+		Exploration Findings
+	</category>
+	<incomplete>
+		There's more to explore here.
+	</incomplete>
+  </TrackerPage>
   <MercuryDesc>
 	<name>
 		
