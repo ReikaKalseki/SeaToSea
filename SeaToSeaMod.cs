@@ -27,6 +27,7 @@ namespace ReikaKalseki.SeaToSea
     internal static readonly XMLLocale itemLocale = new XMLLocale(modDLL, "XML/items.xml");
     internal static readonly XMLLocale pdaLocale = new XMLLocale(modDLL, "XML/pda.xml");
     internal static readonly XMLLocale signalLocale = new XMLLocale(modDLL, "XML/signals.xml");
+    internal static readonly XMLLocale trackerLocale = new XMLLocale(modDLL, "XML/tracker.xml");
     internal static readonly XMLLocale miscLocale = new XMLLocale(modDLL, "XML/misc.xml");
     
     public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
@@ -104,9 +105,11 @@ namespace ReikaKalseki.SeaToSea
     //public static SignalManager.ModSignal duneArchWreckSignal;
     public static SignalManager.ModSignal sanctuaryDirectionHint;
     
-    public static Story.StoryGoal crashMesaRadio;
+    internal static Story.StoryGoal crashMesaRadio;
     //public static Story.StoryGoal duneArchRadio;
     //public static Story.StoryGoal mountainPodRadio;
+    
+    internal static Story.StoryGoal auroraTerminal;
     
     /*
     public static SoundManager.SoundData voidspikeLeviRoar;
@@ -151,6 +154,7 @@ namespace ReikaKalseki.SeaToSea
         itemLocale.load();
         pdaLocale.load();
         signalLocale.load();
+        trackerLocale.load();
         miscLocale.load();
         
         C2CItems.preAdd();
@@ -267,6 +271,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		PDAMessages.addAll();
 		
+		auroraTerminal = SNUtil.addVOLine("auroraringterminal_c2c", Story.GoalType.PDA, miscLocale.getEntry("auroraringterminal").desc, SoundManager.getSound("event:/player/story/Aurora_RingRoom_Terminal2"));
+		
 		KnownTech.onAdd += onTechUnlocked;
        
 		//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
@@ -286,6 +292,7 @@ namespace ReikaKalseki.SeaToSea
 		
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
         
         Vector3 ang = new Vector3(0, 317, 0);
         Vector3 pos1 = new Vector3(-1226, -350, -1258);
@@ -325,19 +332,34 @@ namespace ReikaKalseki.SeaToSea
     		{"CustomCraft2", true},
     		{"FCSAlterraHub", false},
     		{"Socknautica", false},
-    		{"SlotExtender", false}
+    		{"SlotExtender", false},
+    		{"WarpChip", true},
+    		{"Socknautica", true},
+    		{"DADTankSubPack", true},
+    		{"DWEquipmentBonanza", false},
+    		{"SeaVoyager", false},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
     			if (kvp.Value) {
-    				throw new Exception("Mod '"+kvp.Key+"' detected. This mod is not compatible with SeaToSea, and cannot be used alongside it.");
+    				string msg = "Mod '"+kvp.Key+"' detected. This mod is not compatible with SeaToSea, and cannot be used alongside it.";
+    				SNUtil.createPopupWarning(msg, false/*, null, SNUtil.createPopupButton("OK")*/);
+    				throw new Exception(msg);
     			}
     			else {
     				string msg = "SeaToSea: Mod '"+kvp.Key+"' detected. This mod will significantly alter the balance of your pack and risks completely breaking C2C progression.";
-    				SNUtil.createPopupWarning(msg);
+    				SNUtil.createPopupWarning(msg, false/*, null, SNUtil.createPopupButton("OK")*/);
     				SNUtil.log(msg+" You should remove this mod if possible when using SeaToSea.");
     			}
     		}
+    	}
+    	if (!QModManager.API.QModServices.Main.ModPresent("TerrainPatcher")) {
+    		string msg = "TerrainPatcher may be an optional dependency for SeaToSea, but its use is strongly recommended to ensure biomes appear as intended.";
+    		SNUtil.createPopupWarning(msg, true/*, SNUtil.createPopupButton("Download", () => {
+				System.Diagnostics.Process.Start("https://github.com/Esper89/Subnautica-TerrainPatcher/releases/download/v0.4/TerrainPatcher-v0.4.zip");
+				Application.Quit(64);
+			}), SNUtil.createPopupButton("Ignore")*/);
+    		SNUtil.log(msg+" You should add this mod if at all possible.");
     	}
     }
     

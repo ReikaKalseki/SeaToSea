@@ -30,6 +30,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 trailerBaseBioreactor = new Vector3(1314.94F, -80.2F, -412.97F);
 	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
+	    internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -308,6 +309,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	VoidSpikesBiome.instance.tickPlayer(ep);
 	    	UnderwaterIslandsFloorBiome.instance.tickPlayer(ep);
+	    	
+	    	ExplorationTrackerPages.instance.tick();
+	    	
 	    	if (ep.currentSub == null && UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0) {
 	    		if (ep.GetVehicle() == null) {
 	    			float ventDist = -1;
@@ -472,6 +476,46 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (isHeldToolAzuritePowered())
 	    		amt *= 2F;
 	    	return amt;
+	    }
+	    
+	    public static float getConstructableSpeed() {
+			if (NoCostConsoleCommand.main.fastBuildCheat)
+				return 0.01F;
+			if (!GameModeUtils.RequiresIngredients())
+				return 0.2F;
+			return Story.StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key) ? 0.67F : 1F;
+	    }
+	    
+	    public static float getVehicleConstructionSpeed(ConstructorInput inp, TechType made, float time) {
+	    	if (Story.StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key))
+	    		time *= made == TechType.RocketBase ? 0.8F : 0.5F;
+	    	else
+	    		time *= made == TechType.Seamoth ? 2F : 1.5F;
+	    	return time;
+	    }
+	    
+	    public static float getRocketConstructionSpeed(float time) {
+	    	time *= Story.StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key) ? 0.8F : 1.6F;
+	    	return time;
+	    }
+	    
+	    public static bool getFabricatorTime(TechType recipe, out float time) {
+	    	//bool ret = CraftData.GetCraftTime(recipe, out time);
+	    	
+	    	bool ret = CraftData.craftingTimes.TryGetValue(recipe, out time);
+	    	if (!ret) {
+	    		time = 0;
+	    		return false;
+	    	}
+	    	
+	    	if (Story.StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key)) {
+	    		time *= (float)MathUtil.linterpolate(time, 1, 2, 1, 0.5, true);
+	    		time = Mathf.Min(time, 10);
+	    	}
+	    	else {
+	    		time *= 1.5F;
+	    	}
+	    	return true;
 	    }
 	    
 	    public static float getPropulsionCannonForce(PropulsionCannon prop) {
@@ -701,6 +745,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	AvoliteSpawner.instance.cleanPickedUp(p);
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
+	    		Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
 	   			bool seal;
 	   			bool reinf;
 	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
@@ -712,6 +757,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
+	    		Story.StoryGoal.Execute("Platinum", Story.GoalType.Story);
 	    		HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(p.transform.position, 60);
 				foreach (DeepStalkerTag c in set) {
 					if (!c.currentlyHasPlatinum() && !c.GetComponent<WaterParkCreature>()) {
@@ -720,6 +766,12 @@ namespace ReikaKalseki.SeaToSea {
 							c.triggerPtAggro(Player.main.gameObject);
 					}
 				}
+	    	}
+	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType) {
+	    		Story.StoryGoal.Execute("PressureCrystals", Story.GoalType.Story);
+	    	}
+	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
+	    		Story.StoryGoal.Execute("Avolite", Story.GoalType.Story);
 	    	}
 	    }
     
@@ -1034,6 +1086,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.position = auroraStorageModule.position;
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
+	    	else if (pi && pi.ClassId == "bc9354f8-2377-411b-be1f-01ea1914ec49" && Vector3.Distance(auroraRepulsionGunTerminal, go.transform.position) <= 0.2) {
+	    		pi.GetComponent<StoryHandTarget>().goal = SeaToSeaMod.auroraTerminal;
+	    	}
 	    	else if (pi && pi.GetComponent<BlueprintHandTarget>()) {
 	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
 	    	}
@@ -1059,7 +1114,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (skipFruitPlantTick)
 	    		return;
 	    	FruitPlant fp = fpt.getPlant();
-	    	if (ObjectUtil.isFarmedPlant(fp.gameObject) && WorldUtil.isPlantInNativeBiome(fp.gameObject)) {
+	    	if (fp && ObjectUtil.isFarmedPlant(fp.gameObject) && WorldUtil.isPlantInNativeBiome(fp.gameObject)) {
 	        	fp.fruitSpawnInterval = fpt.getBaseGrowthTime()/1.5F;
 	        }
 	    }
