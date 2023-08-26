@@ -40,6 +40,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly int CLUSTER_COUNT = 120;//104;//88;
 		
+		public static readonly string PDA_KEY = "voidpod";
+		
 		public static readonly VoidSpikesBiome instance = new VoidSpikesBiome();
 		
 		private readonly AtmoFX atmoFX = new AtmoFX();
@@ -124,7 +126,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			atmoFX.Patch();
 			
-			GenUtil.registerWorldgen(PDAManager.getPage("voidpod").getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
+			GenUtil.registerWorldgen(PDAManager.getPage(PDA_KEY).getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
 			//GenUtil.registerWorldgen(leviathan.ClassID, end900m, Vector3.zero);
 			
 			for (float i = -100; i <= length+100; i += biomeVolumeRadius*0.5F) {

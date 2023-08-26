@@ -19,6 +19,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private static readonly string platformPrefab;
 		
+		public static readonly string PDA_KEY = "voidspike";
+		
 		static VoidSpikeWreck() {
 			pieces.Add(new VoidWreckProp("e600a1f4-83df-447d-80ab-e3f4ec074b32", new float[]{-90}, 0.25F)); //max tank
 			pieces.Add(new VoidWreckProp("68462082-f714-4b5e-8d0d-623d2ec6058f", new float[]{0, 180}, 0.25F)); //broken seaglide
@@ -66,7 +68,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			Vector3 refPos = platform.transform.position+Vector3.up*0.85F;
 			refPos = MathUtil.getRandomVectorAround(refPos, new Vector3(0.5F, 0, 0.5F));
-			GameObject pda = spawner(PDAManager.getPage("voidspike").getPDAClassID());
+			GameObject pda = spawner(PDAManager.getPage(PDA_KEY).getPDAClassID());
 			pda.transform.position = getPDALocation();
 			pda.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360F), 0);
 			li.Add(pda);
