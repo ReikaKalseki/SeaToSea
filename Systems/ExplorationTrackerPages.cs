@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea
 	    	StoryHandler.instance.addListener(this);
 	    	LanguageHandler.SetLanguageLine("EncyPath_Findings", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getField<string>("category"));
 	    	
-	    	TrackerPage p = addPage(TrackerPages.DEGASI1, new PositionTrigger(POITeleportSystem.instance.getPosition("degasi1")));
+	    	TrackerPage p = addPage(TrackerPages.DEGASI1, new PositionTrigger(POITeleportSystem.instance.getPosition("degasi1"), 70));
 	    	p.addFinding("pda", Finding.fromEncy("JellyPDARoom2Desk")).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("water", Finding.fromUnlock(TechType.BaseFiltrationMachine)).addFinding("breathcharge", Finding.fromEncy(SeaToSeaMod.rebreatherCharger.getPDAPage().id)).addFinding("azurite", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType));
 	    	
 	    	p = addPage(TrackerPages.JELLYSHROOM, new BiomeTrigger(VanillaBiomes.JELLYSHROOM));
@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.POD19, new PositionTrigger(new Vector3(-808.72F, -299.31F, -872.53F), 50));
 	    	p.addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy("LifepodKeenLog")).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1"));
 	    	
-	    	p = addPage(TrackerPages.POD17, new PositionTrigger(new Vector3(-515.56F, -98.79F, -56.18F), 30));
+	    	p = addPage(TrackerPages.POD17, new PositionTrigger(new Vector3(-515.56F, -98.79F, -56.18F), 80));
 	    	p.addFinding("pda", Finding.fromEncy("LifepodSeaglide")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("terminal", Finding.fromStory("Story_AuroraConsole1")).addFinding("jelly", Finding.fromTracker(TrackerPages.JELLYSHROOM)).addFinding("room", Finding.fromStory(C2CHooks.OZZY_FORK_DEEP_ROOM_GOAL));
 	    	
 	    	p = addPage(TrackerPages.POD6, new PositionTrigger(pod6Base, 80));
@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.DUNECENTRAL, new BiomeTrigger(VanillaBiomes.DUNES));
 	    	p.addFinding("shroom", Finding.fromScan(Ecocean.EcoceanMod.glowShroom.TechType)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("suit", Finding.fromUnlock(C2CItems.sealSuit.TechType));
 	    	
-	    	p = addPage(TrackerPages.METEOR, new PositionTrigger(POITeleportSystem.instance.getPosition("meteor").setY(-375), 100));
+	    	p = addPage(TrackerPages.METEOR, new PositionTrigger(POITeleportSystem.instance.getPosition("meteor").setY(-375), 180));
 	    	p.addFinding("meteor", Finding.fromScan(Auroresource.AuroresourceMod.dunesMeteor.TechType)).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload3"));
 	    	
 	    	p = addPage(TrackerPages.UNDERISLANDS, new BiomeTrigger(VanillaBiomes.UNDERISLANDS));
@@ -97,7 +97,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.FLOATDEGASI, new TrackerPageAnyFindingsTrigger(TrackerPages.FLOATDEGASI));
 	    	p.addFinding("main", Finding.fromEncy("IslandsPDABase1Interior")).addFinding("outside", Finding.fromEncy("IslandsPDAExterior")).addFinding("return", Finding.fromEncy("IslandsPDABase1a")).addFinding("init", Finding.fromEncy("IslandsPDABase1b"));
 	    	
-	    	p = addPage(TrackerPages.DUNEARCH, new StoryTrigger(PDAMessagePrompts.instance.getMessage(PDAMessages.getAttr(PDAMessages.Messages.DuneArchPrompt).key)));
+	    	p = addPage(TrackerPages.DUNEARCH, new PositionTrigger(POITeleportSystem.instance.getPosition("dunearch"), 120));
 	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.liquidTank.TechType));
 	    	
 	    	p = addPage(TrackerPages.GRANDREEF, new BiomeTrigger(VanillaBiomes.GRANDREEF));
@@ -128,22 +128,6 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.VOID, new PositionTrigger(VoidSpikesBiome.signalLocation, 30));
 	    	p.addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType)).addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi.TechType));
-	    	
-	    	string path = Path.Combine(Path.GetDirectoryName(SeaToSeaMod.modDLL.Location), "trackerlist.xml");
-			XmlDocument doc = new XmlDocument();
-			XmlElement rootnode = doc.CreateElement("Root");
-			doc.AppendChild(rootnode);
-	    	foreach (KeyValuePair<TrackerPages, TrackerPage> kvp in pages) {
-				XmlElement e = doc.CreateElement(kvp.Key+"");
-				e.addProperty("name", "###");
-				e.addProperty("desc", "###");
-				e.addProperty("pda", "###");
-				foreach (string key in kvp.Value.findings.Keys) {
-					e.addProperty(key, "###");
-				}
-				doc.DocumentElement.AppendChild(e);
-			}
-			doc.Save(path);
 		}
 		
 		private bool isBonesField(Player ep) {
@@ -166,9 +150,8 @@ namespace ReikaKalseki.SeaToSea
 			pages[pgs] = page;
 			if (StoryHandler.instance == null)
 				throw new Exception("Story handler not initialized yet!");
-			//StoryHandler.instance.registerTrigger(firstAppear, new DelayedEncyclopediaEffect(page.encyPage, 0.002F, 4, true));
-			//SNUtil.log("Added findings ency page "+page.encyPage);
-			//LanguageHandler.Main.SetLanguageLine();
+			StoryHandler.instance.registerTrigger(firstAppear, new DelayedEncyclopediaEffect(page.encyPage, 0.002F, 4, true));
+			SNUtil.log("Added findings ency page "+page.encyPage);
 			return page;
 		}
 		
@@ -251,8 +234,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal TrackerPage(XMLLocale.LocaleEntry e) {
 			locale = e;
-			//encyPage = PDAManager.createPage("ency_findings_"+e.key, e.name, "", "Findings");
-			//encyPage.register();
+			encyPage = PDAManager.createPage("ency_findings_"+e.key, e.name, "", "Findings");
+			encyPage.register();
 		}
 		
 		internal TrackerPage addFinding(string key, Func<bool> trigger) {

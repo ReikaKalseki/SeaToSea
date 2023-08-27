@@ -9,9 +9,6 @@
     <pda>
 
 	</pda>
-    <pda>
-
-	</pda>
     <databox>
 
 	</databox>
@@ -75,9 +72,6 @@
     <databox>
 
 	</databox>
-    <pda>
-
-	</pda>
     <cache>
 
 	</cache>
@@ -89,9 +83,6 @@
     <desc>
 
 	</desc>
-    <pda>
-
-	</pda>
     <pda>
 
 	</pda>
@@ -118,9 +109,6 @@
     <pda>
 
 	</pda>
-    <pda>
-
-	</pda>
     <seacrown>
 
 	</seacrown>
@@ -130,14 +118,11 @@
   </POD6>
   <KOOSH>
     <name>
-
+		Bulb Zone
 	</name>
     <desc>
 
 	</desc>
-    <pda>
-
-	</pda>
     <pda>
 
 	</pda>
@@ -153,7 +138,7 @@
   </KOOSH>
   <DUNECENTRAL>
     <name>
-
+		The Dunes
 	</name>
     <desc>
 
@@ -173,7 +158,7 @@
   </DUNECENTRAL>
   <METEOR>
     <name>
-
+		Dunes Meteor
 	</name>
     <desc>
 
@@ -190,7 +175,7 @@
   </METEOR>
   <UNDERISLANDS>
     <name>
-
+		Underwater Islands
 	</name>
     <desc>
 
@@ -216,7 +201,7 @@
   </UNDERISLANDS>
   <BKELPTRENCH>
     <name>
-
+		Blood Kelp Trench
 	</name>
     <desc>
 
@@ -227,9 +212,6 @@
     <pod1>
 
 	</pod1>
-    <pda>
-
-	</pda>
     <chit>
 
 	</chit>
@@ -239,7 +221,7 @@
   </BKELPTRENCH>
   <NBKELP>
     <name>
-
+		Northern Blood Kelp
 	</name>
     <desc>
 
@@ -259,14 +241,11 @@
   </NBKELP>
   <BONEFIELD>
     <name>
-
+		Bones Field
 	</name>
     <desc>
 
 	</desc>
-    <pda>
-
-	</pda>
     <pda>
 
 	</pda>
@@ -285,7 +264,7 @@
   </BONEFIELD>
   <DRF>
     <name>
-
+		Disease Research Facility
 	</name>
     <desc>
 
@@ -320,7 +299,7 @@
   </DRF>
   <LAVACASTLE>
     <name>
-
+		Lava Castle
 	</name>
     <desc>
 
@@ -343,7 +322,7 @@
   </LAVACASTLE>
   <CRAG>
     <name>
-
+		Crag Field
 	</name>
     <desc>
 
@@ -360,7 +339,7 @@
   </CRAG>
   <FLOATISLAND>
     <name>
-
+		Floating Island
 	</name>
     <desc>
 
@@ -380,7 +359,7 @@
   </FLOATISLAND>
   <MOUNTAINISLAND>
     <name>
-
+		Mountain Island
 	</name>
     <desc>
 
@@ -409,7 +388,7 @@
   </MOUNTAINISLAND>
   <GUN>
     <name>
-
+		Quarantine Enforcement Platform
 	</name>
     <desc>
 
@@ -429,7 +408,7 @@
   </GUN>
   <FLOATDEGASI>
     <name>
-
+		Island Degasi Wrecks
 	</name>
     <desc>
 
@@ -452,14 +431,11 @@
   </FLOATDEGASI>
   <DUNEARCH>
     <name>
-
+		Dunes Arch
 	</name>
     <desc>
 
 	</desc>
-    <pda>
-
-	</pda>
     <pda>
 
 	</pda>
@@ -472,14 +448,11 @@
   </DUNEARCH>
   <GRANDREEF>
     <name>
-
+		Grand Reef
 	</name>
     <desc>
 
 	</desc>
-    <pda>
-
-	</pda>
     <pda>
 
 	</pda>
@@ -501,7 +474,7 @@
   </GRANDREEF>
   <MUSHTREE>
     <name>
-
+		Mushroom Tree
 	</name>
     <desc>
 
@@ -524,7 +497,7 @@
   </MUSHTREE>
   <MOUNTAINPOD>
     <name>
-
+		Lifepod 14
 	</name>
     <desc>
 
@@ -556,7 +529,7 @@
   </MOUNTAINPOD>
   <TREADERPOD>
     <name>
-
+		Lifepod 9
 	</name>
     <desc>
 
@@ -570,9 +543,6 @@
     <platinum>
 
 	</platinum>
-    <pda>
-
-	</pda>
     <enzy>
 
 	</enzy>
@@ -585,7 +555,7 @@
   </TREADERPOD>
   <GLASSFOREST>
     <name>
-
+		Glass Forest
 	</name>
     <desc>
 
@@ -608,7 +578,7 @@
   </GLASSFOREST>
   <CRASH>
     <name>
-
+		Crash Zone
 	</name>
     <desc>
 
