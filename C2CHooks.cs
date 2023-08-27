@@ -34,6 +34,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    internal static readonly Vector3 OZZY_FORK_DEEP_ROOM_POS = new Vector3(-645.6F, -102.7F, -16.2F);
 	    internal static readonly string OZZY_FORK_DEEP_ROOM_GOAL = "ozzyforkdeeproom";
+	    internal static readonly Vector3 UNDERISLANDS_BLOCKED_ROOM_POS = new Vector3(-124.38F, -200.69F, 855F);
+	    internal static readonly string UNDERISLANDS_BLOCKED_ROOM_GOAL = "underislandsblockedroom";
+	    internal static readonly Vector3 FLOATING_ARCH_POS = new Vector3(-662.55F, 5.50F, -1064.35F);
+	    internal static readonly string FLOATING_ARCH_GOAL = "floatarch";
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -232,7 +236,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
-	    	if (skipPlayerTick)
+	    	if (skipPlayerTick || !ep || !DIHooks.isWorldLoaded())
 	    		return;
 	    	//SNUtil.writeToChat(ep.GetBiomeString());
 	    	
@@ -343,6 +347,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		
 	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(OZZY_FORK_DEEP_ROOM_GOAL) && Vector3.Distance(OZZY_FORK_DEEP_ROOM_POS, ep.transform.position) <= 12) {
 	    			Story.StoryGoal.Execute(OZZY_FORK_DEEP_ROOM_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(UNDERISLANDS_BLOCKED_ROOM_GOAL) && Vector3.Distance(UNDERISLANDS_BLOCKED_ROOM_POS, ep.transform.position) <= 5) {
+	    			Story.StoryGoal.Execute(UNDERISLANDS_BLOCKED_ROOM_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(FLOATING_ARCH_GOAL) && ep.transform.position.y > 0 && ep.transform.position.y < 22.5F && Vector3.Distance(FLOATING_ARCH_POS, ep.transform.position) <= 25) {
+	    			Story.StoryGoal.Execute(FLOATING_ARCH_GOAL, Story.GoalType.Story);
 	    		}
 	    	}
 	    	
@@ -786,7 +796,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Avolite", Story.GoalType.Story);
 	    	}
+	    	else if (tt == C2CItems.kelp.seed.TechType) {
+	    		Story.StoryGoal.Execute("DeepvineSamples", Story.GoalType.Story);
+	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType && VanillaBiomes.ILZ.isInBiome(Player.main.transform.position)) {
+	    		Story.StoryGoal.Execute("Iridium", Story.GoalType.Story);
 	    		bool reinf;
 	    		bool seal;
 	    		C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf);
@@ -795,6 +809,9 @@ namespace ReikaKalseki.SeaToSea {
 		    		float dmg = 40+(WaterTemperatureSimulation.main.GetTemperature(Player.main.transform.position)-90)/3;
 		    		lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Heat, Player.main.gameObject);
 	    		}
+	    	}
+	    	else if (tt == TechType.Kyanite) {
+	    		Story.StoryGoal.Execute("Kyanite", Story.GoalType.Story);
 	    	}
 	    }
     
@@ -1230,6 +1247,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void getGrinderDrillableDrop(DrillableGrindingResult res) {
 	    	if (res.materialTech == TechType.Sulphur) {
 	    		//SNUtil.writeToChat("Intercepting grinding sulfur");
+	    		Story.StoryGoal.Execute("GrabSulfur", Story.GoalType.Story);
 	    		res.drop = ObjectUtil.lookupPrefab(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).ClassID);
 	    		res.dropCount = UnityEngine.Random.Range(0F, 1F) < 0.33F ? 2 : 1;
 	    	}

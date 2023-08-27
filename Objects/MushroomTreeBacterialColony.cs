@@ -74,6 +74,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void postRegister() {
+			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, "Lifeforms/Coral");
+			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/Bacteria"));
+			page.register();
 			TechType unlock = CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType;
         	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){unlock});
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
@@ -85,6 +88,7 @@ namespace ReikaKalseki.SeaToSea {
 			SNUtil.log("Found "+e.totalFragments+" "+ClassID+" to use as fragments", SeaToSeaMod.modDLL);
 			e.isFragment = true;
 			e.scanTime = 5;
+			e.encyclopedia = page.id;
 			PDAHandler.AddCustomScannerEntry(e);
 		}
 		

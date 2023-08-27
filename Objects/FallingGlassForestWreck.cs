@@ -15,6 +15,8 @@ using SMLHelper.V2.Assets;
 namespace ReikaKalseki.SeaToSea {
 	
 	public class FallingGlassForestWreck : Spawnable {
+		
+		public static readonly string STORY_TAG = "GlassWreckFall";
 	        
 	    internal FallingGlassForestWreck() : base("fallingwreck", "", "") {
 			
@@ -251,6 +253,8 @@ namespace ReikaKalseki.SeaToSea {
 			box.size = new Vector3(20, 15, 35);
 			box.isTrigger = false;
 			box.enabled = false;
+			
+			Story.StoryGoal.Execute(FallingGlassForestWreck.STORY_TAG, Story.GoalType.Story);
 			
 			isFalling = true;
 			//mainBody.isKinematic = true;

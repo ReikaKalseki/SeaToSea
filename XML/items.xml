@@ -525,7 +525,9 @@
 			
 		</desc>
 		<pda>
+			The cave system inside the fossilized tree creates a sheltered environment where unique lifeforms can thrive. One of the most visible of these takes the form of large, dome-shaped colonies of bacteria which leach minerals from the cave walls to power their metabolism.
 			
+			Assessment: Further study may yield insights into manipulation of biochemical reactions
 		</pda>
 	</TREE_BACTERIA>
 	<GEYSER_CORAL>
@@ -536,7 +538,9 @@
 			
 		</desc>
 		<pda>
+			This coral species filters trace minerals from volcanic emissions, specifically the superheated, turbulent, mineral-rich effluent from geyser eruptions. This coral is extremely sensitive to the local conditions, and is unlikely to be able to survive anywhere outside of this cave system. Furthermore, its presence indicates such a volcanic feature deeper in the cave network.
 			
+			Assessment: Further study will enable mechanical imitation of a similar filtration process
 		</pda>
 	</GEYSER_CORAL>
 	<DeepStalker>

@@ -1,4 +1,637 @@
 <Root>
+  <DEGASI1>
+    <name>
+		Underwater Degasi Base
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <databox>
+
+	</databox>
+    <water>
+
+	</water>
+    <breathcharge>
+
+	</breathcharge>
+    <azurite>
+
+	</azurite>
+  </DEGASI1>
+  <JELLYSHROOM>
+    <name>
+		Jellyshroom Caves
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <mushroom>
+
+	</mushroom>
+    <magnetite>
+
+	</magnetite>
+    <degasi>
+
+	</degasi>
+  </JELLYSHROOM>
+  <POD3>
+    <name>
+		Northern Kelp Forest
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <databox>
+
+	</databox>
+    <geyser>
+
+	</geyser>
+  </POD3>
+  <POD19>
+    <name>
+		Keen's Lifepod
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <databox>
+
+	</databox>
+    <pda>
+
+	</pda>
+    <cache>
+
+	</cache>
+  </POD19>
+  <POD17>
+    <name>
+		Western Grassy Plateaus
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <seamoth>
+
+	</seamoth>
+    <terminal>
+
+	</terminal>
+    <jelly>
+
+	</jelly>
+    <room>
+
+	</room>
+  </POD17>
+  <POD6>
+    <name>
+		Eastern Grassy Plateaus
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <seacrown>
+
+	</seacrown>
+    <salve>
+
+	</salve>
+  </POD6>
+  <KOOSH>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <mushkoosh>
+
+	</mushkoosh>
+    <mercury>
+
+	</mercury>
+    <reinf>
+
+	</reinf>
+  </KOOSH>
+  <DUNECENTRAL>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <shroom>
+
+	</shroom>
+    <azurite>
+
+	</azurite>
+    <suit>
+
+	</suit>
+  </DUNECENTRAL>
+  <METEOR>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <meteor>
+
+	</meteor>
+    <cache>
+
+	</cache>
+  </METEOR>
+  <UNDERISLANDS>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <piezo>
+
+	</piezo>
+    <wreck>
+
+	</wreck>
+    <farmer>
+
+	</farmer>
+    <databox>
+
+	</databox>
+    <room>
+
+	</room>
+  </UNDERISLANDS>
+  <BKELPTRENCH>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pod1>
+
+	</pod1>
+    <pda>
+
+	</pda>
+    <chit>
+
+	</chit>
+    <databox>
+
+	</databox>
+  </BKELPTRENCH>
+  <NBKELP>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pod2>
+
+	</pod2>
+    <cache>
+
+	</cache>
+    <levi>
+
+	</levi>
+  </NBKELP>
+  <BONEFIELD>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <skull>
+
+	</skull>
+    <sulfur>
+
+	</sulfur>
+    <seal>
+
+	</seal>
+    <levi>
+
+	</levi>
+  </BONEFIELD>
+  <DRF>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <terminal1>
+
+	</terminal1>
+    <damage>
+
+	</damage>
+    <tablet>
+
+	</tablet>
+    <cycheat>
+
+	</cycheat>
+    <disease>
+
+	</disease>
+    <egg>
+
+	</egg>
+    <dragon>
+
+	</dragon>
+    <warper>
+
+	</warper>
+  </DRF>
+  <LAVACASTLE>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <kyanite>
+
+	</kyanite>
+    <tablet>
+
+	</tablet>
+    <ion>
+
+	</ion>
+    <tap>
+
+	</tap>
+  </LAVACASTLE>
+  <CRAG>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pod7>
+
+	</pod7>
+    <scoop>
+
+	</scoop>
+  </CRAG>
+  <FLOATISLAND>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <degasi>
+
+	</degasi>
+    <keen>
+
+	</keen>
+    <arch>
+
+	</arch>
+  </FLOATISLAND>
+  <MOUNTAINISLAND>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <gun>
+
+	</gun>
+    <beachpda>
+
+	</beachpda>
+    <cavepda>
+
+	</cavepda>
+    <arch>
+
+	</arch>
+    <battery>
+
+	</battery>
+    <tablet>
+
+	</tablet>
+  </MOUNTAINISLAND>
+  <GUN>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <cube>
+
+	</cube>
+    <denied>
+
+	</denied>
+    <jailbreak>
+
+	</jailbreak>
+  </GUN>
+  <FLOATDEGASI>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <main>
+
+	</main>
+    <outside>
+
+	</outside>
+    <return>
+
+	</return>
+    <init>
+
+	</init>
+  </FLOATDEGASI>
+  <DUNEARCH>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <bioproc>
+
+	</bioproc>
+    <liqbr>
+
+	</liqbr>
+  </DUNEARCH>
+  <GRANDREEF>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pda>
+
+	</pda>
+    <platinum>
+
+	</platinum>
+    <bioproc>
+
+	</bioproc>
+    <poo>
+
+	</poo>
+    <sealed>
+
+	</sealed>
+    <levi>
+
+	</levi>
+  </GRANDREEF>
+  <MUSHTREE>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <initpda>
+
+	</initpda>
+    <treepda>
+
+	</treepda>
+    <chit>
+
+	</chit>
+    <bacteria>
+
+	</bacteria>
+  </MUSHTREE>
+  <MOUNTAINPOD>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <podpda>
+
+	</podpda>
+    <podpda2>
+
+	</podpda2>
+    <basepda>
+
+	</basepda>
+    <mask>
+
+	</mask>
+    <stealth>
+
+	</stealth>
+    <knife>
+
+	</knife>
+    <battery>
+
+	</battery>
+  </MOUNTAINPOD>
+  <TREADERPOD>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <treader>
+
+	</treader>
+    <platinum>
+
+	</platinum>
+    <pda>
+
+	</pda>
+    <enzy>
+
+	</enzy>
+    <basepda>
+
+	</basepda>
+    <databox>
+
+	</databox>
+  </TREADERPOD>
+  <GLASSFOREST>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <databox>
+
+	</databox>
+    <bioproc>
+
+	</bioproc>
+    <deepvine>
+
+	</deepvine>
+    <levi>
+
+	</levi>
+  </GLASSFOREST>
+  <CRASH>
+    <name>
+
+	</name>
+    <desc>
+
+	</desc>
+    <pda>
+
+	</pda>
+    <pod4>
+
+	</pod4>
+    <crashmesa>
+
+	</crashmesa>
+    <sanctuary>
+
+	</sanctuary>
+    <trailerbase>
+
+	</trailerbase>
+    <rebreather>
+
+	</rebreather>
+  </CRASH>
   <DEGASIEND>
 	<name>
 		Deep Degasi Base
@@ -45,521 +678,4 @@
 		A large aggressive creature that makes use of light and electricity based attacks.
 	</levi>
   </VOID>
-  <POD3>
-	<name>
-		Northern Kelp Forest
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </POD3>
-  <POD19>
-	<name>
-		Keen's Lifepod
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </POD19>
-  <POD17>
-	<name>
-		Western Grassy Plateaus
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </POD17>
-  <POD6>
-	<name>
-		Eastern Grassy Plateaus
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </POD6>
-  <JELLYSHROOM>
-	<name>
-		Jellyshroom Caves
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </JELLYSHROOM>
-  <DEGASI1>
-	<name>
-		Underwater Degasi Base
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </DEGASI1>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
-  <NAAAAAAAAME>
-	<name>
-		
-	</name>
-	<desc>
-		
-	</desc>
-	<pda>
-		
-	</pda>
-  </NAAAAAAAAME>
 </Root>
