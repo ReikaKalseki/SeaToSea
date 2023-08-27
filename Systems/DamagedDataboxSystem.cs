@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		private DamagedDataboxSystem() {
 			data[C2CHooks.crashMesa] = new DamagedDatabox(15, 0, 10);
 			data[C2CHooks.trailerBaseBioreactor] = new DamagedDatabox(30, 0, 30);
-			data[VoidSpikesBiome.signalLocation] = new DamagedDatabox(20, 0.33F, 30);
+			data[VoidSpikesBiome.signalLocation] = new DamagedDatabox(20, 0.33F, 60);
 			data[SeaToSeaMod.treaderSignal.initialPosition] = new DamagedDatabox(30, 0.15F, 10);
 			data[new Vector3(-114.6F, -234.5F, 854)] = new DamagedDatabox(20, 0.4F); //autofarmer
 			data[new Vector3(986.3F, -271.8F, 1378.6F)] = new DamagedDatabox(45, 0.85F); //rebreather v2
@@ -45,6 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		lv.data.weldable = true;
 		    		lv.health = Mathf.Max(0.01F, kvp.Value.initialRepairFraction*lv.data.maxHealth);
 		    		go.EnsureComponent<BrokenDatabox>();
+		    		SNUtil.log("Damaging databox "+go+" @ "+go.transform.position+": "+kvp.Value);
 				}
 			}
 		}
@@ -95,6 +96,12 @@ namespace ReikaKalseki.SeaToSea {
 				initialRepairFraction = f;
 				searchRadius = r;
 			}
+			
+			public override string ToString()
+			{
+				return string.Format("[DamagedDatabox SecondsToRepair={0}, InitialRepairFraction={1}, SearchRadius={2}]", secondsToRepair, initialRepairFraction, searchRadius);
+			}
+
 			
 		}
 	}

@@ -160,6 +160,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void OnHandHover(GUIHand hand) {
+			//SNUtil.writeToChat("Hover with "+hand);
 			if (isHarvested()) {
 			  	HandReticle.main.SetProgress(getGrowthProgress());
 				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
