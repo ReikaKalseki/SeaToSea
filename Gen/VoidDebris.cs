@@ -53,6 +53,8 @@ namespace ReikaKalseki.SeaToSea
 			GameObject go = spawner(databoxPrefab.ClassID);
 			go.transform.position = MathUtil.getRandomVectorAround(position+Vector3.down*3.5F, 1);
 			go.transform.rotation = UnityEngine.Random.rotationUniform;
+			DamagedDataboxSystem.instance.onDataboxSpawn(go);
+			ObjectUtil.fullyEnable(go);
 			VoidSpikesBiome.checkAndAddWaveBob(go, true);
 		}
 		/*
