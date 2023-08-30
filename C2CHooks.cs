@@ -796,8 +796,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Avolite", Story.GoalType.Story);
 	    	}
+	    	else if (tt == C2CItems.alkali.seed.TechType) {
+	    		Story.StoryGoal.Execute("AlkaliVine", Story.GoalType.Story);
+	    	}
 	    	else if (tt == C2CItems.kelp.seed.TechType) {
 	    		Story.StoryGoal.Execute("DeepvineSamples", Story.GoalType.Story);
+	    	}
+	    	else if (tt == C2CItems.mountainGlow.seed.TechType) {
+	    		Story.StoryGoal.Execute("Pyropod", Story.GoalType.Story);
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType && VanillaBiomes.ILZ.isInBiome(Player.main.transform.position)) {
 	    		Story.StoryGoal.Execute("Iridium", Story.GoalType.Story);

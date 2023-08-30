@@ -56,6 +56,13 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.DUNECENTRAL, new BiomeTrigger(VanillaBiomes.DUNES));
 	    	p.addFinding("shroom", Finding.fromScan(Ecocean.EcoceanMod.glowShroom.TechType)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("suit", Finding.fromUnlock(C2CItems.sealSuit.TechType));
+	    	if (hard)
+	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
+	    	
+	    	p = addPage(TrackerPages.MOUNTAINS, new ProgressionTrigger(ep => BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.MOUNTAINS && ep.transform.position.x > AvoliteSpawner.instance.mountainCenter.x+100 && ep.transform.position.y < -50));
+	    	p.addFinding("pod", Finding.fromTracker(TrackerPages.MOUNTAINPOD)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("pyropod", Finding.fromStory("Pyropod")).addFinding("debris", Finding.fromStory("SunbeamDebris")).addFinding("magnetite", Finding.fromScan(TechType.Magnetite));
+	    	if (hard)
+	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
 	    	p = addPage(TrackerPages.METEOR, new PositionTrigger(POITeleportSystem.instance.getPosition("meteor").setY(-375), 180));
 	    	p.addFinding("meteor", Finding.fromScan(Auroresource.AuroresourceMod.dunesMeteor.TechType)).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload3"));
@@ -99,6 +106,8 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.DUNEARCH, new PositionTrigger(POITeleportSystem.instance.getPosition("dunearch"), 120));
 	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.liquidTank.TechType));
+	    	if (hard)
+	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
 	    	p = addPage(TrackerPages.GRANDREEF, new BiomeTrigger(VanillaBiomes.GRANDREEF));
 	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("poo", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType)).addFinding("sealed", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType));
@@ -121,7 +130,8 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.CRASH, new BiomeTrigger(VanillaBiomes.CRASH));
 	    	p.addFinding("pod4", Finding.fromEncy("LifepodDecoy")).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("sanctuary", Finding.fromScan(C2CItems.sanctuaryPlant.TechType)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType)).addFinding("rebreather", Finding.fromUnlock(SeaToSeaMod.rebreatherCharger.TechType));
-	    	
+	    	if (hard)
+	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
 	    	p = addPage(TrackerPages.DEGASIEND, new BiomeTrigger(VanillaBiomes.DEEPGRAND));
 	    	p.addFinding("end", Finding.fromEncy("DeepPDA3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(SeaToSeaMod.rebreatherCharger.TechType));
@@ -196,6 +206,7 @@ namespace ReikaKalseki.SeaToSea
 		MOUNTAINISLAND, //gun [GUN page], teleporter activation [PrecursorMountainTeleporterActive], beach PDA, cave cache [t2 battery recipe], red tablet; MENTION MOUNTAINBASE ["came from elsewhere"] in the beach PDA entry; prox to sunbeam site or has beach pda
 		GUN, //gun [Precursor_Gun_DisableDenied (attempt disable)], ion cube, lasercutter jailbreak; first gun goal []
 		JELLYSHROOM, //degasi base 1 [DEGASI1 page], magnetite (scan or collect), jellyshroom; jellyshroom biome
+		MOUNTAINS, //pod 14 [MOUNTAINPOD page], magnetite (scan or collect), azurite, pyropods, sunbeam debris [collect sunbeam debris], reaper (hardmode)
 				
 		FLOATDEGASI, //main base [IslandsPDABase1Interior ("this planet won't cause us any new problems")], outside pda [IslandsPDAExterior], bart return [IslandsPDABase1a ("Shouldn't have gone so deep")], [IslandsPDABase1b (init)]; prox to base or any of the above conditions
 		DEGASI1, //degasi base 1 [JellyPDARoom2Desk], water filter, breathcharge start, high cap DB, shaped azurite; proximity to degasi1 POI pos
