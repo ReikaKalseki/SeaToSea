@@ -1,25 +1,25 @@
 <Root>
   <DEGASI1>
-    <name>
+    	<name>
 		Underwater Degasi Base
 	</name>
-    <desc>
+    	<desc>
 
 	</desc>
    	 <pda>
-
+This is used, is the “you want to go DEEPER?!” pda
 	</pda>
-    <databox>
-
+    	<databox>
+		A databox containing the blueprint for the ultra-high capacity oxygen tank
 	</databox>
-    <water>
-
+    	<water>
+		A machine for filtering salt from water, from which the blueprint has been scanned
 	</water>
     	<breathcharge>
 		Fragments of a machine to recharge liquid breathing systems
 	</breathcharge>
     	<azurite>
-
+		Densely compacted azurite formed into a crystalline composite
 	</azurite>
   </DEGASI1>
   <JELLYSHROOM>
@@ -70,10 +70,10 @@
 
 	</pda>
     	<databox>
-
+		A databox containing the blueprint for the ultra-high capacity oxygen tank
 	</databox>
     	<cache>
-
+		An alien structure containing a number of Ion Cubes and little usable information
 	</cache>
   </POD19>
   <POD17>
@@ -84,7 +84,7 @@
 
 	</desc>
     	<pda>
-
+This is used
 	</pda>
     	<seamoth>
 
@@ -107,7 +107,7 @@
 
 	</desc>
     	<pda>
-
+This is used, is the explosion pda
 	</pda>
     	<seacrown>
 		A rare specimen of alien flora, remarkable for its internal bacterial colonies
@@ -133,7 +133,7 @@
 		Geologically active caves containing cinnabar ore
 	</mercury>
     	<reinf>
-		A databox containing the blueprint for a Reinforced Dive Suit
+		A databox containing the blueprint for the Reinforced Dive Suit, accessible only via traversing a wreck
 	</reinf>
   </KOOSH>
   <DUNECENTRAL>
@@ -187,13 +187,13 @@
 
 	</pda>
     	<piezo>
-		Strange, buoyant crystals that will occasionally emit disruptive electromagnetic blasts that disrupt nearby electrical systems.
+		Strange, buoyant crystals that will occasionally emit powerful electromagnetic blasts that disrupt nearby electrical systems.
 	</piezo>
     	<wreck>
 A large wreck from the aurora, a piece of which broke off and fell into the depths before it could be explored
 	</wreck>
     	<farmer>
-		A databox containing the blueprints for an automated harvesting device
+		A databox containing the blueprint for an automated harvesting device, separated from the main wreck and pinned underneath debris
 	</farmer>
     	<databox>
 		A databox containing the blueprint for an integrated fire suppression module for large submersibles
@@ -204,19 +204,19 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
   </UNDERISLANDS>
   <BKELPTRENCH>
     	<name>
-		Blood Kelp Trench
+		Blood Kelp Trench Base
 	</name>
     	<desc>
 
 	</desc>
     	<pda>
-
+		This is used
 	</pda>
     	<pod1>
-
+		The remains of Lifepod 1, underneath a large, derelict seabase 
 	</pod1>
     	<chit>
-
+		Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 25%
 	</chit>
     	<databox>
 
@@ -236,9 +236,9 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</pod2>
     	<cache>
-
+		An alien structure containing a number of Ion Cubes, and a terminal with data indicating a possible function of these caches
 	</cache>
-    		<levi>
+    	<levi>
 
 	</levi>
   </NBKELP>
@@ -250,13 +250,13 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</desc>
     	<pda>
-
+This is used
 	</pda>
     	<skull>
 		An extremely large skull and upper ribcage of an ancient creature dwarfing anything encountered on the planet
 	</skull>
     	<sulfur>
-		Large deposits of pure, crystalline sulfur
+		Large deposits of pure, crystalline sulfur, exposed by surrounding caustic brine 
 	</sulfur>
     	<seal>
 		A damaged seamoth upgrade for reducing power leakage to the environment
@@ -351,7 +351,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</pda>
     	<degasi>
-		(not sure what should go here)
+		remnants of the survivors of the Degasi
 	</degasi>
     	<keen>
 		The last known location of First Officer Keen, and a pda detailing his encounter with Yu, the only other Aurora survivor who appeared to survive for any length of time
@@ -371,7 +371,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</pda>
     	<gun>
-
+		A towering structure, of unknown design and purpose
 	</gun>
     	<beachpda>
 
@@ -408,7 +408,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
     	<jailbreak>
 		A download of what appears to be alien malware, making the laser cutter capable of stripping salvage from the hull of the aurora.
 
-&lt;b&gt;Reminder from Alterra: Salvage of the Aurora is illegal under intergalactic law&lt;/b&gt;
+&lt;color=red&gt;&lt;b&gt;Reminder from Alterra: Salvage of the Aurora is illegal under Transgovernmental law&lt;/b&gt;&lt;/color&gt;
 	</jailbreak>
   </GUN>
   <FLOATDEGASI>
@@ -442,7 +442,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</desc>
     	<pda>
-
+This is used
 	</pda>
     	<reaper>
 
@@ -558,7 +558,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</basepda>
     	<databox>
-
+		A databox containing the blueprint for moderate upgrades to the Seamoth’s depth rating
 	</databox>
   </TREADERPOD>
   <GLASSFOREST>
@@ -572,13 +572,13 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</pda>
     	<databox>
-
+		A databox containing the complex chemical formula for an oxygen-bearing fluid, suitable for liquid-based respiration
 	</databox>
     	<bioproc>
-
+		Fragments of a bioprocessor machine
 	</bioproc>
     	<deepvine>
-
+		Samples taken from large, purple, kelplike flora containing potentially useful organic compounds 
 	</deepvine>
     	<levi>
 
@@ -595,23 +595,20 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</pda>
     	<pod4>
-
+The overturned remains of lifepod 4, containing a databox with the blueprint for decoy devices and a pda warning of massive aggressive predators in the area
 	</pod4>
     	<crashmesa>
-
+		The remains of lifepod 10, with a nearby databox containing the blueprint for significant upgrades to the Seamoth’s depth rating
 	</crashmesa>
     	<reaper>
 
 	</reaper>
     	<sanctuary>
-
+		
 	</sanctuary>
     	<trailerbase>
-
+		The fragmented and partially buried wreck of a Degasi Seabase, likely destroyed by the disturbance caused by the Aurora’s impact, and containing advanced materials and recipes
 	</trailerbase>
-    	<rebreather>
-
-	</rebreather>
   </CRASH>
   <DEGASIEND>
 	<name>
@@ -659,4 +656,33 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		A large aggressive creature that makes use of light and electricity based attacks.
 	</levi>
   </VOID>
+  <MOUNTAINS>
+	<name>
+		Underwater Mountains
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<reaper>
+		
+	</reaper>
+	<pod>
+		
+	</pod>
+	<azurite>
+		Sparse deposits of the volatile mineral Azurite around thermal vents
+	</azurite>
+	<magnetite>
+		
+	</magnetite>
+	<pyropod>
+		
+	</pyropod>
+	<debris>
+		
+	</debris>
+  </MOUNTAINS>
 </Root>
