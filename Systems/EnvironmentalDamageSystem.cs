@@ -269,7 +269,8 @@ namespace ReikaKalseki.SeaToSea {
 		    	//depthWarningFX2.setIntensities(rb ? 0 : depth);
 	    		if (depth > depthDamageStart && !rb) {
 	    			float f2 = depth >= depthDamageMax ? 1 : (float)MathUtil.linterpolate(depth, depthDamageStart, depthDamageMax, 0, 1);
-	    			dmg.liveMixin.TakeDamage(30*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+	    			dmg.liveMixin.TakeDamage((SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 50 : 30)*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+	    			ObjectUtil.removeComponent<HealingOverTime>(dmg.player.gameObject);
 	    		}
 	   			bool seal;
 	   			bool reinf;

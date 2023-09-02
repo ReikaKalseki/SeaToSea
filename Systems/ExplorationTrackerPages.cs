@@ -187,6 +187,12 @@ namespace ReikaKalseki.SeaToSea
 			return true;
 		}
 		
+		internal void showAllPages() {
+			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
+				pages[p].encyPage.unlock(false);
+			}
+		}
+		
 		public void NotifyGoalComplete(string key) {
 			
 		}

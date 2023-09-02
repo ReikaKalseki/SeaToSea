@@ -1392,8 +1392,11 @@ namespace ReikaKalseki.SeaToSea {
 				r.gunNotDisabled.Play();
 				return;
 			}
-			if (!SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && !ExplorationTrackerPages.instance.isFullyComplete(), ExplorationTrackerPages.INCOMPLETE_PDA, PDAMessages.Messages.NeedFinishExploreTrackerMessage)) {
-				return;
+			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+				if (!SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(ExplorationTrackerPages.instance.isFullyComplete(), ExplorationTrackerPages.INCOMPLETE_PDA, PDAMessages.Messages.NeedFinishExploreTrackerMessage)) {
+					ExplorationTrackerPages.instance.showAllPages();
+					return;
+				}
 			}
 			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
@@ -1548,6 +1551,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (scanToScannerRoom.Contains(rt.resource.techType)) {
 	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
+	    	}
+	    	else if (rt.resource.techType == SeaToSeaMod.mushroomBioFragment.TechType) {
+	    		rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.mushroomBioFragment.getFragmentCount()-2;
+	    	}
+	    	else if (rt.resource.techType == SeaToSeaMod.geyserCoral.TechType) {
+	    		rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.geyserCoral.getFragmentCount()-4;
 	    	}
 	    	if (rt.resource.GetComponent<Drillable>()) {
 	    		rt.isDetectable = Story.StoryGoalManager.main.completedGoals.Contains("OnConstructExosuit") || KnownTech.knownTech.Contains(AqueousEngineeringMod.grinderBlock.TechType);

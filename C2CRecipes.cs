@@ -572,8 +572,10 @@ namespace ReikaKalseki.SeaToSea
        	if (hard) {
 			RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
-        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.Polyaniline, 1);
-
+        	RecipeUtil.clearIngredients(TechType.SeamothElectricalDefense);
+        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, C2CItems.t2Battery.TechType, 1);
+        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.AdvancedWiringKit, 1);
+        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.CopperWire, 3);
         	CraftDataHandler.SetItemSize(TechType.PowerCell, new Vector2int(1, 2));
         	CraftDataHandler.SetItemSize(TechType.LaserCutter, new Vector2int(2, 1));
        	}

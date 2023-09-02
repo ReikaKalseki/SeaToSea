@@ -200,7 +200,7 @@ namespace ReikaKalseki.SeaToSea
 		BatteryCharger.compatibleTech.Add(t2Battery.TechType);
         
         UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
-	    	if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+		    if (SeaToSeaMod.playerCanHeal() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(20, 20);
 				ht.activate();
@@ -209,7 +209,7 @@ namespace ReikaKalseki.SeaToSea
 	    	return false;
 		});
         UsableItemRegistry.instance.addUsableItem(bandage.TechType, (s, go) => {
-	    	if (Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+	    	if (SeaToSeaMod.playerCanHeal() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(50, 5);
 				ht.activate();

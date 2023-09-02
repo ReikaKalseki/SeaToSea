@@ -21,6 +21,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly XMLLocale.LocaleEntry locale;
 		
 		//public static readonly Color GLOW_COLOR = new Color(1, 112/255F, 0, 1);
+		
+		private int FRAGMENT_COUNT;
 	        
 	    internal GeyserCoral(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
@@ -33,9 +35,16 @@ namespace ReikaKalseki.SeaToSea {
 	    public override GameObject GetGameObject() {
 			GameObject world = new GameObject(ClassID);
 			world.EnsureComponent<TechTag>().type = TechType;
-			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			PrefabIdentifier pi = world.EnsureComponent<PrefabIdentifier>();
+			pi.ClassId = ClassID;
 			world.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Near;
 			world.EnsureComponent<GeyserCoralTag>();
+			if (!SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+				ResourceTracker rt = world.EnsureComponent<ResourceTracker>();
+				rt.techType = TechType;
+				rt.overrideTechType = TechType;
+				rt.prefabIdentifier = pi;
+			}
 			world.layer = LayerID.Useable;
 			
 			//rotate to 270, 0, 0
@@ -60,12 +69,17 @@ namespace ReikaKalseki.SeaToSea {
 			e.blueprint = unlock;
 			e.destroyAfterScan = false;
 			e.locked = true;
-			e.totalFragments = SeaToSeaMod.worldgen.getCount(ClassID);
+			FRAGMENT_COUNT = SeaToSeaMod.worldgen.getCount(ClassID)-1;
+			e.totalFragments = FRAGMENT_COUNT;
 			SNUtil.log("Found "+e.totalFragments+" "+ClassID+" to use as fragments", SeaToSeaMod.modDLL);
 			e.isFragment = true;
 			e.scanTime = 3;
 			e.encyclopedia = page.id;
 			PDAHandler.AddCustomScannerEntry(e);
+		}
+		
+		public int getFragmentCount() {
+			return FRAGMENT_COUNT;
 		}
 			
 	}
