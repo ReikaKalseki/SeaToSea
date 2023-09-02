@@ -611,6 +611,13 @@ namespace ReikaKalseki.SeaToSea
 			return false;
 		}
 	}
+   
+   public static bool playerCanHeal() {
+   	Player ep = Player.main;
+   	if (ep.IsSwimming() && ep.GetDepth() >= EnvironmentalDamageSystem.depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing())
+   		return false;
+   	return true;
+   }
 
   }
 }

@@ -21,6 +21,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly Color BLUE_COLOR = new Color(0, 112/255F, 1, 1);
 		public static readonly Color PURPLE_COLOR = new Color(160/255F, 12/255F, 1);
+		
+		private int FRAGMENT_COUNT;
 	        
 	    internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
 			locale = e;
@@ -33,7 +35,8 @@ namespace ReikaKalseki.SeaToSea {
 	    public override GameObject GetGameObject() {
 			GameObject world = ObjectUtil.createWorldObject(VanillaFlora.AMOEBOID.getRandomPrefab(true));
 			world.EnsureComponent<TechTag>().type = TechType;
-			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			PrefabIdentifier pi = world.EnsureComponent<PrefabIdentifier>();
+			pi.ClassId = ClassID;
 			GameObject child = ObjectUtil.getChildObject(world, "lost_river_plant_04");
 			GameObject inner = ObjectUtil.getChildObject(child, "lost_river_plant_04");
 			GameObject shell = ObjectUtil.getChildObject(child, "lost_river_plant_04_membrane");
@@ -66,8 +69,19 @@ namespace ReikaKalseki.SeaToSea {
 			
 			world.EnsureComponent<ImmuneToPropulsioncannon>().immuneToRepulsionCannon = true;
 			
+			if (!SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+				ResourceTracker rt = world.EnsureComponent<ResourceTracker>();
+				rt.techType = TechType;
+				rt.overrideTechType = TechType;
+				rt.prefabIdentifier = pi;
+			}
+			
 			return world;
 	    }
+		
+		public int getFragmentCount() {
+			return FRAGMENT_COUNT;
+		}
 		
 		public void register() {
 			Patch();
@@ -84,7 +98,8 @@ namespace ReikaKalseki.SeaToSea {
 			e.blueprint = unlock;
 			e.destroyAfterScan = false;
 			e.locked = true;
-			e.totalFragments = SeaToSeaMod.worldgen.getCount(ClassID);
+			FRAGMENT_COUNT = SeaToSeaMod.worldgen.getCount(ClassID);
+			e.totalFragments = FRAGMENT_COUNT;
 			SNUtil.log("Found "+e.totalFragments+" "+ClassID+" to use as fragments", SeaToSeaMod.modDLL);
 			e.isFragment = true;
 			e.scanTime = 5;
