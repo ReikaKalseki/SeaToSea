@@ -164,6 +164,17 @@
 		Sounds/pdaprompt/cannot-launch-need-cargo.ogg
 	</pda>
   </needlaunchcargo>
+  <unfinishedexplore>
+	<name>
+		
+	</name>
+	<desc>
+		Cannot launch rocket. Your exploration of this region is incomplete. Please refer to the databank for further information.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/unfinished-explore.ogg
+	</pda>
+  </unfinishedexplore>
   <notseenallbiomes>
 	<name>
 		

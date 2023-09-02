@@ -25,6 +25,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		public readonly Vector3 pod6Base = new Vector3(338.5F, -110, 286.5F);
 		
+		internal static readonly string INCOMPLETE_PDA = null;//"unfinishedexplore";
+		
 		private ExplorationTrackerPages() {
 			pages = new Dictionary<TrackerPages, TrackerPage>();
 			
@@ -171,6 +173,18 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal int countFindings(TrackerPages pg) {
 			return pages[pg].countCompleteFindings();
+		}
+		
+		internal bool isComplete(TrackerPages pg) {
+			return pages[pg].isComplete();
+		}
+		
+		internal bool isFullyComplete() {
+			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
+				if (!isComplete(p))
+					return false;
+			}
+			return true;
 		}
 		
 		public void NotifyGoalComplete(string key) {

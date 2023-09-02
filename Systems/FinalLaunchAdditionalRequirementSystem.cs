@@ -164,24 +164,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool checkIfFullyLoaded() {
-			return checkConditionAndShowPDAAndVoicelogIfNot(hasAllCargo() == null, NEED_CARGO_PDA, PDAMessages.Messages.NeedLaunchCargoMessage);
+			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(hasAllCargo() == null, NEED_CARGO_PDA, PDAMessages.Messages.NeedLaunchCargoMessage);
 		}
 		/*
 		public bool checkIfVisitedAllBiomes() {
 			return checkConditionAndShowPDAAndVoicelogIfNot(visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
 		}
 		*/
-		private bool checkConditionAndShowPDAAndVoicelogIfNot(bool check, string page, PDAMessages.Messages msg) {
-			if (check) {
-				return true;
-			}
-			else {
-				if (PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key)) {
-					PDAManager.getPage(page).unlock(false);
-				}
-				return false;
-			}
-		}
 			
 		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
 			updateCounts(lockers);

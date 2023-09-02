@@ -37,6 +37,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("sanctuaryprompt")]SanctuaryPrompt,
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("notseenallbiomes")]NotSeenBiomesMessage,
+			[Message("unfinishedexplore")]NeedFinishExploreTrackerMessage,
 		}
 		
 		public static Message getAttr(Messages key) {
