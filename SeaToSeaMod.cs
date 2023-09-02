@@ -340,6 +340,7 @@ namespace ReikaKalseki.SeaToSea
     		{"DADTankSubPack", true},
     		{"DWEquipmentBonanza", false},
     		{"SeaVoyager", false},
+    		{"SubnauticaRandomiser", true},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
@@ -598,6 +599,18 @@ namespace ReikaKalseki.SeaToSea
 	public static bool hasNoGasMask() {
    		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;
 	}*/
+	public static bool checkConditionAndShowPDAAndVoicelogIfNot(bool check, string page, PDAMessages.Messages msg) {
+		if (check) {
+			return true;
+		}
+		else {
+			if (PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key)) {
+   				if (!string.IsNullOrEmpty(page))
+					PDAManager.getPage(page).unlock(false);
+			}
+			return false;
+		}
+	}
 
   }
 }

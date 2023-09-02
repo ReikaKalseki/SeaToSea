@@ -1392,6 +1392,9 @@ namespace ReikaKalseki.SeaToSea {
 				r.gunNotDisabled.Play();
 				return;
 			}
+			if (!SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && !ExplorationTrackerPages.instance.isFullyComplete(), ExplorationTrackerPages.INCOMPLETE_PDA, PDAMessages.Messages.NeedFinishExploreTrackerMessage)) {
+				return;
+			}
 			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
 			}
@@ -1633,6 +1636,22 @@ namespace ReikaKalseki.SeaToSea {
 	   			check.placeable = true;
 				//check.ignoreSpaceRequirements = true;
 		   	}
+	    }
+	    
+	    public static void onHandSend(GameObject target, HandTargetEventType e, GUIHand hand) {/*
+	    	SNUtil.writeToChat("Hand send fired for GO "+target+"$"+target.activeInHierarchy+"::"+target.GetFullHierarchyPath()+" @ "+target.transform.position+"#"+target.GetInstanceID()+" of type "+e+", on hand "+hand+", TT="+target.GetComponent<IHandTarget>());
+	    	if (KeyCodeUtils.GetKeyHeld(KeyCode.LeftAlt)) {
+	    		IHandTarget iht = target.GetComponent<IHandTarget>();
+	    		if (iht != null)
+	    			iht.OnHandClick(hand);
+	    	}*/
+	    	SanctuaryPlantTag spt = target.GetComponent<SanctuaryPlantTag>();
+	    	if (spt) {
+	    		if (e == HandTargetEventType.Hover)
+	    			spt.OnHandHover(hand);
+	    		else if (e == HandTargetEventType.Click)
+	    			spt.OnHandClick(hand);
+	    	}
 	    }
 	}
 }
