@@ -2,6 +2,7 @@
 using System.IO;    //For data read/write methods
 using System;    //For data read/write methods
 using System.Collections.Generic;   //Working with Lists and Collections
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Linq;   //More advanced manipulation of lists/collections
 using HarmonyLib;
@@ -31,6 +32,7 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
+    private static readonly List<TechType> specialRecipes = new List<TechType>();
     
     internal static void addItemsAndRecipes() {
     	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
@@ -342,83 +344,83 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.modifyIngredients(TechType.Lubricant, i => {i.amount = 4; return false;});
         
-        RecipeUtil.addIngredient(TechType.Rebreather, TechType.Titanium, 3);
-        //RecipeUtil.addIngredient(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
-        RecipeUtil.addIngredient(TechType.Rebreather, TechType.EnameledGlass, 1);
+        addItemToRecipe(TechType.Rebreather, TechType.Titanium, 3);
+        //addItemToRecipe(TechType.Rebreather, TechType.AdvancedWiringKit, 1);
+        addItemToRecipe(TechType.Rebreather, TechType.EnameledGlass, 1);
        // RecipeUtil.removeIngredient(TechType.Rebreather, TechType.WiringKit);
         
         RecipeUtil.modifyIngredients(TechType.Constructor, i => i.techType != TechType.TitaniumIngot);
-        RecipeUtil.addIngredient(TechType.Constructor, TechType.WiringKit, 1);
-        RecipeUtil.addIngredient(TechType.Constructor, TechType.Silicone, 3);
-        RecipeUtil.addIngredient(TechType.Constructor, drone.TechType, 4);
+        addItemToRecipe(TechType.Constructor, TechType.WiringKit, 1);
+        addItemToRecipe(TechType.Constructor, TechType.Silicone, 3);
+        addItemToRecipe(TechType.Constructor, drone.TechType, 4);
         
-        //RecipeUtil.addIngredient(TechType.Polyaniline, TechType.Salt, 2);
-        RecipeUtil.addIngredient(TechType.Polyaniline, C2CItems.sanctuaryPlant.seed.TechType, 1);
+        //addItemToRecipe(TechType.Polyaniline, TechType.Salt, 2);
+        addItemToRecipe(TechType.Polyaniline, C2CItems.sanctuaryPlant.seed.TechType, 1);
         
-        RecipeUtil.addIngredient(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 6);
+        addItemToRecipe(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 6);
         RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
-        RecipeUtil.addIngredient(TechType.StasisRifle, C2CItems.t2Battery.TechType, 2);
+        addItemToRecipe(TechType.StasisRifle, C2CItems.t2Battery.TechType, 2);
         
         RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => {if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium;});
-        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
-        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, C2CItems.sealSuit.TechType, 1);
-        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, C2CItems.sealGloves.TechType, 1);
-        RecipeUtil.addIngredient(TechType.ReinforcedDiveSuit, heatSeal.TechType, 2);
+        addItemToRecipe(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);
+        addItemToRecipe(TechType.ReinforcedDiveSuit, C2CItems.sealSuit.TechType, 1);
+        addItemToRecipe(TechType.ReinforcedDiveSuit, C2CItems.sealGloves.TechType, 1);
+        addItemToRecipe(TechType.ReinforcedDiveSuit, heatSeal.TechType, 2);
         
         RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
         
         RecipeUtil.modifyIngredients(TechType.PlasteelIngot, i => {if (i.techType == TechType.Lithium) i.amount = i.amount*3/2; return false;});        
-        RecipeUtil.addIngredient(TechType.PlasteelIngot, CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType, 1);
+        addItemToRecipe(TechType.PlasteelIngot, CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType, 1);
         
         RecipeUtil.removeIngredient(TechType.Battery, TechType.AcidMushroom);
-        RecipeUtil.addIngredient(TechType.Battery, acid.TechType, 3);
+        addItemToRecipe(TechType.Battery, acid.TechType, 3);
         
-        RecipeUtil.addIngredient(TechType.WiringKit, acid.TechType, 1);
-        RecipeUtil.addIngredient(TechType.ComputerChip, acid.TechType, 2);
+        addItemToRecipe(TechType.WiringKit, acid.TechType, 1);
+        addItemToRecipe(TechType.ComputerChip, acid.TechType, 2);
         
-        RecipeUtil.addIngredient(TechType.ReactorRod, sulfurAcid.TechType, 1);
+        addItemToRecipe(TechType.ReactorRod, sulfurAcid.TechType, 1);
         
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
-        RecipeUtil.addIngredient(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
-        RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
-        RecipeUtil.addIngredient(TechType.PrecursorIonPowerCell, sulfurAcid.TechType, 1);
+        addItemToRecipe(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
+        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
+        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+        addItemToRecipe(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 1);
+        addItemToRecipe(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        addItemToRecipe(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
+        addItemToRecipe(TechType.PrecursorIonPowerCell, sulfurAcid.TechType, 1);
         RecipeUtil.removeIngredient(TechType.PrecursorIonPowerCell, TechType.Silicone);
         
-        RecipeUtil.addIngredient(TechType.Stillsuit, C2CItems.mountainGlow.seed.TechType, 3);
+        addItemToRecipe(TechType.Stillsuit, C2CItems.mountainGlow.seed.TechType, 3);
         
-        RecipeUtil.addIngredient(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        addItemToRecipe(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         
-        RecipeUtil.addIngredient(TechType.CyclopsThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
-        RecipeUtil.addIngredient(TechType.ExosuitThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        addItemToRecipe(TechType.CyclopsThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        addItemToRecipe(TechType.ExosuitThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
         
-        RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
-        RecipeUtil.addIngredient(TechType.RocketBase, TechType.Silicone, 8);
-        RecipeUtil.addIngredient(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4);
+        addItemToRecipe(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
+        addItemToRecipe(TechType.RocketBase, TechType.Silicone, 8);
+        addItemToRecipe(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4);
         RecipeUtil.modifyIngredients(TechType.RocketBase, i => {
       		if (i.techType == TechType.Lead)
       			i.amount = 6;
       		return i.techType == TechType.TitaniumIngot || i.techType == TechType.ComputerChip;
         });
-        RecipeUtil.addIngredient(TechType.RocketBaseLadder, TechType.WiringKit, 4);
+        addItemToRecipe(TechType.RocketBaseLadder, TechType.WiringKit, 4);
         RecipeUtil.modifyIngredients(TechType.RocketStage1, i => i.techType != TechType.PlasteelIngot);
-        RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), 1);
-        RecipeUtil.addIngredient(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), 1);
-        RecipeUtil.addIngredient(TechType.RocketStage1, TechType.CrashPowder, 3);
-        RecipeUtil.addIngredient(TechType.RocketStage1, TechType.Diamond, 4);
+        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), 1);
+        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), 1);
+        addItemToRecipe(TechType.RocketStage1, TechType.CrashPowder, 3);
+        addItemToRecipe(TechType.RocketStage1, TechType.Diamond, 4);
         RecipeUtil.modifyIngredients(TechType.RocketStage2, i => i.techType == TechType.Kyanite || i.techType == TechType.Sulphur);
-        RecipeUtil.addIngredient(TechType.RocketStage2, tankWall.TechType, 2);
-        RecipeUtil.addIngredient(TechType.RocketStage2, fuel.TechType, 4);
-        RecipeUtil.addIngredient(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+        addItemToRecipe(TechType.RocketStage2, tankWall.TechType, 2);
+        addItemToRecipe(TechType.RocketStage2, fuel.TechType, 4);
+        addItemToRecipe(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
         RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 8; return i.techType == TechType.ComputerChip;});
-        RecipeUtil.addIngredient(TechType.RocketStage3, C2CItems.t2Battery.TechType, 1);
-        RecipeUtil.addIngredient(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
-        RecipeUtil.addIngredient(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
-        RecipeUtil.addIngredient(TechType.RocketStage3, TechType.ReactorRod, 4);
+        addItemToRecipe(TechType.RocketStage3, C2CItems.t2Battery.TechType, 1);
+        addItemToRecipe(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
+        addItemToRecipe(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
+        addItemToRecipe(TechType.RocketStage3, TechType.ReactorRod, 4);
         
-        RecipeUtil.addIngredient(TechType.HighCapacityTank, TechType.Aerogel, 1);
+        addItemToRecipe(TechType.HighCapacityTank, TechType.Aerogel, 1);
         
         Dictionary<TechType, int> addMotors = new Dictionary<TechType, int>(){
         	{TechType.BaseMoonpool, 2},
@@ -441,79 +443,79 @@ namespace ReikaKalseki.SeaToSea
         foreach (KeyValuePair<TechType, int> kvp in addMotors) {
         	int amt = -1;
         	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.Lubricant){amt = i.amount; return true;} else {return false;}});
-        	RecipeUtil.addIngredient(kvp.Key, motor.TechType, Math.Max(kvp.Value, amt));
+        	addItemToRecipe(kvp.Key, motor.TechType, Math.Max(kvp.Value, amt));
         }
         
         foreach (KeyValuePair<TechType, int> kvp in replaceTableCoral) {
         	int amt = -1;
         	RecipeUtil.modifyIngredients(kvp.Key, i => {if (i.techType == TechType.JeweledDiskPiece){amt = i.amount; return true;} else {return false;}});
-        	RecipeUtil.addIngredient(kvp.Key, traceMetal.TechType, Math.Max(kvp.Value, amt));
+        	addItemToRecipe(kvp.Key, traceMetal.TechType, Math.Max(kvp.Value, amt));
         }
         
-        RecipeUtil.addIngredient(TechType.Cyclops, armor.TechType, 4);
-        RecipeUtil.addIngredient(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+        addItemToRecipe(TechType.Cyclops, armor.TechType, 4);
+        addItemToRecipe(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         
         RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
-        RecipeUtil.addIngredient(TechType.ExoHullModule1, TechType.Kyanite, 3);
-        RecipeUtil.addIngredient(TechType.ExoHullModule1, armor.TechType, 2);
-        RecipeUtil.addIngredient(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
-        RecipeUtil.addIngredient(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
+        addItemToRecipe(TechType.ExoHullModule1, TechType.Kyanite, 3);
+        addItemToRecipe(TechType.ExoHullModule1, armor.TechType, 2);
+        addItemToRecipe(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
+        addItemToRecipe(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Titanium);
         
-        //RecipeUtil.addIngredient(TechType.CyclopsHullModule1, ?, 3);
-        RecipeUtil.addIngredient(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
+        //addItemToRecipe(TechType.CyclopsHullModule1, ?, 3);
+        addItemToRecipe(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
         
-        RecipeUtil.addIngredient(TechType.LaserCutter, TechType.AluminumOxide, 2);
+        addItemToRecipe(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
-        RecipeUtil.addIngredient(TechType.LaserCutter, C2CItems.t2Battery.TechType, 1);
+        addItemToRecipe(TechType.LaserCutter, C2CItems.t2Battery.TechType, 1);
         
         RecipeUtil.modifyIngredients(TechType.VehicleHullModule2, i => {if (i.techType == TechType.EnameledGlass || i.techType == TechType.Magnetite) i.amount *= 4; return false;});
-        RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.Silicone, 2);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
-        //RecipeUtil.addIngredient(TechType.VehicleHullModule3, armor.TechType, 2);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 2);
+        addItemToRecipe(TechType.VehicleHullModule2, TechType.Silicone, 2);
+        addItemToRecipe(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
+        addItemToRecipe(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
+        //addItemToRecipe(TechType.VehicleHullModule3, armor.TechType, 2);
+        addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+        addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 2);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.PlasteelIngot);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Diamond, 4);
-        RecipeUtil.addIngredient(TechType.VehicleHullModule3, TechType.Lubricant, 6);
+        addItemToRecipe(TechType.VehicleHullModule3, TechType.Diamond, 4);
+        addItemToRecipe(TechType.VehicleHullModule3, TechType.Lubricant, 6);
         
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 2);
+        addItemToRecipe(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 2);
         
         RecipeUtil.modifyIngredients(TechType.EnameledGlass, i => {if (i.techType == TechType.Glass) i.amount *= 2; return false;});
        	RecipeUtil.getRecipe(TechType.EnameledGlass).craftAmount *= 2;
-        RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Lead, 2);
-        RecipeUtil.addIngredient(TechType.EnameledGlass, TechType.Diamond, 1);
-        RecipeUtil.addIngredient(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
+        addItemToRecipe(TechType.EnameledGlass, TechType.Lead, 2);
+        addItemToRecipe(TechType.EnameledGlass, TechType.Diamond, 1);
+        addItemToRecipe(TechType.AdvancedWiringKit, TechType.MercuryOre, 1);
         
         RecipeUtil.modifyIngredients(TechType.AdvancedWiringKit, i => {if (i.techType == TechType.WiringKit) i.amount *= 2; return false;});
         RecipeUtil.modifyIngredients(TechType.WiringKit, i => {if (i.techType == TechType.Silver)i.amount = 3; return false;});
         
         RecipeUtil.getRecipe(TechType.DisinfectedWater).craftAmount = 3;
-        RecipeUtil.addIngredient(TechType.Bleach, chlorine.TechType, 1);
-        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.Bleach, 2);
-        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, TechType.AdvancedWiringKit, 1);
+        addItemToRecipe(TechType.Bleach, chlorine.TechType, 1);
+        addItemToRecipe(TechType.BaseFiltrationMachine, TechType.Bleach, 2);
+        addItemToRecipe(TechType.BaseFiltrationMachine, TechType.AdvancedWiringKit, 1);
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
-        RecipeUtil.addIngredient(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
+        addItemToRecipe(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, TechType.Benzene, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, C2CItems.mountainGlow.seed.TechType, 2);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
+        addItemToRecipe(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
+        addItemToRecipe(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
+        addItemToRecipe(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
+        addItemToRecipe(TechType.PrecursorKey_Red, TechType.Benzene, 1);
+        addItemToRecipe(TechType.PrecursorKey_Red, C2CItems.mountainGlow.seed.TechType, 2);
+        addItemToRecipe(TechType.PrecursorKey_Red, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Red, new Vector2int(3, 3));
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Blue, new Vector2int(2, 2));
         
         RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, C2CItems.getIngot(TechType.Magnetite).ingot, 3);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, TechType.Diamond, 6);
+        addItemToRecipe(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
+        addItemToRecipe(TechType.PrecursorKey_White, C2CItems.getIngot(TechType.Magnetite).ingot, 3);
+        addItemToRecipe(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
+        addItemToRecipe(TechType.PrecursorKey_White, TechType.Diamond, 6);
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_White, 8);    
 
         RecipeUtil.modifyIngredients(TechType.HatchingEnzymes, i => {
@@ -530,7 +532,7 @@ namespace ReikaKalseki.SeaToSea
             }
         	return false;
         });
-        RecipeUtil.addIngredient(TechType.HatchingEnzymes, TechType.ShellGrassSeed, 1);
+        addItemToRecipe(TechType.HatchingEnzymes, TechType.ShellGrassSeed, 1);
         CraftDataHandler.SetItemSize(TechType.ShellGrassSeed, new Vector2int(1, 1));
         CraftDataHandler.SetItemSize(TechType.RedGreenTentacleSeed, new Vector2int(1, 2));
 
@@ -539,10 +541,10 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.ensureIngredient(TechType.Cyclops, TechType.PowerCell, 6);
         
         RecipeUtil.modifyIngredients(TechType.BaseReinforcement, i => true);
-        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);
-        RecipeUtil.addIngredient(TechType.BaseReinforcement, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1);
-        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.Lead, 2);
-        RecipeUtil.addIngredient(TechType.BaseReinforcement, TechType.FiberMesh, 1);
+        addItemToRecipe(TechType.BaseReinforcement, TechType.PlasteelIngot, 1);
+        addItemToRecipe(TechType.BaseReinforcement, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1);
+        addItemToRecipe(TechType.BaseReinforcement, TechType.Lead, 2);
+        addItemToRecipe(TechType.BaseReinforcement, TechType.FiberMesh, 1);
         Base.FaceHullStrength[(int)Base.FaceType.Reinforcement] = hard ? 25 : 36; //from 7
         Base.FaceHullStrength[(int)Base.FaceType.BulkheadOpened] = hard ? 8 : 12; //from 3
         Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = hard ? 8 : 12; //from 3
@@ -553,11 +555,11 @@ namespace ReikaKalseki.SeaToSea
         removeVanillaUnlock(TechType.BaseReinforcement);
         removeVanillaUnlock(TechType.HeatBlade); //force you to learn it from the mountain cave base
         
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_Red, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
-        RecipeUtil.addIngredient(TechType.PrecursorKey_White, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 5);
+        addItemToRecipe(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
+        addItemToRecipe(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);
+        addItemToRecipe(TechType.PrecursorKey_Blue, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 3);
+        addItemToRecipe(TechType.PrecursorKey_Red, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
+        addItemToRecipe(TechType.PrecursorKey_White, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 5);
         /*
         CraftDataHandler.SetItemSize(TechType.CreepvinePiece, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.CreepvineSeedCluster, new Vector2int(3, 3));
@@ -573,9 +575,9 @@ namespace ReikaKalseki.SeaToSea
 			RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
         	removeVanillaUnlock(TechType.SeamothElectricalDefense);
         	RecipeUtil.clearIngredients(TechType.SeamothElectricalDefense);
-        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, C2CItems.t2Battery.TechType, 1);
-        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.AdvancedWiringKit, 1);
-        	RecipeUtil.addIngredient(TechType.SeamothElectricalDefense, TechType.CopperWire, 3);
+        	addItemToRecipe(TechType.SeamothElectricalDefense, C2CItems.t2Battery.TechType, 1);
+        	addItemToRecipe(TechType.SeamothElectricalDefense, TechType.AdvancedWiringKit, 1);
+        	addItemToRecipe(TechType.SeamothElectricalDefense, TechType.CopperWire, 3);
         	CraftDataHandler.SetItemSize(TechType.PowerCell, new Vector2int(1, 2));
         	CraftDataHandler.SetItemSize(TechType.LaserCutter, new Vector2int(2, 1));
        	}
@@ -585,8 +587,41 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.ExosuitPropulsionArmModule, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.ExosuitGrapplingArmModule, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(C2CItems.depth1300.TechType, new Vector2int(2, 2));
-       
+        
+        foreach (FieldInfo f in typeof(C2CItems).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)) {
+        	if (f.FieldType.IsSubclassOf(typeof(ModPrefab))) {
+        		ModPrefab pfb = (ModPrefab)f.GetValue(null);
+        		specialRecipes.Add(pfb.TechType);
+        		lockRecipe(pfb.TechType, false);
+        	}
+        }
+        
+        foreach (CraftingItems.Items tt in Enum.GetValues(typeof(CraftingItems.Items)))
+        	lockRecipe(CraftingItems.getItem(tt).TechType, false);
+        
+        foreach (TechType tt in specialRecipes)
+        	lockRecipe(tt);
+        
+        lockRecipe(TechType.Seamoth, false);
+        lockRecipe(TechType.Cyclops, false);
+        lockRecipe(TechType.Exosuit, false);
+        lockRecipe(TechType.LaserCutter, false);
+        lockRecipe(TechType.PowerCell, false);
+        lockRecipe(TechType.ReinforcedDiveSuit, false);
+               
        	//RecipeUtil.logChangedRecipes();
+    }
+    
+    private static void addItemToRecipe(TechType tt, TechType add, int amt = 1) {
+    	RecipeUtil.addIngredient(tt, add, amt);
+    	specialRecipes.Add(tt);
+    }
+    
+    public static void lockRecipe(TechType tt, bool allowAdd = true) {
+    	TechData r = CraftDataHandler.GetTechData(tt);
+    	if (r == null || r.Ingredients is LockedRecipeList)
+    		return;
+    	r.Ingredients = new LockedRecipeList(r, allowAdd);
     }
     
     public static void removeVanillaUnlock(TechType tt) {
@@ -682,6 +717,51 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getT2BatteryRepair() {
     	return t2BatteryRepair;
+    }
+    
+    class LockedRecipeList : List<Ingredient> {
+    	
+    	public bool allowAdd {get; private set;}
+    	
+    	internal LockedRecipeList(TechData r, bool add = false) : base(r.Ingredients) {
+    		allowAdd = add;
+    	}
+    	
+    	void Add(Ingredient i) {
+    		if (allowAdd)
+    			base.Add(i);
+    		else
+    			throw new Exception("Unsupported operation");
+    	}
+    	
+    	void Insert(int idx, Ingredient i) {
+    		if (allowAdd)
+    			base.Insert(idx, i);
+    		else
+    			throw new Exception("Unsupported operation");
+    	}
+    	
+    	void Remove(Ingredient i) {
+    		throw new Exception("Unsupported operation");
+    	}
+    	
+    	void RemoveAt(int idx) {
+    		throw new Exception("Unsupported operation");
+    	}
+    	
+    	void Clear() {
+    		throw new Exception("Unsupported operation");
+    	}
+
+		public new Ingredient this[int index] {
+			get {
+    			return base[index];
+			}
+			set {
+				throw new Exception("Unsupported operation");
+			}
+		}
+    	
     }
 
   }

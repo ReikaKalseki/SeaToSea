@@ -190,6 +190,8 @@ namespace ReikaKalseki.SeaToSea
 		internal void showAllPages() {
 			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
 				pages[p].encyPage.unlock(false);
+				if (!pages[p].isComplete())
+					pages[p].encyPage.markUpdated(5);
 			}
 		}
 		

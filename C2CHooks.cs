@@ -456,6 +456,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static float getSeaglideSpeed(float f) { //1.45 by default
+	    	if (SeaToSeaMod.fastSeaglideCheatActive)
+	    		return 40;
 	    	//SNUtil.writeToChat("Get SG speed, was "+f+", has="+Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity));
 			if (isHeldToolAzuritePowered()) {
 	    		float bonus = 0.75F; //was 0.55 then 0.95
@@ -736,8 +738,8 @@ namespace ReikaKalseki.SeaToSea {
 	   				dmg.setValue(0);
 	   			}
 	   		}
-	   		if (dmg.type == DamageType.Normal) {
-	   			SeaMoth sm = dmg.target.gameObject.FindAncestor<SeaMoth>();
+	   		if (dmg.type == DamageType.Normal && VanillaBiomes.VOID.isInBiome(dmg.target.transform.position)) {
+	   			SeaMoth sm = dmg.target.FindAncestor<SeaMoth>();
 	   			if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
 	   				dmg.setValue(dmg.getAmount()*1.5F);
 	   		}

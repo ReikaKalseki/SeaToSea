@@ -120,6 +120,7 @@ namespace ReikaKalseki.SeaToSea
    
    internal static bool anywhereSeamothModuleCheatActive = false;
    internal static bool trackerShowAllCheatActive = false;
+   internal static bool fastSeaglideCheatActive = false;
     
     [QModPrePatch]
     public static void PreLoad() {
@@ -548,6 +549,7 @@ namespace ReikaKalseki.SeaToSea
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cTrackerAll", b => trackerShowAllCheatActive = b);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSGSA", b => fastSeaglideCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
