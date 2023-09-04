@@ -7,7 +7,7 @@
 
 	</desc>
    	 <pda>
-This is used, is the “you want to go DEEPER?!” pda
+A PDA recording of a conversation between two Degasi survivors, arguing about the prospects of building a new seabase 500 meters underwater, in a different area of the crater
 	</pda>
     	<databox>
 		A databox containing the blueprint for the ultra-high capacity oxygen tank
@@ -33,10 +33,10 @@ This is used, is the “you want to go DEEPER?!” pda
 
 	</pda>
     	<mushroom>
-
+		Large, glowing, mushroom-like flora, home to a predator in symbiosis
 	</mushroom>
     	<magnetite>
-
+		Deposits of the mineral magnetite, likely formed from volcanic activity
 	</magnetite>
     	<degasi>
 		The decaying remains of a seabase, once inhabited by the survivors of the Degasi
@@ -61,14 +61,23 @@ This is used, is the “you want to go DEEPER?!” pda
   </POD3>
   <POD19>
     	<name>
-		Officer Keen's Lifepod
+		Sparse Reef Fissures
 	</name>
     	<desc>
 
 	</desc>
     	<pda>
-
+		A PDA containing a reprimand from First Officer Keen, and coordinates to a rendezvous on dry land
 	</pda>
+    	<cycfire>
+		A databox containing the blueprint for an integrated fire suppression module for large submersibles
+	</cycfire>
+    	<console>
+		A databox for a moonpool installation, for crafting and installing vehicle upgrades
+	</console>
+    	<nanowrap>
+		Instructions for manufacturing advanced bandages
+	</nanowrap>
     	<databox>
 		A databox containing the blueprint for the ultra-high capacity oxygen tank
 	</databox>
@@ -87,16 +96,16 @@ This is used, is the “you want to go DEEPER?!” pda
 This is used
 	</pda>
     	<seamoth>
-
+		Fragments of Seamoth submersibles, dispersed during the impact of a portion of the Aurora’s Seamoth hangar
 	</seamoth>
     	<terminal>
-
+		.a,...REC.rffly0zqqgy
 	</terminal>
     	<jelly>
-
+		A cavernous biome comprised primarily of pink, mushroomlike flora and predatory eels
 	</jelly>
     	<room>
-
+		A difficult-to-access chamber in a piece of Aurora wreckage filled with a multitude of technology fragments
 	</room>
   </POD17>
   <POD6>
@@ -107,7 +116,7 @@ This is used
 
 	</desc>
     	<pda>
-This is used, is the explosion pda
+A pda detailing the fate of the aurora survivors aboard lifepod 6, who died in an explosion due to haphazard use of a flare
 	</pda>
     	<seacrown>
 		A rare specimen of alien flora, remarkable for its internal bacterial colonies
@@ -127,7 +136,7 @@ This is used, is the explosion pda
 
 	</pda>
     	<mushkoosh>
-		A cave connecting the Mushroom Forest and Bulb Zone, and home to a unique species of chemosynthetic coral. 
+		A cave connecting the Mushroom Forest and Bulb Zone, and home to a unique species of chemosynthetic coral 
 	</mushkoosh>
     	<mercury>
 		Geologically active caves containing cinnabar ore
@@ -147,13 +156,13 @@ This is used, is the explosion pda
 
 	</pda>
     	<reaper>
-		
+		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
 	</reaper>
     	<shroom>
 		Blue mushroom-like plants that emit light-sensitive seed pods
 	</shroom>
     	<azurite>
-		Abundant deposits of the volatile mineral Azurite
+		Abundant deposits of the volatile mineral Azurite around thermal vents
 	</azurite>
     	<suit>
 		A databox for the Electrochemical Suit
@@ -187,7 +196,7 @@ This is used, is the explosion pda
 
 	</pda>
     	<piezo>
-		Strange, buoyant crystals that will occasionally emit powerful electromagnetic blasts that disrupt nearby electrical systems.
+		Strange, buoyant crystals that will occasionally emit powerful electromagnetic blasts that disrupt nearby electrical systems
 	</piezo>
     	<wreck>
 A large wreck from the aurora, a piece of which broke off and fell into the depths before it could be explored
@@ -210,7 +219,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</desc>
     	<pda>
-		This is used
+		This is used, is the long exposition in the base
 	</pda>
     	<pod1>
 		The remains of Lifepod 1, underneath a large, derelict seabase 
@@ -219,7 +228,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 		Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 25%
 	</chit>
     	<databox>
-
+		A databox containing the blueprint for substantial upgrades to the Seamoth’s depth rating, far beyond the typical design envelope
 	</databox>
   </BKELPTRENCH>
   <NBKELP>
@@ -233,13 +242,13 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</pda>
     	<pod2>
-
+		The remains of Aurora lifepod 2, which failed to deploy flotation devices and promptly sunk to the seafloor. The survivors then attempted to escape this extreme depth with no breathing apparatus
 	</pod2>
     	<cache>
 		An alien structure containing a number of Ion Cubes, and a terminal with data indicating a possible function of these caches
 	</cache>
     	<levi>
-
+		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water
 	</levi>
   </NBKELP>
   <BONEFIELD>
@@ -250,7 +259,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</desc>
     	<pda>
-This is used
+A PDA audio log, appearing to record the destruction of a seamoth by the leviathan near where it was found
 	</pda>
     	<skull>
 		An extremely large skull and upper ribcage of an ancient creature dwarfing anything encountered on the planet
@@ -262,7 +271,7 @@ This is used
 		A damaged seamoth upgrade for reducing power leakage to the environment
 	</seal>
     	<levi>
-		A young and aggressive Ghost Leviathan
+		Ethereal, hammer-headed, juvenile leviathan that makes use of forceful ramming to hunt its prey. Highly aggressive
 	</levi>
   </BONEFIELD>
   <DRF>
@@ -351,7 +360,7 @@ This is used
 
 	</pda>
     	<degasi>
-		remnants of the survivors of the Degasi
+		A number of derelict seabases, once occupied by the survivors of the Degasi
 	</degasi>
     	<keen>
 		The last known location of First Officer Keen, and a pda detailing his encounter with Yu, the only other Aurora survivor who appeared to survive for any length of time
@@ -374,10 +383,10 @@ This is used
 		A towering structure, of unknown design and purpose
 	</gun>
     	<beachpda>
-
+		A PDA from a group of Aurora survivors, documenting their arrival on the island from a location to the east and their discoveries of various structures, items, topography, and lifeforms on the island
 	</beachpda>
     	<cavepda>
-
+A PDA from an Aurora survivor, paranoid and desperate about their circumstances, and making note of the fates of their fellow survivors, as well as describing a red alien device they threw away at the eastern end of the island
 	</cavepda>
     	<arch>
 		An alien teleporter, leading to a corresponding structure in a cave on a floating island
@@ -406,7 +415,7 @@ This is used
 		A strange alien terminal, the attempted usage of which was denied for reasons of infection, and revealed the true purpose of the containing structure 
 	</denied>
     	<jailbreak>
-		A download of what appears to be alien malware, making the laser cutter capable of stripping salvage from the hull of the aurora.
+		A download of what appears to be alien malware, making the laser cutter capable of stripping salvage from the hull of the aurora
 
 &lt;color=red&gt;&lt;b&gt;Reminder from Alterra: Salvage of the Aurora is illegal under Transgovernmental law&lt;/b&gt;&lt;/color&gt;
 	</jailbreak>
@@ -422,16 +431,16 @@ This is used
 
 	</pda>
     	<main>
-
+		A PDA from Degasi survivor Paul Torgal, detailing the group’s situation five weeks after crashing, and exhibiting arrogant certainty of their ability to survive on 4546B	
 	</main>
     	<outside>
-
+		A PDA recording of a conversation between two Degasi survivors, mentioning plans to build a new seabase in a mineral-rich cavern
 	</outside>
     	<return>
-
+		A PDA from  Degasi survivor Bart Torgal, appearing to contain some of his last words before succumbing to infection, seemingly recorded long after the deaths of both Paul Torgal and Marguerit Maida, and after a return from an unknown deep location
 	</return>
     	<init>
-
+		A PDA  recording of a conversation between recording of a conversation between the Degasi survivors, documenting their arrival on the island and subsequent predicament regarding food and shelter
 	</init>
   </FLOATDEGASI>
   <DUNEARCH>
@@ -442,10 +451,10 @@ This is used
 
 	</desc>
     	<pda>
-This is used
+A PDA found within wreckage, detailing the fate of an Aurora crewmember who was unable to board an escape pod, but managed to survive the initial impact of the Aurora
 	</pda>
     	<reaper>
-
+		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
 	</reaper>
     	<bioproc>
 		Fragments of a bioprocessor machine
@@ -477,7 +486,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		A databox containing the blueprint for watertight, electrically insulative fabric
 	</sealed>
     	<levi>
-
+		Ethereal, hammer-headed, adolescent leviathans that make use of forceful ramming to repel competitors to their territory, but which in fact feed on microscopic lifeforms in the water
 	</levi>
   </GRANDREEF>
   <MUSHTREE>
@@ -514,13 +523,13 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</pda>
     	<podpda>
-
+		A PDA recording of a conversation between a group of Aurora survivors in an overcrowded lifepod, arguing about what to do in the wake of the Aurora’s crash landing
 	</podpda>
     	<podpda2>
-
+		A PDA from an Aurora survivor, detailing the fate of their lifepod and bemoaning their survival prospects after having been abandoned by the other occupants of the pod
 	</podpda2>
     	<basepda>
-
+		A PDA from an Aurora survivor, detailing dire circumstances as a result of surrounding leviathan activity on their attempts to traverse the area, as well as some indication of an incomplete plan for avoiding their detection. Also contains some analysis of the mineral Azurite, and speculation on where richer deposits of it can be found
 	</basepda>
     	<mask>
 		A damaged databox containing the blueprint for a recirculation mask, wedged into a metal grille
@@ -532,7 +541,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		A survival knife, upgraded to sear whatever it comes into contact with
 	</knife>
     	<battery>
-
+		A databox containing the blueprint for seabase power storage expansions
 	</battery>
   </MOUNTAINPOD>
   <TREADERPOD>
@@ -543,19 +552,19 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</desc>
     	<pda>
-
+		A PDA from an Aurora survivor, whose ranting was interrupted by the destruction of his lifepod
 	</pda>
     	<treader>
-
+		Massive, bottom-dwelling leviathans, the footsteps of which both bury and unearth objects from the seafloor
 	</treader>
     	<platinum>
 		Elemental platinum, unearthed by the titanic footsteps of the Sea Treaders.
 	</platinum>
     	<enzy>
-
+		A damaged databox containing the chemical formula for enzymes that break down cellular structures, apparently crushed by large fauna
 	</enzy>
     	<basepda>
-
+		A PDA from an Aurora survivor, who appears to have become subject to a number of self-inflicted hardships
 	</basepda>
     	<databox>
 		A databox containing the blueprint for moderate upgrades to the Seamoth’s depth rating
@@ -581,7 +590,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		Samples taken from large, purple, kelplike flora containing potentially useful organic compounds 
 	</deepvine>
     	<levi>
-
+		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water. This specimen is colored unusually for its species due to the unique diet the local biome provides
 	</levi>
   </GLASSFOREST>
   <CRASH>
@@ -595,19 +604,19 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 
 	</pda>
     	<pod4>
-The overturned remains of lifepod 4, containing a databox with the blueprint for decoy devices and a pda warning of massive aggressive predators in the area
+The overturned remains of lifepod 4, containing a databox with the blueprint for decoy devices and a PDA warning of massive aggressive predators in the area
 	</pod4>
     	<crashmesa>
 		The remains of lifepod 10, with a nearby databox containing the blueprint for significant upgrades to the Seamoth’s depth rating
 	</crashmesa>
     	<reaper>
-
+Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
 	</reaper>
     	<sanctuary>
-		
+		A small biome, seemingly spared from the destruction of the aurora’s impact, and home to a now-endangered flora specimen with an interesting yet familiar appearance
 	</sanctuary>
     	<trailerbase>
-		The fragmented and partially buried wreck of a Degasi Seabase, likely destroyed by the disturbance caused by the Aurora’s impact, and containing advanced materials and recipes
+		The fragmented and partially buried wreck of a Degasi seabase, likely destroyed by the disturbance caused by the Aurora’s impact, and containing advanced materials and recipes
 	</trailerbase>
   </CRASH>
   <DEGASIEND>
@@ -621,7 +630,7 @@ The overturned remains of lifepod 4, containing a databox with the blueprint for
 		
 	</pda>
 	<end>
-		A recording of the demise of the Degasi survivors as a result of Marguerit Maida bringing an injured leviathan, attracting another which attacked the base.
+		A recording of the demise of the Degasi survivors as a result of Marguerit Maida returning with an injured leviathan, attracting another which attacked the base.
 	</end>
 	<tablet>
 		A broken orange tablet in the same general design of the purple variant, with unknown usage.
@@ -641,19 +650,19 @@ The overturned remains of lifepod 4, containing a databox with the blueprint for
 		
 	</pda>
 	<destroy>
-		Audio of the final moments of lifepod 15 as it was destroyed by a ghost leviathan.
+		Audio of the final moments of lifepod 15 as it was destroyed by a Ghost Leviathan
 	</destroy>
 	<end>
-		A log from the occupant of lifepod 15 as they examined their limited options and discussed visiting an unknown deep region further away from the main crater.
+		A log from the occupant of lifepod 15 as they examined their limited options and discussed visiting an unknown deep region further away from the main crater
 	</end>
 	<databox>
-		A databox containing the blueprint for tough metal plating to build advanced vehicles.
+		A databox containing the blueprint for tough metal plating to build advanced vehicles
 	</databox>
 	<items>
-		Strange crystals formed under extreme pressure, with commensurate fabrication applications.
+		Strange crystals formed under extreme pressure, with commensurate fabrication applications
 	</items>
 	<levi>
-		A large aggressive creature that makes use of light and electricity based attacks.
+		A large, aggressive creature that makes use of light and electricity based attacks
 	</levi>
   </VOID>
   <MOUNTAINS>
@@ -667,22 +676,22 @@ The overturned remains of lifepod 4, containing a databox with the blueprint for
 		
 	</pda>
 	<reaper>
-		
+		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
 	</reaper>
 	<pod>
-		
+		The remains of Aurora Lifepod 14
 	</pod>
 	<azurite>
 		Sparse deposits of the volatile mineral Azurite around thermal vents
 	</azurite>
 	<magnetite>
-		
+		Deposits of the mineral magnetite, likely formed from volcanic activity
 	</magnetite>
 	<pyropod>
-		
+		Heat-emitting flora, the tough pods of which may have heat-resistant or biochemical applications 
 	</pyropod>
 	<debris>
-		
+		Debris from the destruction of the Sunbeam, including miscellaneous garbage, metal, mechanical parts, and rare materials from their cargo bay
 	</debris>
   </MOUNTAINS>
 </Root>
