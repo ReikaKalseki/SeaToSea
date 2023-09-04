@@ -870,17 +870,14 @@ namespace ReikaKalseki.SeaToSea {
     
 	    public static void onDataboxActivate(BlueprintHandTarget c) {	    	
 	    	TechType over = DataboxTypingMap.instance.getOverride(c);
-	    	if (over != TechType.None) {
+	    	if (over != TechType.None && over != c.unlockTechType) {
 	    		SNUtil.log("Blueprint @ "+c.gameObject.transform.ToString()+", previously "+c.unlockTechType+", found an override to "+over);
-	    		ObjectUtil.setDatabox(c, over);
-	    	}
-	    }
-	    
-	    public static void onCrateActivate(SupplyCrate c) {    	
-	    	TechType over = CrateFillMap.instance.getOverride(c);
-	    	if (over != TechType.None) {
-	    		SNUtil.log("Crate @ "+c.gameObject.transform.ToString()+", previously "+c.itemInside+", found an override to "+over);
-	    		ObjectUtil.setCrateItem(c, over);
+	    		GameObject go = ObjectUtil.createWorldObject(GenUtil.getOrCreateDatabox(over).TechType);
+	    		go.transform.SetParent(c.transform.parent);
+	    		go.transform.position = c.transform.position;
+	    		go.transform.rotation = c.transform.rotation;
+	    		go.transform.localScale = c.transform.localScale;
+	    		UnityEngine.Object.Destroy(c.gameObject);
 	    	}
 	    }
 	    

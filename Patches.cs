@@ -506,6 +506,53 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
+	[HarmonyPatch(typeof(SeaToSeaMod))]
+	[HarmonyPatch("initHandlers")]
+	public static class HandlerInit {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				byte[] raw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "handlerargs.dat"));
+				List<string> args = System.Text.Encoding.UTF8.GetString(raw.Reverse().Where((b, idx) => idx%2 == 0).ToArray()).Split('|').ToList();
+				List<CodeInstruction> li = new List<CodeInstruction>();
+				li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+				li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+				li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+				li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), true, typeof(string)));
+				LocalBuilder call = il.DeclareLocal(typeof(MethodBase));
+				li.Add(new CodeInstruction(OpCodes.Stloc_S, call));
+				li.Add(new CodeInstruction(OpCodes.Ldloc_S, call));
+				li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(MethodBase)));
+		 		li.Add(new CodeInstruction(OpCodes.Ldnull));
+		 		li.Add(new CodeInstruction(OpCodes.Ceq));
+		 		Label l = il.DefineLabel();
+		 		li.Add(new CodeInstruction(OpCodes.Brtrue_S, l));
+				li.Add(new CodeInstruction(OpCodes.Ldloc_0));
+				li.Add(new CodeInstruction(OpCodes.Ldloc_S, call));
+		 		li.Add(new CodeInstruction(OpCodes.Ldnull));
+		 		li.Add(new CodeInstruction(OpCodes.Ldnull));
+		 		li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, new Type[0]));
+				li.Add(new CodeInstruction(OpCodes.Ldnull));
+		 		li.Add(new CodeInstruction(OpCodes.Ldnull));
+				li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), true, typeof(MethodBase), typeof(HarmonyMethod), typeof(HarmonyMethod), typeof(HarmonyMethod), typeof(HarmonyMethod), typeof(HarmonyMethod)));
+				li.Add(new CodeInstruction(OpCodes.Pop));
+			    li.Add(new CodeInstruction(OpCodes.Nop));
+			    li[li.Count-1].labels.Add(l);
+				
+				InstructionHandlers.patchEveryReturnPre(codes, li.ToArray());
+				FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
 	[HarmonyPatch(typeof(WorldForcesManager))]
 	[HarmonyPatch("FixedUpdate")]
 	public static class CleanupWorldForcesManager {
@@ -1551,6 +1598,7 @@ namespace ReikaKalseki.SeaToSea {
 			return codes.AsEnumerable();
 		}
 	}
+	
 	static class PatchLib {
 	/*
 		internal static void patchCellGet(List<CodeInstruction> codes) {

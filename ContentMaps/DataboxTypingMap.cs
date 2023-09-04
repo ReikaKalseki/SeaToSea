@@ -60,6 +60,7 @@ namespace ReikaKalseki.SeaToSea
 				data[rnd] = new Dictionary<Vector3, TechType>();
 			}
 			data[rnd][pos] = type;
+			GenUtil.getOrCreateDatabox(type);
 			SNUtil.log("Registered databox mapping "+type+" @ "+pos);
 		}
 		

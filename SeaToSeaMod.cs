@@ -292,8 +292,7 @@ namespace ReikaKalseki.SeaToSea
 		C2CItems.healFlower.addNativeBiome(VanillaBiomes.REDGRASS, true);
 		C2CItems.sanctuaryPlant.addNativeBiome(CrashZoneSanctuaryBiome.instance);
 		
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+		initHandlers();
         
         Vector3 ang = new Vector3(0, 317, 0);
         Vector3 pos1 = new Vector3(-1226, -350, -1258);
@@ -313,12 +312,18 @@ namespace ReikaKalseki.SeaToSea
         SNUtil.addScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
     }
     
+    private static void initHandlers() {
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+    }
+    
     [QModPostPatch]
     public static void PostLoad() {
         worldgen.load(); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
 		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
+        DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
         
         POITeleportSystem.instance.populate();
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
