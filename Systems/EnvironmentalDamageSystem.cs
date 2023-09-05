@@ -68,6 +68,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float cyclopsPowerLeak;
 		private float vehiclePowerLeak;
+		
+		private float playerPressureDamageSince;
+		private float playerPressureDamageDuration;
     	
     	internal float TEMPERATURE_OVERRIDE = -1;
     	
@@ -186,8 +189,13 @@ namespace ReikaKalseki.SeaToSea {
 			if (aurora && !diveSuit && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key) && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key)) {
 				triggerAuroraPrawnBayWarning();
 			}
-			if (dmg.player && !isPlayerInOcean() && !aurora)
-	   			return;
+			if (dmg.player && !isPlayerInOcean()) {
+				playerPressureDamageDuration = Mathf.Max(0, playerPressureDamageDuration-Time.deltaTime);
+				if (playerPressureDamageDuration > 0)
+					dmg.liveMixin.TakeDamage((SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 3 : 1)/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+				if (!aurora)
+	   				return;
+			}
 	   		//SBUtil.writeToChat("not skipped");
 			float temperature = dmg.GetTemperature();
 			float f = 1;
@@ -269,7 +277,10 @@ namespace ReikaKalseki.SeaToSea {
 		    	//depthWarningFX2.setIntensities(rb ? 0 : depth);
 	    		if (depth > depthDamageStart && !rb) {
 	    			float f2 = depth >= depthDamageMax ? 1 : (float)MathUtil.linterpolate(depth, depthDamageStart, depthDamageMax, 0, 1);
+	    			f2 *= 1+playerPressureDamageDuration*0.2F;
 	    			dmg.liveMixin.TakeDamage((SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 50 : 30)*0.25F*f2/ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
+	    			playerPressureDamageSince = time;
+	    			playerPressureDamageDuration += Time.deltaTime;
 	    			ObjectUtil.removeComponent<HealingOverTime>(dmg.player.gameObject);
 	    		}
 	   			bool seal;
@@ -333,6 +344,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	else
 	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key);
     	}
+    	
+		internal bool isPlayerRecoveringFromPressure() {
+			return playerPressureDamageDuration > 0 || DayNightCycle.main.timePassedAsFloat-playerPressureDamageSince < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 15 : 8);
+		}
+		
+		internal void resetCooldowns() {
+			playerPressureDamageDuration = 0;
+			playerPressureDamageSince = -1;
+		}
     	
     	private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
     		if (v.docked || v.precursorOutOfWater) {
@@ -585,8 +605,13 @@ namespace ReikaKalseki.SeaToSea {
 					if (depth >= increaseStart) {
 						num = 2.5F+Math.Min(27.5F, (Player.main.GetDepth()-increaseStart)/rate);
 					}
-					else if (hard && depth > highO2UsageStart && !liquid) {
-						num *= (float)MathUtil.linterpolate(depth, highO2UsageStart, depthDamageStart, 1, 1.5F, true);
+					if (!liquid) {
+						if (hard && depth > highO2UsageStart) {
+							num *= (float)MathUtil.linterpolate(depth, highO2UsageStart, depthDamageStart, 1, 1.5F, true);
+						}
+						if (depth >= depthDamageStart) {
+							num *= 1+playerPressureDamageDuration*0.2F;
+						}
 					}
 					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+increaseStart+"&"+rate+">"+num.ToString("00.000"));
 				}

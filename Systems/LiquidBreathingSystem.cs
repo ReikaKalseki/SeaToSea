@@ -121,6 +121,8 @@ namespace ReikaKalseki.SeaToSea {
 	    public bool isO2BarAbleToFill(Player ep) {
 	    	if (hasTankButNoMask())
 	    		return false;
+	    	if (EnvironmentalDamageSystem.instance.isPlayerRecoveringFromPressure())
+	    		return false;
 	    	return !hasLiquidBreathing() || isInPoweredArea(ep) || !isLiquidBreathingActive(ep);
 	    }
 	    

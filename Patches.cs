@@ -528,6 +528,10 @@ namespace ReikaKalseki.SeaToSea {
 		 		li.Add(new CodeInstruction(OpCodes.Ceq));
 		 		Label l = il.DefineLabel();
 		 		li.Add(new CodeInstruction(OpCodes.Brtrue_S, l));
+				li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+				li.Add(new CodeInstruction(OpCodes.Ldnull));
+				li.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+				li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string), typeof(Assembly), typeof(int)));
 				li.Add(new CodeInstruction(OpCodes.Ldloc_0));
 				li.Add(new CodeInstruction(OpCodes.Ldloc_S, call));
 		 		li.Add(new CodeInstruction(OpCodes.Ldnull));

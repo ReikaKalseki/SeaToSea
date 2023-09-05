@@ -542,6 +542,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	float ret = prop.attractionForce;
 	    	if (isHeldToolAzuritePowered())
 	    		ret *= 3;
+	    	float temp = WaterTemperatureSimulation.main.GetTemperature(Player.main.transform.position);
+	    	if (temp >= 100)
+	    		ret *= Mathf.Max(0.04F, 1F/((temp-99)/50F));
 	    	return ret;
 	    }
 	    
@@ -560,7 +563,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
-	    	if (ch.obj.FindAncestor<Drillable>()) {
+	    	Drillable d = ch.obj.FindAncestor<Drillable>();
+	    	if (d) {
 				SpecialDrillable s = ch.obj.FindAncestor<SpecialDrillable>();
 				if (!s || s.canBeMoved())
 	    			ch.value = 99999999;
@@ -1613,6 +1617,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	else {
 	    		waterToRestore = s.water;
 	    		foodToRestore = s.food;
+	    		EnvironmentalDamageSystem.instance.resetCooldowns();
 	    	}
 	    }
 	    

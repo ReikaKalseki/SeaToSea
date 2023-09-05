@@ -347,6 +347,7 @@ namespace ReikaKalseki.SeaToSea
     		{"DWEquipmentBonanza", false},
     		{"SeaVoyager", false},
     		{"SubnauticaRandomiser", true},
+    		{"EquivalentExchange", true},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
@@ -621,6 +622,8 @@ namespace ReikaKalseki.SeaToSea
    
    public static bool playerCanHeal() {
    	Player ep = Player.main;
+	if (EnvironmentalDamageSystem.instance.isPlayerRecoveringFromPressure())
+		return false;
    	if (ep.IsSwimming() && ep.GetDepth() >= EnvironmentalDamageSystem.depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing())
    		return false;
    	return true;
