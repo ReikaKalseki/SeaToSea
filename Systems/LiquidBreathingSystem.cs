@@ -39,6 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 	    private float forceAllowO2 = 0;
 	    
 	    private float lastUnequippedTime = -1;
+	    
+	    internal float lastKharaaTreatmentTime = -1;
 		
 		private LiquidBreathingSystem() {
 			
@@ -71,10 +73,15 @@ namespace ReikaKalseki.SeaToSea {
 			onAddO2ToBar();
 			//SNUtil.writeToChat("Added "+add);
 	    }*/
-	    
-	    private void onAddO2ToBar() {
-				    		
-	    }
+	    /*
+	    internal void onAddO2ToBar(float amt) {
+	    	if (!hasLimited)
+	    		return;
+	    	Oxygen o = getTankTank();
+	    	float rem = o.oxygenAvailable-75;
+	    	if (rem > 0)
+	    		o.RemoveOxygen(rem);
+	    }*/
 	    
 	    public float getFuelLevel() {
 	    	Battery b = getTankBattery();
@@ -91,6 +98,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (tank.item.GetTechType() != C2CItems.liquidTank.TechType)
 	    		return null;
 	    	Battery b = tank.item.gameObject.GetComponent<Battery>();
+	    	return b;
+	    }
+	    
+	    private Oxygen getTankTank() {
+	    	InventoryItem tank = Inventory.main.equipment.GetItemInSlot("Tank");
+	    	if (tank.item.GetTechType() != C2CItems.liquidTank.TechType)
+	    		return null;
+	    	Oxygen b = tank.item.gameObject.GetComponent<Oxygen>();
 	    	return b;
 	    }
 	    
@@ -149,9 +164,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (!hasLiquidBreathing())
 	    		return true;
-	    	if (!force && !isInPoweredArea(p)) {
-	    		amt = 0;
-	    	    return false;
+	    	if (!force) {
+		    	if (!isInPoweredArea(p)) {
+		    		amt = 0;
+		    	    return false;
+		    	}
 	    	}
 	    	Battery b = getTankBattery();
 	    	if (!b) {
@@ -159,6 +176,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		return false;
 	    	}
 	    	amt = Mathf.Min(amt, b.charge);
+	    	if (hasReducedCapacity())
+	    		amt = Mathf.Min(amt, 75-getTankTank().oxygenAvailable);
 	    	if (amt > 0)
 	    		b.charge -= amt;
 	    	//SNUtil.writeToChat(amt+" > "+b.charge);
@@ -252,6 +271,14 @@ namespace ReikaKalseki.SeaToSea {
 					}
 	    		}
 	    	}
+	    }
+	    
+	    public bool isKharaaTreatmentActive() {
+	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 14400);
+	    }
+	    
+	    public bool hasReducedCapacity() {
+	    	return !isKharaaTreatmentActive() && hasLiquidBreathing();
 	    }
 	    
 	    class OxygenAreaWithLiquidSupport : MonoBehaviour {

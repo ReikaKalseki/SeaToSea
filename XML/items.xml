@@ -263,6 +263,17 @@
 			
 		</pda>
 	</GeyserMinerals>
+	<WeakEnzyme42>
+		<name>
+			Enzyme 42 Traces
+		</name>
+		<desc>
+			A small amount of enzyme 42, but too impure and degraded to properly cure Kharaa infection.
+		</desc>
+		<pda>
+			
+		</pda>
+	</WeakEnzyme42>
 	<breathfluid>
 		<name>
 			Breathing Fluid
@@ -339,6 +350,17 @@
 			
 		</pda>
 	</CurativeBandage>
+	<KharaaTreatment>
+		<name>
+			Kharaa Symptom Alleviation Canister
+		</name>
+		<desc>
+			Provides temporary relief from Kharaa symptoms that reduce pulmonary efficiency, especially when using liquid respiration media. Does not lose effectiveness with use, but will do nothing to combat the infection.
+		</desc>
+		<pda>
+			
+		</pda>
+	</KharaaTreatment>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite
@@ -383,7 +405,7 @@
 			Small, dense crystals formed under extreme pressure, with trace amounts of exotic elements such as Tellurium.
 		</desc>
 		<pda>
-			In the deepest layers of the open ocean, where mineral-rich water expelled from thermal vents collects due to its greater density relative to ordinary seawater, the extreme pressure can force these minerals back out of solution.
+			In the deepest layers of the open ocean, where mineral-rich water collects due to its greater density relative to ordinary seawater, the extreme pressure can force these minerals back out of solution.
 			
 			Abyssoclase is one such mineral, formed when a small seed crystal - possibly quartz, diamond, or sulfur - is coated with successive layers of silcia deposits rich in Tellurium and other rare elements.
 			

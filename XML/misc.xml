@@ -244,6 +244,17 @@
 		
 	</pda>
   </PrawnBayDoorHeatWarn>
+  <LostRiverCachePanel>
+	<name>
+		
+	</name>
+	<desc>
+		Upload human biological data
+	</desc>
+	<pda>
+		
+	</pda>
+  </LostRiverCachePanel>
   <NeedRepairDataBox>
 	<name>
 		
@@ -340,4 +351,38 @@
 		Assessment: Essential for advanced fabrication
 	</pda>
   </MercuryDesc>
+  <EnzymePeeperDisplay>
+	<name>
+		Enzyme Host Peeper
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+  </EnzymePeeperDisplay>
+  <CraftingNodes>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<chemistry>
+		Chemistry
+	</chemistry>
+	<ingots>
+		Metal Ingots
+	</ingots>
+	<ingotUnpack>
+		Metal Unpacking
+	</ingotUnpack>
+	<medical>
+		Medical
+	</medical>
+  </CraftingNodes>
 </Root>

@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{};
+				return new string[]{"C2CMedical"};
 			}
 		}
 	}

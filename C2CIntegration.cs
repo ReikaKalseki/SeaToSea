@@ -101,7 +101,7 @@ namespace ReikaKalseki.SeaToSea {
     public static void addPostCompat() {
 		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 		BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
-		Bioprocessor.addRecipe(AqueousEngineeringMod.poo.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
+		Bioprocessor.addRecipe(new TypeInput(AqueousEngineeringMod.poo), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
 		
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
 		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
