@@ -10,13 +10,13 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea
 {
-	public class CurativeBandage : BasicCraftingItem {
+	public class KharaaTreatment : BasicCraftingItem {
 		
-		public CurativeBandage() : base(SeaToSeaMod.itemLocale.getEntry("CurativeBandage"), "WorldEntities/Natural/FirstAidKit") {
-			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/CurativeBandage");
+		public KharaaTreatment() : base(SeaToSeaMod.itemLocale.getEntry("KharaaTreatment"), "WorldEntities/Natural/FirstAidKit") {
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/KharaaTreatment");
 			unlockRequirement = TechType.Unobtanium;//TechType.Workbench;//SeaToSeaMod.healFlower.TechType;
-			craftingTime = 6;
-			inventorySize = new Vector2int(1, 2);
+			craftingTime = 18;
+			inventorySize = new Vector2int(2, 2);
 			renderModify = r => {
 				r.transform.localScale = new Vector3(1, 3, 1);
 				r.materials[0].SetFloat("_Shininess", 7.5F);

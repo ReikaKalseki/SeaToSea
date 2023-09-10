@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -26,6 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
 		internal static readonly Arrow returnArrow = new Arrow("arrowRet", "", "", "");
 		internal static readonly Arrow spacer = new Arrow("spacer", "", "", "");
+		internal static readonly NotFabricable sparklePeeperDisplay = new NotFabricable(SeaToSeaMod.miscLocale.getEntry("EnzymePeeperDisplay"), CraftData.GetClassIdForTechType(TechType.Peeper));
 		
 		internal static readonly float POWER_COST_IDLE = 0.5F; //per second; was 1.5 then 2.5
 		//internal static readonly float POWER_COST_ACTIVE = 18.0F; //per second
@@ -42,6 +44,8 @@ namespace ReikaKalseki.SeaToSea {
 			rightArrow.Patch();
 			returnArrow.Patch();
 			spacer.Patch();
+			sparklePeeperDisplay.sprite = SpriteManager.Get(TechType.Peeper);
+			sparklePeeperDisplay.Patch();
 			bioprocCategory = TechCategoryHandler.Main.AddTechCategory("bioprocessor", "Bioprocessor");
 			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, bioprocCategory);
 			/*
@@ -51,28 +55,30 @@ namespace ReikaKalseki.SeaToSea {
 					addRecipe(item.TechType, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);                   	
 			    }
 			});*/
+			
 		}
 		
 		public static void addRecipes() {
-			addRecipe(TechType.CreepvineSeedCluster, TechType.Lubricant, 2, 10, 120, 1, 2);
-			addRecipe(TechType.AcidMushroom, CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 30, 5, 2);
-			addRecipe(TechType.WhiteMushroom, TechType.HydrochloricAcid, 6, 20, 400, 9, 2);
-			addRecipe(TechType.BloodOil, TechType.Benzene, 5, 45, 800, 4);
-			addRecipe(C2CItems.alkali.seed.TechType, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 600, 5);
-			addRecipe(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 240, 3, 5);
-			addRecipe(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
-			addRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
-			addRecipe(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
-			addRecipe(C2CItems.kelp.seed.TechType, CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 180, 3, 8);
+			addRecipe(new TypeInput(TechType.CreepvineSeedCluster), TechType.Lubricant, 2, 10, 120, 1, 2);
+			addRecipe(new TypeInput(TechType.AcidMushroom), CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 30, 5, 2);
+			addRecipe(new TypeInput(TechType.WhiteMushroom), TechType.HydrochloricAcid, 6, 20, 400, 9, 2);
+			addRecipe(new TypeInput(TechType.BloodOil), TechType.Benzene, 5, 45, 800, 4);
+			addRecipe(new TypeInput(C2CItems.alkali), CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 600, 5);
+			addRecipe(new TypeInput(TechType.GasPod), CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 240, 3, 5);
+			addRecipe(new TypeInput(TechType.SnakeMushroomSpore), CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
+			addRecipe(new TypeInput(TechType.HatchingEnzymes), CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
+			addRecipe(new TypeInput(TechType.SeaTreaderPoop), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
+			addRecipe(new TypeInput(C2CItems.kelp), CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 180, 3, 8);
+			addRecipe(new SparklePeeperInput(), CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 45, 200, 2, 1, true);
 		}
 		
-		public static void addRecipe(TechType inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
-			if (inp == TechType.None)
+		public static void addRecipe(BioInput inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
+			if (inp == null || inp.getBaseType() == TechType.None)
 				throw new Exception("You may not register a recipe using null!");
 			if (o == TechType.None)
 				throw new Exception("You may not register a recipe making null!");
 			BioRecipe r = new BioRecipe(enzy, secs, energy, inp, o);
-			recipes[r.inputItem] = r;
+			recipes[r.inputItem.getBaseType()] = r;
 			r.inputCount = inamt;
 			r.outputCount = outamt;
 			createRecipeDelegate(r, preventUnlock);
@@ -84,7 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;
-			item.unlock = preventUnlock ? TechType.Unobtanium : r.inputItem;
+			item.unlock = preventUnlock ? TechType.Unobtanium : r.inputItem.getBaseType();
 			item.ownerMod = SeaToSeaMod.modDLL;
 			item.allowUnlockPopups = true;
 			if (item.sprite == null && to != null)
@@ -95,14 +101,14 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addRecipe(item.TechType, TechGroup.Resources, bioprocCategory, r.outputCount, CraftTree.Type.None);
 			//RecipeUtil.addIngredient(item.TechType, SeaToSeaMod.processor.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
-			RecipeUtil.addIngredient(item.TechType, r.inputItem, r.inputCount);
+			RecipeUtil.addIngredient(item.TechType, r.inputItem.getIngredientDisplay(), r.inputCount);
 			RecipeUtil.addIngredient(item.TechType, CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, r.enzyCount);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, spacer.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, returnArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, rightArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
-			delegates[r.inputItem] = item;
+			delegates[r.inputItem.getBaseType()] = item;
 			return item.TechType;
 		}
 		
@@ -232,6 +238,10 @@ namespace ReikaKalseki.SeaToSea {
 			setEmissiveColor(new Color(0, 0, 1));
 		}
 		
+		public bool isCrafting() {
+			return currentOperation != null;
+		}
+		
 		protected override void load(System.Xml.XmlElement data) {
 			operationCooldown = (float)data.getFloat("cooldown", float.NaN);
 			
@@ -248,6 +258,19 @@ namespace ReikaKalseki.SeaToSea {
 			data.addProperty("recipe", currentOperation != null ? currentOperation.inputItem+"" : null);
 			data.addProperty("countdown", nextEnzyTimeRemaining);
 			data.addProperty("required", enzyRequired);
+		}
+		
+		public float getRemainingTime() {
+			if (currentOperation == null)
+				return 0;
+			return (enzyRequired-1)*currentOperation.secondsPerEnzyme+nextEnzyTimeRemaining;
+		}
+		
+		public float getProgressScalar() {
+			float ret = getRemainingTime();
+			if (ret <= 0)
+				return 0;
+			return 1-ret/currentOperation.processTime;
 		}
 		
 		protected override void updateEntity(float seconds) {
@@ -297,12 +320,13 @@ namespace ReikaKalseki.SeaToSea {
 							nextEnzyTimeRemaining = getOperationTime(currentOperation.secondsPerEnzyme);
 							if (enzyRequired <= 0) {
 								//SNUtil.writeToChat("try craft");
-								IList<InventoryItem> ing = sc.container.GetItems(currentOperation.inputItem);
-								if (ing != null && ing.Count >= currentOperation.inputCount) {
+								IEnumerable<InventoryItem> ing = currentOperation.inputItem.getMatchingItems(sc);
+								if (ing != null && ing.Count() >= currentOperation.inputCount) {
 									//SNUtil.writeToChat("success");
 									for (int i = 0; i < currentOperation.inputCount; i++) {
-										SNUtil.log("Removing "+ing[0].item+" from bioproc inventory");
-										InventoryUtil.removeItem(sc, ing[0]); //list is updated in realtime
+										InventoryItem ii = ing.ElementAt(0);
+										SNUtil.log("Removing "+ii.item+" ("+ii.item.gameObject.GetInstanceID()+") from bioproc inventory");
+										InventoryUtil.removeItem(sc, ii); //list is updated in realtime
 									}
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
@@ -391,9 +415,9 @@ namespace ReikaKalseki.SeaToSea {
 		private bool canRunRecipe(StorageContainer sc, BioRecipe r) {
 			//if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
 			//	return false;
-			IList<InventoryItem> ing = sc.container.GetItems(r.inputItem);
+			IEnumerable<InventoryItem> ing = r.inputItem.getMatchingItems(sc);
 			IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
-			return ing != null && enzy != null && enzy.Count >= r.enzyCount && ing.Count >= r.inputCount;
+			return ing != null && enzy != null && enzy.Count >= r.enzyCount && ing.Count() >= r.inputCount;
 		}
 		
 		private void setRecipe(BioRecipe r) {
@@ -419,9 +443,79 @@ namespace ReikaKalseki.SeaToSea {
 		
 	}
 	
+	public abstract class BioInput {
+		
+		public abstract bool isItemValid(Pickupable pp);
+		
+		public abstract TechType getBaseType();
+		
+		public virtual TechType getIngredientDisplay() {
+			return getBaseType();
+		}
+		
+		public IEnumerable<InventoryItem> getMatchingItems(StorageContainer sc) {
+			IList<InventoryItem> li = sc.container.GetItems(getBaseType());
+			return li == null ? null : li.Where(ii => isItemValid(ii.item));
+		}
+		
+	}
+	
+	public sealed class TypeInput : BioInput {
+		
+		private readonly TechType type;
+		
+		internal TypeInput(BasicCustomPlant plant) : this(plant.seed.TechType) {
+			
+		}
+		
+		internal TypeInput(ModPrefab pfb) : this(pfb.TechType) {
+			
+		}
+		
+		internal TypeInput(TechType tt) {
+			type = tt;
+		}
+		
+		public override bool isItemValid(Pickupable pp) {
+			return pp.GetTechType() == type;
+		}
+		
+		public override TechType getBaseType() {
+			return type;
+		}
+		
+		public override string ToString()
+		{
+			return string.Format("[TypeInput Type={0}]", type);
+		}
+
+		
+	}
+	
+	sealed class SparklePeeperInput : BioInput {
+		
+		public override bool isItemValid(Pickupable pp) {
+			return pp.GetTechType() == TechType.Peeper && pp.GetComponent<Peeper>().isHero;
+		}
+		
+		public override TechType getBaseType() {
+			return TechType.Peeper;
+		}
+		
+		public override TechType getIngredientDisplay() {
+			return Bioprocessor.sparklePeeperDisplay.TechType;
+		}
+		
+		public override string ToString()
+		{
+			return "Sparkle Peeper";
+		}
+		
+	}
+	
 	public class BioRecipe {
 			
-		public readonly TechType inputItem;
+		public readonly BioInput inputItem;
 		public readonly TechType outputItem;
 		public readonly int enzyCount;
 		public readonly float processTime;
@@ -433,7 +527,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal int inputCount = 1;
 		internal int outputCount = 1;
 		
-		internal BioRecipe(int s, float t, float e, TechType inp, TechType o) {
+		internal BioRecipe(int s, float t, float e, BioInput inp, TechType o) {
 			inputItem = inp;
 			outputItem = o;
 			enzyCount = s;

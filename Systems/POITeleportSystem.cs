@@ -52,6 +52,7 @@ namespace ReikaKalseki.SeaToSea {
 			addPOI("mtnislandcave", new Vector3(372, -90, 1039));
 			addPOI("treadertunnel", new Vector3(-1250, -277, -725));
 			addPOI("redkey", new Vector3(156.5F, -200, 951));
+			addPOI("lrcache", new Vector3(-1120, -682, -694));
 			addPOI("drf", new Vector3(-248, -800, 281));
 			addPOI("khasar", new Vector3(-925, -178, 500));
 			addPOI("mushtree", new Vector3(-870, -93, 591));

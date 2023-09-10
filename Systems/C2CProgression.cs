@@ -64,6 +64,8 @@ namespace ReikaKalseki.SeaToSea
 			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new ProgressionTrigger(doDunesCheck)), new DunesPrompt());
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
+			
+			StoryHandler.instance.registerTrigger(new EncylopediaTrigger("HeroPeeper"), new TechUnlockEffect(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 6));
 		
 			gatedTechnologies.Add(TechType.Kyanite);
 			gatedTechnologies.Add(TechType.Sulphur);

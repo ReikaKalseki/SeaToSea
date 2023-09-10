@@ -38,6 +38,7 @@ namespace ReikaKalseki.SeaToSea
     internal static BreathingFluid breathingFluid;
     internal static SeamothHeatSink heatSink;
     internal static CurativeBandage bandage;
+    internal static KharaaTreatment treatment;
     
     internal static AlkaliPlant alkali;
     internal static VentKelp kelp;
@@ -66,14 +67,16 @@ namespace ReikaKalseki.SeaToSea
 	}*/
    
    	internal static void preAdd() {
-        chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", "Chemistry");
+   		XMLLocale.LocaleEntry e = SeaToSeaMod.miscLocale.getEntry("CraftingNodes");
+   		chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", e.getField<string>("chemistry"));
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", "Chemistry", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry")/*SpriteManager.Get(SpriteManager.Group.Tab, "fabricator_enzymes")*/, "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", e.getField<string>("chemistry"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getField<string>("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
         
-        ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", "Metal Ingots");
+        ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", e.getField<string>("ingots"));
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, ingotCategory);
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", "Metal Ingots", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", "Metal Unpacking", TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", e.getField<string>("ingots"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
+        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", e.getField<string>("ingotUnpack"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
@@ -94,6 +97,7 @@ namespace ReikaKalseki.SeaToSea
 		breathingFluid = new BreathingFluid();
 		heatSink = new SeamothHeatSink();
 		bandage = new CurativeBandage();
+		treatment = new KharaaTreatment();
    	}
    
    	internal static void addCraftingItems() {
@@ -133,6 +137,8 @@ namespace ReikaKalseki.SeaToSea
         
 		bandage.Patch();
 		CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
+		treatment.Patch();
+		CraftData.useEatSound[treatment.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
    	}
     
    	internal static void addFlora() {
@@ -221,6 +227,13 @@ namespace ReikaKalseki.SeaToSea
 				return true;
 			}
 	    	return false;
+		});
+        UsableItemRegistry.instance.addUsableItem(treatment.TechType, (s, go) => {
+		   	float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-LiquidBreathingSystem.instance.lastKharaaTreatmentTime < 30)
+				return false;
+			LiquidBreathingSystem.instance.lastKharaaTreatmentTime = time;
+			return true;
 		});
    	}
     

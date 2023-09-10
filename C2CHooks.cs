@@ -31,6 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 lrpowerSealSetpieceCenter = new Vector3(-713.45F, -766.37F, -262.74F);
 	    internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
 	    internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
+	    internal static readonly Vector3 lostRiverCachePanel = new Vector3(-1119.5F, -684.4F, -709.7F);
 	    
 	    internal static readonly Vector3 OZZY_FORK_DEEP_ROOM_POS = new Vector3(-645.6F, -102.7F, -16.2F);
 	    internal static readonly string OZZY_FORK_DEEP_ROOM_GOAL = "ozzyforkdeeproom";
@@ -55,6 +56,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static float waterToRestore;
 	    
 	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
+	    public static readonly string lrCachePanelLocaleKey = "LostRiverCachePanel";	    
 	    public static readonly string itemNotDroppableLocaleKey = "ItemNotDroppable";
 	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
 	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
@@ -136,6 +138,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	
+	    	DIHooks.storageHoverEvent += modifyStorageHover;
+	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
 	    	
@@ -196,6 +200,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
 			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
+			LanguageHandler.SetLanguageLine(lrCachePanelLocaleKey, SeaToSeaMod.miscLocale.getEntry(lrCachePanelLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(dockUpgradesLocaleKey, SeaToSeaMod.miscLocale.getEntry(dockUpgradesLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(needRepairDataboxLocaleKey, SeaToSeaMod.miscLocale.getEntry(needRepairDataboxLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(sanctuaryPlantClickLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantClickLocaleKey).desc);
@@ -273,8 +278,10 @@ namespace ReikaKalseki.SeaToSea {
 	    			ep.oxygenMgr.RegisterSource(playerBaseO2);
 	    			float add = Mathf.Min(ep.oxygenMgr.oxygenUnitsPerSecondSurface, ox.oxygenCapacity-ox.oxygenAvailable)*Time.deltaTime;
 	    			if (add > 0.01) {
-	    				if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(ep, ref add))
+	    				if (LiquidBreathingSystem.instance.tryFillPlayerO2Bar(ep, ref add)) {
 	    					ox.AddOxygen(add);
+	    					//LiquidBreathingSystem.instance.onAddO2ToBar(add);
+	    				}
 	    			}
 	    		}
 	    	}
@@ -828,9 +835,13 @@ namespace ReikaKalseki.SeaToSea {
 	    }
     
 	    public static float getReachDistance() {
-	    	if (skipRaytrace)
+	    	if (skipRaytrace || Player.main.GetVehicle())
 	    		return 2;
-	    	return Player.main.GetVehicle() == null && VoidSpikesBiome.instance.isInBiome(Player.main.gameObject.transform.position) ? 3.5F : 2;
+	    	if ((Player.main.transform.position-lostRiverCachePanel).sqrMagnitude <= 100)
+	    		return 4F;
+	    	if (VoidSpikesBiome.instance.isInBiome(Player.main.transform.position))
+	    		return 3.5F;
+	    	return 2;
 	    }
 	    
 	    public static bool checkTargetingSkip(bool orig, Transform obj) {
@@ -1051,6 +1062,49 @@ namespace ReikaKalseki.SeaToSea {
 			else if (pi && pi.ClassId == "61ac1241-e990-4646-a618-bddb6960325b") {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
+		    	}
+	    	}
+			else if (pi && pi.ClassId == "172d9440-2670-45a3-93c7-104fee6da6bc") {
+	    		if (Vector3.Distance(go.transform.position, lostRiverCachePanel) < 2) {
+	    			Renderer r = ObjectUtil.getChildObject(go, "Precursor_Lab_infoframe/Precursor_Lab_infoframe_glass").GetComponent<Renderer>();
+	    			r.materials[0].SetColor("_Color", new Color(1, 1, 1, /*0.43F*/0.24F));
+	    			r.materials[0].SetColor("_SpecColor", new Color(0.38F, 1, 0.52F, 1));
+	    			RenderUtil.setGlossiness(r.materials[0], 50, 0, 0);
+	    			GameObject copy = UnityEngine.Object.Instantiate(r.gameObject);
+	    			copy.transform.SetParent(r.transform.parent);
+	    			copy.transform.position = r.transform.position;
+	    			copy.transform.rotation = r.transform.rotation;
+	    			copy.transform.localScale = r.transform.localScale;
+	    			Renderer r2 = copy.GetComponent<Renderer>();
+	    			r2.materials[0].shader = Shader.Find("UWE/Marmoset/IonCrystal");
+	    			r2.materials[0].SetInt("_ZWrite", 1);
+	    			r2.materials[0].SetColor("_DetailsColor", Color.white);
+	    			r2.materials[0].SetColor("_SquaresColor", new Color(1, 4, 1.5F, 2));
+	    			r2.materials[0].SetFloat("_SquaresTile", 200F);
+	    			r2.materials[0].SetFloat("_SquaresSpeed", 12F);
+	    			r2.materials[0].SetFloat("_SquaresIntensityPow", 20F);
+	    			r2.materials[0].SetVector("_NoiseSpeed", new Vector4(1, 1, 1, 1));
+	    			r2.materials[0].SetVector("_FakeSSSparams", new Vector4(1, 15, 1, 1));
+	    			r2.materials[0].SetVector("_FakeSSSSpeed", new Vector4(1, 1, 1, 1));
+	    			RenderUtil.setGlossiness(r2.materials[0], 0, 0, 0);
+	    			r.transform.position = new Vector3(r.transform.position.x, r.transform.position.y, -709.79F);
+	    			r2.transform.position = new Vector3(r.transform.position.x, r.transform.position.y, -709.80F);
+	    			GenericHandTarget ht = go.EnsureComponent<GenericHandTarget>();
+					ht.onHandHover = new HandTargetEvent();
+					ht.onHandClick = new HandTargetEvent();
+					ht.onHandHover.AddListener(hte => {
+					    if (!KnownTech.knownTech.Contains(C2CItems.treatment.TechType)) {
+						    HandReticle.main.targetDistance = 15;
+							HandReticle.main.SetIcon(HandReticle.IconType.Interact, 1f);
+						   	HandReticle.main.SetInteractText(lrCachePanelLocaleKey);
+					    }
+					});
+					ht.onHandClick.AddListener(hte => {
+					  	if (!KnownTech.knownTech.Contains(C2CItems.treatment.TechType)) {
+						    KnownTech.Add(C2CItems.treatment.TechType);
+							SNUtil.triggerTechPopup(C2CItems.treatment.TechType);
+					    }
+					});
 		    	}
 	    	}/*
 	    	else if (pi && pi.ClassId == VanillaCreatures.GHOST_LEVIATHAN && pi.GetComponentInChildren<GhostLeviatanVoid>()) {
@@ -1664,6 +1718,14 @@ namespace ReikaKalseki.SeaToSea {
 	    			spt.OnHandHover(hand);
 	    		else if (e == HandTargetEventType.Click)
 	    			spt.OnHandClick(hand);
+	    	}
+	    }
+	    
+	    public static void modifyStorageHover(StorageContainer sc, GUIHand h) {
+	    	BioprocessorLogic lgc = sc.GetComponentInParent<BioprocessorLogic>();
+	    	if (lgc && lgc.isCrafting()) {
+	    		HandReticle.main.SetProgress(lgc.getProgressScalar());
+				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
 	    	}
 	    }
 	}

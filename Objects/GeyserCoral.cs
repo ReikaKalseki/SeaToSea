@@ -185,7 +185,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			foreach (Renderer r in render) {
-				float f = 100+(20+scannedFade*40)*Mathf.Sin(time*0.617F+(r.transform.position.magnitude*10)%1781);
+				float f = 100+(20+scannedFade*80)*Mathf.Sin(time*(0.617F+scannedFade*1.4F)+(r.transform.position.magnitude*10)%1781);
 				RenderUtil.setEmissivity(r, f);
 			}
 		}

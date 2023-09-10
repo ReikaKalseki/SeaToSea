@@ -306,6 +306,8 @@ namespace ReikaKalseki.SeaToSea
         	});
         }
         
+        SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("lastKharaaTreatmentTime"), () => LiquidBreathingSystem.instance);
+        
         SNUtil.addScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
         SNUtil.addScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);
         SNUtil.addScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
@@ -341,7 +343,7 @@ namespace ReikaKalseki.SeaToSea
     		{"CustomCraft2", true},
     		{"FCSAlterraHub", false},
     		{"SlotExtender", false},
-    		{"WarpChip", true},
+    		{"WarpChip", false},
     		{"Socknautica", true},
     		{"DADTankSubPack", true},
     		{"DWEquipmentBonanza", false},

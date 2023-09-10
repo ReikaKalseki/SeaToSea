@@ -93,7 +93,7 @@ A PDA recording of a conversation between two Degasi survivors, arguing about th
 
 	</desc>
     	<pda>
-This is used
+Ozzy (from the cafeteria) lamenting his fear of the environment outside his lifepod, the situation he finds himself in, and the apparent lack of attempts to rescue Aurora personnel
 	</pda>
     	<seamoth>
 		Fragments of Seamoth submersibles, dispersed during the impact of a portion of the Aurora’s Seamoth hangar
@@ -165,7 +165,7 @@ A pda detailing the fate of the aurora survivors aboard lifepod 6, who died in a
 		Abundant deposits of the volatile mineral Azurite around thermal vents
 	</azurite>
     	<suit>
-		A databox for the Electrochemical Suit
+		A databox for the Electrochemical Suit, deep inside a large wreck, in a room only accessible via a partially-collapsed duct system
 	</suit>
   </DUNECENTRAL>
   <METEOR>
@@ -219,10 +219,10 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</desc>
     	<pda>
-		This is used, is the long exposition in the base
+		A long information-dense rant from the occupant of Lifepod 1, recorded some time after they crashed in this location; details their potential escape routes and the obstacles therein, as well as some of their attempted solutions
 	</pda>
     	<pod1>
-		The remains of Lifepod 1, underneath a large, derelict seabase 
+		The remains of Lifepod 1, underneath a large, derelict seabase, and a recording of the pod’s violent entry into the planetary atmosphere and then the ocean 
 	</pod1>
     	<chit>
 		Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 25%
@@ -242,7 +242,7 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 
 	</pda>
     	<pod2>
-		The remains of Aurora lifepod 2, which failed to deploy flotation devices and promptly sunk to the seafloor. The survivors then attempted to escape this extreme depth with no breathing apparatus
+		The remains of Aurora lifepod 2, which failed to deploy flotation devices and promptly sunk to the seafloor; The survivors then attempted to escape this extreme depth with no breathing apparatus
 	</pod2>
     	<cache>
 		An alien structure containing a number of Ion Cubes, and a terminal with data indicating a possible function of these caches
@@ -251,9 +251,9 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
 		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water
 	</levi>
   </NBKELP>
-  <BONEFIELD>
+  <LOSTRIVER>
     	<name>
-		Bones Field
+		Lost River
 	</name>
     	<desc>
 
@@ -261,6 +261,12 @@ A large wreck from the aurora, a piece of which broke off and fell into the dept
     	<pda>
 A PDA audio log, appearing to record the destruction of a seamoth by the leviathan near where it was found
 	</pda>
+    	<drf>
+		A destroyed precursor facility with many long-dead biological specimens, and extensive information on multiple organisms found on 4546B
+	</drf>
+    	<cache>
+		A small biological research outpost tucked into a cave wall, by a large skeleton of a now-extinct creature
+	</cache>
     	<skull>
 		An extremely large skull and upper ribcage of an ancient creature dwarfing anything encountered on the planet
 	</skull>
@@ -270,10 +276,13 @@ A PDA audio log, appearing to record the destruction of a seamoth by the leviath
     	<seal>
 		A damaged seamoth upgrade for reducing power leakage to the environment
 	</seal>
+    	<dragon>
+		The skeleton of a Sea Dragon Leviathan; Many bones appear to have been fractured or broken in a high velocity impact
+	</dragon>
     	<levi>
-		Ethereal, hammer-headed, juvenile leviathan that makes use of forceful ramming to hunt its prey. Highly aggressive
+		Ethereal, hammer-headed, juvenile leviathans that make use of forceful ramming to hunt their prey; Highly aggressive
 	</levi>
-  </BONEFIELD>
+  </LOSTRIVER>
   <DRF>
     	<name>
 		Disease Research Facility
@@ -302,9 +311,6 @@ A PDA audio log, appearing to record the destruction of a seamoth by the leviath
     	<egg>
 		The preserved egg of a Sea Dragon Leviathan
 	</egg>
-    	<dragon>
-		The skeleton of a Sea Dragon Leviathan. Many bones appear to have been fractured or broken in a high velocity impact
-	</dragon>
     	<warper>
 		Various body parts belonging to Warpers 
 	</warper>
@@ -343,7 +349,7 @@ A PDA audio log, appearing to record the destruction of a seamoth by the leviath
 
 	</pda>
     	<pod7>
-		The remains of Lifepod 7. Its fabricator appears to have malfunctioned during evacuation
+		The remains of Lifepod 7; Its fabricator appears to have malfunctioned during evacuation
 	</pod7>
     	<scoop>
 		A databox containing the blueprint for a phytoplankton collection module
@@ -395,7 +401,7 @@ A PDA from an Aurora survivor, paranoid and desperate about their circumstances,
 		A damaged, malfunctioning battery made from Azurite-based materials
 	</battery>
     	<tablet>
-		A shattered, red tablet of non-human design. 
+		A shattered, red tablet of non-human design 
 	</tablet>
   </MOUNTAINISLAND>
   <GUN>
@@ -529,7 +535,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		A PDA from an Aurora survivor, detailing the fate of their lifepod and bemoaning their survival prospects after having been abandoned by the other occupants of the pod
 	</podpda2>
     	<basepda>
-		A PDA from an Aurora survivor, detailing dire circumstances as a result of surrounding leviathan activity on their attempts to traverse the area, as well as some indication of an incomplete plan for avoiding their detection. Also contains some analysis of the mineral Azurite, and speculation on where richer deposits of it can be found
+		A PDA from an Aurora survivor, detailing dire circumstances as a result of surrounding leviathan activity on their attempts to traverse the area, as well as some indication of an incomplete plan for avoiding their detection; Also contains some analysis of the mineral Azurite, and speculation on where richer deposits of it can be found
 	</basepda>
     	<mask>
 		A damaged databox containing the blueprint for a recirculation mask, wedged into a metal grille
@@ -558,7 +564,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		Massive, bottom-dwelling leviathans, the footsteps of which both bury and unearth objects from the seafloor
 	</treader>
     	<platinum>
-		Elemental platinum, unearthed by the titanic footsteps of the Sea Treaders.
+		Elemental platinum, unearthed by the titanic footsteps of the Sea Treaders
 	</platinum>
     	<enzy>
 		A damaged databox containing the chemical formula for enzymes that break down cellular structures, apparently crushed by large fauna
@@ -590,7 +596,7 @@ The waste products of Sea Treaders, which may serve as useful biochemical feedst
 		Samples taken from large, purple, kelplike flora containing potentially useful organic compounds 
 	</deepvine>
     	<levi>
-		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water. This specimen is colored unusually for its species due to the unique diet the local biome provides
+		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water; This specimen is colored unusually for its species due to the unique diet the local biome provides
 	</levi>
   </GLASSFOREST>
   <CRASH>
@@ -630,13 +636,13 @@ Large, muscular, predatory leviathans, which make use of echolocation to search 
 		
 	</pda>
 	<end>
-		A recording of the demise of the Degasi survivors as a result of Marguerit Maida returning with an injured leviathan, attracting another which attacked the base.
+		A recording of the demise of the Degasi survivors as a result of Marguerit Maida returning with an injured leviathan, attracting another which attacked the base
 	</end>
 	<tablet>
-		A broken orange tablet in the same general design of the purple variant, with unknown usage.
+		A broken orange tablet in the same general design of the purple variant, with unknown usage
 	</tablet>
 	<rebreather>
-		The final fragments to create a construction blueprint for a machine to recharge liquid breathing systems.
+		The final fragments to create a construction blueprint for a machine to recharge liquid breathing systems
 	</rebreather>
   </DEGASIEND>
   <VOID>

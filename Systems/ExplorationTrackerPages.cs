@@ -80,13 +80,13 @@ namespace ReikaKalseki.SeaToSea
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 	    	
-	    	p = addPage(TrackerPages.BONEFIELD, new ProgressionTrigger(isBonesField));
-	    	p.addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal.TechType)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur"));
+	    	p = addPage(TrackerPages.LOSTRIVER, new BiomeTrigger(VanillaBiomes.LOSTRIVER));
+	    	p.addFinding("drf", Finding.fromTracker(TrackerPages.DRF)).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownloadLostRiver")).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton)).addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal.TechType)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur"));
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathanJuvenile));
 	    	
 	    	p = addPage(TrackerPages.DRF, new StoryTrigger("Precursor_LostRiverBase_Log1"));
-	    	p.addFinding("terminal1", Finding.fromStory("Precursor_LostRiverBase_DataDownload1")).addFinding("egg", Finding.fromScan(TechType.PrecursorLostRiverLabEgg)).addFinding("damage", Finding.fromStory("Precursor_LostRiverBase_DataDownload3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_White)).addFinding("cycheat", Finding.fromUnlock(C2CItems.cyclopsHeat.TechType)).addFinding("disease", Finding.fromStory("Precursor_LostRiverBase_Log3")).addFinding("warper", Finding.fromScan(TechType.PrecursorWarper)).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton));
+	    	p.addFinding("terminal1", Finding.fromStory("Precursor_LostRiverBase_DataDownload1")).addFinding("egg", Finding.fromScan(TechType.PrecursorLostRiverLabEgg)).addFinding("damage", Finding.fromStory("Precursor_LostRiverBase_DataDownload3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_White)).addFinding("cycheat", Finding.fromUnlock(C2CItems.cyclopsHeat.TechType)).addFinding("disease", Finding.fromStory("Precursor_LostRiverBase_Log3")).addFinding("warper", Finding.fromScan(TechType.PrecursorWarper));
 	    	
 	    	p = addPage(TrackerPages.LAVACASTLE, new StoryTrigger("Precursor_LavaCastle_Log1")); //1 is the entry into the castle, Precursor_LavaCastle_Log2 is the lava castle hint
 	    	p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock.TechType));
@@ -140,13 +140,6 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.VOID, new PositionTrigger(VoidSpikesBiome.signalLocation, 30));
 	    	p.addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType)).addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi.TechType));
-		}
-		
-		private bool isBonesField(Player ep) {
-			string biome = WaterBiomeManager.main.GetBiome(ep.transform.position);
-			if (string.IsNullOrEmpty(biome))
-				return false;
-			return biome.Contains("BonesField") && !biome.Contains("Corridor");
 		}
 		
 		private bool isMountainIsland(Player ep) {
@@ -220,7 +213,7 @@ namespace ReikaKalseki.SeaToSea
 		UNDERISLANDS, //falling GF wreck [fire storygoal], autofarmer, prop gun blocked room [prox to -124.38, -200.69, 855 R=5], cylcops fire suppression; underislands biome
 		BKELPTRENCH, //caves [?], pod 1 [], bkelp base (bioproc upgrade AND smdepth4 AND the pda); biome in bkelp trench and depth > 350m
 		NBKELP, //pod 2 [Lifepod1], precursor cache [Precursor_Cache_DataDownload2], nest in the cave, ghost leviathan [hardmode?]; biome in N bkelp and depth > 400
-		BONEFIELD, //garg skull, powerseal, large sulfur; bonefield biome
+		LOSTRIVER, //garg skull, powerseal, large sulfur; lostriver
 		DRF, //story terminal [Precursor_LostRiverBase_DataDownload1], damage report [Precursor_LostRiverBase_DataDownload3], scan PrecursorLostRiverLabEgg, white tablet, kharaa progress [Precursor_LostRiverBase_Log3], cyclopsheat, scan PrecursorWarper, scan seadragon skeleton [PrecursorSeaDragonSkeleton]; first DRF pda message []
 		LAVACASTLE, //kyanite, blue tablet, ion power, ATP tap; pda message
 		CRAG, //pod 7 [LifepodRandom], planktonscoop; crag biome
