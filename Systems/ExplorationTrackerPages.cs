@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("degasi", Finding.fromTracker(TrackerPages.FLOATDEGASI)).addFinding("keen", Finding.fromEncy("RendezvousFloatingIsland")).addFinding("arch", Finding.fromStory(C2CHooks.FLOATING_ARCH_GOAL));
 	    	
 	    	p = addPage(TrackerPages.MOUNTAINISLAND, new ProgressionTrigger(isMountainIsland));
-	    	p.addFinding("gun", Finding.fromTracker(TrackerPages.GUN)).addFinding("arch", Finding.fromStory("PrecursorMountainTeleporterActive")).addFinding("beachpda", Finding.fromEncy("islandpda")).addFinding("cavepda", Finding.fromEncy("islandcave")).addFinding("battery", Finding.fromUnlock(C2CItems.t2Battery.TechType)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Red));
+	    	p.addFinding("gun", Finding.fromTracker(TrackerPages.GUN)).addFinding("arch", Finding.fromStory("PrecursorMountainTeleporterActive")).addFinding("beachpda", Finding.fromEncy("islandpda")).addFinding("plantalcove", Finding.fromStory(C2CHooks.PLANT_ALCOVE_GOAL).setOptional(hard)).addFinding("campfire", Finding.fromStory("campfire").setOptional(false)).addFinding("cavepda", Finding.fromEncy("islandcave")).addFinding("battery", Finding.fromUnlock(C2CItems.t2Battery.TechType)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Red));
 	    	
 	    	p = addPage(TrackerPages.GUN, new StoryTrigger("Goal_BiomePrecursorGunUpper"));
 	    	p.addFinding("cube", Finding.fromScan(TechType.PrecursorIonCrystal)).addFinding("denied", Finding.fromStory("Precursor_Gun_DisableDenied")).addFinding("jailbreak", Finding.fromStory(Auroresource.AuroresourceMod.laserCutterJailbroken));
@@ -164,17 +164,17 @@ namespace ReikaKalseki.SeaToSea
 			return pages[pg].encyPage.id;
 		}
 		
-		internal int countFindings(TrackerPages pg) {
-			return pages[pg].countCompleteFindings();
+		internal int countFindings(TrackerPages pg, bool requireOptional) {
+			return pages[pg].countCompleteFindings(requireOptional);
 		}
 		
-		internal bool isComplete(TrackerPages pg) {
-			return pages[pg].isComplete();
+		internal bool isComplete(TrackerPages pg, bool requireOptional) {
+			return pages[pg].isComplete(requireOptional);
 		}
 		
-		internal bool isFullyComplete() {
+		internal bool isFullyComplete(bool requireOptional) {
 			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
-				if (!isComplete(p))
+				if (!isComplete(p, requireOptional))
 					return false;
 			}
 			return true;
@@ -183,7 +183,7 @@ namespace ReikaKalseki.SeaToSea
 		internal void showAllPages() {
 			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
 				pages[p].encyPage.unlock(false);
-				if (!pages[p].isComplete())
+				if (!pages[p].isComplete(false))
 					pages[p].encyPage.markUpdated(5);
 			}
 		}
@@ -241,7 +241,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public readonly TrackerPages page;
 		
-		public TrackerPageAnyFindingsTrigger(TrackerPages b) : base(ep => ExplorationTrackerPages.instance.countFindings(b) > 0) {
+		public TrackerPageAnyFindingsTrigger(TrackerPages b) : base(ep => ExplorationTrackerPages.instance.countFindings(b, true) > 0) {
 			page = b;
 		}
 		
@@ -264,7 +264,7 @@ namespace ReikaKalseki.SeaToSea
 			encyPage.register();
 		}
 		
-		internal TrackerPage addFinding(string key, Func<bool> trigger) {
+		internal TrackerPage addFinding(string key, FindingTrigger trigger) {
 			findings[key] = new Finding(key, locale.getField<string>(key), trigger);
 			return this;
 		}
@@ -273,17 +273,17 @@ namespace ReikaKalseki.SeaToSea
 			encyPage.update(generatePDAContent(), true);
 		}
 		
-		internal int countCompleteFindings() {
+		internal int countCompleteFindings(bool requireOptional) {
 			int ret = 0;
 			foreach (Finding f in findings.Values) {
-				if (f.isTriggered.Invoke())
+				if ((f.trigger.isOptional && !requireOptional) || f.trigger.isTriggered.Invoke())
 					ret++;
 			}
 			return ret;
 		}
 		
-		internal bool isComplete() {
-			return countCompleteFindings() == findings.Count;
+		internal bool isComplete(bool requireOptional) {
+			return countCompleteFindings(requireOptional) == findings.Count;
 		}
 		
 		private string generatePDAContent() {
@@ -291,11 +291,11 @@ namespace ReikaKalseki.SeaToSea
 			bool incomplete = false;
 			bool any = false;
 			foreach (Finding f in findings.Values) {
-				if (SeaToSeaMod.trackerShowAllCheatActive || f.isTriggered.Invoke()) {
+				if (SeaToSeaMod.trackerShowAllCheatActive || f.trigger.isTriggered.Invoke()) {
 					desc += "\t •  "+f.desc+"\n\n";
 					any = true;
 				}
-				else {
+				else if (!f.trigger.isOptional || f.trigger.triggerMoreToExplore) {
 					incomplete = true;
 				}
 			}
@@ -312,41 +312,59 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal readonly string key;
 		internal readonly string desc;
+		internal readonly FindingTrigger trigger;
 		
-		internal readonly Func<bool> isTriggered;
-		
-		internal Finding(string k, string s, Func<bool> f) {
+		internal Finding(string k, string s, FindingTrigger f) {
 			key = k;
 			desc = s;
-			isTriggered = f;
+			trigger = f;
 		}
 		
 		internal static Func<bool> combine(Func<bool> f1, Func<bool> f2) {
 			return () => f1.Invoke() && f2.Invoke();
 		}
 		
-		internal static Func<bool> fromScan(TechType tt) {
-			return () => PDAScanner.complete.Contains(tt);
+		internal static FindingTrigger fromScan(TechType tt) {
+			return new FindingTrigger(() => PDAScanner.complete.Contains(tt));
 		}
 		
-		internal static Func<bool> fromUnlock(TechType tt) {
-			return () => KnownTech.knownTech.Contains(tt);
+		internal static FindingTrigger fromUnlock(TechType tt) {
+			return new FindingTrigger(() => KnownTech.knownTech.Contains(tt));
 		}
 		
-		internal static Func<bool> fromEncy(string ency) {
-			return () => PDAEncyclopedia.entries.ContainsKey(ency);
+		internal static FindingTrigger fromEncy(string ency) {
+			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ency));
 		}
 		
-		internal static Func<bool> fromTracker(TrackerPages pg) {
-			return () => PDAEncyclopedia.entries.ContainsKey(ExplorationTrackerPages.instance.getEncyKey(pg));
+		internal static FindingTrigger fromTracker(TrackerPages pg) {
+			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ExplorationTrackerPages.instance.getEncyKey(pg)));
 		}
 		
-		internal static Func<bool> fromStory(string key) {
-			return () => StoryGoalManager.main.IsGoalComplete(key);
+		internal static FindingTrigger fromStory(string key) {
+			return new FindingTrigger(() => StoryGoalManager.main.IsGoalComplete(key));
 		}
 		
-		internal static Func<bool> fromStory(StoryGoal g) {
-			return () => StoryGoalManager.main.IsGoalComplete(g.key);
+		internal static FindingTrigger fromStory(StoryGoal g) {
+			return new FindingTrigger(() => StoryGoalManager.main.IsGoalComplete(g.key));
+		}
+		
+	}
+	
+	class FindingTrigger {
+		
+		internal readonly Func<bool> isTriggered;
+		
+		internal bool isOptional;
+		internal bool triggerMoreToExplore;
+		
+		internal FindingTrigger(Func<bool> f) {
+			isTriggered = f;
+		}
+		
+		internal FindingTrigger setOptional(bool triggerMoreExplore) {
+			triggerMoreToExplore = triggerMoreExplore;
+			isOptional = true;
+			return this;
 		}
 		
 	}

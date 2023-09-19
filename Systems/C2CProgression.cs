@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea
 	    	
 			StoryHandler.instance.registerTrigger(new StoryTrigger("AuroraRadiationFixed"), new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F));
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Orange), new DelayedStoryEffect(SeaToSeaMod.crashMesaRadio, 0.00004F));
-			StoryHandler.instance.registerTrigger(new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth), new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000018F));
+			StoryHandler.instance.registerTrigger(new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth), new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000015F));
 			
 			
 			StoryGoal pod12Radio = new StoryGoal("RadioKoosh26", Story.GoalType.Radio, 0);
@@ -164,7 +164,8 @@ namespace ReikaKalseki.SeaToSea
 	    }
 	    
 	    private bool doDunesCheck(Player ep) {
-	    	if (ep.GetBiomeString() != null && ep.GetBiomeString().ToLowerInvariant().Contains("dunes")) {
+    		string biome = ep.GetBiomeString();
+	    	if (biome != null && biome.ToLowerInvariant().Contains("dunes")) {
 	    		float time = DayNightCycle.main.timePassedAsFloat;
 	    		if (lastDunesEntry < 0)
 	    			lastDunesEntry = time;

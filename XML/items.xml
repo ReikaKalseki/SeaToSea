@@ -274,6 +274,17 @@
 			
 		</pda>
 	</WeakEnzyme42>
+	<Nanocarbon>
+		<name>
+			Nanocarbon
+		</name>
+		<desc>
+			Carbon nanotubes, woven together into sheets which are then heat-fused together. An advanced industrial product not producible by standard fabrication technology.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Nanocarbon>
 	<breathfluid>
 		<name>
 			Breathing Fluid

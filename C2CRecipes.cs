@@ -127,7 +127,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem armor = CraftingItems.getItem(CraftingItems.Items.HullPlating);
         armor.craftingTime = 9;
         armor.numberCrafted = 2;
-        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 6);
+        armor.addIngredient(TechType.PlasteelIngot, 2).addIngredient(TechType.Lead, 3).addIngredient(comb, 1).addIngredient(TechType.Nickel, 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Nanocarbon), 1);
         
         BasicCraftingItem motor = CraftingItems.getItem(CraftingItems.Items.Motor);
         motor.craftingTime = 1;

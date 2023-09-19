@@ -58,6 +58,14 @@ namespace ReikaKalseki.SeaToSea
 					case Items.HoneycombComposite:
 					item.renderModify = r => r.materials[0].EnableKeyword("MARMO_SPECMAP");
 					break;
+					case Items.Nanocarbon:
+					item.renderModify = r => {
+						r.materials[0].DisableKeyword("MARMO_EMISSION");
+						r.materials[0].EnableKeyword("MARMO_SPECMAP");
+						RenderUtil.setGlossiness(r, 0.175F, 0, 0.7F);
+						RenderUtil.swapToModdedTextures(r, item);
+					};
+					break;
 					case Items.DenseAzurite:
 						item.glowIntensity = 2;
 						item.renderModify = r => r.transform.localScale = Vector3.one*2;
@@ -226,6 +234,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		public enum Items {
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.AramidFibers,		"WorldEntities/Natural/aerogel")]HoneycombComposite,
+			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aerogel")]Nanocarbon,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/hydrochloricacid")]SulfurAcid,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]CrystalLens,

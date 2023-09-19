@@ -200,6 +200,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private void cook() {
 			InventoryUtil.addItem(cooking.output.TechType);
+			Story.StoryGoal.Execute("campfire", Story.GoalType.Story);
 		}
 		
 		internal void load(XmlElement data) {

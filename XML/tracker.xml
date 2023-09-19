@@ -403,6 +403,12 @@ A PDA from an Aurora survivor, paranoid and desperate about their circumstances,
     	<tablet>
 		A shattered, red tablet of non-human design 
 	</tablet>
+    	<plantalcove>
+		A small skylit alcove in the above-water cave system, host to a new species of plant not encountered anywhere else on 4546B
+	</plantalcove>
+    	<campfire>
+		A sleeping mat and campfire left over from one of the aurora survivors that made it to the island; the campfire can be used to smoke fish to preserve it without the use of salt
+	</campfire>
   </MOUNTAINISLAND>
   <GUN>
     	<name>
