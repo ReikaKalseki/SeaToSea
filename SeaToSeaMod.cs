@@ -344,7 +344,7 @@ namespace ReikaKalseki.SeaToSea
     		{"FCSAlterraHub", false},
     		{"SlotExtender", false},
     		{"WarpChip", false},
-    		{"Socknautica", true},
+    		//{"Socknautica", false},
     		{"DADTankSubPack", true},
     		{"DWEquipmentBonanza", false},
     		{"SeaVoyager", false},

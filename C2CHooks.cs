@@ -39,6 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly string UNDERISLANDS_BLOCKED_ROOM_GOAL = "underislandsblockedroom";
 	    internal static readonly Vector3 FLOATING_ARCH_POS = new Vector3(-662.55F, 5.50F, -1064.35F);
 	    internal static readonly string FLOATING_ARCH_GOAL = "floatarch";
+	    internal static readonly Vector3 PLANT_ALCOVE_POS = new Vector3(375, 22, 870);
+	    internal static readonly string PLANT_ALCOVE_GOAL = "islandalcove";
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -133,7 +135,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
 	    	DIHooks.propulsibilityEvent += modifyPropulsibility;
-	    	DIHooks.droppabilityEvent += modifyDroppability;
+	    	DIHooks.droppabilityEvent += modifyDroppability;	    	
+	    	DIHooks.moduleFireCostEvent += (ch) => ch.value = getModuleFireCost(ch);
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
@@ -360,6 +363,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(FLOATING_ARCH_GOAL) && ep.transform.position.y > 0 && ep.transform.position.y < 22.5F && Vector3.Distance(FLOATING_ARCH_POS, ep.transform.position) <= 25) {
 	    			Story.StoryGoal.Execute(FLOATING_ARCH_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(PLANT_ALCOVE_GOAL) && ep.transform.position.y > 15 && ep.transform.position.y < 30F && Vector3.Distance(PLANT_ALCOVE_POS, ep.transform.position) <= 15) {
+	    			Story.StoryGoal.Execute(PLANT_ALCOVE_GOAL, Story.GoalType.Story);
 	    		}
 	    	}
 	    	
@@ -1450,7 +1456,7 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			}
 			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
-				if (!SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(ExplorationTrackerPages.instance.isFullyComplete(), ExplorationTrackerPages.INCOMPLETE_PDA, PDAMessages.Messages.NeedFinishExploreTrackerMessage)) {
+				if (!SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(ExplorationTrackerPages.instance.isFullyComplete(false), ExplorationTrackerPages.INCOMPLETE_PDA, PDAMessages.Messages.NeedFinishExploreTrackerMessage)) {
 					ExplorationTrackerPages.instance.showAllPages();
 					return;
 				}
@@ -1520,6 +1526,19 @@ namespace ReikaKalseki.SeaToSea {
 	    	float f = Mathf.Clamp01((ch.panel.maxDepth-effectiveDepth)/ch.panel.maxDepth);
 	    	//SNUtil.writeToChat(depth+" > "+effectiveDepth+" > "+f+" > "+ch.panel.depthCurve.Evaluate(f));
 	    	return ch.panel.depthCurve.Evaluate(f);
+	    }
+	    
+	    public static float getModuleFireCost(DIHooks.ModuleFireCostCheck ch) {
+	    	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+	    	if (hard)
+	    		ch.value *= 1.5F;
+	    	if (ch.module == TechType.SeamothSonarModule)
+	    		ch.value *= hard ? 8/3F : 4/3F;
+	    	return ch.value;
+	    }
+	    
+	    public static void fireSeamothDefence(SeaMoth sm) {
+	    	sm.energyInterface.ConsumeEnergy(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 5 : 3);
 	    }
 		
 		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {
