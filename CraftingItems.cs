@@ -64,6 +64,7 @@ namespace ReikaKalseki.SeaToSea
 						r.materials[0].EnableKeyword("MARMO_SPECMAP");
 						RenderUtil.setGlossiness(r, 0.175F, 0, 0.7F);
 						RenderUtil.swapToModdedTextures(r, item);
+						r.gameObject.FindAncestor<PrefabIdentifier>().gameObject.EnsureComponent<NanocarbonTag>();
 					};
 					break;
 					case Items.DenseAzurite:
@@ -288,6 +289,71 @@ namespace ReikaKalseki.SeaToSea
 				template = temp;
 			}
 		}
+	}
+	
+	internal class NanocarbonTag : MonoBehaviour {
+		
+		private float wetTime;
+		
+		private DynamicBubbler bubbler;
+		private Renderer[] renderers = null;
+		
+		private static float DISSOLUTION_TIME = 60*5;//30;
+		
+		private void Update() {
+			if (!bubbler) {
+				bubbler = gameObject.EnsureComponent<DynamicBubbler>().setBubbleCount(3);
+				bubbler.scatter = new Vector3(0.25F, 0.05F, 0.25F);
+			}
+			if (renderers == null) {
+				renderers = GetComponentsInChildren<MeshRenderer>();
+				foreach (Renderer r in renderers) {
+					r.materials[0].EnableKeyword("FX_BUILDING");
+					r.materials[0].SetColor("_BorderColor", Color.white);
+					r.materials[0].SetVector("_BuildParams", new Vector4(0, 0, 8, 0));
+					r.materials[0].SetFloat("_BuildLinear", 0.35F);
+					r.materials[0].SetFloat("_NoiseThickness", 0);
+					r.materials[0].SetFloat("_NoiseStr", 0.1F);
+					r.materials[0].SetFloat("_Built", 1F);
+				}
+			}
+			
+			if (ObjectUtil.isInWater(gameObject))
+				wetTime += Time.deltaTime;
+			else
+				reset();
+			
+			if (wetTime > DISSOLUTION_TIME/6F) {
+				if (wetTime > DISSOLUTION_TIME) {
+					dissolve();
+				}
+				else {
+					bubbler.currentIntensity = (float)MathUtil.linterpolate(wetTime, DISSOLUTION_TIME/6F, DISSOLUTION_TIME, 0, 1, true);
+					float f = (float)MathUtil.linterpolate(wetTime, DISSOLUTION_TIME/3F, DISSOLUTION_TIME, 1, 0, true);
+					foreach (Renderer r in renderers)
+						r.materials[0].SetFloat("_Built", f);
+				}
+			}
+			else {
+				bubbler.currentIntensity = 0;
+			}
+		}
+		
+		public void reset() {
+			wetTime = 0;
+			bubbler.currentIntensity = 0;
+			bubbler.clear();
+		}
+		
+		private void dissolve() {
+			bubbler.currentIntensity = Mathf.Max(0, bubbler.currentIntensity-Time.deltaTime);
+			foreach (Renderer r in renderers)
+				r.gameObject.SetActive(false);
+			ObjectUtil.removeComponent<Pickupable>(gameObject);
+			if (bubbler.currentIntensity <= 0)
+				UnityEngine.Object.Destroy(gameObject, 4);
+		}
+		
 	}
 	
 	class BrokenAzuriteBatterySparker : AzuriteSparker {

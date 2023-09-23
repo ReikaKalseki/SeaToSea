@@ -186,6 +186,17 @@
 		Sounds/pdaprompt/cannot-launch-missing-biomes.ogg
 	</pda>
   </notseenallbiomes>
+  <liqbrselfscan>
+	<name>
+		
+	</name>
+	<desc>
+		Oxygen efficiency at 50%. A self scan is strongly advised.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/liq-br-selfscan.ogg
+	</pda>
+  </liqbrselfscan>
   <bulkheadLaserCutterUpgrade>
 	<name>
 		Laser Cutter Temperature Upgrade

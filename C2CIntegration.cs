@@ -45,6 +45,7 @@ namespace ReikaKalseki.SeaToSea {
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.NO_BUILDER_CLEAR, true);
     	
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
+    	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.REENTRY_RATE, f => Mathf.Clamp(f, 0.5F, 2F));
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	
@@ -156,6 +157,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		CompassDistortionSystem.instance.addRegionalDistortion(new CompassDistortionSystem.BiomeDistortion(UnderwaterIslandsFloorBiome.instance, 180F, 0.18F));
 		CompassDistortionSystem.instance.addRegionalDistortion(new CompassDistortionSystem.ConditionalDistortion(pos => VoidSpikeLeviathanSystem.instance.isVoidFlashActive(true), 720F, 1.2F));
+		
+		FallingMaterialSystem.instance.clear();
+		FallingMaterialSystem.instance.addMaterial(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 100);
     }
 
   }
