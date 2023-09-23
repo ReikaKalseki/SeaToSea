@@ -140,6 +140,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
+	    	DIHooks.selfScanEvent += onSelfScan;
 	    	
 	    	DIHooks.storageHoverEvent += modifyStorageHover;
 	    	
@@ -837,6 +838,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (tt == TechType.Kyanite) {
 	    		Story.StoryGoal.Execute("Kyanite", Story.GoalType.Story);
+	    	}
+	    	else if (tt == CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType) {
+	    		p.GetComponent<NanocarbonTag>().reset();
 	    	}
 	    }
     
@@ -1699,6 +1703,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (ii != null && ii.item.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
 	    			ii.item.destroyOnDeath = true;
 	    		}
+	    	}
+	    }
+	    
+	    public static void onSelfScan() {
+	    	if (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.LiquidBreathingSelfScan).key)) {
+	    		PDAManager.getPage("liqbrefficiency").unlock();
 	    	}
 	    }
 	    

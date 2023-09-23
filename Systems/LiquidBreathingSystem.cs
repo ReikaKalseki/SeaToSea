@@ -47,7 +47,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public void onEquip() {
-	    	
+	    	InfectedMixin inf = Player.main.GetComponent<InfectedMixin>();
+	    	inf.SetInfectedAmount(Mathf.Max(inf.infectedAmount, 0.25F));
+	    	if (hasLiquidBreathing())
+	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.LiquidBreathingSelfScan).key);
 	    }
 	    
 	    public void onUnequip() {

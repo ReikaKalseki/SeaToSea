@@ -78,7 +78,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float temperature;
 		
-		private readonly List<ParticleSystem> bubbles = new List<ParticleSystem>();
+		private DynamicBubbler bubbler;
 		
 		private static readonly Color glowNew = new Color(1F, 1F, 0.75F, 1F);
 		private static readonly Color glowMid = new Color(1F, 0.4F, 0.25F, 1);
@@ -97,17 +97,8 @@ namespace ReikaKalseki.SeaToSea {
 				prefab = GetComponentInChildren<PrefabIdentifier>();
 			if (!light)
 				light = GetComponentInChildren<Light>();
-			
-			while (bubbles.Count < 4) {
-				GameObject go = ObjectUtil.createWorldObject("0dbd3431-62cc-4dd2-82d5-7d60c71a9edf");
-				go.transform.SetParent(transform);
-				go.transform.localPosition = MathUtil.getRandomVectorAround(Vector3.zero, 0.05F);
-				go.transform.rotation = Quaternion.Euler(270, 0, 0); //not local - force to always be up
-				ParticleSystem ps = go.GetComponent<ParticleSystem>();
-				ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-				go.SetActive(true);
-				bubbles.Add(ps);
-			}
+			if (!bubbler)
+				bubbler = gameObject.EnsureComponent<DynamicBubbler>().setBubbleCount(4);
 			
 			transform.localScale = Vector3.one*1.5F;
 			
@@ -124,14 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			float f = getIntensity();
-			int bubN = Mathf.CeilToInt(bubbles.Count*f);
-			for (int i = 0; i < bubbles.Count; i++) {
-				if (i < bubN)
-					bubbles[i].Play();
-				else
-					bubbles[i].Stop(true, ParticleSystemStopBehavior.StopEmitting);
-				bubbles[i].transform.rotation = Quaternion.Euler(270, 0, 0); //not local - force to always be up
-			}
+			bubbler.currentIntensity = f;
 			if (light) {
 				light.intensity = UnityEngine.Random.Range(1.45F, 1.55F)*f;
 				light.color = getColor(f);

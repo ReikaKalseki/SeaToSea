@@ -489,6 +489,19 @@
 		Advanced
 	</category>
   </deepairuse>
+  <liqbrefficiency>
+	<name>
+		Pulmonary Bacterial Infection
+	</name>
+	<pda>
+		The bacteria infecting your system have begun to attack and damage your pulmonary tissues, reducing their gas exchange efficacy. This has been manageable so far, due to the large capacity of standard gas-mix SCUBA tanks resulting in several minutes of breathing time even at markedly reduced efficiency, but the fairly low base capacity of the liquid breathing system supply tank combined with the unwanted interaction of the liquid respiration medium with the biofilm in your lungs means that dive times are now constrained to short enough intervals to make meaningful activity difficult to impossible.
+		
+		While a full medical suite such as that which would have been onboard the Aurora could easily solve this problem, the best feasible solution with the limited supplies currently at hand would be to try and temporarily treat some of the worst symptoms of this infection and remove this biofilm until a more permanent cure becomes available. Unfortunately, how to do this requires further research.
+	</pda>
+	<category>
+		Advanced
+	</category>
+  </liqbrefficiency>
   <heatdamage>
 	<name>
 		Mechanical Overheating
