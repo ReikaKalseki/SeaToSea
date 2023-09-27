@@ -46,6 +46,7 @@ namespace ReikaKalseki.SeaToSea {
     	
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.REENTRY_RATE, f => Mathf.Clamp(f, 0.5F, 2F));
+    	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.REENTRY_WARNING, f => Mathf.Clamp(f, 0.5F, 4F));
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	
@@ -122,6 +123,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		RecipeUtil.addIngredient(EcoceanMod.planktonScoop.TechType, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1);
 		GenUtil.registerWorldgen(new PositionedPrefab(GenUtil.getOrCreateDatabox(EcoceanMod.planktonScoop.TechType).ClassID, new Vector3(332.93F, -277.64F, -1435.6F)));
+		
+		RecipeUtil.addIngredient(AuroresourceMod.meteorDetector.TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+		RecipeUtil.addIngredient(AuroresourceMod.meteorDetector.TechType, CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 1);
+		//RecipeUtil.addIngredient(AuroresourceMod.meteorDetector.TechType, TechType.MercuryOre, 2);
 		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
 		RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
