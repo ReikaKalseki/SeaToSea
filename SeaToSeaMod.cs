@@ -345,6 +345,7 @@ namespace ReikaKalseki.SeaToSea
     		{"SlotExtender", false},
     		{"WarpChip", false},
     		//{"Socknautica", false},
+    		{"Socksfor1Monsters", false},
     		{"DADTankSubPack", true},
     		{"DWEquipmentBonanza", false},
     		{"SeaVoyager", false},

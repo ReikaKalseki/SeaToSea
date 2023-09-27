@@ -298,7 +298,7 @@ namespace ReikaKalseki.SeaToSea
 		private DynamicBubbler bubbler;
 		private Renderer[] renderers = null;
 		
-		private static float DISSOLUTION_TIME = 60*5;//30;
+		private static readonly float DISSOLUTION_TIME = 90;//30;
 		
 		private void Update() {
 			if (!bubbler) {
