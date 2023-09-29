@@ -90,12 +90,18 @@ namespace ReikaKalseki.SeaToSea
 			Vector3 pos = transform.position;
 			
 			//keep the vents clear
-			if (Vector3.Distance(pos, vent1) <= 1.8F)
-				body.AddForce((pos-vent1).normalized*3, ForceMode.VelocityChange);
-			if (Vector3.Distance(pos, vent2) <= 1.8F)
-				body.AddForce((pos-vent2).normalized*3, ForceMode.VelocityChange);
+			if (Vector3.Distance(pos, vent1) <= 1.8F) {
+				body.isKinematic = false;
+				body.AddForce((pos-vent1).normalized*5, ForceMode.VelocityChange);
+				return;
+			}
+			if (Vector3.Distance(pos, vent2) <= 1.8F) {
+				body.isKinematic = false;
+				body.AddForce((pos-vent2).normalized*5, ForceMode.VelocityChange);
+				return;
+			}
 				
-			if (time > 1.5F && body.velocity.magnitude < 0.1)
+			if (time > 1.5F && body.velocity.magnitude < 0.1 && !GetComponent<PropulseCannonAmmoHandler>())
 				fixInPlace();
 		}
 		

@@ -46,6 +46,15 @@ namespace ReikaKalseki.SeaToSea {
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
 	    
 	    private static readonly HashSet<TechType> scanToScannerRoom = new HashSet<TechType>();
+	    private static readonly HashSet<string> floaterRocks = new HashSet<string>() {
+			"44396d05-0910-4b4d-a046-119fab3512a5",
+			"7637d968-4878-46a5-adf5-aa9e21fe3ddc",
+			"9a9cdb4e-f110-412d-b16b-b9ace904b569",
+			"a7b35deb-1ac7-4fb8-8393-c0252cbf6d23",
+			"d4ad48a9-67fa-4b34-8447-5cd6a69d1270",
+			"e3d778b5-a81e-4b64-8dd6-910fb22772db",
+			"f895696c-cdc6-4427-a87f-2b62666ea0cb"
+	    };
 	    
 	    private static Oxygen playerBaseO2;
 	    
@@ -68,29 +77,29 @@ namespace ReikaKalseki.SeaToSea {
 	    public static readonly string campfireUseLocaleKey = "CampfireClick";
 	    public static readonly string smokedNoExpireLocaleKey = "SmokedNoExpire";
 	    
-	    public static readonly bool skipPlayerTick = false;
-	    public static readonly bool skipBiomeCheck = false;
-	    public static readonly bool skipTemperatureCheck = false;
-	    public static readonly bool skipSkyApplierSpawn = false;
-	    public static readonly bool skipRadiationLevel = false;
-	    public static readonly bool skipFruitPlantTick = false;
-	    public static readonly bool skipScannerTick = false;
-	    public static readonly bool skipCompassCalc = false;
-	    public static readonly bool skipPodTick = false;
-	    public static readonly bool skipSeamothTick = false;
-	    public static readonly bool skipCrawlerTick = false;
-	    public static readonly bool skipTreaderTick = false;
-	    public static readonly bool skipVoidLeviTick = false;
-	    public static readonly bool skipMagnetic = false;
-	    public static readonly bool skipWaveBob = false;
-	    public static readonly bool skipRaytrace = false;
-	    public static readonly bool skipReach = false;
-	    public static readonly bool skipResourceSpawn = false;
-	    public static readonly bool skipEnviroDamage = false;
-	    public static readonly bool skipO2 = false;
-	    public static readonly bool skipWorldForces = false;
-	    public static readonly bool skipStalkerShiny = false;
-	    public static readonly bool skipRocketTick = false;
+	    public static bool skipPlayerTick = false;
+	    public static bool skipBiomeCheck = false;
+	    public static bool skipTemperatureCheck = false;
+	    public static bool skipSkyApplierSpawn = false;
+	    public static bool skipRadiationLevel = false;
+	    public static bool skipFruitPlantTick = false;
+	    public static bool skipScannerTick = false;
+	    public static bool skipCompassCalc = false;
+	    public static bool skipPodTick = false;
+	    public static bool skipSeamothTick = false;
+	    public static bool skipCrawlerTick = false;
+	    public static bool skipTreaderTick = false;
+	    public static bool skipVoidLeviTick = false;
+	    public static bool skipMagnetic = false;
+	    public static bool skipWaveBob = false;
+	    public static bool skipRaytrace = false;
+	    public static bool skipReach = false;
+	    public static bool skipResourceSpawn = false;
+	    public static bool skipEnviroDamage = false;
+	    public static bool skipO2 = false;
+	    public static bool skipWorldForces = false;
+	    public static bool skipStalkerShiny = false;
+	    public static bool skipRocketTick = false;
 	    
 	    static C2CHooks() {
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -1212,7 +1221,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (go.GetComponent<SubRoot>() || go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
 	    		go.EnsureComponent<Magnetic>();
 	    	}
-	    	if (go.FindAncestor<Drillable>()) {
+	    	if (pi && !floaterRocks.Contains(pi.ClassId) && CraftData.GetTechType(go) != TechType.FloatingStone && go.GetComponent<Drillable>()) {
 	    		Rigidbody rb = go.FindAncestor<Rigidbody>();
 	    		if (rb)
 	    			rb.mass = Mathf.Max(2400, rb.mass);
@@ -1471,6 +1480,10 @@ namespace ReikaKalseki.SeaToSea {
 			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
 			//	return;
 			//}
+			if (!C2CProgression.instance.isRequiredProgressionComplete()) {
+				SNUtil.writeToChat("Missing progression, cannot launch");
+				return;
+			}
 			FinalLaunchAdditionalRequirementSystem.instance.forceLaunch(r);
 	    }
 	    
