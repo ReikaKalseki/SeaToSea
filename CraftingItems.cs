@@ -315,6 +315,7 @@ namespace ReikaKalseki.SeaToSea
 					r.materials[0].SetFloat("_NoiseThickness", 0);
 					r.materials[0].SetFloat("_NoiseStr", 0.1F);
 					r.materials[0].SetFloat("_Built", 1F);
+					r.transform.localScale = new Vector3(4, 2, 4);
 				}
 			}
 			

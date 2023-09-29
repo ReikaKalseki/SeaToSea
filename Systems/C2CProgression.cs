@@ -32,6 +32,7 @@ namespace ReikaKalseki.SeaToSea
 	    private float lastDunesEntry = -1;
     
     	private readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
+    	private readonly HashSet<string> requiredProgression = new HashSet<string>();
 		
 		private C2CProgression() {
 	    	StoryHandler.instance.addListener(this);
@@ -103,6 +104,8 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.PrecursorKey_Purple);
 			gatedTechnologies.Add(TechType.HeatBlade);
 			gatedTechnologies.Add(TechType.ReactorRod);
+			
+			//requiredProgression.Add();
 		}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
@@ -179,6 +182,14 @@ namespace ReikaKalseki.SeaToSea
 	    	}
 	    		return false;
 	    }
+    	
+    	public bool isRequiredProgressionComplete() {
+    		foreach (string s in requiredProgression) {
+    			if (!StoryGoalManager.main.IsGoalComplete(s))
+    				return false;
+    		}
+    		return true;
+    	}
 		
 		public void NotifyGoalComplete(string key) {
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {

@@ -339,6 +339,7 @@ namespace ReikaKalseki.SeaToSea
     		{"CyclopsBioReactor", false},
     		{"RedBaron", true},
     		{"SeamothArms", true},
+    		{"HabitatControlPanel", true},
     		{"MoreSeamothDepth", true},
     		{"CustomCraft2", true},
     		{"FCSAlterraHub", false},
