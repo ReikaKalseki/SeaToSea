@@ -210,6 +210,7 @@ namespace ReikaKalseki.SeaToSea {
 		    }
 	    	
 	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
+	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_Office_PDA1", Language.main.Get("EncyDesc_Aurora_Office_PDA1").Replace("1454", getCargoBayDoorCode()));
 	    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
 			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
@@ -1172,6 +1173,11 @@ namespace ReikaKalseki.SeaToSea {
 				lv.health = lv.data.maxHealth;
 	    		return;
 	    	}
+	    	else if (pi && pi.ClassId == "48a5564b-e632-4666-9e7c-f377fbc4fd23") { //cargo bay door
+	    		KeypadDoorConsole pad = pi.GetComponentInChildren<KeypadDoorConsole>();
+	    		pad.accessCode = getCargoBayDoorCode();
+	    		return;
+	    	}
 	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
 	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
@@ -1231,6 +1237,15 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    public static string getCargoBayDoorCode() {
+	    	UnityEngine.Random.InitState(SNUtil.getWorldSeedInt());
+	    	UnityEngine.Random.Range(0, 1);
+	    	string ret = "";
+	    	while (ret.Length < 4)
+	    		ret += (char)UnityEngine.Random.Range('1', '9'+1);
+	    	return ret;
+	    }
 	    
 	    public static void tickFruitPlant(DIHooks.FruitPlantTag fpt) {
 	    	if (skipFruitPlantTick)
