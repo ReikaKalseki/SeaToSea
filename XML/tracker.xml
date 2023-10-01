@@ -374,6 +374,9 @@ A PDA audio log, appearing to record the destruction of a seamoth by the leviath
     	<arch>
 		A strange alien arch hidden within a cave
 	</arch>
+    	<floater>
+		Giant versions of the buoyant floater organisms encountered attached to some rocks, holding the entire landmass afloat
+	</floater>
   </FLOATISLAND>
   <MOUNTAINISLAND>
     	<name>
