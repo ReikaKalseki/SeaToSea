@@ -243,7 +243,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Magnesium")]HullPlating, //was wiring kit
 			[Item(typeof(NotFabricable), 		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]Sealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]SealFabric,
-			[Item(typeof(BasicCraftingItem), 	TechCategory.AdvancedMaterials,	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]HeatSealant,
+			[Item(typeof(BasicCraftingItem), 	TechCategory.AdvancedMaterials,	TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]HeatSealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/FiberMesh")]SmartPolymer,

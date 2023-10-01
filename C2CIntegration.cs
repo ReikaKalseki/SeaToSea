@@ -99,6 +99,8 @@ namespace ReikaKalseki.SeaToSea {
 			map[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
 		};
 		
+		AuroresourceMod.detectorUnlock = TechType.None;
+		//do in XML GenUtil.spawnDatabox(new Vector3(), AuroresourceMod.meteorDetector.TechType, new Vector3());
 	}
     
     public static void addPostCompat() {
@@ -144,6 +146,8 @@ namespace ReikaKalseki.SeaToSea {
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2, "A small but aggressive carrion feeder, with limited visual sensation");
 		
 		C2CRecipes.removeVanillaUnlock(EcoceanMod.planktonScoop.TechType);
+		
+		C2CRecipes.removeVanillaUnlock(AuroresourceMod.meteorDetector.TechType);
 		
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.3F, getRenderObj = ItemDisplayRenderBehavior.getChildNamed("model/"+CraftingItems.LATHING_DRONE_RENDER_OBJ_NAME)});
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.2F});
