@@ -95,7 +95,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("pod7", Finding.fromEncy("LifepodRandom")).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop.TechType));
 	    	
 	    	p = addPage(TrackerPages.FLOATISLAND, new ProgressionTrigger(ep => ep.transform.position.y >= 15 && (ep.transform.position-POITeleportSystem.instance.getPosition("islandwreck")).sqrMagnitude <= 150*150));
-	    	p.addFinding("degasi", Finding.fromTracker(TrackerPages.FLOATDEGASI)).addFinding("keen", Finding.fromEncy("RendezvousFloatingIsland")).addFinding("arch", Finding.fromStory(C2CHooks.FLOATING_ARCH_GOAL));
+	    	p.addFinding("degasi", Finding.fromTracker(TrackerPages.FLOATDEGASI)).addFinding("keen", Finding.fromEncy("RendezvousFloatingIsland")).addFinding("arch", Finding.fromStory(C2CHooks.FLOATING_ARCH_GOAL)).addFinding("floater", Finding.fromScan(TechType.LargeFloater));
 	    	
 	    	p = addPage(TrackerPages.MOUNTAINISLAND, new ProgressionTrigger(isMountainIsland));
 	    	p.addFinding("gun", Finding.fromTracker(TrackerPages.GUN)).addFinding("arch", Finding.fromStory("PrecursorMountainTeleporterActive")).addFinding("beachpda", Finding.fromEncy("islandpda")).addFinding("plantalcove", Finding.fromStory(C2CHooks.PLANT_ALCOVE_GOAL).setOptional(hard)).addFinding("campfire", Finding.fromStory("campfire").setOptional(false)).addFinding("cavepda", Finding.fromEncy("islandcave")).addFinding("battery", Finding.fromUnlock(C2CItems.t2Battery.TechType)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Red));

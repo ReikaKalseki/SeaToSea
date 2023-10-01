@@ -801,7 +801,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
 	   			bool seal;
 	   			bool reinf;
-	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+	   			if (!C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
 	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
 	    			float dmg = lv.maxHealth*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.3F : 0.2F);
 	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)

@@ -142,7 +142,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (dT > 0 && body.isKinematic && Player.main != null && !Player.main.IsInsideWalkable() && Player.main.IsSwimming()) {
 	   			bool seal;
 	   			bool reinf;
-	   			if (C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+	   			if (!C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
 					GameObject ep = Player.main.gameObject;
 					float distsq = (ep.transform.position-gameObject.transform.position).sqrMagnitude;
 					float r = isMountainBase ? DAMAGE_RANGE_MOUNTAIN : DAMAGE_RANGE;
