@@ -555,6 +555,8 @@ namespace ReikaKalseki.SeaToSea
         removeVanillaUnlock(TechType.VehicleHullModule3);
         removeVanillaUnlock(TechType.BaseReinforcement);
         removeVanillaUnlock(TechType.HeatBlade); //force you to learn it from the mountain cave base
+        if (hard)
+        	removeVanillaUnlock(TechType.AdvancedWiringKit);
         
         addItemToRecipe(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
         addItemToRecipe(TechType.PrecursorKey_Orange, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2);

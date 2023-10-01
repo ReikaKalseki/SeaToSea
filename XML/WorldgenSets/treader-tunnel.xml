@@ -1140,7 +1140,7 @@
 	  </Scatter>
     </objectManipulation>
   </customprefab>
-  <customprefab count="14">
+  <customprefab count="6">
     <prefab>fauna_bleeder</prefab>
     <position>
       <x>-1200</x>
@@ -1155,7 +1155,7 @@
 	  </Scatter>
     </objectManipulation>
   </customprefab>
-  <customprefab count="24">
+  <customprefab count="9">
     <prefab>fauna_bleeder</prefab>
     <position>
       <x>-1266</x>
