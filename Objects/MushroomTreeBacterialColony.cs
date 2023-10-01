@@ -164,7 +164,7 @@ namespace ReikaKalseki.SeaToSea {
 			Color c = Color.Lerp(MushroomTreeBacterialColony.BLUE_COLOR, MushroomTreeBacterialColony.PURPLE_COLOR, 0.33F+0.67F*f);
 			if (scannedFade > 0) {
 				f += 2.5F*scannedFade;
-				f2 += 1.5F*scannedFade;
+				f2 += 0.75F*scannedFade;
 				c = Color.Lerp(c, new Color(1, 0, 0), scannedFade);
 				MushroomTreeBacterialColony.setupWave(render, 1+scannedFade*0.004F);
 				MushroomTreeBacterialColony.setColors(render, f);

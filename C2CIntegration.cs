@@ -100,7 +100,6 @@ namespace ReikaKalseki.SeaToSea {
 		};
 		
 		AuroresourceMod.detectorUnlock = TechType.None;
-		//do in XML GenUtil.spawnDatabox(new Vector3(), AuroresourceMod.meteorDetector.TechType, new Vector3());
 	}
     
     public static void addPostCompat() {
@@ -120,6 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3, "Oil containing frequency-discriminating chemoluminescent seeds");		
 		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.lavaShroom.seed.TechType, 2, "Flora adapted for and frequently becoming sources of extreme heat");
+		//FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.mushroomStack.seed.TechType, 1, "Decorative, luminous flora ");
 		
 		SeaTreaderTunnelLocker.addItem(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 		
