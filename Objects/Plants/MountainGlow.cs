@@ -83,6 +83,7 @@ namespace ReikaKalseki.SeaToSea {
     		if (isGrown) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
+				seeds = fruitHolder.GetComponentsInChildren<PickPrefab>();
     			foreach (PickPrefab pp in seeds) {
     				pp.SetPickedUp();
     			}
@@ -115,7 +116,8 @@ namespace ReikaKalseki.SeaToSea {
 				fruitHolder.transform.localRotation = Quaternion.Euler(0, 0, 180);
 				ObjectUtil.removeComponent<ChildObjectIdentifier>(fruitHolder);
 				ObjectUtil.removeComponent<TechTag>(fruitHolder);
-				seeds = fruitHolder.GetComponentsInChildren<PickPrefab>();
+				if (seeds == null)
+					seeds = fruitHolder.GetComponentsInChildren<PickPrefab>();
 				foreach (PickPrefab pp in seeds) {
 					pp.pickTech = C2CItems.mountainGlow.seed.TechType;
 			    	pp.pickedEvent.AddHandler(pp.gameObject, new UWE.Event<PickPrefab>.HandleFunction(p => {

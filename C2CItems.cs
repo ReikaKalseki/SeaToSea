@@ -71,12 +71,14 @@ namespace ReikaKalseki.SeaToSea
    		chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", e.getField<string>("chemistry"));
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
         CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", e.getField<string>("chemistry"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry"), "Resources");
-        CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getField<string>("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
         
         ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", e.getField<string>("ingots"));
         TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, ingotCategory);
         CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", e.getField<string>("ingots"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
         CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", e.getField<string>("ingotUnpack"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
+        
+	    CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getField<string>("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
+	    CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CHelmet", e.getField<string>("helmet"), SpriteManager.Get(TechType.Rebreather));
         
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);

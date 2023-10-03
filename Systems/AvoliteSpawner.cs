@@ -239,7 +239,7 @@ namespace ReikaKalseki.SeaToSea {
 			SunbeamDebris s = pp.GetComponentInChildren<SunbeamDebris>();
 			if (s) {
 				Story.StoryGoal.Execute("SunbeamDebris", Story.GoalType.Story);
-				UnityEngine.Object.DestroyImmediate(s.gameObject);
+				s.destroy();
 			}
 		}
 		
@@ -302,6 +302,10 @@ namespace ReikaKalseki.SeaToSea {
 				rt.overrideTechType = TechType;
 				return go;
 			}
+		
+			protected sealed override Atlas.Sprite GetItemSprite() {
+				return TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/SunbeamDebrisIcon");
+			}
 			
 		}
 		
@@ -314,7 +318,7 @@ namespace ReikaKalseki.SeaToSea {
 				//SNUtil.writeToChat("sunbeamdebrishint > "+Story.StoryGoalManager.main.IsGoalComplete("sunbeamdebrishint"));
 				if (!instance.isValidPosition(transform.position)) {
 					SNUtil.log("Invalid sunbeam debris location, deleting @ "+transform.position);
-					UnityEngine.Object.DestroyImmediate(gameObject);
+					destroy();
 				}/*
 				else if (DayNightCycle.main.timePassedAsFloat-lastConversionCheck >= 1) {
 					lastConversionCheck = DayNightCycle.main.timePassedAsFloat;
@@ -342,11 +346,16 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					else {
 						SNUtil.log("Item set exhausted, deleting @ "+transform.position);
-						UnityEngine.Object.DestroyImmediate(gameObject);
+						destroy();
 					}
 					enabled = false;
 					//UnityEngine.Object.DestroyImmediate(gameObject); do not destroy immediately, do that when the bound item is collected/destroyed
 				}
+			}
+			
+			internal void destroy() {
+				GetComponent<ResourceTracker>().Unregister();
+				UnityEngine.Object.DestroyImmediate(gameObject);
 			}
 			
 		}
