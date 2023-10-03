@@ -41,6 +41,16 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly string FLOATING_ARCH_GOAL = "floatarch";
 	    internal static readonly Vector3 PLANT_ALCOVE_POS = new Vector3(375, 22, 870);
 	    internal static readonly string PLANT_ALCOVE_GOAL = "islandalcove";
+	    internal static readonly Vector3 MUSHTREE_POS = new Vector3(-879.7F, -138, 590.4F);
+	    internal static readonly string MUSHTREE_GOAL = "mushtree";
+	    internal static readonly Vector3 MUSHTREE_ARCH_POS = new Vector3(-777.5F, -229.8F, 404.8F);
+	    internal static readonly string MUSHTREE_ARCH_GOAL = "musharch";
+	    internal static readonly Vector3 CRAG_ARCH_POS = new Vector3(-90.2F, -287.4F, -1261.5F);
+	    internal static readonly string CRAG_ARCH_GOAL = "cragarch";
+	    internal static readonly Vector3 KOOSH_ARCH_POS = new Vector3(1344.8F, -309.2F, 730.7F);
+	    internal static readonly string KOOSH_ARCH_GOAL = "koosharch";
+	    internal static readonly Vector3 LR_ARCH_POS = new Vector3(-914.7F, -621.2F, 1078.4F);
+	    internal static readonly string LR_ARCH_GOAL = "lrarch";
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -97,7 +107,6 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool skipResourceSpawn = false;
 	    public static bool skipEnviroDamage = false;
 	    public static bool skipO2 = false;
-	    public static bool skipWorldForces = false;
 	    public static bool skipStalkerShiny = false;
 	    public static bool skipRocketTick = false;
 	    
@@ -366,6 +375,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 	    		}
 	    		
+	    		//TODO cleanup
 	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(OZZY_FORK_DEEP_ROOM_GOAL) && Vector3.Distance(OZZY_FORK_DEEP_ROOM_POS, ep.transform.position) <= 12) {
 	    			Story.StoryGoal.Execute(OZZY_FORK_DEEP_ROOM_GOAL, Story.GoalType.Story);
 	    		}
@@ -377,6 +387,21 @@ namespace ReikaKalseki.SeaToSea {
 	    		}
 	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(PLANT_ALCOVE_GOAL) && ep.transform.position.y > 15 && ep.transform.position.y < 30F && Vector3.Distance(PLANT_ALCOVE_POS, ep.transform.position) <= 15) {
 	    			Story.StoryGoal.Execute(PLANT_ALCOVE_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(MUSHTREE_GOAL) && Vector3.Distance(MUSHTREE_POS, ep.transform.position) <= 4) {
+	    			Story.StoryGoal.Execute(MUSHTREE_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(MUSHTREE_ARCH_GOAL) && Vector3.Distance(MUSHTREE_ARCH_POS, ep.transform.position) <= 12) {
+	    			Story.StoryGoal.Execute(MUSHTREE_ARCH_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(KOOSH_ARCH_GOAL) && Vector3.Distance(KOOSH_ARCH_POS, ep.transform.position) <= 8) {
+	    			Story.StoryGoal.Execute(KOOSH_ARCH_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(LR_ARCH_GOAL) && Vector3.Distance(LR_ARCH_POS, ep.transform.position) <= 6) {
+	    			Story.StoryGoal.Execute(LR_ARCH_GOAL, Story.GoalType.Story);
+	    		}
+	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(CRAG_ARCH_GOAL) && Vector3.Distance(CRAG_ARCH_POS, ep.transform.position) <= 6) {
+	    			Story.StoryGoal.Execute(CRAG_ARCH_GOAL, Story.GoalType.Story);
 	    		}
 	    	}
 	    	
@@ -1010,17 +1035,6 @@ namespace ReikaKalseki.SeaToSea {
 	    		calc.setValue(Mathf.Max(calc.getTemperature(), 800-10*Vector3.Distance(g.transform.position, calc.position)));
 	    	}
 	    	calc.setValue(C2CMoth.getOverrideTemperature(calc.getTemperature()));*/
-	    }
-	    
-	    public static void tickWorldForces(WorldForces wf) {
-	    	if (skipWorldForces)
-	    		return;
-	    	if (wf == null || wf.gameObject == null || !wf.gameObject.activeInHierarchy || !wf.enabled) {
-	    		//WorldForcesManager.instance.RemoveWorldForces(wf);
-	    		//SNUtil.log("Disabling invalid WF tick in "+wf);
-	    		return;
-	    	}
-	    	wf.DoFixedUpdate();
 	    }
 	    
 	    public static void onPrecursorDoorSpawn(PrecursorKeyTerminal pk) {
