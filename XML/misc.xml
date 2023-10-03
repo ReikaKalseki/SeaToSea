@@ -395,5 +395,8 @@
 	<medical>
 		Medical
 	</medical>
+	<helmet>
+		Masks
+	</helmet>
   </CraftingNodes>
 </Root>

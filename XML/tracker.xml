@@ -1,712 +1,780 @@
 <Root>
-  <DEGASI1>
-    	<name>
-		Underwater Degasi Base
-	</name>
-    	<desc>
+	<DEGASI1>
+		<name>
+			Underwater Degasi Base
+		</name>
+		<desc>
 
-	</desc>
-   	 <pda>
-A PDA recording of a conversation between two Degasi survivors, arguing about the prospects of building a new seabase 500 meters underwater, in a different area of the crater
-	</pda>
-    	<databox>
-		A databox containing the blueprint for the ultra-high capacity oxygen tank
-	</databox>
-    	<water>
-		A machine for filtering salt from water, from which the blueprint has been scanned
-	</water>
-    	<breathcharge>
-		Fragments of a machine to recharge liquid breathing systems
-	</breathcharge>
-    	<azurite>
-		Densely compacted azurite formed into a crystalline composite
-	</azurite>
-  </DEGASI1>
-  <JELLYSHROOM>
-    	<name>
-		Jellyshroom Caves
-	</name>
-    	<desc>
-
-	</desc>
-    	<pda>
-
-	</pda>
-    	<mushroom>
-		Large, glowing, mushroom-like flora, home to a predator in symbiosis
-	</mushroom>
-    	<magnetite>
-		Deposits of the mineral magnetite, likely formed from volcanic activity
-	</magnetite>
-    	<degasi>
-		The decaying remains of a seabase, once inhabited by the survivors of the Degasi
-	</degasi>
-  </JELLYSHROOM>
-  <POD3>
-    	<name>
-		Northern Kelp Forest
-	</name>
-    	<desc>
-
-	</desc>
-    	<pda>
-
-	</pda>
-    	<databox>
-		A databox containing the blueprint for a compass
-	</databox>
-    	<geyser>
-		A cave south of lifepod 3 containing an undersea geyser, several broken Nanolathing Drones, and extremely high numbers of both Crashfish and Drooping Stingers
-	</geyser>
-  </POD3>
-  <POD19>
-    	<name>
-		Sparse Reef Fissures
-	</name>
-    	<desc>
-
-	</desc>
-    	<pda>
-		A PDA containing a reprimand from First Officer Keen, and coordinates to a rendezvous on dry land
-	</pda>
-    	<cycfire>
-		A databox containing the blueprint for an integrated fire suppression module for large submersibles
-	</cycfire>
-    	<console>
-		A databox for a moonpool installation, for crafting and installing vehicle upgrades
-	</console>
-    	<nanowrap>
-		Instructions for manufacturing advanced bandages
-	</nanowrap>
-    	<databox>
-		A databox containing the blueprint for the ultra-high capacity oxygen tank
-	</databox>
-    	<cache>
-		An alien structure containing a number of Ion Cubes and little usable information
-	</cache>
-  </POD19>
-  <POD17>
-    	<name>
+		</desc>
+		<pda>
+			A PDA recording of a conversation between two Degasi survivors, arguing about the prospects of building a new seabase 500 meters underwater, in a different area of the crater
+		</pda>
+		<databox>
+			A databox containing the blueprint for the ultra-high capacity oxygen tank
+		</databox>
+		<water>
+			A machine for filtering salt from water, from which the blueprint has been scanned
+		</water>
+		<breathcharge>
+			Fragments of a machine to recharge liquid breathing systems
+		</breathcharge>
+		<azurite>
+			Densely compacted azurite formed into a crystalline composite
+		</azurite>
+	</DEGASI1>
+	<JELLYSHROOM>
+		<name>
+			Jellyshroom Caves
+		</name>
+		<desc>
+		</desc>
+		<pda>
+		</pda>
+		<mushroom>
+			Large, glowing, mushroom-like flora, home to a predator in symbiosis
+		</mushroom>
+		<magnetite>
+			Deposits of the mineral magnetite, likely formed from volcanic activity
+		</magnetite>
+		<degasi>
+			The decaying remains of a seabase, once inhabited by the survivors of the Degasi
+		</degasi>
+	</JELLYSHROOM>
+	<POD3>
+		<name>
+			Northern Kelp Forest
+		</name>
+		<desc>
+		</desc>
+		<pda>
+		</pda>
+		<databox>
+			A databox containing the blueprint for a compass
+		</databox>
+		<geyser>
+			A cave south of lifepod 3 containing an undersea geyser, several broken Nanolathing Drones, and extremely high numbers of both Crashfish and Drooping Stingers
+		</geyser>
+	</POD3>
+	<POD19>
+		<name>
+			Sparse Reef Fissures
+		</name>
+		<desc>
+		</desc>
+		<pda>
+			A PDA containing a reprimand from First Officer Keen, and coordinates to a rendezvous on dry land
+		</pda>
+		<cycfire>
+			A databox containing the blueprint for an integrated fire suppression module for large submersibles
+		</cycfire>
+		<console>
+			A databox for a moonpool installation, for crafting and installing vehicle upgrades
+		</console>
+		<nanowrap>
+			Instructions for manufacturing advanced bandages
+		</nanowrap>
+		<databox>
+			A databox containing the blueprint for the ultra-high capacity oxygen tank
+		</databox>
+		<cache>
+			An alien structure containing a number of Ion Cubes and little usable information
+		</cache>
+		<vent>
+			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
+		</vent>
+	</POD19>
+	<POD17>
+		<name>
 		Western Grassy Plateaus
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 Ozzy (from the cafeteria) lamenting his fear of the environment outside his lifepod, the situation he finds himself in, and the apparent lack of attempts to rescue Aurora personnel
-	</pda>
-    	<seamoth>
+		</pda>
+		<seamoth>
 		Fragments of Seamoth submersibles, dispersed during the impact of a portion of the Aurora’s Seamoth hangar
-	</seamoth>
-    	<terminal>
+		</seamoth>
+		<terminal>
 		.a,...REC.rffly0zqqgy
-	</terminal>
-    	<jelly>
+		</terminal>
+		<jelly>
 		A cavernous biome comprised primarily of pink, mushroomlike flora and predatory eels
-	</jelly>
-    	<room>
+		</jelly>
+		<room>
 		A difficult-to-access chamber in a piece of Aurora wreckage filled with a multitude of technology fragments
-	</room>
-  </POD17>
-  <POD6>
-    	<name>
+		</room>
+	</POD17>
+	<POD6>
+		<name>
 		Eastern Grassy Plateaus
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 A pda detailing the fate of the aurora survivors aboard lifepod 6, who died in an explosion due to haphazard use of a flare
-	</pda>
-    	<seacrown>
+		</pda>
+		<seacrown>
 		A rare specimen of alien flora, remarkable for its internal bacterial colonies
-	</seacrown>
-    	<salve>
+		</seacrown>
+		<salve>
 		A species of red flora, the leaves of which are coated in oils that have medicinal properties
-	</salve>
-  </POD6>
-  <KOOSH>
-    	<name>
+		</salve>
+	</POD6>
+	<KOOSH>
+		<name>
 		Bulb Zone
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
-
-	</pda>
-    	<mushkoosh>
-		A cave connecting the Mushroom Forest and Bulb Zone, and home to a unique species of chemosynthetic coral 
-	</mushkoosh>
-    	<mercury>
+		</desc>
+		<pda>
+		A log from a fraudulent and unqualified doctor forseeing his own demise
+		</pda>
+		<mushkoosh>
+		A convoluted cave connecting the Mushroom Forest and Bulb Zone, and home to a unique species of chemosynthetic coral 
+		</mushkoosh>
+		<mercury>
 		Geologically active caves containing cinnabar ore
-	</mercury>
-    	<reinf>
+		</mercury>
+		<reinf>
 		A databox containing the blueprint for the Reinforced Dive Suit, accessible only via traversing a wreck
-	</reinf>
-  </KOOSH>
-  <DUNECENTRAL>
-    	<name>
+		</reinf>
+		<arch>
+			A strange alien arch hidden in a small cave, in the deeper reaches of the biome
+		</arch>
+	</KOOSH>
+	<DUNECENTRAL>
+		<name>
 		The Dunes
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<reaper>
+		</pda>
+		<reaper>
 		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
-	</reaper>
-    	<shroom>
+		</reaper>
+		<shroom>
 		Blue mushroom-like plants that emit light-sensitive seed pods
-	</shroom>
-    	<azurite>
+		</shroom>
+		<azurite>
 		Abundant deposits of the volatile mineral Azurite around thermal vents
-	</azurite>
-    	<suit>
+		</azurite>
+		<suit>
 		A databox for the Electrochemical Suit, deep inside a large wreck, in a room only accessible via a partially-collapsed duct system
-	</suit>
-  </DUNECENTRAL>
-  <METEOR>
-    	<name>
+		</suit>
+		<vent>
+			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
+		</vent>
+	</DUNECENTRAL>
+	<METEOR>
+		<name>
 		Dunes Meteor
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<meteor>
+		</pda>
+		<meteor>
 		The core of a large meteorite, comprised of several useful metals
-	</meteor>
-    	<cache>
+		</meteor>
+		<cache>
 		An alien structure containing a number of Ion Cubes, and what seem to be the memories of an alien lifeform
-	</cache>
-  </METEOR>
-  <UNDERISLANDS>
-    	<name>
+		</cache>
+	</METEOR>
+	<UNDERISLANDS>
+		<name>
 		Underwater Islands
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<piezo>
+		</pda>
+		<glass>
+			A unique, hot, and dangerous biome in the trench under the main underwater islands biome
+		</glass>
+		<piezo>
 		Strange, buoyant crystals that will occasionally emit powerful electromagnetic blasts that disrupt nearby electrical systems
-	</piezo>
-    	<wreck>
+		</piezo>
+		<wreck>
 A large wreck from the aurora, a piece of which broke off and fell into the depths before it could be explored
-	</wreck>
-    	<farmer>
+		</wreck>
+		<farmer>
 		A databox containing the blueprint for an automated harvesting device, separated from the main wreck and pinned underneath debris
-	</farmer>
-    	<databox>
+		</farmer>
+		<databox>
 		A databox containing the blueprint for an integrated fire suppression module for large submersibles
-	</databox>
-    	<room>
+		</databox>
+		<room>
 		A room containing a number of databoxes, originally blocked by a dislodged titanium door 
-	</room>
-  </UNDERISLANDS>
-  <BKELPTRENCH>
-    	<name>
+		</room>
+	</UNDERISLANDS>
+	<BKELPTRENCH>
+		<name>
 		Blood Kelp Trench Base
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 		A long information-dense rant from the occupant of Lifepod 1, recorded some time after they crashed in this location; details their potential escape routes and the obstacles therein, as well as some of their attempted solutions
-	</pda>
-    	<pod1>
+		</pda>
+		<pod1>
 		The remains of Lifepod 1, underneath a large, derelict seabase, and a recording of the pod’s violent entry into the planetary atmosphere and then the ocean 
-	</pod1>
-    	<chit>
+		</pod1>
+		<chit>
 		Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 25%
-	</chit>
-    	<databox>
+		</chit>
+		<databox>
 		A databox containing the blueprint for substantial upgrades to the Seamoth’s depth rating, far beyond the typical design envelope
-	</databox>
-  </BKELPTRENCH>
-  <NBKELP>
-    	<name>
+		</databox>
+	</BKELPTRENCH>
+	<NBKELP>
+		<name>
 		Northern Blood Kelp
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<pod2>
+		</pda>
+		<pod2>
 		The remains of Aurora lifepod 2, which failed to deploy flotation devices and promptly sunk to the seafloor; The survivors then attempted to escape this extreme depth with no breathing apparatus
-	</pod2>
-    	<cache>
+		</pod2>
+		<cache>
 		An alien structure containing a number of Ion Cubes, and a terminal with data indicating a possible function of these caches
-	</cache>
-    	<levi>
+		</cache>
+		<levi>
 		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water
-	</levi>
-  </NBKELP>
-  <LOSTRIVER>
-    	<name>
+		</levi>
+	</NBKELP>
+	<LOSTRIVER>
+		<name>
 		Lost River
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 A PDA audio log, appearing to record the destruction of a seamoth by the leviathan near where it was found
-	</pda>
-    	<drf>
+		</pda>
+		<arch>
+			A strange alien arch hidden in a small cave behind a brinefall in the Ghost Forest
+		</arch>
+		<drf>
 		A destroyed precursor facility with many long-dead biological specimens, and extensive information on multiple organisms found on 4546B
-	</drf>
-    	<cache>
+		</drf>
+		<cache>
 		A small biological research outpost tucked into a cave wall, by a large skeleton of a now-extinct creature
-	</cache>
-    	<skull>
+		</cache>
+		<skull>
 		An extremely large skull and upper ribcage of an ancient creature dwarfing anything encountered on the planet
-	</skull>
-    	<sulfur>
+		</skull>
+		<sulfur>
 		Large deposits of pure, crystalline sulfur, exposed by surrounding caustic brine 
-	</sulfur>
-    	<seal>
+		</sulfur>
+		<seal>
 		A damaged seamoth upgrade for reducing power leakage to the environment
-	</seal>
-    	<dragon>
+		</seal>
+		<dragon>
 		The skeleton of a Sea Dragon Leviathan; Many bones appear to have been fractured or broken in a high velocity impact
-	</dragon>
-    	<levi>
+		</dragon>
+		<levi>
 		Ethereal, hammer-headed, juvenile leviathans that make use of forceful ramming to hunt their prey; Highly aggressive
-	</levi>
-  </LOSTRIVER>
-  <DRF>
-    	<name>
+		</levi>
+	</LOSTRIVER>
+	<DRF>
+		<name>
 		Disease Research Facility
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<terminal1>
+		</pda>
+		<terminal1>
 		A download of alien biological and paleontological data, pertaining to various species on 4546b, both extant and extinct
-	</terminal1>
-    	<damage>
+		</terminal1>
+		<damage>
 		A download of alien black box data, detailing how the facility was destroyed through the actions of an enraged Sea Dragon 
-	</damage>
-    	<tablet>
+		</damage>
+		<tablet>
 		A broken, flickering white tablet, similar to other previously encountered tablets, inside the skeleton of a large research specimen
-	</tablet>
-    	<cycheat>
+		</tablet>
+		<cycheat>
 		A download of alien technological data that has been adapted into a heat rejection upgrade for the Cyclops
-	</cycheat>
-    	<disease>
+		</cycheat>
+		<disease>
 		A download of alien historical data pertaining to the nature and origins of the “Kharaa” bacterium
-	</disease>
-    	<egg>
+		</disease>
+		<egg>
 		The preserved egg of a Sea Dragon Leviathan
-	</egg>
-    	<warper>
+		</egg>
+		<warper>
 		Various body parts belonging to Warpers 
-	</warper>
-  </DRF>
-  <LAVACASTLE>
-    	<name>
+		</warper>
+	</DRF>
+	<LAVACASTLE>
+		<name>
 		Lava Castle
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<kyanite>
+		</pda>
+		<kyanite>
 		Collectible kyanite crystals, formed via high levels of volcanic activity
-	</kyanite>
-    	<tablet>
+		</kyanite>
+		<tablet>
 		A pristine, sky-blue tablet, certain to be similar in function to other alien tablets
-	</tablet>
-    	<ion>
+		</tablet>
+		<ion>
 		A download of alien technological data, adapted into blueprints for ion cube-based batteries
-	</ion>
-    	<tap>
+		</ion>
+		<tap>
 		A download of alien structural data, indicating how to tap into the energy running through alien structures
-	</tap>
-  </LAVACASTLE>
-  <CRAG>
-    	<name>
+		</tap>
+	</LAVACASTLE>
+	<CRAG>
+		<name>
 		Crag Field
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<pod7>
+		</pda>
+		<pod7>
 		The remains of Lifepod 7; Its fabricator appears to have malfunctioned during evacuation
-	</pod7>
-    	<scoop>
+		</pod7>
+		<scoop>
 		A databox containing the blueprint for a phytoplankton collection module
-	</scoop>
-  </CRAG>
-  <FLOATISLAND>
-    	<name>
+		</scoop>
+		<arch>
+			A strange alien arch hidden in a small cave
+		</arch>
+	</CRAG>
+	<FLOATISLAND>
+		<name>
 		Floating Island
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<degasi>
+		</pda>
+		<degasi>
 		A number of derelict seabases, once occupied by the survivors of the Degasi
-	</degasi>
-    	<keen>
+		</degasi>
+		<keen>
 		The last known location of First Officer Keen, and a pda detailing his encounter with Yu, the only other Aurora survivor who appeared to survive for any length of time
-</keen>
-    	<arch>
+		</keen>
+		<arch>
 		A strange alien arch hidden within a cave
-	</arch>
-    	<floater>
+		</arch>
+		<floater>
 		Giant versions of the buoyant floater organisms encountered attached to some rocks, holding the entire landmass afloat
-	</floater>
-  </FLOATISLAND>
-  <MOUNTAINISLAND>
-    	<name>
+		</floater>
+	</FLOATISLAND>
+	<MOUNTAINISLAND>
+		<name>
 		Mountain Island
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<gun>
+		</pda>
+		<gun>
 		A towering structure, of unknown design and purpose
-	</gun>
-    	<beachpda>
+		</gun>
+		<beachpda>
 		A PDA from a group of Aurora survivors, documenting their arrival on the island from a location to the east and their discoveries of various structures, items, topography, and lifeforms on the island
-	</beachpda>
-    	<cavepda>
+		</beachpda>
+		<cavepda>
 A PDA from an Aurora survivor, paranoid and desperate about their circumstances, and making note of the fates of their fellow survivors, as well as describing a red alien device they threw away at the eastern end of the island
-	</cavepda>
-    	<arch>
+		</cavepda>
+		<arch>
 		An alien teleporter, leading to a corresponding structure in a cave on a floating island
-	</arch>
-    	<battery>
+		</arch>
+		<battery>
 		A damaged, malfunctioning battery made from Azurite-based materials
-	</battery>
-    	<tablet>
+		</battery>
+		<tablet>
 		A shattered, red tablet of non-human design 
-	</tablet>
-    	<plantalcove>
+		</tablet>
+		<plantalcove>
 		A small skylit alcove in the above-water cave system, host to a new species of plant not encountered anywhere else on 4546B
-	</plantalcove>
-    	<campfire>
+		</plantalcove>
+		<campfire>
 		A sleeping mat and campfire left over from one of the aurora survivors that made it to the island; the campfire can be used to smoke fish to preserve it without the use of salt
-	</campfire>
-  </MOUNTAINISLAND>
-  <GUN>
-    	<name>
+		</campfire>
+	</MOUNTAINISLAND>
+	<GUN>
+		<name>
 		Quarantine Enforcement Platform
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<cube>
+		</pda>
+		<cube>
 		Glowing green cubes containing immense ionic energy
-	</cube>
-    	<denied>
+		</cube>
+		<denied>
 		A strange alien terminal, the attempted usage of which was denied for reasons of infection, and revealed the true purpose of the containing structure 
-	</denied>
-    	<jailbreak>
+		</denied>
+		<jailbreak>
 		A download of what appears to be alien malware, making the laser cutter capable of stripping salvage from the hull of the aurora
 
 &lt;color=red&gt;&lt;b&gt;Reminder from Alterra: Salvage of the Aurora is illegal under Transgovernmental law&lt;/b&gt;&lt;/color&gt;
-	</jailbreak>
-  </GUN>
-  <FLOATDEGASI>
-    	<name>
+		</jailbreak>
+	</GUN>
+	<FLOATDEGASI>
+		<name>
 		Island Degasi Wrecks
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<main>
+		</pda>
+		<main>
 		A PDA from Degasi survivor Paul Torgal, detailing the group’s situation five weeks after crashing, and exhibiting arrogant certainty of their ability to survive on 4546B	
-	</main>
-    	<outside>
+		</main>
+		<outside>
 		A PDA recording of a conversation between two Degasi survivors, mentioning plans to build a new seabase in a mineral-rich cavern
-	</outside>
-    	<return>
+		</outside>
+		<return>
 		A PDA from  Degasi survivor Bart Torgal, appearing to contain some of his last words before succumbing to infection, seemingly recorded long after the deaths of both Paul Torgal and Marguerit Maida, and after a return from an unknown deep location
-	</return>
-    	<init>
+		</return>
+		<init>
 		A PDA  recording of a conversation between recording of a conversation between the Degasi survivors, documenting their arrival on the island and subsequent predicament regarding food and shelter
-	</init>
-  </FLOATDEGASI>
-  <DUNEARCH>
-    	<name>
+		</init>
+	</FLOATDEGASI>
+	<DUNEARCH>
+		<name>
 		Dunes Arch
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 A PDA found within wreckage, detailing the fate of an Aurora crewmember who was unable to board an escape pod, but managed to survive the initial impact of the Aurora
-	</pda>
-    	<reaper>
+		</pda>
+		<reaper>
 		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
-	</reaper>
-    	<bioproc>
+		</reaper>
+		<bioproc>
 		Fragments of a bioprocessor machine
-	</bioproc>
-    	<liqbr>
+		</bioproc>
+		<liqbr>
 		A databox containing the blueprints for a liquid breathing system
-	</liqbr>
-  </DUNEARCH>
-  <GRANDREEF>
-    	<name>
+		</liqbr>
+	</DUNEARCH>
+	<GRANDREEF>
+		<name>
 		Grand Reef
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<platinum>
+		</pda>
+		<platinum>
 		Elemental platinum, unearthed by the titanic footsteps of the Sea Treaders
-	</platinum>
-    	<bioproc>
+		</platinum>
+		<bioproc>
 		Fragments of a bioprocessor machine
-	</bioproc>
-    	<poo>
+		</bioproc>
+		<poo>
 The waste products of Sea Treaders, which may serve as useful biochemical feedstock into various processes
-	</poo>
-    	<sealed>
+		</poo>
+		<sealed>
 		A databox containing the blueprint for watertight, electrically insulative fabric
-	</sealed>
-    	<levi>
+		</sealed>
+		<levi>
 		Ethereal, hammer-headed, adolescent leviathans that make use of forceful ramming to repel competitors to their territory, but which in fact feed on microscopic lifeforms in the water
-	</levi>
-  </GRANDREEF>
-  <MUSHTREE>
-    	<name>
+		</levi>
+		<vent>
+			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
+		</vent>
+	</GRANDREEF>
+	<MUSHTREE>
+		<name>
 		Mushroom Tree
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<initpda>
-		The log of an Aurora survivor, designated to rescue aurora passenger Jochi Khasar or document their fate if this proved impossible
-	</initpda>
-    	<treepda>
+		</pda>
+		<treepda>
 		The last words of an Aurora survivor who became trapped in the hollowed caverns of a large coral tree
-	</treepda>
-    	<chit>
+		</treepda>
+		<chit>
 		An installable overclock for the Laser Cutter, allowing it to carve through reinforced bulkheads
-	</chit>
-    	<bacteria>
+		</chit>
+		<bacteria>
 		Large colonies of bacteria, containing enzymes capable of breaking down biological matter
-	</bacteria>
-  </MUSHTREE>
-  <MOUNTAINPOD>
-    	<name>
+		</bacteria>
+	</MUSHTREE>
+	<MUSHROOMS>
+		<name>
+		Mushroom Disk Forests
+		</name>
+		<desc>
+
+		</desc>
+		<pda>
+
+		</pda>
+		<khasar>
+			A recording of Jochi Khasar's violent atmospheric entry, and his reaction to the situation
+		</khasar>
+		<initpda>
+		The log of an Aurora survivor, designated to rescue aurora passenger Jochi Khasar or document their fate if this proved impossible
+		</initpda>
+		<tree>
+			Large fossilized remains of a mushroom tree with a complex internal cave system, in the center of the Western Mushroom Forest
+		</tree>
+		<highwreck>
+			A large fragment of the aurora, resting on top of a mushroom tree, with several technologies and audio logs related to orbital scanning
+		</highwreck>
+		<arch>
+			A strange alien arch hidden in a small cave, accessible from an underwater ravine in the Western Mushroom Forest
+		</arch>
+		<mushkoosh>
+		A convoluted cave connecting the Eastern Mushroom Forest and Bulb Zone, and home to a unique species of chemosynthetic coral 
+		</mushkoosh>
+		<cyclops>
+		Scattered pieces of cyclops submarines
+		</cyclops>
+		<vent>
+			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
+		</vent>
+	</MUSHROOMS>
+	<MOUNTAINPOD>
+		<name>
 		Lifepod 14
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<podpda>
+		</pda>
+		<podpda>
 		A PDA recording of a conversation between a group of Aurora survivors in an overcrowded lifepod, arguing about what to do in the wake of the Aurora’s crash landing
-	</podpda>
-    	<podpda2>
+		</podpda>
+		<podpda2>
 		A PDA from an Aurora survivor, detailing the fate of their lifepod and bemoaning their survival prospects after having been abandoned by the other occupants of the pod
-	</podpda2>
-    	<basepda>
+		</podpda2>
+		<basepda>
 		A PDA from an Aurora survivor, detailing dire circumstances as a result of surrounding leviathan activity on their attempts to traverse the area, as well as some indication of an incomplete plan for avoiding their detection; Also contains some analysis of the mineral Azurite, and speculation on where richer deposits of it can be found
-	</basepda>
-    	<mask>
+		</basepda>
+		<mask>
 		A damaged databox containing the blueprint for a recirculation mask, wedged into a metal grille
-	</mask>
-    	<stealth>
+		</mask>
+		<stealth>
 		A databox containing the blueprints for an experimental noise suppression module, intended to enable evading detection by Reaper Leviathans
-	</stealth>
-    	<knife>
+		</stealth>
+		<knife>
 		A survival knife, upgraded to sear whatever it comes into contact with
-	</knife>
-    	<battery>
+		</knife>
+		<battery>
 		A databox containing the blueprint for seabase power storage expansions
-	</battery>
-  </MOUNTAINPOD>
-  <TREADERPOD>
-    	<name>
+		</battery>
+	</MOUNTAINPOD>
+	<TREADERPOD>
+		<name>
 		Lifepod 9
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 		A PDA from an Aurora survivor, whose ranting was interrupted by the destruction of his lifepod
-	</pda>
-    	<treader>
+		</pda>
+		<treader>
 		Massive, bottom-dwelling leviathans, the footsteps of which both bury and unearth objects from the seafloor
-	</treader>
-    	<platinum>
+		</treader>
+		<platinum>
 		Elemental platinum, unearthed by the titanic footsteps of the Sea Treaders
-	</platinum>
-    	<enzy>
+		</platinum>
+		<enzy>
 		A damaged databox containing the chemical formula for enzymes that break down cellular structures, apparently crushed by large fauna
-	</enzy>
-    	<basepda>
+		</enzy>
+		<basepda>
 		A PDA from an Aurora survivor, who appears to have become subject to a number of self-inflicted hardships
-	</basepda>
-    	<databox>
+		</basepda>
+		<databox>
 		A databox containing the blueprint for moderate upgrades to the Seamoth’s depth rating
-	</databox>
-  </TREADERPOD>
-  <GLASSFOREST>
-    	<name>
+		</databox>
+	</TREADERPOD>
+	<GLASSFOREST>
+		<name>
 		Glass Forest
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<databox>
+		</pda>
+		<databox>
 		A databox containing the complex chemical formula for an oxygen-bearing fluid, suitable for liquid-based respiration
-	</databox>
-    	<bioproc>
+		</databox>
+		<bioproc>
 		Fragments of a bioprocessor machine
-	</bioproc>
-    	<deepvine>
+		</bioproc>
+		<deepvine>
 		Samples taken from large, purple, kelplike flora containing potentially useful organic compounds 
-	</deepvine>
-    	<levi>
+		</deepvine>
+		<levi>
 		An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water; This specimen is colored unusually for its species due to the unique diet the local biome provides
-	</levi>
-  </GLASSFOREST>
-  <CRASH>
-    	<name>
+		</levi>
+	</GLASSFOREST>
+	<CRASH>
+		<name>
 		Crash Zone
-	</name>
-    	<desc>
+		</name>
+		<desc>
 
-	</desc>
-    	<pda>
+		</desc>
+		<pda>
 
-	</pda>
-    	<pod4>
+		</pda>
+		<pod4>
 The overturned remains of lifepod 4, containing a databox with the blueprint for decoy devices and a PDA warning of massive aggressive predators in the area
-	</pod4>
-    	<crashmesa>
+		</pod4>
+		<crashmesa>
 		The remains of lifepod 10, with a nearby databox containing the blueprint for significant upgrades to the Seamoth’s depth rating
-	</crashmesa>
-    	<reaper>
+		</crashmesa>
+		<reaper>
 Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
-	</reaper>
-    	<sanctuary>
+		</reaper>
+		<sanctuary>
 		A small biome, seemingly spared from the destruction of the aurora’s impact, and home to a now-endangered flora specimen with an interesting yet familiar appearance
-	</sanctuary>
-    	<trailerbase>
+		</sanctuary>
+		<trailerbase>
 		The fragmented and partially buried wreck of a Degasi seabase, likely destroyed by the disturbance caused by the Aurora’s impact, and containing advanced materials and recipes
-	</trailerbase>
-  </CRASH>
-  <DEGASIEND>
-	<name>
+		</trailerbase>
+	</CRASH>
+	<DEGASIEND>
+		<name>
 		Deep Degasi Base
-	</name>
-	<desc>
+		</name>
+		<desc>
 		
-	</desc>
-	<pda>
+		</desc>
+		<pda>
 		
-	</pda>
-	<end>
+		</pda>
+		<end>
 		A recording of the demise of the Degasi survivors as a result of Marguerit Maida returning with an injured leviathan, attracting another which attacked the base
-	</end>
-	<tablet>
+		</end>
+		<tablet>
 		A broken orange tablet in the same general design of the purple variant, with unknown usage
-	</tablet>
-	<rebreather>
+		</tablet>
+		<rebreather>
 		The final fragments to create a construction blueprint for a machine to recharge liquid breathing systems
-	</rebreather>
-  </DEGASIEND>
-  <VOID>
-	<name>
+		</rebreather>
+	</DEGASIEND>
+	<VOID>
+		<name>
 		Crater Edge
-	</name>
-	<desc>
+		</name>
+		<desc>
 		
-	</desc>
-	<pda>
+		</desc>
+		<pda>
 		
-	</pda>
-	<destroy>
+		</pda>
+		<destroy>
 		Audio of the final moments of lifepod 15 as it was destroyed by a Ghost Leviathan
-	</destroy>
-	<end>
-		A log from the occupant of lifepod 15 as they examined their limited options and discussed visiting an unknown deep region further away from the main crater
-	</end>
-	<databox>
+		</destroy>
+		<databox>
 		A databox containing the blueprint for tough metal plating to build advanced vehicles
-	</databox>
-	<items>
+		</databox>
+		<spikes>
+			A large biome, separated from the main crater by open water, comprised of floating spike-shaped chunks of rock
+		</spikes>
+		<bubble>
+			Strange rising spheres which can stick to vehicles and significantly impede movement
+		</bubble>
+	</VOID>
+	<VOIDSPIKES>
+		<name>
+		Void Spikes
+		</name>
+		<desc>
+		
+		</desc>
+		<pda>
+		
+		</pda>
+		<end>
+		A log from the occupant of lifepod 15 as they examined their limited options and discussed visiting an unknown deep region further away from the main crater
+		</end>
+		<items>
 		Strange crystals formed under extreme pressure, with commensurate fabrication applications
-	</items>
-	<levi>
+		</items>
+		<levi>
 		A large, aggressive creature that makes use of light and electricity based attacks
-	</levi>
-  </VOID>
-  <MOUNTAINS>
-	<name>
+		</levi>
+	</VOIDSPIKES>
+	<MOUNTAINS>
+		<name>
 		Underwater Mountains
-	</name>
-	<desc>
+		</name>
+		<desc>
 		
-	</desc>
-	<pda>
+		</desc>
+		<pda>
 		
-	</pda>
-	<reaper>
+		</pda>
+		<reaper>
 		Large, muscular, predatory leviathans, which make use of echolocation to search for prey, which they grip with large mandibles
-	</reaper>
-	<pod>
+		</reaper>
+		<pod>
 		The remains of Aurora Lifepod 14
-	</pod>
-	<azurite>
+		</pod>
+		<azurite>
 		Sparse deposits of the volatile mineral Azurite around thermal vents
-	</azurite>
-	<magnetite>
+		</azurite>
+		<magnetite>
 		Deposits of the mineral magnetite, likely formed from volcanic activity
-	</magnetite>
-	<pyropod>
+		</magnetite>
+		<pyropod>
 		Heat-emitting flora, the tough pods of which may have heat-resistant or biochemical applications 
-	</pyropod>
-	<debris>
+		</pyropod>
+		<debris>
 		Debris from the destruction of the Sunbeam, including miscellaneous garbage, metal, mechanical parts, and rare materials from their cargo bay
-	</debris>
-  </MOUNTAINS>
+		</debris>
+		<vent>
+			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
+		</vent>
+	</MOUNTAINS>
 </Root>
