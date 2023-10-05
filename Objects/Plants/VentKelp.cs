@@ -245,6 +245,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
 	    			if (isNew) {
 		    			foreach (KelpSegment s in segments) {
+							if (!s.renderer)
+								continue;
 							s.renderer.materials[1].SetVector("_Scale", new Vector4(0.05F, 0.0F, 0.05F, 0.0F));
 							s.renderer.materials[1].SetVector("_Frequency", new Vector4(0.8F, 0.8F, 0.8F, 0.8F));
 							s.renderer.materials[1].SetVector("_Speed", new Vector4(0.2F, 0.2F, 0.2F, 0.2F));
@@ -261,6 +263,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			bool kill = false;
 			foreach (KelpSegment s in segments) {
+				if (!s.renderer)
+					continue;
 				if (grown && s.index >= 2) {
 					UnityEngine.Object.DestroyImmediate(s.obj);
 					SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position);
@@ -270,17 +274,20 @@ namespace ReikaKalseki.SeaToSea {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
 				}
 			}
+			//SNUtil.writeToChat(time.ToString("00.000")+" > "+(time-lastContinuityCheckTime).ToString("00.000"));
 			if (time-lastContinuityCheckTime >= 1) {
 				lastContinuityCheckTime = time;
-				List<int> presenceSet = new List<int>();
 				foreach (KelpSegment s in segments) {
 					if (!s.renderer) {
 						kill = true;
+						//SNUtil.writeToChat("Detected incomplete vent kelp @ "+transform.position+": "+s.obj.GetFullHierarchyPath());
 						continue;
 					}
 					//float f = (float)Math.Abs(2*VentKelp.noiseField.getValue(r.gameObject.transform.position+Vector3.up*DayNightCycle.main.timePassedAsFloat*7.5F))-0.75F;
 					if (!s.live || s.live.health <= 0) {
 						kill = true;
+						//SNUtil.writeToChat("Detected incomplete vent kelp @ "+transform.position+": "+s.obj.GetFullHierarchyPath());
+						continue;
 					}
 					if (s.obj.transform.position.y >= -3) {
 						if (grown)
@@ -290,17 +297,6 @@ namespace ReikaKalseki.SeaToSea {
 						redoRenderers = true;
 						continue;
 					}
-					if (s.index >= 0) {
-						presenceSet.Add(s.index);
-					}
-				}
-				presenceSet.Sort();
-				int last = -1;
-				foreach (int val in presenceSet) {
-					if (val-last > 1) {
-						kill = true;
-					}
-					last = val;
 				}
 			}
 			if (kill && !isNew) {/*

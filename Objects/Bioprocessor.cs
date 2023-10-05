@@ -207,7 +207,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 	}
 		
-	public class BioprocessorLogic : CustomMachineLogic {
+	public class BioprocessorLogic : DiscreteOperationalMachineLogic {
 		
 		private BioRecipe currentOperation;
 		private int enzyRequired;
@@ -238,8 +238,21 @@ namespace ReikaKalseki.SeaToSea {
 			setEmissiveColor(new Color(0, 0, 1));
 		}
 		
-		public bool isCrafting() {
+		public override bool isWorking() {
 			return currentOperation != null;
+		}
+		
+		public float getRemainingTime() {
+			if (currentOperation == null)
+				return 0;
+			return (enzyRequired-1)*currentOperation.secondsPerEnzyme+nextEnzyTimeRemaining;
+		}
+		
+		public override float getProgressScalar() {
+			float ret = getRemainingTime();
+			if (ret <= 0)
+				return 0;
+			return 1-ret/currentOperation.processTime;
 		}
 		
 		protected override void load(System.Xml.XmlElement data) {
@@ -258,19 +271,6 @@ namespace ReikaKalseki.SeaToSea {
 			data.addProperty("recipe", currentOperation != null ? currentOperation.inputItem+"" : null);
 			data.addProperty("countdown", nextEnzyTimeRemaining);
 			data.addProperty("required", enzyRequired);
-		}
-		
-		public float getRemainingTime() {
-			if (currentOperation == null)
-				return 0;
-			return (enzyRequired-1)*currentOperation.secondsPerEnzyme+nextEnzyTimeRemaining;
-		}
-		
-		public float getProgressScalar() {
-			float ret = getRemainingTime();
-			if (ret <= 0)
-				return 0;
-			return 1-ret/currentOperation.processTime;
 		}
 		
 		protected override void updateEntity(float seconds) {
