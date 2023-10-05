@@ -134,7 +134,7 @@ namespace ReikaKalseki.SeaToSea
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 	    	
 	    	p = addPage(TrackerPages.CRASH, new BiomeTrigger(VanillaBiomes.CRASH));
-	    	p.addFinding("pod4", Finding.fromEncy("LifepodDecoy")).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("sanctuary", Finding.fromScan(C2CItems.sanctuaryPlant.TechType)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType));
+	    	p.addFinding("pod4", Finding.fromEncy("LifepodDecoy")).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("stasis", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.stasisBlock.TechType)).addFinding("sanctuary", Finding.fromScan(C2CItems.sanctuaryPlant.TechType)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType));
 	    	if (hard)
 	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
