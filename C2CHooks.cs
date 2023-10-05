@@ -160,8 +160,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	DIHooks.selfScanEvent += onSelfScan;
 	    	
-	    	DIHooks.storageHoverEvent += modifyStorageHover;
-	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
 	    	
@@ -1789,14 +1787,6 @@ namespace ReikaKalseki.SeaToSea {
 	    			spt.OnHandHover(hand);
 	    		else if (e == HandTargetEventType.Click)
 	    			spt.OnHandClick(hand);
-	    	}
-	    }
-	    
-	    public static void modifyStorageHover(StorageContainer sc, GUIHand h) {
-	    	BioprocessorLogic lgc = sc.GetComponentInParent<BioprocessorLogic>();
-	    	if (lgc && lgc.isCrafting()) {
-	    		HandReticle.main.SetProgress(lgc.getProgressScalar());
-				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
 	    	}
 	    }
 	}

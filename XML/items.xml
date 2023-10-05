@@ -768,6 +768,8 @@
 		</desc>
 		<pda>
 			The geyser particulate filter uses a mesh of platinum-coated, electrically-charged wire to attract certain trace minerals present in the output of volcanic geysers, collecting them for use in fabrication. An essential component of plasteel production, this device - or conceptual analogues - has been a mainstay of deep-space outposts, be they scientific, military, or colony.
+			
+			Despite being ostensibly linked to a geyser, this device has no integrated thermoelectric conversion units, and so still requires a powered base nearby to draw power from.
 		</pda>
 	</geyserfilter>
 	<enum>

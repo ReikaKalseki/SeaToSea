@@ -88,24 +88,41 @@ namespace ReikaKalseki.SeaToSea {
 			
 			Renderer[] r = mdl.GetComponentsInChildren<Renderer>();
 			RenderUtil.swapToModdedTextures(r, this);
+			foreach (Renderer rr in r)
+				RenderUtil.setEmissivity(rr, 1);
 			r = mdl2.GetComponentsInChildren<Renderer>();
 			RenderUtil.swapToModdedTextures(r, this);
+			foreach (Renderer rr in r)
+				RenderUtil.setEmissivity(rr, 1);
+			
+			go.EnsureComponent<PowerFX>().vfxPrefab = ObjectUtil.lookupPrefab(TechType.PowerTransmitter).GetComponent<PowerFX>().vfxPrefab;
 		}
 		
 	}
 		
-	public class GeyserFilterLogic : CustomMachineLogic {
+	public class GeyserFilterLogic : DiscreteOperationalMachineLogic {
 		
 		internal Renderer[] mainRenderers;
 		private Geyser geyser;
 		
+		private PowerFX lineRenderer;
+		
 		private bool isPowered;
+		private bool checkedPower;
 		
 		private float collectionTime;
 		
 		void Start() {
 			SNUtil.log("Reinitializing geyser filter");
 			SeaToSeaMod.geyserFilter.initializeMachine(gameObject);
+		}
+		
+		public override bool isWorking() {
+			return geyser && isPowered;
+		}
+		
+		public override float getProgressScalar() {
+			return Mathf.Clamp01(collectionTime/GeyserFilter.PRODUCTION_RATE);
 		}
 		
 		protected override void load(System.Xml.XmlElement data) {
@@ -119,10 +136,13 @@ namespace ReikaKalseki.SeaToSea {
 		protected override void updateEntity(float seconds) {
 			if (mainRenderers == null)
 				mainRenderers = GetComponentsInChildren<Renderer>();
+			if (!lineRenderer)
+				lineRenderer = GetComponent<PowerFX>();
 			if (!geyser && seconds > 0)
 				geyser = WorldUtil.getClosest<Geyser>(transform.position);
 			if (geyser && (geyser.transform.position.y > transform.position.y || Vector3.Distance(geyser.transform.position, transform.position) >= 30))
 				geyser = null;
+			lineRenderer.target = geyser ? geyser.gameObject : null;
 			//SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
 			if (!geyser)
 				return;
@@ -135,14 +155,24 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			sc.hoverText = "Collect filtrate";
 			
-			isPowered = consumePower(GeyserFilter.POWER_COST*seconds);
+			setPowered(seconds);
 			if (isPowered && geyser.erupting) {
 				collectionTime += seconds;
 				if (collectionTime >= GeyserFilter.PRODUCTION_RATE) {
 					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0)
-						collectionTime -= GeyserFilter.PRODUCTION_RATE;
+						collectionTime = 0;
 				}
 			}
+		}
+		
+		private void setPowered(float seconds) {
+			bool pwr = isPowered;
+			isPowered = consumePower(GeyserFilter.POWER_COST*seconds);
+			if (isPowered != pwr || !checkedPower) {
+				foreach (Renderer r in mainRenderers)
+					r.materials[0].SetColor("_GlowColor", isPowered ? Color.green : Color.red);
+			}
+			checkedPower = true;
 		}
 	}
 }
