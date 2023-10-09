@@ -61,13 +61,7 @@ namespace ReikaKalseki.SeaToSea
 						}
 					}
 					if (dist <= 120)  {
-						HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(transform.position, 60);
-						int amt = 0;
-						foreach (DeepStalkerTag c in set) {
-							if (c.isAlive() && !c.GetComponent<WaterParkCreature>()) {
-								amt++;
-							}
-						}
+						int amt = DeepStalkerTag.countDeepStalkersNear(transform);
 						//int amt = stalkers.Count;
 						for (int i = amt; i < 3; i++) {
 							GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.deepStalker.ClassID, true, true);

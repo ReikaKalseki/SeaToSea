@@ -171,6 +171,9 @@
 		<vent>
 			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
 		</vent>
+		<arch>
+			A small wreck next to a large stone arch
+		</arch>
 	</DUNECENTRAL>
 	<METEOR>
 		<name>
@@ -522,6 +525,9 @@
 		<vent>
 			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
 		</vent>
+		<base>
+			A long-abandoned seabase built by the Degasi survivors in a cave deep underwater
+		</base>
 	</GRANDREEF>
 	<MUSHTREE>
 		<name>
