@@ -262,8 +262,7 @@ namespace ReikaKalseki.SeaToSea {
 					HashSet<SunbeamDebris> set = WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.resourceNodes[UnityEngine.Random.Range(0, map.resourceNodes.Count)].position, 4);
 					if (set.Count > 0)
 						set.First().tryConvert();*/
-					foreach (SunbeamDebris s in WorldUtil.getObjectsNearWithComponent<SunbeamDebris>(map.transform.position, map.GetScanRange()))
-						s.tryConvert();
+					WorldUtil.getGameObjectsNear(map.transform.position, map.GetScanRange(), go => {SunbeamDebris s = go.GetComponent<SunbeamDebris>(); if (s){s.tryConvert();}});
 				}
 			}
 			else {
