@@ -188,21 +188,7 @@ namespace ReikaKalseki.SeaToSea {
 						bindToTreader(WorldUtil.getClosest<SeaTreader>(gameObject));
 					List<GameObject> loosePlatinum = new List<GameObject>();
 					List<CollectShiny> stalkersWithPlatinum = new List<CollectShiny>();
-					HashSet<GameObject> set = WorldUtil.getObjectsNear(transform.position, 40);
-					foreach (GameObject go in set) {
-						PlatinumTag pt = go.GetComponent<PlatinumTag>();
-						if (pt && pt.getTimeOnGround() >= 2.5F) {
-							//collectorComponent.shinyTarget = pt.gameObject;
-							loosePlatinum.Add(pt.gameObject);
-						}
-						CollectShiny c = go.GetComponent<CollectShiny>();
-						if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
-							//collectorComponent.shinyTarget = c.shinyTarget;
-							//triggerPtAggro(c.gameObject);
-							//break;
-							stalkersWithPlatinum.Add(c);
-						}
-					}
+					WorldUtil.getGameObjectsNear(transform.position, 40, go => parseNearbyObject(go, loosePlatinum, stalkersWithPlatinum));
 					bool flag = false;
 					if (loosePlatinum.Count > 0) {
 						collectorComponent.shinyTarget = loosePlatinum[UnityEngine.Random.Range(0, loosePlatinum.Count)];
@@ -243,16 +229,35 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				if (time >= lastDespawnCheck+2.5F && distp > 40) {
 					lastDespawnCheck = time;
-					HashSet<DeepStalkerTag> set = WorldUtil.getObjectsNearWithComponent<DeepStalkerTag>(transform.position, 60);
-					int amt = 0;
-					foreach (DeepStalkerTag c in set) {
-						if (c.isAlive() && !c.GetComponent<WaterParkCreature>()) {
-							amt++;
-						}
-					}
-					if (amt > 5)
+					if (countDeepStalkersNear(transform) > 5)
 						destroyCreature();
 				}
+			}
+		}
+		
+		internal static int countDeepStalkersNear(Transform t) {
+			int amt = 0;
+			WorldUtil.getGameObjectsNear(t.position, 60, go => {
+				DeepStalkerTag c = go.GetComponent<DeepStalkerTag>();
+				if (c && c.isAlive() && !c.GetComponent<WaterParkCreature>())
+					amt++;
+				}
+			);
+			return amt;
+		}
+		
+		private void parseNearbyObject(GameObject go, List<GameObject> loosePlatinum, List<CollectShiny> stalkersWithPlatinum) {
+			PlatinumTag pt = go.GetComponent<PlatinumTag>();
+			if (pt && pt.getTimeOnGround() >= 2.5F) {
+				//collectorComponent.shinyTarget = go;
+				loosePlatinum.Add(go);
+			}
+			CollectShiny c = go.GetComponent<CollectShiny>();
+			if (c && c.shinyTarget && c.targetPickedUp && c.shinyTarget.GetComponent<PlatinumTag>()) {
+				//collectorComponent.shinyTarget = c.shinyTarget;
+				//triggerPtAggro(go);
+				//break;
+				stalkersWithPlatinum.Add(c);
 			}
 		}
 		

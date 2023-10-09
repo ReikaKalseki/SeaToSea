@@ -107,6 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 		   	lrLeakage["LostRiver_GhostTree"] = 1;
 		   	lrLeakage["LostRiver_GhostTree_Skeleton"] = 1;
 		   	lrLeakage["LostRiver_Canyon"] = 1.75F;
+		    lrLeakage["Precursor_LostRiverBase"] = 1;
 		   			   	
 		   	lrPoisonDamage["LostRiver_BonesField_Corridor"] = 8;
 		    lrPoisonDamage["LostRiver_GhostTree"] = 8;
@@ -118,6 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 		    lrPoisonDamage["LostRiver_Junction"] = 15;
 		    lrPoisonDamage["LostRiver_Junction_Skeleton"] = 15;
 		    lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
+		    lrPoisonDamage["Precursor_LostRiverBase"] = 15;
 		    
 		    foreach (string kvp in new HashSet<string>(lrLeakage.Keys)) {
 		    	lrLeakage[kvp+"_Water"] = lrLeakage[kvp]*1.5F;

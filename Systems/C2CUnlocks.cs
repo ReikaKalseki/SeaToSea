@@ -63,6 +63,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.BlueAmoeba, C2CRecipes.getAlternateBacteria().TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).TechType, C2CRecipes.getAltTraceMetal().TechType);
+	    	//do NOT unlock sulfur acid alt; is unlocked with crys sulfur 
 		}
 	}
 	

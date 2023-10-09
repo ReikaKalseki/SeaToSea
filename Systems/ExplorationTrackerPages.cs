@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("pda", Finding.fromEncy("Lifepod2")).addFinding("mushkoosh", Finding.fromEncy("ency_"+SeaToSeaMod.geyserCoral.ClassID)).addFinding("mercury", Finding.fromScan(TechType.MercuryOre)).addFinding("reinf", Finding.fromUnlock(TechType.ReinforcedDiveSuit)).addFinding("arch", Finding.fromStory(C2CHooks.KOOSH_ARCH_GOAL));
 	    	
 	    	p = addPage(TrackerPages.DUNECENTRAL, new BiomeTrigger(VanillaBiomes.DUNES));
-	    	p.addFinding("shroom", Finding.fromScan(Ecocean.EcoceanMod.glowShroom.TechType)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("suit", Finding.fromUnlock(C2CItems.sealSuit.TechType)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));
+	    	p.addFinding("shroom", Finding.fromScan(Ecocean.EcoceanMod.glowShroom.TechType)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("suit", Finding.fromUnlock(C2CItems.sealSuit.TechType)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromTracker(TrackerPages.DUNEARCH));
 	    	if (hard)
 	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
@@ -104,7 +104,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("cube", Finding.fromScan(TechType.PrecursorIonCrystal)).addFinding("denied", Finding.fromStory("Precursor_Gun_DisableDenied")).addFinding("jailbreak", Finding.fromStory(Auroresource.AuroresourceMod.laserCutterJailbroken));
 	    	
 	    	p = addPage(TrackerPages.FLOATDEGASI, new TrackerPageAnyFindingsTrigger(TrackerPages.FLOATDEGASI));
-	    	p.addFinding("main", Finding.fromEncy("IslandsPDABase1Interior")).addFinding("outside", Finding.fromEncy("IslandsPDAExterior")).addFinding("return", Finding.fromEncy("IslandsPDABase1a")).addFinding("init", Finding.fromEncy("IslandsPDABase1b"));
+	    	p.addFinding("main", Finding.fromEncy("IslandsPDABase1Interior")).addFinding("outside", Finding.fromEncy("IslandsPDAExterior")).addFinding("return", Finding.fromEncy("IslandsPDABase1a")).addFinding("init", Finding.fromEncy("IslandsPDABase1bDesk"));
 	    	
 	    	p = addPage(TrackerPages.DUNEARCH, new PositionTrigger(POITeleportSystem.instance.getPosition("dunearch"), 120));
 	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.liquidTank.TechType));
@@ -112,7 +112,7 @@ namespace ReikaKalseki.SeaToSea
 	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
 	    	p = addPage(TrackerPages.GRANDREEF, new BiomeTrigger(VanillaBiomes.GRANDREEF));
-	    	p.addFinding("platinum", Finding.fromStory("Platinum")).addFinding("poo", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType)).addFinding("sealed", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType)).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));
+	    	p.addFinding("base", Finding.fromTracker(TrackerPages.DEGASIEND)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("poo", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType)).addFinding("sealed", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType)).addFinding("bioproc", Finding.fromEncy(SeaToSeaMod.processor.getPDAPage().id)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 	    	
@@ -141,10 +141,10 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.DEGASIEND, new BiomeTrigger(VanillaBiomes.DEEPGRAND));
 	    	p.addFinding("end", Finding.fromEncy("DeepPDA3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(SeaToSeaMod.rebreatherCharger.TechType));
 	    	
-	    	p = addPage(TrackerPages.VOID, new BiomeTrigger(VanillaBiomes.VOID));
+	    	p = addPage(TrackerPages.VOID, new TrackerPageAnyFindingsTrigger(TrackerPages.VOID));
 	    	p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble.TechType)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType));
 	    	
-	    	p = addPage(TrackerPages.VOIDSPIKES, new BiomeTrigger(VoidSpikesBiome.instance));
+	    	p = addPage(TrackerPages.VOIDSPIKES, new ProgressionTrigger(ep => ep.transform.position.y < -525 && VoidSpikesBiome.instance.isInBiome(ep.transform.position)));
 	    	p.addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi.TechType));
 		}
 		

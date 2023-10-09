@@ -77,16 +77,12 @@ namespace ReikaKalseki.SeaToSea {
 		private bool needsAngling;
 		
 		void Start() {
-			isGrown = gameObject.GetComponent<GrownPlant>() != null;
+			isGrown = GetComponent<GrownPlant>() != null;
     		//if (gameObject.transform.position.y > -10)
     		//	UnityEngine.Object.Destroy(gameObject);
     		if (isGrown) {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
-				seeds = fruitHolder.GetComponentsInChildren<PickPrefab>();
-    			foreach (PickPrefab pp in seeds) {
-    				pp.SetPickedUp();
-    			}
     		}
     		else if (transform.position.y > -120 || Vector3.Angle(transform.up, Vector3.up) >= 45) {
     			UnityEngine.Object.Destroy(gameObject);
