@@ -1010,6 +1010,9 @@ namespace ReikaKalseki.SeaToSea {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 70F);
 				codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRepulsionCannonThrowForce", false, typeof(RepulsionCannon));
 				codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
+				
+				idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "UnityEngine.Rigidbody", "get_mass", true, new Type[0]);
+				codes.InsertRange(idx+2, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldloc_S, 12), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onRepulsionCannonTryHit", false, typeof(RepulsionCannon), typeof(Rigidbody))}); //after the following add
 				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
@@ -1591,6 +1594,28 @@ namespace ReikaKalseki.SeaToSea {
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "ElectricalDefense", "chargeScalar");
 				codes.InsertRange(idx, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "fireSeamothDefence", false, typeof(SeaMoth))});
+				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
+			}
+			catch (Exception e) {
+				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
+				FileLog.Log(e.Message);
+				FileLog.Log(e.StackTrace);
+				FileLog.Log(e.ToString());
+			}
+			return codes.AsEnumerable();
+		}
+	}
+	
+	[HarmonyPatch(typeof(KeypadDoorConsole))]
+	[HarmonyPatch("NumberButtonPress")]
+	public static class OnKeypadButtonPress {
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+			try {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "ResetNumberField");
+				idx = InstructionHandlers.getFirstOpcode(codes, idx, OpCodes.Call);
+				codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onKeypadFailed", false, typeof(KeypadDoorConsole))});
 				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
 			}
 			catch (Exception e) {

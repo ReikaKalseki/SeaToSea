@@ -190,6 +190,7 @@ namespace ReikaKalseki.SeaToSea
 		BioReactorHandler.Main.SetBioReactorCharge(mountainGlow.seed.TechType, BaseBioReactor.GetCharge(TechType.Oculus)*2F);
 		BioReactorHandler.Main.SetBioReactorCharge(sanctuaryPlant.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBasketPlantSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, BaseBioReactor.GetCharge(TechType.CreepvinePiece));
+		BioReactorHandler.Main.SetBioReactorCharge(CustomEgg.getEgg(SeaToSeaMod.deepStalker.TechType).TechType, BaseBioReactor.GetCharge(TechType.StalkerEgg)*0.9F);
    	}
    
    	internal static void addTablets() {
