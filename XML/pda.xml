@@ -533,6 +533,23 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </drfwarperheat>
+  <captaindoor>
+	<name>
+		Captain's Quarters Door Code
+	</name>
+	<pda>
+		The passcode on this doorway appears to have been changed since the last data package from the Aurora was received by Alterra HQ.
+		
+		While normal operating procedure does dictate a regular rotation of such door codes, the regular updates sent back to Earth would normally ensure that the correct code is known to all parties involved.
+		
+		The exact reason for this failure is uncertain, though it may be a result of simple bad luck in timing; perhaps the last package that would contain such a code was sent during a communications blackout period - such as during first entry into this star system - and the crash of the Aurora since then meant there have been no available personnel to make further attempts.
+		
+		What is clear, however, is that without the access code, the door cannot be operated by the usual mechanism, and another approach must be devised.
+	</pda>
+	<category>
+		DownloadedData/Codes
+	</category>
+  </captaindoor>
   <needlaunchcargo>
 	<name>
 		Alterra Desired Research Sample Manifest

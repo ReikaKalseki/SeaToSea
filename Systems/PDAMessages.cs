@@ -38,7 +38,8 @@ namespace ReikaKalseki.SeaToSea
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("notseenallbiomes")]NotSeenBiomesMessage,
 			[Message("unfinishedexplore")]NeedFinishExploreTrackerMessage,
-			[Message("liqbrselfscan")]LiquidBreathingSelfScan,
+			[Message("liqbrselfscaneasy")]LiquidBreathingSelfScanEasy,
+			[Message("liqbrselfscanhard")]LiquidBreathingSelfScanHard,
 		}
 		
 		public static Message getAttr(Messages key) {

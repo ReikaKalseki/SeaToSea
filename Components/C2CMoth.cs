@@ -79,6 +79,9 @@ namespace ReikaKalseki.SeaToSea
 			private float speedBonus;
 			
 			private int stuckCells = 0;
+			
+			//private Renderer deepStalkerStorageDamage;
+			
 			private PredatoryBloodvine holdingBloodKelp;
         	
 			void Start() {

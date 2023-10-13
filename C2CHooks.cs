@@ -217,8 +217,7 @@ namespace ReikaKalseki.SeaToSea {
 		    }
 	    	
 	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
-	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_Office_PDA1", Language.main.Get("EncyDesc_Aurora_Office_PDA1").Replace("1454", getCargoBayDoorCode()));
-	    	
+	    		    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
 			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
 			LanguageHandler.SetLanguageLine(lrCachePanelLocaleKey, SeaToSeaMod.miscLocale.getEntry(lrCachePanelLocaleKey).desc);
@@ -235,6 +234,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_White.AsString(), SeaToSeaMod.itemLocale.getEntry("whitekey").desc);
 	    	
 	    	Campfire.updateLocale(); //call after the above locale init
+	    	KeypadCodeSwappingSystem.instance.patchEncyPages();
 	    	
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get(TechType.LEDLight));
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_"+TechType.LEDLight.AsString()));
@@ -242,6 +242,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	LanguageHandler.SetLanguageLine(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
 	    	
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule3.AsString().Replace("maximum", "900m")));
+	    	
+	    	StoryGoalCustomEventHandler.main.sunbeamGoals[StoryGoalCustomEventHandler.main.sunbeamGoals.Length-1].trigger = SeaToSeaMod.sunbeamCountdownTrigger.key;
 	    }
 	    
 	    private static void moveToExploitable(string key) {
@@ -609,7 +611,57 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
+	    public static void onRepulsionCannonTryHit(RepulsionCannon prop, Rigidbody rb) {
+	    	if (isHeldToolAzuritePowered() && rb.gameObject.GetFullHierarchyPath().Contains("CaptainsQuarters_Keypad")) {
+	    		StarshipDoor s = rb.GetComponent<StarshipDoor>();
+	    		//SNUtil.writeToChat("S: "+s);
+	    		if (s) {
+	    			GameObject go = s.gameObject;
+		    		GameObject door = ObjectUtil.getChildObject(rb.gameObject, "Starship_doors_manual_01/Starship_doors_automatic");
+		    		Rigidbody rb2 = door.EnsureComponent<Rigidbody>();
+		    		rb2.copyObject(rb);
+	    			UnityEngine.Object.Destroy(s.GetComponent<StarshipDoorLocked>()); //need to do directly since removecomponent calls destroyImmediate, and this is an anim call
+	    			UnityEngine.Object.Destroy(s);
+	    			//SNUtil.writeToChat("C: "+string.Join(", ", go.GetComponents<MonoBehaviour>().Select<Component, string>(c => c.GetType().Name).ToArray()));
+		    		rb2.isKinematic = false;
+		    		rb2.mass = 500;
+		    		rb2.ResetCenterOfMass();
+		    		rb2.ResetInertiaTensor();
+		    		rb2.detectCollisions = true;
+		    		rb2.transform.SetParent(null);
+		    		foreach (Collider c in rb2.GetComponentsInChildren<Collider>()) {
+		    			c.enabled = false;
+		    		}
+		    		rb2.velocity = MainCamera.camera.transform.forward*30F+Vector3.up*7.5F;
+		    		rb2.angularVelocity = MathUtil.getRandomVectorAround(Vector3.zero, 2.5F);
+		    		door.EnsureComponent<FlyingDoor>().Invoke("solidify", 0.05F);
+		    		door.EnsureComponent<FlyingDoor>().Invoke("thump", 0.15F);
+	    		}
+	    	}
+	    }
+	    
+	    private class FlyingDoor : MonoBehaviour {
+	    	
+	    	private static readonly SoundManager.SoundData impactSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "doorhit", "Sounds/doorhit.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
+	    	
+	    	void solidify() {
+	    		foreach (Collider c in GetComponentsInChildren<Collider>()) {
+	    			c.enabled = true;
+	    		}	
+	    	}
+	    	
+	    	void thump() {
+	    		SoundManager.playSoundAt(impactSound, transform.position, false, 40, 2);
+	    		SoundManager.playSoundAt(impactSound, transform.position, false, 40, 2);
+	    	}
+	    	
+	    }
+	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
+	    	if (ch.obj.FindAncestor<Rigidbody>().name.StartsWith("ExplorableWreckRoom", StringComparison.InvariantCultureIgnoreCase)) {
+	    		ch.value = 1;
+	    		return;
+	    	}
 	    	Drillable d = ch.obj.FindAncestor<Drillable>();
 	    	if (d) {
 				SpecialDrillable s = ch.obj.FindAncestor<SpecialDrillable>();
@@ -1185,11 +1237,6 @@ namespace ReikaKalseki.SeaToSea {
 				lv.health = lv.data.maxHealth;
 	    		return;
 	    	}
-	    	else if (pi && pi.ClassId == "48a5564b-e632-4666-9e7c-f377fbc4fd23") { //cargo bay door
-	    		KeypadDoorConsole pad = pi.GetComponentInChildren<KeypadDoorConsole>();
-	    		pad.accessCode = getCargoBayDoorCode();
-	    		return;
-	    	}
 	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
 	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
@@ -1244,20 +1291,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (rb)
 	    			rb.mass = Mathf.Max(2400, rb.mass);
 	    	}
+	    	if (pi)
+	    		KeypadCodeSwappingSystem.instance.handleDoor(pi);
 	    }/*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
-	    
-	    public static string getCargoBayDoorCode() {
-	    	UnityEngine.Random.InitState(SNUtil.getWorldSeedInt());
-	    	UnityEngine.Random.Range(0, 1);
-	    	string ret = "";
-	    	while (ret.Length < 4)
-	    		ret += (char)UnityEngine.Random.Range('1', '9'+1);
-	    	return ret;
-	    }
 	    
 	    public static void tickFruitPlant(DIHooks.FruitPlantTag fpt) {
 	    	if (skipFruitPlantTick)
@@ -1747,7 +1787,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onSelfScan() {
-	    	if (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.LiquidBreathingSelfScan).key)) {
+	    	PDAMessages.Messages msg = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? PDAMessages.Messages.LiquidBreathingSelfScanHard : PDAMessages.Messages.LiquidBreathingSelfScanEasy;
+	    	if (PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(msg).key)) {
 	    		PDAManager.getPage("liqbrefficiency").unlock();
 	    	}
 	    }
@@ -1788,6 +1829,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		else if (e == HandTargetEventType.Click)
 	    			spt.OnHandClick(hand);
 	    	}
+	    }
+	    
+	    public static void onKeypadFailed(KeypadDoorConsole con) {
+	    	KeypadCodeSwappingSystem.instance.onCodeFailed(con);
 	    }
 	}
 }

@@ -49,8 +49,10 @@ namespace ReikaKalseki.SeaToSea {
 	    public void onEquip() {
 	    	InfectedMixin inf = Player.main.GetComponent<InfectedMixin>();
 	    	inf.SetInfectedAmount(Mathf.Max(inf.infectedAmount, 0.25F));
-	    	if (hasLiquidBreathing())
-	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.LiquidBreathingSelfScan).key);
+	    	if (hasLiquidBreathing()) {
+	    		PDAMessages.Messages msg = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? PDAMessages.Messages.LiquidBreathingSelfScanHard : PDAMessages.Messages.LiquidBreathingSelfScanEasy;
+	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key);
+	    	}
 	    }
 	    
 	    public void onUnequip() {
@@ -179,8 +181,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		return false;
 	    	}
 	    	amt = Mathf.Min(amt, b.charge);
-	    	if (hasReducedCapacity())
-	    		amt = Mathf.Min(amt, 75-getTankTank().oxygenAvailable);
+	    	//if (hasReducedCapacity()) does not work reliably
+	    	//	amt = Mathf.Min(amt, 75-getTankTank().oxygenAvailable);
 	    	if (amt > 0)
 	    		b.charge -= amt;
 	    	//SNUtil.writeToChat(amt+" > "+b.charge);
