@@ -575,6 +575,7 @@ namespace ReikaKalseki.SeaToSea {
 				return 0;
 			float num = 1;
 			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting && isPlayerInOcean()) {
+				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType;
 				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
 				if (!hasRebreather) {
@@ -600,7 +601,6 @@ namespace ReikaKalseki.SeaToSea {
 					else {
 						rate = depth > depthDamageStart ? 8F : 10F;
 					}
-					bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 					if (hard) {
 						rate *= 0.8F; //do NOT adjust the depth
 					}
@@ -617,6 +617,8 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+increaseStart+"&"+rate+">"+num.ToString("00.000"));
 				}
+				if (LiquidBreathingSystem.instance.hasReducedCapacity())
+					num *= hard ? 5 : 3;
 			}
 			return breathingInterval * num;
 	    }

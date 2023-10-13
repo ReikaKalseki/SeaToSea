@@ -111,6 +111,8 @@ namespace ReikaKalseki.SeaToSea
     
     internal static Story.StoryGoal auroraTerminal;
     
+    internal static Story.StoryGoal sunbeamCountdownTrigger;
+    
     /*
     public static SoundManager.SoundData voidspikeLeviRoar;
     public static SoundManager.SoundData voidspikeLeviBite;
@@ -274,6 +276,8 @@ namespace ReikaKalseki.SeaToSea
 		PDAMessages.addAll();
 		
 		auroraTerminal = SNUtil.addVOLine("auroraringterminal_c2c", Story.GoalType.PDA, miscLocale.getEntry("auroraringterminal").desc, SoundManager.getSound("event:/player/story/Aurora_RingRoom_Terminal2"));
+		
+		sunbeamCountdownTrigger = new Story.StoryGoal("c2cTriggerSunbeamCountdown", Story.GoalType.Story, 0);
 		
 		KnownTech.onAdd += onTechUnlocked;
        

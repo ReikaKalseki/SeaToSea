@@ -197,6 +197,28 @@
 		Sounds/pdaprompt/liq-br-selfscan.ogg
 	</pda>
   </liqbrselfscan>
+  <liqbrselfscaneasy>
+	<name>
+		
+	</name>
+	<desc>
+		Oxygen efficiency at 30%. A self scan is strongly advised.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/liq-br-selfscan-easy.ogg
+	</pda>
+  </liqbrselfscaneasy>
+  <liqbrselfscanhard>
+	<name>
+		
+	</name>
+	<desc>
+		Oxygen efficiency at 20%. A self scan is strongly advised.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/liq-br-selfscan-hard.ogg
+	</pda>
+  </liqbrselfscanhard>
   <bulkheadLaserCutterUpgrade>
 	<name>
 		Laser Cutter Temperature Upgrade

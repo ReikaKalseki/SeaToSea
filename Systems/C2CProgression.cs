@@ -67,12 +67,15 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 			
 			StoryHandler.instance.registerTrigger(new EncylopediaTrigger("HeroPeeper"), new TechUnlockEffect(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 6));
+			
+			StoryHandler.instance.registerTrigger(new ProgressionTrigger(canSunbeamCountdownBegin), new DelayedStoryEffect(SeaToSeaMod.sunbeamCountdownTrigger, 0.001F, 90));
 		
 			gatedTechnologies.Add(TechType.Kyanite);
 			gatedTechnologies.Add(TechType.Sulphur);
 			gatedTechnologies.Add(TechType.Nickel);
 			gatedTechnologies.Add(TechType.JellyPlant);
 			gatedTechnologies.Add(TechType.BloodOil);
+			gatedTechnologies.Add(TechType.AramidFibers);
 			gatedTechnologies.Add(TechType.WhiteMushroom);
 			gatedTechnologies.Add(TechType.SeaCrown);
 			gatedTechnologies.Add(TechType.Aerogel);
@@ -107,6 +110,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			//requiredProgression.Add();
 		}
+    	
+    	private bool canSunbeamCountdownBegin(Player ep) {
+    		return StoryGoalManager.main.completedGoals.Contains("OnPlayRadioSunbeam3") && ep.GetVehicle() is SeaMoth;
+    	}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
 	    	bool late = KnownTech.knownTech.Contains(TechType.StasisRifle) || KnownTech.knownTech.Contains(TechType.BaseMoonpool) || KnownTech.knownTech.Contains(TechType.HighCapacityTank);

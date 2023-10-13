@@ -125,7 +125,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.MOUNTAINPOD, new TrackerPageAnyFindingsTrigger(TrackerPages.MOUNTAINPOD));
 	    	p.addFinding("podpda", Finding.fromEncy("mountainpodearly")).addFinding("podpda2", Finding.fromEncy("mountainpodlate")).addFinding("mask", Finding.fromUnlock(C2CItems.rebreatherV2.TechType)).addFinding("stealth", Finding.fromUnlock(C2CItems.voidStealth.TechType)).addFinding("knife", Finding.fromUnlock(TechType.HeatBlade)).addFinding("battery", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.batteryBlock.TechType)).addFinding("basepda", Finding.fromEncy("mountaincave"));
 	    	
-	    	p = addPage(TrackerPages.TREADERPOD, new StoryTrigger(SeaToSeaMod.treaderSignal.storyGate));
+	    	p = addPage(TrackerPages.TREADERPOD, new StoryTrigger("OnPlay"+SeaToSeaMod.treaderSignal.storyGate));
 	    	p.addFinding("treader", Finding.fromScan(TechType.SeaTreader)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("pda", Finding.fromEncy("treaderpod")).addFinding("enzy", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType)).addFinding("basepda", Finding.fromEncy("treadercave")).addFinding("databox", Finding.fromUnlock(TechType.VehicleHullModule2));
 	    	
 	    	p = addPage(TrackerPages.GLASSFOREST, new ProgressionTrigger(ep => UnderwaterIslandsFloorBiome.instance.isInBiome(ep.transform.position) && ep.transform.position.y < -425));
@@ -266,6 +266,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private readonly XMLLocale.LocaleEntry locale;
 		
+		private bool hasUpdated = false;
+		
 		internal TrackerPage(XMLLocale.LocaleEntry e) {
 			locale = e;
 			encyPage = PDAManager.createPage("ency_findings_"+e.key, e.name, "", "Findings");
@@ -278,7 +280,8 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal void updateText() {
-			encyPage.update(generatePDAContent(), true);
+			encyPage.update(generatePDAContent(), true, hasUpdated);
+			hasUpdated = true;
 		}
 		
 		internal int countCompleteFindings(bool requireOptional) {
@@ -299,7 +302,7 @@ namespace ReikaKalseki.SeaToSea
 			bool incomplete = false;
 			bool any = false;
 			foreach (Finding f in findings.Values) {
-				if (SeaToSeaMod.trackerShowAllCheatActive || f.trigger.isTriggered.Invoke()) {
+				if (SeaToSeaMod.trackerShowAllCheatActive || (GameModeUtils.currentGameMode != GameModeOption.Creative && f.trigger.isTriggered.Invoke())) {
 					desc += "\t •  "+f.desc+"\n\n";
 					any = true;
 				}
