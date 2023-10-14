@@ -109,6 +109,7 @@ namespace ReikaKalseki.SeaToSea {
 			//RecipeUtil.addIngredient(item.TechType, rightArrow.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, r.outputItem, r.outputCount);
 			delegates[r.inputItem.getBaseType()] = item;
+			r.outputDelegate = item;
 			return item.TechType;
 		}
 		
@@ -118,6 +119,15 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static TechType getRecipeReferenceItem(TechType input) {
 			return delegates[input].TechType;
+		}
+		
+		public static BioRecipe getByOutput(TechType output) {
+			foreach (BioRecipe r in recipes.Values) {
+				if (r.outputItem == output || (r.outputDelegate != null && r.outputDelegate.TechType == output)) {
+					return r;
+				}
+			}
+			return null;
 		}
 		
 		public Bioprocessor(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc, "6d71afaa-09b6-44d3-ba2d-66644ffe6a99") {
@@ -413,8 +423,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private bool canRunRecipe(StorageContainer sc, BioRecipe r) {
-			//if (!KnownTech.knownTech.Contains(r.inputItem) || !KnownTech.knownTech.Contains(r.outputItem))
-			//	return false;
+			if (!KnownTech.knownTech.Contains(r.outputItem))
+				return false;
 			IEnumerable<InventoryItem> ing = r.inputItem.getMatchingItems(sc);
 			IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 			return ing != null && enzy != null && enzy.Count >= r.enzyCount && ing.Count() >= r.inputCount;
@@ -523,6 +533,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public readonly float secondsPerEnzyme;
 		public readonly float powerPerSecond;
+		
+		internal DuplicateRecipeDelegate outputDelegate;
 		
 		internal int inputCount = 1;
 		internal int outputCount = 1;
