@@ -379,6 +379,14 @@ namespace ReikaKalseki.SeaToSea
 			}), SNUtil.createPopupButton("Ignore")*/);
     		SNUtil.log(msg+" You should add this mod if at all possible.");
     	}
+    	if (!QModManager.API.QModServices.Main.ModPresent("AgonyRadialCraftingTabs")) {
+    		string msg = "RadialTabs is recommended when using SeaToSea to ensure that all crafting nodes in fabricator UIs remain onscreen.";
+    		SNUtil.createPopupWarning(msg, true/*, SNUtil.createPopupButton("Download", () => {
+				System.Diagnostics.Process.Start("https://www.nexusmods.com/Core/Libs/Common/Widgets/ModRequirementsPopUp?id=2624&game_id=1155");
+				Application.Quit(64);
+			}), SNUtil.createPopupButton("Ignore")*/);
+    		SNUtil.log(msg+" You should add this mod if at all possible.");
+    	}
     }
     
     private static void dumpAbandonedBaseTextures() {

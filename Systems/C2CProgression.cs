@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 			
-			StoryHandler.instance.registerTrigger(new EncylopediaTrigger("HeroPeeper"), new TechUnlockEffect(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 6));
+			StoryHandler.instance.registerTrigger(new ProgressionTrigger(canUnlockEnzy42Recipe), new TechUnlockEffect(Bioprocessor.getByOutput(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType).outputDelegate.TechType, 1, 6));
 			
 			StoryHandler.instance.registerTrigger(new ProgressionTrigger(canSunbeamCountdownBegin), new DelayedStoryEffect(SeaToSeaMod.sunbeamCountdownTrigger, 0.001F, 90));
 		
@@ -113,6 +113,10 @@ namespace ReikaKalseki.SeaToSea
     	
     	private bool canSunbeamCountdownBegin(Player ep) {
     		return StoryGoalManager.main.completedGoals.Contains("OnPlayRadioSunbeam3") && ep.GetVehicle() is SeaMoth;
+    	}
+    	
+    	private bool canUnlockEnzy42Recipe(Player ep) {
+    		return PDAEncyclopedia.entries.ContainsKey("HeroPeeper") && KnownTech.knownTech.Contains(SeaToSeaMod.processor.TechType);
     	}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
