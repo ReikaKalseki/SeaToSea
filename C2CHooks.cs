@@ -634,8 +634,9 @@ namespace ReikaKalseki.SeaToSea {
 		    		}
 		    		rb2.velocity = MainCamera.camera.transform.forward*30F+Vector3.up*7.5F;
 		    		rb2.angularVelocity = MathUtil.getRandomVectorAround(Vector3.zero, 2.5F);
-		    		door.EnsureComponent<FlyingDoor>().Invoke("solidify", 0.05F);
-		    		door.EnsureComponent<FlyingDoor>().Invoke("thump", 0.15F);
+		    		FlyingDoor fd = door.EnsureComponent<FlyingDoor>();
+		    		fd.Invoke("solidify", 0.05F);
+		    		fd.Invoke("thump", 0.15F);
 	    		}
 	    	}
 	    }
@@ -1147,7 +1148,10 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
-	    	}
+	    	}/*
+			else if (pi && pi.ClassId == "SeaVoyager") {
+	    		go.EnsureComponent<C2CVoyager>();
+	    	}*/
 			else if (pi && pi.ClassId == "172d9440-2670-45a3-93c7-104fee6da6bc") {
 	    		if (Vector3.Distance(go.transform.position, lostRiverCachePanel) < 2) {
 	    			Renderer r = ObjectUtil.getChildObject(go, "Precursor_Lab_infoframe/Precursor_Lab_infoframe_glass").GetComponent<Renderer>();
