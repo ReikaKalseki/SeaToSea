@@ -107,6 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 		   	lrLeakage["LostRiver_GhostTree"] = 1;
 		   	lrLeakage["LostRiver_GhostTree_Skeleton"] = 1;
 		   	lrLeakage["LostRiver_Canyon"] = 1.75F;
+		   	lrLeakage["LostRiver_SkeletonCave"] = 1.75F; //around the six eye skull
 		    lrLeakage["Precursor_LostRiverBase"] = 1;
 		   			   	
 		   	lrPoisonDamage["LostRiver_BonesField_Corridor"] = 8;
@@ -114,6 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 		    lrPoisonDamage["LostRiver_GhostTree_Skeleton"] = 8;
 		    lrPoisonDamage["LostRiver_Corridor"] = 8;
 		    lrPoisonDamage["LostRiver_Canyon"] = 10;
+		   	lrPoisonDamage["LostRiver_SkeletonCave"] = 10; //around the six eye skull
 		    lrPoisonDamage["LostRiver_BonesField"] = 15;
 		    lrPoisonDamage["LostRiver_BonesField_Skeleton"] = 15;
 		    lrPoisonDamage["LostRiver_Junction"] = 15;
@@ -152,7 +154,7 @@ namespace ReikaKalseki.SeaToSea {
     	public bool isPlayerInOcean() {
     		Player ep = Player.main;
     		bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
-    		return inWater && !ep.currentWaterPark && !isInPrecursor(ep.gameObject);
+    		return inWater && !ep.currentWaterPark && !(isInPrecursor(ep.gameObject) && ep.transform.position.y < -1300);
     	}
     	
     	public bool isInPrecursor(GameObject go) {

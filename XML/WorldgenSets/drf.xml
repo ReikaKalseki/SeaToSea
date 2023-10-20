@@ -24,6 +24,31 @@
     </scale>
   </customprefab>
   <customprefab>
+    <prefab>172d9440-2670-45a3-93c7-104fee6da6bc</prefab>
+    <position>
+      <x>-242.45198059082</x>
+      <y>-804.644287109375</y>
+      <z>272.141265869141</z>
+    </position>
+    <rotation>
+      <x>347.076629638672</x>
+      <y>338.007202148438</y>
+      <z>14.3316631317139</z>
+      <quaternion>
+        <x>-0.133252665400505</x>
+        <y>-0.174274653196335</y>
+        <z>0.100374490022659</z>
+        <w>0.970462262630463</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>1</x>
+      <y>1</y>
+      <z>1</z>
+    </scale>
+    <xmlID>f71abb15-1e82-49d1-a2ad-544402936e8e</xmlID>
+  </customprefab>
+  <customprefab>
     <prefab>brokentablet_white</prefab>
     <position>
       <x>-301.222778320313</x>

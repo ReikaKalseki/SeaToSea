@@ -82,31 +82,34 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private bool isFrozen;
 		
+		private static readonly Vector3 deleteArea = new Vector3(-1264, -282, -724);
+		
 		void Start() {
 			isGrown = gameObject.GetComponent<GrownPlant>() != null;
 			currentScale = 1;
 			rootScale = UnityEngine.Random.Range(2, 2.5F);
     		if (isGrown) {
     			gameObject.SetActive(true);
-    			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
+    			transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
     		}
-			else if (gameObject.transform.position.y > -10) {
+			else if (transform.position.y > -10 || Vector3.Distance(transform.position, deleteArea) <= 20) {
     			UnityEngine.Object.Destroy(gameObject);
 			}
     		else {
-    			gameObject.transform.localScale = Vector3.one*rootScale;
+    			transform.localScale = Vector3.one*rootScale;
     		}
 		}
 		
-		public void OnFreeze(float time) {
-			if (time <= 2)
-				return;
+		public void OnFreeze(/*float time*/) {
+			//if (time <= 2)
+			//	return;
 			isFrozen = true;
-			Invoke("OnUnfreeze", time-2);
+			//Invoke("OnUnfreeze", time-2);
 		}
 		
 		public void OnUnfreeze() {
 			isFrozen = false;
+			timeVisible = 1;
 		}
 		
 		void Update() {

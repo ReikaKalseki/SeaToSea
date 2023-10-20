@@ -5433,20 +5433,14 @@
           <piece>RoomLadderTop</piece>
           <prefab>basePart</prefab>
           <position>
-            <x>-1287.21398925781</x>
-            <y>-664.10107421875</y>
-            <z>-418.778228759766</z>
+            <x>-1287.21</x>
+            <y>-661.5</y>
+            <z>-418.98</z>
           </position>
           <rotation>
-            <x>0</x>
-            <y>199.71418762207</y>
+            <x>270</x>
+            <y>109.7</y>
             <z>0</z>
-            <quaternion>
-              <x>0</x>
-              <y>0.985237836837769</y>
-              <z>0</z>
-              <w>-0.171191304922104</w>
-            </quaternion>
           </rotation>
           <scale>
             <x>1</x>
