@@ -3,6 +3,7 @@ using System.IO;    //For data read/write methods
 using System;    //For data read/write methods
 using System.Collections.Generic;   //Working with Lists and Collections
 using System.Reflection;
+using System.Xml;
 using System.Linq;   //More advanced manipulation of lists/collections
 using HarmonyLib;
 using QModManager.API.ModLoading;
@@ -87,6 +88,8 @@ namespace ReikaKalseki.SeaToSea
     internal static CrashZoneSanctuaryFern crashSanctuaryFern;
     //internal static CrashZoneSanctuaryGrassBump sanctuaryGrassBump;
     //internal static CrashZoneSanctuaryCoralSheet sanctuaryCoral;
+    
+    internal static LRNestGrass lrNestGrass;
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
@@ -229,6 +232,9 @@ namespace ReikaKalseki.SeaToSea
 	    //sanctuaryCoral = new CrashZoneSanctuaryCoralSheet();
 	    //sanctuaryCoral.Patch();
 	    
+	    lrNestGrass = new LRNestGrass();
+	    lrNestGrass.Patch();
+	    
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
         
@@ -330,6 +336,11 @@ namespace ReikaKalseki.SeaToSea
 		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
         DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
+        
+    	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
+    		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
+    		LootDistributionHandler.EditLootDistributionData(CustomEgg.getEgg(TechType.SpineEel).ClassID, bb, 0, 1);
+    	}
         
         POITeleportSystem.instance.populate();
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
@@ -553,10 +564,6 @@ namespace ReikaKalseki.SeaToSea
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP3.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.SCRAP4.prefab, BiomeType.GrandReef_TreaderPath, 0.1F, 1);
     	
-    	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
-    		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
-    	}
-    	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_DIAMOND.prefab, BiomeType.Mountains_IslandCaveFloor, 0.33F, 1);
     }
     
@@ -644,6 +651,55 @@ namespace ReikaKalseki.SeaToSea
    		return false;
    	return true;
    }
+	   
+	   public static void generateLRNestPlants() {
+		   	Vector3 p1 = new Vector3(-786, -762.6F, -321);
+		   	Vector3 p2 = new Vector3(-801, -764.9F, -280);
+		   	
+		   	List<GameObject> plants = new List<GameObject>();
+		   	
+		   	for (float f = 0; f <= 1; f += 0.05F) {
+		   		Vector3 vec = Vector3.Lerp(p1, p2, f);
+		   		for (int i = 0; i < 9; i++) {
+					Vector3 rot = UnityEngine.Random.rotationUniform.eulerAngles.normalized;
+					Ray ray = new Ray(vec, rot);
+					if (UWE.Utils.RaycastIntoSharedBuffer(ray, 6, Voxeland.GetTerrainLayerMask(), QueryTriggerInteraction.Ignore) > 0) {
+						RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
+						if (hit.transform != null) {
+							bool flag = true;
+							foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(hit.point, 0.2F)) {
+								if (pi.ClassId == lrNestGrass.ClassID) {
+									flag = false;
+									break;
+								}
+							}
+							if (!flag)
+								continue;
+							GameObject go = ObjectUtil.createWorldObject(lrNestGrass.ClassID);
+							go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
+							go.transform.position = hit.point;
+							plants.Add(go);
+						}
+					}
+		   		}
+		   	}
+	   	
+			string path = BuildingHandler.instance.getDumpFile("lr_nest");
+			XmlDocument doc = new XmlDocument();
+			XmlElement rootnode = doc.CreateElement("Root");
+			doc.AppendChild(rootnode);
+			
+			CustomEgg egg = CustomEgg.getEgg(TechType.SpineEel);
+			
+			foreach (GameObject go in plants) {
+				PositionedPrefab pfb = new PositionedPrefab(go.GetComponent<PrefabIdentifier>());
+				XmlElement e = doc.CreateElement("customprefab");
+				pfb.saveToXML(e);
+				doc.DocumentElement.AppendChild(e);
+			}
+			
+			doc.Save(path);
+	   }
 
   }
 }

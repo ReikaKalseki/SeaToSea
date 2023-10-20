@@ -23,6 +23,8 @@ namespace ReikaKalseki.SeaToSea
 			private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 			private static readonly SoundManager.SoundData boostSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothboost", "Sounds/seamothboost.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 			//private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+			
+			private static readonly Vector3 sweepArchCave = new Vector3(1570, -338, 1075);
 		
 			internal static bool useSeamothVehicleTemperature = true;
 			
@@ -206,7 +208,7 @@ namespace ReikaKalseki.SeaToSea
 				
 				if (VanillaBiomes.KOOSH.isInBiome(transform.position)) {
 					string biome = WaterBiomeManager.main.GetBiome(transform.position, false);
-					if (biome != null && biome.ToLowerInvariant().Contains("cave")) {
+					if (biome != null && biome.ToLowerInvariant().Contains("cave") && Vector3.Distance(transform.position, sweepArchCave) >= 40) {
 						kooshCave = true;
 						Vector3 vel = body.velocity;
 						Vector3 vec = Vector3.zero;

@@ -281,7 +281,7 @@
 			A destroyed precursor facility with many long-dead biological specimens, and extensive information on multiple organisms found on 4546B
 		</drf>
 		<cache>
-			A small biological research outpost tucked into a cave wall, by a large skeleton of a now-extinct creature
+			A small biological research outpost tucked into a cave wall, by a large skeleton of a now-extinct creature; contained a genetic terminal where the upload of human data provided basic insights into Kharaa treatment
 		</cache>
 		<skull>
 			An extremely large skull and upper ribcage of an ancient creature dwarfing anything encountered on the planet
@@ -655,6 +655,9 @@
 		<databox>
 			A databox containing the complex chemical formula for an oxygen-bearing fluid, suitable for liquid-based respiration
 		</databox>
+		<speed>
+			A databox for a module to give the seamoth a speed boost, shoved in an air vent by the force of the crash
+		</speed>
 		<bioproc>
 			Fragments of a bioprocessor machine
 		</bioproc>

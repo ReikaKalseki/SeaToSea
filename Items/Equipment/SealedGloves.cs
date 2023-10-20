@@ -26,6 +26,18 @@ namespace ReikaKalseki.SeaToSea
 				return CraftTree.Type.None;
 			}
 		}
+
+		public override TechGroup GroupForPDA {
+			get {
+				return TechGroup.Miscellaneous;
+			}
+		}
+
+		public override TechCategory CategoryForPDA {
+			get {
+				return TechCategory.Misc;
+			}
+		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			
