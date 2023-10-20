@@ -156,6 +156,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.droppabilityEvent += modifyDroppability;	    	
 	    	DIHooks.moduleFireCostEvent += (ch) => ch.value = getModuleFireCost(ch);
 	    	
+	    	DIHooks.onStasisRifleFreezeEvent += (ch) => ch.applyKinematicChange = !onStasisFreeze(ch.sphere, ch.body);
+	    	DIHooks.onStasisRifleUnfreezeEvent += (ch) => ch.applyKinematicChange = !onStasisUnFreeze(ch.sphere, ch.body);
+	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	DIHooks.selfScanEvent += onSelfScan;
@@ -501,6 +504,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	//SNUtil.writeToChat("Get swim speed, was "+f+", has="+LiquidBreathingSystem.instance.hasLiquidBreathing());
 	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing())
 	    		f -= 0.1F; //was 0.25
+	    	if (WorldUtil.isInDRF(Player.main.transform.position))
+	    		f *= 0.5F;
 	    	return f;
 	    }
 	    
@@ -516,6 +521,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			f += bonus*depthFactor;
 	    		}
 	    	}
+	    	if (WorldUtil.isInDRF(Player.main.transform.position))
+	    		f *= 0.5F;
 	    	return f;
 	    }
 	    
@@ -659,7 +666,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void modifyPropulsibility(DIHooks.PropulsibilityCheck ch) {
-	    	if (ch.obj.FindAncestor<Rigidbody>().name.StartsWith("ExplorableWreckRoom", StringComparison.InvariantCultureIgnoreCase)) {
+	    	if (ch.obj.FindAncestor<Rigidbody>().name.StartsWith("ExplorableWreck", StringComparison.InvariantCultureIgnoreCase)) {
 	    		ch.value = 1;
 	    		return;
 	    	}
@@ -1742,16 +1749,24 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static void onStasisFreeze(StasisSphere s, Collider c) {
-	    	PrefabIdentifier pi = c.gameObject.FindAncestor<PrefabIdentifier>();
-	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID)
-	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnFreeze(s.time);
+	    public static bool onStasisFreeze(StasisSphere s, Rigidbody c) {
+	    	PrefabIdentifier pi = c.GetComponent<PrefabIdentifier>();
+	    	//SNUtil.writeToChat("Froze "+pi??pi.ClassId);
+	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID) {
+	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnFreeze(/*s.time*/);
+	    		return true;
+	    	}
+	    	return false;
 	    }
 	    
-	    public static void onStasisUnFreeze(StasisSphere s, Collider c) {/*
-	    	PrefabIdentifier pi = c.gameObject.FindAncestor<PrefabIdentifier>(true);
-	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID)
-	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnUnfreeze();*/
+	    public static bool onStasisUnFreeze(StasisSphere s, Rigidbody c) {
+	    	PrefabIdentifier pi = c.GetComponent<PrefabIdentifier>();
+	    	//SNUtil.writeToChat("Unfroze "+pi??pi.ClassId);
+	    	if (pi && pi.ClassId == C2CItems.alkali.ClassID) {
+	    		pi.GetComponentInChildren<AlkaliPlantTag>().OnUnfreeze();
+	    		return true;
+	    	}
+	    	return false;
 	    }
 	    
 	    public static float get3AxisSpeed(float orig, Vehicle v, Vector3 input) {

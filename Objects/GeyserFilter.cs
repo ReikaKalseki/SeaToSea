@@ -138,7 +138,7 @@ namespace ReikaKalseki.SeaToSea {
 				mainRenderers = GetComponentsInChildren<Renderer>();
 			if (!lineRenderer)
 				lineRenderer = GetComponent<PowerFX>();
-			if (!geyser && seconds > 0)
+			if (!geyser && DIHooks.getWorldAge() > 1 && seconds > 0)
 				geyser = WorldUtil.getClosest<Geyser>(transform.position);
 			if (geyser && (geyser.transform.position.y > transform.position.y || Vector3.Distance(geyser.transform.position, transform.position) >= 30))
 				geyser = null;
