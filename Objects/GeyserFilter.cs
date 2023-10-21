@@ -112,6 +112,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float collectionTime;
 		
+		private float lastGeyserCheckTime = -1;
+		
 		void Start() {
 			SNUtil.log("Reinitializing geyser filter");
 			SeaToSeaMod.geyserFilter.initializeMachine(gameObject);
@@ -138,8 +140,15 @@ namespace ReikaKalseki.SeaToSea {
 				mainRenderers = GetComponentsInChildren<Renderer>();
 			if (!lineRenderer)
 				lineRenderer = GetComponent<PowerFX>();
-			if (!geyser && DIHooks.getWorldAge() > 1 && seconds > 0)
+			if (seconds <= 0)
+				return;
+			if ((Player.main.transform.position-transform.position).sqrMagnitude >= 90000)
+				return;
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (!geyser && DIHooks.getWorldAge() > 1 && seconds > 0 && time-lastGeyserCheckTime >= 0.5F) {
 				geyser = WorldUtil.getClosest<Geyser>(transform.position);
+				lastGeyserCheckTime = time;
+			}
 			if (geyser && (geyser.transform.position.y > transform.position.y || Vector3.Distance(geyser.transform.position, transform.position) >= 30))
 				geyser = null;
 			lineRenderer.target = geyser ? geyser.gameObject : null;
@@ -151,8 +160,6 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			}
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
-			if (seconds <= 0)
-				return;
 			sc.hoverText = "Collect filtrate";
 			
 			setPowered(seconds);

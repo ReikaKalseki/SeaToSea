@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea {
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.GEYSER_RESOURCE_RATE, 0.5F);
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
+    	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.ATPTAPRATE, f => hard ? 10 : 15);
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RESSCAN, true);
@@ -98,6 +99,10 @@ namespace ReikaKalseki.SeaToSea {
 			map[TechType.ExosuitGrapplingArmFragment] = hard ? 12 : 6;
 			map[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
 			map[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
+			
+			TechType seaVoyager = TechType.None;
+			if (TechTypeHandler.TryGetModdedTechType("SeaVoyager", out seaVoyager))
+				map[seaVoyager] = hard ? 18 : 12;
 		};
 		
 		AuroresourceMod.detectorUnlock = TechType.None;
