@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class SanctuaryPlant : BasicCustomPlant {
+	public class SanctuaryPlant : BasicCustomPlant, CustomHarvestBehavior {
 		
 		public static readonly Color BASE_COLOR = new Color(26/255F, 231/255F, 220/255F, 1);
 		
@@ -31,6 +31,14 @@ namespace ReikaKalseki.SeaToSea {
 		
 		protected override bool generateSeed() {
 			return true;
+		}
+		
+		public bool canBeAutoharvested() {
+			return false;
+		}
+		
+		public GameObject tryHarvest(GameObject go) {
+			return go.GetComponent<SanctuaryPlantTag>().tryHarvest() ? ObjectUtil.createWorldObject(seed.TechType) : null;
 		}
 		
 		public override Vector2int SizeInInventory {
