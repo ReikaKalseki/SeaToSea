@@ -199,6 +199,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void OnScanned() {
 			scanned = true;
+    		SNUtil.addBlueprintNotification(SeaToSeaMod.geyserFilter.TechType);
 		}
 		
 	}

@@ -180,6 +180,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void OnScanned() {
 			scanned = true;
+			SNUtil.addBlueprintNotification(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType);
 		}
 		
 	}
