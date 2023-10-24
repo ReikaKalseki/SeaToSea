@@ -1266,6 +1266,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
 	    		//ObjectUtil.removeComponent<ImmuneToPropulsioncannon>(go);
+	    		go.EnsureComponent<PrawnLightController>();
 	    	}
         	else if (pi && pi.classId == "8b113c46-c273-4112-b7ef-65c50d2591ed") { //rocket
 	    		go.EnsureComponent<C2CRocket>();
@@ -1339,6 +1340,33 @@ namespace ReikaKalseki.SeaToSea {
 	    			Player.main.liveMixin.TakeDamage(5, Player.main.transform.position, DamageType.Heat, gameObject);
 	    		}
 			}
+	    	
+	    }
+	    
+	    class PrawnLightController : MonoBehaviour {
+			
+			private GameObject leftBonusLight;
+			private GameObject rightBonusLight;
+			
+			private Exosuit prawn;
+	    	
+	    	private void Update() {
+				if (!leftBonusLight) {
+					leftBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_left"), true);
+				}
+				if (!rightBonusLight) {
+					rightBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_right"), true);
+				}
+				
+				if (!prawn)
+					prawn = GetComponent<Exosuit>();
+				
+				bool flag = InventoryUtil.vehicleHasUpgrade(prawn, C2CItems.lightModule.TechType);
+				rightBonusLight.SetActive(flag);
+				leftBonusLight.SetActive(flag);
+				if (flag)
+					prawn.ConsumeEnergy(Time.deltaTime*0.33F);
+	    	}
 	    	
 	    }
 	    

@@ -1,6 +1,32 @@
 <Root>
   <customprefab>
     <prefab>databox</prefab>
+	<tech>VehicleLightBonus</tech>
+    <position>
+      <x>1304.44592285156</x>
+      <y>-222.629928588867</y>
+      <z>562.240844726563</z>
+    </position>
+    <rotation>
+      <x>356.400054931641</x>
+      <y>2.67331785153146E-07</y>
+      <z>330.999938964844</z>
+      <quaternion>
+        <x>-0.0304097104817629</x>
+        <y>-0.00786450412124395</y>
+        <z>-0.250257074832916</z>
+        <w>0.967669785022736</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>0.75</x>
+      <y>0.75</y>
+      <z>0.75</z>
+    </scale>
+    <xmlID>e299c793-ac82-46c7-a1fa-1fbdfbc72e0a</xmlID>
+  </customprefab>
+  <customprefab>
+    <prefab>databox</prefab>
 	<tech>ScannerRoomMeteorPlanner</tech>
     <position>
       <x>-654.698120117188</x>

@@ -644,6 +644,19 @@
 			
 		</pda>
 	</SeaMothSpeed>
+	<VehicleLightBonus>
+		<name>
+			Enhanced Vehicle Headlights Module
+		</name>
+		<desc>
+			Greatly increases the intensity, range, and illumination angle of vehicle headlights, at the cost of a small increase in power consumption.
+			
+			Seamoth and P.R.A.W.N. compatible.
+		</desc>
+		<pda>
+			
+		</pda>
+	</VehicleLightBonus>
 	<SeamothHeatSinkModule>
 		<name>
 			Seamoth Heat Sink Module
@@ -772,17 +785,6 @@
 			Despite being ostensibly linked to a geyser, this device has no integrated thermoelectric conversion units, and so still requires a powered base nearby to draw power from.
 		</pda>
 	</geyserfilter>
-	<enum>
-		<name>
-			
-		</name>
-		<desc>
-			
-		</desc>
-		<pda>
-			
-		</pda>
-	</enum>
 	<enum>
 		<name>
 			

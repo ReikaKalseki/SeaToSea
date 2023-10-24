@@ -28,6 +28,7 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothPowerSealModule powerSeal;
     internal static SeamothHeatSinkModule heatSinkModule;
     internal static SeamothSpeedModule speedModule;
+    internal static VehicleLightModule lightModule;
     internal static SealedSuit sealSuit;
     internal static SealedGloves sealGloves;
     internal static AzuriteBattery t2Battery;
@@ -90,6 +91,7 @@ namespace ReikaKalseki.SeaToSea
         powerSeal = new SeamothPowerSealModule();
         heatSinkModule = new SeamothHeatSinkModule();
         speedModule = new SeamothSpeedModule();
+        lightModule = new VehicleLightModule();
         cyclopsHeat = new CyclopsHeatModule();        
 		sealSuit = new SealedSuit();   
 		sealGloves = new SealedGloves();				
@@ -124,6 +126,9 @@ namespace ReikaKalseki.SeaToSea
         
         speedModule.preventNaturalUnlock();
         speedModule.Patch();
+        
+        lightModule.preventNaturalUnlock();
+        lightModule.Patch();
         
         cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
