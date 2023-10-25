@@ -134,6 +134,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	DIHooks.constructabilityEvent += applyGeyserFilterBuildability;
 	    	
+	    	DIHooks.getSwimSpeedEvent += getSwimSpeed;
+	    	
 	    	//DIHooks.fogCalculateEvent += interceptChosenFog;
 	    	
 	    	DIHooks.radiationCheckEvent += (ch) => {if (!skipRadiationLevel) ch.value = getRadiationLevel(ch);};
@@ -504,15 +506,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public static float getSwimSpeed(float f) {
+	    public static void getSwimSpeed(DIHooks.SwimSpeedCalculation ch) {
 	    	if (Player.main.motorMode != Player.MotorMode.Dive)
-	    		return f;
+	    		return;
 	    	//SNUtil.writeToChat("Get swim speed, was "+f+", has="+LiquidBreathingSystem.instance.hasLiquidBreathing());
 	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing())
-	    		f -= 0.1F; //was 0.25
+	    		ch.setValue(ch.getValue()-0.1F); //was 0.25
 	    	if (WorldUtil.isInDRF(Player.main.transform.position))
-	    		f *= 0.5F;
-	    	return f;
+	    		ch.setValue(ch.getValue()*0.5F);
 	    }
 	    
 	    public static float getSeaglideSpeed(float f) { //1.45 by default
@@ -1357,18 +1358,18 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
-	    	sm.GetComponent<BrightLightController>().recalculateModule();
+	    	sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 	    	if (added && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
 	    		sm.torpedoSilos[slotID].SetActive(true);
 	    	}
 	    }
 	    
 	    public static void updateCyclopsModules(SubRoot sm) {
-	    	sm.GetComponent<BrightLightController>().recalculateModule();
+	    	sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 	    }
 	    
 	    public static void updatePrawnModules(Exosuit sm, int slotID, TechType tt, bool added) {
-	    	sm.GetComponent<BrightLightController>().recalculateModule();
+	    	sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 	    }
 	    
 	    public static void useSeamothModule(SeaMoth sm, TechType tt, int slotID) {

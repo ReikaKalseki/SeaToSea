@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea
 	internal class BrightLightController : MonoBehaviour {
 		
 		private MonoBehaviour vehicle;
-		
+		private Ecocean.ECHooks.ECMoth ecoceanComponent;
 		private CyclopsLightingPanel cyclopsControl;
 			
 		private List<Light> bonusLights = new List<Light>();
@@ -32,6 +32,8 @@ namespace ReikaKalseki.SeaToSea
 		private float lightIntensity;
 		private float lightIntensityBrights;
 		private float lightAngle;
+		
+		private float ecLightIntensity = 1;
 		
 		internal BrightLightController setPowerValues(float baseline, float bright) {
 			energyConsumptionBaseline = baseline;
@@ -87,6 +89,10 @@ namespace ReikaKalseki.SeaToSea
 							bonusLights.Add(l);
 					}
 				}
+				if (!cyclops && !ecoceanComponent) {
+					ecoceanComponent = GetComponent<Ecocean.ECHooks.ECMoth>();
+					ecoceanComponent.getLightIntensity = () => ecLightIntensity;
+				}
 			}
 			else {
 				return;
@@ -100,6 +106,8 @@ namespace ReikaKalseki.SeaToSea
 				l.range = flag2 ? lightRangeBrights : lightRange;
 			}
 			
+			ecLightIntensity = flag1 ? (flag2 ? 4 : 2.5F) : 1;
+			
 			if (flag1) {
 				float amt = Time.deltaTime*(flag2 ? energyConsumptionBrights : energyConsumptionBaseline);
 				if (cyclops) {
@@ -109,10 +117,14 @@ namespace ReikaKalseki.SeaToSea
 				else {
 					((Vehicle)vehicle).ConsumeEnergy(amt);
 				}
-			}	
+			}
 		}
 		
 		public void recalculateModule() {
+			if (!vehicle) {
+				Invoke("recalculateModule", 0.5F);
+				return;
+			}
 			hasModule = vehicle is SubRoot ? InventoryUtil.cyclopsHasUpgrade((SubRoot)vehicle, C2CItems.lightModule.TechType) : InventoryUtil.vehicleHasUpgrade((Vehicle)vehicle, C2CItems.lightModule.TechType);
 		}
 		
