@@ -62,9 +62,6 @@ namespace ReikaKalseki.SeaToSea
 			private VehicleAccelerationModifier speedModifier;
 			private Rigidbody body;
 			
-			private GameObject leftBonusLight;
-			private GameObject rightBonusLight;
-			
 			private float baseDamageAmount;
 			
 			private float vehicleTemperature = 25;
@@ -157,19 +154,6 @@ namespace ReikaKalseki.SeaToSea
 					seamoth = GetComponent<SeaMoth>();
 				if (!body)
 					body = GetComponent<Rigidbody>();
-				
-				if (!leftBonusLight) {
-					leftBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_left"), false);
-				}
-				if (!rightBonusLight) {
-					rightBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_right"), false);
-				}
-				
-				bool flag = seamoth.lightsActive && InventoryUtil.vehicleHasUpgrade(seamoth, C2CItems.lightModule.TechType);
-				rightBonusLight.SetActive(flag);
-				leftBonusLight.SetActive(flag);
-				if (flag)
-					seamoth.ConsumeEnergy(tickTime*0.25F);
 				
 				if (!speedModifier) {
 					speedModifier = seamoth.gameObject.AddComponent<VehicleAccelerationModifier>();
