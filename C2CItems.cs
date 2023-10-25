@@ -232,6 +232,7 @@ namespace ReikaKalseki.SeaToSea
 					dt.CancelInvoke("DoDamage");
 					UnityEngine.Object.DestroyImmediate(dt);
 				}
+				Ecocean.FoodEffectSystem.instance.clearNegativeEffects();
 				return true;
 			}
 	    	return false;
