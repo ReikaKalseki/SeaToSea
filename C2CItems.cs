@@ -232,6 +232,10 @@ namespace ReikaKalseki.SeaToSea
 					dt.CancelInvoke("DoDamage");
 					UnityEngine.Object.DestroyImmediate(dt);
 				}
+				foreach (PlayerMovementSpeedModifier ds in Player.main.gameObject.GetComponents<PlayerMovementSpeedModifier>()) {
+					if (ds.speedModifier < 1)
+						UnityEngine.Object.DestroyImmediate(ds);
+				}
 				Ecocean.FoodEffectSystem.instance.clearNegativeEffects();
 				return true;
 			}
