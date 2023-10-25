@@ -122,6 +122,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
 	    	
 	    	DIHooks.onSeamothModulesChangedEvent += updateSeamothModules;
+	    	DIHooks.onCyclopsModulesChangedEvent += updateCyclopsModules;
+	    	DIHooks.onPrawnModulesChangedEvent += updatePrawnModules;
 	    	DIHooks.onSeamothModuleUsedEvent += useSeamothModule;
 	    	
 	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
@@ -156,12 +158,16 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.droppabilityEvent += modifyDroppability;	    	
 	    	DIHooks.moduleFireCostEvent += (ch) => ch.value = getModuleFireCost(ch);
 	    	
+	    	DIHooks.equipmentTypeCheckEvent += changeEquipmentCompatibility;
+	    	
 	    	DIHooks.onStasisRifleFreezeEvent += (ch) => ch.applyKinematicChange = !onStasisFreeze(ch.sphere, ch.body);
 	    	DIHooks.onStasisRifleUnfreezeEvent += (ch) => ch.applyKinematicChange = !onStasisUnFreeze(ch.sphere, ch.body);
 	    	
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	DIHooks.selfScanEvent += onSelfScan;
+	    	
+	    	DIHooks.tryEatEvent += tryEat;
 	    	
 	    	BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 	    	BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
@@ -1257,6 +1263,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
 	    		go.EnsureComponent<C2CMoth>();
+	    		go.EnsureComponent<BrightLightController>().setLightValues(120, 1.75F, 135, 180, 2.5F).setPowerValues(0.15F, 0.5F);
 	    		//go.EnsureComponent<VoidSpikeLeviathanSystem.SeamothStealthManager>();
 	    	}
 	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
@@ -1266,7 +1273,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		td.onlyLavaDamage = false;
 	    		td.InvokeRepeating("UpdateDamage", 1f, 1f);
 	    		//ObjectUtil.removeComponent<ImmuneToPropulsioncannon>(go);
-	    		go.EnsureComponent<PrawnLightController>();
+	    		go.EnsureComponent<BrightLightController>().setLightValues(120, 1.6F, 120, 150, 2.25F).setPowerValues(0.25F, 0.67F);
 	    	}
         	else if (pi && pi.classId == "8b113c46-c273-4112-b7ef-65c50d2591ed") { //rocket
 	    		go.EnsureComponent<C2CRocket>();
@@ -1295,7 +1302,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.EnsureComponent<Magnetic>();
 	    	}
 	    	
-	    	if (go.GetComponent<SubRoot>() || go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
+	    	SubRoot sub = go.GetComponent<SubRoot>();
+	    	if (sub) {
+	    		go.EnsureComponent<Magnetic>();
+	    		if (sub.isCyclops)
+	    			go.EnsureComponent<BrightLightController>().setLightValues(0, 0, 135, 200, 2.0F).setPowerValues(0, /*0.4F*/1.6F);
+	    	}
+	    	if (go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
 	    		go.EnsureComponent<Magnetic>();
 	    	}
 	    	if (pi && !floaterRocks.Contains(pi.ClassId) && CraftData.GetTechType(go) != TechType.FloatingStone && go.GetComponent<Drillable>()) {
@@ -1343,37 +1356,19 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    }
 	    
-	    class PrawnLightController : MonoBehaviour {
-			
-			private GameObject leftBonusLight;
-			private GameObject rightBonusLight;
-			
-			private Exosuit prawn;
-	    	
-	    	private void Update() {
-				if (!leftBonusLight) {
-					leftBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_left"), true);
-				}
-				if (!rightBonusLight) {
-					rightBonusLight = VehicleLightModule.createBonusLight(ObjectUtil.getChildObject(gameObject, "lights_parent/light_right"), true);
-				}
-				
-				if (!prawn)
-					prawn = GetComponent<Exosuit>();
-				
-				bool flag = InventoryUtil.vehicleHasUpgrade(prawn, C2CItems.lightModule.TechType);
-				rightBonusLight.SetActive(flag);
-				leftBonusLight.SetActive(flag);
-				if (flag)
-					prawn.ConsumeEnergy(Time.deltaTime*0.33F);
-	    	}
-	    	
-	    }
-	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
+	    	sm.GetComponent<BrightLightController>().recalculateModule();
 	    	if (added && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
 	    		sm.torpedoSilos[slotID].SetActive(true);
 	    	}
+	    }
+	    
+	    public static void updateCyclopsModules(SubRoot sm) {
+	    	sm.GetComponent<BrightLightController>().recalculateModule();
+	    }
+	    
+	    public static void updatePrawnModules(Exosuit sm, int slotID, TechType tt, bool added) {
+	    	sm.GetComponent<BrightLightController>().recalculateModule();
 	    }
 	    
 	    public static void useSeamothModule(SeaMoth sm, TechType tt, int slotID) {
@@ -1557,12 +1552,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	return s.LoseTooth();
 	    }
 	    
-	    public static bool tryEat(Survival s, GameObject go) {
-	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing()) {
-	    		SoundManager.playSoundAt(SoundManager.buildSound("event:/interface/select"), Player.main.transform.position, false, -1, 1);
-	    		return false;
-	    	}
-	    	return s.Eat(go);
+	    public static void tryEat(DIHooks.EatAttempt ea) {
+	    	if (LiquidBreathingSystem.instance.hasLiquidBreathing())
+	    		ea.allowEat = false;
 	    }
 	    
 	    public static void tryLaunchRocket(LaunchRocket r) {
@@ -1880,6 +1872,12 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onKeypadFailed(KeypadDoorConsole con) {
 	    	KeypadCodeSwappingSystem.instance.onCodeFailed(con);
+	    }
+	    
+	    public static void changeEquipmentCompatibility(DIHooks.EquipmentTypeCheck ch) {
+	    	if (ch.item == C2CItems.lightModule.TechType && Player.main.currentSub && Player.main.currentSub.isCyclops && Vector3.Distance(Player.main.currentSub.GetComponentInChildren<CyclopsVehicleStorageTerminalManager>().transform.position, Player.main.transform.position) >= 4.5F) {
+	    		ch.type = EquipmentType.CyclopsModule;
+	    	}
 	    }
 	}
 }

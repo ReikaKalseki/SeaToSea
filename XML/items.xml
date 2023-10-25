@@ -479,6 +479,9 @@
 		<header>
 			AlkaliVines
 		</header>
+		<eateffect>
+			Causes chemical burns when eaten.
+		</eateffect>
 	</ALKALI_PLANT>
 	<VENT_KELP>
 		<name>
@@ -531,6 +534,9 @@
 		<header>
 			MountainGlow
 		</header>
+		<eateffect>
+			Causes burns when eaten.
+		</eateffect>
 	</MOUNTAIN_GLOW>
 	<SANCTUARY_PLANT>
 		<name>
@@ -651,7 +657,9 @@
 		<desc>
 			Greatly increases the intensity, range, and illumination angle of vehicle headlights, at the cost of a small increase in power consumption.
 			
-			Seamoth and P.R.A.W.N. compatible.
+			Can also be activated to engage a "high beam" mode with even greater illumination, at the cost of a much larger increase in power consumption.
+			
+			Seamoth, Cyclops, and P.R.A.W.N. compatible.
 		</desc>
 		<pda>
 			

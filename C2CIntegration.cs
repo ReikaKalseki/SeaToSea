@@ -175,6 +175,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		FallingMaterialSystem.instance.clear();
 		FallingMaterialSystem.instance.addMaterial(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 100);
+		
+		FoodEffectSystem.instance.addVomitingEffect(C2CItems.mountainGlow.seed.TechType, 60, 60, 8, 2F, 10);			
+		FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.mountainGlow.seed.TechType, 50, 30, DamageType.Heat, SeaToSeaMod.itemLocale.getEntry(C2CItems.mountainGlow.ClassID).getField<string>("eateffect"));
+		
+		FoodEffectSystem.instance.addVomitingEffect(C2CItems.kelp.seed.TechType, 250, 250, 20, 0.8F, 2);
+		FoodEffectSystem.instance.addPoisonEffect(C2CItems.kelp.seed.TechType, 250, 30);
+		FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.alkali.seed.TechType, 75, 30, DamageType.Acid, SeaToSeaMod.itemLocale.getEntry(C2CItems.alkali.ClassID).getField<string>("eateffect"));
     }
 
   }
