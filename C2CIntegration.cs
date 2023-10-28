@@ -185,6 +185,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		FoodEffectSystem.instance.addVomitingEffect(C2CItems.sanctuaryPlant.seed.TechType, 60, 40, 5, 2, 5);
 		FoodEffectSystem.instance.addEffect(C2CItems.sanctuaryPlant.seed.TechType, (s, go) => PlayerMovementSpeedModifier.add(1.8F, 180), FoodEffectSystem.instance.getLocaleEntry("speed"));
+		
+		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
     }
 
   }

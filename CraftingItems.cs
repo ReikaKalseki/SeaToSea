@@ -198,7 +198,10 @@ namespace ReikaKalseki.SeaToSea
 						item.inventorySize = new Vector2int(1, 1);
 						item.renderModify = r => {
 							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
-							ObjectUtil.removeComponent<Eatable>(root);
+							Eatable ea = root.GetComponent<Eatable>();
+							ea.foodValue = 6;
+							ea.waterValue = 0;
+							ea.decomposes = false;
 							ObjectUtil.removeComponent<Plantable>(root);
 							
 							RenderUtil.swapToModdedTextures(r, item);

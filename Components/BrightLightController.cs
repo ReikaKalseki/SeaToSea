@@ -76,22 +76,23 @@ namespace ReikaKalseki.SeaToSea
 				vehicle = GetComponent<Vehicle>();
 				if (!vehicle)
 					vehicle = GetComponent<SubRoot>();
+				if (vehicle is BaseRoot) {
+					UnityEngine.Object.Destroy(this);
+					return;
+				}
 			}
 
 			bool cyclops = vehicle is SubRoot;
 			if (cyclops && !cyclopsControl)
 				cyclopsControl = GetComponentInChildren<CyclopsLightingPanel>();
 			if (vehicle) {
-				if (bonusLights.Count == 0 || !bonusLights[0]) {
-					foreach (Transform t in ObjectUtil.getChildObject(gameObject, cyclops ? "Floodlights" : "lights_parent").transform) {
-						Light l = createBonusLight(t.gameObject);
-						if (l)
-							bonusLights.Add(l);
-					}
+				if (bonusLights.Count == 0) {
+					rebuildLights(cyclops);
 				}
 				if (!cyclops && !ecoceanComponent) {
 					ecoceanComponent = GetComponent<Ecocean.ECHooks.ECMoth>();
-					ecoceanComponent.getLightIntensity = () => ecLightIntensity;
+					if (ecoceanComponent)
+						ecoceanComponent.getLightIntensity = () => ecLightIntensity;
 				}
 			}
 			else {
@@ -101,9 +102,15 @@ namespace ReikaKalseki.SeaToSea
 			bool flag1 = hasModule && areLightsOn();
 			bool flag2 = flag1 && (cyclops || InventoryUtil.isVehicleUpgradeSelected((Vehicle)vehicle, C2CItems.lightModule.TechType));
 			foreach (Light l in bonusLights) {
-				l.gameObject.SetActive(flag1);
-				l.intensity = flag2 ? lightIntensityBrights : lightIntensity;
-				l.range = flag2 ? lightRangeBrights : lightRange;
+				if (l) {
+					l.gameObject.SetActive(flag1);
+					l.intensity = flag2 ? lightIntensityBrights : lightIntensity;
+					l.range = flag2 ? lightRangeBrights : lightRange;
+				}
+				else {
+					rebuildLights(cyclops);
+					return;
+				}
 			}
 			
 			ecLightIntensity = flag1 ? (flag2 ? 4 : 2.5F) : 1;
@@ -117,6 +124,26 @@ namespace ReikaKalseki.SeaToSea
 				else {
 					((Vehicle)vehicle).ConsumeEnergy(amt);
 				}
+			}
+		}
+		
+		private void rebuildLights(bool cyclops) {
+			foreach (Light l in bonusLights) {
+				if (l)
+					UnityEngine.Object.Destroy(l.gameObject);
+			}
+			bonusLights.Clear();
+			GameObject go = ObjectUtil.getChildObject(gameObject, cyclops ? "Floodlights" : "lights_parent");
+			if (!go) {
+				SNUtil.writeToChat("Could not find light parent on "+gameObject+"="+vehicle);
+				return;
+			}
+			foreach (Transform t in go.transform) {
+				if (!t)
+					continue;
+				Light l = createBonusLight(t.gameObject);
+				if (l)
+					bonusLights.Add(l);
 			}
 		}
 		
