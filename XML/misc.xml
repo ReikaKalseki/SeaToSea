@@ -244,6 +244,32 @@
 		Now completes recipes with 33% less energy required
 	</pda>
   </bioprocessorBoost>
+  <HUDAlerts>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<chemwarn>
+		Poisoning Detected
+	</chemwarn>
+	<o2warn>
+		Elevated O2 Consumption
+	</o2warn>
+	<pressurewarn>
+		Extreme Pressure Detected
+	</pressurewarn>
+	<leakwarn>
+		Power Loss Detected
+	</leakwarn>
+	<heatwarn>
+		Extreme Temperature Detected
+	</heatwarn>
+  </HUDAlerts>
   <DockToChangeVehicleUpgrades>
 	<name>
 		

@@ -254,7 +254,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_"+TechType.VehicleHullModule3.AsString().Replace("maximum", "900m")));
 	    	
-	    	StoryGoalCustomEventHandler.main.sunbeamGoals[StoryGoalCustomEventHandler.main.sunbeamGoals.Length-1].trigger = SeaToSeaMod.sunbeamCountdownTrigger.key;
+	    	StoryGoalCustomEventHandler.main.sunbeamGoals[StoryGoalCustomEventHandler.main.sunbeamGoals.Length-2].trigger = SeaToSeaMod.sunbeamCountdownTrigger.key;
 	    }
 	    
 	    private static void moveToExploitable(string key) {

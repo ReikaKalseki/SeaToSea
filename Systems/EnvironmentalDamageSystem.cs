@@ -687,11 +687,11 @@ namespace ReikaKalseki.SeaToSea {
 	   		
 	   		//GameObject hud = ObjectUtil.getChildObject(uGUI.main.screenCanvas, "HUD/Content");
 	   		GameObject hudTemplate = uGUI.main.GetComponentInChildren<uGUI_RadiationWarning>(true).gameObject;
-	   		lrPoisonHUDWarning = createHUDWarning(hudTemplate, "chemwarn", "Poisoning Detected", () => poison.isActive() && isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
-	   		o2ConsumptionIncreasingHUDWarning = createHUDWarning(hudTemplate, "o2warn", "Elevated O2 Consumption", () => o2Up.isActive() && isPlayerInOcean() && !crush.isActive(), 10);
-	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", "Extreme Pressure Detected", () => crush.isActive() && isPlayerInOcean(), 20);
-	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", "Power Loss Detected", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
-	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", "Extreme Temperature Detected", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
+	   		lrPoisonHUDWarning = createHUDWarning(hudTemplate, "chemwarn", () => poison.isActive() && isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
+	   		o2ConsumptionIncreasingHUDWarning = createHUDWarning(hudTemplate, "o2warn", () => o2Up.isActive() && isPlayerInOcean() && !crush.isActive(), 10);
+	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", () => crush.isActive() && isPlayerInOcean(), 20);
+	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
+	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
 	   		extremeHeatHUDWarning.showWhenNotSwimming = () => true;
 	   		lrLeakHUDWarning.showWhenNotSwimming = () => Player.main.GetVehicle() || (Player.main.currentSub && Player.main.currentSub.isCyclops && Player.main.isPiloting);
 	   		warnings.Sort();
@@ -701,8 +701,12 @@ namespace ReikaKalseki.SeaToSea {
     		Player ep = Player.main;
     		if (!ep)
     			return false;
-    		if (ep.GetVehicle() || (ep.currentSub && ep.currentSub.isCyclops)) {
+    		Vehicle v = ep.GetVehicle();
+    		if (v || (ep.currentSub && ep.currentSub.isCyclops)) {
 	    		if (getLRPowerLeakage(ep.gameObject) <= 0)
+	    			return false;
+		   		bool upgrade;
+	    		if (v && getLRLeakFactor(v, out upgrade) <= 0)
 	    			return false;
 		   		float time = DayNightCycle.main.timePassedAsFloat;
 		   		return time-vehiclePowerLeak <= 1 || time-cyclopsPowerLeak <= 5;
@@ -720,20 +724,20 @@ namespace ReikaKalseki.SeaToSea {
 		   	return time-playerHeatDamage <= 1 || time-cyclopsHeatDamage <= 5;
     	}
     	
-    	private CustomHUDWarning createHUDWarning(GameObject template, string tex, string msg, EnviroAlert e, int pri, Color? c = null) {
-    		return createHUDWarning(template, tex, msg, e.isActive, pri, c);
+    	private CustomHUDWarning createHUDWarning(GameObject template, string key, EnviroAlert e, int pri, Color? c = null) {
+    		return createHUDWarning(template, key, e.isActive, pri, c);
     	}
     	
-    	private CustomHUDWarning createHUDWarning(GameObject template, string tex, string msg, Func<bool> f, int pri, Color? c = null) {
+    	private CustomHUDWarning createHUDWarning(GameObject template, string key, Func<bool> f, int pri, Color? c = null) {
     		GameObject go = UnityEngine.Object.Instantiate(template);
     		uGUI_RadiationWarning rad = go.GetComponent<uGUI_RadiationWarning>();
     		CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
     		warn.replace(rad, f);
-    		warn.setText(msg, c);
-    		warn.setTexture(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/"+tex));
+    		warn.setText(SeaToSeaMod.miscLocale.getEntry("HUDAlerts").getField<string>(key), c);
+    		warn.setTexture(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/"+key));
     		warn.transform.SetParent(template.transform.parent, false);
     		warn.priority = pri;
-    		go.name = "CustomHudWarning_"+msg;
+    		go.name = "CustomHudWarning_"+key;
     		ObjectUtil.removeComponent<uGUI_RadiationWarning>(go);
     		SNUtil.log("Created custom hud warning "+go);
     		go.SetActive(true);

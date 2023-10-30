@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"VehicleModules"};
+				return new string[]{"CommonModules"};
 			}
 		}
 
