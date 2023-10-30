@@ -213,6 +213,7 @@ namespace ReikaKalseki.SeaToSea
 		
 		BatteryCharger.compatibleTech.Add(t2Battery.TechType);
         
+		//override first aid kit
         UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
 		    if (SeaToSeaMod.playerCanHeal() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();

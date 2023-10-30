@@ -84,7 +84,7 @@ namespace ReikaKalseki.SeaToSea {
     			gameObject.SetActive(true);
     			gameObject.transform.localScale = Vector3.one*UnityEngine.Random.Range(0.8F, 1.2F);
     		}
-    		else if (transform.position.y > -120 || Vector3.Angle(transform.up, Vector3.up) >= 45) {
+    		else if (transform.position.y > -120 || transform.position.x < 275 || Vector3.Angle(transform.up, Vector3.up) >= 45) {
     			UnityEngine.Object.Destroy(gameObject);
 			}
     		else {

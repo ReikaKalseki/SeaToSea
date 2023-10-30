@@ -367,6 +367,7 @@ namespace ReikaKalseki.SeaToSea
     		{"SeaVoyager", false},
     		{"SubnauticaRandomiser", true},
     		{"EquivalentExchange", true},
+    		{"Deathrun", false},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {

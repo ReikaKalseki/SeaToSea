@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override TechGroup GroupForPDA {
 			get {
-				return TechGroup.Miscellaneous;
+				return TechGroup.Uncategorized;
 			}
 		}
 
