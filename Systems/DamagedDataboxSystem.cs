@@ -45,6 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 		    		lv.data.weldable = true;
 		    		lv.health = Mathf.Max(0.01F, kvp.Value.initialRepairFraction*lv.data.maxHealth);
 		    		go.EnsureComponent<BrokenDatabox>();
+		    		go.EnsureComponent<ImmuneToPropulsioncannon>();
 		    		SNUtil.log("Damaging databox "+go+" @ "+go.transform.position+": "+kvp.Value);
 				}
 			}

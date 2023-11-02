@@ -249,6 +249,12 @@ namespace ReikaKalseki.SeaToSea
 			LiquidBreathingSystem.instance.lastKharaaTreatmentTime = time;
 			return true;
 		});
+		
+		IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery));
+		IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.DenseAzurite));
+		IrreplaceableItemRegistry.instance.registerItem(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL));
+		IrreplaceableItemRegistry.instance.registerItem(TechType.PrecursorKey_Blue);
+		IrreplaceableItemRegistry.instance.registerItem(TechType.PrecursorKey_Red);
    	}
     
     internal static void onTechUnlocked(TechType tech) {
