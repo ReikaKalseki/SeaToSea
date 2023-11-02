@@ -73,6 +73,11 @@ namespace ReikaKalseki.SeaToSea {
 			l.intensity = 1.4F;
 			l.range = 8;
 			l.shadows = LightShadows.Soft;
+			
+			Eatable ea = go.GetComponent<Eatable>();
+			ea.decomposes = false;
+			ea.foodValue = 12;
+			ea.waterValue = 0;
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {

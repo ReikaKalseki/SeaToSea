@@ -281,17 +281,6 @@
 		
 	</pda>
   </DockToChangeVehicleUpgrades>
-  <ItemNotDroppable>
-	<name>
-		
-	</name>
-	<desc>
-		This item can be stored but cannot be dropped.
-	</desc>
-	<pda>
-		
-	</pda>
-  </ItemNotDroppable>
   <PrawnBayDoorHeatWarn>
 	<name>
 		

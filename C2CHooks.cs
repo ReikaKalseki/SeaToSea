@@ -77,8 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private static float waterToRestore;
 	    
 	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
-	    public static readonly string lrCachePanelLocaleKey = "LostRiverCachePanel";	    
-	    public static readonly string itemNotDroppableLocaleKey = "ItemNotDroppable";
+	    public static readonly string lrCachePanelLocaleKey = "LostRiverCachePanel";
 	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
 	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
 	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
@@ -143,6 +142,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.itemTooltipEvent += generateItemTooltips;
 	    	DIHooks.bulkheadLaserHoverEvent += interceptBulkheadLaserCutter;
         
+	    	DIHooks.knifeAttemptEvent += tryKnife;
 	    	DIHooks.onKnifedEvent += onKnifed;
 	    	DIHooks.knifeHarvestEvent += interceptItemHarvest;
 	    	
@@ -157,7 +157,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.solarEfficiencyEvent += (ch) => ch.value = getSolarEfficiencyLevel(ch);
 	    	DIHooks.depthCompassEvent += getCompassDepthLevel;
 	    	DIHooks.propulsibilityEvent += modifyPropulsibility;
-	    	DIHooks.droppabilityEvent += modifyDroppability;	    	
+	    	//DIHooks.droppabilityEvent += modifyDroppability;	    	
 	    	DIHooks.moduleFireCostEvent += (ch) => ch.value = getModuleFireCost(ch);
 	    	
 	    	DIHooks.equipmentTypeCheckEvent += changeEquipmentCompatibility;
@@ -697,13 +697,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!e)
 	    		return false;
 	    	return e.battery != null && Mathf.Approximately(e.battery.capacity, C2CItems.t2Battery.capacity);
-	    }
-	    
-	    public static void modifyDroppability(DIHooks.DroppabilityCheck check) {
-	    	if (check.item.GetTechType() == CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery).TechType) {
-	    		check.allow = false;
-	    		check.error = Language.main.Get(itemNotDroppableLocaleKey);
-	    	}
 	    }
 	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
@@ -1506,14 +1499,16 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 	    
-	    public static bool isObjectKnifeable(LiveMixin lv) {
-	    	if (!lv || CraftData.GetTechType(lv.gameObject) == TechType.BlueAmoeba)
-	    		return true;
-	    	AlkaliPlantTag a = lv.GetComponent<AlkaliPlantTag>();
-	    	if (a) {
-	    		return a.isHarvestable();
+	    public static void tryKnife(DIHooks.KnifeAttempt k) {
+	    	if (CraftData.GetTechType(k.target.gameObject) == TechType.BlueAmoeba) {
+	    		k.allowKnife = true;
+	    		return;
 	    	}
-	    	return !lv.weldable && lv.knifeable && !lv.GetComponent<EscapePod>();
+	    	AlkaliPlantTag a = k.target.GetComponent<AlkaliPlantTag>();
+	    	if (a) {
+	    		k.allowKnife = a.isHarvestable();
+	    		return;
+	    	}
 	    }
 	    
 	    public static GameObject getStalkerShinyTarget(GameObject def, CollectShiny cc) {
