@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using Story;
@@ -82,6 +83,8 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.Seamoth);
 			gatedTechnologies.Add(TechType.Cyclops);
 			gatedTechnologies.Add(TechType.Exosuit);
+			gatedTechnologies.Add(TechType.Benzene);
+			gatedTechnologies.Add(TechType.HydrochloricAcid);
 			gatedTechnologies.Add(TechType.Polyaniline);
 			gatedTechnologies.Add(TechType.ExosuitDrillArmModule);
 			gatedTechnologies.Add(TechType.ExoHullModule1);
@@ -110,6 +113,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			//requiredProgression.Add();
 		}
+    	
+    	public IEnumerable<TechType> getGatedTechnologies() {
+    		return new ReadOnlyCollection<TechType>(gatedTechnologies.ToList());
+    	}
     	
     	private bool canSunbeamCountdownBegin(Player ep) {
     		return StoryGoalManager.main.completedGoals.Contains("OnPlayRadioSunbeam3") && ep.GetVehicle() is SeaMoth;

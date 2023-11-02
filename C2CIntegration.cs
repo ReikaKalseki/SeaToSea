@@ -187,6 +187,22 @@ namespace ReikaKalseki.SeaToSea {
 		FoodEffectSystem.instance.addEffect(C2CItems.sanctuaryPlant.seed.TechType, (s, go) => PlayerMovementSpeedModifier.add(1.8F, 180), FoodEffectSystem.instance.getLocaleEntry("speed"));
 		
 		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
+		
+		if (QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub")) {
+			CustomMachineLogic.powerCostFactor *= 5;
+			
+			Type store = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Registration.FCSAlterraHubService");
+			FieldInfo f = store.GetField("_storeItems", BindingFlags.NonPublic | BindingFlags.Static);
+			System.Collections.IDictionary dict = (System.Collections.IDictionary)f.GetValue(null);
+			foreach (TechType tt in C2CProgression.instance.getGatedTechnologies()) {
+				if (dict.Contains(tt))
+					dict.Remove(tt);
+			}
+			dict.Remove(TechType.Battery);
+			dict.Remove(TechType.PowerCell);
+			dict.Remove(TechType.WiringKit);
+			dict.Remove(TechType.AdvancedWiringKit);
+		}
     }
 
   }
