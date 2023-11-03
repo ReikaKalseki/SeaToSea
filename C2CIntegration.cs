@@ -167,6 +167,13 @@ namespace ReikaKalseki.SeaToSea {
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, TechType.Polyaniline);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, TechType.Polyaniline);
 		
+		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.25F);
+		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1.25F);
+		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, 1.25F);
+		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.5F);
+		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
+		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
+		
 		ItemDisplay.setRendererBehavior(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.2F});
 		ItemDisplay.setRendererBehavior(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.0F, rotationSpeedMultiplier = 1.5F});
 		
@@ -187,6 +194,14 @@ namespace ReikaKalseki.SeaToSea {
 		FoodEffectSystem.instance.addEffect(C2CItems.sanctuaryPlant.seed.TechType, (s, go) => PlayerMovementSpeedModifier.add(1.8F, 180), FoodEffectSystem.instance.getLocaleEntry("speed"));
 		
 		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
+		
+		BaseRoomSpecializationSystem.instance.registerModdedObject(SeaToSeaMod.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(SeaToSeaMod.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.alkali, 0.1F);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.healFlower, 0.1F);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.2F);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1F);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.25F);
 		
 		if (QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub")) {
 			CustomMachineLogic.powerCostFactor *= 5;

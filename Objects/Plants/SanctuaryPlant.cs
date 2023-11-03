@@ -74,7 +74,7 @@ namespace ReikaKalseki.SeaToSea {
 			l.range = 8;
 			l.shadows = LightShadows.Soft;
 			
-			Eatable ea = go.GetComponent<Eatable>();
+			Eatable ea = go.EnsureComponent<Eatable>();
 			ea.decomposes = false;
 			ea.foodValue = 12;
 			ea.waterValue = 0;
