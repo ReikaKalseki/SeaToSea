@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly GlassForestAtmoFX atmoFX = new GlassForestAtmoFX();
 		
-		private UnderwaterIslandsFloorBiome() : base(biomeName) {
+		private UnderwaterIslandsFloorBiome() : base(biomeName, 0.8F) {
 			
 		}
 		
