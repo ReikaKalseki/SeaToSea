@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly Dictionary<VanillaCreatures, int> creatureCounts = new Dictionary<VanillaCreatures, int>();
 		
-		private CrashZoneSanctuaryBiome() : base(biomeName) {
+		private CrashZoneSanctuaryBiome() : base(biomeName, 1F) {
 			creatureCounts[VanillaCreatures.BLADDERFISH] = 36;
 			creatureCounts[VanillaCreatures.BOOMERANG] = 48;
 			creatureCounts[VanillaCreatures.CAVECRAWLER] = 27;

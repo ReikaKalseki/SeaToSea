@@ -58,7 +58,7 @@ namespace ReikaKalseki.SeaToSea {
 		private bool delayTeleportOutUntilEnterSeamoth = false;
 		private bool delayTeleportInUntilEnterSeamoth = false;
 		
-		private VoidSpikesBiome() : base(biomeName) {
+		private VoidSpikesBiome() : base(biomeName, 0.4F) {
 			generator = new VoidSpikes((end500m+end900m)/2);
 	      	generator.count = CLUSTER_COUNT;
 	      	//generator.scaleXZ = 16;
