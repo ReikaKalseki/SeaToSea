@@ -1817,7 +1817,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onItemsLost() {
 	    	foreach (InventoryItem ii in ((IEnumerable<InventoryItem>)Inventory.main.container)) {
-	    		if (ii != null && ii.item.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
+	    		if (ii != null && ii.item && ii.item.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
 	    			ii.item.destroyOnDeath = true;
 	    		}
 	    	}
