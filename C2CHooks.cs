@@ -783,6 +783,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static Vector3 getApparentPingPosition(PingInstance inst) {
+	    	if (!inst || !inst.origin)
+	    		return Vector3.zero;
 	    	Vector3 pos = inst.origin.position;
 	    	if (inst.pingType == SeaToSeaMod.voidSpikeDirectionHint.signalType) {
 	    		pos = VoidSpikesBiome.instance.getPDALocation()+VoidSpikesBiome.voidEndpoint500m-VoidSpikesBiome.end500m;//VoidSpikesBiome.voidEndpoint500m;
@@ -815,7 +817,7 @@ namespace ReikaKalseki.SeaToSea {
 	   				return;
 	   			}
 	   			else if (flag) {
-		   			if (dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) {
+	   				if ((dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) && dmg.dealer != Player.main.gameObject) {
 	   					string biome = WaterBiomeManager.main.GetBiome(p.transform.position, false);
 	   					bool brine = biome != null && biome.Contains("LostRiver") && (biome.Contains("Lake") || biome.Contains("Stream") || biome.Contains("Water"));
 	   					if (brine) {
