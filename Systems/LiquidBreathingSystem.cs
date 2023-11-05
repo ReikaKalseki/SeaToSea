@@ -283,7 +283,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool hasReducedCapacity() {
-	    	return !isKharaaTreatmentActive() && hasLiquidBreathing();
+	    	return !isKharaaTreatmentActive() && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
 	    }
 	    
 	    class OxygenAreaWithLiquidSupport : MonoBehaviour {
