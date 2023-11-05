@@ -51,6 +51,8 @@ namespace ReikaKalseki.SeaToSea {
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.ATPTAPRATE, f => hard ? 10 : 15);
+    	if (hard)
+    		AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.LEISUREDECO, f => Mathf.Max(f, 18));
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RESSCAN, true);
@@ -167,13 +169,6 @@ namespace ReikaKalseki.SeaToSea {
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, TechType.Polyaniline);
 		ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, TechType.Polyaniline);
 		
-		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.25F);
-		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1.25F);
-		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, 1.25F);
-		ItemDisplay.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.5F);
-		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
-		ItemDisplay.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
-		
 		ItemDisplay.setRendererBehavior(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.2F});
 		ItemDisplay.setRendererBehavior(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, new ItemDisplayRenderBehavior(){verticalOffset = 0.0F, rotationSpeedMultiplier = 1.5F});
 		
@@ -202,6 +197,13 @@ namespace ReikaKalseki.SeaToSea {
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.2F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.25F);
+		
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.25F);
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1.25F);
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, 1.25F);
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.5F);
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
+		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
 		
 		if (QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub")) {
 			CustomMachineLogic.powerCostFactor *= 5;

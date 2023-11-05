@@ -375,7 +375,7 @@ namespace ReikaKalseki.SeaToSea {
 				leak *= 8;
 			float fb = 0;
 			foreach (EnergyMixin mix in v.energyInterface.sources) {
-			   	if (mix && !Mathf.Approximately(mix.capacity, 1000))
+			   	if (mix && /*mix.capacity > 0 && */!Mathf.Approximately(mix.capacity, 1000))
 			   		fb++;
 			}
 			//fb /= v.energyInterface.sources.Length;
