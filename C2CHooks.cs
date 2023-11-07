@@ -132,6 +132,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onEMPHitEvent += onEMPHit;
 	    	
 	    	DIHooks.constructabilityEvent += applyGeyserFilterBuildability;
+	    	DIHooks.breathabilityEvent += canPlayerBreathe;
 	    	
 	    	DIHooks.getSwimSpeedEvent += getSwimSpeed;
 	    	
@@ -453,13 +454,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	return LiquidBreathingSystem.instance.isO2BarFlashingRed() ? 6 : orig;
 	    }
 	    
-	    public static bool canPlayerBreathe(bool orig, Player p) {
+	    public static void canPlayerBreathe(DIHooks.BreathabilityCheck ch) {
 	    	if (skipO2)
-	    		return true;
+	    		return;
 	    	//SNUtil.writeToChat(orig+": "+p.IsUnderwater()+" > "+Inventory.main.equipment.GetCount(SeaToSeaMod.rebreatherV2.TechType));
-	    	if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(p))
-	    		return false;
-	    	return orig;
+	    	if (!LiquidBreathingSystem.instance.isO2BarAbleToFill(ch.player))
+	    		ch.breathable = false;
 	    }
 	    
 	    public static float addO2ToPlayer(OxygenManager mgr, float f) {
@@ -879,18 +879,20 @@ namespace ReikaKalseki.SeaToSea {
 	   		EnvironmentalDamageSystem.instance.tickPlayerEnviroAlerts(warn);
 		}
     
-	    public static void onItemPickedUp(Pickupable p) {
+	    public static void onItemPickedUp(Pickupable p, Exosuit prawn, bool isKnife) {
 	    	AvoliteSpawner.instance.cleanPickedUp(p);
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
 	   			bool seal;
 	   			bool reinf;
-	   			if (!C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
-	    			LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
+	   			if (prawn || !C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+	   				LiveMixin lv = prawn ? prawn.liveMixin : Player.main.gameObject.GetComponentInParent<LiveMixin>();
 	    			float dmg = lv.maxHealth*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.3F : 0.2F);
 	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
 	    				dmg *= 0.75F;
+	    			if (prawn)
+	    				dmg *= 0.67F; //do about 35% damage
 					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
 				}
 	    	}
@@ -901,7 +903,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (!c.currentlyHasPlatinum() && !c.GetComponent<WaterParkCreature>()) {
 						float chance = Mathf.Clamp01(1F-Vector3.Distance(c.transform.position, p.transform.position)/90F);
 						if (UnityEngine.Random.Range(0F, 1F) <= chance)
-							c.triggerPtAggro(Player.main.gameObject);
+							c.triggerPtAggro(prawn ? prawn.gameObject : Player.main.gameObject);
 					}
 				}
 	    	}
@@ -925,7 +927,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		bool reinf;
 	    		bool seal;
 	    		C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf);
-	    		if (!reinf) {
+	    		if (!prawn && !reinf) {
 		    		LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
 		    		float dmg = 40+(WaterTemperatureSimulation.main.GetTemperature(Player.main.transform.position)-90)/3;
 		    		lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Heat, Player.main.gameObject);
@@ -1570,6 +1572,9 @@ namespace ReikaKalseki.SeaToSea {
 					return;
 				}
 			}
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfScannedAllLifeforms()) {
+				return;
+			}
 			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
 			}
@@ -1846,6 +1851,10 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void applyGeyserFilterBuildability(DIHooks.BuildabilityCheck check) {
+	    	if (VoidSpikesBiome.instance.isInBiome(Player.main.transform.position)) {
+	    		check.placeable = false;
+	    		return;
+	    	}
 			if (Builder.constructableTechType == SeaToSeaMod.geyserFilter.TechType && !check.placeOn) {
 	   			check.placeable = true;
 				//check.ignoreSpaceRequirements = true;

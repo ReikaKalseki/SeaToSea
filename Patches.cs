@@ -771,32 +771,6 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 	
-	[HarmonyPatch(typeof(Player))]
-	[HarmonyPatch("CanBreathe")]
-	public static class PlayerBreathabilityHook {
-		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-			try {
-				InstructionHandlers.patchEveryReturnPre(codes, injectCallback);
-				//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-				FileLog.Log("Done patch "+MethodBase.GetCurrentMethod().DeclaringType);
-			}
-			catch (Exception e) {
-				FileLog.Log("Caught exception when running patch "+MethodBase.GetCurrentMethod().DeclaringType+"!");
-				FileLog.Log(e.Message);
-				FileLog.Log(e.StackTrace);
-				FileLog.Log(e.ToString());
-			}
-			return codes.AsEnumerable();
-		}
-	
-		private static void injectCallback(List<CodeInstruction> codes, int idx) {
-			codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "canPlayerBreathe", false, typeof(bool), typeof(Player)));
-			codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-		}
-	}
-	
 	[HarmonyPatch(typeof(uGUI_OxygenBar))]
 	[HarmonyPatch("LateUpdate")]
 	public static class O2BarTick {

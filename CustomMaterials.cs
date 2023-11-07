@@ -17,6 +17,7 @@ namespace ReikaKalseki.SeaToSea
 	public static class CustomMaterials {
 		
 		private static readonly Dictionary<Materials, BasicCustomOre> mappings = new Dictionary<Materials, BasicCustomOre>();
+		private static readonly Dictionary<TechType, BasicCustomOre> techs = new Dictionary<TechType, BasicCustomOre>();
 				
 		static CustomMaterials() {
 			foreach (Materials m in Enum.GetValues(typeof(Materials))) {
@@ -40,6 +41,7 @@ namespace ReikaKalseki.SeaToSea
 				}
 				mappings[m] = item;
 				item.Patch();	
+				techs[item.TechType] = item;
 				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2, e.getField<string>("header"));
 				SNUtil.log(" > "+item);
 			}
@@ -52,6 +54,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		public static BasicCustomOre getItem(Materials key) {
 			return mappings[key];
+		}
+		
+		public static BasicCustomOre getItemByTech(TechType tt) {
+			return techs.ContainsKey(tt) ? techs[tt] : null;
 		}
 		
 		public static TechType getIngot(Materials key) {
