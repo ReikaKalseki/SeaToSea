@@ -164,6 +164,17 @@
 		Sounds/pdaprompt/cannot-launch-need-cargo.ogg
 	</pda>
   </needlaunchcargo>
+  <needscaneverything>
+	<name>
+		
+	</name>
+	<desc>
+		Cannot launch rocket without scanning the planet's materials and lifeforms.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/cannot-launch-need-scans.ogg
+	</pda>
+  </needscaneverything>
   <unfinishedexplore>
 	<name>
 		

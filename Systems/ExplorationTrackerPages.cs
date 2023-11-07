@@ -186,6 +186,14 @@ namespace ReikaKalseki.SeaToSea
 			return true;
 		}
 		
+		internal void markAllDiscovered() {
+			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
+				foreach (Finding f in pages[p].findings.Values) {
+					f.trigger.markComplete();
+				}
+			}
+		}
+		
 		internal void showAllPages() {
 			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
 				pages[p].encyPage.unlock(false);
@@ -340,7 +348,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal static FindingTrigger fromScan(TechType tt) {
-			return new FindingTrigger(() => PDAScanner.complete.Contains(tt));
+			return new FindingTrigger(() => PDAScanner.complete.Contains(tt), () => PDAScanner.complete.Add(tt));
 		}
 		
 		internal static FindingTrigger fromUnlock(ModPrefab pfb) {
@@ -348,23 +356,23 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal static FindingTrigger fromUnlock(TechType tt) {
-			return new FindingTrigger(() => KnownTech.knownTech.Contains(tt));
+			return new FindingTrigger(() => KnownTech.knownTech.Contains(tt), () => KnownTech.Add(tt));
 		}
 		
 		internal static FindingTrigger fromEncy(string ency) {
-			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ency));
+			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ency), () => PDAEncyclopedia.Add(ency, false));
 		}
 		
-		internal static FindingTrigger fromTracker(TrackerPages pg) {
-			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ExplorationTrackerPages.instance.getEncyKey(pg)));
+		internal static FindingTrigger fromTracker(TrackerPages pg) { //do not overload to fromEncy because the pg may not be loaded yet
+			return new FindingTrigger(() => PDAEncyclopedia.entries.ContainsKey(ExplorationTrackerPages.instance.getEncyKey(pg)), () => PDAEncyclopedia.Add(ExplorationTrackerPages.instance.getEncyKey(pg), false));
 		}
 		
 		internal static FindingTrigger fromStory(string key) {
-			return new FindingTrigger(() => StoryGoalManager.main.IsGoalComplete(key));
+			return new FindingTrigger(() => StoryGoalManager.main.IsGoalComplete(key), () => StoryGoalManager.main.completedGoals.Add(key));
 		}
 		
 		internal static FindingTrigger fromStory(StoryGoal g) {
-			return new FindingTrigger(() => StoryGoalManager.main.IsGoalComplete(g.key));
+			return fromStory(g.key);
 		}
 		
 	}
@@ -372,12 +380,14 @@ namespace ReikaKalseki.SeaToSea
 	class FindingTrigger {
 		
 		internal readonly Func<bool> isTriggered;
+		internal readonly Action markComplete;
 		
 		internal bool isOptional;
 		internal bool triggerMoreToExplore;
 		
-		internal FindingTrigger(Func<bool> f) {
+		internal FindingTrigger(Func<bool> f, Action a) {
 			isTriggered = f;
+			markComplete = a;
 		}
 		
 		internal FindingTrigger setOptional(bool triggerMoreExplore) {

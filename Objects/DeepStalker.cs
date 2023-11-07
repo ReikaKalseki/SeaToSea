@@ -33,7 +33,10 @@ namespace ReikaKalseki.SeaToSea {
 				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
 				r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 			}
-			world.EnsureComponent<AggressiveToPilotingVehicle>().aggressionPerSecond = 0.2F;
+			AggressiveToPilotingVehicle agv = world.EnsureComponent<AggressiveToPilotingVehicle>();
+			agv.aggressionPerSecond = 0.2F;
+			agv.creature = world.GetComponent<Creature>();
+			agv.lastTarget = world.EnsureComponent<LastTarget>();
 			return world;
 	    }
 		
