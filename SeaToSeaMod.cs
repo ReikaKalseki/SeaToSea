@@ -368,6 +368,7 @@ namespace ReikaKalseki.SeaToSea
     		{"SubnauticaRandomiser", true},
     		{"EquivalentExchange", true},
     		{"Deathrun", false},
+    		{"DecorationsMod", false},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
@@ -579,13 +580,14 @@ namespace ReikaKalseki.SeaToSea
         
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cTrackerAll", b => trackerShowAllCheatActive = b);
+        //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cTrackerSetAll", ExplorationTrackerPages.instance.markAllDiscovered);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSGSA", b => fastSeaglideCheatActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", unlockSignal);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cpoi", POITeleportSystem.instance.jumpToPOI);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()));
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+FinalLaunchAdditionalRequirementSystem.instance.scannedAllLifeforms()));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);
     }
     /*

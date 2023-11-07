@@ -107,6 +107,28 @@ namespace ReikaKalseki.SeaToSea {
 			return null;
 		}
 		
+		internal TechType scannedAllLifeforms() {
+			foreach (TechType tt in PDAScanner.mapping.Keys) {
+				if (tt == SeaToSeaMod.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
+					continue;
+				if (!PDAScanner.complete.Contains(tt)) {
+					if (CustomMaterials.getItemByTech(tt) != null)
+						return tt;
+					if (BasicCustomPlant.getPlant(tt) != null)
+						return tt;
+					string pfb = CraftData.GetClassIdForTechType(tt);
+					if (pfb != null && VanillaFlora.getFromID(pfb) != null)
+						return tt;
+					if (pfb != null && VanillaResources.getFromID(pfb) != null)
+						return tt;
+					GameObject prefab = ObjectUtil.lookupPrefab(tt);
+					if (prefab && prefab.GetComponent<Creature>())
+						return tt;
+				}
+			}
+			return TechType.None;
+		}
+		
 		internal void updateCounts(List<StorageContainer> lockers) {
 			foreach (RequiredItem ri in requiredItems.Values) {
 				ri.currentlyHas = 0;
@@ -163,8 +185,19 @@ namespace ReikaKalseki.SeaToSea {
 			HandReticle.main.RequestCrosshairHide();
 		}
 		
+		internal void spawnItems() {
+			foreach (RequiredItem ri in requiredItems.Values) {
+				for (int i = 0; i < ri.count; i++)
+					InventoryUtil.addItem(ri.item);
+			}typeof(ReikaKalseki.SeaToSea.ExplorationTrackerPages).GetMethod("markAllDiscovered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(ReikaKalseki.SeaToSea.ExplorationTrackerPages.instance, 0, null, null, null);
+		}
+		
 		public bool checkIfFullyLoaded() {
 			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(hasAllCargo() == null, NEED_CARGO_PDA, PDAMessages.Messages.NeedLaunchCargoMessage);
+		}
+		
+		public bool checkIfScannedAllLifeforms() {
+			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(scannedAllLifeforms() == TechType.None, null, PDAMessages.Messages.NeedScansMessage);
 		}
 		/*
 		public bool checkIfVisitedAllBiomes() {
