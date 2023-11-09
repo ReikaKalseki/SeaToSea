@@ -143,6 +143,10 @@ namespace ReikaKalseki.SeaToSea {
 			return false;
 		}
 		
+		public override bool existsInSeveralPlaces() {
+			return false;
+		}
+		
 		private void addAtmoFX(Vector3 pos) {
 			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
 		}

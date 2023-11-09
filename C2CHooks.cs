@@ -1930,14 +1930,21 @@ namespace ReikaKalseki.SeaToSea {
 	    	return canFCSDrillOperate(drill);
 	    }
 	    
+	    private static float lastDrillDepletionTime = -1;
+	    
 	    public static bool canFCSDrillOperate(MonoBehaviour drill) {
 	    	//SNUtil.writeToChat("Drill "+drill+" @ "+drill.transform.position+" is trying to mine: "+orig);
 	    	bool ret = DrillDepletionSystem.instance.hasRemainingLife(drill);
 	    	if (!ret) {
-	    		Component com = drill.GetComponent(C2CIntegration.getFCSDrillOreManager());
-	    		if (com) {
-		    		PropertyInfo p = C2CIntegration.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		    		p.SetValue(com, new List<TechType>{});
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (time-lastDrillDepletionTime >= 1) {
+	    			lastDrillDepletionTime = time;
+	    			SNUtil.writeToChat("Drill in "+WorldUtil.getRegionalDescription(drill.transform.position)+" has depleted the local resources.");
+		    		Component com = drill.GetComponent(C2CIntegration.getFCSDrillOreManager());
+		    		if (com) {
+			    		PropertyInfo p = C2CIntegration.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			    		p.SetValue(com, new List<TechType>{});
+		    		}
 	    		}
 	    	}
 	    	return ret;

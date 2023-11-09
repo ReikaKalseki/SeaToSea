@@ -69,6 +69,10 @@ namespace ReikaKalseki.SeaToSea {
 			return false;
 		}
 		
+		public override bool existsInSeveralPlaces() {
+			return false;
+		}
+		
 		public override bool isInBiome(Vector3 pos) {
 			float dist = Vector3.Distance(pos, biomeCenter);
 			if (dist > biomeRadius+radiusFuzz)

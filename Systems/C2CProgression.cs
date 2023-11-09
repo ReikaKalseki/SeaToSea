@@ -244,7 +244,7 @@ namespace ReikaKalseki.SeaToSea
     		if (gatedTechnologies.Contains(tt))
     			return true;
     		Spawnable s = ItemRegistry.instance.getItem(tt);
-    		return (s is BasicCraftingItem && ((BasicCraftingItem)s).getOwnerMod() == SeaToSeaMod.modDLL) || (s is BasicCustomOre && ((BasicCustomOre)s).getOwnerMod() == SeaToSeaMod.modDLL);
+    		return s is DIPrefab && ((DIPrefab)s).getOwnerMod() == SeaToSeaMod.modDLL;
 	    }
 	}
 	
