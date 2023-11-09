@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(107/255F, 80/255F, 62/255F, 1));
 					break;
 					case Items.BioEnzymes:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(1F, 170/255F, 0F, 1));
+						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(28/255F, 1, 172/255F, 1));
 					break;
 					case Items.KelpEnzymes:
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.5F, 0.0F, 1F, 1));
