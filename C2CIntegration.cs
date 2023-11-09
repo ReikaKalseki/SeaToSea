@@ -5,6 +5,7 @@ using System.Collections.Generic;   //Working with Lists and Collections
 using System.Reflection;
 using System.Linq;   //More advanced manipulation of lists/collections
 using HarmonyLib;
+using System.Reflection.Emit;
 using QModManager.API.ModLoading;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
@@ -22,6 +23,8 @@ using ReikaKalseki.Ecocean;
 namespace ReikaKalseki.SeaToSea {
 	
   public static class C2CIntegration {
+		
+	private static Type drillOreManager;
     
 	public static void injectConfigValues() {
         ReefbalanceMod.config.load();
@@ -220,8 +223,87 @@ namespace ReikaKalseki.SeaToSea {
 			dict.Remove(TechType.PowerCell);
 			dict.Remove(TechType.WiringKit);
 			dict.Remove(TechType.AdvancedWiringKit);
+		
+			Type t = InstructionHandlers.getTypeBySimpleName("FCS_HomeSolutions.Mods.TrashRecycler.Mono.Recycler");
+			if (t != null) {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Recycle", SeaToSeaMod.modDLL, codes => {
+					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "FCS_AlterraHub.Helpers.TechDataHelpers", "GetIngredientsWithOutBatteries", false, new Type[]{typeof(TechType)});
+					codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSRecyclerOutput", false, typeof(List<>).MakeGenericType(typeof(Ingredient))));
+				});
+			}
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Helpers.Helpers");
+			if (t != null) {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "GetBiomeData", SeaToSeaMod.modDLL, codes => {
+					InstructionHandlers.patchEveryReturnPre(codes, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSDrillerOutput", false, typeof(List<>).MakeGenericType(typeof(TechType))));
+				});
+			}
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator");
+			drillOreManager = t;
+			if (t != null) {
+				DrillDepletionSystem.instance.register();
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "SetAllowTick", SeaToSeaMod.modDLL, codes => {
+				    int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "FCS_AlterraHub.Mono.FcsDevice", "get_IsOperational", true, new Type[0]);
+					codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "canFCSDrillOperate", false, typeof(bool), typeof(MonoBehaviour))});
+				});
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Update", SeaToSeaMod.modDLL, codes => {
+					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "_passedTime");
+					codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickFCSDrill", false, typeof(MonoBehaviour))});
+				});
+			}
+			
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Managers.DrillSystem");
+			if (t != null)
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController");
+			if (t != null)
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+			
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
+			if (t != null) {
+				C2CItems.fcsDrillFuel = new FCSFuel();
+				C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
+				C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 1);
+				C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
+				C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 1);
+				C2CItems.fcsDrillFuel.Patch();
+				TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Benzene, C2CItems.fcsDrillFuel.TechType);
+				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
+			}
+			
+			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Patchers.DeepDrillerGUIOilPage");
+			if (t != null) {
+				if (C2CItems.fcsDrillFuel == null) {
+					C2CItems.fcsDrillFuel = new FCSFuel();
+					C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
+					C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 1);
+					C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
+					C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 1);
+					C2CItems.fcsDrillFuel.Patch();
+					TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Benzene, C2CItems.fcsDrillFuel.TechType);
+				}
+				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
+			}
 		}
     }
+		
+	private static void addDrillOperationHook(List<CodeInstruction> codes) {
+		int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler", "HasOil", true, new Type[0]);
+		codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "canFCSDrillOperate", false, typeof(bool), typeof(MonoBehaviour))});
+	}
+		
+	private static void replaceFCSDrillFuel(List<CodeInstruction> codes) {
+		for (int i = codes.Count-1; i >= 0; i--) {
+			if (codes[i].LoadsConstant((int)TechType.Lubricant)) {
+				codes[i] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSDrillFuel", false, new Type[0]);
+			}
+		}
+	}
+	
+	public static Type getFCSDrillOreManager() {
+		return drillOreManager;
+	}
 
   }
 }

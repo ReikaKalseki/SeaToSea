@@ -595,6 +595,8 @@ namespace ReikaKalseki.SeaToSea
         foreach (FieldInfo f in typeof(C2CItems).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)) {
         	if (f.FieldType.IsSubclassOf(typeof(ModPrefab))) {
         		ModPrefab pfb = (ModPrefab)f.GetValue(null);
+        		if (pfb == null)
+        			continue;
         		specialRecipes.Add(pfb.TechType);
         		lockRecipe(pfb.TechType, false);
         	}

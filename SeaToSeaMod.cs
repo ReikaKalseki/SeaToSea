@@ -116,6 +116,8 @@ namespace ReikaKalseki.SeaToSea
     
     internal static Story.StoryGoal sunbeamCountdownTrigger;
     
+    internal static Harmony harmony;
+    
     /*
     public static SoundManager.SoundData voidspikeLeviRoar;
     public static SoundManager.SoundData voidspikeLeviBite;
@@ -136,13 +138,13 @@ namespace ReikaKalseki.SeaToSea
 
     [QModPatch]
     public static void Load() {
-        Harmony harmony = new Harmony(MOD_KEY);
+        harmony = new Harmony(MOD_KEY);
         Harmony.DEBUG = true;
         FileLog.logPath = Path.Combine(Path.GetDirectoryName(modDLL.Location), "harmony-log.txt");
         FileLog.Log("Ran mod register, started harmony (harmony log)");
         SNUtil.log("Ran mod register, started harmony");
         try {
-        	harmony.PatchAll(modDLL);
+        	InstructionHandlers.runPatchesIn(harmony, typeof(C2CPatches));
         }
         catch (Exception ex) {
 			FileLog.Log("Caught exception when running patcher!");

@@ -241,7 +241,10 @@ namespace ReikaKalseki.SeaToSea
 		}
     
 	    public bool isTechGated(TechType tt) {
-	    	return gatedTechnologies.Contains(tt);
+    		if (gatedTechnologies.Contains(tt))
+    			return true;
+    		Spawnable s = ItemRegistry.instance.getItem(tt);
+    		return (s is BasicCraftingItem && ((BasicCraftingItem)s).getOwnerMod() == SeaToSeaMod.modDLL) || (s is BasicCustomOre && ((BasicCustomOre)s).getOwnerMod() == SeaToSeaMod.modDLL);
 	    }
 	}
 	

@@ -29,9 +29,12 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothHeatSinkModule heatSinkModule;
     internal static SeamothSpeedModule speedModule;
     internal static VehicleLightModule lightModule;
+    
     internal static SealedSuit sealSuit;
     internal static SealedGloves sealGloves;
     internal static AzuriteBattery t2Battery;
+    
+    internal static BasicCraftingItem fcsDrillFuel;
     
     internal static RebreatherV2 rebreatherV2;
     internal static LiquidTank liquidTank;

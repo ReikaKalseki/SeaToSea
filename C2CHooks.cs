@@ -178,6 +178,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
 	    	ExplodingAnchorPod.onExplodingAnchorPodDamageEvent += onAnchorPodExplode;
 	    	PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
+	    	VoidBubble.voidBubbleSpawnerTickEvent += tickVoidBubbles;
+	    	VoidBubble.voidBubbleTickEvent += tickVoidBubble;
 	    	
 	    	ESHooks.scannabilityEvent += isItemMapRoomDetectable;
 	    	
@@ -856,6 +858,9 @@ namespace ReikaKalseki.SeaToSea {
 	   			if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
 	   				dmg.setValue(dmg.getAmount()*1.5F);
 	   		}
+	   		if (dmg.type == DamageType.Poison && dmg.target.GetComponent<GlowKelpTag>()) {
+	   			dmg.setValue(0);
+	   		}
 		}
 	   
 	   	public static float getVehicleRechargeAmount(Vehicle v) {
@@ -1457,6 +1462,20 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void tickVoidBubbles(VoidBubbleSpawnerTick t) {
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(t.player.transform.position, true)-VoidSpikesBiome.biomeVolumeRadius;
+	    	float f = (float)MathUtil.linterpolate(dist, 50, 300, 0, 1, true);
+	    	//SNUtil.writeToChat(dist.ToString("0.0")+" > "+f.ToString("0.0000"));
+	    	t.spawnChance *= f;
+	    }
+	    
+	    public static void tickVoidBubble(VoidBubbleTag t) {
+	    	double dist = VoidSpikesBiome.instance.getDistanceToBiome(Player.main.transform.position, true)-VoidSpikesBiome.biomeVolumeRadius;
+	    	if (dist <= 120) {
+	    		t.fade(dist <= 80 ? 2 : (dist <= 80 ? 5 : 10));
+	    	}
+	    }
+	    
 	    public static ClipMapManager.Settings modifyWorldMeshSettings(ClipMapManager.Settings values) {
 	    	ClipMapManager.LevelSettings baseline = values.levels[0];
 	    	
@@ -1656,7 +1675,15 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void fireSeamothDefence(SeaMoth sm) {
+	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 10); //x1.5 on hard already
 	    	sm.energyInterface.ConsumeEnergy(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 5 : 3);
+	    }
+	    
+	    public static void fireVehicleTorpedo(Vehicle v) {
+	    	if (v is SeaMoth) {
+		    	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+		    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(v as SeaMoth, hard ? 20 : 10);
+	    	}
 	    }
 		
 		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {
@@ -1885,6 +1912,45 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (ch.item == C2CItems.lightModule.TechType && Player.main.currentSub && Player.main.currentSub.isCyclops && Vector3.Distance(Player.main.currentSub.GetComponentInChildren<CyclopsVehicleStorageTerminalManager>().transform.position, Player.main.transform.position) >= 4.5F) {
 	    		ch.type = EquipmentType.CyclopsModule;
 	    	}
+	    }
+	    
+	    public static List<SMLHelper.V2.Crafting.Ingredient> filterFCSRecyclerOutput(List<SMLHelper.V2.Crafting.Ingredient> li) {
+	    	li.RemoveAll(i => C2CProgression.instance.isTechGated(i.techType));
+	    	return li;
+	    }
+	    
+	    public static List<TechType> filterFCSDrillerOutput(List<TechType> li) {
+	    	li.RemoveAll(C2CProgression.instance.isTechGated);
+	    	return li;
+	    }
+	    
+	    public static bool canFCSDrillOperate(bool orig, MonoBehaviour drill) { //orig is actually hasOil in some cases
+	    	if (!orig)
+	    		return false;
+	    	return canFCSDrillOperate(drill);
+	    }
+	    
+	    public static bool canFCSDrillOperate(MonoBehaviour drill) {
+	    	//SNUtil.writeToChat("Drill "+drill+" @ "+drill.transform.position+" is trying to mine: "+orig);
+	    	bool ret = DrillDepletionSystem.instance.hasRemainingLife(drill);
+	    	if (!ret) {
+	    		Component com = drill.GetComponent(C2CIntegration.getFCSDrillOreManager());
+	    		if (com) {
+		    		PropertyInfo p = C2CIntegration.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+		    		p.SetValue(com, new List<TechType>{});
+	    		}
+	    	}
+	    	return ret;
+	    }
+	    
+	    public static void tickFCSDrill(MonoBehaviour drill) {
+	    	//SNUtil.writeToChat("Ticking drill "+drill+" @ "+drill.transform.position);
+	    	if (DayNightCycle.main.deltaTime > 0)
+	    		DrillDepletionSystem.instance.deplete(drill);
+	    }
+	    
+	    public static TechType getFCSDrillFuel() {
+	    	return C2CItems.fcsDrillFuel.TechType;
 	    }
 	}
 }
