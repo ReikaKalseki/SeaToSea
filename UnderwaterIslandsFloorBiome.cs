@@ -89,6 +89,10 @@ namespace ReikaKalseki.SeaToSea {
 			return false;
 		}
 		
+		public override bool existsInSeveralPlaces() {
+			return false;
+		}
+		
 		public void tickPlayer(Player ep) {
 			
 		}
