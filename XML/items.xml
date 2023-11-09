@@ -374,6 +374,17 @@
 			
 		</pda>
 	</KharaaTreatment>
+	<FCSFuel>
+		<name>
+			High-Performance Lubricating Fuel
+		</name>
+		<desc>
+			A viscous hydrocarbon-based compound used to both fuel and lubricate large combustion engines.
+		</desc>
+		<pda>
+			
+		</pda>
+	</FCSFuel>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite

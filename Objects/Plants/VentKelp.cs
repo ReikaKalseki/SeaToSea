@@ -180,7 +180,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 	}
 	*/
-	class GlowKelpTag : MonoBehaviour {
+	internal class GlowKelpTag : MonoBehaviour {
 		
 		internal static readonly Color idleColor = new Color(0.1F, 0, 0.5F, 1);
 		internal static readonly Color activeColor = new Color(0.7F, 0.2F, 1, 1);
