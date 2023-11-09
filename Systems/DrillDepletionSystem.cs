@@ -35,14 +35,24 @@ namespace ReikaKalseki.SeaToSea {
 	   	}
 	    
 	    private DrillDepletionAOETag getAoEForDrill(MonoBehaviour drill) {
-	    	HashSet<DrillDepletionAOETag> tag = WorldUtil.getObjectsNearWithComponent<DrillDepletionAOETag>(drill.transform.position, 5);
+	    	HashSet<DrillDepletionAOETag> set = WorldUtil.getObjectsNearWithComponent<DrillDepletionAOETag>(drill.transform.position, 5);
 	    	//SNUtil.writeToChat("Drill "+drill+" @ "+drill.transform.position+" fetching tag = "+tag.toDebugString());
-	    	if (tag.Count == 0) {
+	    	float initialValue = 0;
+	    	if (set.Count > 1) {
+	    		foreach (DrillDepletionAOETag tag in set) {
+	    			initialValue += tag.totalDrillTime;
+	    			UnityEngine.Object.Destroy(tag.gameObject);
+	    		}
+	    		set.Clear();
+	    	}
+	    	if (set.Count == 0) {
 	    		GameObject go = ObjectUtil.createWorldObject(aoeEntity.ClassID);
 	    		go.transform.position = drill.transform.position;
-	    		tag.Add(go.GetComponent<DrillDepletionAOETag>());
+	    		DrillDepletionAOETag tag = go.GetComponent<DrillDepletionAOETag>();
+	    		tag.totalDrillTime = initialValue;
+	    		set.Add(tag);
 	    	}
-	    	return tag.First();
+	    	return set.First();
 	    }
 	    
 	    internal bool hasRemainingLife(MonoBehaviour drill) {
@@ -54,6 +64,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	DrillDepletionAOETag tag = getAoEForDrill(drill);
 	    	if (tag)
 	    		tag.totalDrillTime += DayNightCycle.main.deltaTime; //this is the time step they use too
+	    }
+	    
+	    internal float getRemainingDrillTime(MonoBehaviour drill) {
+	    	DrillDepletionAOETag tag = getAoEForDrill(drill);
+	    	return tag ? DRILL_LIFE-tag.totalDrillTime : 0;
 	    }
 	}
 	
