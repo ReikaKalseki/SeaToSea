@@ -119,6 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.getTemperatureEvent += getWaterTemperature;
 	    	
 	    	DIHooks.onPlayerTickEvent += tickPlayer;
+	    	DIHooks.getPlayerInputEvent += controlPlayerInput;
 	    	
 	    	DIHooks.onSeamothModulesChangedEvent += updateSeamothModules;
 	    	DIHooks.onCyclopsModulesChangedEvent += updateCyclopsModules;
@@ -886,6 +887,7 @@ namespace ReikaKalseki.SeaToSea {
     
 	    public static void onItemPickedUp(Pickupable p, Exosuit prawn, bool isKnife) {
 	    	AvoliteSpawner.instance.cleanPickedUp(p);
+	    	FCSIntegrationSystem.instance.modifyPeeperFood(p);
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
@@ -1152,6 +1154,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (skipSkyApplierSpawn)
 	    		return;
 	    	GameObject go = pk.gameObject;
+	    	if (go.name.StartsWith("ExplorableWreck", StringComparison.InvariantCultureIgnoreCase)) {
+	    		go.EnsureComponent<ImmuneToPropulsioncannon>(); //also implements IObstacle to prevent building
+	    	}
 	    	PrefabIdentifier pi = go.FindAncestor<PrefabIdentifier>();
 			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
@@ -1940,9 +1945,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (time-lastDrillDepletionTime >= 1) {
 	    			lastDrillDepletionTime = time;
 	    			SNUtil.writeToChat("Drill in "+WorldUtil.getRegionalDescription(drill.transform.position)+" has depleted the local resources.");
-		    		Component com = drill.GetComponent(C2CIntegration.getFCSDrillOreManager());
+		    		Component com = drill.GetComponent(FCSIntegrationSystem.instance.getFCSDrillOreManager());
 		    		if (com) {
-			    		PropertyInfo p = C2CIntegration.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			    		PropertyInfo p = FCSIntegrationSystem.instance.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			    		p.SetValue(com, new List<TechType>{});
 		    		}
 	    		}
@@ -1958,6 +1963,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static TechType getFCSDrillFuel() {
 	    	return C2CItems.fcsDrillFuel.TechType;
+	    }
+	    
+	    public static void controlPlayerInput(DIHooks.PlayerInput pi) {
+	    	FCSIntegrationSystem.instance.manageDrunkenness(pi);
 	    }
 	}
 }
