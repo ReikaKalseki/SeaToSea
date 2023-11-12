@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class MountainGlow : BasicCustomPlant, MultiTexturePrefab<FloraPrefabFetch> {
+	public class MountainGlow : BasicCustomPlant, MultiTexturePrefab {
 		
 		public MountainGlow() : base(SeaToSeaMod.itemLocale.getEntry("MOUNTAIN_GLOW"), new FloraPrefabFetch("1d5877a7-bc56-46c8-a27c-f9d0ab99cc80"), "ba866b79-1db1-4689-a697-b7d2bc65959d", "Pods") {
 			glowIntensity = 3F;

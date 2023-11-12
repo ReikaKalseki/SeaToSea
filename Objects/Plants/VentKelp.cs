@@ -13,7 +13,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class VentKelp : BasicCustomPlant, MultiTexturePrefab<FloraPrefabFetch> {
+	public class VentKelp : BasicCustomPlant, MultiTexturePrefab {
 		
 		public static float minTemperature = 25;
 		public static float idealTemperature = 60;
