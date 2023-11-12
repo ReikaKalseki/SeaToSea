@@ -14,7 +14,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class GeyserFilter : CustomMachine<GeyserFilterLogic>, MultiTexturePrefab<StringPrefabContainer> {
+	public class GeyserFilter : CustomMachine<GeyserFilterLogic>, MultiTexturePrefab {
 		
 		internal static readonly float POWER_COST = 1.5F; //per second
 		internal static readonly float PRODUCTION_RATE = 45F; //seconds per item
