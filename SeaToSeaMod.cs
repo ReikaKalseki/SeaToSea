@@ -97,6 +97,10 @@ namespace ReikaKalseki.SeaToSea
     
     //internal static VoidLeviElecSphere leviPulse;
     internal static DeepStalker deepStalker;
+    internal static SanctuaryJellyray sanctuaryray;
+    internal static PurpleHolefish purpleHolefish;
+    internal static PurpleBoomerang purpleBoomerang;
+    internal static PurpleHoopfish purpleHoopfish;
     internal static VoidSpikeLeviathan voidSpikeLevi;
     
     internal static Bioprocessor processor;
@@ -176,7 +180,16 @@ namespace ReikaKalseki.SeaToSea
 	    //voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
         
 	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
-	    deepStalker.register();
+	    deepStalker.Patch();
+	    
+	    sanctuaryray = new SanctuaryJellyray(itemLocale.getEntry("SanctuaryJellyray"));
+	    sanctuaryray.Patch();
+	    purpleBoomerang = new PurpleBoomerang(itemLocale.getEntry("PurpleBoomerang"));
+	    purpleBoomerang.Patch();
+	    purpleHolefish = new PurpleHolefish(itemLocale.getEntry("PurpleHolefish"));
+	    purpleHolefish.Patch();
+	    purpleHoopfish = new PurpleHoopfish(itemLocale.getEntry("PurpleHoopfish"));
+	    purpleHoopfish.Patch();
 	    
 	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
 	    voidSpikeLevi.register();
@@ -303,6 +316,7 @@ namespace ReikaKalseki.SeaToSea
 		C2CItems.kelp.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
 		C2CItems.healFlower.addNativeBiome(VanillaBiomes.REDGRASS, true);
 		C2CItems.sanctuaryPlant.addNativeBiome(CrashZoneSanctuaryBiome.instance);
+		C2CItems.mountainGlow.addNativeBiome(VanillaBiomes.MOUNTAINS);
 		
 		initHandlers();
         

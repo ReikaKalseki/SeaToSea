@@ -64,6 +64,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.BaseMoonpool));
 			*/
 			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new ProgressionTrigger(doDunesCheck)), new DunesPrompt());
+			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new StoryTrigger(C2CHooks.METEOR_GOAL)), new MeteorPrompt());
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 			
@@ -237,7 +238,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 	
 		internal bool canTriggerPDAPrompt(Player ep) {
-	    	return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && (ep.IsSwimming() || ep.GetVehicle() != null) && ep.currentSub == null;
+    		return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS) && (ep.IsSwimming() || Mathf.Abs(ep.transform.position.y) <= 1 || ep.GetVehicle() != null) && ep.currentSub == null && !ep.currentEscapePod && !ep.precursorOutOfWater && !WorldUtil.isPrecursorBiome(ep.transform.position);
 		}
     
 	    public bool isTechGated(TechType tt) {
@@ -286,6 +287,18 @@ namespace ReikaKalseki.SeaToSea
 		
 		public override string ToString() {
 			return "Dunes Prompt";
+		}
+		
+	}
+	
+	internal class MeteorPrompt : DelayedProgressionEffect {
+		
+		public MeteorPrompt() : base(() => {PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.MeteorPrompt).key);}, () => PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.MeteorPrompt).key), 100F, 2) {
+			
+		}
+		
+		public override string ToString() {
+			return "Meteor Prompt";
 		}
 		
 	}

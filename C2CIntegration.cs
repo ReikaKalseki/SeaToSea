@@ -113,7 +113,13 @@ namespace ReikaKalseki.SeaToSea {
 		BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
 		Bioprocessor.addRecipe(new TypeInput(AqueousEngineeringMod.poo), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
 		
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.alkali, 0.15F, BiomeRegions.RegionType.Other));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.healFlower, 0.15F, BiomeRegions.RegionType.RedGrass));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.kelp, 0.08F, BiomeRegions.RegionType.Other));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.mountainGlow, 0.3F, BiomeRegions.RegionType.Other));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, BiomeRegions.RegionType.Other));
 		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
+		
 		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
 		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, EcoceanMod.glowOil.TechType, hard ? 3 : 2);

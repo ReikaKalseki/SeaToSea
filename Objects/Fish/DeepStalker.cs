@@ -15,43 +15,34 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class DeepStalker : Spawnable {
+	public class DeepStalker : RetexturedFish {
 		
 		private readonly XMLLocale.LocaleEntry locale;
 	        
-	    internal DeepStalker(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
+	    internal DeepStalker(XMLLocale.LocaleEntry e) : base(e, VanillaCreatures.STALKER.prefab) {
 			locale = e;
+			glowIntensity = 1.25F;
+			
+			scanTime = 8;
+			eggBase = TechType.StalkerEgg;
+			eggMaturationTime = 2400;
+			eggSpawnRate = 0.25F;
+			eggSpawns.Add(BiomeType.GrandReef_TreaderPath);
 	    }
 			
-	    public override GameObject GetGameObject() {
-			GameObject world = ObjectUtil.createWorldObject(VanillaCreatures.STALKER.prefab, true, true);
-			world.EnsureComponent<TechTag>().type = TechType;
-			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+		public override void prepareGameObject(GameObject world, Renderer[] r0) {
 			DeepStalkerTag kc = world.EnsureComponent<DeepStalkerTag>();
-			foreach (Renderer r in world.GetComponentsInChildren<Renderer>()) {
-				RenderUtil.setEmissivity(r, 1.25F);
-				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Creature/DeepStalker");
+			foreach (Renderer r in r0) {
 				r.materials[0].SetColor("_GlowColor", new Color(1, 1, 1, 1));
 			}
 			AggressiveToPilotingVehicle agv = world.EnsureComponent<AggressiveToPilotingVehicle>();
 			agv.aggressionPerSecond = 0.2F;
 			agv.creature = world.GetComponent<Creature>();
 			agv.lastTarget = world.EnsureComponent<LastTarget>();
-			return world;
 	    }
 		
-		public void register() {
-			Patch();
-			SNUtil.addPDAEntry(this, 8, "Lifeforms/Fauna/Carnivores", locale.pda, locale.getField<string>("header"), null);
-			
-			CustomEgg.createAndRegisterEgg(this, TechType.StalkerEgg, 1, locale.desc, true, e => {e.eggProperties.growingPeriod = 2400;}, 0.25F, BiomeType.GrandReef_TreaderPath);
-	    
-	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Creature, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_OpenDeep_CreatureOnly, 1, 0.15F);
-	   		//GenUtil.registerSlotWorldgen(ClassID, PrefabFileName, TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.GrandReef_TreaderPath, 1, 0.3F);
-	   		
-	   		BehaviourData.behaviourTypeList[TechType] = BehaviourType.Shark;
-	   		
-	   		BioReactorHandler.SetBioReactorCharge(TechType, BaseBioReactor.charge[TechType.Stalker]);
+		public override BehaviourType getBehavior() {
+			return BehaviourType.Shark;
 		}
 			
 	}

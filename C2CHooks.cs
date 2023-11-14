@@ -14,6 +14,7 @@ using UnityEngine;
 
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.AqueousEngineering;
+using ReikaKalseki.Auroresource;
 using ReikaKalseki.Ecocean;
 using ReikaKalseki.Exscansion;
 using ReikaKalseki.SeaToSea;
@@ -51,6 +52,7 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly string KOOSH_ARCH_GOAL = "koosharch";
 	    internal static readonly Vector3 LR_ARCH_POS = new Vector3(-914.7F, -621.2F, 1078.4F);
 	    internal static readonly string LR_ARCH_GOAL = "lrarch";
+	    internal static readonly string METEOR_GOAL = "meteorhit";
 	    
 	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
 	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
@@ -181,6 +183,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
 	    	VoidBubble.voidBubbleSpawnerTickEvent += tickVoidBubbles;
 	    	VoidBubble.voidBubbleTickEvent += tickVoidBubble;
+	    	
+	    	FallingMaterialSystem.impactEvent += onMeteorImpact;
 	    	
 	    	ESHooks.scannabilityEvent += isItemMapRoomDetectable;
 	    	
@@ -806,7 +810,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		//if (type == DamageType.Acid && dealer == null && target.GetComponentInParent<SeaMoth>() != null)
 	   		//	return 0;
 	   		//SNUtil.writeToChat(dmg.target.name);
-	   		Player p = dmg.target.GetComponentInParent<Player>();
+	   		Player p = dmg.target.FindAncestor<Player>();
 	   		if (p != null) {
 	   			if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 27) {
 	   				dmg.setValue(0);
@@ -837,7 +841,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		//if (sub && sub.isCyclops)
 	   		//	SNUtil.writeToChat("Cyclops ["+dmg.target.GetFullHierarchyPath()+"] took "+dmg.amount+" of "+dmg.type+" from '"+dmg.dealer+"'");
 	   		if (dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture || dmg.type == DamageType.Electrical) {
-	   			DeepStalkerTag s = dmg.target.GetComponent<DeepStalkerTag>();
+	   			DeepStalkerTag s = dmg.target.FindAncestor<DeepStalkerTag>();
 	   			if (s) {
 	   				if (dmg.type == DamageType.Electrical)
 	   					s.onHitWithElectricDefense();
@@ -845,7 +849,7 @@ namespace ReikaKalseki.SeaToSea {
 	   			}
 	   		}
 	   		if (dmg.type == DamageType.Electrical) {
-	   			VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.GetComponent<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
+	   			VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.FindAncestor<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
 	   			if (s) {
 	   				dmg.setValue(0);
 	   				dmg.lockValue();
@@ -859,7 +863,8 @@ namespace ReikaKalseki.SeaToSea {
 	   			if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
 	   				dmg.setValue(dmg.getAmount()*1.5F);
 	   		}
-	   		if (dmg.type == DamageType.Poison && dmg.target.GetComponent<GlowKelpTag>()) {
+	   		GlowKelpTag tag = dmg.target.FindAncestor<GlowKelpTag>();
+	   		if (tag && (dmg.type == DamageType.Poison || !ObjectUtil.isFarmedPlant(dmg.target))) {
 	   			dmg.setValue(0);
 	   		}
 		}
@@ -1304,7 +1309,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		pi.GetComponent<StoryHandTarget>().goal = SeaToSeaMod.auroraTerminal;
 	    	}
 	    	else if (pi && pi.GetComponent<BlueprintHandTarget>()) {
-	    		DamagedDataboxSystem.instance.onDataboxSpawn(pi.gameObject);
+	    		DamagedDataboxSystem.instance.onDataboxSpawn(go);
+	    		go.EnsureComponent<ImmuneToPropulsioncannon>();
 	    	}
 	    	else if (pi && (pi.ClassId == VanillaResources.MAGNETITE.prefab || pi.ClassId == VanillaResources.LARGE_MAGNETITE.prefab)) {
 	    		go.EnsureComponent<Magnetic>();
@@ -1713,8 +1719,11 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
 	    	if (h.drops.Count > 0) {
-	    		if (h.objectType == C2CItems.kelp.TechType)
+	    		if (h.objectType == C2CItems.kelp.TechType) {
 	    			h.drops[h.defaultDrop] = 2;
+	    			if (UnityEngine.Random.Range(0F, 1F) <= 0.05F)
+	    				h.drops[CustomEgg.getEgg(SeaToSeaMod.purpleHolefish.TechType).TechType] = 1;
+	    		}
 		    	if (ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
 		        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
 		        }
@@ -1967,6 +1976,12 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void controlPlayerInput(DIHooks.PlayerInput pi) {
 	    	FCSIntegrationSystem.instance.manageDrunkenness(pi);
+	    }
+	    
+	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {
+	    	if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.MeteorPrompt).key)) {
+	    		Story.StoryGoal.Execute(METEOR_GOAL, Story.GoalType.Story);
+	    	}
 	    }
 	}
 }
