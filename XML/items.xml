@@ -609,10 +609,81 @@
 			
 			The purpose of the bioluminescent features on the stalker may be to aid this intimidation, or they may be designed to attract small prey fish.
 		</pda>
+		<category>
+			Lifeforms/Fauna/Carnivores
+		</category>
 		<header>
 			deepstalker
 		</header>
 	</DeepStalker>
+	<SanctuaryJellyray>
+		<name>
+			Torchray
+		</name>
+		<desc>
+			A peaceful ray species that feeds on the glowing cores of eye flame plants.
+		</desc>
+		<pda>
+			Torchrays slowly drift around their native biome, occasionally grazing on the glowing cores of the eye flames below. Like all other ray species so far encountered on the planet, they are both behaviorally passive and inedibly poisonous.
+		</pda>
+		<category>
+			Lifeforms/Fauna/LargeHerbivores
+		</category>
+		<header>
+			sanctuaryray
+		</header>
+	</SanctuaryJellyray>
+	<PurpleBoomerang>
+		<name>
+			Pulsefish
+		</name>
+		<desc>
+			A variant of the boomerang, adapted for the hot, dark, bacteria-laden waters of the Glass Forest.
+		</desc>
+		<pda>
+			The pulsefish is largely identical to its shallow-water counterpart, save for one notable difference: For reasons unknown, members of this species will rapidly alter the brightness of the ends their fins. This is unlikely to be an attempt at communication, but it may perhaps be a mechanism to avoid predation by the numerous aggressive fauna in the region.
+		</pda>
+		<category>
+			Lifeforms/Fauna/SmallHerbivores
+		</category>
+		<header>
+			purpleboomerang
+		</header>
+	</PurpleBoomerang>
+	<PurpleHolefish>
+		<name>
+			Kelp Grazer
+		</name>
+		<desc>
+			A variant of the holefish, adapted for the hot, dark, bacteria-laden waters of the Glass Forest. Displays a degree of deepsea gigantism.
+		</desc>
+		<pda>
+			Kelp grazers bear strong visual similarity to the tiny holefish found in the shallows caves, but behaviorally they could not be more distinct. Where holefish are skittish and rapidly dart around at the slightest provocation, kelp grazers lazily drift around deepvine clusters and occasionally harvest small quantities of their leaves - or more likely, the bacteria contained within - for sustenance. In doing this they also occasionally leave eggs behind on the plant.
+		</pda>
+		<category>
+			Lifeforms/Fauna/LargeHerbivores
+		</category>
+		<header>
+			purpleholefish
+		</header>
+	</PurpleHolefish>
+	<PurpleHoopfish>
+		<name>
+			Ringfish
+		</name>
+		<desc>
+			A variant of the hoopfish, adapted for the hot, dark, bacteria-laden waters of the Glass Forest.
+		</desc>
+		<pda>
+			Ringfish are small luminescent fish native to the Glass Forest, and move in and out of the stands of deepvine, blending in with the foliage.
+		</pda>
+		<category>
+			Lifeforms/Fauna/SmallHerbivores
+		</category>
+		<header>
+			purplehoopfish
+		</header>
+	</PurpleHoopfish>
 	<VoidSpikeLevi>
 		<name>
 			 Galvanic Leviathan

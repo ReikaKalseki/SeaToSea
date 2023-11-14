@@ -35,6 +35,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("followradio")]FollowRadioPrompt,
 			[Message("underislandgeyserminerals")]UnderwaterIslandsPrompt,
 			[Message("sanctuaryprompt")]SanctuaryPrompt,
+			[Message("meteorprompt")]MeteorPrompt,
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("needscaneverything")]NeedScansMessage,
 			[Message("notseenallbiomes")]NotSeenBiomesMessage,

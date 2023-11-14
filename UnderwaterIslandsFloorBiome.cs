@@ -36,11 +36,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly GlassForestAtmoFX atmoFX = new GlassForestAtmoFX();
 		
+		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
+		
 		private UnderwaterIslandsFloorBiome() : base(biomeName, 0.8F) {
-			
 		}
 		
 		public override void register() {
+			UnityEngine.Random.InitState(234761897);
         	GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
 			
 			atmoFX.Patch();
@@ -55,6 +57,18 @@ namespace ReikaKalseki.SeaToSea {
 			
 			GenUtil.registerSlotWorldgen(C2CItems.kelp.ClassID, C2CItems.kelp.PrefabFileName, C2CItems.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
+			
+			creatureCounts[SeaToSeaMod.purpleBoomerang.ClassID] = 300;
+			creatureCounts[SeaToSeaMod.purpleHolefish.ClassID] = 60;
+			creatureCounts[SeaToSeaMod.purpleHoopfish.ClassID] = 250;
+			
+			foreach (KeyValuePair<string, int> kvp in creatureCounts) {
+				for (int i = 0; i < kvp.Value; i++) {
+					Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)*0.5F).setY(-(UnityEngine.Random.Range(440, 480)));
+					//SNUtil.log("Spawning "+kvp.Key+" @ "+pos);
+					GenUtil.registerWorldgen(new PositionedPrefab(kvp.Key, pos));
+				}
+			}
 		}
 		/*
 		private void addAtmoFX(Vector3 pos) {
