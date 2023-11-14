@@ -26,37 +26,41 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly CrashZoneSanctuaryBiome instance = new CrashZoneSanctuaryBiome();
 		
-		private readonly Dictionary<VanillaCreatures, int> creatureCounts = new Dictionary<VanillaCreatures, int>();
+		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 		
 		private CrashZoneSanctuaryBiome() : base(biomeName, 1F) {
-			creatureCounts[VanillaCreatures.BLADDERFISH] = 36;
-			creatureCounts[VanillaCreatures.BOOMERANG] = 48;
-			creatureCounts[VanillaCreatures.CAVECRAWLER] = 27;
-			creatureCounts[VanillaCreatures.GASOPOD] = 4;
-			creatureCounts[VanillaCreatures.HOOPFISH] = 90;
-			creatureCounts[VanillaCreatures.MESMER] = 6;
+			creatureCounts[VanillaCreatures.BLADDERFISH.prefab] = 36;
+			creatureCounts[VanillaCreatures.BOOMERANG.prefab] = 48;
+			creatureCounts[VanillaCreatures.CAVECRAWLER.prefab] = 27;
+			creatureCounts[VanillaCreatures.GASOPOD.prefab] = 4;
+			creatureCounts[VanillaCreatures.HOOPFISH.prefab] = 90;
+			creatureCounts[VanillaCreatures.MESMER.prefab] = 6;
 			
-			creatureCounts[VanillaCreatures.SCHOOL_HOOPFISH] = 6;
-			creatureCounts[VanillaCreatures.SCHOOL_HOLEFISH] = 3;
-			creatureCounts[VanillaCreatures.SCHOOL_BOOMERANG] = 6;
-			creatureCounts[VanillaCreatures.SCHOOL_BLADDERFISH] = 3;
+			creatureCounts[VanillaCreatures.SCHOOL_HOOPFISH.prefab] = 6;
+			creatureCounts[VanillaCreatures.SCHOOL_HOLEFISH.prefab] = 3;
+			creatureCounts[VanillaCreatures.SCHOOL_BOOMERANG.prefab] = 6;
+			creatureCounts[VanillaCreatures.SCHOOL_BLADDERFISH.prefab] = 3;
 		}
 		
-		public override void register() {/* prebaked
+		public override void register() {
+			UnityEngine.Random.InitState(873451871);
+			/* prebaked
 			GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.crashSanctuarySpawner.ClassID, biomeCenter));
 			
-			UnityEngine.Random.InitState(873451871);
 			for (int i = 0; i < 160; i++) {
 				Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)*0.8F).setY(-300);
 				if (isInBiome(pos))
 					GenUtil.registerWorldgen(new PositionedPrefab(SeaToSeaMod.sanctuaryGrassSpawner.ClassID, pos));
 			}
 			*/
-			foreach (KeyValuePair<VanillaCreatures, int> kvp in creatureCounts) {
+			
+			creatureCounts[SeaToSeaMod.sanctuaryray.ClassID] = 18;
+			
+			foreach (KeyValuePair<string, int> kvp in creatureCounts) {
 				for (int i = 0; i < kvp.Value; i++) {
 					Vector3 pos = MathUtil.getRandomVectorAround(biomeCenter, new Vector3(biomeRadius, 0, biomeRadius)*0.67F).setY(-340);
 					if (isInBiome(pos))
-						GenUtil.registerWorldgen(new PositionedPrefab(kvp.Key.getPrefabID(), pos));
+						GenUtil.registerWorldgen(new PositionedPrefab(kvp.Key, pos));
 				}
 			}
 		}

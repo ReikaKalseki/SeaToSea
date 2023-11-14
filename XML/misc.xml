@@ -120,6 +120,17 @@
 		Sounds/pdaprompt/sanctuaryprompt.ogg
 	</pda>
   </sanctuaryprompt>
+  <meteorprompt>
+	<name>
+		
+	</name>
+	<desc>
+		Materials from the Aurora undergoing atmospheric re-entry may have unexpected applications and other blueprints may require those resources.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/meteor.ogg
+	</pda>
+  </meteorprompt>
   <treaderpoo>
 	<name>
 		
