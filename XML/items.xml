@@ -618,13 +618,13 @@
 	</DeepStalker>
 	<SanctuaryJellyray>
 		<name>
-			Torchray
+			Lantern Ray
 		</name>
 		<desc>
 			A peaceful ray species that feeds on the glowing cores of eye flame plants.
 		</desc>
 		<pda>
-			Torchrays slowly drift around their native biome, occasionally grazing on the glowing cores of the eye flames below. Like all other ray species so far encountered on the planet, they are both behaviorally passive and inedibly poisonous.
+			Lantern Rays slowly drift around their native biome, occasionally grazing on the glowing cores of the eye flames below. Like all other ray species so far encountered on the planet, they are both behaviorally passive and inedibly poisonous.
 		</pda>
 		<category>
 			Lifeforms/Fauna/LargeHerbivores

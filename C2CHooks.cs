@@ -1720,8 +1720,13 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
 	    	if (h.drops.Count > 0) {
 	    		if (h.objectType == C2CItems.kelp.TechType) {
+	    			GlowKelpTag tag = h.hit.FindAncestor<GlowKelpTag>();
 	    			h.drops[h.defaultDrop] = 2;
-	    			if (UnityEngine.Random.Range(0F, 1F) <= 0.05F)
+	    			float f = tag.isFarmed() ? 0 : 0.05F;
+	    			WaterPark wp = tag.getACU();
+	    			if (wp && wp.GetComponentInChildren<PurpleHolefishTag>())
+	    				f = 0.015F;
+	    			if (f > 0 && UnityEngine.Random.Range(0F, 1F) <= f)
 	    				h.drops[CustomEgg.getEgg(SeaToSeaMod.purpleHolefish.TechType).TechType] = 1;
 	    		}
 		    	if (ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
