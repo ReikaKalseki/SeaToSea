@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.IO;
 
@@ -137,6 +138,10 @@ namespace ReikaKalseki.SeaToSea {
 			debris.init();
 			
 			//IngameMenuHandler.Main.RegisterOnSaveEvent(SpikeCache.save);
+		}
+		
+		public override mset.Sky getSky() {
+			return WorldUtil.getSkybox(VanillaBiomes.VOID.getIDs().First());
 		}
 		
 		public override bool isCaveBiome() {

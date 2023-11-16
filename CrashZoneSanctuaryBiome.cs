@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.IO;
 
@@ -63,6 +64,10 @@ namespace ReikaKalseki.SeaToSea {
 						GenUtil.registerWorldgen(new PositionedPrefab(kvp.Key, pos));
 				}
 			}
+		}
+		
+		public override mset.Sky getSky() {
+			return WorldUtil.getSkybox("sparseReef");
 		}
 		
 		public override VanillaMusic[] getMusicOptions() {

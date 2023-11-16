@@ -50,9 +50,47 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Renderer[] renders;
 		
+		private float lastEyeFlameCheckTime = -1;
+		private float lastEyeFlameEatTime = DayNightCycle.main.timePassedAsFloat-UnityEngine.Random.Range(0, 1200);
+		
+		private SanctuaryPlantTag currentTarget;
+		
+		private SwimRandom swimmer;
+		
 		void Update() {
 			if (renders == null)
 				renders = GetComponentsInChildren<Renderer>();
+			if (!swimmer)
+				swimmer = GetComponentInChildren<SwimRandom>();
+			
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastEyeFlameCheckTime >= 10 && time-lastEyeFlameEatTime >= 600 && !GetComponent<WaterParkCreature>()) { //10 min each
+				lastEyeFlameCheckTime = time;
+				WorldUtil.getObjectsNear<SanctuaryPlantTag>(transform.position, 180, (Func<SanctuaryPlantTag, bool>)tryTarget, go => go.GetComponent<SanctuaryPlantTag>());
+			}
+			
+			if (currentTarget && swimmer) {
+				float dist = (currentTarget.transform.position-transform.position).sqrMagnitude;
+				if (dist < 5) {
+					if (currentTarget.tryHarvest()) { //does not spawn item
+						lastEyeFlameEatTime = time;
+						SoundManager.playSoundAt(SoundManager.buildSound(CraftData.GetPickupSound(TechType.SeaTreaderPoop)), transform.position);
+						Jellyray jr = GetComponent<Jellyray>();
+						jr.Hunger.Value = 0;
+						jr.Happy.Add(0.5F);
+						currentTarget = null;
+					}
+				}
+				else {
+					swimmer.swimBehaviour.SwimTo(currentTarget.transform.position, 2.5F);
+				}
+			}
+		}
+		
+		private bool tryTarget(SanctuaryPlantTag sp) {
+			if (!currentTarget || (sp.transform.position-transform.position).sqrMagnitude < (currentTarget.transform.position-transform.position).sqrMagnitude)
+				currentTarget = sp;
+			return false;
 		}
 		
 	}

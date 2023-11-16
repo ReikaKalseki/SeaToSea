@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.IO;
 
@@ -39,6 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 		
 		private UnderwaterIslandsFloorBiome() : base(biomeName, 0.8F) {
+			
 		}
 		
 		public override void register() {
@@ -74,6 +76,10 @@ namespace ReikaKalseki.SeaToSea {
 		private void addAtmoFX(Vector3 pos) {
 			GenUtil.registerWorldgen(atmoFX.ClassID, pos, Quaternion.identity, go => go.transform.localScale = Vector3.one*(100+biomeVolumeRadius));
 		}*/
+		
+		public override mset.Sky getSky() {
+			return WorldUtil.getSkybox(VanillaBiomes.UNDERISLANDS.getIDs().First());
+		}
 		
 		public override VanillaMusic[] getMusicOptions() {
 			return new VanillaMusic[]{VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM, VanillaMusic.AURORA};

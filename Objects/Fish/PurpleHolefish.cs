@@ -31,6 +31,12 @@ namespace ReikaKalseki.SeaToSea {
 			eggSpawnRate = 1.5F;
 			eggSpawns.Add(BiomeType.UnderwaterIslands_IslandCaveFloor);
 	    }
+
+		public override Vector2int SizeInInventory {
+			get {
+				return new Vector2int(2, 2);
+			}
+		}
 			
 		public override void prepareGameObject(GameObject world, Renderer[] r0) {
 			PurpleHolefishTag kc = world.EnsureComponent<PurpleHolefishTag>();
@@ -42,6 +48,8 @@ namespace ReikaKalseki.SeaToSea {
 			world.GetComponent<SwimRandom>().swimVelocity *= 0.25F;
 			world.GetComponent<SwimRandom>().swimForward *= 0.5F;
 			world.GetComponent<Locomotion>().maxVelocity *= 0.25F;
+			//world.GetComponent<Eatable>().foodValue *= 2.4F;
+			ObjectUtil.removeComponent<Eatable>(world);
 			world.GetComponentInChildren<AnimateByVelocity>().animSpeedValue *= 0.25F;
 			world.GetComponentInChildren<AnimateByVelocity>().animationMoveMaxSpeed *= 0.25F;
 			world.GetComponent<SplineFollowing>().inertia *= 2;
@@ -61,14 +69,31 @@ namespace ReikaKalseki.SeaToSea {
 		private Renderer[] renders;
 		private Animator[] animators;
 		
+		private bool isACU;
+		
+		private float lastTickTime = -1;
+		
+		void Awake() {
+			isACU = GetComponent<WaterParkCreature>();
+		}
+		
 		void Update() {
-			transform.localScale = Vector3.one*5;
 			if (renders == null)
 				renders = GetComponentsInChildren<Renderer>();
 			if (animators == null)
 				animators = GetComponentsInChildren<Animator>();
-			foreach (Animator a in animators)
-				a.speed = 0.25F;
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastTickTime >= 0.5F) {
+				lastTickTime = time;
+				isACU = GetComponent<WaterParkCreature>();
+				transform.localScale = Vector3.one*(isACU ? 1.5F : 5);
+				foreach (Animator a in animators) {
+					if (a)
+						a.speed = 0.25F;
+				}
+				if (isACU)
+					ObjectUtil.removeChildObject(gameObject, "model_FP");
+			}
 		}
 		
 	}
