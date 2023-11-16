@@ -113,12 +113,37 @@ namespace ReikaKalseki.SeaToSea {
 		BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
 		Bioprocessor.addRecipe(new TypeInput(AqueousEngineeringMod.poo), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount*4, rec.outputCount);
 		
-		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.alkali, 0.15F, BiomeRegions.RegionType.Other));
-		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.healFlower, 0.15F, BiomeRegions.RegionType.RedGrass));
-		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.kelp, 0.08F, BiomeRegions.RegionType.Other));
-		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.mountainGlow, 0.3F, BiomeRegions.RegionType.Other));
-		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, BiomeRegions.RegionType.Other));
-		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, 0.5F, 0.3F, true, BiomeRegions.RegionType.GrandReef);
+		BiomeRegions.RegionType glassForest = new BiomeRegions.RegionType("GlassForest", UnderwaterIslandsFloorBiome.instance.displayName, 3.5F, 0F, 0.8F, 0.85F);
+		//BiomeRegions.RegionType voidSpikes = new BiomeRegions.RegionType(VoidSpikesBiome.instance.displayName, 0.1F, 0.1F, 0.25F, 0.95F);
+		BiomeRegions.RegionType sanctuary = new BiomeRegions.RegionType("Sanctuary", CrashZoneSanctuaryBiome.instance.displayName, 0.1F, 1.1F, 0.85F, 0.8F);
+		ACUTheming.setFloorTexture(glassForest, TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/ACUFloor/GlassForest"));
+		//ACUTheming.setFloorTexture(voidSpikes, TextureManager.getTexture(AqueousEngineeringMod.modDLL, "Textures/ACUFloor/VoidSpikes"));
+		ACUTheming.setFloorTexture(sanctuary, TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/ACUFloor/Sanctuary"));
+		ACUTheming.registerGrassProp(sanctuary, null, 25, 0.6F); //null is default texture
+		ACUTheming.registerProp(sanctuary, SeaToSeaMod.crashSanctuaryFern.ClassID, 20, true, 0.7F);
+		
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.alkali, 0.15F, BiomeRegions.Other));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.healFlower, 0.15F, BiomeRegions.RedGrass));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.kelp, 0.08F, glassForest));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.mountainGlow, 0.3F, BiomeRegions.Other));
+		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, sanctuary));
+		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(SeaToSeaMod.purpleBoomerang, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Boomerang), glassForest));
+		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(SeaToSeaMod.purpleHoopfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Spinefish), glassForest));
+		ACUEcosystems.ACUMetabolism met = ACUEcosystems.getMetabolismForAnimal(TechType.RabbitRay);
+		ACUEcosystems.addPredatorType(SeaToSeaMod.purpleHolefish.TechType, met.relativeValue*2F, met.metabolismPerSecond, met.normalizedPoopChance, false, glassForest);
+		met = ACUEcosystems.getMetabolismForAnimal(TechType.Jellyray);
+		ACUEcosystems.addPredatorType(SeaToSeaMod.sanctuaryray.TechType, met.relativeValue*1.25F, met.metabolismPerSecond, met.normalizedPoopChance, false, sanctuary);
+		met = ACUEcosystems.getMetabolismForAnimal(TechType.Stalker);
+		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, met.relativeValue*1.5F, met.metabolismPerSecond*0.5F, met.normalizedPoopChance*1.25F, true, BiomeRegions.GrandReef);
+		ACUEcosystems.getMetabolismForAnimal(TechType.BoneShark).addBiome(glassForest);
+		ACUEcosystems.getMetabolismForAnimal(TechType.Gasopod).addBiome(sanctuary);
+		ACUEcosystems.getMetabolismForAnimal(TechType.Mesmer).addBiome(sanctuary);
+		ACUEcosystems.getAnimalFood(TechType.Bladderfish).addBiome(sanctuary);
+		ACUEcosystems.getAnimalFood(TechType.Boomerang).addBiome(sanctuary);
+		ACUEcosystems.getAnimalFood(TechType.Hoopfish).addBiome(sanctuary);
+		ACUEcosystems.getPlantFood(VanillaFlora.SPOTTED_DOCKLEAF.getPrefabID()).addBiome(sanctuary);
+		ACUEcosystems.getPlantFood(VanillaFlora.PAPYRUS.getPrefabID()).addBiome(sanctuary);
+		//ACUEcosystems.getAnimalFood(TechType.CaveCrawler).addBiome(sanctuary);
 		
 		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
 		
@@ -189,6 +214,10 @@ namespace ReikaKalseki.SeaToSea {
 		FoodEffectSystem.instance.addVomitingEffect(C2CItems.kelp.seed.TechType, 250, 250, 20, 1.5F, 2);
 		FoodEffectSystem.instance.addPoisonEffect(C2CItems.kelp.seed.TechType, 250, 30);
 		FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.alkali.seed.TechType, 75, 30, DamageType.Acid, SeaToSeaMod.itemLocale.getEntry(C2CItems.alkali.ClassID).getField<string>("eateffect"));
+		
+		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleHolefish.TechType, 60, 30);
+		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleBoomerang.TechType, 50, 30);
+		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleHoopfish.TechType, 80, 30);
 		
 		FoodEffectSystem.instance.addVomitingEffect(C2CItems.sanctuaryPlant.seed.TechType, 60, 40, 5, 2, 5);
 		FoodEffectSystem.instance.addEffect(C2CItems.sanctuaryPlant.seed.TechType, (s, go) => PlayerMovementSpeedModifier.add(1.8F, 180), FoodEffectSystem.instance.getLocaleEntry("speed"));

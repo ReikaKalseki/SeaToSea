@@ -66,6 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(C2CItems.healFlower.seed.TechType, 4, "Leaves coated in oils suitable for medical applications");
 			addRequiredItem(C2CItems.mountainGlow.seed.TechType, 1, "Aggressively parasitic flora that eats its host from within");
 			addRequiredItem(C2CItems.sanctuaryPlant.seed.TechType, 2, "A glowing seed-bearing organ from a plant on the verge of extinction");
+			addRequiredItem(SeaToSeaMod.purpleHolefish.TechType, 1, "A large slow-moving herbivore whose life revolves around the kelp it feeds on and lays eggs in");
 			
 			addRequiredItem(TechType.PrecursorIonCrystal, 3, "Alien Power Storage Units").setSorting(1000);
 			addRequiredItem(TechType.Diamond, 1, "*").setSorting(1000);

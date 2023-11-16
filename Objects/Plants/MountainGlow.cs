@@ -112,6 +112,8 @@ namespace ReikaKalseki.SeaToSea {
 				fruitHolder.transform.localRotation = Quaternion.Euler(0, 0, 180);
 				ObjectUtil.removeComponent<ChildObjectIdentifier>(fruitHolder);
 				ObjectUtil.removeComponent<TechTag>(fruitHolder);
+				ObjectUtil.removeComponent<LargeWorldEntity>(fruitHolder);
+				ObjectUtil.removeComponent<PrefabIdentifier>(fruitHolder);
 				if (seeds == null)
 					seeds = fruitHolder.GetComponentsInChildren<PickPrefab>();
 				foreach (PickPrefab pp in seeds) {

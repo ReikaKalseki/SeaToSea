@@ -44,7 +44,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r0) {
 			base.prepareGameObject(go, r0);
-			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 			GlowKelpTag g = go.EnsureComponent<GlowKelpTag>();
 			float h = 0;/*
 			int n = (int)Math.Min(9, 3+((1+heightNoiseField.getValue(go.transform.position))*8));
@@ -92,8 +92,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void prepareSubplant(GameObject child, bool leavesOnly = false) {
-			child.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
-			child.EnsureComponent<TechTag>().type = TechType;
+			ObjectUtil.removeComponent<LargeWorldEntity>(child);
+			ObjectUtil.removeComponent<TechTag>(child);
+			ObjectUtil.removeComponent<PrefabIdentifier>(child);
 			
 			foreach (Renderer r in child.GetComponentsInChildren<Renderer>(true)) {
 				leavesOnlyRendering = leavesOnly;
@@ -187,6 +188,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly List<KelpSegment> segments = new List<KelpSegment>();
 		private GrownPlant grown;
+		private WaterPark acu;
 		private bool redoRenderers;
 		private float creationTime = 999999;
 		private float lastAreaCheckTime = -1;
@@ -220,7 +222,8 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.kelp.prepareGameObject(gameObject, null);
 			creationTime = DayNightCycle.main.timePassedAsFloat;
 			grown = gameObject.GetComponent<GrownPlant>();
-			if (grown) {
+			acu = gameObject.FindAncestor<WaterPark>();
+			if (grown || acu) {
     			gameObject.SetActive(true);
     		}
     		else {
@@ -241,7 +244,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (time-lastAreaCheckTime >= 0.25) {
 				lastAreaCheckTime = time;
 				intensity = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
-				if (grown) {
+				if (grown || acu) {
 	    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
 	    			if (isNew) {
 		    			foreach (KelpSegment s in segments) {
@@ -262,21 +265,31 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			bool kill = false;
+			bool cropped = false;
 			foreach (KelpSegment s in segments) {
 				if (!s.renderer)
 					continue;
-				if (grown && s.index >= 2) {
+				if ((grown || acu) && s.index >= 2 && !isNew) {
+					cropped = true;
 					UnityEngine.Object.DestroyImmediate(s.obj);
-					SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position);
+					SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position+" #"+s.index);
 					continue;
 				}
 				foreach (Material m in s.renderer.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));
+					if (acu) {
+						Color c = new Color(0.44F, 0.28F, 0.56F);
+						m.SetColor("_Color", c);
+					}
 				}
 			}
+			if (cropped) {
+				segments.RemoveAll(s => !s.renderer);
+			}
 			//SNUtil.writeToChat(time.ToString("00.000")+" > "+(time-lastContinuityCheckTime).ToString("00.000"));
-			if (time-lastContinuityCheckTime >= 1) {
+			else if (time-lastContinuityCheckTime >= 1 && !isNew) {
 				lastContinuityCheckTime = time;
+				kill |= segments.Count <= 0;
 				foreach (KelpSegment s in segments) {
 					if (!s.renderer) {
 						kill = true;
@@ -293,7 +306,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (grown)
 							s.obj.GetComponentInParent<Planter>().RemoveItem(grown.seed);
 						UnityEngine.Object.DestroyImmediate(s.obj);
-						SNUtil.log("Destroying surface vent kelp @ "+transform.position);
+						SNUtil.log("Destroying surface vent kelp @ "+transform.position+" #"+s.index);
 						redoRenderers = true;
 						continue;
 					}
@@ -311,6 +324,14 @@ namespace ReikaKalseki.SeaToSea {
 				gameObject.GetComponentInParent<LiveMixin>().TakeDamage(99999F);
 				SNUtil.log("Killing incomplete/killed vent kelp @ "+transform.position);
 			}
+		}
+		
+		public bool isFarmed() {
+			return (bool)grown;
+		}
+		
+		public WaterPark getACU() {
+			return acu;
 		}
 		
 	}
