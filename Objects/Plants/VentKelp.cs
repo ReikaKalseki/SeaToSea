@@ -280,6 +280,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (acu) {
 						Color c = new Color(0.44F, 0.28F, 0.56F);
 						m.SetColor("_Color", c);
+						m.SetColor("_SpecColor", c);
 					}
 				}
 			}
