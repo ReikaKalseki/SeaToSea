@@ -129,6 +129,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onSeamothModuleUsedEvent += useSeamothModule;
 	    	
 	    	DIHooks.onSeamothSonarUsedEvent += pingSeamothSonar;
+	    	DIHooks.onTorpedoFireEvent += onTorpedoFired;
+	    	DIHooks.onTorpedoExplodeEvent += onTorpedoExploded;
 	    	
 	    	DIHooks.onSonarUsedEvent += pingAnySonar;
 	    	
@@ -1422,6 +1424,17 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void onTorpedoFired(Bullet b, Vehicle v) {
+	    	if (v is SeaMoth)
+	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(v as SeaMoth, SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 30 : 15);
+	    }
+	    
+	    public static void onTorpedoExploded(SeamothTorpedo p, Transform result) {
+	    	Vehicle v = Player.main.GetVehicle();
+	    	if (v is SeaMoth)
+	    		VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(v as SeaMoth, SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 60 : 30);
+	    }
+	    
 	    public static void pingAnySonar(SNCameraRoot cam) {
 	    	if (VoidSpikesBiome.instance.isInBiome(cam.transform.position)) {
 	    		VoidSpikeLeviathanSystem.instance.triggerEMInterference();
@@ -1688,13 +1701,6 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void fireSeamothDefence(SeaMoth sm) {
 	    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(sm, 10); //x1.5 on hard already
 	    	sm.energyInterface.ConsumeEnergy(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 5 : 3);
-	    }
-	    
-	    public static void fireVehicleTorpedo(Vehicle v) {
-	    	if (v is SeaMoth) {
-		    	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
-		    	VoidSpikeLeviathanSystem.instance.temporarilyDisableSeamothStealth(v as SeaMoth, hard ? 20 : 10);
-	    	}
 	    }
 		
 		public static void generateItemTooltips(StringBuilder sb, TechType tt, GameObject go) {

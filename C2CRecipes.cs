@@ -502,7 +502,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
         addItemToRecipe(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
+        RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Machines"});
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
@@ -513,7 +513,7 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Blue, new Vector2int(2, 2));
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Personal", "Equipment"});
+        RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Machines"});
         addItemToRecipe(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         addItemToRecipe(TechType.PrecursorKey_White, C2CItems.getIngot(TechType.Magnetite).ingot, 3);
         addItemToRecipe(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);
@@ -591,6 +591,13 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetItemSize(TechType.ExosuitPropulsionArmModule, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(TechType.ExosuitGrapplingArmModule, new Vector2int(2, 2));
         CraftDataHandler.SetItemSize(C2CItems.depth1300.TechType, new Vector2int(2, 2));
+        
+        CraftTreeHandler.RemoveNode(CraftTree.Type.Fabricator, "Personal", "Equipment", "PrecursorKey_Purple");
+        CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Purple, "Machines");
+        CraftTreeHandler.RemoveNode(CraftTree.Type.Fabricator, "Personal", "Equipment", "PrecursorKey_Orange");
+        CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Orange, "Machines");
+        CraftTreeHandler.RemoveNode(CraftTree.Type.Fabricator, "Personal", "Equipment", "PrecursorKey_Blue");
+        CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, TechType.PrecursorKey_Blue, "Machines");
         
         foreach (FieldInfo f in typeof(C2CItems).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)) {
         	if (f.FieldType.IsSubclassOf(typeof(ModPrefab))) {

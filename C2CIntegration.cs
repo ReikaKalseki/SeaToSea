@@ -145,7 +145,7 @@ namespace ReikaKalseki.SeaToSea {
 		ACUEcosystems.getPlantFood(VanillaFlora.PAPYRUS.getPrefabID()).addBiome(sanctuary);
 		//ACUEcosystems.getAnimalFood(TechType.CaveCrawler).addBiome(sanctuary);
 		
-		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 3);
+		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1.0F);
 		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, EcoceanMod.glowOil.TechType, hard ? 3 : 2);
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
