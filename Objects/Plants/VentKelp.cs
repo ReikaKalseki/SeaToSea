@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -10,6 +11,7 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
 
 namespace ReikaKalseki.SeaToSea {
 	
@@ -76,6 +78,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (Collider c in go.GetComponentsInChildren<Collider>(true)) {
 				c.isTrigger = true;
 			}
+			go.EnsureComponent<SonarOnlyRenderer>();
 		}
 		
 		private GameObject getOrCreateSubplant(string pfb, GameObject go, float h, string nm) {
@@ -194,14 +197,19 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastAreaCheckTime = -1;
 		private float lastContinuityCheckTime = -1;
 		
+		private SonarOnlyRenderer sonarControl;
+		
 		private float intensity = 1;
 		
 		class KelpSegment {
 			
 			internal readonly Renderer renderer;
+			//internal readonly Renderer sonarRenderer;
 			internal readonly LiveMixin live;
 			internal readonly GameObject obj;
 			internal readonly int index;
+		
+			internal float sonarIntensity = 0;
 			
 			internal KelpSegment(Renderer r) {
 				renderer = r;
@@ -233,14 +241,21 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			if (!sonarControl)
+				sonarControl = GetComponent<SonarOnlyRenderer>();
 			bool isNew = DayNightCycle.main.timePassedAsFloat-creationTime <= 0.1F;
 			if (segments.Count == 0 || isNew || redoRenderers) {
 				segments.Clear();
 				foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>()) {
-					segments.Add(new KelpSegment(r));
+					//if (!r.gameObject.name.Contains("Sonar")) {
+						KelpSegment s = new KelpSegment(r);
+						segments.Add(s);
+						//sonarControl.renderers.Add(s.sonarRenderer);
+					//}
 				}
 			}
 			float time = DayNightCycle.main.timePassedAsFloat;
+			float dT = Time.deltaTime;
 			if (time-lastAreaCheckTime >= 0.25) {
 				lastAreaCheckTime = time;
 				intensity = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
@@ -266,9 +281,26 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			bool kill = false;
 			bool cropped = false;
+			float sonarDist = sonarControl.computeSonarDistance();
 			foreach (KelpSegment s in segments) {
 				if (!s.renderer)
 					continue;
+				if (sonarControl.isBlobVisible(s.renderer, sonarDist, 1.5F))
+					s.sonarIntensity = Mathf.Min(1, s.sonarIntensity+dT*3.2F);
+				else
+					s.sonarIntensity = Mathf.Max(0, s.sonarIntensity-dT*1F);
+				
+				if (s.sonarIntensity > 0) {
+					s.renderer.materials[1].EnableKeyword("FX_BUILDING");
+					s.renderer.materials[1].SetFloat("_Built", 0.25F);
+					s.renderer.materials[1].SetVector("_BuildParams", new Vector4(1, 1, 0.25F, 0.1F));
+					s.renderer.materials[1].SetColor("_BorderColor", new Color(4.25F*s.sonarIntensity, 0, 0, 1));
+					s.renderer.materials[1].SetFloat("_NoiseThickness", 0.07F);
+					s.renderer.materials[1].SetFloat("_NoiseStr", 0.15F);
+				}
+				else {
+					s.renderer.materials[1].DisableKeyword("FX_BUILDING");
+				}
 				if ((grown || acu) && s.index >= 2 && !isNew) {
 					cropped = true;
 					UnityEngine.Object.DestroyImmediate(s.obj);
