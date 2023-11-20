@@ -505,6 +505,7 @@ namespace ReikaKalseki.SeaToSea {
 	sealed class SparklePeeperInput : BioInput {
 		
 		public override bool isItemValid(Pickupable pp) {
+			//SNUtil.writeToChat("Comparing against "+pp+" ("+(pp.GetComponent<Peeper>() ? pp.GetComponent<Peeper>().isHero.ToString() : "no")+")");
 			return pp.GetTechType() == TechType.Peeper && pp.GetComponent<Peeper>().isHero;
 		}
 		
