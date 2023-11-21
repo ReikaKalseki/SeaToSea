@@ -1686,7 +1686,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		effectiveDepth = (float)MathUtil.linterpolate(depth, 50, 100, 50, 125, true);
 	    	float f = Mathf.Clamp01((ch.panel.maxDepth-effectiveDepth)/ch.panel.maxDepth);
 	    	//SNUtil.writeToChat(depth+" > "+effectiveDepth+" > "+f+" > "+ch.panel.depthCurve.Evaluate(f));
-	    	return ch.panel.depthCurve.Evaluate(f);
+	    	return ch.panel.depthCurve.Evaluate(f)*ch.panel.GetSunScalar();
 	    }
 	    
 	    public static float getModuleFireCost(DIHooks.ModuleFireCostCheck ch) {

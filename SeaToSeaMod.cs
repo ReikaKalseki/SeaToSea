@@ -533,7 +533,7 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.UnderwaterIslands_Geyser, 0.15F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.25F, 1);
     	
-    	LootDistributionHandler.EditLootDistributionData(purpleHolefish.ClassID, BiomeType.UnderwaterIslands_OpenDeep_CreatureOnly, 4F, 1);
+    	LootDistributionHandler.EditLootDistributionData(purpleHolefish.ClassID, BiomeType.UnderwaterIslands_OpenDeep_CreatureOnly, 2.75F, 1);
     	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverCorridor_LakeFloor, 0.2F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverJunction_LakeFloor, 0.2F, 1);
