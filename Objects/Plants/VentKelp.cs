@@ -11,7 +11,6 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
-using ReikaKalseki.Ecocean;
 
 namespace ReikaKalseki.SeaToSea {
 	
