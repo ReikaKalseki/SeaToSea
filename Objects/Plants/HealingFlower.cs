@@ -83,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 	    void OnTriggerStay(Collider other) {
 			if (!other.isTrigger && other.gameObject.FindAncestor<Player>()) {
 				float dt = Time.deltaTime;
-				if (other.gameObject.FindAncestor<LiveMixin>().AddHealth((isGrown ? 0.33F : 0.75F)*dt) > 0.0001F) {
+				if (other.gameObject.FindAncestor<LiveMixin>().AddHealth((isGrown ? 0.2F : 0.5F)*dt) > 0.00001F) {
 					if (isGrown && live != null)
 						live.TakeDamage(0.67F*dt, transform.position);
 				}
