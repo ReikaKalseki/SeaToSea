@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly AvoliteSpawner instance = new AvoliteSpawner();
 		
-		public readonly int AVOLITE_COUNT = 9;//6;
+		public readonly int AVOLITE_COUNT = FCSIntegrationSystem.instance.isLoaded() ? 13 : 9;//6;
 		private readonly int SCRAP_COUNT = 45;//60;//UnityEngine.Random.Range(45, 71); //45-70
 		private readonly string xmlPathRoot;
 		

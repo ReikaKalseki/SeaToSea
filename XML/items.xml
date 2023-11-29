@@ -747,6 +747,17 @@
 			
 		</pda>
 	</VehicleLightBonus>
+	<SeamothTether>
+		<name>
+			Seamoth Tether Module
+		</name>
+		<desc>
+			Uses propulsion cannon technology to allow a seamoth to tow one or more large objects behind it, while power supplies last. Power cost is continuous regardless of towing load.
+		</desc>
+		<pda>
+			
+		</pda>
+	</SeamothTether>
 	<SeamothHeatSinkModule>
 		<name>
 			Seamoth Heat Sink Module

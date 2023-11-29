@@ -212,6 +212,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	     }
 	    	}));
 	    	
+	    	if (FCSIntegrationSystem.instance.isLoaded())
+	    		FCSIntegrationSystem.instance.initializeTechUnlocks();
+	    	
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    	UnderwaterIslandsFloorBiome.instance.onWorldStart();
         
@@ -299,6 +302,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	
 	    	float time = DayNightCycle.main.timePassedAsFloat;
+	    	
+	    	if (FCSIntegrationSystem.instance.isLoaded())
+	    		FCSIntegrationSystem.instance.tickNotifications(time);
 	    	
 	    	if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
 	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
@@ -1279,6 +1285,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
 	    		go.EnsureComponent<C2CMoth>();
 	    		go.EnsureComponent<BrightLightController>().setLightValues(120, 1.75F, 135, 180, 2.5F).setPowerValues(0.15F, 0.5F);
+	    		go.EnsureComponent<SeamothTetherController>();
 	    		//go.EnsureComponent<VoidSpikeLeviathanSystem.SeamothStealthManager>();
 	    	}
 	    	else if (pi && pi.ClassId == "ba3fb98d-e408-47eb-aa6c-12e14516446b") { //prawn
@@ -1374,6 +1381,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
 	    	sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
+	    	sm.gameObject.EnsureComponent<SeamothTetherController>().recalculateModule();
 	    	if (added && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
 	    		sm.torpedoSilos[slotID].SetActive(true);
 	    	}
@@ -1749,7 +1757,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static bool chargerConsumeEnergy(IPowerInterface pi, float amt, out float consumed, Charger c) {
-	    	if (c is PowerCellCharger && SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && (c is PowerCellCharger || c.GetType().Name.Contains("FCS")))
 	    		amt *= 1.5F;
 	    	return pi.ConsumeEnergy(amt, out consumed);
 	    }
@@ -1987,6 +1995,15 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void controlPlayerInput(DIHooks.PlayerInput pi) {
 	    	FCSIntegrationSystem.instance.manageDrunkenness(pi);
+	    }
+	    
+	    public static void onFCSPurchasedTech(TechType tt) {
+	    	FCSIntegrationSystem.instance.onPlayerBuy(tt);
+	    }
+	    
+	    public static bool isFCSItemBuyable(TechType tt) {
+	    	//SNUtil.writeToChat("checking if "+tt.AsString()+" is buyable: unlocked="+CrafterLogic.IsCraftRecipeUnlocked(tt));
+	    	return tt != TechType.None && !KnownTech.Contains(tt);
 	    }
 	    
 	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {

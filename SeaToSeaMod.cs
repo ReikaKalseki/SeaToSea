@@ -352,6 +352,7 @@ namespace ReikaKalseki.SeaToSea
 		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
         DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
+        DataboxTypingMap.instance.addValue(-483.55, -504.69, 1326.64, C2CItems.tetherModule.TechType);
         
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
     		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);
@@ -373,7 +374,7 @@ namespace ReikaKalseki.SeaToSea
     		{"HabitatControlPanel", true},
     		{"MoreSeamothDepth", true},
     		{"CustomCraft2", true},
-    		{"FCSAlterraHub", false},
+    		//{"FCSAlterraHub", false},
     		{"SlotExtender", false},
     		{"WarpChip", false},
     		//{"Socknautica", false},
@@ -385,6 +386,7 @@ namespace ReikaKalseki.SeaToSea
     		{"EquivalentExchange", true},
     		{"Deathrun", false},
     		{"DecorationsMod", false},
+    		{"AnthCreatures", true},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
@@ -505,11 +507,10 @@ namespace ReikaKalseki.SeaToSea
     	BasicCustomOre vent = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL);
     	vent.registerWorldgen(BiomeType.Dunes_ThermalVent, 1, 3F);
     	vent.registerWorldgen(BiomeType.Mountains_ThermalVent, 1, 1.0F);
-    	//vent.registerWorldgen(BiomeType.JellyshroomCaves_Geyser, 1, 0.5F);
-    	//vent.registerWorldgen(BiomeType.KooshZone_Geyser, 1, 1F);
-    	//vent.registerWorldgen(BiomeType.GrandReef_ThermalVent, 1, 3F);
-    	//vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 4F);
-    	//vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.5F);
+    	if (FCSIntegrationSystem.instance.isLoaded()) {
+    		vent.registerWorldgen(BiomeType.UnderwaterIslands_Geyser, 1, 0.2F);
+    		vent.registerWorldgen(BiomeType.DeepGrandReef_ThermalVent, 1, 0.4F);
+    	}
     	
     	BasicCustomOre irid = CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Ceiling, 1, 1.2F);

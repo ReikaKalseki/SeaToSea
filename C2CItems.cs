@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea
     internal static SeamothHeatSinkModule heatSinkModule;
     internal static SeamothSpeedModule speedModule;
     internal static VehicleLightModule lightModule;
+    internal static SeamothTetherModule tetherModule;
     
     internal static SealedSuit sealSuit;
     internal static SealedGloves sealGloves;
@@ -95,6 +96,7 @@ namespace ReikaKalseki.SeaToSea
         heatSinkModule = new SeamothHeatSinkModule();
         speedModule = new SeamothSpeedModule();
         lightModule = new VehicleLightModule();
+        tetherModule = new SeamothTetherModule();
         cyclopsHeat = new CyclopsHeatModule();        
 		sealSuit = new SealedSuit();   
 		sealGloves = new SealedGloves();				
@@ -132,6 +134,9 @@ namespace ReikaKalseki.SeaToSea
         
         lightModule.preventNaturalUnlock();
         lightModule.Patch();
+        
+        tetherModule.preventNaturalUnlock();
+        tetherModule.Patch();
         
         cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
@@ -218,7 +223,7 @@ namespace ReikaKalseki.SeaToSea
         
 		//override first aid kit
         UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
-		    if (SeaToSeaMod.playerCanHeal() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+		if (SeaToSeaMod.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(20, 20);
 				ht.activate();
@@ -227,7 +232,7 @@ namespace ReikaKalseki.SeaToSea
 	    	return false;
 		});
         UsableItemRegistry.instance.addUsableItem(bandage.TechType, (s, go) => {
-	    	if (SeaToSeaMod.playerCanHeal() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+	    	if (SeaToSeaMod.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(50, 5);
 				ht.activate();
@@ -241,6 +246,7 @@ namespace ReikaKalseki.SeaToSea
 						UnityEngine.Object.DestroyImmediate(ds);
 				}
 				Ecocean.FoodEffectSystem.instance.clearNegativeEffects();
+				ObjectUtil.removeComponent<FCSIntegrationSystem.Drunk>(Player.main.gameObject);
 				return true;
 			}
 	    	return false;
