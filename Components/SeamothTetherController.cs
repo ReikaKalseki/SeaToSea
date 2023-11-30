@@ -39,7 +39,7 @@ namespace ReikaKalseki.SeaToSea
 					grabberRoot.transform.SetParent(transform);
 					grabberRoot.transform.localRotation = Quaternion.identity;
 					grabberRoot.transform.localPosition = Vector3.forward*-2;
-				}
+				}/*
 				grabbers = grabberRoot.GetComponents<PropulsionCannon>();
 				if (grabbers.Length < 6) {
 					for (int i = grabbers.Length; i < 6; i++) {
@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 					prop.energyInterface = vehicle.energyInterface;
 					prop.muzzle = grabberRoot.transform;
 				}
-				grabberRoot.name = "GrabberRoot";
+				grabberRoot.name = "GrabberRoot";*/
 			}
 			
 			if (grabbers == null)
