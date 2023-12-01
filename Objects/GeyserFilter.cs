@@ -16,7 +16,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class GeyserFilter : CustomMachine<GeyserFilterLogic>, MultiTexturePrefab {
 		
-		internal static readonly float POWER_COST = 1.5F; //per second
+		//internal static readonly float POWER_COST = 1.5F; //per second
 		internal static readonly float PRODUCTION_RATE = 45F; //seconds per item
 		
 		static GeyserFilter() {
@@ -107,8 +107,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private PowerFX lineRenderer;
 		
-		private bool isPowered;
-		private bool checkedPower;
+		//private bool isPowered;
+		//private bool checkedPower;
 		
 		private float collectionTime;
 		
@@ -120,7 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override bool isWorking() {
-			return geyser && isPowered;
+			return geyser;// && isPowered;
 		}
 		
 		public override float getProgressScalar() {
@@ -153,6 +153,8 @@ namespace ReikaKalseki.SeaToSea {
 				geyser = null;
 			lineRenderer.target = geyser ? geyser.gameObject : null;
 			//SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
+			foreach (Renderer r in mainRenderers)
+				r.materials[0].SetColor("_GlowColor", geyser ? Color.green : Color.red);
 			if (!geyser)
 				return;
 			StorageContainer sc = getStorage();
@@ -162,8 +164,8 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("I am ticking @ "+go.transform.position);
 			sc.hoverText = "Collect filtrate";
 			
-			setPowered(seconds);
-			if (isPowered && geyser.erupting) {
+			//setPowered(seconds);
+			if (geyser.erupting) {
 				collectionTime += seconds;
 				if (collectionTime >= GeyserFilter.PRODUCTION_RATE) {
 					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0)
@@ -171,7 +173,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}
-		
+		/*
 		private void setPowered(float seconds) {
 			bool pwr = isPowered;
 			isPowered = consumePower(GeyserFilter.POWER_COST*seconds);
@@ -180,6 +182,6 @@ namespace ReikaKalseki.SeaToSea {
 					r.materials[0].SetColor("_GlowColor", isPowered ? Color.green : Color.red);
 			}
 			checkedPower = true;
-		}
+		}*/
 	}
 }

@@ -34,6 +34,9 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
 	    internal static readonly Vector3 lostRiverCachePanel = new Vector3(-1119.5F, -684.4F, -709.7F);
 	    
+	    internal static readonly Vector3 fcsWreckOpenableDoor = new Vector3(88.87F, -420.75F, 1449.10F);
+	    internal static readonly Vector3 fcsWreckBlockedDoor = new Vector3(93.01F, -421.27F, 1444.71F);    
+	    
 	    internal static readonly Vector3 OZZY_FORK_DEEP_ROOM_POS = new Vector3(-645.6F, -102.7F, -16.2F);
 	    internal static readonly string OZZY_FORK_DEEP_ROOM_GOAL = "ozzyforkdeeproom";
 	    internal static readonly Vector3 UNDERISLANDS_BLOCKED_ROOM_POS = new Vector3(-124.38F, -200.69F, 855F);
@@ -212,8 +215,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	     }
 	    	}));
 	    	
-	    	if (FCSIntegrationSystem.instance.isLoaded())
+	    	if (FCSIntegrationSystem.instance.isLoaded()) {
 	    		FCSIntegrationSystem.instance.initializeTechUnlocks();
+	    		BaseBioReactor.charge[FCSIntegrationSystem.instance.getBiofuel()] = 18000;
+	    	}
 	    	
 	    	VoidSpikesBiome.instance.onWorldStart();
 	    	UnderwaterIslandsFloorBiome.instance.onWorldStart();
@@ -1171,7 +1176,13 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.EnsureComponent<ImmuneToPropulsioncannon>(); //also implements IObstacle to prevent building
 	    	}
 	    	PrefabIdentifier pi = go.FindAncestor<PrefabIdentifier>();
-			if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
+	    	if (pi && pi.ClassId == "d79ab37f-23b6-42b9-958c-9a1f4fc64cfd" && Vector3.Distance(fcsWreckOpenableDoor, go.transform.position) <= 0.5) {
+				new WreckDoorSwaps.DoorSwap(go.transform.position, "Handle").applyTo(go);
+	    	}
+	    	else if (pi && pi.ClassId == "055b3160-f57b-46ba-80f5-b708d0c8180e" && Vector3.Distance(fcsWreckBlockedDoor, go.transform.position) <= 0.5) {
+				new WreckDoorSwaps.DoorSwap(go.transform.position, "Blocked").applyTo(go);
+	    	}			
+			else if (pi && pi.ClassId == VanillaCreatures.SEA_TREADER.prefab) {
 				//go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
 				go.EnsureComponent<C2CTreader>();
 	    	}
@@ -2006,10 +2017,29 @@ namespace ReikaKalseki.SeaToSea {
 	    	return tt != TechType.None && !KnownTech.Contains(tt);
 	    }
 	    
+	    public static int filterFCSCartAdd(int origLimit, System.Collections.IList cart, TechType adding) { //cart is a List<CartItem>, each of which has a TechType property which might == adding
+	    	if (cart.Count <= 0 || !FCSIntegrationSystem.instance.isUnlockingTypePurchase(adding)) //always allow first item or as many non-unlocking purchases as you want
+	    		return origLimit;
+	    	PropertyInfo pi = cart[0].GetType().GetProperty("TechType", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+	    	foreach (var obj in cart) {
+	    		TechType tt = (TechType)pi.GetValue(obj);
+	    		if (tt == adding)
+	    			return -1;
+	    	}
+	    	return origLimit;
+	    }
+	    
 	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {
 	    	if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.MeteorPrompt).key)) {
 	    		Story.StoryGoal.Execute(METEOR_GOAL, Story.GoalType.Story);
 	    	}
+	    }
+	    
+	    public static void buildDisplayMonitorButton(MonoBehaviour screen, uGUI_ItemIcon icon) {
+	    	icon.transform.localScale = new Vector3(0.5F, 0.45F, 1);
+	    	GameObject grid = ObjectUtil.getChildObject(screen.gameObject, "Canvas/Screens/MainScreen/ActualScreen/MainGrid");
+	    	UnityEngine.UI.GridLayoutGroup grp = grid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+	    	grp.cellSize = new Vector2(100, 90);
 	    }
 	}
 }

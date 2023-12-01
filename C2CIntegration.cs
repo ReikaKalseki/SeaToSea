@@ -10,6 +10,8 @@ using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Assets;
+using HarmonyLib;
+using System.Reflection.Emit;
 
 using ReikaKalseki.Auroresource;
 using ReikaKalseki.Reefbalance;
@@ -239,8 +241,38 @@ namespace ReikaKalseki.SeaToSea {
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
 		
+		TechType tt;
+		if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableSmall", out tt)) {
+			RecipeUtil.modifyIngredients(tt, cheapenResourceMonitor);
+			RecipeUtil.addIngredient(tt, TechType.AluminumOxide, 1);
+		}
+		if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableLarge", out tt)) {
+			RecipeUtil.modifyIngredients(tt, cheapenResourceMonitor);
+			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
+			RecipeUtil.addIngredient(tt, TechType.AluminumOxide, 2);
+			
+			Type t = InstructionHandlers.getTypeBySimpleName("ResourceMonitor.Components.ResourceMonitorDisplay");
+			FieldInfo fi = t.GetField("ITEMS_PER_PAGE", BindingFlags.Static | BindingFlags.NonPublic);
+			fi.SetValue(null, 48); //originally 12 = 2x6, make 4x12
+			
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "CreateAndAddItemDisplay", SeaToSeaMod.modDLL, shrinkItemDisplay);
+		}
+		
 		FCSIntegrationSystem.instance.applyPatches();
     }
+		
+	private static void shrinkItemDisplay(List<CodeInstruction> codes) {
+		int idx = InstructionHandlers.getLastOpcodeBefore(codes, codes.Count, OpCodes.Ret);
+		codes.InsertRange(idx, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldloc_2), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "buildDisplayMonitorButton", false, new Type[]{typeof(MonoBehaviour), typeof(uGUI_ItemIcon)})});
+	}
+		
+	private static bool cheapenResourceMonitor(Ingredient i) {
+		if (i.techType != TechType.Glass && i.amount > 0)
+			i.amount = i.amount/2;
+		if (i.techType == TechType.AdvancedWiringKit)
+			i.techType = TechType.WiringKit;
+		return false;
+	}
 
   }
 }

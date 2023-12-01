@@ -27,6 +27,25 @@ using ReikaKalseki.DIAlterra;
 using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 
+using FCS_AlterraHub;
+using FCS_AlterraHub.Registration;
+using FCS_AlterraHomeSolutions;
+using FCS_EnergySolutions;
+using FCS_EnergySolutions.Configuration;
+using FCS_HomeSolutions;
+using FCS_HomeSolutions.Configuration;
+using FCS_LifeSupportSolutions;
+using FCS_LifeSupportSolutions.Configuration;
+using FCS_ProductionSolutions;
+using FCS_ProductionSolutions.Configuration;
+using FCS_StorageSolutions;
+using FCS_StorageSolutions.Configuration;
+using FCS_HomeSolutions.Mods.TrashRecycler.Mono;
+using FCS_HomeSolutions.Mods.TrashRecycler;
+using FCS_ProductionSolutions.Mods.DeepDriller;
+using FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono;
+using FCSCommon;
+
 namespace ReikaKalseki.SeaToSea {
 	
 	public class FCSIntegrationSystem {
@@ -36,6 +55,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly bool isFCSLoaded;
 		
 		private Type drillOreManager;
+		private TechType fcsBiofuel;
+		private DuplicateRecipeDelegateWithRecipe fcsBiofuelAlt;
 		private readonly HashSet<TechType> peeperBarFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> registeredEffectFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> replacedTechRecipes = new HashSet<TechType>();
@@ -53,6 +74,18 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public Type getFCSDrillOreManager() {
 			return drillOreManager;
+		}
+		
+		public bool isUnlockingTypePurchase(TechType tt) {
+			return replacedTechRecipes.Contains(tt);
+		}
+		
+		public TechType getBiofuel() {
+			return fcsBiofuel;
+		}
+		
+		public TechType getBiofuelAlt() {
+			return fcsBiofuelAlt.TechType;
 		}
 		
 		internal void modifyPeeperFood(Pickupable pp) {
@@ -103,11 +136,11 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}
-		/*	
+		
 		private static void preventDuplicateUnlock(List<CodeInstruction> codes) {
 			int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Stloc_0);
-			codes.InsertRange(idx, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSCartAdd", false, typeof(int), typeof(List<>).m, typeof(TechType))});
-		}*/
+			codes.InsertRange(idx, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldfld, InstructionHandlers.convertFieldOperand("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CartDropDownHandler", "_pendingItems")), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSCartAdd", false, typeof(int), typeof(IList), typeof(TechType))});
+		}
 			
 		private static void filterShopList(List<CodeInstruction> codes) {
 			codes.Clear();
@@ -170,106 +203,77 @@ namespace ReikaKalseki.SeaToSea {
 		internal void applyPatches() {
 			if (!isFCSLoaded)
 				return;
-			CustomMachineLogic.powerCostFactor *= 5;
+			CustomMachineLogic.powerCostFactor *= 2;
 			
-			Type store = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Registration.FCSAlterraHubService");
-			FieldInfo f = store.GetField("_storeItems", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			FieldInfo f = typeof(FCSAlterraHubService).GetField("_storeItems", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			Assembly core = f.DeclaringType.Assembly;
 			IDictionary dict = (IDictionary)f.GetValue(null);
-			foreach (TechType tt in C2CProgression.instance.getGatedTechnologies()) {
-				if (dict.Contains(tt))
-					dict.Remove(tt);
+			foreach (TechType item in C2CProgression.instance.getGatedTechnologies()) {
+				if (dict.Contains(item))
+					dict.Remove(item);
 			}
 			dict.Remove(TechType.Battery);
 			dict.Remove(TechType.PowerCell);
 			dict.Remove(TechType.WiringKit);
 			dict.Remove(TechType.AdvancedWiringKit);
 			
-			Type homeMod = InstructionHandlers.getTypeBySimpleName("FCS_HomeSolutions.Configuration.Mod");
-			f = homeMod.GetField("PeeperBarFoods", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			dict = (IDictionary)f.GetValue(null);
-			if (dict.Contains(TechType.NutrientBlock))
-				dict.Remove(TechType.NutrientBlock);
-			if (dict.Contains(TechType.BigFilteredWater))
-				dict.Remove(TechType.BigFilteredWater);
-			peeperBarFoods.AddRange((IEnumerable<TechType>)dict.Keys);
-			Type t = InstructionHandlers.getTypeBySimpleName("FCS_HomeSolutions.Mods.TrashRecycler.Mono.Recycler");
-			if (t != null) {
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Recycle", SeaToSeaMod.modDLL, codes => {
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.FCSPDAController"), "MakeAPurchase", SeaToSeaMod.modDLL, replacePurchaseAction);
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CheckOutPopupDialogWindow"), "MakePurchase", SeaToSeaMod.modDLL, redirectPurchase);
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.ScreenItems.StoreItem"), "CheckIsUnlocked", SeaToSeaMod.modDLL, filterShopList);
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CartDropDownHandler"), "AddItem", SeaToSeaMod.modDLL, preventDuplicateUnlock);
+			
+			Type homeModType = InstructionHandlers.getTypeBySimpleName("FCS_HomeSolutions.Configuration.Mod");
+			if (homeModType != null) {
+				Assembly homeMod = homeModType.Assembly;
+				f = homeModType.GetField("PeeperBarFoods", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+				dict = (IDictionary)f.GetValue(null);
+				if (dict.Contains(TechType.NutrientBlock))
+					dict.Remove(TechType.NutrientBlock);
+				if (dict.Contains(TechType.BigFilteredWater))
+					dict.Remove(TechType.BigFilteredWater);
+				peeperBarFoods.AddRange((IEnumerable<TechType>)dict.Keys);
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, homeMod.GetType("FCS_HomeSolutions.Mods.TrashRecycler.Mono.Recycler"), "Recycle", SeaToSeaMod.modDLL, codes => {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "FCS_AlterraHub.Helpers.TechDataHelpers", "GetIngredientsWithOutBatteries", false, new Type[]{typeof(TechType)});
 					codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSRecyclerOutput", false, typeof(List<>).MakeGenericType(typeof(Ingredient))));
 				});
 			}
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Helpers.Helpers");
-			if (t != null) {
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "GetBiomeData", SeaToSeaMod.modDLL, codes => {
+			Type drillHelper = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Helpers.Helpers");
+			if (drillHelper != null) {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, drillHelper, "GetBiomeData", SeaToSeaMod.modDLL, codes => {
 					InstructionHandlers.patchEveryReturnPre(codes, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "filterFCSDrillerOutput", false, typeof(List<>).MakeGenericType(typeof(TechType))));
 				});
-			}
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator");
-			drillOreManager = t;
-			if (t != null) {
+				
+				Assembly prodMod = drillHelper.Assembly;
+				drillOreManager = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator");
 				DrillDepletionSystem.instance.register();
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "SetAllowTick", SeaToSeaMod.modDLL, codes => {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, drillOreManager, "SetAllowTick", SeaToSeaMod.modDLL, codes => {
 				    int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "FCS_AlterraHub.Mono.FcsDevice", "get_IsOperational", true, new Type[0]);
 					codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "canFCSDrillOperate", false, typeof(bool), typeof(MonoBehaviour))});
 				});
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Update", SeaToSeaMod.modDLL, codes => {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, drillOreManager, "Update", SeaToSeaMod.modDLL, codes => {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "_passedTime");
 					codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickFCSDrill", false, typeof(MonoBehaviour))});
 				});
-			}
-			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Managers.DrillSystem");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
-			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
-			if (t != null) {
+				
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.Managers.DrillSystem"), "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController"), "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+				
+				Type t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
 				C2CItems.fcsDrillFuel = new FCSFuel();
 				C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
 				C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 1);
-				C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
+				//C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
 				C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 1);
 				C2CItems.fcsDrillFuel.Patch();
 				TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Benzene, C2CItems.fcsDrillFuel.TechType);
 				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
-			}
-			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_ProductionSolutions.Mods.DeepDriller.Patchers.DeepDrillerGUIOilPage");
-			if (t != null) {
-				if (C2CItems.fcsDrillFuel == null) {
-					C2CItems.fcsDrillFuel = new FCSFuel();
-					C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
-					C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 1);
-					C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
-					C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 1);
-					C2CItems.fcsDrillFuel.Patch();
-					TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Benzene, C2CItems.fcsDrillFuel.TechType);
-				}
+				
+				t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.Patchers.DeepDrillerGUIOilPage");
 				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
 			}
 			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mods.FCSPDA.Mono.FCSPDAController");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "MakeAPurchase", SeaToSeaMod.modDLL, replacePurchaseAction);
-			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CheckOutPopupDialogWindow");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "MakePurchase", SeaToSeaMod.modDLL, redirectPurchase);
-			
-			t = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mods.FCSPDA.Mono.ScreenItems.StoreItem");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "CheckIsUnlocked", SeaToSeaMod.modDLL, filterShopList);
-			/*
-			t = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CartDropDownHandler");
-			if (t != null)
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "AddItem", SeaToSeaMod.modDLL, preventDuplicateUnlock);
-			*/
 			assignRecipe("ahsLeftCornerRailing", 1);
 			assignRecipe("ahsLeftCornerwGlassRailing", 1, basicGlass());
 			assignRecipe("ahsRightCornerRailing", 1);
@@ -374,7 +378,39 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("DSSItemDisplay", "MountSmartTV");
 			assignRecipe("DSSTerminalMonitor", "MountSmartTV");
 			
-			assignRecipe("FCSBioFuel", 0, new Ingredient[]{new Ingredient(TechType.CookedOculus, 2), new Ingredient(EcoceanMod.glowOil.TechType, 3), new Ingredient(C2CItems.mountainGlow.seed.TechType, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 1), new Ingredient(TechType.CreepvineSeedCluster, 1), new Ingredient(TechType.RedConePlantSeed, 1), new Ingredient(TechType.RedRollPlantSeed, 1)});
+			fcsBiofuel = findFCSItem("FCSBioFuel");
+			TechData td = RecipeUtil.addRecipe(fcsBiofuel, TechGroup.Resources, C2CItems.chemistryCategory, 1, CraftTree.Type.Fabricator, new string[]{"Resources", "C2Chemistry"});
+			td.Ingredients.Add(new Ingredient(TechType.Oculus, 3));
+			td.Ingredients.Add(new Ingredient(EcoceanMod.glowOil.TechType, 2));
+			td.Ingredients.Add(new Ingredient(C2CItems.mountainGlow.seed.TechType, 1));
+			td.Ingredients.Add(new Ingredient(CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 1));
+			td.Ingredients.Add(new Ingredient(TechType.CreepvineSeedCluster, 1));
+			td.Ingredients.Add(new Ingredient(TechType.RedConePlantSeed, 1));
+			td.Ingredients.Add(new Ingredient(TechType.RedRollPlantSeed, 1));
+			CraftDataHandler.SetTechData(fcsBiofuel, td);
+			CraftDataHandler.SetItemSize(fcsBiofuel, new Vector2int(4, 4));
+			CraftDataHandler.SetItemSize(TechType.RedConePlantSeed, new Vector2int(2, 1));
+			CraftDataHandler.SetItemSize(TechType.RedRollPlantSeed, new Vector2int(1, 2));
+			CraftDataHandler.SetCraftingTime(fcsBiofuel, 10);
+			BioReactorHandler.SetBioReactorCharge(fcsBiofuel, 18000);
+			
+	       	TechData rec = RecipeUtil.copyRecipe(td);
+			rec.Ingredients.Add(new Ingredient(SeaToSeaMod.purpleBoomerang.TechType, 2));
+			rec.Ingredients.Add(new Ingredient(TechType.Benzene, 1));
+			rec.Ingredients.Add(new Ingredient(C2CItems.sanctuaryPlant.seed.TechType, 1));
+			rec.Ingredients.ForEach(i => {if (i.techType == EcoceanMod.glowOil.TechType || i.techType == CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType)i.amount *= 2;});
+	       	fcsBiofuelAlt = new DuplicateRecipeDelegateWithRecipe(fcsBiofuel, rec);
+	       	fcsBiofuelAlt.category = C2CItems.chemistryCategory;
+	       	fcsBiofuelAlt.group = TechGroup.Resources;
+	       	fcsBiofuelAlt.craftingType = CraftTree.Type.Fabricator;
+	       	fcsBiofuelAlt.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
+	       	fcsBiofuelAlt.ownerMod = SeaToSeaMod.modDLL;
+	       	fcsBiofuelAlt.craftTime = 15;
+	       	fcsBiofuelAlt.setRecipe(2);
+	       	fcsBiofuelAlt.unlock = TechType.Unobtanium;
+	       	fcsBiofuelAlt.allowUnlockPopups = true;
+	       	fcsBiofuelAlt.Patch();
+	       	TechnologyUnlockSystem.instance.addDirectUnlock(fcsBiofuel, fcsBiofuelAlt.TechType);
 		}
 		
 		public void assignRecipe(string id, string refItem) {
