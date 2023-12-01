@@ -17,8 +17,8 @@ namespace ReikaKalseki.SeaToSea
 {
 	internal class SeamothTetherController : MonoBehaviour {
 		
-		private static readonly float POWER_COST = 0.2F; //per second
-		internal static readonly float RANGE = 20F;
+		private static readonly float POWER_COST = 0.5F; //per second
+		internal static readonly float RANGE = 25F;
 		
 		private SeaMoth vehicle;
 		
@@ -215,7 +215,7 @@ namespace ReikaKalseki.SeaToSea
 				return;
 			}
 			float d = Mathf.Clamp(magnitude, 1f, 4f);
-			Vector3 vector = target.velocity + Vector3.Normalize(distance) * (animal ? 300 : 600) * d * dT / (1f + target.mass * massScale);
+			Vector3 vector = target.velocity + Vector3.Normalize(distance) * (animal ? 300 : 800) * d * dT / (1f + target.mass * massScale);
 			Vector3 amount = vector * (10f + Mathf.Pow(Mathf.Clamp01(1f - magnitude), 1.75f) * 40f) * dT;
 			vector = UWE.Utils.SlerpVector(vector, Vector3.zero, amount);
 			target.velocity = vector;

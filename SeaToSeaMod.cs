@@ -191,6 +191,9 @@ namespace ReikaKalseki.SeaToSea
 	    purpleHoopfish = new PurpleHoopfish(itemLocale.getEntry("PurpleHoopfish"));
 	    purpleHoopfish.Patch();
 	    
+	    CraftDataHandler.SetCookedVariant(purpleBoomerang.TechType, TechType.CookedBoomerang);
+	    CraftDataHandler.SetCookedVariant(purpleHoopfish.TechType, TechType.CookedHoopfish);
+	    
 	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
 	    voidSpikeLevi.register();
 	    
