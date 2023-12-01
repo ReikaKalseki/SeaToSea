@@ -347,7 +347,7 @@ namespace ReikaKalseki.SeaToSea
     
     [QModPostPatch]
     public static void PostLoad() {
-        worldgen.load(); //load in post because some cross-mod TTs may not exist yet
+    	worldgen.load(s => s != "fcswreck.xml" || FCSIntegrationSystem.instance.isLoaded()); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
 		geyserCoral.postRegister();
         DataboxTypingMap.instance.load();
