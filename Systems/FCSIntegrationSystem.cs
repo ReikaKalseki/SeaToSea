@@ -59,6 +59,7 @@ namespace ReikaKalseki.SeaToSea {
 		private DuplicateRecipeDelegateWithRecipe fcsBiofuelAlt;
 		private readonly HashSet<TechType> peeperBarFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> registeredEffectFoods = new HashSet<TechType>();
+		private readonly HashSet<TechType> notBuyableTechs = new HashSet<TechType>();
 		private readonly HashSet<TechType> replacedTechRecipes = new HashSet<TechType>();
 		
 		private float lastTimeUnlock = -1;
@@ -77,7 +78,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool isUnlockingTypePurchase(TechType tt) {
-			return replacedTechRecipes.Contains(tt);
+			return replacedTechRecipes.Contains(tt) && !notBuyableTechs.Contains(tt);
 		}
 		
 		public TechType getBiofuel() {
@@ -191,6 +192,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal void initializeTechUnlocks() {
 			foreach (TechType tt in replacedTechRecipes) {
+				if (notBuyableTechs.Contains(tt))
+					continue;
+				SNUtil.log("Relocking tech "+tt.AsString()+" as no storygoal set");
 				if (StoryGoalManager.main.completedGoals.Contains("UnlockFCS"+tt.AsString())) {
 					KnownTech.Add(tt);
 				}
@@ -203,7 +207,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal void applyPatches() {
 			if (!isFCSLoaded)
 				return;
-			CustomMachineLogic.powerCostFactor *= 2;
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+			CustomMachineLogic.powerCostFactor *= hard ? 1.6F : 2; //since hard increases bioproc 2.5x, only increase to 4x instead of 5x 
 			
 			FieldInfo f = typeof(FCSAlterraHubService).GetField("_storeItems", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 			Assembly core = f.DeclaringType.Assembly;
@@ -216,6 +221,27 @@ namespace ReikaKalseki.SeaToSea {
 			dict.Remove(TechType.PowerCell);
 			dict.Remove(TechType.WiringKit);
 			dict.Remove(TechType.AdvancedWiringKit);
+			
+			f = core.GetType("FCS_AlterraHub.Systems.StoreInventorySystem").GetField("OrePrices", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			Dictionary<TechType, decimal> oreValues = (Dictionary<TechType, decimal>)f.GetValue(null);
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType] = (decimal)Mathf.Lerp((float)oreValues[TechType.Nickel], (float)oreValues[TechType.Kyanite], 0.67F);
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType] = oreValues[TechType.Gold]*1.25M;
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType] = oreValues[TechType.Kyanite]*1.5M;
+			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots()) {
+				if (oreValues.ContainsKey(ingot.material))
+					oreValues[ingot.ingot] = oreValues[ingot.material]*ingot.count;
+			}
+			
+			oreValues[TechType.MercuryOre] = (decimal)Mathf.Lerp((float)oreValues[TechType.Gold], (float)oreValues[TechType.Nickel], 0.5F);
+			oreValues[TechType.Floater] = oreValues[TechType.Titanium]*2.0M;
+			oreValues[TechType.BloodOil] = oreValues[TechType.Titanium]*1.0M;
+			oreValues[TechType.CreepvineSeedCluster] = oreValues[TechType.Titanium]*0.25M;
+			oreValues[TechType.SeaCrownSeed] = oreValues[TechType.Titanium]*0.5M;
+			oreValues[C2CItems.alkali.seed.TechType] = oreValues[TechType.Copper];
+			oreValues[C2CItems.kelp.seed.TechType] = oreValues[TechType.Copper];
+			oreValues[C2CItems.mountainGlow.seed.TechType] = oreValues[TechType.Copper]*1.2M;
+			oreValues[C2CItems.sanctuaryPlant.seed.TechType] = oreValues[TechType.Gold];
+			oreValues[C2CItems.healFlower.seed.TechType] = (decimal)Mathf.Lerp((float)oreValues[TechType.Titanium], (float)oreValues[TechType.Copper], 0.5F);
 			
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.FCSPDAController"), "MakeAPurchase", SeaToSeaMod.modDLL, replacePurchaseAction);
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CheckOutPopupDialogWindow"), "MakePurchase", SeaToSeaMod.modDLL, redirectPurchase);
@@ -343,9 +369,9 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("TrashReceptacle", 3);
 			assignRecipe("WallSign", "OutsideSign");
 			
-			assignRecipe("AlterraHubDepot", 6, electronicsTier2(1));
-			assignRecipe("DronePortPad", 8, reinforcedStrong(2));
-			assignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1));
+			notBuyableTechs.Add(assignRecipe("AlterraHubDepot", 6, electronicsTier2(1)));
+			notBuyableTechs.Add(assignRecipe("DronePortPad", 8, reinforcedStrong(2)));
+			notBuyableTechs.Add(assignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1)));
 			assignRecipe("PatreonStatue", 2, new Ingredient[]{new Ingredient(TechType.Quartz, 1)}, electronicsTier1());
 			
 			assignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(C2CItems.fcsDrillFuel.TechType, 1), new Ingredient(TechType.WiringKit, 1)}, electronicsTier1(2));
@@ -413,27 +439,27 @@ namespace ReikaKalseki.SeaToSea {
 	       	TechnologyUnlockSystem.instance.addDirectUnlock(fcsBiofuel, fcsBiofuelAlt.TechType);
 		}
 		
-		public void assignRecipe(string id, string refItem) {
-			assignRecipe(id, 0, RecipeUtil.getRecipe(findFCSItem(refItem)).Ingredients.ToArray());
+		public TechType assignRecipe(string id, string refItem) {
+			return assignRecipe(id, 0, RecipeUtil.getRecipe(findFCSItem(refItem)).Ingredients.ToArray());
 		}
 		
-		public void assignRecipe(string id, int titanium, Ingredient[] set1, Ingredient[] set2, Ingredient[] set3 = null) {
+		public TechType assignRecipe(string id, int titanium, Ingredient[] set1, Ingredient[] set2, Ingredient[] set3 = null) {
 			List<Ingredient> li = new List<Ingredient>();
 			li.AddRange(set1);
 			li.AddRange(set2);
 			if (set3 != null)
 				li.AddRange(set3);
-			assignRecipe(id, titanium, li.ToArray());
+			return assignRecipe(id, titanium, li.ToArray());
 		}
 		
-		public void assignRecipe(string id, int titanium, params Ingredient[] items) {
+		public TechType assignRecipe(string id, int titanium, params Ingredient[] items) {
 			TechType tt = TechType.None;
 			try {
 				tt = findFCSItem(id);
 			}
 			catch (Exception ex) {
 				SNUtil.log(ex.ToString());
-				return;
+				return tt;
 			}
 			TechData td = null;
 			try {
@@ -442,7 +468,7 @@ namespace ReikaKalseki.SeaToSea {
 			catch (Exception ex) {
 				SNUtil.log("No recipe found for '"+id+"'");
 				SNUtil.log(ex.ToString());
-				return;
+				return tt;
 			}
 			replacedTechRecipes.Add(tt);
 			td.Ingredients.Clear();
@@ -451,6 +477,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (Ingredient i in items)
 				td.Ingredients.Add(i);
 			CraftDataHandler.SetTechData(tt, td);
+			return tt;
 		}
 		
 		private TechType findFCSItem(string id) {
