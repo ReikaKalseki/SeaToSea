@@ -205,8 +205,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void applyPatches() {
-			if (!isFCSLoaded)
-				return;
+			if (isFCSLoaded)
+				doApplyPatches();
+		}
+		
+		private void doApplyPatches() {
 			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 			CustomMachineLogic.powerCostFactor *= hard ? 1.6F : 2; //since hard increases bioproc 2.5x, only increase to 4x instead of 5x 
 			
