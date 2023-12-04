@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[0];
+				return new string[]{"TankMenu"};
 			}
 		}
 		

@@ -376,10 +376,10 @@
 	</KharaaTreatment>
 	<FCSFuel>
 		<name>
-			High-Performance Lubricating Fuel
+			High-Performance Lubricant
 		</name>
 		<desc>
-			A viscous hydrocarbon-based compound used to both fuel and lubricate large combustion engines.
+			A viscous hydrocarbon-based compound used to lubricate large motors and gearboxes.
 		</desc>
 		<pda>
 			

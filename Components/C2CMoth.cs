@@ -195,7 +195,7 @@ namespace ReikaKalseki.SeaToSea
 					speedModifier.accelerationMultiplier *= 0.3F;
 				speedModifier.accelerationMultiplier *= Mathf.Max(0.1F, health);
 				if (tethers.isTowing())
-					speedModifier.accelerationMultiplier *= 0.75F;
+					speedModifier.accelerationMultiplier *= 0.6F;
 				//SNUtil.writeToChat(speedBonus.ToString("0.000"));
 				
 				if (heatsinkSoundEvent != null && heatsinkSoundEvent.Value.hasHandle()) {

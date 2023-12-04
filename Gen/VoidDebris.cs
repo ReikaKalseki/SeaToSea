@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void init() {
-			databoxPrefab = GenUtil.getOrCreateDatabox(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, go => go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch);
+			databoxPrefab = GenUtil.getOrCreateDatabox(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, go => go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global);
 		}
 		
 		public override void loadFromXML(XmlElement e) {

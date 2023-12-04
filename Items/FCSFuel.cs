@@ -15,8 +15,9 @@ namespace ReikaKalseki.SeaToSea
 		public FCSFuel() : base(SeaToSeaMod.itemLocale.getEntry("FCSFuel"), "WorldEntities/Natural/Lubricant") {
 			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/FCSFuel");
 			unlockRequirement = TechType.Unobtanium;
-			craftingTime = 3;
-			inventorySize = new Vector2int(4, 4); //one in inv at a time
+			craftingTime = 6;
+			numberCrafted = 4;
+			inventorySize = new Vector2int(2, 2);
 		}
 
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

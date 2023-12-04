@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using System.Reflection;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,7 @@ using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Auroresource;
 using ReikaKalseki.SeaToSea;
 
 namespace ReikaKalseki.SeaToSea {
@@ -21,6 +24,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly DrillDepletionSystem instance = new DrillDepletionSystem();
 		
 		private static readonly float DRILL_LIFE = 3600; //seconds
+		internal static readonly float RADIUS = 200;//300;
     
 	    internal DrillDepletionAOE aoeEntity;
 		
@@ -56,20 +60,64 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    internal bool hasRemainingLife(MonoBehaviour drill) {
+	    	DrillableResourceArea aoe = getMotherlode(drill);
+	    	if (aoe != null) {
+	    		drill.gameObject.EnsureComponent<MotherlodeDrillTag>().deposit = aoe;
+	    		return true;
+	    	}
 	    	DrillDepletionAOETag tag = getAoEForDrill(drill);
 	    	return tag && tag.totalDrillTime <= DRILL_LIFE;
 	    }
 	    
 	    internal void deplete(MonoBehaviour drill) {
+	    	DrillableResourceArea aoe = getMotherlode(drill);
+	    	//SNUtil.writeToChat("motherlode = "+aoe);
+	    	if (aoe != null) {
+	    		drill.gameObject.EnsureComponent<MotherlodeDrillTag>().deposit = aoe;
+	    		return;
+	    	}
 	    	DrillDepletionAOETag tag = getAoEForDrill(drill);
 	    	if (tag)
 	    		tag.totalDrillTime += DayNightCycle.main.deltaTime; //this is the time step they use too
 	    }
 	    
-	    internal float getRemainingDrillTime(MonoBehaviour drill) {
-	    	DrillDepletionAOETag tag = getAoEForDrill(drill);
-	    	return tag ? DRILL_LIFE-tag.totalDrillTime : 0;
+	    internal DrillableResourceArea getMotherlode(MonoBehaviour drill) {
+	    	foreach (DrillableResourceArea.DrillableResourceAreaTag d in WorldUtil.getObjectsNearWithComponent<DrillableResourceArea.DrillableResourceAreaTag>(drill.transform.position, DrillableResourceArea.getMaxRadius()+10)) {
+	    		SphereCollider aoe = d.GetComponentInChildren<SphereCollider>();
+	    		Vector3 ctr = aoe.transform.position+aoe.center;
+	    		if (ctr.y < drill.transform.position.y && MathUtil.isPointInCylinder(ctr, drill.transform.position, aoe.radius-10, aoe.radius*1.5F+10)) {
+	    			return DrillableResourceArea.getResourceNode(d.GetComponent<PrefabIdentifier>().ClassId);
+	    		}
+	    		else {
+	    			//SNUtil.writeToChat("motherlode too far away @ "+ctr+" for "+drill.transform.position+" R="+aoe.radius);
+	    		}
+	    	}
+	    	return null;
 	    }
+	}
+	
+	class MotherlodeDrillTag : MonoBehaviour {
+		
+		internal DrillableResourceArea deposit;
+		
+	    private float lastOreTableAssignTime = -1;
+		
+		void Start() {
+			SNUtil.writeToChat("Drill at "+WorldUtil.getRegionalDescription(transform.position)+" is mining deposit: "+Language.main.Get(deposit.TechType.AsString()));
+		}
+		
+		void Update() {
+	    	float time = DayNightCycle.main.timePassedAsFloat;
+	    	if (time-lastOreTableAssignTime >= 1) {
+	    		lastOreTableAssignTime = time;
+		    	Component com = GetComponent(FCSIntegrationSystem.instance.getFCSDrillOreManager());
+		    	if (com) {
+			   		PropertyInfo p = FCSIntegrationSystem.instance.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			   		p.SetValue(com, deposit.getAllAvailableResources());
+		    	}
+	    	}
+		}
+		
 	}
 	
 	internal class DrillDepletionAOE : Spawnable {
@@ -86,7 +134,7 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<DrillDepletionAOETag>();
 			SphereCollider sc = go.EnsureComponent<SphereCollider>();
 			sc.isTrigger = true;
-			sc.radius = 300;
+			sc.radius = DrillDepletionSystem.RADIUS;
 			sc.center = Vector3.zero;
 			go.layer = LayerID.NotUseable;
 			return go;
