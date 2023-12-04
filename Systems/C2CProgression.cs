@@ -76,6 +76,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.Kyanite);
 			gatedTechnologies.Add(TechType.Sulphur);
 			gatedTechnologies.Add(TechType.Nickel);
+			gatedTechnologies.Add(TechType.MercuryOre);
 			gatedTechnologies.Add(TechType.JellyPlant);
 			gatedTechnologies.Add(TechType.BloodOil);
 			gatedTechnologies.Add(TechType.AramidFibers);
