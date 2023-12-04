@@ -104,6 +104,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal Renderer[] mainRenderers;
 		private Geyser geyser;
+		private LargeWorldEntity geyserWorldEntity;
 		
 		private PowerFX lineRenderer;
 		
@@ -145,18 +146,18 @@ namespace ReikaKalseki.SeaToSea {
 			if ((Player.main.transform.position-transform.position).sqrMagnitude >= 90000)
 				return;
 			float time = DayNightCycle.main.timePassedAsFloat;
-			if (!geyser && DIHooks.getWorldAge() > 1 && seconds > 0 && time-lastGeyserCheckTime >= 0.5F) {
-				geyser = WorldUtil.getClosest<Geyser>(transform.position);
+			if (DIHooks.getWorldAge() > 0.5F && seconds > 0 && time-lastGeyserCheckTime >= 0.5F) {
+				setGeyser(findGeyser());
 				lastGeyserCheckTime = time;
 			}
-			if (geyser && (geyser.transform.position.y > transform.position.y || Vector3.Distance(geyser.transform.position, transform.position) >= 30))
-				geyser = null;
 			lineRenderer.target = geyser ? geyser.gameObject : null;
 			//SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
 			foreach (Renderer r in mainRenderers)
 				r.materials[0].SetColor("_GlowColor", geyser ? Color.green : Color.red);
 			if (!geyser)
 				return;
+			geyserWorldEntity.cellLevel = LargeWorldEntity.CellLevel.Global;
+			//geyser.transform.SetParent(null);
 			StorageContainer sc = getStorage();
 			if (!sc) {
 				return;
@@ -173,6 +174,25 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}
+		
+		public static bool forceAlign = false;
+		
+		private Geyser findGeyser() {/*
+			IEcoTarget ret = EcoRegionManager.main.FindNearestTarget(EcoTargetType.HeatArea, transform.position, tgt => tgt.GetGameObject().GetComponent<Geyser>(), 10);
+			if (ret == null)
+				return null;
+			GameObject go = ret.GetGameObject();*/
+			foreach (Geyser g in WorldUtil.getObjectsNearWithComponent<Geyser>(transform.position, 50)) {
+				if (g.transform.position.y < transform.position.y && transform.position.y-g.transform.position.y <= 25) {
+					if (Vector3.Distance(g.transform.position.setY(0), transform.position.setY(0)) < 15)
+						return g;
+					if (forceAlign && Vector3.Distance(g.transform.position.setY(0), transform.position.setY(0)) < 40)
+						transform.position = g.transform.position.setY(transform.position.y);
+				}
+			}
+			return null;
+		}
+		
 		/*
 		private void setPowered(float seconds) {
 			bool pwr = isPowered;
@@ -183,5 +203,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			checkedPower = true;
 		}*/
+		
+		private void setGeyser(Geyser g) {
+			geyser = g;
+			geyserWorldEntity = g ? g.GetComponent<LargeWorldEntity>() : null;
+		}
 	}
 }

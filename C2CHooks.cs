@@ -961,8 +961,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (tt == TechType.Kyanite) {
 	    		Story.StoryGoal.Execute("Kyanite", Story.GoalType.Story);
 	    	}
+	    	else if (tt == TechType.Nickel) {
+	    		Story.StoryGoal.Execute("Nickel", Story.GoalType.Story);
+	    	}
+	    	else if (tt == TechType.MercuryOre) {
+	    		Story.StoryGoal.Execute("Mercury", Story.GoalType.Story);
+	    	}
 	    	else if (tt == CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType) {
 	    		p.GetComponent<NanocarbonTag>().reset();
+	    		Story.StoryGoal.Execute("Nanocarbon", Story.GoalType.Story);
 	    	}
 	    }
     
@@ -2002,6 +2009,73 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static TechType getFCSDrillFuel() {
 	    	return C2CItems.fcsDrillFuel.TechType;
+	    }
+	    
+	    public static TechType pickFCSDrillOre(TechType orig, MonoBehaviour drill, bool filtering, bool blacklist, HashSet<TechType> filters, List<TechType> defaultSet) {
+	    	DrillableResourceArea d = DrillDepletionSystem.instance.getMotherlode(drill);
+	    	if (d != null) {
+	    		TechType ret = getRandomValidMotherlodeDrillYield(d);
+	    		if (filtering && filters.Contains(ret) == blacklist)
+	    			ret = TechType.None;
+	    		//SNUtil.writeToChat("picking new drop for drill "+drill+" on "+d.ClassID+": "+ret);
+	    		return ret;
+	    	}
+	    	return orig;
+	    }
+	    
+	    private static TechType getRandomValidMotherlodeDrillYield(DrillableResourceArea d) {
+	    	TechType ret = d.getRandomResourceType();
+	    	while (!isFCSDrillMaterialAllowed(ret))
+	    		ret = d.getRandomResourceType();
+	    	return ret;
+	    }
+	    
+	    private static bool isFCSDrillMaterialAllowed(TechType tt) {
+	    	if (tt == TechType.Nickel)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Nickel");
+	    	if (tt == TechType.MercuryOre)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Mercury");
+	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Iridium");
+	    	return true;
+	    }
+	    
+	    public static Action<int, int> cleanupFCSContainer(Action<int, int> notify, MonoBehaviour drill, Dictionary<TechType, int> dict) {
+	    	if (dict.ContainsKey(TechType.None)) {
+	    		SNUtil.writeToChat("Removed TechType.None from drill inventory");
+	    		dict.Remove(TechType.None);
+	    	}
+	    	int removed = 0;
+	    	if (dict.ContainsKey(TechType.MercuryOre) && !Story.StoryGoalManager.main.completedGoals.Contains("Mercury")) {
+	    		removed += dict[TechType.MercuryOre];
+	    		dict.Remove(TechType.MercuryOre);
+	    	}
+	    	if (dict.ContainsKey(TechType.Nickel) && !Story.StoryGoalManager.main.completedGoals.Contains("Nickel")) {
+	    		removed += dict[TechType.Nickel];
+	    		dict.Remove(TechType.Nickel);
+	    	}
+	    	if (dict.ContainsKey(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) && !Story.StoryGoalManager.main.completedGoals.Contains("Iridium")) {
+	    		removed += dict[CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType];
+	    		dict.Remove(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType);
+	    	}
+	    	if (removed > 0) {
+	    		DrillableResourceArea d = DrillDepletionSystem.instance.getMotherlode(drill);
+	    		SNUtil.writeToChat("Removing "+removed+" progression-gated resources from drill yield @ "+d);
+		    	for (int i = 0; i < removed; i++) {
+	    			TechType tt = d == null ? (UnityEngine.Random.Range(0F, 1F) <= 0.3 ? TechType.Copper : TechType.Titanium) : getRandomValidMotherlodeDrillYield(d);
+		    		if (dict.ContainsKey(tt))
+		    			dict[tt] = dict[tt]+1;
+		    		else
+		    			dict[tt] = 1;
+		    	}
+	    	}
+	    	return notify;
+	    }
+	    
+	    public static float getFCSBioGenPowerFactor(float val, MonoBehaviour power, TechType item) {
+	    	if (item == FCSIntegrationSystem.instance.getBiofuel())
+	    		val *= 4;
+	    	return val;
 	    }
 	    
 	    public static void controlPlayerInput(DIHooks.PlayerInput pi) {

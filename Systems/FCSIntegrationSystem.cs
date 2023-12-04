@@ -129,6 +129,15 @@ namespace ReikaKalseki.SeaToSea {
 			int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler", "HasOil", true, new Type[0]);
 			codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "canFCSDrillOperate", false, typeof(bool), typeof(MonoBehaviour))});
 		}
+			/*
+		private static void addDrillFuelPowerHook(List<CodeInstruction> codes) {
+			InstructionHandlers.patchInitialHook(codes,
+				new CodeInstruction(OpCodes.Ldarg_0),
+				InstructionHandlers.createMethodCall("FCS_ProductionSolutions.Mods.DeepDriller.Managers.DrillSystem", "get_OilHandler", true, new Type[0]),
+				new CodeInstruction(OpCodes.Ldarg_0),
+				InstructionHandlers.createMethodCall("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController", "get_DeepDrillerPowerManager", true, new Type[0]),
+			);			
+		}*/
 			
 		private static void replaceFCSDrillFuel(List<CodeInstruction> codes) {
 			for (int i = codes.Count-1; i >= 0; i--) {
@@ -169,6 +178,30 @@ namespace ReikaKalseki.SeaToSea {
 			codes.RemoveAt(idx+1);
 			//codes.RemoveAt(idx);
 			codes[idx].opcode = OpCodes.Ldc_I4_0;
+		}
+		
+		private static void controlOreGeneration(List<CodeInstruction> codes) {
+			for (int i = codes.Count-1; i >= 0; i--) {
+				if (codes[i].opcode == OpCodes.Ldstr && codes[i].operand == "Spawning item {0}") {
+					patchTechTypeChoice(codes, i-1);
+				}
+			}
+		}
+		
+		private static void patchTechTypeChoice(List<CodeInstruction> codes, int idx) {
+			List<CodeInstruction> added = new List<CodeInstruction>(){
+				new CodeInstruction(OpCodes.Ldarg_0),
+				new CodeInstruction(OpCodes.Ldarg_0),
+				InstructionHandlers.createMethodCall("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "get_IsFocused", true, new Type[0]),
+				new CodeInstruction(OpCodes.Ldarg_0),
+				new CodeInstruction(OpCodes.Ldfld, InstructionHandlers.convertFieldOperand("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "_blacklistMode")),
+				new CodeInstruction(OpCodes.Ldarg_0),
+				new CodeInstruction(OpCodes.Ldfld, InstructionHandlers.convertFieldOperand("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "_focusOres")),
+				new CodeInstruction(OpCodes.Ldarg_0),
+				InstructionHandlers.createMethodCall("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "get_AllowedOres", true, new Type[0]),
+				InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "pickFCSDrillOre", false, typeof(TechType), typeof(MonoBehaviour), typeof(bool), typeof(bool), typeof(HashSet<>).MakeGenericType(typeof(TechType)), typeof(List<>).MakeGenericType(typeof(TechType))),
+			};
+			codes.InsertRange(idx, added);
 		}
 		
 		internal void onPlayerBuy(TechType tt) {
@@ -227,15 +260,21 @@ namespace ReikaKalseki.SeaToSea {
 			
 			f = core.GetType("FCS_AlterraHub.Systems.StoreInventorySystem").GetField("OrePrices", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 			Dictionary<TechType, decimal> oreValues = (Dictionary<TechType, decimal>)f.GetValue(null);
-			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType] = (decimal)Mathf.Lerp((float)oreValues[TechType.Nickel], (float)oreValues[TechType.Kyanite], 0.67F);
-			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType] = oreValues[TechType.Gold]*1.25M;
-			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType] = oreValues[TechType.Kyanite]*1.5M;
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType] = (decimal)Mathf.Lerp((float)oreValues[TechType.Nickel], (float)oreValues[TechType.Kyanite], 0.75F);
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType] = oreValues[TechType.Gold]*1.5M;
+			oreValues[CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType] = oreValues[TechType.Kyanite]*2M;
+			
+			oreValues[TechType.MercuryOre] = (decimal)Mathf.Lerp((float)oreValues[TechType.Gold], (float)oreValues[TechType.Nickel], 0.5F);
+			oreValues[TechType.Salt] = oreValues[TechType.Titanium]*0.2M;
+			oreValues[CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType] = oreValues[TechType.Copper];
+			oreValues[CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType] = oreValues[TechType.Lead];
+			
 			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots()) {
 				if (oreValues.ContainsKey(ingot.material))
 					oreValues[ingot.ingot] = oreValues[ingot.material]*ingot.count;
 			}
 			
-			oreValues[TechType.MercuryOre] = (decimal)Mathf.Lerp((float)oreValues[TechType.Gold], (float)oreValues[TechType.Nickel], 0.5F);
+			/*
 			oreValues[TechType.Floater] = oreValues[TechType.Titanium]*2.0M;
 			oreValues[TechType.BloodOil] = oreValues[TechType.Titanium]*1.0M;
 			oreValues[TechType.CreepvineSeedCluster] = oreValues[TechType.Titanium]*0.25M;
@@ -245,6 +284,7 @@ namespace ReikaKalseki.SeaToSea {
 			oreValues[C2CItems.mountainGlow.seed.TechType] = oreValues[TechType.Copper]*1.2M;
 			oreValues[C2CItems.sanctuaryPlant.seed.TechType] = oreValues[TechType.Gold];
 			oreValues[C2CItems.healFlower.seed.TechType] = (decimal)Mathf.Lerp((float)oreValues[TechType.Titanium], (float)oreValues[TechType.Copper], 0.5F);
+			*/
 			
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.FCSPDAController"), "MakeAPurchase", SeaToSeaMod.modDLL, replacePurchaseAction);
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, core.GetType("FCS_AlterraHub.Mods.FCSPDA.Mono.Dialogs.CheckOutPopupDialogWindow"), "MakePurchase", SeaToSeaMod.modDLL, redirectPurchase);
@@ -283,24 +323,48 @@ namespace ReikaKalseki.SeaToSea {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOreGenerator", "_passedTime");
 					codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickFCSDrill", false, typeof(MonoBehaviour))});
 				});
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, drillOreManager, "GenerateOre", SeaToSeaMod.modDLL, controlOreGeneration);
 				
 				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.Managers.DrillSystem"), "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
-				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController"), "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+				Type t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerController");
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "get_IsOperational", SeaToSeaMod.modDLL, addDrillOperationHook);
+				//InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Update", SeaToSeaMod.modDLL, addDrillFuelPowerHook);
+				                                
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerContainer").GetMethod("AddItemToContainer", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(TechType)}, null), SeaToSeaMod.modDLL, codes => {
+				    int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerContainer", "get_OnContainerUpdate", true, new Type[0]);
+				    codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldfld, InstructionHandlers.convertFieldOperand("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerContainer", "_container")), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "cleanupFCSContainer", false, typeof(Action<,>).MakeGenericType(typeof(int), typeof(int)), typeof(MonoBehaviour), typeof(Dictionary<,>).MakeGenericType(typeof(TechType), typeof(int)))});
+				});
 				
-				Type t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
 				C2CItems.fcsDrillFuel = new FCSFuel();
-				C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
-				C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 1);
-				//C2CItems.fcsDrillFuel.addIngredient(TechType.Salt, 1);
-				C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 1);
+				//C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
+				C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 2);
+				C2CItems.fcsDrillFuel.addIngredient(EcoceanMod.glowOil.TechType, 1);
+				C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 3);
+				C2CItems.fcsDrillFuel.addIngredient(C2CItems.alkali.seed.TechType, 1);
 				C2CItems.fcsDrillFuel.Patch();
-				TechnologyUnlockSystem.instance.addDirectUnlock(TechType.Benzene, C2CItems.fcsDrillFuel.TechType);
+				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerLightDuty"), C2CItems.fcsDrillFuel.TechType);
+				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerMK3"), C2CItems.fcsDrillFuel.TechType);
+				t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
 				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
 				
 				t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.Patchers.DeepDrillerGUIOilPage");
 				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
+			}
+			
+			Type alterraGen = InstructionHandlers.getTypeBySimpleName("FCS_EnergySolutions.Mods.AlterraGen.Mono.AlterraGenPowerManager");
+			if (alterraGen != null) {
+				Assembly energyMod = alterraGen.Assembly;
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, alterraGen, "Update", SeaToSeaMod.modDLL, codes => {
+					int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldc_R4);
+					codes[idx].operand = 2.4F; //from 1.167F
+					//codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSBioGenPPS", false, typeof(MonoBehaviour));
+				});
+				
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, alterraGen, "GetMultiplier", SeaToSeaMod.modDLL, codes => {
+					InstructionHandlers.patchEveryReturnPre(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSBioGenPowerFactor", false, typeof(float), typeof(MonoBehaviour), typeof(TechType)));
+				});
 			}
 			
 			assignRecipe("ahsLeftCornerRailing", 1);
@@ -377,7 +441,7 @@ namespace ReikaKalseki.SeaToSea {
 			notBuyableTechs.Add(assignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1)));
 			assignRecipe("PatreonStatue", 2, new Ingredient[]{new Ingredient(TechType.Quartz, 1)}, electronicsTier1());
 			
-			assignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(C2CItems.fcsDrillFuel.TechType, 1), new Ingredient(TechType.WiringKit, 1)}, electronicsTier1(2));
+			assignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.AdvancedWiringKit, 1)});
 			assignRecipe("AlterraSolarCluster", 0, new Ingredient[]{new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Gold, 2), new Ingredient(TechType.WiringKit, 1)});
 			assignRecipe("JetStreamT242", 4, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 2), new Ingredient(TechType.Silicone, 4));
 			assignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
@@ -439,7 +503,7 @@ namespace ReikaKalseki.SeaToSea {
 	       	fcsBiofuelAlt.unlock = TechType.Unobtanium;
 	       	fcsBiofuelAlt.allowUnlockPopups = true;
 	       	fcsBiofuelAlt.Patch();
-	       	TechnologyUnlockSystem.instance.addDirectUnlock(fcsBiofuel, fcsBiofuelAlt.TechType);
+	       	StoryHandler.instance.registerTrigger(new TechTrigger(fcsBiofuel), new TechUnlockEffect(fcsBiofuelAlt.TechType));
 		}
 		
 		public TechType assignRecipe(string id, string refItem) {

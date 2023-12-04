@@ -18,7 +18,7 @@ namespace ReikaKalseki.SeaToSea
 	internal class SeamothTetherController : MonoBehaviour {
 		
 		private static readonly float POWER_COST = 0.5F; //per second
-		internal static readonly float RANGE = 25F;
+		internal static readonly float RANGE = 18F;
 		
 		private SeaMoth vehicle;
 		
@@ -119,7 +119,7 @@ namespace ReikaKalseki.SeaToSea
 						return;
 					}*/
 					Creature c = go.GetComponent<Creature>();
-					if (c is GasoPod || c is Shocker || c is LavaLizard || c is Stalker || c is BoneShark || c is SpineEel || c is SandShark || c is Warper) {
+					if (c is GasoPod || c is Shocker || c is LavaLizard || c is Jellyray || c is Stalker || c is BoneShark || c is SpineEel || c is SandShark || c is Warper) {
 						available.Add(rb);
 						return;
 					}
@@ -198,24 +198,26 @@ namespace ReikaKalseki.SeaToSea
 			
 			if (!target)
 				return;
+			target.isKinematic = false;
 			
 			bool animal = (bool)target.GetComponent<Creature>();
 		
 			Vector3 tgtFX = mgr.transform.position-mgr.transform.forward*1-mgr.transform.up*0.25F;
 			float f = animal ? 2 : 1;
-			Vector3 tgt = mgr.transform.position-mgr.transform.forward*5*f-mgr.transform.up*2*f;
+			Vector3 tgt = mgr.transform.position+(target.transform.position-mgr.transform.position).normalized*5*f;//mgr.transform.position-mgr.transform.forward*8*f-mgr.transform.up*2.5F*f;
 			effect.origin = tgtFX;
 			effect.target = target.transform.position;
 			effect.originVector = -mgr.transform.forward;
 			
 			Vector3 distance = tgt - target.transform.position;
 			float magnitude = distance.magnitude;
-			if (magnitude > SeamothTetherController.RANGE) {
+			if (magnitude > SeamothTetherController.RANGE*2.5F) {
+				SNUtil.writeToChat("Lost grip of "+Language.main.Get(CraftData.GetTechType(target.gameObject).AsString()));
 				drop();
 				return;
 			}
 			float d = Mathf.Clamp(magnitude, 1f, 4f);
-			Vector3 vector = target.velocity + Vector3.Normalize(distance) * (animal ? 300 : 800) * d * dT / (1f + target.mass * massScale);
+			Vector3 vector = target.velocity + Vector3.Normalize(distance) * (animal ? 300 : 1200) * d * dT / (1f + target.mass * massScale);
 			Vector3 amount = vector * (10f + Mathf.Pow(Mathf.Clamp01(1f - magnitude), 1.75f) * 40f) * dT;
 			vector = UWE.Utils.SlerpVector(vector, Vector3.zero, amount);
 			target.velocity = vector;

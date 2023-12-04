@@ -180,8 +180,7 @@ namespace ReikaKalseki.SeaToSea
 	    //voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
         
 	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
-	    deepStalker.Patch();
-	    
+	    deepStalker.Patch();	    
 	    sanctuaryray = new SanctuaryJellyray(itemLocale.getEntry("SanctuaryJellyray"));
 	    sanctuaryray.Patch();
 	    purpleBoomerang = new PurpleBoomerang(itemLocale.getEntry("PurpleBoomerang"));
@@ -190,6 +189,12 @@ namespace ReikaKalseki.SeaToSea
 	    purpleHolefish.Patch();
 	    purpleHoopfish = new PurpleHoopfish(itemLocale.getEntry("PurpleHoopfish"));
 	    purpleHoopfish.Patch();
+	    
+	    WaterParkCreature.waterParkCreatureParameters[deepStalker.TechType] = SNUtil.getModifiedACUParams(TechType.Stalker, 1, 1, 1, 1.5F);
+	    WaterParkCreature.waterParkCreatureParameters[sanctuaryray.TechType] = SNUtil.getModifiedACUParams(TechType.Jellyray, 1, 1, 1, 1.25F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleBoomerang.TechType] = SNUtil.getModifiedACUParams(TechType.Boomerang, 1, 1, 1, 0.67F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleHoopfish.TechType] = SNUtil.getModifiedACUParams(TechType.Hoopfish, 1.2F, 1.2F, 1.2F, 1.25F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleHolefish.TechType] = SNUtil.getModifiedACUParams(TechType.HoleFish, 4F, 4F, 4F, 3.0F);
 	    
 	    CraftDataHandler.SetCookedVariant(purpleBoomerang.TechType, TechType.CookedBoomerang);
 	    CraftDataHandler.SetCookedVariant(purpleHoopfish.TechType, TechType.CookedHoopfish);

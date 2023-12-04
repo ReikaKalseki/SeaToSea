@@ -23,6 +23,18 @@ namespace ReikaKalseki.SeaToSea
 		public override Vector2int SizeInInventory {
 			get {return new Vector2int(3, 3);}
 		}
+
+		public override CraftTree.Type FabricatorType {
+			get {
+				return CraftTree.Type.Workbench;
+			}
+		}
+
+		public override string[] StepsToFabricatorTab {
+			get {
+				return new string[]{"TankMenu"};
+			}
+		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			Oxygen o2 = go.EnsureComponent<Oxygen>();
