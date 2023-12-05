@@ -22,9 +22,6 @@ namespace ReikaKalseki.SeaToSea {
     
     	public static readonly float ENVIRO_RATE_SCALAR = 4;
     	
-    	internal readonly static Vector3 lavaCastleCenter = new Vector3(-49, -1242, 118);
-    	private readonly static double lavaCastleInnerRadius = 65;//75;
-    	private readonly static double lavaCastleRadius = Vector3.Distance(new Vector3(-116, -1194, 126), lavaCastleCenter)+32;
     	private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
     	private readonly static Vector3 lavaPitTunnelMid = new Vector3(145.8F, -1225F, 528F);
     	private readonly static double lavaPitEntranceRadius = 130;
@@ -516,10 +513,10 @@ namespace ReikaKalseki.SeaToSea {
     		if (ret == "ILZCastleChamber")
     			ret = "LavaCastleInner";
     		if (ret.StartsWith("ILZ", StringComparison.InvariantCultureIgnoreCase)) {
-    			float rad = Vector3.Distance(lavaCastleCenter, pos);
-    			if (rad < lavaCastleInnerRadius)
+    			float rad = Vector3.Distance(WorldUtil.lavaCastleCenter, pos);
+    			if (rad < WorldUtil.lavaCastleInnerRadius)
     				ret = "LavaCastleInner";
-    			else if (rad < lavaCastleRadius)
+    			else if (rad < WorldUtil.lavaCastleRadius)
     				ret = "LavaCastle";
     		}
     		if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
