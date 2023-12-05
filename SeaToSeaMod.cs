@@ -184,10 +184,12 @@ namespace ReikaKalseki.SeaToSea
 	    sanctuaryray = new SanctuaryJellyray(itemLocale.getEntry("SanctuaryJellyray"));
 	    sanctuaryray.Patch();
 	    purpleBoomerang = new PurpleBoomerang(itemLocale.getEntry("PurpleBoomerang"));
+	    purpleBoomerang.cookableIntoBase = 1;
 	    purpleBoomerang.Patch();
 	    purpleHolefish = new PurpleHolefish(itemLocale.getEntry("PurpleHolefish"));
 	    purpleHolefish.Patch();
 	    purpleHoopfish = new PurpleHoopfish(itemLocale.getEntry("PurpleHoopfish"));
+	    purpleHoopfish.cookableIntoBase = 1;
 	    purpleHoopfish.Patch();
 	    
 	    WaterParkCreature.waterParkCreatureParameters[deepStalker.TechType] = SNUtil.getModifiedACUParams(TechType.Stalker, 1, 1, 1, 1.5F);
@@ -195,9 +197,6 @@ namespace ReikaKalseki.SeaToSea
 	    WaterParkCreature.waterParkCreatureParameters[purpleBoomerang.TechType] = SNUtil.getModifiedACUParams(TechType.Boomerang, 1, 1, 1, 0.67F);
 	    WaterParkCreature.waterParkCreatureParameters[purpleHoopfish.TechType] = SNUtil.getModifiedACUParams(TechType.Hoopfish, 1.2F, 1.2F, 1.2F, 1.25F);
 	    WaterParkCreature.waterParkCreatureParameters[purpleHolefish.TechType] = SNUtil.getModifiedACUParams(TechType.HoleFish, 4F, 4F, 4F, 3.0F);
-	    
-	    CraftDataHandler.SetCookedVariant(purpleBoomerang.TechType, TechType.CookedBoomerang);
-	    CraftDataHandler.SetCookedVariant(purpleHoopfish.TechType, TechType.CookedHoopfish);
 	    
 	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
 	    voidSpikeLevi.register();
@@ -342,10 +341,10 @@ namespace ReikaKalseki.SeaToSea
         
         SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("lastKharaaTreatmentTime", BindingFlags.Instance | BindingFlags.NonPublic), () => LiquidBreathingSystem.instance);
         
-        SNUtil.addScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
-        SNUtil.addScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);
-        SNUtil.addScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
-        SNUtil.addScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
+        SNUtil.addMultiScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
+        SNUtil.addMultiScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);
+        SNUtil.addMultiScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
+        SNUtil.addMultiScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
     }
     
     private static void initHandlers() {
@@ -377,6 +376,7 @@ namespace ReikaKalseki.SeaToSea
     	Dictionary<string, bool> modsWithIssues = new Dictionary<string, bool>(){
     		{"CyclopsNuclearUpgrades", false},
     		{"CyclopsBioReactor", false},
+    		{"AquariumBreeding", false},
     		{"RedBaron", true},
     		{"SeamothArms", true},
     		{"HabitatControlPanel", true},
