@@ -72,7 +72,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p = addPage(TrackerPages.UNDERISLANDS, new BiomeTrigger(VanillaBiomes.UNDERISLANDS));
 	    	p.addFinding("glass", Finding.fromTracker(TrackerPages.GLASSFOREST)).addFinding("piezo", Finding.fromScan(Ecocean.EcoceanMod.piezo)).addFinding("wreck", Finding.fromStory(FallingGlassForestWreck.STORY_TAG)).addFinding("farmer", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.farmerBlock)).addFinding("databox", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("room", Finding.fromStory(C2CHooks.UNDERISLANDS_BLOCKED_ROOM_GOAL));
 	    	
-	    	p = addPage(TrackerPages.BKELPTRENCH, new ProgressionTrigger(ep => BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.BLOODKELP && ep.transform.position.y < -520));
+	    	p = addPage(TrackerPages.BKELPTRENCH, new TrackerPageAnyFindingsTrigger(TrackerPages.BKELPTRENCH));
 	    	p.addFinding("pod1", Finding.fromEncy("bkelpbase")).addFinding("pda", Finding.fromEncy("bkelpbase2")).addFinding("chit", Finding.fromStory(SeaToSeaMod.bioProcessorBoost.goal)).addFinding("databox", Finding.fromUnlock(C2CItems.depth1300));//TODO .addFinding("caves", Finding.(??));
 	    	
 	    	p = addPage(TrackerPages.NBKELP, new ProgressionTrigger(ep => BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.BLOODKELPNORTH && ep.transform.position.y < -400));

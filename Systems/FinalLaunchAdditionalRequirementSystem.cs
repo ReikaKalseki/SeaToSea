@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(SeaToSeaMod.deepStalker.TechType, 1, "A semi-intelligent predator with a strong attraction to shiny objects, adapted for deep water");
 			
 			addRequiredItem(TechType.Bladderfish, 2, "A fish with water filtering capabilities");
-			addRequiredItem(TechType.Peeper, 2, "Enzyme host peeper").setSorting(2000).setAdditionalCheck(pp => {
+			addRequiredItem(TechType.Peeper, 3, "Enzyme host peeper").setSorting(2000).setAdditionalCheck(pp => {
 				Creature c = pp.GetComponent<Creature>();
 				return c is Peeper && ((Peeper)c).isHero;
 			});

@@ -442,10 +442,10 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("PatreonStatue", 2, new Ingredient[]{new Ingredient(TechType.Quartz, 1)}, electronicsTier1());
 			
 			assignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.AdvancedWiringKit, 1)});
-			assignRecipe("AlterraSolarCluster", 0, new Ingredient[]{new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Gold, 2), new Ingredient(TechType.WiringKit, 1)});
+			assignRecipe("AlterraSolarCluster", 0, new Ingredient[]{new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 2), new Ingredient(TechType.Gold, 3), new Ingredient(TechType.WiringKit, 1)});
 			assignRecipe("JetStreamT242", 4, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 2), new Ingredient(TechType.Silicone, 4));
 			assignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
-			assignRecipe("TelepowerPylon", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2)}, electronicsTier3());
+			assignRecipe("TelepowerPylon", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, electronicsTier3());
 			assignRecipe("UniversalCharger", 2, electronicsTier2(4));
 			assignRecipe("WindSurfer", 5, new Ingredient[]{new Ingredient(TechType.Silicone, 4), new Ingredient(TechType.Magnetite, 5)}, electronicsTier1(3));
 			assignRecipe("WindSurferOperator", 5, new Ingredient[]{new Ingredient(TechType.Silicone, 4)});

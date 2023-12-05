@@ -240,6 +240,9 @@ namespace ReikaKalseki.SeaToSea {
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.5F);
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
+
+		foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
+			BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material)*3);
 		
 		TechType tt;
 		if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableSmall", out tt)) {
@@ -256,10 +259,18 @@ namespace ReikaKalseki.SeaToSea {
 			fi.SetValue(null, 48); //originally 12 = 2x6, make 4x12
 			
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "CreateAndAddItemDisplay", SeaToSeaMod.modDLL, shrinkItemDisplay);
+			
+			t = t.Assembly.GetType("ResourceMonitor.Components.ResourceMonitorLogic");
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "TrackStorageContainer", SeaToSeaMod.modDLL, filterStorageContainerInteract);
 		}
 		
 		FCSIntegrationSystem.instance.applyPatches();
     }
+		
+	private static void filterStorageContainerInteract(List<CodeInstruction> codes) {
+		int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldloc_1);
+		codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "isStorageVisibleToDisplayMonitor", false, new Type[]{typeof(bool), typeof(StorageContainer)})});
+	}
 		
 	private static void shrinkItemDisplay(List<CodeInstruction> codes) {
 		int idx = InstructionHandlers.getLastOpcodeBefore(codes, codes.Count, OpCodes.Ret);

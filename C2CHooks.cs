@@ -295,7 +295,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void tickPlayer(Player ep) {
 	    	if (skipPlayerTick || !ep || !DIHooks.isWorldLoaded())
 	    		return;
-	    	//SNUtil.writeToChat(ep.GetBiomeString());
+	    	//SNUtil.writeToChat(WorldUtil.getRegionalDescription(ep.transform.position));
 	    	
 	    	if (playerBaseO2 == null) {
 	    		foreach (Oxygen o in Player.main.oxygenMgr.sources) {
@@ -2114,6 +2114,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	GameObject grid = ObjectUtil.getChildObject(screen.gameObject, "Canvas/Screens/MainScreen/ActualScreen/MainGrid");
 	    	UnityEngine.UI.GridLayoutGroup grp = grid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
 	    	grp.cellSize = new Vector2(100, 90);
+	    }
+	    
+	    public static bool isStorageVisibleToDisplayMonitor(bool skip, StorageContainer sc) {
+	    	//SNUtil.writeToChat("checking SC="+sc+": "+skip);
+	    	skip |= (sc && sc.gameObject.FindAncestor<MapRoomFunctionality>());
+	    	skip |= (sc && sc.GetComponent<BioprocessorLogic>());
+	    	return skip;
 	    }
 	}
 }
