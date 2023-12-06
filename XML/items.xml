@@ -385,6 +385,17 @@
 			
 		</pda>
 	</FCSFuel>
+	<LuminolDrop>
+		<name>
+			Luminol Drop
+		</name>
+		<desc>
+			A small quantity of luminol.
+		</desc>
+		<pda>
+			
+		</pda>
+	</LuminolDrop>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite

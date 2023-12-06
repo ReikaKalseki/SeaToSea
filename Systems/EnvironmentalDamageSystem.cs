@@ -50,13 +50,14 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private readonly Bounds prisonAquariumExpanded;
 		
-		internal readonly SoundManager.SoundData pdaBeep;
+		private readonly SoundManager.SoundData pdaBeep;
 		
 		internal CustomHUDWarning lrPoisonHUDWarning;
 		internal CustomHUDWarning lrLeakHUDWarning;
 		internal CustomHUDWarning extremeHeatHUDWarning;
 		internal CustomHUDWarning o2ConsumptionIncreasingHUDWarning;
 		internal CustomHUDWarning o2ConsumptionMaxedOutHUDWarning;
+		internal CustomHUDWarning infectedLungsHUDWarning;
 		
 		private readonly List<CustomHUDWarning> warnings = new List<CustomHUDWarning>();
 		
@@ -139,6 +140,14 @@ namespace ReikaKalseki.SeaToSea {
     	
     	private void registerBiomeEnvironment(string b, float t, float dmg, float w, int cf, float dmgC) {
     		temperatures[b] = new TemperatureEnvironment(b, t, dmg, w, cf, dmgC);
+    	}
+    	
+    	public void playPDABeep() {
+    		playPDABeep(Player.main.transform.position);
+    	}
+    	
+    	public void playPDABeep(Vector3 pos) {
+    		SoundManager.playSoundAt(pdaBeep, pos, false, -1);
     	}
     	
     	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
@@ -296,40 +305,47 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 			float leak = getLRPowerLeakage(biome)*0.9F;
 		   	if (leak > 0) {
-		   		bool used = false;
 		   		Vehicle v = dmg.player ? dmg.player.GetVehicle() : dmg.gameObject.FindAncestor<Vehicle>();
-		   		float innerLeakFactor = 1;
-		   		if (v) {
-		   			bool upgrade;
-		    		leak *= getLRLeakFactor(v, out upgrade);
-		    		if (upgrade)
-		    			innerLeakFactor = 0.5F;
+		   		if (triggerPowerLeakage(v, dmg.player, leak)) {
+		    		if (PDAManager.getPage("lostrivershortcircuit").unlock())
+		    			playPDABeep();
 		   		}
-		    	if (leak > 0) {
-			    	if (dmg.player) {
-		    			used = triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
-						//used = true;
-			    	}
-			    	else if (v) {
-					    int trash;
-						v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
-						used = true;
-						foreach (StorageContainer sc in v.GetComponentsInChildren<StorageContainer>(true))
-							if (!sc.gameObject.FindAncestor<Player>())
-								triggerPowerLeakage(sc.container, leak, innerLeakFactor);
-						foreach (SeamothStorageContainer sc in v.GetComponentsInChildren<SeamothStorageContainer>(true))
-							if (!sc.gameObject.FindAncestor<Player>())
-								triggerPowerLeakage(sc.container, leak, innerLeakFactor);
-			    	}
-		    		if (used) {
-		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
-		    			if (!dmg.player)
-		    				vehiclePowerLeak = time;
-		    		}
-		    	}
+		    	if (!dmg.player)
+		    		vehiclePowerLeak = time;
 			}
 	 	}
+	 	
+		private bool triggerPowerLeakage(Vehicle v, Player ep, float leak) {
+		   	float innerLeakFactor = 1;
+		   	if (v) {
+		   		bool upgrade;
+		    	leak *= getLRLeakFactor(v, out upgrade);
+		    	if (upgrade)
+		    		innerLeakFactor = 0.5F;
+		   	}
+		    if (leak > 0) {
+		   		bool used = false;
+			   	if (ep) {
+		    		used = triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
+					//used = true;
+			   	}
+			   	else if (v) {
+				    int trash;
+					v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak/ENVIRO_RATE_SCALAR));
+					used = true;
+					foreach (StorageContainer sc in v.GetComponentsInChildren<StorageContainer>(true))
+						if (!sc.gameObject.FindAncestor<Player>())
+							triggerPowerLeakage(sc.container, leak, innerLeakFactor);
+					foreach (SeamothStorageContainer sc in v.GetComponentsInChildren<SeamothStorageContainer>(true))
+						if (!sc.gameObject.FindAncestor<Player>())
+							triggerPowerLeakage(sc.container, leak, innerLeakFactor);
+			   	}
+		   		return used;
+		    }
+		   	else {
+		   		return false;
+		   	}
+		}
 	 	
 		internal float getHeatDamageModuleFactor(TechType tt) {
 			if (tt == TechType.ExosuitThermalReactorModule)
@@ -456,11 +472,15 @@ namespace ReikaKalseki.SeaToSea {
 				    	cyclopsPowerLeak = time;
 					    sub.powerRelay.ConsumeEnergy(leak*2.5F, out trash);
 					    foreach (StorageContainer sc in sub.GetComponentsInChildren<StorageContainer>(true)) {
-					    	if (/*!sc.gameObject.FindAncestor<Vehicle>() && */!sc.gameObject.FindAncestor<Player>())
+					    	if (!sc.gameObject.FindAncestor<Vehicle>() && !sc.gameObject.FindAncestor<Player>()) //skip vehicle because will be included later in the docked call
 								triggerPowerLeakage(sc.container, leak, 1);
 					    }
+					    foreach (VehicleDockingBay d in sub.GetComponentsInChildren<VehicleDockingBay>(true)) {
+					    	if (d.dockedVehicle)
+								triggerPowerLeakage(d.dockedVehicle, null, leak*0.5F);
+					    }
 		    			if (PDAManager.getPage("lostrivershortcircuit").unlock())
-		    				SoundManager.playSoundAt(pdaBeep, Player.main.transform.position, false, -1);
+		    				playPDABeep();
 				    }
 				}
 	    	}
@@ -676,6 +696,10 @@ namespace ReikaKalseki.SeaToSea {
 	   		O2IncreasingAlert o2Up = new O2IncreasingAlert(warn);
 	   		warn.alerts.Add(o2Up);
 	   		
+	   		InfectedLungAlert infLung = new InfectedLungAlert(warn);
+	   		infLung.preventiveItem.Clear();
+	   		warn.alerts.Add(infLung);
+	   		
 	   		EnviroAlert poison = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
 	   		poison.preventiveItem.Clear();
 	   		poison.preventiveItem.Add(C2CItems.sealSuit.TechType);
@@ -686,6 +710,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		GameObject hudTemplate = uGUI.main.GetComponentInChildren<uGUI_RadiationWarning>(true).gameObject;
 	   		lrPoisonHUDWarning = createHUDWarning(hudTemplate, "chemwarn", () => poison.isActive() && isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
 	   		o2ConsumptionIncreasingHUDWarning = createHUDWarning(hudTemplate, "o2warn", () => o2Up.isActive() && isPlayerInOcean() && !crush.isActive(), 10);
+	   		infectedLungsHUDWarning = createHUDWarning(hudTemplate, "influngwarn", () => infLung.isActive() && !crush.isActive(), 10);//, new Color(0.25F, 1F, 0.25F, 1));
 	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", () => crush.isActive() && isPlayerInOcean(), 20);
 	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
 	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
@@ -892,12 +917,32 @@ namespace ReikaKalseki.SeaToSea {
 		internal override void fire(RebreatherDepthWarnings warn) {
 			base.fire(warn);
 			
-			SoundManager.playSoundAt(EnvironmentalDamageSystem.instance.pdaBeep, Player.main.transform.position, false, -1);
+			EnvironmentalDamageSystem.instance.playPDABeep();
 		   	PDAManager.getPage("deepairuse").unlock();
 		}
 		
 		public override string ToString() {
 			return "o2 increase warning";
+		}
+		
+	}
+	
+	class InfectedLungAlert : EnviroAlert {
+		
+		internal InfectedLungAlert(RebreatherDepthWarnings warn) : base(warn, ep => LiquidBreathingSystem.instance.hasReducedCapacity() && EnvironmentalDamageSystem.instance.isPlayerInOcean(), null, null) {
+			preventiveItem.Clear();
+		}
+		
+		internal override void fire(RebreatherDepthWarnings warn) {
+			base.fire(warn);
+			
+			EnvironmentalDamageSystem.instance.playPDABeep();
+	    	PDAMessages.Messages msg = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? PDAMessages.Messages.LiquidBreathingSelfScanHard : PDAMessages.Messages.LiquidBreathingSelfScanEasy;
+	    	PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key);
+		}
+		
+		public override string ToString() {
+			return "infected lungs warning";
 		}
 		
 	}

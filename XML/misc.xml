@@ -291,6 +291,9 @@
 	<heatwarn>
 		Extreme Temperature Detected
 	</heatwarn>
+	<influngwarn>
+		Reduced Liquid Respiration Efficiency
+	</influngwarn>
   </HUDAlerts>
   <DockToChangeVehicleUpgrades>
 	<name>

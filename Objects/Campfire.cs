@@ -232,9 +232,15 @@ namespace ReikaKalseki.SeaToSea {
 		public void OnHandClick(GUIHand hand) {
 			if (cooking == null) {
 				Pickupable held = Inventory.main.GetHeld();
-				if (held && Campfire.cookMap.ContainsKey(held.GetTechType()) && Inventory.main.TryRemoveItem(held)) { //sound
-					cooking = Campfire.cookMap[held.GetTechType()];
-					UnityEngine.Object.DestroyImmediate(held.gameObject);
+				if (held) {
+					TechType tt = held.GetTechType();
+					RetexturedFish rf = RetexturedFish.getFish(tt);
+					if (rf != null)
+						tt = CraftData.entClassTechTable[rf.baseTemplate.prefab];
+					if (Campfire.cookMap.ContainsKey(tt) && Inventory.main.TryRemoveItem(held)) { //sound
+						cooking = Campfire.cookMap[tt];
+						UnityEngine.Object.DestroyImmediate(held.gameObject);
+					}
 				}
 			}
 		}

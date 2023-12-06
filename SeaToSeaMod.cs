@@ -376,7 +376,7 @@ namespace ReikaKalseki.SeaToSea
     	Dictionary<string, bool> modsWithIssues = new Dictionary<string, bool>(){
     		{"CyclopsNuclearUpgrades", false},
     		{"CyclopsBioReactor", false},
-    		{"AquariumBreeding", false},
+    		//{"AquariumBreeding", false},
     		{"RedBaron", true},
     		{"SeamothArms", true},
     		{"HabitatControlPanel", true},

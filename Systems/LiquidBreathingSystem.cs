@@ -41,6 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private float lastUnequippedTime = -1;
 	    
 	    internal float lastKharaaTreatmentTime = -1;
+	    private bool lastKharaaTreatmentActive;
 		
 		private LiquidBreathingSystem() {
 			
@@ -49,10 +50,6 @@ namespace ReikaKalseki.SeaToSea {
 	    public void onEquip() {
 	    	InfectedMixin inf = Player.main.GetComponent<InfectedMixin>();
 	    	inf.SetInfectedAmount(Mathf.Max(inf.infectedAmount, 0.25F));
-	    	if (hasLiquidBreathing()) {
-	    		PDAMessages.Messages msg = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? PDAMessages.Messages.LiquidBreathingSelfScanHard : PDAMessages.Messages.LiquidBreathingSelfScanEasy;
-	    		PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key);
-	    	}
 	    }
 	    
 	    public void onUnequip() {
@@ -278,12 +275,20 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
-	    public bool isKharaaTreatmentActive() {
-	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 14400);
+	    private bool isKharaaTreatmentActive() {
+	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 9000 : 21600);
 	    }
 	    
 	    public bool hasReducedCapacity() {
-	    	return !isKharaaTreatmentActive() && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
+	    	bool active = isKharaaTreatmentActive();/*
+	    	if (lastKharaaTreatmentActive != active) {
+	    		if (!active) {
+	    			SNUtil.writeToChat(Language.main.Get(C2CItems.treatment.TechType)+" expired");
+	    			EnvironmentalDamageSystem.instance.playPDABeep();
+	    		}
+	    		lastKharaaTreatmentActive = active;
+	    	}*/
+	    	return !active && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
 	    }
 	    
 	    class OxygenAreaWithLiquidSupport : MonoBehaviour {

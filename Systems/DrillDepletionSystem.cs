@@ -98,7 +98,29 @@ namespace ReikaKalseki.SeaToSea {
 	
 	class MotherlodeDrillTag : MonoBehaviour {
 		
+		private static readonly int MOTHERLODE_ORES_PER_DAY = 60;
+		
+		private static PropertyInfo allowedOreField;
+		private static FieldInfo oresPerDayField;
+		private static MethodInfo oresPerDaySet;
+		
+		private static Type drillerDisplay;
+		private static MethodInfo updateDisplay;
+		private static FieldInfo filterGridField;
+		private static FieldInfo filterListField;
+		
+		private static Type gridHelper;
+		private static MethodInfo showGridPage;
+		//private static FieldInfo currentGridPage;
+		private static FieldInfo gridGO;
+		
+		private static Type iconButton;
+		private static FieldInfo buttonItem;
+		private static FieldInfo buttonIcon;
+		
 		internal DrillableResourceArea deposit;
+		
+		private Component drillerDisplayComponent;
 		
 	    private float lastOreTableAssignTime = -1;
 		
@@ -107,15 +129,65 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+	    	if (allowedOreField == null) {
+	    		Type t = FCSIntegrationSystem.instance.getFCSDrillOreManager();
+	    		allowedOreField = t.GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		oresPerDayField = t.GetField("_oresPerDay", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		oresPerDaySet = t.GetMethod("SetOresPerDay", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		
+	    		drillerDisplay = t.Assembly.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerDisplay");
+	    		updateDisplay = drillerDisplay.GetMethod("UpdateDisplayValues", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		filterGridField = drillerDisplay.GetField("_filterGrid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		filterListField = drillerDisplay.GetField("_trackedFilterState", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		
+	    		gridHelper = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mono.GridHelper");
+	    		//currentGridPage = gridHelper.GetField("_currentPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		showGridPage = gridHelper.GetMethod("DrawPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[0], null);
+	    		gridGO = gridHelper.GetField("_itemsGrid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		
+	    		iconButton = gridHelper.Assembly.GetType("FCS_AlterraHub.Model.GUI.uGUI_FCSDisplayItem");
+	    		buttonItem = iconButton.GetField("_techType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		buttonIcon = iconButton.GetField("_icon", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    	}
+	    	
 	    	float time = DayNightCycle.main.timePassedAsFloat;
 	    	if (time-lastOreTableAssignTime >= 1) {
 	    		lastOreTableAssignTime = time;
 		    	Component com = GetComponent(FCSIntegrationSystem.instance.getFCSDrillOreManager());
 		    	if (com) {
-			   		PropertyInfo p = FCSIntegrationSystem.instance.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			   		p.SetValue(com, deposit.getAllAvailableResources());
+			   		allowedOreField.SetValue(com, deposit.getAllAvailableResources());
+			   		
+			   		//set ores per day count too; default is 25 but increase to 60 on a motherlode
+			   		int get = (int)oresPerDayField.GetValue(com);
+			   		if (get != MOTHERLODE_ORES_PER_DAY)
+			   			oresPerDaySet.Invoke(com, new object[]{MOTHERLODE_ORES_PER_DAY});
+			   		
+					drillerDisplayComponent = GetComponent(drillerDisplay);
+					if (drillerDisplayComponent) {
+						IDictionary dict = (IDictionary)filterListField.GetValue(drillerDisplayComponent);
+						dict.Clear();
+					  		
+						MonoBehaviour grid = (MonoBehaviour)filterGridField.GetValue(drillerDisplayComponent);
+						if (grid != null) {
+					  		GameObject go = (GameObject)gridGO.GetValue(grid);
+					  		ObjectUtil.removeChildObject(go, "OreBTN");
+					  		showGridPage.Invoke(grid, new object[0]);
+						}
+						
+						updateDisplay.Invoke(drillerDisplayComponent, new object[0]);
+					}
 		    	}
 	    	}
+						
+			MonoBehaviour grid2 = (MonoBehaviour)filterGridField.GetValue(drillerDisplayComponent);
+			if (grid2 != null) {
+				GameObject go = (GameObject)gridGO.GetValue(grid2);
+				foreach (Component c in go.GetComponentsInChildren(iconButton)) {
+					TechType tt = (TechType)buttonItem.GetValue(c);
+					uGUI_Icon ico = (uGUI_Icon)buttonIcon.GetValue(c);
+	    			ico.sprite = SpriteManager.Get(C2CHooks.isFCSDrillMaterialAllowed(tt) ? tt : TechType.None);
+				}
+			}
 		}
 		
 	}
