@@ -242,8 +242,9 @@ namespace ReikaKalseki.SeaToSea {
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
 
 		foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
-			BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material)*3);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material)*ingot.count/2F);
 		
+		Type t;
 		TechType tt;
 		if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableSmall", out tt)) {
 			RecipeUtil.modifyIngredients(tt, cheapenResourceMonitor);
@@ -254,7 +255,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 			RecipeUtil.addIngredient(tt, TechType.AluminumOxide, 2);
 			
-			Type t = InstructionHandlers.getTypeBySimpleName("ResourceMonitor.Components.ResourceMonitorDisplay");
+			t = InstructionHandlers.getTypeBySimpleName("ResourceMonitor.Components.ResourceMonitorDisplay");
 			FieldInfo fi = t.GetField("ITEMS_PER_PAGE", BindingFlags.Static | BindingFlags.NonPublic);
 			fi.SetValue(null, 48); //originally 12 = 2x6, make 4x12
 			
@@ -263,6 +264,13 @@ namespace ReikaKalseki.SeaToSea {
 			t = t.Assembly.GetType("ResourceMonitor.Components.ResourceMonitorLogic");
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "TrackStorageContainer", SeaToSeaMod.modDLL, filterStorageContainerInteract);
 		}
+		
+		//buggy with C2C apparently
+		t = InstructionHandlers.getTypeBySimpleName("EasyCraft.Options");
+		InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "OnAutoCraftChanged", SeaToSeaMod.modDLL, codes => {codes[InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldarg_0)].opcode = OpCodes.Ldc_I4_0;});
+		t = t.Assembly.GetType("EasyCraft.Main");
+		var settingMain = t.GetProperty("Settings", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		settingMain.GetType().GetField("autoCraft", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(settingMain, false);
 		
 		FCSIntegrationSystem.instance.applyPatches();
     }

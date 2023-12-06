@@ -1347,7 +1347,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (sub) {
 	    		go.EnsureComponent<Magnetic>();
 	    		if (sub.isCyclops)
-	    			go.EnsureComponent<BrightLightController>().setLightValues(0, 0, 135, 200, 2.0F).setPowerValues(0, /*0.4F*/1.6F);
+	    			go.EnsureComponent<BrightLightController>().setLightValues(0, 0, 135, 200, 2.0F).setPowerValues(0, /*0.4F1.6F*/0.6F);
 	    	}
 	    	if (go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
 	    		go.EnsureComponent<Magnetic>();
@@ -2008,7 +2008,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static TechType getFCSDrillFuel() {
-	    	return C2CItems.fcsDrillFuel.TechType;
+	    	return FCSIntegrationSystem.instance.fcsDrillFuel.TechType;
 	    }
 	    
 	    public static TechType pickFCSDrillOre(TechType orig, MonoBehaviour drill, bool filtering, bool blacklist, HashSet<TechType> filters, List<TechType> defaultSet) {
@@ -2030,7 +2030,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
-	    private static bool isFCSDrillMaterialAllowed(TechType tt) {
+	    internal static bool isFCSDrillMaterialAllowed(TechType tt) {
 	    	if (tt == TechType.Nickel)
 	    		return Story.StoryGoalManager.main.completedGoals.Contains("Nickel");
 	    	if (tt == TechType.MercuryOre)
