@@ -61,6 +61,9 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly HashSet<TechType> registeredEffectFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> notBuyableTechs = new HashSet<TechType>();
 		private readonly HashSet<TechType> replacedTechRecipes = new HashSet<TechType>();
+    
+	    internal BasicCraftingItem fcsDrillFuel;
+	    internal BasicCraftingItem luminolDrop;
 		
 		private float lastTimeUnlock = -1;
 		private HashSet<TechType> unlocksRightNow = new HashSet<TechType>();
@@ -335,15 +338,15 @@ namespace ReikaKalseki.SeaToSea {
 				    codes.InsertRange(idx+1, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldfld, InstructionHandlers.convertFieldOperand("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerContainer", "_container")), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "cleanupFCSContainer", false, typeof(Action<,>).MakeGenericType(typeof(int), typeof(int)), typeof(MonoBehaviour), typeof(Dictionary<,>).MakeGenericType(typeof(TechType), typeof(int)))});
 				});
 				
-				C2CItems.fcsDrillFuel = new FCSFuel();
+				fcsDrillFuel = new FCSFuel();
 				//C2CItems.fcsDrillFuel.addIngredient(TechType.Benzene, 1);
-				C2CItems.fcsDrillFuel.addIngredient(TechType.Lubricant, 2);
-				C2CItems.fcsDrillFuel.addIngredient(EcoceanMod.glowOil.TechType, 1);
-				C2CItems.fcsDrillFuel.addIngredient(TechType.JellyPlant, 3);
-				C2CItems.fcsDrillFuel.addIngredient(C2CItems.alkali.seed.TechType, 1);
-				C2CItems.fcsDrillFuel.Patch();
-				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerLightDuty"), C2CItems.fcsDrillFuel.TechType);
-				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerMK3"), C2CItems.fcsDrillFuel.TechType);
+				fcsDrillFuel.addIngredient(TechType.Lubricant, 2);
+				fcsDrillFuel.addIngredient(EcoceanMod.glowOil.TechType, 1);
+				fcsDrillFuel.addIngredient(TechType.JellyPlant, 3);
+				fcsDrillFuel.addIngredient(C2CItems.alkali.seed.TechType, 1);
+				fcsDrillFuel.Patch();
+				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerLightDuty"), fcsDrillFuel.TechType);
+				TechnologyUnlockSystem.instance.addDirectUnlock(findFCSItem("DeepDrillerMK3"), fcsDrillFuel.TechType);
 				t = prodMod.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerOilHandler");
 				foreach (MethodInfo m in t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					InstructionHandlers.patchMethod(SeaToSeaMod.harmony, m, SeaToSeaMod.modDLL, replaceFCSDrillFuel);
@@ -366,6 +369,14 @@ namespace ReikaKalseki.SeaToSea {
 					InstructionHandlers.patchEveryReturnPre(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSBioGenPowerFactor", false, typeof(float), typeof(MonoBehaviour), typeof(TechType)));
 				});
 			}
+			
+			luminolDrop = new BasicCraftingItem(SeaToSeaMod.itemLocale.getEntry("LuminolDrop"), "WorldEntities/Natural/polyaniline");
+			luminolDrop.numberCrafted = 6;
+			luminolDrop.craftingTime = 0.5F;
+			luminolDrop.renderModify = CraftingItems.getItem(CraftingItems.Items.Luminol).renderModify;
+			luminolDrop.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/LuminolDrop");
+			luminolDrop.addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
+			luminolDrop.Patch();
 			
 			assignRecipe("ahsLeftCornerRailing", 1);
 			assignRecipe("ahsLeftCornerwGlassRailing", 1, basicGlass());
@@ -409,18 +420,18 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("LedLightStickShort", 1, new Ingredient(TechType.Quartz, 1));
 			assignRecipe("LedLightStickWall", 1, new Ingredient(TechType.Quartz, 2));
 			assignRecipe("MiniFountainFilter", 1, new Ingredient(TechType.Pipe, 5));
-			assignRecipe("MountSmartTV", 1, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(EcoceanMod.glowOil.TechType, 3), new Ingredient(TechType.Quartz, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonBarStool", 2, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonPlanter", 2, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonShelf01", 3, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonShelf02", 2, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonShelf03", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonTable01", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
-			assignRecipe("NeonTable02", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
+			assignRecipe("MountSmartTV", 1, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(EcoceanMod.glowOil.TechType, 3), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 3));
+			assignRecipe("NeonBarStool", 2, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonPlanter", 2, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonShelf01", 3, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonShelf02", 2, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonShelf03", 1, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonTable01", 1, new Ingredient(luminolDrop.TechType, 1));
+			assignRecipe("NeonTable02", 1, new Ingredient(luminolDrop.TechType, 1));
 			assignRecipe("OutsideSign", 2, new Ingredient(TechType.Quartz, 2), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Silver, 1));
 			assignRecipe("PaintTool", 2, new Ingredient(TechType.Battery, 1), new Ingredient(TechType.Pipe, 5));
 			assignRecipe("pccpu", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 2));
-			assignRecipe("pcmonitor", 1, new Ingredient(TechType.WiringKit, 1), new Ingredient(EcoceanMod.glowOil.TechType, 2), new Ingredient(TechType.Quartz, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1));
+			assignRecipe("pcmonitor", 1, new Ingredient(TechType.WiringKit, 1), new Ingredient(EcoceanMod.glowOil.TechType, 2), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 2));
 			assignRecipe("PeeperLoungeBar", 3, new Ingredient(TechType.ComputerChip, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1));
 			assignRecipe("QuantumPowerBank", 2, new Ingredient[]{new Ingredient(TechType.PowerCell, 3)}, reinforcedStrong(), electronicsTier3());
 			assignRecipe("QuantumPowerBankCharger", 0, new Ingredient[]{new Ingredient(TechType.WiringKit, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1)}, reinforced(2), electronicsTier1(4));
@@ -474,7 +485,7 @@ namespace ReikaKalseki.SeaToSea {
 			fcsBiofuel = findFCSItem("FCSBioFuel");
 			TechData td = RecipeUtil.addRecipe(fcsBiofuel, TechGroup.Resources, C2CItems.chemistryCategory, 1, CraftTree.Type.Fabricator, new string[]{"Resources", "C2Chemistry"});
 			td.Ingredients.Add(new Ingredient(TechType.Oculus, 3));
-			td.Ingredients.Add(new Ingredient(EcoceanMod.glowOil.TechType, 2));
+			td.Ingredients.Add(new Ingredient(EcoceanMod.glowOil.TechType, 5));
 			td.Ingredients.Add(new Ingredient(C2CItems.mountainGlow.seed.TechType, 1));
 			td.Ingredients.Add(new Ingredient(CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 1));
 			td.Ingredients.Add(new Ingredient(TechType.CreepvineSeedCluster, 1));

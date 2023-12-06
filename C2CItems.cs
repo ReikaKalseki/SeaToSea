@@ -35,8 +35,6 @@ namespace ReikaKalseki.SeaToSea
     internal static SealedGloves sealGloves;
     internal static AzuriteBattery t2Battery;
     
-    internal static BasicCraftingItem fcsDrillFuel;
-    
     internal static RebreatherV2 rebreatherV2;
     internal static LiquidTank liquidTank;
     
