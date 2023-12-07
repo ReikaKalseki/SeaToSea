@@ -179,7 +179,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void register() {
 			Patch();
-			ESHooks.addLeviathan(TechType);
 			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"));
 		}
 		

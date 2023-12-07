@@ -115,6 +115,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool skipRocketTick = false;
 	    
 	    static C2CHooks() {
+			SNUtil.log("Initializing C2CHooks");
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
 	    	DIHooks.onDamageEvent += recalculateDamage;
 	    	DIHooks.onItemPickedUpEvent += onItemPickedUp;
@@ -190,8 +191,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	VoidBubble.voidBubbleTickEvent += tickVoidBubble;
 	    	
 	    	FallingMaterialSystem.impactEvent += onMeteorImpact;
-	    	
-	    	ESHooks.scannabilityEvent += isItemMapRoomDetectable;
 	    	
 	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
 	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType);
@@ -960,6 +959,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	else if (tt == TechType.Kyanite) {
 	    		Story.StoryGoal.Execute("Kyanite", Story.GoalType.Story);
+	    	}
+	    	else if (tt == TechType.Sulphur) {
+	    		Story.StoryGoal.Execute("Sulfur", Story.GoalType.Story);
+	    	}
+	    	else if (tt == TechType.UraniniteCrystal) {
+	    		Story.StoryGoal.Execute("Uranium", Story.GoalType.Story);
 	    	}
 	    	else if (tt == TechType.Nickel) {
 	    		Story.StoryGoal.Execute("Nickel", Story.GoalType.Story);
@@ -1814,7 +1819,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	return dmg.damagePerCrush*f;
 	    }
 		
-		static void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {
+		internal static void isItemMapRoomDetectable(ESHooks.ResourceScanCheck rt) {
 	    	if (rt.resource.techType == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
 	    		rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType) || Story.StoryGoalManager.main.completedGoals.Contains("Precursor_LavaCastle_Log2"); //mentions lava castle
 	    	}
@@ -1933,8 +1938,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		check.placeable = false;
 	    		return;
 	    	}
-			if (Builder.constructableTechType == SeaToSeaMod.geyserFilter.TechType && !check.placeOn) {
-	   			check.placeable = true;
+			if (Builder.constructableTechType == SeaToSeaMod.geyserFilter.TechType) {
+	    		check.placeable = !check.placeOn && GeyserFilterLogic.findGeyser(Builder.GetGhostModel().transform.position);
+	    		check.ignoreSpaceRequirements = check.placeable;
 				//check.ignoreSpaceRequirements = true;
 		   	}
 	    }
@@ -2025,18 +2031,24 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static TechType getRandomValidMotherlodeDrillYield(DrillableResourceArea d) {
 	    	TechType ret = d.getRandomResourceType();
-	    	while (!isFCSDrillMaterialAllowed(ret))
+	    	while (!isFCSDrillMaterialAllowed(ret, false))
 	    		ret = d.getRandomResourceType();
 	    	return ret;
 	    }
 	    
-	    internal static bool isFCSDrillMaterialAllowed(TechType tt) {
+	    internal static bool isFCSDrillMaterialAllowed(TechType tt, bool skipChance) {
 	    	if (tt == TechType.Nickel)
-	    		return Story.StoryGoalManager.main.completedGoals.Contains("Nickel");
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Nickel") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.4F);
 	    	if (tt == TechType.MercuryOre)
-	    		return Story.StoryGoalManager.main.completedGoals.Contains("Mercury");
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Mercury") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.2F);
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType)
-	    		return Story.StoryGoalManager.main.completedGoals.Contains("Iridium");
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Iridium") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.2F);
+	    	if (tt == TechType.Kyanite)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Kyanite") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.25F);
+	    	if (tt == TechType.Sulphur)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Sulfur") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.5F);
+	    	if (tt == TechType.UraniniteCrystal)
+	    		return Story.StoryGoalManager.main.completedGoals.Contains("Uranium") && (skipChance || UnityEngine.Random.Range(0F, 1F) <= 0.5F);
 	    	return true;
 	    }
 	    
@@ -2053,6 +2065,18 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (dict.ContainsKey(TechType.Nickel) && !Story.StoryGoalManager.main.completedGoals.Contains("Nickel")) {
 	    		removed += dict[TechType.Nickel];
 	    		dict.Remove(TechType.Nickel);
+	    	}
+	    	if (dict.ContainsKey(TechType.Kyanite) && !Story.StoryGoalManager.main.completedGoals.Contains("Kyanite")) {
+	    		removed += dict[TechType.Kyanite];
+	    		dict.Remove(TechType.Kyanite);
+	    	}
+	    	if (dict.ContainsKey(TechType.Sulphur) && !Story.StoryGoalManager.main.completedGoals.Contains("Sulfur")) {
+	    		removed += dict[TechType.Sulphur];
+	    		dict.Remove(TechType.Sulphur);
+	    	}
+	    	if (dict.ContainsKey(TechType.UraniniteCrystal) && !Story.StoryGoalManager.main.completedGoals.Contains("Uranium")) {
+	    		removed += dict[TechType.UraniniteCrystal];
+	    		dict.Remove(TechType.UraniniteCrystal);
 	    	}
 	    	if (dict.ContainsKey(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) && !Story.StoryGoalManager.main.completedGoals.Contains("Iridium")) {
 	    		removed += dict[CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType];

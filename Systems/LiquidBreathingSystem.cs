@@ -276,7 +276,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    private bool isKharaaTreatmentActive() {
-	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 9000 : 21600);
+	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 18000);
 	    }
 	    
 	    public bool hasReducedCapacity() {
