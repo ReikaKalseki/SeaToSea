@@ -2088,7 +2088,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static bool isFCSItemBuyable(TechType tt) {
 	    	//SNUtil.writeToChat("checking if "+tt.AsString()+" is buyable: unlocked="+CrafterLogic.IsCraftRecipeUnlocked(tt));
-	    	return tt != TechType.None && !KnownTech.Contains(tt);
+	    	return tt != TechType.None && !KnownTech.Contains(tt) && tt != FCSIntegrationSystem.instance.getTeleportCard() && tt != FCSIntegrationSystem.instance.getVehiclePad();
 	    }
 	    
 	    public static int filterFCSCartAdd(int origLimit, System.Collections.IList cart, TechType adding) { //cart is a List<CartItem>, each of which has a TechType property which might == adding
@@ -2101,6 +2101,13 @@ namespace ReikaKalseki.SeaToSea {
 	    			return -1;
 	    	}
 	    	return origLimit;
+	    }
+	    
+	    public static bool isTeleporterFunctional(bool orig, MonoBehaviour teleporter) {
+	    	//SNUtil.writeToChat("Testing teleporter "+teleporter+" @ "+teleporter.transform.position);
+	    	if (!orig)
+	    		return false;
+	    	return FCSIntegrationSystem.instance.checkTeleporterFunction(teleporter);
 	    }
 	    
 	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {

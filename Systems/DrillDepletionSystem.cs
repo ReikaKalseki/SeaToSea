@@ -17,6 +17,9 @@ using ReikaKalseki.DIAlterra;
 using ReikaKalseki.Auroresource;
 using ReikaKalseki.SeaToSea;
 
+using FCS_AlterraHub.Mono;
+using FCS_AlterraHub.Model.GUI;
+
 namespace ReikaKalseki.SeaToSea {
 	
 	public class DrillDepletionSystem {
@@ -99,6 +102,7 @@ namespace ReikaKalseki.SeaToSea {
 	class MotherlodeDrillTag : MonoBehaviour {
 		
 		private static readonly int MOTHERLODE_ORES_PER_DAY = 60;
+		private static readonly int MOTHERLODE_STORAGE_CAPACITY = 1200;
 		
 		private static PropertyInfo allowedOreField;
 		private static FieldInfo oresPerDayField;
@@ -106,15 +110,19 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static Type drillerDisplay;
 		private static MethodInfo updateDisplay;
+		//private static MethodInfo refreshDisplayStorage;
 		private static FieldInfo filterGridField;
 		private static FieldInfo filterListField;
+		private static FieldInfo storageText;
 		
-		private static Type gridHelper;
+		private static PropertyInfo controllerStorage;
+		
+		private static FieldInfo storageCapacity;
+		
 		private static MethodInfo showGridPage;
 		//private static FieldInfo currentGridPage;
 		private static FieldInfo gridGO;
 		
-		private static Type iconButton;
 		private static FieldInfo buttonItem;
 		private static FieldInfo buttonIcon;
 		
@@ -137,17 +145,23 @@ namespace ReikaKalseki.SeaToSea {
 	    		
 	    		drillerDisplay = t.Assembly.GetType("FCS_ProductionSolutions.Mods.DeepDriller.HeavyDuty.Mono.FCSDeepDrillerDisplay");
 	    		updateDisplay = drillerDisplay.GetMethod("UpdateDisplayValues", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		//refreshDisplayStorage = drillerDisplay.GetMethod("RefreshStorageAmount", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 	    		filterGridField = drillerDisplay.GetField("_filterGrid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 	    		filterListField = drillerDisplay.GetField("_trackedFilterState", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		storageText = drillerDisplay.GetField("_itemCounter", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 	    		
-	    		gridHelper = InstructionHandlers.getTypeBySimpleName("FCS_AlterraHub.Mono.GridHelper");
+	    		controllerStorage = FCSIntegrationSystem.instance.getFCSDrillController().GetProperty("DeepDrillerContainer", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		storageCapacity = FCSIntegrationSystem.instance.getFCSDrillStorage().GetField("_storageSize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		
 	    		//currentGridPage = gridHelper.GetField("_currentPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-	    		showGridPage = gridHelper.GetMethod("DrawPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[0], null);
-	    		gridGO = gridHelper.GetField("_itemsGrid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		showGridPage = typeof(GridHelper).GetMethod("DrawPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[0], null);
+	    		gridGO = typeof(GridHelper).GetField("_itemsGrid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 	    		
-	    		iconButton = gridHelper.Assembly.GetType("FCS_AlterraHub.Model.GUI.uGUI_FCSDisplayItem");
-	    		buttonItem = iconButton.GetField("_techType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-	    		buttonIcon = iconButton.GetField("_icon", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		buttonItem = typeof(uGUI_FCSDisplayItem).GetField("_techType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		buttonIcon = typeof(uGUI_FCSDisplayItem).GetField("_icon", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+	    		
+	    		GridHelper grid = (GridHelper)filterGridField.GetValue(drillerDisplayComponent);
+	    		grid.OnLoadDisplay += (data) => rebuildDisplay();
 	    	}
 	    	
 	    	float time = DayNightCycle.main.timePassedAsFloat;
@@ -162,33 +176,45 @@ namespace ReikaKalseki.SeaToSea {
 			   		if (get != MOTHERLODE_ORES_PER_DAY)
 			   			oresPerDaySet.Invoke(com, new object[]{MOTHERLODE_ORES_PER_DAY});
 			   		
-					drillerDisplayComponent = GetComponent(drillerDisplay);
-					if (drillerDisplayComponent) {
-						IDictionary dict = (IDictionary)filterListField.GetValue(drillerDisplayComponent);
-						dict.Clear();
-					  		
-						MonoBehaviour grid = (MonoBehaviour)filterGridField.GetValue(drillerDisplayComponent);
-						if (grid != null) {
-					  		GameObject go = (GameObject)gridGO.GetValue(grid);
-					  		ObjectUtil.removeChildObject(go, "OreBTN");
-					  		showGridPage.Invoke(grid, new object[0]);
-						}
-						
-						updateDisplay.Invoke(drillerDisplayComponent, new object[0]);
-					}
+			   		rebuildDisplay();
+		    	}
+		    	
+		    	Component com2 = GetComponent(FCSIntegrationSystem.instance.getFCSDrillController());
+		    	if (com2) {
+		    		var storage = controllerStorage.GetValue(com2);
+		    		storageCapacity.SetValue(storage, MOTHERLODE_STORAGE_CAPACITY); //defaults to 300
 		    	}
 	    	}
 						
-			MonoBehaviour grid2 = (MonoBehaviour)filterGridField.GetValue(drillerDisplayComponent);
+			GridHelper grid2 = (GridHelper)filterGridField.GetValue(drillerDisplayComponent);
 			if (grid2 != null) {
 				GameObject go = (GameObject)gridGO.GetValue(grid2);
-				foreach (Component c in go.GetComponentsInChildren(iconButton)) {
+				foreach (uGUI_FCSDisplayItem c in go.GetComponentsInChildren<uGUI_FCSDisplayItem>()) {
 					TechType tt = (TechType)buttonItem.GetValue(c);
 					uGUI_Icon ico = (uGUI_Icon)buttonIcon.GetValue(c);
 	    			ico.sprite = SpriteManager.Get(C2CHooks.isFCSDrillMaterialAllowed(tt) ? tt : TechType.None);
 				}
+				
+				Text t = (Text)storageText.GetValue(drillerDisplayComponent);
+				t.text = t.text.Substring(0, t.text.LastIndexOf('/')+1)+MOTHERLODE_STORAGE_CAPACITY;
+				updateDisplay.Invoke(drillerDisplayComponent, new object[0]);
 			}
 		}
+	    
+	    private void rebuildDisplay() {
+			drillerDisplayComponent = GetComponent(drillerDisplay);
+			if (drillerDisplayComponent) {
+				IDictionary dict = (IDictionary)filterListField.GetValue(drillerDisplayComponent);
+				dict.Clear();
+			  		
+				GridHelper grid = (GridHelper)filterGridField.GetValue(drillerDisplayComponent);
+				if (grid != null) {
+					GameObject go = (GameObject)gridGO.GetValue(grid);
+			  		ObjectUtil.removeChildObject(go, "OreBTN");
+			  		showGridPage.Invoke(grid, new object[0]);
+				}
+			}
+	    }
 		
 	}
 	

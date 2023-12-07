@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (item.sprite == null)
 				item.sprite = SpriteManager.Get(r.outputItem);
 			item.Patch();
-			RecipeUtil.addRecipe(item.TechType, TechGroup.Resources, bioprocCategory, r.outputCount, CraftTree.Type.None);
+			RecipeUtil.addRecipe(item.TechType, TechGroup.Resources, bioprocCategory, null, r.outputCount, CraftTree.Type.None);
 			//RecipeUtil.addIngredient(item.TechType, SeaToSeaMod.processor.TechType, 1);
 			//RecipeUtil.addIngredient(item.TechType, leftArrow.TechType, 1);
 			RecipeUtil.addIngredient(item.TechType, r.inputItem.getIngredientDisplay(), r.inputCount);
