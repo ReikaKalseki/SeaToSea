@@ -8,6 +8,7 @@ using System.Linq;   //More advanced manipulation of lists/collections
 using HarmonyLib;
 using QModManager.API.ModLoading;
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Exscansion;
 using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
@@ -357,9 +358,13 @@ namespace ReikaKalseki.SeaToSea
     	worldgen.load(s => s != "fcswreck.xml" || FCSIntegrationSystem.instance.isLoaded()); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
 		geyserCoral.postRegister();
+		AvoliteSpawner.instance.postRegister();
         DataboxTypingMap.instance.load();
         DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
         DataboxTypingMap.instance.addValue(-483.55, -504.69, 1326.64, C2CItems.tetherModule.TechType);
+        
+		ESHooks.addLeviathan(voidSpikeLevi.TechType);
+	    ESHooks.scannabilityEvent += C2CHooks.isItemMapRoomDetectable;
         
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
     		LootDistributionHandler.EditLootDistributionData(VanillaResources.SULFUR.prefab, bb, 0, 1);

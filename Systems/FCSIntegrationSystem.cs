@@ -166,7 +166,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal bool checkTeleporterFunction(MonoBehaviour teleporter) {
 			C2CTeleporterManager c = teleporter.gameObject.EnsureComponent<C2CTeleporterManager>();
-			c.controller = teleporter;
+			c.controller = (FcsDevice)teleporter;
 			return c.active;
 		}
 		
@@ -174,7 +174,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			private static MethodInfo setState;
 			
-			internal MonoBehaviour controller;
+			internal FcsDevice controller;
 			private SubRoot seabase;
 			private FcsDevice charger;
 			private float lastChargerCheck = -1;
@@ -205,7 +205,7 @@ namespace ReikaKalseki.SeaToSea {
 			    	StorageContainer sc = charger.GetComponentInChildren<StorageContainer>();
 			    	state = sc && sc.container.GetCount(TechType.PrecursorIonCrystal) > 0;
 			    }
-				state &= seabase && seabase.isBase && seabase.powerRelay.GetPower() > 10;
+				state &= seabase && seabase.isBase && seabase.powerRelay.GetPower() > 10 && controller.IsConstructed;
 				setState.Invoke(controller, BindingFlags.Default, null, new object[]{state}, null);
 				active = state;
 			}
@@ -538,12 +538,11 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("NeonTable01", 1, new Ingredient(luminolDrop.TechType, 1));
 			assignRecipe("NeonTable02", 1, new Ingredient(luminolDrop.TechType, 1));
 			assignRecipe("OutsideSign", 2, new Ingredient(TechType.Quartz, 2), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Silver, 1));
-			assignRecipe("PaintTool", 2, new Ingredient(TechType.Battery, 1), new Ingredient(TechType.Pipe, 5));
 			assignRecipe("pccpu", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 2));
 			assignRecipe("pcmonitor", 1, new Ingredient(TechType.WiringKit, 1), new Ingredient(paint.TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 2), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 2));
 			assignRecipe("PeeperLoungeBar", 3, new Ingredient(TechType.ComputerChip, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1));
 			assignRecipe("QuantumPowerBankCharger", 0, new Ingredient[]{new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, reinforced(2), electronicsTier1(4));
-			assignRecipe("QuantumTeleporter", 4, new Ingredient[]{new Ingredient(TechType.PrecursorIonCrystal, 2), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1), new Ingredient(EcoceanMod.glowOil.TechType, 4)}, electronicsTier3());
+			assignRecipe("QuantumTeleporter", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1), new Ingredient(EcoceanMod.glowOil.TechType, 4)}, electronicsTier3());
 			//assignRecipe("QuantumTeleporterVehiclePad", 8, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4), new Ingredient(TechType.PrecursorIonCrystal, 5), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 8)}, electronicsTier3());
 			assignRecipe("Recycler", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 2));
 			assignRecipe("RingLight", 1, new Ingredient(TechType.Quartz, 2));
@@ -593,9 +592,11 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("DSSTerminalMonitor", "MountSmartTV");
 			
 			//assignRecipe("QuantumPowerBank", 2, new Ingredient[]{new Ingredient(TechType.PowerCell, 3)}, reinforcedStrong(), electronicsTier3());
+			RecipeUtil.addRecipe(findFCSItem("PaintTool"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
 			RecipeUtil.addRecipe(findFCSItem("PaintCan"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
 			RecipeUtil.addRecipe(findFCSItem("DSSServer"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
 			RecipeUtil.addRecipe(findFCSItem("DSSTransceiver"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
+			assignRecipe("PaintTool", 2, new Ingredient(TechType.Battery, 1), new Ingredient(TechType.Pipe, 5));
 			assignRecipe("PaintCan", 1, new Ingredient(paint.TechType, 4));
 			assignRecipe("DSSServer", 0, new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
 			assignRecipe("DSSTransceiver", 0, new Ingredient(TechType.ComputerChip, 2), new Ingredient(TechType.WiringKit, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(TechType.Gold, 2), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1));
@@ -631,6 +632,8 @@ namespace ReikaKalseki.SeaToSea {
 	       	fcsBiofuelAlt.setRecipe(2);
 	       	fcsBiofuelAlt.unlock = TechType.Unobtanium;
 	       	fcsBiofuelAlt.allowUnlockPopups = true;
+	       	Spawnable sp = (Spawnable)SNUtil.getModPrefabByTechType(fcsBiofuel);
+	       	fcsBiofuelAlt.sprite = (Atlas.Sprite)typeof(Spawnable).GetMethod("GetItemSprite", BindingFlags.Instance | BindingFlags.NonPublic, null, CallingConventions.HasThis, new Type[0], null).Invoke(sp, BindingFlags.Default, null, new object[0], null);
 	       	fcsBiofuelAlt.Patch();
 	       	StoryHandler.instance.registerTrigger(new TechTrigger(fcsBiofuel), new TechUnlockEffect(fcsBiofuelAlt.TechType));
 		}

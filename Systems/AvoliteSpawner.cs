@@ -95,7 +95,9 @@ namespace ReikaKalseki.SeaToSea {
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
 			
 			avo = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).ClassID;
-			
+		}
+		
+		public void postRegister() {
 			ESHooks.scannabilityEvent += isItemMapRoomDetectable;
 		}
 		

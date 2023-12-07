@@ -257,6 +257,14 @@
 	</objectManipulation>
   </customprefab>
   <customprefab>
+    <prefab>ScannerRoomMarker_AbandonedBase</prefab>
+    <position>
+      <x>-1268.2158203125</x>
+      <y>-288.243865966797</y>
+      <z>-726.21337890625</z>
+    </position>
+  </customprefab>
+  <customprefab>
     <prefab>c9d84dfd-6802-41bd-a7b1-34d9b3a31531</prefab>
     <position>
       <x>-1258.21569824219</x>
