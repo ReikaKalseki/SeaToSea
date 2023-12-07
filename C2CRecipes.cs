@@ -503,7 +503,7 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
         addItemToRecipe(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Machines"});
+        RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, new string[]{"Machines"});
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.AluminumOxide, 4);
@@ -514,7 +514,7 @@ namespace ReikaKalseki.SeaToSea
         CraftDataHandler.SetCraftingTime(TechType.PrecursorKey_Red, 6);
         CraftDataHandler.SetItemSize(TechType.PrecursorKey_Blue, new Vector2int(2, 2));
         
-        RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, 1, CraftTree.Type.Fabricator, new string[]{"Machines"});
+        RecipeUtil.addRecipe(TechType.PrecursorKey_White, TechGroup.Personal, TechCategory.Equipment, new string[]{"Machines"});
         addItemToRecipe(TechType.PrecursorKey_White, TechType.PrecursorIonCrystal, 1);
         addItemToRecipe(TechType.PrecursorKey_White, C2CItems.getIngot(TechType.Magnetite).ingot, 3);
         addItemToRecipe(TechType.PrecursorKey_White, TechType.UraniniteCrystal, 3);

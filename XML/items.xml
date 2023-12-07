@@ -396,6 +396,17 @@
 			
 		</pda>
 	</LuminolDrop>
+	<Paint>
+		<name>
+			Paint
+		</name>
+		<desc>
+			A quantity of pigment emulsion.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Paint>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite
