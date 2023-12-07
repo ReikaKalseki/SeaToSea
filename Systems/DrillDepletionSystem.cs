@@ -192,7 +192,7 @@ namespace ReikaKalseki.SeaToSea {
 				foreach (uGUI_FCSDisplayItem c in go.GetComponentsInChildren<uGUI_FCSDisplayItem>()) {
 					TechType tt = (TechType)buttonItem.GetValue(c);
 					uGUI_Icon ico = (uGUI_Icon)buttonIcon.GetValue(c);
-	    			ico.sprite = SpriteManager.Get(C2CHooks.isFCSDrillMaterialAllowed(tt) ? tt : TechType.None);
+	    			ico.sprite = SpriteManager.Get(C2CHooks.isFCSDrillMaterialAllowed(tt, true) ? tt : TechType.None);
 				}
 				
 				Text t = (Text)storageText.GetValue(drillerDisplayComponent);

@@ -50,6 +50,8 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeComponent<Trashcan>(go);
 			ObjectUtil.removeChildObject(go, "Bubbles");
 			
+			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+			
 			StorageContainer con = go.GetComponentInChildren<StorageContainer>();
 			con.hoverText = "Collect Filtrate";
 			con.storageLabel = "FILTRATE";
@@ -95,7 +97,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (Renderer rr in r)
 				RenderUtil.setEmissivity(rr, 1);
 			
-			go.EnsureComponent<PowerFX>().vfxPrefab = ObjectUtil.lookupPrefab(TechType.PowerTransmitter).GetComponent<PowerFX>().vfxPrefab;
+			//go.EnsureComponent<PowerFX>().vfxPrefab = ObjectUtil.lookupPrefab(TechType.PowerTransmitter).GetComponent<PowerFX>().vfxPrefab;
 		}
 		
 	}
@@ -103,10 +105,11 @@ namespace ReikaKalseki.SeaToSea {
 	public class GeyserFilterLogic : DiscreteOperationalMachineLogic {
 		
 		internal Renderer[] mainRenderers;
-		private Geyser geyser;
-		private LargeWorldEntity geyserWorldEntity;
 		
-		private PowerFX lineRenderer;
+		private Geyser liveGeyser;
+		private float geyserDutyCycle = 0.2F;
+		
+		//private PowerFX lineRenderer;
 		
 		//private bool isPowered;
 		//private bool checkedPower;
@@ -115,13 +118,15 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float lastGeyserCheckTime = -1;
 		
+		private bool showedFullMessage;
+		
 		void Start() {
 			SNUtil.log("Reinitializing geyser filter");
 			SeaToSeaMod.geyserFilter.initializeMachine(gameObject);
 		}
 		
 		public override bool isWorking() {
-			return geyser;// && isPowered;
+			return true;
 		}
 		
 		public override float getProgressScalar() {
@@ -129,34 +134,35 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		protected override void load(System.Xml.XmlElement data) {
-			
+			collectionTime = (float)data.getFloat("collectionTime", 0);
+			geyserDutyCycle = (float)data.getFloat("geyserActivity", 0.2);
 		}
 		
 		protected override void save(System.Xml.XmlElement data) {
-			
+			data.addProperty("collectionTime", collectionTime);
+			data.addProperty("geyserActivity", geyserDutyCycle);
 		}
 		
 		protected override void updateEntity(float seconds) {
 			if (mainRenderers == null)
 				mainRenderers = GetComponentsInChildren<Renderer>();
-			if (!lineRenderer)
-				lineRenderer = GetComponent<PowerFX>();
+			//if (!lineRenderer)
+			//	lineRenderer = GetComponent<PowerFX>();
 			if (seconds <= 0)
 				return;
 			if ((Player.main.transform.position-transform.position).sqrMagnitude >= 90000)
 				return;
 			float time = DayNightCycle.main.timePassedAsFloat;
-			if (DIHooks.getWorldAge() > 0.5F && seconds > 0 && time-lastGeyserCheckTime >= 0.5F) {
-				setGeyser(findGeyser());
+			if (DIHooks.getWorldAge() > 0.5F && !liveGeyser && seconds > 0 && time-lastGeyserCheckTime >= 2.5F) {
+				liveGeyser = findGeyser();
+				if (liveGeyser)
+					geyserDutyCycle = liveGeyser.eruptionLength/liveGeyser.eruptionInterval;
 				lastGeyserCheckTime = time;
 			}
-			lineRenderer.target = geyser ? geyser.gameObject : null;
+			//lineRenderer.target = geyser ? geyser.gameObject : null;
 			//SNUtil.writeToChat("Geyser: "+geyser+" @ "+(geyser ? geyser.transform.position.ToString() : "null"));
 			foreach (Renderer r in mainRenderers)
-				r.materials[0].SetColor("_GlowColor", geyser ? Color.green : Color.red);
-			if (!geyser)
-				return;
-			geyserWorldEntity.cellLevel = LargeWorldEntity.CellLevel.Global;
+				r.materials[0].SetColor("_GlowColor", Color.Lerp(Color.red, Color.green, collectionTime/GeyserFilter.PRODUCTION_RATE));
 			//geyser.transform.SetParent(null);
 			StorageContainer sc = getStorage();
 			if (!sc) {
@@ -166,28 +172,37 @@ namespace ReikaKalseki.SeaToSea {
 			sc.hoverText = "Collect filtrate";
 			
 			//setPowered(seconds);
-			if (geyser.erupting) {
-				collectionTime += seconds;
+			float increase = liveGeyser ? (liveGeyser.erupting ? seconds : 0) : (seconds*geyserDutyCycle);
+			if (liveGeyser || liveGeyser.erupting) {
+				collectionTime += increase;
 				if (collectionTime >= GeyserFilter.PRODUCTION_RATE) {
-					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0)
+					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0) {
 						collectionTime = 0;
+						showedFullMessage = false;
+					}
+					else if (!showedFullMessage) {
+						SNUtil.writeToChat(Language.main.Get(SeaToSeaMod.geyserFilter.TechType)+" in "+WorldUtil.getRegionalDescription(transform.position)+" is full");
+						showedFullMessage = true;
+					}
 				}
 			}
 		}
 		
 		public static bool forceAlign = false;
 		
-		private Geyser findGeyser() {/*
+		private Geyser findGeyser() {
+			return findGeyser(transform.position);
+		}
+		
+		public static Geyser findGeyser(Vector3 position) {/*
 			IEcoTarget ret = EcoRegionManager.main.FindNearestTarget(EcoTargetType.HeatArea, transform.position, tgt => tgt.GetGameObject().GetComponent<Geyser>(), 10);
 			if (ret == null)
 				return null;
 			GameObject go = ret.GetGameObject();*/
-			foreach (Geyser g in WorldUtil.getObjectsNearWithComponent<Geyser>(transform.position, 50)) {
-				if (g.transform.position.y < transform.position.y && transform.position.y-g.transform.position.y <= 25) {
-					if (Vector3.Distance(g.transform.position.setY(0), transform.position.setY(0)) < 15)
+			foreach (Geyser g in WorldUtil.getObjectsNearWithComponent<Geyser>(position, 50)) {
+				if (g.transform.position.y < position.y && position.y-g.transform.position.y <= 25) {
+					if (Vector3.Distance(g.transform.position.setY(0), position.setY(0)) < 15)
 						return g;
-					if (forceAlign && Vector3.Distance(g.transform.position.setY(0), transform.position.setY(0)) < 40)
-						transform.position = g.transform.position.setY(transform.position.y);
 				}
 			}
 			return null;
@@ -203,10 +218,5 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			checkedPower = true;
 		}*/
-		
-		private void setGeyser(Geyser g) {
-			geyser = g;
-			geyserWorldEntity = g ? g.GetComponent<LargeWorldEntity>() : null;
-		}
 	}
 }

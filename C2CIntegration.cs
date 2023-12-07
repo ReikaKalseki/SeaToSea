@@ -63,6 +63,8 @@ namespace ReikaKalseki.SeaToSea {
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RANGEAMT, 200);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.SPDAMT, 6);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASESPEED, 18);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.BASES, true);
+    	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.ALIEN, true);
     	
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWFIRERATE, f => hard ? Mathf.Clamp(f, 0.33F, 0.67F) : Mathf.Clamp(f, 0.75F, 1F));
     	EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOWLIFE, f => Mathf.Clamp(f, 0.5F, hard ? 1F : 2F));
