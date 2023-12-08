@@ -269,10 +269,12 @@ namespace ReikaKalseki.SeaToSea {
 		
 		//buggy with C2C apparently
 		t = InstructionHandlers.getTypeBySimpleName("EasyCraft.Options");
-		InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "OnAutoCraftChanged", SeaToSeaMod.modDLL, codes => {codes[InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldarg_1)].opcode = OpCodes.Ldc_I4_0;});
-		t = t.Assembly.GetType("EasyCraft.Main");
-		var settingMain = t.GetProperty("Settings", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-		settingMain.GetType().GetField("autoCraft", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(settingMain, false);
+		if (t != null) {
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "OnAutoCraftChanged", SeaToSeaMod.modDLL, codes => {codes[InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldarg_1)].opcode = OpCodes.Ldc_I4_0;});
+			t = t.Assembly.GetType("EasyCraft.Main");
+			var settingMain = t.GetProperty("Settings", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			settingMain.GetType().GetField("autoCraft", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(settingMain, false);
+		}
 		
 		FCSIntegrationSystem.instance.applyPatches();
     }
