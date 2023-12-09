@@ -368,7 +368,9 @@
 			Kharaa Symptom Alleviation Canister
 		</name>
 		<desc>
-			Provides temporary relief from Kharaa symptoms that reduce pulmonary efficiency, especially when using liquid respiration media. Does not lose effectiveness with use, but will do nothing to combat the infection.
+			Provides temporary relief from Kharaa symptoms that reduce pulmonary efficiency when using liquid respiration media. Continued use of this media will eventually require exhaust the inoculative capacity of this treatment and another dose will be required.
+			
+			This medication does not lose effectiveness with use, but will do nothing to combat the underlying infection.
 		</desc>
 		<pda>
 			

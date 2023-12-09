@@ -251,10 +251,7 @@ namespace ReikaKalseki.SeaToSea
 		});
         UsableItemRegistry.instance.addUsableItem(treatment.TechType, (s, go) => {
 		   	float time = DayNightCycle.main.timePassedAsFloat;
-			if (time-LiquidBreathingSystem.instance.lastKharaaTreatmentTime < 30)
-				return false;
-			LiquidBreathingSystem.instance.lastKharaaTreatmentTime = time;
-			return true;
+			return LiquidBreathingSystem.instance.useKharaaTreatment();
 		});
 		
 		IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery));

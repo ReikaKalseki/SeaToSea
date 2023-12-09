@@ -59,8 +59,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public static void addRecipes() {
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 			addRecipe(new TypeInput(TechType.CreepvineSeedCluster), TechType.Lubricant, 2, 10, 120, 1, 2);
-			addRecipe(new TypeInput(TechType.AcidMushroom), CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 30, 5, 2);
+			addRecipe(new TypeInput(TechType.AcidMushroom), CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType, 2, 2, 30, 5, hard ? 2 : 3);
 			addRecipe(new TypeInput(TechType.WhiteMushroom), TechType.HydrochloricAcid, 6, 20, 400, 9, 2);
 			addRecipe(new TypeInput(TechType.BloodOil), TechType.Benzene, 5, 45, 800, 4);
 			addRecipe(new TypeInput(C2CItems.alkali), CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 600, 5);

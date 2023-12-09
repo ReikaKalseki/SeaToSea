@@ -340,7 +340,7 @@ namespace ReikaKalseki.SeaToSea
         	});
         }
         
-        SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("lastKharaaTreatmentTime", BindingFlags.Instance | BindingFlags.NonPublic), () => LiquidBreathingSystem.instance);
+        SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("kharaaTreatmentRemainingTime", BindingFlags.Instance | BindingFlags.NonPublic), () => LiquidBreathingSystem.instance);
         
         SNUtil.addMultiScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
         SNUtil.addMultiScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);

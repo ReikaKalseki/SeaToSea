@@ -173,7 +173,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//setPowered(seconds);
 			float increase = liveGeyser ? (liveGeyser.erupting ? seconds : 0) : (seconds*geyserDutyCycle);
-			if (liveGeyser || liveGeyser.erupting) {
+			if (!liveGeyser || liveGeyser.erupting) {
 				collectionTime += increase;
 				if (collectionTime >= GeyserFilter.PRODUCTION_RATE) {
 					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0) {
