@@ -324,6 +324,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		//SNUtil.writeToChat("Tick liquid breathing: "+LiquidBreathingSystem.instance.isLiquidBreathingActive(ep));
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
 	    		if (LiquidBreathingSystem.instance.isLiquidBreathingActive(ep)) {
+	    			LiquidBreathingSystem.instance.tickKharaaTreatment();
 	    			ep.oxygenMgr.UnregisterSource(playerBaseO2);
 	    			ep.oxygenMgr.RegisterSource(ox);
 	    		}
@@ -2132,6 +2133,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (!orig)
 	    		return false;
 	    	return FCSIntegrationSystem.instance.checkTeleporterFunction(teleporter);
+	    }
+	    
+	    public static float getCurrentGeneratorPower(float orig, MonoBehaviour generator) {
+	    	float sp = DayNightCycle.main.dayNightSpeed*2;
+	    	return sp*1.2F*FCSIntegrationSystem.instance.getCurrentGeneratorPowerFactor(generator);
 	    }
 	    
 	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {
