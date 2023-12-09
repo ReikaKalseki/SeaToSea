@@ -170,6 +170,34 @@ namespace ReikaKalseki.SeaToSea {
 			return c.active;
 		}
 		
+		internal float getCurrentGeneratorPowerFactor(MonoBehaviour turbine) {
+			Vector3 pos = turbine.transform.position;
+			BiomeBase bb = BiomeBase.getBiome(pos);
+			float ret = 1;
+			bool geyser = Vector3.Scale(WorldUtil.getNearestGeyserPosition(pos)-pos, new Vector3(1, 0.5F, 1)).sqrMagnitude <= 400;
+			if (bb == VanillaBiomes.MOUNTAINS)
+				ret *= (float)MathUtil.linterpolate(-pos.y, 250, 400, 1.5, 4, true);
+			else if (bb == VanillaBiomes.LOSTRIVER || bb == VanillaBiomes.COVE)
+				ret *= 3;
+			else if (bb == VanillaBiomes.CRASH || bb == CrashZoneSanctuaryBiome.instance || bb == VanillaBiomes.SPARSE || bb == VanillaBiomes.CRAG)
+				ret *= 0.5F;
+			else if (!geyser && bb == VanillaBiomes.JELLYSHROOM)
+				ret *= 0.25F;
+			else if (bb == UnderwaterIslandsFloorBiome.instance)
+				ret *= (float)MathUtil.linterpolate(-pos.y, 300, 500, 3, 5, true);
+			else if (bb == VanillaBiomes.DEEPGRAND || bb == VanillaBiomes.BLOODKELP)
+				ret *= 2F;
+			else if (bb == VanillaBiomes.BLOODKELPNORTH)
+				ret *= 1.5F;
+			if ((pos-WorldUtil.LAVA_DOME).sqrMagnitude <= 6400)
+				ret *= 1.5F;
+			else if ((pos-WorldUtil.DUNES_METEOR).sqrMagnitude <= 14400)
+				ret *= 0.4F;
+			if (geyser)
+				ret *= bb == UnderwaterIslandsFloorBiome.instance ? 1.5F : 3;
+			return ret;
+		}
+		
 		class C2CTeleporterManager : MonoBehaviour {
 			
 			private static MethodInfo setState;
@@ -289,6 +317,11 @@ namespace ReikaKalseki.SeaToSea {
 				InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "pickFCSDrillOre", false, typeof(TechType), typeof(MonoBehaviour), typeof(bool), typeof(bool), typeof(HashSet<>).MakeGenericType(typeof(TechType)), typeof(List<>).MakeGenericType(typeof(TechType))),
 			};
 			codes.InsertRange(idx, added);
+		}
+		
+		private static void controlCurrentGeneration(List<CodeInstruction> codes) {
+			int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "FCS_EnergySolutions.Mods.JetStreamT242.Mono.JetStreamT242PowerManager", "_energyPerSec");
+			codes.InsertRange(idx, new List<CodeInstruction>{new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getCurrentGeneratorPower", false, typeof(float), typeof(MonoBehaviour))});
 		}
 		
 		internal void onPlayerBuy(TechType tt) {
@@ -458,14 +491,19 @@ namespace ReikaKalseki.SeaToSea {
 			if (alterraGen != null) {
 				Assembly energyMod = alterraGen.Assembly;
 				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, alterraGen, "Update", SeaToSeaMod.modDLL, codes => {
-					int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldc_R4);
-					codes[idx].operand = 2.4F; //from 1.167F
-					//codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSBioGenPPS", false, typeof(MonoBehaviour));
+					codes[InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldc_R4)].operand = 2.4F; //from 1.167F
 				});
 				
 				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, alterraGen, "GetMultiplier", SeaToSeaMod.modDLL, codes => {
 					InstructionHandlers.patchEveryReturnPre(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getFCSBioGenPowerFactor", false, typeof(float), typeof(MonoBehaviour), typeof(TechType)));
 				});
+				/* this is animation only, does not matter
+				Type t = energyMod.GetType("FCS_EnergySolutions.Configuration.Config");
+				PropertyInfo p = t.GetProperty("JetStreamT242BiomeSpeeds", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+				Dictionary<string, float> biomeSpeeds = new Dictionary<string, float>();
+				p.SetValue(obj, biomeSpeeds);*/
+				
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, energyMod.GetType("FCS_EnergySolutions.Mods.JetStreamT242.Mono.JetStreamT242PowerManager"), "ProducePower", SeaToSeaMod.modDLL, controlCurrentGeneration);
 			}
 			
 			luminolDrop = new BasicCraftingItem(SeaToSeaMod.itemLocale.getEntry("LuminolDrop"), "WorldEntities/Natural/polyaniline");
@@ -565,11 +603,20 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
 			assignRecipe("TelepowerPylon", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, electronicsTier3());
 			assignRecipe("UniversalCharger", 2, electronicsTier2(4));
-			assignRecipe("WindSurfer", 5, new Ingredient[]{new Ingredient(TechType.Silicone, 4), new Ingredient(TechType.Magnetite, 5)}, electronicsTier1(3));
-			//RecipeUtil.addRecipe(findFCSItem("WindSurferOperator"), TechGroup.ExteriorModules, TechCategory.ExteriorModule);
-			//RecipeUtil.addRecipe(findFCSItem("WindSurferPlatform"), TechGroup.ExteriorModules, TechCategory.ExteriorModule);
-			//assignRecipe("WindSurferOperator", 5, new Ingredient[]{new Ingredient(TechType.Silicone, 4)});
-			//assignRecipe("WindSurferPlatform", 5, new Ingredient[]{new Ingredient(TechType.Silicone, 4)});
+			
+			TechType tt = findFCSItem("WindSurferPlatform_Kit");
+			RecipeUtil.addRecipe(tt, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
+			CraftDataHandler.SetItemSize(tt, new Vector2int(3, 3));
+			assignRecipe("WindSurferPlatform_Kit", 0, floatingPlatform(10));
+			
+			tt = findFCSItem("WindSurfer_Kit");
+			RecipeUtil.addRecipe(tt, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
+			CraftDataHandler.SetItemSize(tt, new Vector2int(3, 3));
+			assignRecipe("WindSurfer_Kit", 0, floatingPlatform(30), new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 4), new Ingredient(TechType.Magnetite, 5)});
+			
+			tt = findFCSItem("WindSurferOperator");
+			//RecipeUtil.addRecipe(tt, TechGroup.Constructor, TechCategory.Constructor, null, 1, CraftTree.Type.Constructor);
+			assignRecipe("WindSurferOperator", 0, new Ingredient[]{new Ingredient(TechType.Silicone, 8), new Ingredient(TechType.TitaniumIngot, 2), new Ingredient(TechType.Polyaniline, 2), new Ingredient(TechType.CopperWire, 5), new Ingredient(TechType.AdvancedWiringKit, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 5)});
 			
 			assignRecipe("BaseOxygenTank", 4, motorized(), electronicsTier1());
 			assignRecipe("BaseOxygenTankKitType", "BaseOxygenTank");
@@ -638,8 +685,12 @@ namespace ReikaKalseki.SeaToSea {
 	       	StoryHandler.instance.registerTrigger(new TechTrigger(fcsBiofuel), new TechUnlockEffect(fcsBiofuelAlt.TechType));
 		}
 		
-		public TechType assignRecipe(string id, string refItem) {
-			return assignRecipe(id, 0, RecipeUtil.getRecipe(findFCSItem(refItem)).Ingredients.ToArray());
+		public TechType assignRecipe(string id, params string[] refItem) {
+			List<Ingredient> li = new List<Ingredient>();
+			foreach (string item in refItem) {
+				li = RecipeUtil.combineIngredients(li, RecipeUtil.getRecipe(findFCSItem(item)).Ingredients);
+			}
+			return assignRecipe(id, 0, li.ToArray());
 		}
 		
 		public TechType assignRecipe(string id, int titanium, Ingredient[] set1, Ingredient[] set2, Ingredient[] set3 = null) {
@@ -691,11 +742,12 @@ namespace ReikaKalseki.SeaToSea {
 		private Ingredient[] basicGlass(int amt = 1) {return new Ingredient[]{new Ingredient(ItemRegistry.instance.getItem("BaseGlass").TechType, amt)};}
 		private Ingredient[] strongGlass(int amt = 2) {return new Ingredient[]{new Ingredient(TechType.EnameledGlass, amt)};}
 		private Ingredient[] motorized(int mot = 1) {return new Ingredient[]{new Ingredient(TechType.WiringKit, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, mot)};}
-		private Ingredient[] electronicsTier1(int gold = 1) {return new Ingredient[]{new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Gold, gold)};}
+		private Ingredient[] electronicsTier1(int gold = 1, int wire = 1) {return new Ingredient[]{new Ingredient(TechType.CopperWire, wire), new Ingredient(TechType.Gold, gold)};}
 		private Ingredient[] electronicsTier2(int mag = 1) {return new Ingredient[]{new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, mag)};}
 		private Ingredient[] electronicsTier3() {return new Ingredient[]{new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.Polyaniline, 1)};}
 		private Ingredient[] reinforced(int lead = 1) {return new Ingredient[]{new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.Lead, lead)};}
 		private Ingredient[] reinforcedStrong(int amt = 1) {return new Ingredient[]{new Ingredient(TechType.Lead, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, amt)};}
+		private Ingredient[] floatingPlatform(int titanium) {bool ingot = titanium >= 10; return new Ingredient[]{new Ingredient(TechType.Silicone, 4), new Ingredient(ingot ? TechType.TitaniumIngot : TechType.Titanium, ingot ? titanium/10 : titanium)};}
 		
 		internal class Drunk : PlayerMovementSpeedModifier {
 			

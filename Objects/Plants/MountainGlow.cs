@@ -146,8 +146,13 @@ namespace ReikaKalseki.SeaToSea {
 		
 	    void OnTriggerStay(Collider other) {
 			if (EnvironmentalDamageSystem.instance.isPlayerInOcean() && DayNightCycle.main.timePassedAsFloat-lastDamageTime >= 0.05F && !other.isTrigger && other.gameObject.FindAncestor<Player>()) {
-				other.gameObject.FindAncestor<LiveMixin>().TakeDamage(Time.deltaTime*1.5F, transform.position, DamageType.Heat);
-				lastDamageTime = DayNightCycle.main.timePassedAsFloat;
+				bool suit = false;
+				bool trash;
+				C2CItems.hasSealedOrReinforcedSuit(out trash, out suit);
+				if (!suit) {
+					other.gameObject.FindAncestor<LiveMixin>().TakeDamage(Time.deltaTime*1.5F, transform.position, DamageType.Heat);
+					lastDamageTime = DayNightCycle.main.timePassedAsFloat;
+				}
 			}
 	    }
 		

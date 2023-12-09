@@ -40,8 +40,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private float lastUnequippedTime = -1;
 	    
-	    internal float lastKharaaTreatmentTime = -1;
-	    private bool lastKharaaTreatmentActive;
+	    private float kharaaTreatmentRemainingTime;
+	    private float lastTimerWarningTime;
 		
 		private LiquidBreathingSystem() {
 			
@@ -275,20 +275,45 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    internal bool useKharaaTreatment() {
+	    	float dur = getTreatmentDuration();
+	    	if (kharaaTreatmentRemainingTime > Mathf.Max(dur*0.01F, 60))
+	    		return false;
+	    	kharaaTreatmentRemainingTime = dur;
+	    	return true;
+	    }
+	    
+	    public float getTreatmentDuration() {
+	    	return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 18000;
+	    }
+	    
 	    private bool isKharaaTreatmentActive() {
-	    	return lastKharaaTreatmentTime > 0 && DayNightCycle.main.timePassedAsFloat-lastKharaaTreatmentTime <= (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 18000);
+	    	return kharaaTreatmentRemainingTime > 0;
+	    }
+	    
+	    public float getRemainingTreatmentTime() {
+	    	return kharaaTreatmentRemainingTime;
+	    }
+	    
+	    internal void tickKharaaTreatment() {
+	    	if (Player.main.infectedMixin.IsInfected() && kharaaTreatmentRemainingTime > 0) {
+	    		kharaaTreatmentRemainingTime = Mathf.Max(0, kharaaTreatmentRemainingTime-Time.deltaTime);
+	    		if (DayNightCycle.main.timePassedAsFloat-lastTimerWarningTime >= 62) {
+		    		lastTimerWarningTime = DayNightCycle.main.timePassedAsFloat;
+		    		if (Mathf.Abs(kharaaTreatmentRemainingTime-getTreatmentDuration()/2F) < 5) {
+			    		EnvironmentalDamageSystem.instance.playPDABeep();
+			    		SNUtil.writeToChat("Kharaa treatment at 50%");
+		    		}
+		    		else if (kharaaTreatmentRemainingTime <= 60) {
+			    		EnvironmentalDamageSystem.instance.playPDABeep();
+			    		SNUtil.writeToChat("Kharaa treatment has 60 seconds remaining");
+		    		}
+	    		}
+	    	}
 	    }
 	    
 	    public bool hasReducedCapacity() {
-	    	bool active = isKharaaTreatmentActive();/*
-	    	if (lastKharaaTreatmentActive != active) {
-	    		if (!active) {
-	    			SNUtil.writeToChat(Language.main.Get(C2CItems.treatment.TechType)+" expired");
-	    			EnvironmentalDamageSystem.instance.playPDABeep();
-	    		}
-	    		lastKharaaTreatmentActive = active;
-	    	}*/
-	    	return !active && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
+	    	return !isKharaaTreatmentActive() && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
 	    }
 	    
 	    class OxygenAreaWithLiquidSupport : MonoBehaviour {

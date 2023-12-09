@@ -345,8 +345,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		public void reset() {
 			wetTime = 0;
-			bubbler.currentIntensity = 0;
-			bubbler.clear();
+			if (bubbler) {
+				bubbler.currentIntensity = 0;
+				bubbler.clear();
+			}
 		}
 		
 		private void dissolve() {
