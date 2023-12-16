@@ -353,8 +353,40 @@ namespace ReikaKalseki.SeaToSea
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
     }
     
+    class LavaCastleVentCrystalPlacer : Spawnable {
+    	
+    	internal LavaCastleVentCrystalPlacer() : base("LavaCastleVentCrystalPlacer", "", "") {
+    		
+    	}
+    	
+		public override GameObject GetGameObject() {
+    		GameObject go = new GameObject("LavaCastleVentCrystalPlacer");
+    		go.EnsureComponent<LavaCastleVentCrystalConverter>();
+    		return go;
+		} 
+    	
+    }
+    
+    class LavaCastleVentCrystalConverter : MonoBehaviour {
+    	
+    	void Update() {
+    		if ((transform.position-Player.main.transform.position).sqrMagnitude <= 40000) {
+    			float ch = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.15F : 0.25F;
+    			if (UnityEngine.Random.Range(0F, 1F) < ch) {
+    				GameObject azur = ObjectUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID);
+    				azur.transform.rotation = transform.rotation;
+    				azur.transform.position = transform.position;
+    				azur.SetActive(true);
+    			}
+    			UnityEngine.Object.Destroy(gameObject);
+    		}
+    	}
+    	
+    }
+    
     [QModPostPatch]
     public static void PostLoad() {
+    	new LavaCastleVentCrystalPlacer().Patch();
     	worldgen.load(s => s != "fcswreck.xml" || FCSIntegrationSystem.instance.isLoaded()); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
 		geyserCoral.postRegister();
@@ -619,7 +651,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", unlockSignal);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cpoi", POITeleportSystem.instance.jumpToPOI);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+FinalLaunchAdditionalRequirementSystem.instance.scannedAllLifeforms()));
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+FinalLaunchAdditionalRequirementSystem.instance.scannedAllLifeforms().toDebugString()));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);
     }
     /*
@@ -686,6 +718,55 @@ namespace ReikaKalseki.SeaToSea
    		return false;
    	return true;
    }
+   /*
+   public static void generateLavaCastleAzurite() {
+   	List<GameObject> azurite = new List<GameObject>();
+   	string azur = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID;
+   	foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+   		if (pi.ClassId == "407e40cf-69f2-4412-8ab6-45faac5c4ea2") {
+   			for (int ang = 0; ang < 360; ang += 10) {
+   				float a = UnityEngine.Random.Range(ang-5F, ang+5F);
+   				float r = 16;
+   				Vector3 dt = new Vector3(Mathf.Cos(a)*r, -UnityEngine.Random.Range(0, UnityEngine.Random.Range(25, 40)), Mathf.Sin(a)*r);
+   				Vector3 vec = pi.transform.position+dt;
+   					Ray ray = new Ray(vec, -dt.setY(0));
+   					if (UWE.Utils.RaycastIntoSharedBuffer(ray, 24, Voxeland.GetTerrainLayerMask(), QueryTriggerInteraction.Ignore) > 0) {
+   						RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
+   						if (hit.transform != null) {
+							bool flag = true;
+							foreach (PrefabIdentifier pi2 in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(hit.point, 9F)) {
+								if (pi2.ClassId == azur) {
+									flag = false;
+									break;
+								}
+							}
+							if (!flag)
+								continue;
+   							GameObject go = ObjectUtil.createWorldObject(azur);
+							go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
+							go.transform.Rotate(Vector3.up*UnityEngine.Random.Range(0F, 360F), Space.Self);
+							go.transform.position = hit.point;
+							azurite.Add(go);
+   						}
+   					}
+   			}
+   		}
+   	}
+	   	
+			string path = BuildingHandler.instance.getDumpFile("lavacastle_vents");
+			XmlDocument doc = new XmlDocument();
+			XmlElement rootnode = doc.CreateElement("Root");
+			doc.AppendChild(rootnode);
+			
+			foreach (GameObject go in azurite) {
+				PositionedPrefab pfb = new PositionedPrefab(go.GetComponent<PrefabIdentifier>());
+				XmlElement e = doc.CreateElement("customprefab");
+				pfb.saveToXML(e);
+				doc.DocumentElement.AppendChild(e);
+			}
+			
+			doc.Save(path);
+   }*/
 	   
 	   public static void generateLRNestPlants() {
 		   	Vector3 p1 = new Vector3(-786, -762.6F, -321);
