@@ -48,14 +48,14 @@ namespace ReikaKalseki.SeaToSea {
 			world.GetComponent<SwimRandom>().swimVelocity *= 0.25F;
 			world.GetComponent<SwimRandom>().swimForward *= 0.5F;
 			world.GetComponent<Locomotion>().maxVelocity *= 0.25F;
-			//world.GetComponent<Eatable>().foodValue *= 2.4F;
+			world.GetComponent<Eatable>().foodValue *= 2.4F;
 			ObjectUtil.removeComponent<Eatable>(world);
 			world.GetComponentInChildren<AnimateByVelocity>().animSpeedValue *= 0.25F;
 			world.GetComponentInChildren<AnimateByVelocity>().animationMoveMaxSpeed *= 0.25F;
 			world.GetComponent<SplineFollowing>().inertia *= 2;
 			ObjectUtil.removeComponent<FleeWhenScared>(world);
 			ObjectUtil.removeComponent<Scareable>(world);
-			ObjectUtil.removeComponent<Pickupable>(world);
+			//ObjectUtil.removeComponent<Pickupable>(world);
 	    }
 		
 		public override BehaviourType getBehavior() {
@@ -68,6 +68,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Renderer[] renders;
 		private Animator[] animators;
+		
+		private Pickupable pickup;
 		
 		private bool isACU;
 		
@@ -82,6 +84,8 @@ namespace ReikaKalseki.SeaToSea {
 				renders = GetComponentsInChildren<Renderer>();
 			if (animators == null)
 				animators = GetComponentsInChildren<Animator>();
+			if (!pickup)
+				pickup = GetComponent<Pickupable>();
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time-lastTickTime >= 0.5F) {
 				lastTickTime = time;
@@ -94,6 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (isACU)
 					ObjectUtil.removeChildObject(gameObject, "model_FP");
 			}
+			pickup.isPickupable = isACU;
 		}
 		
 	}

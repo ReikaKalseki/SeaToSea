@@ -32,6 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly string NEED_CARGO_PDA = "needlaunchcargo";
 		
 		private FinalLaunchAdditionalRequirementSystem() {
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 			addRequiredItem(TechType.BoneShark, 1, "A large, armored, territorial predator");
 			addRequiredItem(TechType.Sandshark, 1, "A burrowing ambush predator, infected with Kharaa").setSorting(2000).setAdditionalCheck(pp => {
 				InfectedMixin mix = pp.GetComponent<InfectedMixin>();
@@ -41,15 +42,17 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(TechType.LavaLizard, 1, "A creature with extreme thermal resistance due to regular direct lava exposure");
 			addRequiredItem(TechType.Crabsnake, 1, "A symbiotic predator");
 			addRequiredItem(TechType.Cutefish, 1, "A highly intelligent herbivore");
-			addRequiredItem(TechType.RabbitRay, 1, "A small ray species with vibration-detection capabilities, suitable for aquariums");
-			addRequiredItem(TechType.SpineEel, 1, "A transparent-bodied predator");
+			if (hard) {
+				addRequiredItem(TechType.RabbitRay, 1, "A small ray species with vibration-detection capabilities, suitable for aquariums");
+				addRequiredItem(TechType.SpineEel, 1, "A transparent-bodied predator");
+			}
 			addRequiredItem(TechType.Mesmer, 1, "A predator that uses psychological manipulation");
 			addRequiredItem(TechType.Jumper, 2, "A small cave-dwelling scavenger");
 			
 			addRequiredItem(SeaToSeaMod.deepStalker.TechType, 1, "A semi-intelligent predator with a strong attraction to shiny objects, adapted for deep water");
 			
 			addRequiredItem(TechType.Bladderfish, 2, "A fish with water filtering capabilities");
-			addRequiredItem(TechType.Peeper, 3, "Enzyme host peeper").setSorting(2000).setAdditionalCheck(pp => {
+			addRequiredItem(TechType.Peeper, hard ? 6 : 3, "Enzyme host peeper").setSorting(2000).setAdditionalCheck(pp => {
 				Creature c = pp.GetComponent<Creature>();
 				return c is Peeper && ((Peeper)c).isHero;
 			});
@@ -57,10 +60,13 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(TechType.Floater, 6, "A parasitic lifeform consisting of two symbiotic components");
 			
 			addRequiredItem(TechType.SeaCrownSeed, 1, "Flora with an internal bacteria-rich chamber");
-			addRequiredItem(TechType.MembrainTreeSeed, 1, "Flora with a large bell filled with microbial and coral colonies");
+			if (hard)
+				addRequiredItem(TechType.SmallFanSeed, 2, "A small rare plant that grows vanes of tissue between rigid spokes, adapted for living in groups");
+			else
+				addRequiredItem(TechType.MembrainTreeSeed, 1, "Flora with a large bell filled with microbial and coral colonies");
 			addRequiredItem(TechType.FernPalmSeed, 1, "Flora exhibiting signs of genetic modification");
 			addRequiredItem(TechType.JellyPlant, 3, "An edible and low-density flora sample");
-			addRequiredItem(TechType.JeweledDiskPiece, 4, "Coral containing rare resource nodules");
+			addRequiredItem(TechType.JeweledDiskPiece, hard ? 6 : 4, "Coral containing rare resource nodules");
 			
 			addRequiredItem(C2CItems.kelp.seed.TechType, 2, "Flora with symbiotic chemosynethetic bacteria in the leaves");
 			addRequiredItem(C2CItems.healFlower.seed.TechType, 4, "Leaves coated in oils suitable for medical applications");
@@ -68,7 +74,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(C2CItems.sanctuaryPlant.seed.TechType, 2, "A glowing seed-bearing organ from a plant on the verge of extinction");
 			addRequiredItem(SeaToSeaMod.purpleHolefish.TechType, 1, "A large slow-moving herbivore whose life revolves around the kelp it feeds on and lays eggs in");
 			
-			addRequiredItem(TechType.PrecursorIonCrystal, 3, "Alien Power Storage Units").setSorting(1000);
+			addRequiredItem(TechType.PrecursorIonCrystal, hard ? 8 : 3, "Alien Power Storage Units").setSorting(1000);
 			addRequiredItem(TechType.Diamond, 1, "*").setSorting(1000);
 			
 			addRequiredItem(TechType.PrecursorKey_Purple, 1, "*").setSorting(3000);
@@ -108,26 +114,51 @@ namespace ReikaKalseki.SeaToSea {
 			return null;
 		}
 		
-		internal TechType scannedAllLifeforms() {
+		internal IEnumerable<TechType> scannedAllLifeforms() {
+			List<TechType> li = new List<TechType>();
 			foreach (TechType tt in PDAScanner.mapping.Keys) {
-				if (tt == SeaToSeaMod.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
+				if (isDummiedOut(tt))
 					continue;
-				if (!PDAScanner.complete.Contains(tt)) {
-					if (CustomMaterials.getItemByTech(tt) != null)
-						return tt;
-					if (BasicCustomPlant.getPlant(tt) != null)
-						return tt;
-					string pfb = CraftData.GetClassIdForTechType(tt);
-					if (pfb != null && VanillaFlora.getFromID(pfb) != null)
-						return tt;
-					if (pfb != null && VanillaResources.getFromID(pfb) != null)
-						return tt;
-					GameObject prefab = ObjectUtil.lookupPrefab(tt);
-					if (prefab && prefab.GetComponent<Creature>())
-						return tt;
+				if (!PDAScanner.complete.Contains(tt) && mustScanToLeave(tt))
+					li.Add(tt);
+			}
+			return li;
+		}
+		
+		internal bool isDummiedOut(TechType tt) {
+			if (tt == SeaToSeaMod.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
+				return true;
+			if (tt == TechType.BasaltChunk || tt == TechType.SeaEmperor || tt == TechType.BloodGrass || tt == TechType.SmallFan)
+				return true;
+			return false;
+		}
+		
+		internal bool mustScanToLeave(TechType tt) {
+			if (CustomMaterials.getItemByTech(tt) != null)
+				return true;
+			else if (BasicCustomPlant.getPlant(tt) != null)
+				return true;
+			string pfb = CraftData.GetClassIdForTechType(tt);
+			if (pfb != null && VanillaFlora.getFromID(pfb) != null)
+				return true;
+			if (pfb != null && VanillaResources.getFromID(pfb) != null)
+				return true;
+			GameObject prefab = ObjectUtil.lookupPrefab(tt);
+			if (prefab) {
+				if (prefab.GetComponent<Creature>())
+					return true;
+				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && CraftData.GetTechType(prefab) == tt && prefab.GetComponentInChildren<Collider>()) { //scannable
+					string key = PDAScanner.GetEntryData(tt).encyclopedia;
+					if (!string.IsNullOrEmpty(key) && PDAEncyclopedia.mapping.ContainsKey(key)) {
+						PDAEncyclopedia.EntryData ed = PDAEncyclopedia.mapping[key];
+						if (ed != null) {
+							if (ed.path.StartsWith("planetarygeology", StringComparison.InvariantCultureIgnoreCase) || ed.path.StartsWith("lifeforms", StringComparison.InvariantCultureIgnoreCase))
+								return true;
+						}
+					}
 				}
 			}
-			return TechType.None;
+			return false;
 		}
 		
 		internal void updateCounts(List<StorageContainer> lockers) {
@@ -190,7 +221,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (RequiredItem ri in requiredItems.Values) {
 				for (int i = 0; i < ri.count; i++)
 					InventoryUtil.addItem(ri.item);
-			}typeof(ReikaKalseki.SeaToSea.ExplorationTrackerPages).GetMethod("markAllDiscovered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(ReikaKalseki.SeaToSea.ExplorationTrackerPages.instance, 0, null, null, null);
+			}
 		}
 		
 		public bool checkIfFullyLoaded() {
@@ -198,7 +229,13 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool checkIfScannedAllLifeforms() {
-			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(scannedAllLifeforms() == TechType.None, null, PDAMessages.Messages.NeedScansMessage);
+			IEnumerable<TechType> li = scannedAllLifeforms();
+			bool done = li.Count() == 0;
+			if (!done) {
+				SNUtil.writeToChat(li.Count()+" databank scans are missing");
+				SNUtil.log("Failed to launch, missing scans of "+li.toDebugString());
+			}
+			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(done, null, PDAMessages.Messages.NeedScansMessage);
 		}
 		/*
 		public bool checkIfVisitedAllBiomes() {

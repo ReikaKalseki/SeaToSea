@@ -394,6 +394,7 @@ namespace ReikaKalseki.SeaToSea {
 			oreValues[TechType.Salt] = oreValues[TechType.Titanium]*0.2M;
 			oreValues[CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType] = oreValues[TechType.Copper];
 			oreValues[CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType] = oreValues[TechType.Lead];
+			oreValues[CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType] = oreValues[TechType.Kyanite]*4;
 			
 			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots()) {
 				if (oreValues.ContainsKey(ingot.material))
@@ -604,19 +605,21 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("TelepowerPylon", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, electronicsTier3());
 			assignRecipe("UniversalCharger", 2, electronicsTier2(4));
 			
-			TechType tt = findFCSItem("WindSurferPlatform_Kit");
-			RecipeUtil.addRecipe(tt, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
-			CraftDataHandler.SetItemSize(tt, new Vector2int(3, 3));
+			TechType plat = findFCSItem("WindSurferPlatform_Kit");
+			RecipeUtil.addRecipe(plat, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
+			CraftDataHandler.SetItemSize(plat, new Vector2int(3, 3));
 			assignRecipe("WindSurferPlatform_Kit", 0, floatingPlatform(10));
 			
-			tt = findFCSItem("WindSurfer_Kit");
-			RecipeUtil.addRecipe(tt, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
-			CraftDataHandler.SetItemSize(tt, new Vector2int(3, 3));
+			TechType turb = findFCSItem("WindSurfer_Kit");
+			RecipeUtil.addRecipe(turb, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
+			CraftDataHandler.SetItemSize(turb, new Vector2int(3, 3));
 			assignRecipe("WindSurfer_Kit", 0, floatingPlatform(30), new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 4), new Ingredient(TechType.Magnetite, 5)});
 			
-			tt = findFCSItem("WindSurferOperator");
+			TechType tt = findFCSItem("WindSurferOperator");
 			//RecipeUtil.addRecipe(tt, TechGroup.Constructor, TechCategory.Constructor, null, 1, CraftTree.Type.Constructor);
 			assignRecipe("WindSurferOperator", 0, new Ingredient[]{new Ingredient(TechType.Silicone, 8), new Ingredient(TechType.TitaniumIngot, 2), new Ingredient(TechType.Polyaniline, 2), new Ingredient(TechType.CopperWire, 5), new Ingredient(TechType.AdvancedWiringKit, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 5)});
+			TechnologyUnlockSystem.instance.addDirectUnlock(tt, plat);
+			TechnologyUnlockSystem.instance.addDirectUnlock(tt, turb);
 			
 			assignRecipe("BaseOxygenTank", 4, motorized(), electronicsTier1());
 			assignRecipe("BaseOxygenTankKitType", "BaseOxygenTank");

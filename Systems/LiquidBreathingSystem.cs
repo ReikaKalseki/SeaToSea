@@ -284,7 +284,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public float getTreatmentDuration() {
-	    	return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 7200 : 18000;
+	    	return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 2400 : 7200;
 	    }
 	    
 	    private bool isKharaaTreatmentActive() {
