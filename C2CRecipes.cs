@@ -29,6 +29,7 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe traceMetalAlternate;
     private static DuplicateRecipeDelegateWithRecipe altFiberMesh;
     private static DuplicateRecipeDelegateWithRecipe altSulfurAcid;
+    private static DuplicateRecipeDelegateWithRecipe altBleach;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
@@ -241,6 +242,21 @@ namespace ReikaKalseki.SeaToSea
        	altSulfurAcid.allowUnlockPopups = true;
        	altSulfurAcid.Patch();
        	/*
+       	rec = new TechData();
+        rec.Ingredients.Add(new Ingredient(TechType.Salt, 2));
+        rec.Ingredients.Add(new Ingredient(TechType.HydrochloricAcid, 1));
+       	altBleach = new DuplicateRecipeDelegateWithRecipe(TechType.Bleach, rec);
+       	altBleach.category = C2CItems.chemistryCategory;
+       	altBleach.group = TechGroup.Resources;
+       	altBleach.craftingType = CraftTree.Type.Fabricator;
+       	altBleach.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
+       	altBleach.ownerMod = SeaToSeaMod.modDLL;
+       	altBleach.craftTime = 4;
+       	altBleach.setRecipe(2);
+       	altBleach.unlock = TechType.HydrochloricAcid;
+       	altBleach.allowUnlockPopups = true;
+       	altBleach.Patch();*/
+       	/*
         int s = 3;
         rec = new TechData();
         rec.Ingredients.Add(new Ingredient(C2CItems.kelp.seed.TechType, Mathf.CeilToInt(kelpamt*s*0.5F)));
@@ -383,10 +399,12 @@ namespace ReikaKalseki.SeaToSea
         
         addItemToRecipe(TechType.ReactorRod, sulfurAcid.TechType, 1);
         
+        RecipeUtil.modifyIngredients(TechType.PrecursorIonBattery, i => {i.amount *= 2; return false;});
         addItemToRecipe(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
-        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1);
-        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
-        addItemToRecipe(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 1);
+        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2);
+        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
+        addItemToRecipe(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        RecipeUtil.getRecipe(TechType.PrecursorIonBattery).craftAmount = 2;
         addItemToRecipe(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         addItemToRecipe(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
         addItemToRecipe(TechType.PrecursorIonPowerCell, sulfurAcid.TechType, 1);
@@ -462,7 +480,7 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.ExoHullModule1, TechType.Kyanite, 3);
         addItemToRecipe(TechType.ExoHullModule1, armor.TechType, 2);
         addItemToRecipe(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
-        addItemToRecipe(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 3);
+        addItemToRecipe(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 2);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Titanium);
         
@@ -716,6 +734,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getAltSulfurAcid() {
     	return altSulfurAcid;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getAltBleach() {
+    	return altBleach;
     }
     
     public static DuplicateRecipeDelegateWithRecipe getAltTraceMetal() {

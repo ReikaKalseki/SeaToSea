@@ -917,8 +917,8 @@ namespace ReikaKalseki.SeaToSea {
 	    			if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
 	    				dmg *= 0.75F;
 	    			if (prawn)
-	    				dmg *= 0.67F; //do about 35% damage
-					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, Player.main.gameObject);
+	    				dmg *= 0.04F; //do about 2% damage
+					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, p.gameObject);
 				}
 	    	}
 	    	else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType) {
@@ -1207,6 +1207,9 @@ namespace ReikaKalseki.SeaToSea {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
 	    	}/*
+			else if (pi && pi.ClassId == "407e40cf-69f2-4412-8ab6-45faac5c4ea2") {
+	    		
+	    	}*//*
 			else if (pi && pi.ClassId == "SeaVoyager") {
 	    		go.EnsureComponent<C2CVoyager>();
 	    	}*/
@@ -1752,7 +1755,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 		public static void onKnifed(GameObject go) {
 	    	if (CraftData.GetTechType(go) == TechType.BlueAmoeba)
-	    		InventoryUtil.addItem(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType);
+	    		DIHooks.fireKnifeHarvest(go, new Dictionary<TechType, int>{{CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 1}});
 		}
 	    
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
@@ -2157,6 +2160,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	//SNUtil.writeToChat("checking SC="+sc+": "+skip);
 	    	skip |= (sc && sc.gameObject.FindAncestor<MapRoomFunctionality>());
 	    	skip |= (sc && sc.GetComponent<BioprocessorLogic>());
+	    	skip |= (sc && sc.GetComponent<Planter>());
 	    	return skip;
 	    }
 	}

@@ -120,6 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 					pp.pickTech = C2CItems.mountainGlow.seed.TechType;
 			    	pp.pickedEvent.AddHandler(pp.gameObject, new UWE.Event<PickPrefab>.HandleFunction(p => {
 						fruiter.inactiveFruits.Add(pp);
+						fruiter.timeNextFruit = DayNightCycle.main.timePassedAsFloat + fruiter.fruitSpawnInterval;
 			    	}));
 					if (isGrown)
 						pp.SetPickedUp();

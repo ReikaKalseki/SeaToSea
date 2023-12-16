@@ -295,6 +295,8 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("I am ticking @ "+transform.position+": "+seconds);
 			if (seconds <= 0)
 				return;
+			sc.container.isAllowedToRemove += (pp, vb) => currentOperation == null || (pp.GetTechType() != CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType && pp.GetTechType() != currentOperation.inputItem.getBaseType());
+			sc.container.isAllowedToAdd += (pp, vb) => currentOperation == null || pp.GetTechType() == currentOperation.outputItem || pp.GetTechType() == CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType;
 			if (!setCollision) {
 				Bioprocessor.setTerminalBox(gameObject);
 				setCollision = true;
@@ -320,7 +322,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (nextEnzyTimeRemaining <= 0) {
 							IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 							if (enzy != null && enzy.Count >= 1) {
-								InventoryUtil.removeItem(sc, enzy[0]);
+								InventoryUtil.forceRemoveItem(sc, enzy[0]);
 								enzyRequired--;
 								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 								setEmissiveColor(workingColor, 1+getOperationTime(currentOperation.secondsPerEnzyme));
@@ -337,12 +339,12 @@ namespace ReikaKalseki.SeaToSea {
 									for (int i = 0; i < currentOperation.inputCount; i++) {
 										InventoryItem ii = ing.ElementAt(0);
 										SNUtil.log("Removing "+ii.item+" ("+ii.item.gameObject.GetInstanceID()+") from bioproc inventory");
-										InventoryUtil.removeItem(sc, ii); //list is updated in realtime
+										InventoryUtil.forceRemoveItem(sc, ii); //list is updated in realtime
 									}
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
 										n *= 2;
-										InventoryUtil.removeItem(sc, kelp[0]);
+										InventoryUtil.forceRemoveItem(sc, kelp[0]);
 									}
 									addItemToInventory(currentOperation.outputItem, n);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+" x"+n);
