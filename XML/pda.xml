@@ -1,17 +1,4 @@
 <Root>
-  <sunbeamdebrishint>
-	<name>
-		Possible salvageable materials
-	</name>
-	<pda>
-		The destruction of the Sunbeam trading ship may have resulted in some of its cargo and construction materials being scattered over the areas near where it was attempting to land, or along its approach path (or an extension thereof). This may provide access to materials not normally available on the surface of 4546B.
-		
-		However, these materials are scattered over a wide area, and the local fauna make a manual search highly inadvisable.
-	</pda>
-	<category>
-		DownloadedData/Codes
-	</category>
-  </sunbeamdebrishint>
   <crashmesahint>
 	<name>
 		Lifepod 10 Transmission origin
@@ -458,6 +445,19 @@
 		Sounds/vo/mushtreepda.ogg
 	</audio>
   </treepda>
+  <sunbeamdebrishint>
+	<name>
+		Possible salvageable materials
+	</name>
+	<pda>
+		The destruction of the Sunbeam trading ship may have resulted in some of its cargo and construction materials being scattered over the areas near where it was attempting to land, or along its approach path (or an extension thereof). This may provide access to materials not normally available on the surface of 4546B.
+		
+		However, these materials are scattered over a wide area, and the local fauna make a manual search highly inadvisable.
+	</pda>
+	<category>
+		DownloadedData/Codes
+	</category>
+  </sunbeamdebrishint>
   <lostrivershortcircuit>
 	<name>
 		Hypersalinated Water
@@ -563,6 +563,19 @@
 		Advanced
 	</category>
   </needlaunchcargo>
+  <needencyscans>
+	<name>
+		4546B Survey Status
+	</name>
+	<pda>
+		You should perform a survey of the geology and ecology present in this region of 4546B. This requires collecting information on every major formation and lifeform by using your handheld scanner.
+		
+		Your current scan progress is:
+	</pda>
+	<category>
+		Advanced
+	</category>
+  </needencyscans>
   <notvisitedallbiomes>
 	<name>
 		Biome Survey Required

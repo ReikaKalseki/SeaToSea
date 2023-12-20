@@ -133,7 +133,7 @@ namespace ReikaKalseki.SeaToSea {
 	    private float lastOreTableAssignTime = -1;
 		
 		void Start() {
-			SNUtil.writeToChat("Drill at "+WorldUtil.getRegionalDescription(transform.position)+" is mining deposit: "+Language.main.Get(deposit.TechType.AsString()));
+			SNUtil.writeToChat("Drill at "+WorldUtil.getRegionalDescription(transform.position, true)+" is mining deposit: "+Language.main.Get(deposit.TechType.AsString()));
 		}
 		
 		void Update() {

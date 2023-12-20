@@ -178,6 +178,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.respawnEvent += onPlayerRespawned;
 	    	DIHooks.itemsLostEvent += onItemsLost;
 	    	DIHooks.selfScanEvent += onSelfScan;
+	    	DIHooks.scanCompleteEvent += onScanComplete;
 	    	
 	    	DIHooks.tryEatEvent += tryEat;
 	    	
@@ -309,6 +310,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	if (FCSIntegrationSystem.instance.isLoaded())
 	    		FCSIntegrationSystem.instance.tickNotifications(time);
+	    	
+	    	LifeformScanningSystem.instance.tick(time);
 	    	
 	    	if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
 	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
@@ -906,6 +909,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onItemPickedUp(Pickupable p, Exosuit prawn, bool isKnife) {
 	    	AvoliteSpawner.instance.cleanPickedUp(p);
 	    	FCSIntegrationSystem.instance.modifyPeeperFood(p);
+	    	LifeformScanningSystem.instance.onObjectSeen(p.gameObject, true);
 	    	TechType tt = p.GetTechType();
 	    	if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 	    		Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
@@ -1185,6 +1189,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (skipSkyApplierSpawn)
 	    		return;
 	    	GameObject go = pk.gameObject;
+	    	//if (DIHooks.isWorldLoaded())
+	    	//	LifeformScanningSystem.instance.onObjectCreated(go);
 	    	if (go.name.StartsWith("ExplorableWreck", StringComparison.InvariantCultureIgnoreCase)) {
 	    		go.EnsureComponent<ImmuneToPropulsioncannon>(); //also implements IObstacle to prevent building
 	    	}
@@ -1361,6 +1367,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (go.GetComponent<BaseCell>() || go.GetComponent<Constructable>() || go.FindAncestor<Vehicle>()) {
 	    		go.EnsureComponent<Magnetic>();
 	    	}
+	    	if (go.GetComponent<MeleeAttack>()) {
+	    		go.EnsureComponent<AttackRelay>();
+	    	}
 	    	if (pi && !floaterRocks.Contains(pi.ClassId) && CraftData.GetTechType(go) != TechType.FloatingStone && go.GetComponent<Drillable>()) {
 	    		Rigidbody rb = go.FindAncestor<Rigidbody>();
 	    		if (rb)
@@ -1373,6 +1382,15 @@ namespace ReikaKalseki.SeaToSea {
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
 	    }*/
+	    
+	    class AttackRelay : MonoBehaviour {
+	    	
+	    	void OnMeleeAttack(GameObject target) {
+	    		if (target == Player.main.gameObject)
+	    			LifeformScanningSystem.instance.onObjectSeen(gameObject, false);
+	    	}
+	    	
+	    }
 	    
 	    public static void tickFruitPlant(DIHooks.FruitPlantTag fpt) {
 	    	if (skipFruitPlantTick)
@@ -1582,6 +1600,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 	    public static void tryKnife(DIHooks.KnifeAttempt k) {
+	    	LifeformScanningSystem.instance.onObjectSeen(k.target.gameObject, false);
 	    	if (CraftData.GetTechType(k.target.gameObject) == TechType.BlueAmoeba) {
 	    		k.allowKnife = true;
 	    		return;
@@ -1922,6 +1941,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    }
 	    
+	    public static void onScanComplete(PDAScanner.EntryData data) {
+	    	LifeformScanningSystem.instance.onScanComplete(data);
+	    }
+	    
 	    public static void onDataboxTooltipCalculate(BlueprintHandTarget tgt) {
 	    	LiveMixin lv = tgt.GetComponent<LiveMixin>();
 	    	if (lv && lv.health < lv.maxHealth) {
@@ -1956,6 +1979,8 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (iht != null)
 	    			iht.OnHandClick(hand);
 	    	}*/
+	    	if (e == HandTargetEventType.Hover && target)
+	    		LifeformScanningSystem.instance.onObjectSeen(target, true);
 	    	SanctuaryPlantTag spt = target.GetComponent<SanctuaryPlantTag>();
 	    	if (spt) {
 	    		if (e == HandTargetEventType.Hover)
@@ -2000,7 +2025,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		float time = DayNightCycle.main.timePassedAsFloat;
 	    		if (time-lastDrillDepletionTime >= 1) {
 	    			lastDrillDepletionTime = time;
-	    			SNUtil.writeToChat("Drill in "+WorldUtil.getRegionalDescription(drill.transform.position)+" has depleted the local resources.");
+	    			SNUtil.writeToChat("Drill in "+WorldUtil.getRegionalDescription(drill.transform.position, true)+" has depleted the local resources.");
 		    		Component com = drill.GetComponent(FCSIntegrationSystem.instance.getFCSDrillOreManager());
 		    		if (com) {
 			    		PropertyInfo p = FCSIntegrationSystem.instance.getFCSDrillOreManager().GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
