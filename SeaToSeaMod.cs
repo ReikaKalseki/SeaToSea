@@ -319,6 +319,7 @@ namespace ReikaKalseki.SeaToSea
 		CrashZoneSanctuaryBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
+		LifeformScanningSystem.instance.register();
 		
 		C2CItems.alkali.addNativeBiome(VanillaBiomes.MOUNTAINS, true).addNativeBiome(VanillaBiomes.TREADER, true).addNativeBiome(VanillaBiomes.KOOSH, true);
 		C2CItems.kelp.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
@@ -651,7 +652,7 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", unlockSignal);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cpoi", POITeleportSystem.instance.jumpToPOI);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+FinalLaunchAdditionalRequirementSystem.instance.scannedAllLifeforms().toDebugString()));
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+LifeformScanningSystem.instance.hasScannedEverything()));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);
     }
     /*

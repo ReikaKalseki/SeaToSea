@@ -234,7 +234,7 @@ namespace ReikaKalseki.SeaToSea {
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.healFlower, 0.1F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.2F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1F);
-		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.25F);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.125F);
 		
 		BaseRoomSpecializationSystem.instance.setDisplayValue(SeaToSeaMod.purpleBoomerang.TechType, 0.2F); //lava boomerang is 0.15
 		BaseRoomSpecializationSystem.instance.setDisplayValue(SeaToSeaMod.purpleHoopfish.TechType, 0.2F); //hoopfish is 0.2

@@ -453,7 +453,7 @@ namespace ReikaKalseki.SeaToSea {
 		    	float leak = getLRPowerLeakage(dmg.gameObject);
 		    	//SBUtil.writeToChat("leak "+leak);
 			   	if (leak > 0) {
-		    		leak *= 1.2F; //+20% more for cyclops
+		    		leak *= 1.8F; //+80% more for cyclops (still less than 1/3 as fast per % as seamoth and more than 50% slower than prawn)
 		    		
 	    			SubControl con = dmg.gameObject.GetComponentInParent<SubControl>();
 				    if (con.cyclopsMotorMode.engineOn)

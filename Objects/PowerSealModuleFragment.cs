@@ -24,10 +24,15 @@ namespace ReikaKalseki.SeaToSea {
 	    public override GameObject GetGameObject() {
 			GameObject world = ObjectUtil.createWorldObject(C2CItems.powerSeal.ClassID);
 			world.EnsureComponent<TechTag>().type = TechType;
-			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+			PrefabIdentifier pi = world.EnsureComponent<PrefabIdentifier>();
+			pi.ClassId = ClassID;
 			ObjectUtil.removeComponent<WorldForces>(world);
 			ObjectUtil.removeComponent<Pickupable>(world);
-			ObjectUtil.removeComponent<ResourceTracker>(world);
+			//ObjectUtil.removeComponent<ResourceTracker>(world);
+			ResourceTracker rt = world.EnsureComponent<ResourceTracker>();
+			rt.techType = TechType.Fragment;
+			rt.overrideTechType = TechType.Fragment;
+			rt.prefabIdentifier = pi;
 			world.GetComponent<Rigidbody>().isKinematic = true;
 			world.EnsureComponent<BrokenModule>();
 			Renderer r = world.GetComponentInChildren<Renderer>();
