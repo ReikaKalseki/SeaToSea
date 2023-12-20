@@ -181,7 +181,7 @@ namespace ReikaKalseki.SeaToSea {
 						showedFullMessage = false;
 					}
 					else if (!showedFullMessage) {
-						SNUtil.writeToChat(Language.main.Get(SeaToSeaMod.geyserFilter.TechType)+" in "+WorldUtil.getRegionalDescription(transform.position)+" is full");
+						SNUtil.writeToChat(Language.main.Get(SeaToSeaMod.geyserFilter.TechType)+" in "+WorldUtil.getRegionalDescription(transform.position, true)+" is full");
 						showedFullMessage = true;
 					}
 				}

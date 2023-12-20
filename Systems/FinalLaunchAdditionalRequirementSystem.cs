@@ -114,53 +114,6 @@ namespace ReikaKalseki.SeaToSea {
 			return null;
 		}
 		
-		internal IEnumerable<TechType> scannedAllLifeforms() {
-			List<TechType> li = new List<TechType>();
-			foreach (TechType tt in PDAScanner.mapping.Keys) {
-				if (isDummiedOut(tt))
-					continue;
-				if (!PDAScanner.complete.Contains(tt) && mustScanToLeave(tt))
-					li.Add(tt);
-			}
-			return li;
-		}
-		
-		internal bool isDummiedOut(TechType tt) {
-			if (tt == SeaToSeaMod.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
-				return true;
-			if (tt == TechType.BasaltChunk || tt == TechType.SeaEmperor || tt == TechType.BloodGrass || tt == TechType.SmallFan)
-				return true;
-			return false;
-		}
-		
-		internal bool mustScanToLeave(TechType tt) {
-			if (CustomMaterials.getItemByTech(tt) != null)
-				return true;
-			else if (BasicCustomPlant.getPlant(tt) != null)
-				return true;
-			string pfb = CraftData.GetClassIdForTechType(tt);
-			if (pfb != null && VanillaFlora.getFromID(pfb) != null)
-				return true;
-			if (pfb != null && VanillaResources.getFromID(pfb) != null)
-				return true;
-			GameObject prefab = ObjectUtil.lookupPrefab(tt);
-			if (prefab) {
-				if (prefab.GetComponent<Creature>())
-					return true;
-				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && CraftData.GetTechType(prefab) == tt && prefab.GetComponentInChildren<Collider>()) { //scannable
-					string key = PDAScanner.GetEntryData(tt).encyclopedia;
-					if (!string.IsNullOrEmpty(key) && PDAEncyclopedia.mapping.ContainsKey(key)) {
-						PDAEncyclopedia.EntryData ed = PDAEncyclopedia.mapping[key];
-						if (ed != null) {
-							if (ed.path.StartsWith("planetarygeology", StringComparison.InvariantCultureIgnoreCase) || ed.path.StartsWith("lifeforms", StringComparison.InvariantCultureIgnoreCase))
-								return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-		
 		internal void updateCounts(List<StorageContainer> lockers) {
 			foreach (RequiredItem ri in requiredItems.Values) {
 				ri.currentlyHas = 0;
@@ -229,13 +182,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool checkIfScannedAllLifeforms() {
-			IEnumerable<TechType> li = scannedAllLifeforms();
-			bool done = li.Count() == 0;
-			if (!done) {
-				SNUtil.writeToChat(li.Count()+" databank scans are missing");
-				SNUtil.log("Failed to launch, missing scans of "+li.toDebugString());
-			}
-			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(done, null, PDAMessages.Messages.NeedScansMessage);
+			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(LifeformScanningSystem.instance.hasScannedEverything(), null, PDAMessages.Messages.NeedScansMessage);
 		}
 		/*
 		public bool checkIfVisitedAllBiomes() {
@@ -245,17 +192,15 @@ namespace ReikaKalseki.SeaToSea {
 			
 		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
 			updateCounts(lockers);
-			PDAManager.getPage(FinalLaunchAdditionalRequirementSystem.NEED_CARGO_PDA).update(generatePDAContent(), true);
+			PDAManager.getPage(FinalLaunchAdditionalRequirementSystem.NEED_CARGO_PDA).update(generateCargoPDAContent(), true);
 		}
 		
-		private string generatePDAContent(/*Dictionary<TechType, RequiredItem> missing*/) {
+		private string generateCargoPDAContent() {
 			string desc = SeaToSeaMod.pdaLocale.getEntry(NEED_CARGO_PDA).pda+"\n";
 			List<RequiredItem> li = requiredItems.Values.ToList();
 			li.Sort();
 			foreach (RequiredItem ri in li) {
-				//int has = missing.ContainsKey(ri.item) ? ri.count-missing[ri.item] : ri.count;
 				int has = ri.currentlyHas;
-				//SNUtil.writeToChat("Currently has "+has+" of "+ri);
 				string color = has < ri.count ? (has == 0 ? "FF2040" : "FFE020") : "20FF40";
 				desc += string.Format("\t- {1} (<color=#{0}>{2}/{3}</color>)\n\n", color, ri.getDesc(), has, ri.count);
 			}
