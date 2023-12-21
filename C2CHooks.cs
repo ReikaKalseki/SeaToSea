@@ -1043,6 +1043,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.localScale = c.transform.localScale;
 	    		UnityEngine.Object.Destroy(c.gameObject);
 	    	}
+	    	else if (c.unlockTechType == C2CItems.breathingFluid.TechType && c.transform.position.y < -500) { //clear old databox placement
+	    		UnityEngine.Object.Destroy(c.gameObject);
+	    	}
+	    	else if (c.unlockTechType == C2CItems.liquidTank.TechType && c.transform.position.y > -500) {
+	    		UnityEngine.Object.Destroy(c.gameObject);
+	    	}
 	    }
 	    
 	    public static GameObject interceptScannerTarget(GameObject original, ref PDAScanner.ScanTarget tgt) { //the GO is the collider, NOT the parent
