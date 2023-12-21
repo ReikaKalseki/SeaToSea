@@ -105,7 +105,7 @@
   </customprefab>
   <customprefab>
     <prefab>databox</prefab>
-    <tech>breathfluid</tech>
+    <tech>LiquidTank</tech>
     <position>
       <x>-138.367340087891</x>
       <y>-505.586669921875</y>

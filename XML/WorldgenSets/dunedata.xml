@@ -1,7 +1,7 @@
 <Root>
   <customprefab>
     <prefab>databox</prefab>
-	<tech>LiquidTank</tech>
+	<tech>breathfluid</tech>
     <position>
       <x>-1613.22998046875</x>
       <y>-355.082305908203</y>
