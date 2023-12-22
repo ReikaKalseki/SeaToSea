@@ -655,7 +655,7 @@ namespace ReikaKalseki.SeaToSea {
 	   		bool inOcean = isPlayerInOcean();
 	   		for (int i = 0; i < warnings.Count; i++) {
 	   			CustomHUDWarning w = warnings[i];
-	   			if (!flagged && w.shouldShow(inOcean)) {
+	   			if (!flagged && w.shouldShow(Player.main, inOcean)) {
 	   				//SNUtil.writeToChat("Activated HUD warn "+w.getText());
 	   				w.setActive(true);
 	   				flagged = true;
@@ -714,8 +714,8 @@ namespace ReikaKalseki.SeaToSea {
 	   		o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", () => crush.isActive() && isPlayerInOcean(), 20);
 	   		lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
 	   		extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
-	   		extremeHeatHUDWarning.showWhenNotSwimming = () => true;
-	   		lrLeakHUDWarning.showWhenNotSwimming = () => Player.main.GetVehicle() || (Player.main.currentSub && Player.main.currentSub.isCyclops && Player.main.isPiloting);
+	   		extremeHeatHUDWarning.showWhenNotSwimming = (ep) => true;
+	   		lrLeakHUDWarning.showWhenNotSwimming = (ep) => ep.GetVehicle() || SNUtil.getControllingCamera(ep) || (ep.currentSub && ep.currentSub.isCyclops && ep.isPiloting);
 	   		warnings.Sort();
 		}
     	
@@ -723,6 +723,10 @@ namespace ReikaKalseki.SeaToSea {
     		Player ep = Player.main;
     		if (!ep)
     			return false;
+    		MapRoomCamera cam = SNUtil.getControllingCamera(ep);
+    		//SNUtil.writeToChat(cam+"");
+    		if (cam && getLRPowerLeakage(cam.gameObject) > 0)
+    			return true;
     		Vehicle v = ep.GetVehicle();
     		if (v || (ep.currentSub && ep.currentSub.isCyclops)) {
 	    		if (getLRPowerLeakage(ep.gameObject) <= 0)
@@ -774,7 +778,7 @@ namespace ReikaKalseki.SeaToSea {
 		private Text text;
 		private Func<bool> condition;
 		public bool forceShow = false;
-		internal Func<bool> showWhenNotSwimming = () => false;
+		internal Func<Player, bool> showWhenNotSwimming = (ep) => false;
 		
 		public int priority = 0;
 		
@@ -802,8 +806,8 @@ namespace ReikaKalseki.SeaToSea {
 			return text.text;
 		}
 		
-		public bool shouldShow(bool inOcean) {
-			return forceShow || ((showWhenNotSwimming() || inOcean) && condition());
+		public bool shouldShow(Player ep, bool inOcean) {
+			return forceShow || ((showWhenNotSwimming(ep) || inOcean) && condition());
 		}
 		
 		public void setActive(bool active) {
