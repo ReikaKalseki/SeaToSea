@@ -44,8 +44,8 @@ namespace ReikaKalseki.SeaToSea {
 	    private float lastTimerWarningTime;
 		
 		private LiquidBreathingSystem() {
-			
-		}
+	    	
+	    }
 	    
 	    public void onEquip() {
 	    	InfectedMixin inf = Player.main.GetComponent<InfectedMixin>();
@@ -313,7 +313,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public bool hasReducedCapacity() {
-	    	return !isKharaaTreatmentActive() && Player.main.infectedMixin.IsInfected() && hasLiquidBreathing();
+	    	return !isKharaaTreatmentActive() && !Story.StoryGoalManager.main.completedGoals.Contains("Infection_Progress5") && hasLiquidBreathing();
 	    }
 	    
 	    class OxygenAreaWithLiquidSupport : MonoBehaviour {
