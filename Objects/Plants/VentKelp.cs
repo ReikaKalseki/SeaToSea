@@ -259,7 +259,7 @@ namespace ReikaKalseki.SeaToSea {
 				lastAreaCheckTime = time;
 				intensity = 1-(float)((VentKelp.noiseField.getValue(gameObject.transform.position+Vector3.down*DayNightCycle.main.timePassedAsFloat*7.5F)+1)/2D);
 				if (grown || acu) {
-	    			gameObject.transform.localScale = new Vector3(2, 3.5F, 2);
+					gameObject.transform.localScale = acu && acu.height == 1 ? new Vector3(1.5F, 1.75F, 1.5F) : new Vector3(2, 3.5F, 2);
 	    			if (isNew) {
 		    			foreach (KelpSegment s in segments) {
 							if (!s.renderer)
@@ -300,11 +300,16 @@ namespace ReikaKalseki.SeaToSea {
 				else {
 					s.renderer.materials[1].DisableKeyword("FX_BUILDING");
 				}
-				if ((grown || acu) && s.index >= 2 && !isNew) {
-					cropped = true;
-					UnityEngine.Object.DestroyImmediate(s.obj);
-					SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position+" #"+s.index);
-					continue;
+				if ((grown || acu) && !isNew) {
+					int limit = 2;
+					if (acu)
+						limit = Math.Max(1, acu.height-1);
+					if (s.index >= limit) {
+						cropped = true;
+						UnityEngine.Object.DestroyImmediate(s.obj);
+						SNUtil.log("Destroying extra farmed vent kelp @ "+transform.position+" #"+s.index);
+						continue;
+					}
 				}
 				foreach (Material m in s.renderer.materials) {
 					m.SetColor("_GlowColor", Color.Lerp(idleColor, activeColor, intensity*1.5F-0.5F));

@@ -1832,6 +1832,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		float amt = 5*(1+(temp-100)/100F);
 	    		cam.liveMixin.TakeDamage(amt*Time.deltaTime, campos, DamageType.Heat);
 	    	}
+	    	if (!cam.dockingPoint) {
+		    	float leak = EnvironmentalDamageSystem.instance.getLRPowerLeakage(cam.gameObject);
+		    	if (leak >= 0) {
+		    		cam.energyMixin.ConsumeEnergy(leak*Time.deltaTime*0.5F);
+		    	}
+	    	}
 	    }
 	    
 	    public static float getCrushDamage(CrushDamage dmg) {
