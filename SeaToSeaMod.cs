@@ -433,6 +433,7 @@ namespace ReikaKalseki.SeaToSea
     		{"Deathrun", false},
     		{"DecorationsMod", false},
     		{"AnthCreatures", true},
+    		{"SpyWatch", true},
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
