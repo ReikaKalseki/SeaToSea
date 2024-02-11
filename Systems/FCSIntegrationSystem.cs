@@ -14,8 +14,6 @@ using UnityEngine.UI;
 using FMOD;
 using FMODUnity;
 
-using QModManager.API.ModLoading;
-
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
