@@ -114,6 +114,18 @@ namespace ReikaKalseki.SeaToSea {
 	    public static bool skipStalkerShiny = false;
 	    public static bool skipRocketTick = false;
 	    
+	    private static TechType techPistol = TechType.None;
+	    private static bool searchedTechPistol = false;
+	    
+	    private static TechType loadTechPistol() {
+	    	if (techPistol == TechType.None && !searchedTechPistol) {
+	    		techPistol = SNUtil.getTechType("TechPistol");
+	    		if (DIHooks.isWorldLoaded())
+	    			searchedTechPistol = true;
+	    	}
+	    	return techPistol;
+	    }
+	    
 	    static C2CHooks() {
 			SNUtil.log("Initializing C2CHooks");
 	    	DIHooks.onWorldLoadedEvent += onWorldLoaded;
@@ -317,6 +329,15 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
 	    			WaterBiomeManager.main.GetComponent<WaterscapeVolume>().fogEnabled = true;
 	    	}
+	    	
+	    	TechType tt = loadTechPistol();
+	    	if (tt != TechType.None) {
+		    	Pickupable pp = Inventory.main.GetHeld();
+		    	if (pp && pp.GetTechType() == tt && !Story.StoryGoalManager.main.completedGoals.Contains("Iridium")) {
+		    		Inventory.main.DestroyItem(tt);
+		    		SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/gravsphere/explode"), ep.transform.position);
+		    	}
+		    }
 	    	
 	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
@@ -739,6 +760,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (p == null)
 	    		return;
 	    	addT2BatteryAllowance(mix);
+	    	if (p.GetTechType() == loadTechPistol()) {
+	    		mix.defaultBattery = C2CItems.t2Battery.TechType;
+	    		return;
+	    	}
 	    	switch(p.GetTechType()) {
 	    		case TechType.StasisRifle:
 	    		case TechType.LaserCutter:

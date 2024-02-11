@@ -279,6 +279,14 @@ namespace ReikaKalseki.SeaToSea {
 			settingMain.GetType().GetField("autoCraft", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(settingMain, false);
 		}
 		
+		if (TechTypeHandler.TryGetModdedTechType("TechPistol", out tt)) {
+			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 2);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1);
+			RecipeUtil.removeIngredient(tt, TechType.Battery);
+			RecipeUtil.removeIngredient(tt, TechType.Lubricant);
+			RecipeUtil.addIngredient(tt, C2CItems.t2Battery.TechType, 1);
+		}
+		
 		FCSIntegrationSystem.instance.applyPatches();
     }
 		
