@@ -330,14 +330,7 @@ namespace ReikaKalseki.SeaToSea {
 	    			WaterBiomeManager.main.GetComponent<WaterscapeVolume>().fogEnabled = true;
 	    	}
 	    	
-	    	TechType tt = loadTechPistol();
-	    	if (tt != TechType.None) {
-		    	Pickupable pp = Inventory.main.GetHeld();
-		    	if (pp && pp.GetTechType() == tt && !Story.StoryGoalManager.main.completedGoals.Contains("Iridium")) {
-		    		Inventory.main.DestroyItem(tt);
-		    		SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/gravsphere/explode"), ep.transform.position);
-		    	}
-		    }
+	    	ItemUnlockLegitimacySystem.instance.tick(ep);
 	    	
 	    	if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 	    		Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
@@ -1220,6 +1213,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (skipSkyApplierSpawn)
 	    		return;
 	    	GameObject go = pk.gameObject;
+	    	if (go.name.StartsWith("Seamoth", StringComparison.InvariantCultureIgnoreCase) && go.name.EndsWith("Arm(Clone)", StringComparison.InvariantCultureIgnoreCase))
+	    		return;
 	    	//if (DIHooks.isWorldLoaded())
 	    	//	LifeformScanningSystem.instance.onObjectCreated(go);
 	    	if (go.name.StartsWith("ExplorableWreck", StringComparison.InvariantCultureIgnoreCase)) {

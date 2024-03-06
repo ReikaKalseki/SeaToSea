@@ -286,8 +286,32 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.removeIngredient(tt, TechType.Lubricant);
 			RecipeUtil.addIngredient(tt, C2CItems.t2Battery.TechType, 1);
 		}
+		ItemUnlockLegitimacySystem.instance.add("TechPistol", "TechPistol", () => Story.StoryGoalManager.main.completedGoals.Contains("Iridium"));
+		
+		if (TechTypeHandler.TryGetModdedTechType("SeamothDrillArmModule", out tt)) {
+			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType, 1);
+		}
+		if (TechTypeHandler.TryGetModdedTechType("SeamothPropulsionArmModule", out tt)) {
+			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+			RecipeUtil.addIngredient(tt, TechType.Polyaniline, 1);
+			RecipeUtil.addIngredient(tt, TechType.MercuryOre, 2);
+		}
+		ItemUnlockLegitimacySystem.instance.add("SeamothArms", "SeamothDrillArmModule", () => Story.StoryGoalManager.main.completedGoals.Contains("Iridium"));
+		//ItemUnlockLegitimacySystem.instance.add("SeamothArms", "SeamothPropulsionArmModule", () => Story.StoryGoalManager.main.completedGoals.Contains(?));
+		
+		t = InstructionHandlers.getTypeBySimpleName("SlotExtender.Configuration.SEConfig");
+		if (t != null) {
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Config_Load", SeaToSeaMod.modDLL, codes => {
+				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stsfld, "SlotExtender.Configuration.SEConfig", "MAXSLOTS");
+				codes.InsertRange(idx, new List<CodeInstruction>(){new CodeInstruction(OpCodes.Pop), new CodeInstruction(OpCodes.Ldc_I4_5)});
+			});
+		}
 		
 		FCSIntegrationSystem.instance.applyPatches();
+		ItemUnlockLegitimacySystem.instance.applyPatches();
     }
 		
 	private static void filterStorageContainerInteract(List<CodeInstruction> codes) {

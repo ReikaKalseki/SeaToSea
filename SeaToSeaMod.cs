@@ -416,7 +416,7 @@ namespace ReikaKalseki.SeaToSea
     		{"CyclopsBioReactor", false},
     		//{"AquariumBreeding", false},
     		{"RedBaron", true},
-    		{"SeamothArms", true},
+    		//{"SeamothArms", true},
     		{"HabitatControlPanel", true},
     		{"MoreSeamothDepth", true},
     		{"CustomCraft2", true},
@@ -434,6 +434,23 @@ namespace ReikaKalseki.SeaToSea
     		{"DecorationsMod", false},
     		{"AnthCreatures", true},
     		{"SpyWatch", true},
+    		{"SeamothEnergyShield", true},
+    		{"SeamothThermal", false},
+    		{"ArmorSuit", false},
+    		{"ShieldSuit", false},
+    		{"TimeControlSuit", true},
+    		{"CameraDroneStasisUpgrade", true},
+    		//{"CameraDroneFlightUpgrade", false},
+    		{"CustomizeYourSpawns", true},
+    		{"CameraDroneStasisUpgrade", true},
+    		{"StasisModule", true},
+    		{"StasisTorpedo", true},
+    		{"CyclopsLaserCannonModule", false},
+    		{"DebrisRecycling", true},
+    		{"AD3D_DeepEngineMod", false},
+    		{"AD3D_TechFabricatorMod", false},
+    		{"PassiveReapers", true},
+    		{"PlasmaCannonArm", false}, //add scanner module?
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
