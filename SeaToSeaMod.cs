@@ -442,7 +442,6 @@ namespace ReikaKalseki.SeaToSea
     		{"CameraDroneStasisUpgrade", true},
     		//{"CameraDroneFlightUpgrade", false},
     		{"CustomizeYourSpawns", true},
-    		{"CameraDroneStasisUpgrade", true},
     		{"StasisModule", true},
     		{"StasisTorpedo", true},
     		{"CyclopsLaserCannonModule", false},
