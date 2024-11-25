@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal void populate() { //lazyload because some of these come later
 			addPOI("origin", Vector3.zero);
 			addPOI("aurora", new Vector3(1010, 38, 119)).setActions(prepareAurora);
-			addPOI("prawnbay", new Vector3(986, 4, -1.6F)).setActions(prepareAurora);
+			addPOI("prawnbay", new Vector3(986, 6, -1.6F)).setActions(prepareAurora);
 			addPOI("cove", new Vector3(-855, -881, 403));
 			addPOI("lavacastle", new Vector3(-32, -1204, 142));
 			addPOI("degasi1", new Vector3(85, -260, -356));

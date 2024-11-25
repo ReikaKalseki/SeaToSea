@@ -7,6 +7,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Utility;
 
@@ -70,6 +71,23 @@ namespace ReikaKalseki.SeaToSea {
 			"e3d778b5-a81e-4b64-8dd6-910fb22772db",
 			"f895696c-cdc6-4427-a87f-2b62666ea0cb"
 	    };
+	    
+	    private static readonly HashSet<string> auroraFires = new HashSet<string>() {
+			"14bbf7f0-4276-48bf-868b-317b366edd16",
+			"3877d31d-37a5-4c94-8eef-881a500c58bc",
+			"afe53ea1-d2a8-4f76-8ffb-d41ff6046b52"
+	    };	    
+	    
+	    private static readonly Dictionary<string, Color> auroraPrawnFireColors = new Dictionary<string, Color>{
+					{"xFireFlame", new Color(0, 0.67F, 2)},
+					{"xFireCurl", new Color(1, 1, 1)},
+					{"xAmbiant_Sparks", new Color(0, 1, 1)},
+					{"xAmbiant_Ashes", new Color(0.1F, 0.1F, 1)},
+					{"x_Fire_CrossPlanes", new Color(0.67F, 0.43F, 1)},
+					{"x_Fire_GroundPlane", new Color(0.24F, 0.57F, 1)},
+					{"x_SmokeLight_Cylindrical", new Color(0.67F, 0.72F, 0.97F)},
+					{"x_Fire_Cylindrical", new Color(0.24F, 0.51F, 1)},
+				};
 	    
 	    private static Oxygen playerBaseO2;
 	    
@@ -1291,6 +1309,9 @@ namespace ReikaKalseki.SeaToSea {
 	    	else if (pi && pi.ClassId == VanillaCreatures.GHOST_LEVIATHAN && pi.GetComponentInChildren<GhostLeviatanVoid>()) {
 	    		***
 	    	}*/
+	    	else if (pi && auroraFires.Contains(pi.ClassId) && EnvironmentalDamageSystem.instance.isPositionInAuroraPrawnBay(pi.transform.position)) {
+	    		blueAuroraPrawnFire(go);
+	    	}
 	    	else if (pi && pi.ClassId == "b86d345e-0517-4f6e-bea4-2c5b40f623b4" && pi.transform.parent && pi.transform.parent.name.Contains("ExoRoom_Weldable")) {
 	    		GameObject inner = ObjectUtil.getChildObject(go, "Starship_doors_manual_01/Starship_doors_automatic");
 	    		StarshipDoorLocked d = go.transform.parent.GetComponentInChildren<StarshipDoorLocked>();
@@ -1327,6 +1348,7 @@ namespace ReikaKalseki.SeaToSea {
 				fire.transform.parent = go.transform;
 				fire.transform.position = Vector3.Lerp(p1, p2, 0.5F)+new Vector3(1.3F, -0.05F, -1.7F);
 				fire.transform.localScale = new Vector3(1.8F, 1, 1.8F);
+				blueAuroraPrawnFire(fire);
 				//ObjectUtil.removeComponent<VFXExtinguishableFire>(fire);
 				LiveMixin lv = fire.GetComponent<LiveMixin>();
 				lv.invincible = true;
@@ -1403,7 +1425,74 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	if (pi)
 	    		KeypadCodeSwappingSystem.instance.handleDoor(pi);
-	    }/*
+	    }
+	    
+	    public static void onFireSpawn(VFXExtinguishableFire fire) {/*
+	    	SNUtil.log("Spawned fire "+fire+" @ "+fire.transform.position);
+	    	PrefabIdentifier pi = fire.gameObject.FindAncestor<PrefabIdentifier>();
+	    	SNUtil.log("pi: "+(pi ? pi.classId : "null"));
+	    	if (pi && auroraFires.Contains(pi.ClassId)) {
+	    		blueAuroraPrawnFire(pi.gameObject);
+	    	}*/
+	    	fire.gameObject.EnsureComponent<AuroraFireChecker>();
+	    }
+	    
+	    private static void blueAuroraPrawnFire(GameObject fire) {
+	    	fire.EnsureComponent<AuroraFireBluer>();
+	    }
+	    
+	    private class AuroraFireChecker : MonoBehaviour {
+	    	
+	    	void Update() {
+	    		PrefabIdentifier pi = gameObject.FindAncestor<PrefabIdentifier>();
+	    		if (pi) {
+	    			if (auroraFires.Contains(pi.ClassId) && EnvironmentalDamageSystem.instance.isPositionInAuroraPrawnBay(pi.transform.position)) {
+	    				pi.gameObject.EnsureComponent<AuroraFireBluer>();
+	    			}
+					UnityEngine.Object.Destroy(this);
+	    		}
+	    	}
+	    	
+	    }
+	    
+	    private class AuroraFireBluer : MonoBehaviour {
+	    	
+	    	private float age;
+	    	
+	    	void Update() {
+	    		age += Time.deltaTime;
+	    		bool flag = false;
+		    	//SNUtil.log("Trying to blue prawn bay fire "+gameObject.name+" @ "+transform.position);
+				foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) {
+		    		if (!r)
+		    			continue;
+		    		//SNUtil.log("Checking renderer "+r.name+" in "+r.gameObject.GetFullHierarchyPath());
+					if (auroraPrawnFireColors.ContainsKey(r.name)) {
+		    			foreach (Material m in r.materials) {
+			    			//SNUtil.log("Setting color to "+auroraPrawnFireColors[r.name]);
+							m.color = auroraPrawnFireColors[r.name];
+							flag = true;
+						}
+		    		}
+				}
+				Light l = GetComponentInChildren<Light>();
+				if (l)
+					l.color = new Color(0.55F, 0.67F, 1F);
+				if (flag && age >= 0.5F) {
+					Light l2 = ObjectUtil.addLight(gameObject);
+					l2.color = l.color;
+					l2.intensity = 0.4F;
+					l2.range = 32F;
+					l2.name = "BlueFireLight";
+				
+		    		//SNUtil.log("Bluing complete. Destroying component.");
+					UnityEngine.Object.Destroy(this);
+				}
+		    }
+	    	
+	    }
+	    
+	    /*
 	    
 	    public static void onPingAdd(uGUI_PingEntry e, PingType type, string name, string text) {
 	    	SNUtil.log("Ping ID type "+type+" = "+name+"|"+text+" > "+e.label.text);
@@ -2219,6 +2308,26 @@ namespace ReikaKalseki.SeaToSea {
 	    	skip |= (sc && sc.GetComponent<BioprocessorLogic>());
 	    	skip |= (sc && sc.GetComponent<Planter>());
 	    	return skip;
+	    }
+	    
+	    public static void mergeDeathrunRecipeChange(TechType tt, TechData td) {
+	    	TechData real = RecipeUtil.getRecipe(tt);
+	    	if (real == null) {
+	    		SNUtil.log("Discarding deathrun "+tt+" recipe, as there is no vanilla recipe");
+	    		return;
+	    	}
+	    	SNUtil.log("Integrating deathrun recipe change: "+tt+" = "+RecipeUtil.toString(td)+" into "+RecipeUtil.toString(real));
+	    	Dictionary<TechType, int> cost = RecipeUtil.getIngredientsDict(real);
+	    	foreach (Ingredient i in td.Ingredients) {
+	    		if (cost.ContainsKey(i.techType)) {
+	    			cost[i.techType] = Math.Max(cost[i.techType], i.amount);
+	    		}
+	    	}
+	    	RecipeUtil.modifyIngredients(tt, i => { i.amount = cost[i.techType]; return false;});
+	    }
+	    
+	    public static void mergeDeathrunFragmentScanCount(TechType tt, int amt) {
+	    	PDAHandler.EditFragmentsToScan(tt, Math.Max(amt, ReikaKalseki.Reefbalance.ReefbalanceMod.getScanCountOverride(tt)));
 	    }
 	}
 }
