@@ -310,9 +310,30 @@ namespace ReikaKalseki.SeaToSea {
 			});
 		}
 		
+		t = InstructionHandlers.getTypeBySimpleName("DeathRun.DeathRun");
+		if (t != null)
+			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Patch", SeaToSeaMod.modDLL, filterDeathrun);
+		
 		FCSIntegrationSystem.instance.applyPatches();
 		ItemUnlockLegitimacySystem.instance.applyPatches();
     }
+		
+	private static void filterDeathrun(List<CodeInstruction> codes) {
+		for (int i = 0; i < codes.Count; i++) {
+			CodeInstruction ci = codes[i];
+			if (ci.opcode == OpCodes.Call) {
+				MethodInfo call = (MethodInfo)ci.operand;
+				if (call.Name == "SetTechData") {
+					codes[i] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "mergeDeathrunRecipeChange", false, new Type[]{typeof(TechType), typeof(TechData)});
+				}
+				else if (call.Name == "EditFragmentsToScan") {
+					codes[i] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "mergeDeathrunFragmentScanCount", false, new Type[]{typeof(TechType), typeof(int)});
+				}
+			}
+		}
+		//int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "SMLHelper.V2.Handler.CraftDataHandler", "SetTechData");
+		//
+	}
 		
 	private static void filterStorageContainerInteract(List<CodeInstruction> codes) {
 		int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldloc_1);
