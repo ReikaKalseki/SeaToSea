@@ -450,6 +450,7 @@ namespace ReikaKalseki.SeaToSea
     		{"AD3D_TechFabricatorMod", false},
     		{"PassiveReapers", true},
     		{"PlasmaCannonArm", false}, //add scanner module?
+    		{"Radiant Depths", true}, //TODO id might be wrong
     	};
     	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
     		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {

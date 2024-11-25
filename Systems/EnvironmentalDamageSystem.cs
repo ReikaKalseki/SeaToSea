@@ -34,6 +34,7 @@ namespace ReikaKalseki.SeaToSea {
     	private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
     	internal readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
     	
+    	private readonly static Vector3 auroraPrawnBayCornerPatch = new Vector3(976.95F, 8.85F, -23.55F);
     	private readonly static Vector3 auroraPrawnBayLineA1 = new Vector3(995, 2.6F, -38.6F);
     	private readonly static Vector3 auroraPrawnBayLineA2 = new Vector3(1023.5F, 2.6F, -12.7F);
     	private readonly static Vector3 auroraPrawnBayLineB1 = new Vector3(981.3F, 2.6F, -21.4F);
@@ -150,11 +151,11 @@ namespace ReikaKalseki.SeaToSea {
     		SoundManager.playSoundAt(pdaBeep, pos, false, -1);
     	}
     	
-    	public bool isPlayerInAuroraPrawnBay(Vector3 pos) {
+    	public bool isPositionInAuroraPrawnBay(Vector3 pos) {
     		double d1 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineA1, auroraPrawnBayLineA2);
     		double d2 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineB1, auroraPrawnBayLineB2);
     		double d3 = MathUtil.getDistanceToLineSegment(pos, (auroraPrawnBayLineA1+auroraPrawnBayLineB1)/2F, (auroraPrawnBayLineA2+auroraPrawnBayLineB2)/2F);
-    		return Math.Min(d1, Math.Min(d3, d2)) <= 6.25;
+    		return Math.Min(d1, Math.Min(d3, d2)) <= 6.25 || (pos-auroraPrawnBayCornerPatch).sqrMagnitude <= 36;
     	}
     	
     	public bool isPlayerInOcean() {
@@ -541,7 +542,7 @@ namespace ReikaKalseki.SeaToSea {
     		}
     		if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
     			ret = "LavaPitEntrance";
-    		if (isPlayerInAuroraPrawnBay(pos))
+    		if (isPositionInAuroraPrawnBay(pos))
     			ret = "AuroraPrawnBay";
     		if (Vector3.Distance(auroraPrawnBayDoor, pos) <= 3)
     			ret = "AuroraPrawnBayDoor";
