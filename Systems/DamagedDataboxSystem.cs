@@ -33,6 +33,7 @@ namespace ReikaKalseki.SeaToSea {
 			data[new Vector3(-114.6F, -234.5F, 854)] = new DamagedDatabox(20, 0.4F); //autofarmer
 			data[new Vector3(986.3F, -271.8F, 1378.6F)] = new DamagedDatabox(45, 0.85F); //rebreather v2
 			data[new Vector3(110, -264, -369)] = new DamagedDatabox(20, 0.25F, 2); //high cap tank in jellyshroom
+			data[new Vector3(-809.76F, -302.24F, -876.86F)] = new DamagedDatabox(20, 0.25F, 2); //high cap tank by keen
 		}
 		
 		internal void onDataboxSpawn(GameObject go) {

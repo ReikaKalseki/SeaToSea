@@ -22,40 +22,62 @@ namespace ReikaKalseki.SeaToSea
 {
   public static class C2CItems {
     
-    internal static SeamothVoidStealthModule voidStealth;
-    internal static CyclopsHeatModule cyclopsHeat;
-    internal static SeamothDepthModule depth1300;
-    internal static SeamothPowerSealModule powerSeal;
-    internal static SeamothHeatSinkModule heatSinkModule;
-    internal static SeamothSpeedModule speedModule;
-    internal static VehicleLightModule lightModule;
-    internal static SeamothTetherModule tetherModule;
+    public static SeamothVoidStealthModule voidStealth;
+    public static CyclopsHeatModule cyclopsHeat;
+    public static SeamothDepthModule depth1300;
+    public static SeamothPowerSealModule powerSeal;
+    public static SeamothHeatSinkModule heatSinkModule;
+    public static SeamothSpeedModule speedModule;
+    public static VehicleLightModule lightModule;
+    public static SeamothTetherModule tetherModule;
     
-    internal static SealedSuit sealSuit;
-    internal static SealedGloves sealGloves;
-    internal static AzuriteBattery t2Battery;
+    public static SealedSuit sealSuit;
+    public static SealedGloves sealGloves;
+    public static AzuriteBattery t2Battery;
     
-    internal static RebreatherV2 rebreatherV2;
-    internal static LiquidTank liquidTank;
+    public static RebreatherV2 rebreatherV2;
+    public static LiquidTank liquidTank;
     
-    internal static BreathingFluid breathingFluid;
-    internal static SeamothHeatSink heatSink;
-    internal static CurativeBandage bandage;
-    internal static KharaaTreatment treatment;
+    public static BreathingFluid breathingFluid;
+    public static SeamothHeatSink heatSink;
+    public static CurativeBandage bandage;
+    public static KharaaTreatment treatment;
     
-    internal static AlkaliPlant alkali;
-    internal static VentKelp kelp;
-    internal static HealingFlower healFlower;
-    internal static MountainGlow mountainGlow;
-    internal static SanctuaryPlant sanctuaryPlant;
+    public static AlkaliPlant alkali;
+    public static VentKelp kelp;
+    public static HealingFlower healFlower;
+    public static MountainGlow mountainGlow;
+    public static SanctuaryPlant sanctuaryPlant;
+    
+    public static TechType emperorRootCommon;
+    public static readonly Dictionary<string, EmperorRoot> emperorRoots = new Dictionary<string, EmperorRoot>();
     
     public static BrokenTablet brokenRedTablet;
     public static BrokenTablet brokenWhiteTablet;
     public static BrokenTablet brokenOrangeTablet;
     public static BrokenTablet brokenBlueTablet;
     
+    public static DeepStalker deepStalker;
+    public static SanctuaryJellyray sanctuaryray;
+    public static PurpleHolefish purpleHolefish;
+    public static PurpleBoomerang purpleBoomerang;
+    public static PurpleHoopfish purpleHoopfish;
+    public static VoidSpikeLeviathan voidSpikeLevi;
+    
+    public static TechType brineCoral;
+    public static BrineCoralPiece brineCoralPiece;
+    
+    public static EmperorRootOil emperorRootOil;
+    
+    public static Bioprocessor processor;
+    public static RebreatherRecharger rebreatherCharger;
+    public static GeyserFilter geyserFilter;
+    //public static IncubatorInjector incubatorInjector;
+    
     public static TechCategory chemistryCategory;
     public static TechCategory ingotCategory;
+    
+    public static CraftTree.Type hatchingEnzymes;
     
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
     private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
@@ -111,6 +133,30 @@ namespace ReikaKalseki.SeaToSea
    		CraftingItems.addAll();
    	}
    
+   internal static void addCreatures() {
+	    deepStalker = new DeepStalker(SeaToSeaMod.itemLocale.getEntry("DeepStalker"));
+	    deepStalker.Patch();	    
+	    sanctuaryray = new SanctuaryJellyray(SeaToSeaMod.itemLocale.getEntry("SanctuaryJellyray"));
+	    sanctuaryray.Patch();
+	    purpleBoomerang = new PurpleBoomerang(SeaToSeaMod.itemLocale.getEntry("PurpleBoomerang"));
+	    purpleBoomerang.cookableIntoBase = 1;
+	    purpleBoomerang.Patch();
+	    purpleHolefish = new PurpleHolefish(SeaToSeaMod.itemLocale.getEntry("PurpleHolefish"));
+	    purpleHolefish.Patch();
+	    purpleHoopfish = new PurpleHoopfish(SeaToSeaMod.itemLocale.getEntry("PurpleHoopfish"));
+	    purpleHoopfish.cookableIntoBase = 1;
+	    purpleHoopfish.Patch();
+	    
+	    WaterParkCreature.waterParkCreatureParameters[deepStalker.TechType] = SNUtil.getModifiedACUParams(TechType.Stalker, 1, 1, 1, 1.5F);
+	    WaterParkCreature.waterParkCreatureParameters[sanctuaryray.TechType] = SNUtil.getModifiedACUParams(TechType.Jellyray, 1, 1, 1, 1.25F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleBoomerang.TechType] = SNUtil.getModifiedACUParams(TechType.Boomerang, 1, 1, 1, 0.67F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleHoopfish.TechType] = SNUtil.getModifiedACUParams(TechType.Hoopfish, 1.2F, 1.2F, 1.2F, 1.25F);
+	    WaterParkCreature.waterParkCreatureParameters[purpleHolefish.TechType] = SNUtil.getModifiedACUParams(TechType.HoleFish, 4F, 4F, 4F, 3.0F);
+	    
+	    voidSpikeLevi = new VoidSpikeLeviathan(SeaToSeaMod.itemLocale.getEntry("VoidSpikeLevi"));
+	    voidSpikeLevi.register();
+   }
+   
    	internal static void addMainItems() {
 		breathingFluid.Patch();
 		heatSink.Patch();
@@ -160,11 +206,11 @@ namespace ReikaKalseki.SeaToSea
 		XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(alkali.ClassID);
 		alkali.addPDAEntry(e.pda, 3, e.getField<string>("header"));
 		SNUtil.log(" > "+alkali);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_CaveFloor, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.Dunes_CaveFloor, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.KooshZone_CaveFloor, 1, 2F);
-		GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Medium, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
+		GenUtil.registerPlantWorldgen(alkali, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
+		GenUtil.registerPlantWorldgen(alkali, BiomeType.Mountains_CaveFloor, 1, 0.5F);
+		GenUtil.registerPlantWorldgen(alkali, BiomeType.Dunes_CaveFloor, 1, 0.5F);
+		GenUtil.registerPlantWorldgen(alkali, BiomeType.KooshZone_CaveFloor, 1, 2F);
+		GenUtil.registerPlantWorldgen(alkali, BiomeType.SeaTreaderPath_CaveFloor, 1, 1F);
 		//GenUtil.registerSlotWorldgen(alkali.ClassID, alkali.PrefabFileName, alkali.TechType, false, BiomeType.UnderwaterIslands_ValleyFloor, 1, 0.5F);
 		
 		kelp = new VentKelp();
@@ -178,22 +224,40 @@ namespace ReikaKalseki.SeaToSea
 		e = SeaToSeaMod.itemLocale.getEntry(healFlower.ClassID);
 		healFlower.addPDAEntry(e.pda, 5, e.getField<string>("header"));
 		SNUtil.log(" > "+healFlower);
-		GenUtil.registerSlotWorldgen(healFlower.ClassID, healFlower.PrefabFileName, healFlower.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Near, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
+		GenUtil.registerPlantWorldgen(healFlower, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
 		
 		mountainGlow = new MountainGlow();
 		mountainGlow.Patch();	
 		e = SeaToSeaMod.itemLocale.getEntry(mountainGlow.ClassID);
 		mountainGlow.addPDAEntry(e.pda, 8, e.getField<string>("header"));
 		SNUtil.log(" > "+mountainGlow);
-		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Grass, 1, 0.5F);
-		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Rock, 1, 0.1F);
-		GenUtil.registerSlotWorldgen(mountainGlow.ClassID, mountainGlow.PrefabFileName, mountainGlow.TechType, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Sand, 1, 0.3F);
+		GenUtil.registerPrefabWorldgen(mountainGlow, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Grass, 1, 0.5F);
+		GenUtil.registerPrefabWorldgen(mountainGlow, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Rock, 1, 0.1F);
+		GenUtil.registerPrefabWorldgen(mountainGlow, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Sand, 1, 0.3F);
 		
 		sanctuaryPlant = new SanctuaryPlant();
 		sanctuaryPlant.Patch();	
 		e = SeaToSeaMod.itemLocale.getEntry(sanctuaryPlant.ClassID);
 		sanctuaryPlant.addPDAEntry(e.pda, 10, e.getField<string>("header"));
 		SNUtil.log(" > "+sanctuaryPlant);
+	    
+	    e = SeaToSeaMod.itemLocale.getEntry("BRINE_CORAL");
+	    brineCoral = SNUtil.addTechTypeToVanillaPrefabs(e, SeaToSeaMod.lrCoralClusters.ToArray());
+	    SNUtil.addPDAEntry(brineCoral, e.key, e.name, 3, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+	    
+	    brineCoralPiece = new BrineCoralPiece(SeaToSeaMod.itemLocale.getEntry("BrineCoralPiece"));
+	    brineCoralPiece.Patch();
+		
+		e = SeaToSeaMod.itemLocale.getEntry("EMPEROR_ROOT");
+		foreach (string pfb in VanillaFlora.BLOOD_ROOT_FERTILE) {
+			emperorRoots[pfb] = new EmperorRoot(e, pfb);
+			emperorRoots[pfb].Patch();
+		}
+		emperorRootCommon = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
+	    SNUtil.addPDAEntry(emperorRootCommon, e.key, e.name, 5, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+	    
+	    emperorRootOil = new EmperorRootOil(SeaToSeaMod.itemLocale.getEntry("EmperorRootOil"));
+	    emperorRootOil.Patch();
 		
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*0.8F);
@@ -201,7 +265,9 @@ namespace ReikaKalseki.SeaToSea
 		BioReactorHandler.Main.SetBioReactorCharge(mountainGlow.seed.TechType, BaseBioReactor.GetCharge(TechType.Oculus)*2F);
 		BioReactorHandler.Main.SetBioReactorCharge(sanctuaryPlant.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBasketPlantSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, BaseBioReactor.GetCharge(TechType.CreepvinePiece));
-		BioReactorHandler.Main.SetBioReactorCharge(CustomEgg.getEgg(SeaToSeaMod.deepStalker.TechType).TechType, BaseBioReactor.GetCharge(TechType.StalkerEgg)*0.9F);
+		BioReactorHandler.Main.SetBioReactorCharge(CustomEgg.getEgg(deepStalker.TechType).TechType, BaseBioReactor.GetCharge(TechType.StalkerEgg)*0.9F);
+		BioReactorHandler.Main.SetBioReactorCharge(CustomEgg.getEgg(purpleHolefish.TechType).TechType, BaseBioReactor.GetCharge(TechType.GasopodEgg)*1.5F);
+		BioReactorHandler.Main.SetBioReactorCharge(emperorRootOil.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*0.5F);
    	}
    
    	internal static void addTablets() {
@@ -210,6 +276,35 @@ namespace ReikaKalseki.SeaToSea
         brokenWhiteTablet.register();
         brokenOrangeTablet.register();
    	}
+   
+   internal static void addMachines() {
+   		XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry("bioprocessor");
+        processor = new Bioprocessor(e);
+        processor.Patch();       
+        SNUtil.log("Registered custom machine "+processor);
+        processor.addPDAPage(e.pda, "Bioprocessor");
+        processor.addFragments(4, 5, SeaToSeaMod.bioprocFragments);
+        Bioprocessor.addRecipes();
+        
+        e = SeaToSeaMod.itemLocale.getEntry("rebreathercharger");
+        rebreatherCharger = new RebreatherRecharger(e);
+        rebreatherCharger.Patch();
+        SNUtil.log("Registered custom machine "+rebreatherCharger);
+        rebreatherCharger.addPDAPage(e.pda, "RebreatherCharger");
+        rebreatherCharger.addFragments(4, 7.5F, SeaToSeaMod.rebreatherChargerFragments);
+        
+        e = SeaToSeaMod.itemLocale.getEntry("geyserfilter");
+        geyserFilter = new GeyserFilter(e);
+        geyserFilter.Patch();
+        SNUtil.log("Registered custom machine "+geyserFilter);
+        geyserFilter.addPDAPage(e.pda, "GeyserFilter");
+        /*
+        e = SeaToSeaMod.itemLocale.getEntry("incubatorinjector");
+        incubatorInjector = new IncubatorInjector(e);
+        incubatorInjector.Patch();
+        SNUtil.log("Registered custom machine "+incubatorInjector);
+        incubatorInjector.addPDAPage(e.pda, "??");*/
+   }
    
    	internal static void postAdd() {		
 		registerTabletTechKey(brokenBlueTablet);

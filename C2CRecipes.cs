@@ -32,6 +32,11 @@ namespace ReikaKalseki.SeaToSea
     private static DuplicateRecipeDelegateWithRecipe altBleach;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     
+    //private static TechData hatchingEnzymesReplacement;
+    
+    private static CraftTree.Type precursorEnzymeFab;
+    private static ModCraftTreeRoot precursorEnzymeTree;
+    
     private static readonly List<TechType> removedVanillaUnlocks = new List<TechType>();
     private static readonly List<TechType> specialRecipes = new List<TechType>();
     
@@ -163,6 +168,18 @@ namespace ReikaKalseki.SeaToSea
         fuel.craftingTime = 6;
         fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, 3).addIngredient(TechType.CrashPowder, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
         
+        BasicCraftingItem electro = CraftingItems.getItem(CraftingItems.Items.Electrolytes);
+        electro.craftingTime = 1;
+        electro.addIngredient(C2CItems.sanctuaryPlant.seed, hard ? 3 : 2).addIngredient(C2CItems.brineCoralPiece, 4).addIngredient(sulfurAcid, 1);
+        
+        //BasicCraftingItem pump = CraftingItems.getItem(CraftingItems.Items.FluidPump);
+        //pump.craftingTime = 5;
+        //pump.addIngredient(TechType.PlasteelIngot, 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(motor, 4).addIngredient(TechType.Pipe, 10);
+        
+        BasicCraftingItem microfilter = CraftingItems.getItem(CraftingItems.Items.MicroFilter);
+        microfilter.craftingTime = 6F;
+        microfilter.addIngredient(TechType.Titanium, 2).addIngredient(C2CItems.mountainGlow.seed, hard ? 2 : 1).addIngredient(TechType.FiberMesh, 5).addIngredient(TechType.Diamond, 1).addIngredient(TechType.AluminumOxide, hard ? 3 : 2);
+        
         C2CItems.addCraftingItems();
         
         rec = RecipeUtil.copyRecipe(bacteria.getRecipe());
@@ -293,9 +310,18 @@ namespace ReikaKalseki.SeaToSea
         
         RecipeUtil.removeRecipe(TechType.HydrochloricAcid, true);
 		RecipeUtil.removeRecipe(TechType.Benzene, true);
+		
+		//hatchingEnzymesReplacement = RecipeUtil.copyRecipe(RecipeUtil.getRecipe(TechType.HatchingEnzymes));
+		//RecipeUtil.removeRecipe(TechType.HatchingEnzymes, true);
+		RecipeUtil.RecipeNode node = RecipeUtil.getRecipeNode(TechType.HatchingEnzymes);
+		CraftTreeHandler.Main.RemoveNode(node.recipeType, node.path.Split('\\'));
+		precursorEnzymeTree = CraftTreeHandler.CreateCustomCraftTreeAndType("PrecursorEnzymes", out precursorEnzymeFab);
+		precursorEnzymeTree.AddCraftingNode(TechType.HatchingEnzymes);
+		//RecipeUtil.changeRecipePath(TechType.HatchingEnzymes, "Resources", "C2Chemistry");
+		RecipeUtil.setItemCategory(TechType.HatchingEnzymes, TechGroup.Uncategorized, TechCategory.Misc); //this removes from PDA
 		C2CItems.setChemistry(TechType.Bleach);
 		C2CItems.setChemistry(TechType.Polyaniline);
-		C2CItems.setChemistry(TechType.HatchingEnzymes);
+		//C2CItems.setChemistry(TechType.HatchingEnzymes);
        	
 		RecipeUtil.changeRecipePath(TechType.TitaniumIngot, "Resources", "C2CIngots");
 		RecipeUtil.setItemCategory(TechType.TitaniumIngot, TechGroup.Resources, C2CItems.ingotCategory);
@@ -303,7 +329,7 @@ namespace ReikaKalseki.SeaToSea
 		
         C2CItems.voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
         C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(armor, 2);
-        C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
+        C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.CALCITE), 8).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
         C2CItems.heatSinkModule.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(TechType.Pipe, 5).addIngredient(motor, 1).addIngredient(TechType.Benzene, 2);
         C2CItems.speedModule.addIngredient(TechType.Nickel, 5).addIngredient(motor, 4).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.Gravsphere, 1);
         C2CItems.lightModule.addIngredient(TechType.LEDLight, 3).addIngredient(TechType.WiringKit, 1).addIngredient(TechType.CopperWire, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol), 2);
@@ -312,10 +338,10 @@ namespace ReikaKalseki.SeaToSea
         C2CItems.sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
         C2CItems.t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 		C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
-        C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
+        C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(SeaToSeaMod.geogel, 4).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
+        C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(C2CItems.breathingFluid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
         C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Lithium, 2);
-        C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(TechType.PurpleVasePlantSeed, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
-		C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(C2CItems.healFlower.seed.TechType, 3).addIngredient(TechType.JellyPlant, 1).addIngredient(TechType.Bleach, 1);
+        C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(SeaToSeaMod.geogel, 1).addIngredient(C2CItems.healFlower.seed, 3).addIngredient(TechType.JellyPlant, 1).addIngredient(TechType.Bleach, 1);
 		C2CItems.treatment.addIngredient(C2CItems.bandage, 1).addIngredient(TechType.Glass, 1).addIngredient(TechType.Titanium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42), 2);
 		C2CItems.addMainItems();
         /*
@@ -386,6 +412,15 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.ReinforcedDiveSuit, C2CItems.sealGloves.TechType, 1);
         addItemToRecipe(TechType.ReinforcedDiveSuit, heatSeal.TechType, 2);
         
+        addItemToRecipe(TechType.Stillsuit, C2CItems.mountainGlow.seed.TechType, 3);
+        
+        addItemToRecipe(TechType.SwimChargeFins, electro.TechType, 1);
+        
+        addItemToRecipe(TechType.BaseNuclearReactor, electro.TechType, 2);
+        addItemToRecipe(TechType.BaseNuclearReactor, armor.TechType, 2);
+        RecipeUtil.removeIngredient(TechType.BaseNuclearReactor, TechType.PlasteelIngot);
+        RecipeUtil.removeIngredient(TechType.BaseNuclearReactor, TechType.Lead);
+        
         RecipeUtil.modifyIngredients(TechType.AramidFibers, i => {if (i.techType == TechType.FiberMesh) i.amount = 2; return false;});
         
         RecipeUtil.modifyIngredients(TechType.PlasteelIngot, i => {if (i.techType == TechType.Lithium) i.amount = i.amount*3/2; return false;});        
@@ -403,19 +438,17 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
         addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2);
         addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
-        addItemToRecipe(TechType.PrecursorIonBattery, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        addItemToRecipe(TechType.PrecursorIonBattery, electro.TechType, 2);
         RecipeUtil.getRecipe(TechType.PrecursorIonBattery).craftAmount = 2;
         addItemToRecipe(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         addItemToRecipe(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
-        addItemToRecipe(TechType.PrecursorIonPowerCell, sulfurAcid.TechType, 1);
         RecipeUtil.removeIngredient(TechType.PrecursorIonPowerCell, TechType.Silicone);
         
-        addItemToRecipe(TechType.Stillsuit, C2CItems.mountainGlow.seed.TechType, 3);
-        
         addItemToRecipe(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
+        addItemToRecipe(TechType.CyclopsShieldModule, electro.TechType, 1);
         
-        addItemToRecipe(TechType.CyclopsThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
-        addItemToRecipe(TechType.ExosuitThermalReactorModule, C2CItems.sanctuaryPlant.seed.TechType, 2);
+        addItemToRecipe(TechType.CyclopsThermalReactorModule, electro.TechType, 4);
+        addItemToRecipe(TechType.ExosuitThermalReactorModule, electro.TechType, 3);
         
         addItemToRecipe(TechType.RocketBase, CraftingItems.getItem(CraftingItems.Items.HullPlating).TechType, 4);
         addItemToRecipe(TechType.RocketBase, TechType.Silicone, 8);
@@ -440,6 +473,7 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
         addItemToRecipe(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
         addItemToRecipe(TechType.RocketStage3, TechType.ReactorRod, 4);
+        addItemToRecipe(TechType.RocketStage3, electro.TechType, 5);
         
         addItemToRecipe(TechType.HighCapacityTank, TechType.Aerogel, 1);
         
@@ -474,6 +508,7 @@ namespace ReikaKalseki.SeaToSea
         }
         
         addItemToRecipe(TechType.Cyclops, armor.TechType, 4);
+        addItemToRecipe(TechType.Cyclops, electro.TechType, 3);
         addItemToRecipe(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         
         RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
@@ -484,7 +519,10 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
         RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Titanium);
         
-        //addItemToRecipe(TechType.CyclopsHullModule1, ?, 3);
+        addItemToRecipe(TechType.ExosuitJetUpgradeModule, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 4);
+        addItemToRecipe(TechType.ExosuitJetUpgradeModule, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 5);
+        
+        addItemToRecipe(TechType.CyclopsHullModule1, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 15);
         addItemToRecipe(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
         
         addItemToRecipe(TechType.LaserCutter, TechType.AluminumOxide, 2);
@@ -521,6 +559,8 @@ namespace ReikaKalseki.SeaToSea
         RecipeUtil.removeIngredient(TechType.BaseFiltrationMachine, TechType.CopperWire);
         addItemToRecipe(TechType.BaseFiltrationMachine, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 1);
         
+        //replace fiber mesh with microbial filter
+        
         RecipeUtil.addRecipe(TechType.PrecursorKey_Red, TechGroup.Personal, TechCategory.Equipment, new string[]{"Machines"});
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.PrecursorIonCrystal, 1);
         addItemToRecipe(TechType.PrecursorKey_Red, TechType.MercuryOre, 6);
@@ -551,9 +591,11 @@ namespace ReikaKalseki.SeaToSea
         			i.amount = 3;
             	break;
             }
-        	return false;
+            return false;
         });
         addItemToRecipe(TechType.HatchingEnzymes, TechType.ShellGrassSeed, 1);
+        addItemToRecipe(TechType.HatchingEnzymes, C2CItems.emperorRootOil.TechType, 3);
+        
         CraftDataHandler.SetItemSize(TechType.ShellGrassSeed, new Vector2int(1, 1));
         CraftDataHandler.SetItemSize(TechType.RedGreenTentacleSeed, new Vector2int(1, 2));
 
@@ -604,6 +646,8 @@ namespace ReikaKalseki.SeaToSea
         	addItemToRecipe(TechType.SeamothElectricalDefense, TechType.CopperWire, 3);
         	CraftDataHandler.SetItemSize(TechType.PowerCell, new Vector2int(1, 2));
         	CraftDataHandler.SetItemSize(TechType.LaserCutter, new Vector2int(2, 1));
+        	
+        	//removeVanillaUnlock(TechType.CyclopsShieldModule);
        	}
         CraftDataHandler.SetItemSize(TechType.PrecursorIonPowerCell, new Vector2int(1, 2));
         CraftDataHandler.SetItemSize(TechType.Jumper, new Vector2int(1, 1));
@@ -645,8 +689,17 @@ namespace ReikaKalseki.SeaToSea
        	//RecipeUtil.logChangedRecipes();
     }
     
+    public static void replaceFiberMeshWithMicroFilter(TechType tt) {
+		RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType, RecipeUtil.removeIngredient(tt, TechType.FiberMesh).amount);
+    }
+    
     private static void addItemToRecipe(TechType tt, TechType add, int amt = 1) {
     	RecipeUtil.addIngredient(tt, add, amt);
+    	specialRecipes.Add(tt);
+    }
+    
+    private static void addItemToRecipe(TechType tt, TechData td, TechType add, int amt = 1) {
+    	RecipeUtil.addIngredient(td, add, amt);
     	specialRecipes.Add(tt);
     }
     
@@ -754,6 +807,14 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getT2BatteryRepair() {
     	return t2BatteryRepair;
+    }
+    /*
+    public static TechData getHatchingEnzymeRecipe() {
+    	return hatchingEnzymesReplacement;
+    }*/
+    
+    public static CraftTree.Type getHatchingEnzymeFab() {
+    	return precursorEnzymeFab;
     }
     
     class LockedRecipeList : List<Ingredient> {

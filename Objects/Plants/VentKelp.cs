@@ -140,6 +140,8 @@ namespace ReikaKalseki.SeaToSea {
 				RenderUtil.setEmissivity(r, 8, new HashSet<int>{1});
 				RenderUtil.swapToModdedTextures(r, this);
 			}
+			
+			Ecocean.PlantHidingCollider.addToObject(child.GetComponentInChildren<Collider>(), new Color(0.75F, 0.3F, 1F));
 		}
 		
 		public override float getScaleInGrowbed(bool indoors) {

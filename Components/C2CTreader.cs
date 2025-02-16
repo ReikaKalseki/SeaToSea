@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea
 						int amt = DeepStalkerTag.countDeepStalkersNear(transform);
 						//int amt = stalkers.Count;
 						for (int i = amt; i < 3; i++) {
-							GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.deepStalker.ClassID, true, true);
+							GameObject go = ObjectUtil.createWorldObject(C2CItems.deepStalker.ClassID, true, true);
 							go.transform.position = MathUtil.getRandomVectorAround(transform.position, 12).setY(transform.position.y+2);
 							go.GetComponent<DeepStalkerTag>().bindToTreader(GetComponent<SeaTreader>());
 						}

@@ -17,12 +17,12 @@ namespace ReikaKalseki.SeaToSea
 			foreach (Messages m in Enum.GetValues(typeof(Messages))) {
 				Message attr = getAttr(m);
 				XMLLocale.LocaleEntry e = SeaToSeaMod.miscLocale.getEntry(attr.key);
-				PDAMessagePrompts.instance.addPDAMessage(e.key, e.desc, e.pda);
+				PDAMessagePrompts.instance.addPDAMessage(e);
 			}
 		}
 		
 		public enum Messages {
-			[Message("voidspikeenter")]VoidSpike,
+			//[Message("voidspikeenter")]VoidSpike,
 			[Message("aurorafire")]AuroraFireWarn,
 			[Message("aurorafire_norad")]AuroraFireWarn_NoRad,
 			//[Message("auroracut")]AuroraSalvage,
@@ -35,6 +35,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("followradio")]FollowRadioPrompt,
 			[Message("underislandgeyserminerals")]UnderwaterIslandsPrompt,
 			[Message("sanctuaryprompt")]SanctuaryPrompt,
+			[Message("hiddenseamothprompt")]JellySeamothDepthPrompt,
 			[Message("meteorprompt")]MeteorPrompt,
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("needscaneverything")]NeedScansMessage,

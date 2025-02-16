@@ -90,7 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void Start() {
 			SNUtil.log("Reinitializing rebreather charger");
-			SeaToSeaMod.rebreatherCharger.initializeMachine(gameObject);
+			C2CItems.rebreatherCharger.initializeMachine(gameObject);
 		}
 		
 		protected override void load(System.Xml.XmlElement data) {

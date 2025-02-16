@@ -22,6 +22,8 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Color BLUE_COLOR = new Color(0, 112/255F, 1, 1);
 		public static readonly Color PURPLE_COLOR = new Color(160/255F, 12/255F, 1);
 		
+		public static TechType unlock { get; private set; }
+		
 		private int FRAGMENT_COUNT;
 	        
 	    internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
@@ -91,7 +93,7 @@ namespace ReikaKalseki.SeaToSea {
 			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, "Lifeforms/Coral");
 			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/Bacteria"));
 			page.register();
-			TechType unlock = CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType;
+			unlock = CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType;
         	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){unlock});
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
 			e.key = TechType;
@@ -180,7 +182,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void OnScanned() {
 			scanned = true;
-			SNUtil.addBlueprintNotification(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType);
+			SNUtil.addBlueprintNotification(MushroomTreeBacterialColony.unlock);
 		}
 		
 	}

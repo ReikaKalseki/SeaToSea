@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public GeyserFilter(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc, "bedc40fb-bd97-4b4d-a943-d39360c9c7bd") { //nuclear waste disposal
-			addIngredient(TechType.FiberMesh, 4);
+			addIngredient(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType, 4);
 			addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1);
 			addIngredient(TechType.Titanium, 3);
 			addIngredient(TechType.CopperWire, 2);
@@ -122,7 +122,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void Start() {
 			SNUtil.log("Reinitializing geyser filter");
-			SeaToSeaMod.geyserFilter.initializeMachine(gameObject);
+			C2CItems.geyserFilter.initializeMachine(gameObject);
 		}
 		
 		public override bool isWorking() {
@@ -176,12 +176,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (!liveGeyser || liveGeyser.erupting) {
 				collectionTime += increase;
 				if (collectionTime >= GeyserFilter.PRODUCTION_RATE) {
+					collectionTime = 0; //reset time no matter what, otherwise lags trying to add when full
 					if (addItemToInventory(CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType) > 0) {
-						collectionTime = 0;
 						showedFullMessage = false;
 					}
 					else if (!showedFullMessage) {
-						SNUtil.writeToChat(Language.main.Get(SeaToSeaMod.geyserFilter.TechType)+" in "+WorldUtil.getRegionalDescription(transform.position, true)+" is full");
+						SNUtil.writeToChat(Language.main.Get(C2CItems.geyserFilter.TechType)+" in "+WorldUtil.getRegionalDescription(transform.position, true)+" is full");
 						showedFullMessage = true;
 					}
 				}

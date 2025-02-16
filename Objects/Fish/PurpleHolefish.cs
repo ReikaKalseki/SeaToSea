@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 			bigEgg = false;
 			eggMaturationTime = 1200;
 			eggSpawnRate = 1.5F;
-			eggSpawns.Add(BiomeType.UnderwaterIslands_IslandCaveFloor);
+			//eggSpawns.Add(BiomeType.UnderwaterIslands_IslandCaveFloor);
 	    }
 
 		public override Vector2int SizeInInventory {

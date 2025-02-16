@@ -152,9 +152,14 @@ namespace ReikaKalseki.SeaToSea {
 			Collider[] boxes = GetComponentsInChildren<Collider>(true);
 			for (int i = 0; i < 14; i++) {
 				Collider c = boxes[UnityEngine.Random.Range(0, boxes.Length)];
+				if (!c) {
+					continue;
+				}
 				Vector3 pos = MathUtil.getRandomVectorBetween(c.bounds.min, c.bounds.max);
 				if (UnityEngine.Random.Range(0F, 1F) <= 0.75) {
 					ParticleSystem fx = WorldUtil.spawnParticlesAt(pos, "ee56cc29-1da3-41d7-8cf3-d8f028cb9559", 5);
+					if (!fx)
+						continue;
 					ParticleSystem.MainModule mod = fx.main;
 					mod.duration *= 1.5F;
 					mod.startSizeMultiplier *= 4.5F;
@@ -169,6 +174,8 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else {
 					ParticleSystem fx = getSmokeFX();
+					if (!fx)
+						continue;
 					fx.transform.position = pos;
 					WorldUtil.setParticlesTemporary(fx, UnityEngine.Random.Range(0.33F, 0.75F));
 					ParticleSystem.MainModule mod = fx.main;

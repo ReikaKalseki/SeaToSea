@@ -41,7 +41,6 @@ namespace ReikaKalseki.SeaToSea
 			o2.oxygenAvailable = 0;
 			o2.oxygenCapacity = LiquidBreathingSystem.TANK_CAPACITY;
 			Battery b = go.EnsureComponent<Battery>();
-			b.charge = 0;
 			b._capacity = LiquidBreathingSystem.ITEM_VALUE;
 		}
 		

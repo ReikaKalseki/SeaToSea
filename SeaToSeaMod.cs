@@ -30,12 +30,14 @@ namespace ReikaKalseki.SeaToSea
     internal static readonly XMLLocale pdaLocale = new XMLLocale(modDLL, "XML/pda.xml");
     internal static readonly XMLLocale signalLocale = new XMLLocale(modDLL, "XML/signals.xml");
     internal static readonly XMLLocale trackerLocale = new XMLLocale(modDLL, "XML/tracker.xml");
+    internal static readonly XMLLocale mouseoverLocale = new XMLLocale(modDLL, "XML/mouseover.xml");
     internal static readonly XMLLocale miscLocale = new XMLLocale(modDLL, "XML/misc.xml");
     
     public static readonly WorldgenDatabase worldgen = new WorldgenDatabase();
     
     private static Dictionary<string, Dictionary<string, Texture2D>> degasiBaseTextures = new Dictionary<string, Dictionary<string, Texture2D>>();
     
+    //exclusion radius, target count, max range
     private static readonly Dictionary<Vector3, Tuple<float, int, float>> mercurySpawners = new Dictionary<Vector3, Tuple<float, int, float>>(){
     	{new Vector3(908.7F, -235.1F, 615.7F), Tuple.Create(2F, 4, 32F)},
     	{new Vector3(904.3F, -247F, 668.8F), Tuple.Create(1F, 3, 32F)},
@@ -49,12 +51,22 @@ namespace ReikaKalseki.SeaToSea
     	{new Vector3(1228, -275.6F, 483.9F), Tuple.Create(2F, 3, 32F)}
     };
     
+    private static readonly Dictionary<Vector3, Tuple<float, int, float>> calciteSpawners = new Dictionary<Vector3, Tuple<float, int, float>>(){
+    	{new Vector3(-993.1F, -630.4F, -618.2F), Tuple.Create(4F, 3, 24F)},
+    	{new Vector3(-983.3F, -623.9F, -561.1F), Tuple.Create(4F, 5, 32F)},
+    	{new Vector3(-666.8F, -688.0F, -42.14F), Tuple.Create(4F, 6, 48F)},
+    	{new Vector3(-674.2F, -622.0F, -221.6F), Tuple.Create(4F, 6, 48F)},
+    	{new Vector3(-719.4F, -673.7F, -39.6F), Tuple.Create(4F, 5, 48F)},
+    	{new Vector3(-864.5F, -672.7F, -128.6F), Tuple.Create(4F, 8, 48F)},
+    };
+    
     public static readonly TechnologyFragment[] rebreatherChargerFragments = new TechnologyFragment[]{
     	new TechnologyFragment("f350b8ae-9ee4-4349-a6de-d031b11c82b1", go => go.transform.localScale = new Vector3(1, 3, 1)),
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230", go => go.transform.localScale = new Vector3(1, 2, 1)),
   		//new TechnologyFragment("589bf5a6-6866-4828-90b2-7266661bb6ed"),
   		new TechnologyFragment("3c076458-505e-4683-90c1-34c1f7939a0f", go => go.transform.localScale = new Vector3(1, 1, 0.2F)),
     };
+    
     public static readonly TechnologyFragment[] bioprocFragments = new TechnologyFragment[]{
     	new TechnologyFragment("85259b00-2672-497e-bec9-b200a1ab012f"),
     	//new TechnologyFragment("ba258aad-07e9-4c9b-b517-2ce7400db7b2"),
@@ -63,10 +75,22 @@ namespace ReikaKalseki.SeaToSea
     	new TechnologyFragment("f744e6d9-f719-4653-906b-34ed5dbdb230"),
     };
     
+    public static readonly HashSet<string> lrCoralClusters = new HashSet<string>{
+    	"a711c0fa-f31e-4426-9164-a9a65557a9a2",
+		//"e0e3036d-93fc-4554-8a58-4efed1efbbd7",  not found under brine
+		"e1022037-0897-4a64-b460-cda2a309d2f1",
+    };
+    
     public static TechnologyFragment lathingDroneFragment;
     
     public static MushroomTreeBacterialColony mushroomBioFragment;    
-    public static GeyserCoral geyserCoral;    
+    public static GeyserCoral geyserCoral;      
+    public static GelFountain gelFountain;    
+    public static GeoGel geogel;  
+    public static GeoGel geogelDrip;  
+    public static GeoGelFog geogelFog;
+    public static GeoGelFog geogelFogDrip;     
+    
     public static PowerSealModuleFragment powersealModuleFragment;    
     public static EjectedHeatSink ejectedHeatSink;
     
@@ -79,10 +103,20 @@ namespace ReikaKalseki.SeaToSea
     public static Campfire campfire;
     public static Mattress mattress;
     public static MarshmallowCan marshCan;
+    public static GunPoolBarrier gunPoolBarrier;
+    public static LockedPrecursorDoor stepCaveBarrier;
+    public static PartialPurpleTablet purpleTabletPartA;
+    public static PartialPurpleTablet purpleTabletPartB;
+    //public static PartialPurpleTablet floatingIslandTablet;
+    public static ExplodingGrabbable brokenAuroraDepthModule;
     
     private static BloodKelpBaseNuclearReactorMelter reactorMelter;
     private static TrailerBaseConverter bioBreaker;
-    private static MercuryLootSpawner mercuryLootSpawner;
+    private static TerrainLootSpawner mercuryLootSpawner;
+    private static TerrainLootSpawner calciteLootSpawner;
+    private static ObjectSpawner stepCaveTunnelSpawner;
+    private static ObjectSpawner stepCaveTunnelSpawnerSmall;
+    private static StepCaveTunnelAtmo stepCaveTunnelAtmo;
     
     internal static CrashZoneSanctuarySpawner crashSanctuarySpawner;
     internal static SanctuaryGrassSpawner sanctuaryGrassSpawner;
@@ -94,19 +128,17 @@ namespace ReikaKalseki.SeaToSea
     
     public static DataChit laserCutterBulkhead;
     public static DataChit bioProcessorBoost;
+    public static DataChit seamothDepthUnlockChit;
+    public static TechType seamothDepthUnlockTrackerTech;
+    public static PDAScanner.EntryData seamothDepthUnlockTracker;
    // public static DataChit vehicleSpeedBoost;
+   
+    public static PrecursorFabricatorConsole prisonEnzymeConsole;
+   
+  	public static TechType prisonPipeRoomTank;
+  	public static PDAManager.PDAPage enviroSimulation;
     
     //internal static VoidLeviElecSphere leviPulse;
-    internal static DeepStalker deepStalker;
-    internal static SanctuaryJellyray sanctuaryray;
-    internal static PurpleHolefish purpleHolefish;
-    internal static PurpleBoomerang purpleBoomerang;
-    internal static PurpleHoopfish purpleHoopfish;
-    internal static VoidSpikeLeviathan voidSpikeLevi;
-    
-    internal static Bioprocessor processor;
-    internal static RebreatherRecharger rebreatherCharger;
-    internal static GeyserFilter geyserFilter;
     
     public static SignalManager.ModSignal treaderSignal;
     public static SignalManager.ModSignal voidSpikeDirectionHint;
@@ -118,6 +150,7 @@ namespace ReikaKalseki.SeaToSea
     //public static Story.StoryGoal mountainPodRadio;
     
     internal static Story.StoryGoal auroraTerminal;
+    //internal static Story.StoryGoal jellyPDATriggeredPDAPrompt;
     
     internal static Story.StoryGoal sunbeamCountdownTrigger;
     
@@ -169,6 +202,7 @@ namespace ReikaKalseki.SeaToSea
         pdaLocale.load();
         signalLocale.load();
         trackerLocale.load();
+        mouseoverLocale.load();
         miscLocale.load();
         
         C2CItems.preAdd();
@@ -179,37 +213,40 @@ namespace ReikaKalseki.SeaToSea
 	    //voidspikeLeviFX = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_fx", "Sounds/voidlevi-fx1.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
 	   // voidspikeLeviAmbient = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_amb", "Sounds/voidlevi-longamb2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
 	    //voidspikeLeviBite = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikelevi_bite", "Sounds/voidlevi-bite.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 200);}, SoundSystem.masterBus);
-        
-	    deepStalker = new DeepStalker(itemLocale.getEntry("DeepStalker"));
-	    deepStalker.Patch();	    
-	    sanctuaryray = new SanctuaryJellyray(itemLocale.getEntry("SanctuaryJellyray"));
-	    sanctuaryray.Patch();
-	    purpleBoomerang = new PurpleBoomerang(itemLocale.getEntry("PurpleBoomerang"));
-	    purpleBoomerang.cookableIntoBase = 1;
-	    purpleBoomerang.Patch();
-	    purpleHolefish = new PurpleHolefish(itemLocale.getEntry("PurpleHolefish"));
-	    purpleHolefish.Patch();
-	    purpleHoopfish = new PurpleHoopfish(itemLocale.getEntry("PurpleHoopfish"));
-	    purpleHoopfish.cookableIntoBase = 1;
-	    purpleHoopfish.Patch();
-	    
-	    WaterParkCreature.waterParkCreatureParameters[deepStalker.TechType] = SNUtil.getModifiedACUParams(TechType.Stalker, 1, 1, 1, 1.5F);
-	    WaterParkCreature.waterParkCreatureParameters[sanctuaryray.TechType] = SNUtil.getModifiedACUParams(TechType.Jellyray, 1, 1, 1, 1.25F);
-	    WaterParkCreature.waterParkCreatureParameters[purpleBoomerang.TechType] = SNUtil.getModifiedACUParams(TechType.Boomerang, 1, 1, 1, 0.67F);
-	    WaterParkCreature.waterParkCreatureParameters[purpleHoopfish.TechType] = SNUtil.getModifiedACUParams(TechType.Hoopfish, 1.2F, 1.2F, 1.2F, 1.25F);
-	    WaterParkCreature.waterParkCreatureParameters[purpleHolefish.TechType] = SNUtil.getModifiedACUParams(TechType.HoleFish, 4F, 4F, 4F, 3.0F);
-	    
-	    voidSpikeLevi = new VoidSpikeLeviathan(itemLocale.getEntry("VoidSpikeLevi"));
-	    voidSpikeLevi.register();
+
+	    C2CItems.addCreatures();
 	    
 	    XMLLocale.LocaleEntry e = miscLocale.getEntry("bulkheadLaserCutterUpgrade");
 	    laserCutterBulkhead = new DataChit(e.key, e.name, e.desc, d => {d.controlText = e.pda; d.graphic = () => SNUtil.getTechPopupSprite(TechType.LaserCutter);});
+	    //laserCutterBulkhead.showOnScannerRoom = false;
 	    laserCutterBulkhead.Patch();
 	    e = miscLocale.getEntry("bioprocessorBoost");
 	    bioProcessorBoost = new DataChit(e.key, e.name, e.desc, d => {d.controlText = e.pda;});
+	    //bioProcessorBoost.showOnScannerRoom = false;
 	    bioProcessorBoost.Patch();
+	    e = miscLocale.getEntry("jellyshroomSeamothDepth");
+	    seamothDepthUnlockChit = new DataChit(e.key, e.name, e.desc, d => {d.onUnlock = C2CProgression.onSeamothDepthChit;});
+	    seamothDepthUnlockChit.showOnScannerRoom = true;
+	    seamothDepthUnlockChit.Patch();
+	    
+	    seamothDepthUnlockTrackerTech = TechTypeHandler.AddTechType(modDLL, "SeamothDepthUnlockTracker", "", "");
+		seamothDepthUnlockTracker = new PDAScanner.EntryData();
+		seamothDepthUnlockTracker.key = seamothDepthUnlockTrackerTech;
+		seamothDepthUnlockTracker.blueprint = TechType.VehicleHullModule1;
+		seamothDepthUnlockTracker.destroyAfterScan = false;
+		seamothDepthUnlockTracker.locked = true;
+		seamothDepthUnlockTracker.totalFragments = 3;
+		seamothDepthUnlockTracker.isFragment = true;
+		PDAHandler.AddCustomScannerEntry(seamothDepthUnlockTracker);
+	    
+		e = itemLocale.getEntry("Geogel");
+	    geogel = new GeoGel(e, false);
+	    geogel.Patch();
+	    geogelDrip = new GeoGel(e, true);
+	    geogelDrip.Patch();
 	    
         C2CItems.addFlora();
+	    
         C2CRecipes.addItemsAndRecipes();	
         C2CItems.addTablets();
 	    powersealModuleFragment = new PowerSealModuleFragment();
@@ -234,6 +271,16 @@ namespace ReikaKalseki.SeaToSea
 	    mattress.Patch();
 	    marshCan = new MarshmallowCan();
 	    marshCan.Patch();
+	    gunPoolBarrier = new GunPoolBarrier();
+	    gunPoolBarrier.Patch();
+	    stepCaveBarrier = new LockedPrecursorDoor("StepCaveDoor", PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Purple, new PositionedPrefab("", new Vector3(34.895F, -167F, -649.277F), Quaternion.Euler(0, 287.2F, 0)), new PositionedPrefab("", new Vector3(48.267F, -169.978F, -659.676F), Quaternion.Euler(3.335F, 273.717F, 0.541F)));
+	    stepCaveBarrier.Patch();
+	    purpleTabletPartA = new PartialPurpleTablet(true, false);
+	    purpleTabletPartA.Patch();
+	    purpleTabletPartB = new PartialPurpleTablet(false, true);
+	    purpleTabletPartB.Patch();
+	    brokenAuroraDepthModule = new ExplodingGrabbable("ExplodingAuroraModule", C2CHooks.auroraDepthModule.prefabName);
+	    brokenAuroraDepthModule.Patch();
 	    reactorMelter = new BloodKelpBaseNuclearReactorMelter();
 	    reactorMelter.Patch();
 	    bioBreaker = new TrailerBaseConverter();
@@ -242,8 +289,31 @@ namespace ReikaKalseki.SeaToSea
 	    mushroomBioFragment = new MushroomTreeBacterialColony(itemLocale.getEntry("TREE_BACTERIA"));
 	    mushroomBioFragment.register();
 	    
-	    mercuryLootSpawner = new MercuryLootSpawner();
+	    mercuryLootSpawner = new TerrainLootSpawner("MercuryLootSpawner", VanillaResources.MERCURY.prefab);
 	    mercuryLootSpawner.Patch();
+	    calciteLootSpawner = new TerrainLootSpawner("CalciteLootSpawner", CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).ClassID);
+	    calciteLootSpawner.Patch();
+	    
+	    WeightedRandom<PrefabReference> stepCavePlants = new WeightedRandom<PrefabReference>();	    
+	    stepCavePlants.addEntry(VanillaFlora.VIOLET_BEAU, 40);
+	    stepCavePlants.addEntry(VanillaFlora.PAPYRUS, 30);  
+	    stepCavePlants.addEntry(VanillaFlora.REDWORT, 30);  
+	    stepCavePlants.addEntry(new ModPrefabContainer(C2CItems.healFlower), 20);
+	    stepCaveTunnelSpawner = new ObjectSpawner("StepCaveTunnelPlantSpawner", new ObjectSpawner.SpawnSet(stepCavePlants));
+	    stepCaveTunnelSpawner.Patch();
+	    
+	    stepCavePlants = new WeightedRandom<PrefabReference>();
+	    stepCavePlants.addEntry(VanillaFlora.ACID_MUSHROOM, 40);
+	    //often placed wrong stepCavePlants.addEntry(VanillaFlora.WRITHING_WEED.getPrefabID(), 20);
+	    stepCaveTunnelSpawnerSmall = new ObjectSpawner("StepCaveTunnelPlantSpawnerSmall", new ObjectSpawner.SpawnSet(stepCavePlants, (go, tt) => {
+			go.transform.rotation = tt.rotation;
+			go.transform.Rotate(go.transform.right, -90);
+		}));
+	    stepCaveTunnelSpawnerSmall.Patch();
+	    
+	    stepCaveTunnelAtmo = new StepCaveTunnelAtmo();
+	    stepCaveTunnelAtmo.Patch();
+	    
 	    crashSanctuarySpawner = new CrashZoneSanctuarySpawner();
 	    crashSanctuarySpawner.Patch();
 	    sanctuaryGrassSpawner = new SanctuaryGrassSpawner();
@@ -258,6 +328,12 @@ namespace ReikaKalseki.SeaToSea
 	    lrNestGrass = new LRNestGrass();
 	    lrNestGrass.Patch();
 	    
+	    //PrecursorFabricatorConsole.CraftingIdentifier ci = new PrecursorFabricatorConsole.RecipeID(TechType.HatchingEnzymes, C2CRecipes.getHatchingEnzymeRecipe(), "HatchEnzymes");
+	    prisonEnzymeConsole = new PrecursorFabricatorConsole(C2CRecipes.getHatchingEnzymeFab(), "PrecursorEnzymes", new Color(0.8F, 0.8F, 0.8F));
+	    prisonEnzymeConsole.Patch();
+	    
+	    CustomLocaleKeyDatabase.registerKeys(mouseoverLocale);
+	   
 	    //leviPulse = new VoidLeviElecSphere();
 	    //leviPulse.Patch();
         
@@ -268,43 +344,54 @@ namespace ReikaKalseki.SeaToSea
 			go.EnsureComponent<LathingDroneSparker>();
         }); //it has its own model
         
-       	e = itemLocale.getEntry("bioprocessor");
-        processor = new Bioprocessor(e);
-        processor.Patch();       
-        SNUtil.log("Registered custom machine "+processor);
-        processor.addPDAPage(e.pda, "Bioprocessor");
-        processor.addFragments(4, 5, bioprocFragments);
-        Bioprocessor.addRecipes();
-        
-        e = itemLocale.getEntry("rebreathercharger");
-        rebreatherCharger = new RebreatherRecharger(e);
-        rebreatherCharger.Patch();
-        SNUtil.log("Registered custom machine "+rebreatherCharger);
-        rebreatherCharger.addPDAPage(e.pda, "RebreatherCharger");
-        rebreatherCharger.addFragments(4, 7.5F, rebreatherChargerFragments);
-        
-        e = itemLocale.getEntry("geyserfilter");
-        geyserFilter = new GeyserFilter(e);
-        geyserFilter.Patch();
-        SNUtil.log("Registered custom machine "+geyserFilter);
-        geyserFilter.addPDAPage(e.pda, "GeyserFilter");
+        C2CItems.addMachines();
 	    
 	    geyserCoral = new GeyserCoral(itemLocale.getEntry("GEYSER_CORAL"));
 	    geyserCoral.register();
+	    
+	    gelFountain = new GelFountain(itemLocale.getEntry("GEL_FOUNTAIN"));
+	    gelFountain.register();
+	    
+	    geogelFog = new GeoGelFog(false);
+	    geogelFog.Patch();
+	    geogelFogDrip = new GeoGelFog(true);
+	    geogelFogDrip.Patch();
         
         addPDAEntries();
-        
+	    /*
+	    e = SeaToSeaMod.pdaLocale.getEntry("envirosim");
+	    prisonPipeRoomTank = TechTypeHandler.AddTechType(modDLL, e.key, e.getField<string>("scanprompt"), e.desc);
+	    //prisonPipeRoomTank = new TechType[4];
+	    //for (int i = 0; i < prisonPipeRoomTank.Length; i++)
+	    //	prisonPipeRoomTank[i] = TechTypeHandler.AddTechType(modDLL, e.key+"_"+i, e.name, e.desc);
+	    //SNUtil.addPDAEntry(prisonPipeRoomTank, e.key, e.name, 1, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+	    enviroSimulation = PDAManager.getPage(e.key);
+	    
+		PDAScanner.EntryData se = new PDAScanner.EntryData();
+		se.key = prisonPipeRoomTank;
+		se.blueprint = TechType.None;
+		se.destroyAfterScan = false;
+		se.locked = true;
+		se.totalFragments = 4;
+		se.isFragment = true;
+		se.scanTime = 1;
+		se.encyclopedia = enviroSimulation.id;
+		PDAHandler.AddCustomScannerEntry(se);
+        */
         addCommands();
         addOreGen();
         
         GenUtil.registerWorldgen(new PositionedPrefab(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID, Azurite.mountainBaseAzurite, Quaternion.Euler(0, 202.4F, 33.2F)));
         //GenUtil.registerWorldgen(new PositionedPrefab("e85adb0d-665e-48f5-9fa2-2dd316776864", C2CHooks.bkelpBaseGeoCenter), go => go.transform.localScale = Vector3.one*60);
         
-        addSignalsAndRadio();
+		addSignalsAndRadio();
 		
 		PDAMessages.addAll();
 		
-		auroraTerminal = SNUtil.addVOLine("auroraringterminal_c2c", Story.GoalType.PDA, miscLocale.getEntry("auroraringterminal").desc, SoundManager.getSound("event:/player/story/Aurora_RingRoom_Terminal2"));
+		auroraTerminal = new Story.StoryGoal("auroraringterminal_c2c", Story.GoalType.PDA, 0);
+		e = miscLocale.getEntry(auroraTerminal.key);
+		SNUtil.addVOLine(auroraTerminal, e.desc, SoundManager.registerPDASound(modDLL, e.key, e.pda).asset);
+		//StoryHandler.instance.addListener(s => {if (s == auroraTerminal.key) {}});
 		
 		sunbeamCountdownTrigger = new Story.StoryGoal("c2cTriggerSunbeamCountdown", Story.GoalType.Story, 0);
 		
@@ -319,6 +406,7 @@ namespace ReikaKalseki.SeaToSea
 		CrashZoneSanctuaryBiome.instance.register();
 		VoidSpike.register();
 		AvoliteSpawner.instance.register();
+		BiomeDiscoverySystem.instance.register();
 		LifeformScanningSystem.instance.register();
 		
 		C2CItems.alkali.addNativeBiome(VanillaBiomes.MOUNTAINS, true).addNativeBiome(VanillaBiomes.TREADER, true).addNativeBiome(VanillaBiomes.KOOSH, true);
@@ -326,6 +414,7 @@ namespace ReikaKalseki.SeaToSea
 		C2CItems.healFlower.addNativeBiome(VanillaBiomes.REDGRASS, true);
 		C2CItems.sanctuaryPlant.addNativeBiome(CrashZoneSanctuaryBiome.instance);
 		C2CItems.mountainGlow.addNativeBiome(VanillaBiomes.MOUNTAINS);
+		//C2CItems.underislandsCavePlant.addNativeBiome(VanillaBiomes.UNDERISLANDS);
 		
 		initHandlers();
         
@@ -388,15 +477,17 @@ namespace ReikaKalseki.SeaToSea
     [QModPostPatch]
     public static void PostLoad() {
     	new LavaCastleVentCrystalPlacer().Patch();
-    	worldgen.load(s => s != "fcswreck.xml" || FCSIntegrationSystem.instance.isLoaded()); //load in post because some cross-mod TTs may not exist yet
+    	worldgen.load(s => s != "fcswreck" || FCSIntegrationSystem.instance.isLoaded()); //load in post because some cross-mod TTs may not exist yet
 		mushroomBioFragment.postRegister();
 		geyserCoral.postRegister();
+		gelFountain.postRegister();
+		
 		AvoliteSpawner.instance.postRegister();
         DataboxTypingMap.instance.load();
         DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
         DataboxTypingMap.instance.addValue(-483.55, -504.69, 1326.64, C2CItems.tetherModule.TechType);
         
-		ESHooks.addLeviathan(voidSpikeLevi.TechType);
+		ESHooks.addLeviathan(C2CItems.voidSpikeLevi.TechType);
 	    ESHooks.scannabilityEvent += C2CHooks.isItemMapRoomDetectable;
         
     	foreach (BiomeType bb in Enum.GetValues(typeof(BiomeType))) {
@@ -412,7 +503,7 @@ namespace ReikaKalseki.SeaToSea
     	dumpAbandonedBaseTextures();
     	
     	Dictionary<string, bool> modsWithIssues = new Dictionary<string, bool>(){
-    		{"CyclopsNuclearUpgrades", false},
+    		{"CyclopsNuclearUpgrades", true},
     		{"CyclopsBioReactor", false},
     		//{"AquariumBreeding", false},
     		{"RedBaron", true},
@@ -431,7 +522,7 @@ namespace ReikaKalseki.SeaToSea
     		{"SubnauticaRandomiser", true},
     		{"EquivalentExchange", true},
     		{"Deathrun", false},
-    		{"DecorationsMod", false},
+    		{"DecorationsMod", true},
     		{"AnthCreatures", true},
     		{"SpyWatch", true},
     		{"SeamothEnergyShield", true},
@@ -447,20 +538,32 @@ namespace ReikaKalseki.SeaToSea
     		{"CyclopsLaserCannonModule", false},
     		{"DebrisRecycling", true},
     		{"AD3D_DeepEngineMod", false},
+    		{"DeepEngineMod", false},
     		{"AD3D_TechFabricatorMod", false},
     		{"PassiveReapers", true},
     		{"PlasmaCannonArm", false}, //add scanner module?
-    		{"Radiant Depths", true}, //TODO id might be wrong
+    		{"AcceleratedStart", true},
+    		{"CyclopsNuclearReactor", true},
+    		{"LaserCannon", true},
+    		{"PartsFromScanning", true},
+    		{"StealthModule", true},
+    		{"RPG_Framework", true},
+    		{"CustomBatteries", true},
+    		{"DropUpgradesOnDestroy", false},
+    		{"All_Items_1x1", false},
+    		{"Radiant Depths", true}, //TODO id might be wrong, also might be 2.0
+    		{"aaaaaaaaaa", true},
     	};
-    	foreach (KeyValuePair<string, bool> kvp in modsWithIssues) {
-    		if (QModManager.API.QModServices.Main.ModPresent(kvp.Key)) {
-    			if (kvp.Value) {
-    				string msg = "Mod '"+kvp.Key+"' detected. This mod is not compatible with SeaToSea, and cannot be used alongside it.";
+    	foreach (QModManager.API.IQMod mod in QModManager.API.QModServices.Main.GetAllMods()) {
+    		SNUtil.log("Checking compat with 'mod "+mod.Id+"' (\""+mod.DisplayName+"\")");
+    		if (modsWithIssues.ContainsKey(mod.Id)) {
+    			if (modsWithIssues[mod.Id]) {
+    				string msg = "Mod '"+mod.DisplayName+"' detected. This mod is not compatible with SeaToSea, and cannot be used alongside it.";
     				SNUtil.createPopupWarning(msg, false/*, null, SNUtil.createPopupButton("OK")*/);
     				throw new Exception(msg);
     			}
     			else {
-    				string msg = "SeaToSea: Mod '"+kvp.Key+"' detected. This mod will significantly alter the balance of your pack and risks completely breaking C2C progression.";
+    				string msg = "SeaToSea: Mod '"+mod.DisplayName+"' detected. This mod will significantly alter the balance of your pack and risks completely breaking C2C progression.";
     				SNUtil.createPopupWarning(msg, false/*, null, SNUtil.createPopupButton("OK")*/);
     				SNUtil.log(msg+" You should remove this mod if possible when using SeaToSea.");
     			}
@@ -583,6 +686,9 @@ namespace ReikaKalseki.SeaToSea
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.6F);
     	irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 0.5F);
     	
+    	BasicCustomOre calcite = CustomMaterials.getItem(CustomMaterials.Materials.CALCITE);
+    	calcite.registerWorldgen(BiomeType.BonesField_Cave_Ceiling, 1, 1.2F);
+    	
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 2.5F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MAGNETITE.prefab, BiomeType.UnderwaterIslands_Geyser, 0.4F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_DIAMOND.prefab, BiomeType.UnderwaterIslands_Geyser, 0.25F, 1);
@@ -598,7 +704,12 @@ namespace ReikaKalseki.SeaToSea
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_MERCURY.prefab, BiomeType.UnderwaterIslands_Geyser, 0.15F, 1);
     	LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.UnderwaterIslands_ValleyFloor, 0.25F, 1);
     	
-    	LootDistributionHandler.EditLootDistributionData(purpleHolefish.ClassID, BiomeType.UnderwaterIslands_OpenDeep_CreatureOnly, 2.75F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_IslandCaveFloor, 0.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.QUARTZ.prefab, BiomeType.UnderwaterIslands_IslandCaveWall, 0.3F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_IslandCaveFloor, 0.5F, 1);
+    	LootDistributionHandler.EditLootDistributionData(VanillaResources.MAGNETITE.prefab, BiomeType.UnderwaterIslands_IslandCaveWall, 0.3F, 1);
+    	
+    	LootDistributionHandler.EditLootDistributionData(C2CItems.purpleHolefish.ClassID, BiomeType.UnderwaterIslands_OpenDeep_CreatureOnly, 2.75F, 1);
     	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverCorridor_LakeFloor, 0.2F, 1);
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.LARGE_SULFUR.prefab, BiomeType.LostRiverJunction_LakeFloor, 0.2F, 1);
@@ -627,6 +738,10 @@ namespace ReikaKalseki.SeaToSea
     		if (config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
     			count = Math.Max(1, count*2/3);
     		GenUtil.registerWorldgen(new PositionedPrefab(mercuryLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
+    	}
+    	
+    	foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in calciteSpawners) {
+    		GenUtil.registerWorldgen(new PositionedPrefab(calciteLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3)));
     	}
     	
     	//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
@@ -661,14 +776,14 @@ namespace ReikaKalseki.SeaToSea
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidLeviReefback", VoidSpikeLeviathan.makeReefbackTest);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("relockRecipes", relockRecipes);
         
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cTrackerAll", b => trackerShowAllCheatActive = b);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b && SNUtil.canUseDebug());
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cTrackerAll", b => trackerShowAllCheatActive = b && SNUtil.canUseDebug());
         //ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cTrackerSetAll", ExplorationTrackerPages.instance.markAllDiscovered);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSGSA", b => fastSeaglideCheatActive = b);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSGSA", b => fastSeaglideCheatActive = b && SNUtil.canUseDebug());
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cFRHS", b => SeamothHeatSinkModule.FREE_CHEAT = b && SNUtil.canUseDebug());
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cENVHEAT", b => {if (SNUtil.canUseDebug())EnvironmentalDamageSystem.instance.TEMPERATURE_OVERRIDE = b;});
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMTempDebug", b => C2CMoth.temperatureDebugActive = b);
-        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", unlockSignal);
+        ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cSignalUnlock", arg => {if (SNUtil.canUseDebug())unlockSignal(arg);});
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("c2cpoi", POITeleportSystem.instance.jumpToPOI);
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: "+FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo()+"; Missing scan="+LifeformScanningSystem.instance.hasScannedEverything()));
         ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);

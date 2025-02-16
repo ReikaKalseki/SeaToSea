@@ -28,13 +28,7 @@ namespace ReikaKalseki.SeaToSea
 				VanillaResources template = (VanillaResources)typeof(VanillaResources).GetField(attr.templateName).GetValue(null);
 				BasicCustomOre item = (BasicCustomOre)Activator.CreateInstance(attr.itemClass, new object[]{id, e.name, e.desc, template});
 				item.glowIntensity = attr.glow;
-				switch(m) {
-					case Materials.PLATINUM:
-						item.collectSound = "event:/loot/pickup_diamond";
-						break;
-					case Materials.VENT_CRYSTAL:
-						item.collectSound = "event:/loot/pickup_uraninitecrystal";
-						break;
+				switch(m) { //since has no custom class
 					case Materials.IRIDIUM:
 						item.collectSound = "event:/loot/pickup_copper";
 						break;
@@ -70,6 +64,7 @@ namespace ReikaKalseki.SeaToSea
 			[Material(typeof(PressureCrystals),	"TITANIUM",	1.2F)]		PRESSURE_CRYSTALS,
 			[Material(typeof(Avolite),			"KYANITE",	0.75F)]		PHASE_CRYSTAL,	
 			[Material(typeof(BasicCustomOre),	"SILVER")]				IRIDIUM,
+			[Material(typeof(Calcite),			"MAGNETITE", 0.2F)]		CALCITE,
 		}
 		
 		public class Material : Attribute {

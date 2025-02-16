@@ -20,7 +20,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Vector3 mountainBaseAzurite = new Vector3(939.533630371094F, -347.903259277344F, 1443.25720214844F);
 		
 		public Azurite(string id, string name, string desc, VanillaResources template) : base(id, name, desc, template) {
-			
+			collectSound = "event:/loot/pickup_uraninitecrystal";
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

@@ -25,6 +25,18 @@ namespace ReikaKalseki.SeaToSea {
 	public static class C2CHooks {
 	    
 	    internal static readonly Vector3 deepDegasiTablet = new Vector3(-638.9F, -506.0F, -941.3F);
+	    
+	    internal static readonly List<Vector3> purpleTabletsToBreak = new List<Vector3>(){ //do not include one inside gun by control room
+	    	new Vector3(291.19F, 30.94F, 848.86F), //south island shelf
+	    	new Vector3(363.22F, 54.11F, 1015.80F), //internal island bridge
+	    	new Vector3(383.18F, 18.21F, 1086.94F), //above gun entrance
+	    	new Vector3(389.05F, -120.38F, 1150.36F), //this one is in that separate small cave loop
+	    	new Vector3(320.14F, -91.85F, 1023.56F), //underwater near survivor cache
+	    	new Vector3(-753.54F, 13.72F, -1107.50F), //floating island
+	    };
+	    
+	    //internal static readonly Dictionary<Vector3, bool[]> purpleTabletsToRemoveParts = new Dictionary<Vector3, bool[]>();
+	    
 	    internal static readonly Vector3 crashMesa = new Vector3(623.8F, -250.0F, -1105.2F);
 	    internal static readonly Vector3 mountainBaseGeoCenter = new Vector3(953, -344, 1453);
 	    internal static readonly Vector3 bkelpBaseGeoCenter = new Vector3(-1311.6F, -670.6F, -412.7F);
@@ -34,32 +46,17 @@ namespace ReikaKalseki.SeaToSea {
 	    internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
 	    internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
 	    internal static readonly Vector3 lostRiverCachePanel = new Vector3(-1119.5F, -684.4F, -709.7F);
+	    //internal static readonly Vector3 gunPoolBarrier = new Vector3(481.81F, -125.03F, 1257.85F);
+	    //internal static readonly Vector3 gunPoolBarrierTerminal = new Vector3();
+		internal static readonly Vector3 gunCenter = new Vector3(460.6F, -99, 1208.4F);
+		internal static readonly Vector3 mountainCenter = new Vector3(359.9F, 29F, 985.9F);
 	    
 	    internal static readonly Vector3 fcsWreckOpenableDoor = new Vector3(88.87F, -420.75F, 1449.10F);
-	    internal static readonly Vector3 fcsWreckBlockedDoor = new Vector3(93.01F, -421.27F, 1444.71F);    
+	    internal static readonly Vector3 fcsWreckBlockedDoor = new Vector3(93.01F, -421.27F, 1444.71F);  
 	    
-	    internal static readonly Vector3 OZZY_FORK_DEEP_ROOM_POS = new Vector3(-645.6F, -102.7F, -16.2F);
-	    internal static readonly string OZZY_FORK_DEEP_ROOM_GOAL = "ozzyforkdeeproom";
-	    internal static readonly Vector3 UNDERISLANDS_BLOCKED_ROOM_POS = new Vector3(-124.38F, -200.69F, 855F);
-	    internal static readonly string UNDERISLANDS_BLOCKED_ROOM_GOAL = "underislandsblockedroom";
-	    internal static readonly Vector3 FLOATING_ARCH_POS = new Vector3(-662.55F, 5.50F, -1064.35F);
-	    internal static readonly string FLOATING_ARCH_GOAL = "floatarch";
-	    internal static readonly Vector3 PLANT_ALCOVE_POS = new Vector3(375, 22, 870);
-	    internal static readonly string PLANT_ALCOVE_GOAL = "islandalcove";
-	    internal static readonly Vector3 MUSHTREE_POS = new Vector3(-879.7F, -138, 590.4F);
-	    internal static readonly string MUSHTREE_GOAL = "mushtree";
-	    internal static readonly Vector3 MUSHTREE_ARCH_POS = new Vector3(-777.5F, -229.8F, 404.8F);
-	    internal static readonly string MUSHTREE_ARCH_GOAL = "musharch";
-	    internal static readonly Vector3 CRAG_ARCH_POS = new Vector3(-90.2F, -287.4F, -1261.5F);
-	    internal static readonly string CRAG_ARCH_GOAL = "cragarch";
-	    internal static readonly Vector3 KOOSH_ARCH_POS = new Vector3(1344.8F, -309.2F, 730.7F);
-	    internal static readonly string KOOSH_ARCH_GOAL = "koosharch";
-	    internal static readonly Vector3 LR_ARCH_POS = new Vector3(-914.7F, -621.2F, 1078.4F);
-	    internal static readonly string LR_ARCH_GOAL = "lrarch";
-	    internal static readonly string METEOR_GOAL = "meteorhit";
-	    
-	    private static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
-	    private static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
+	    internal static readonly PositionedPrefab auroraStorageModule = new PositionedPrefab("d290b5da-7370-4fb8-81bc-656c6bde78f8", new Vector3(991.5F, 3.21F, -30.99F), Quaternion.Euler(14.44F, 353.7F, 341.6F));
+	    internal static readonly PositionedPrefab auroraCyclopsModule = new PositionedPrefab("049d2afa-ae76-4eef-855d-3466828654c4", new Vector3(872.5F, 2.69F, -0.66F), Quaternion.Euler(357.4F, 224.9F, 21.38F));
+	    internal static readonly PositionedPrefab auroraDepthModule = new PositionedPrefab("74ec328c-e627-40ad-b373-97e384ec0385", new Vector3(903.52F, -0.16F, 16.06F), Quaternion.Euler(10.34F, 341.24F, 331.96F));
 	    
 	    private static readonly HashSet<TechType> scanToScannerRoom = new HashSet<TechType>();
 	    private static readonly HashSet<string> floaterRocks = new HashSet<string>() {
@@ -79,15 +76,15 @@ namespace ReikaKalseki.SeaToSea {
 	    };	    
 	    
 	    private static readonly Dictionary<string, Color> auroraPrawnFireColors = new Dictionary<string, Color>{
-					{"xFireFlame", new Color(0, 0.67F, 2)},
-					{"xFireCurl", new Color(1, 1, 1)},
-					{"xAmbiant_Sparks", new Color(0, 1, 1)},
-					{"xAmbiant_Ashes", new Color(0.1F, 0.1F, 1)},
-					{"x_Fire_CrossPlanes", new Color(0.67F, 0.43F, 1)},
-					{"x_Fire_GroundPlane", new Color(0.24F, 0.57F, 1)},
-					{"x_SmokeLight_Cylindrical", new Color(0.67F, 0.72F, 0.97F)},
-					{"x_Fire_Cylindrical", new Color(0.24F, 0.51F, 1)},
-				};
+			{"xFireFlame", new Color(0, 0.67F, 2)},
+			{"xFireCurl", new Color(1, 1, 1)},
+			{"xAmbiant_Sparks", new Color(0, 1, 1)},
+			{"xAmbiant_Ashes", new Color(0.1F, 0.1F, 1)},
+			{"x_Fire_CrossPlanes", new Color(0.67F, 0.43F, 1)},
+			{"x_Fire_GroundPlane", new Color(0.24F, 0.57F, 1)},
+			{"x_SmokeLight_Cylindrical", new Color(0.67F, 0.72F, 0.97F)},
+			{"x_Fire_Cylindrical", new Color(0.24F, 0.51F, 1)},
+		};
 	    
 	    private static Oxygen playerBaseO2;
 	    
@@ -98,17 +95,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static float foodToRestore;
 	    private static float waterToRestore;
-	    
-	    public static readonly string prawnBayLocaleKey = "PrawnBayDoorHeatWarn";
-	    public static readonly string lrCachePanelLocaleKey = "LostRiverCachePanel";
-	    public static readonly string dockUpgradesLocaleKey = "DockToChangeVehicleUpgrades";
-	    public static readonly string needRepairDataboxLocaleKey = "NeedRepairDataBox";
-	    public static readonly string sanctuaryPlantGrowingLocaleKey = "SanctuaryPlantGrowing";
-	    public static readonly string sanctuaryPlantClickLocaleKey = "SanctuaryPlantClick";
-	    public static readonly string campfireCookingLocaleKey = "CampfireCooking";
-	    public static readonly string campfireUseLocaleKey = "CampfireClick";
-	    public static readonly string smokedNoExpireLocaleKey = "SmokedNoExpire";
-	    
+	    	    
 	    public static bool skipPlayerTick = false;
 	    public static bool skipBiomeCheck = false;
 	    public static bool skipTemperatureCheck = false;
@@ -134,6 +121,10 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    private static TechType techPistol = TechType.None;
 	    private static bool searchedTechPistol = false;
+	    
+	    private static float lastO2PipeTime = -1;
+	    
+	    private static bool playerDied;
 	    
 	    private static TechType loadTechPistol() {
 	    	if (techPistol == TechType.None && !searchedTechPistol) {
@@ -189,6 +180,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	DIHooks.onFruitPlantTickEvent += tickFruitPlant;
 	    	
 	    	DIHooks.reaperGrabVehicleEvent += onReaperGrab;
+	    	DIHooks.cyclopsDamageEvent += onCyclopsDamage;
 	    	
 	    	DIHooks.vehicleEnterEvent += onVehicleEnter;
 	    	
@@ -226,15 +218,35 @@ namespace ReikaKalseki.SeaToSea {
 	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType);
 	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType);
 	    	scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType);
-	    	scanToScannerRoom.Add(SeaToSeaMod.voidSpikeLevi.TechType);
+	    	scanToScannerRoom.Add(C2CItems.voidSpikeLevi.TechType);
 	    	scanToScannerRoom.Add(C2CItems.alkali.TechType);
 	    	scanToScannerRoom.Add(C2CItems.healFlower.TechType);
 	    	scanToScannerRoom.Add(C2CItems.kelp.TechType);
+	    	
+	    	/*
+	    	foreach (Vector3 vec in purpleTabletsToBreak)
+	    		purpleTabletsToRemoveParts[vec] = new bool[]{true, true};
+	    	purpleTabletsToRemoveParts[purpleTabletsToBreak[2]] = new bool[]{true, false};
+	    	UnityEngine.Random rand = new UnityEngine.Random();
+	    	int seed = SNUtil.getInstallSeed();
+	    	UnityEngine.Random.InitState(seed);
+	    	foreach (PositionedPrefab pfb in SeaToSeaMod.worldgen.getPositions("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4", mountainCenter.setY(0), 200)) {
+	    		bool[] arr = new bool[]{true, true};
+	    		int which = UnityEngine.Random.Range(0, 3);
+	    		if (which == 0)
+	    			arr[0] = false;
+	    		else if (which == 1)
+	    			arr[1] = false;
+	    		purpleTabletsToRemoveParts[pfb.position] = arr;
+	    	}*/
 	    }
 	    
 	    public static void onWorldLoaded() {	    	
 	    	Inventory.main.equipment.onEquip += onEquipmentAdded;
 	    	Inventory.main.equipment.onUnequip += onEquipmentRemoved;
+	    	
+	    	//remove all since field does not serialize
+	    	InventoryUtil.forEachOfType(Inventory.main.container, C2CItems.emperorRootOil.TechType, ii => InventoryUtil.forceRemoveItem(Inventory.main.container, ii));
 	        
 	    	BrokenTablet.updateLocale();
 	    	
@@ -278,15 +290,6 @@ namespace ReikaKalseki.SeaToSea {
 	    	LanguageHandler.SetLanguageLine("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
 	    		    	
 	    	LanguageHandler.SetLanguageLine("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
-			LanguageHandler.SetLanguageLine(prawnBayLocaleKey, SeaToSeaMod.miscLocale.getEntry(prawnBayLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(lrCachePanelLocaleKey, SeaToSeaMod.miscLocale.getEntry(lrCachePanelLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(dockUpgradesLocaleKey, SeaToSeaMod.miscLocale.getEntry(dockUpgradesLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(needRepairDataboxLocaleKey, SeaToSeaMod.miscLocale.getEntry(needRepairDataboxLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(sanctuaryPlantClickLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantClickLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(sanctuaryPlantGrowingLocaleKey, SeaToSeaMod.miscLocale.getEntry(sanctuaryPlantGrowingLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(campfireUseLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireUseLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(campfireCookingLocaleKey, SeaToSeaMod.miscLocale.getEntry(campfireCookingLocaleKey).desc);
-			LanguageHandler.SetLanguageLine(smokedNoExpireLocaleKey, SeaToSeaMod.miscLocale.getEntry(smokedNoExpireLocaleKey).desc);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 	    	LanguageHandler.SetLanguageLine("EncyDesc_Mercury", SeaToSeaMod.miscLocale.getEntry("MercuryDesc").pda);
 	    	LanguageHandler.SetLanguageLine("Tooltip_"+TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
@@ -323,6 +326,10 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void tickPlayer(Player ep) {
+	    	if (playerDied) {
+	    		setupDeathScreen();
+	    		return;
+	    	}
 	    	if (skipPlayerTick || !ep || !DIHooks.isWorldLoaded())
 	    		return;
 	    	//SNUtil.writeToChat(WorldUtil.getRegionalDescription(ep.transform.position));
@@ -342,6 +349,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		FCSIntegrationSystem.instance.tickNotifications(time);
 	    	
 	    	LifeformScanningSystem.instance.tick(time);
+	    	EmperorRootOil.tickInventory(ep, time);
 	    	
 	    	if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
 	    		if (VoidSpikesBiome.instance.getDistanceToBiome(Camera.main.transform.position, true) < 200)
@@ -390,7 +398,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (time >= nextSanctuaryPromptCheckTime && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key)) {
 	    		nextSanctuaryPromptCheckTime = time+1;
 	    		if (distsq < 2500 || Vector3.Distance(ep.transform.position, auroraFront) < 144 || Vector3.Distance(ep.transform.position, trailerBaseBioreactor) < 200 || Vector3.Distance(ep.transform.position, CrashZoneSanctuaryBiome.biomeCenter) < 200) {
-	    			Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("triggerSanctuary", 20);
+	    			Player.main.gameObject.EnsureComponent<DelayedPromptsCallback>().Invoke("triggerSanctuary", 20);
 	    		}
 	    	}
 	    	
@@ -440,35 +448,6 @@ namespace ReikaKalseki.SeaToSea {
 			    			}
 			    		}
 					}
-	    		}
-	    		
-	    		//TODO cleanup
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(OZZY_FORK_DEEP_ROOM_GOAL) && Vector3.Distance(OZZY_FORK_DEEP_ROOM_POS, ep.transform.position) <= 12) {
-	    			Story.StoryGoal.Execute(OZZY_FORK_DEEP_ROOM_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(UNDERISLANDS_BLOCKED_ROOM_GOAL) && Vector3.Distance(UNDERISLANDS_BLOCKED_ROOM_POS, ep.transform.position) <= 5) {
-	    			Story.StoryGoal.Execute(UNDERISLANDS_BLOCKED_ROOM_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(FLOATING_ARCH_GOAL) && ep.transform.position.y > 0 && ep.transform.position.y < 22.5F && Vector3.Distance(FLOATING_ARCH_POS, ep.transform.position) <= 25) {
-	    			Story.StoryGoal.Execute(FLOATING_ARCH_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(PLANT_ALCOVE_GOAL) && ep.transform.position.y > 15 && ep.transform.position.y < 30F && Vector3.Distance(PLANT_ALCOVE_POS, ep.transform.position) <= 15) {
-	    			Story.StoryGoal.Execute(PLANT_ALCOVE_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(MUSHTREE_GOAL) && Vector3.Distance(MUSHTREE_POS, ep.transform.position) <= 4) {
-	    			Story.StoryGoal.Execute(MUSHTREE_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(MUSHTREE_ARCH_GOAL) && Vector3.Distance(MUSHTREE_ARCH_POS, ep.transform.position) <= 12) {
-	    			Story.StoryGoal.Execute(MUSHTREE_ARCH_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(KOOSH_ARCH_GOAL) && Vector3.Distance(KOOSH_ARCH_POS, ep.transform.position) <= 8) {
-	    			Story.StoryGoal.Execute(KOOSH_ARCH_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(LR_ARCH_GOAL) && Vector3.Distance(LR_ARCH_POS, ep.transform.position) <= 6) {
-	    			Story.StoryGoal.Execute(LR_ARCH_GOAL, Story.GoalType.Story);
-	    		}
-	    		if (!Story.StoryGoalManager.main.completedGoals.Contains(CRAG_ARCH_GOAL) && Vector3.Distance(CRAG_ARCH_POS, ep.transform.position) <= 6) {
-	    			Story.StoryGoal.Execute(CRAG_ARCH_GOAL, Story.GoalType.Story);
 	    		}
 	    	}
 	    	
@@ -538,13 +517,13 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (skipBiomeCheck)
 	    		return;
 	    	if (VoidSpikesBiome.instance.isInBiome(b.position)) {
-	    		b.setValue(VoidSpikesBiome.biomeName);
+	    		b.setValue(VoidSpikesBiome.instance.biomeName);
 	    		b.lockValue();
 	    		//if (BiomeBase.logBiomeFetch)
 	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+VoidSpikesBiome.biomeName);
 	    	}
 	    	else if (UnderwaterIslandsFloorBiome.instance.isInBiome(b.originalValue, b.position)) {
-	    		b.setValue(UnderwaterIslandsFloorBiome.biomeName);
+	    		b.setValue(UnderwaterIslandsFloorBiome.instance.biomeName);
 	    		b.lockValue();
 	    		//if (BiomeBase.logBiomeFetch)
 	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
@@ -554,7 +533,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		b.lockValue();
 	   		}*/
 	    	else if (CrashZoneSanctuaryBiome.instance.isInBiome(b.position)) {
-	    		b.setValue(CrashZoneSanctuaryBiome.biomeName);
+	    		b.setValue(CrashZoneSanctuaryBiome.instance.biomeName);
 	    		b.lockValue();
 	    		//if (BiomeBase.logBiomeFetch)
 	    		//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
@@ -756,6 +735,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onThingInO2Area(OxygenArea a, Collider obj) {
 	    	if (obj.gameObject.FindAncestor<Player>() == Utils.GetLocalPlayerComp()) {
+	    		lastO2PipeTime = DayNightCycle.main.timePassedAsFloat;
 		    	float o2ToAdd = Math.Min(a.oxygenPerSecond*Time.deltaTime, Player.main.GetOxygenCapacity()-Player.main.GetOxygenAvailable());
 		    	if (o2ToAdd > 0)
 		    		LiquidBreathingSystem.instance.tryFillPlayerO2Bar(Player.main, ref o2ToAdd, true);
@@ -1017,6 +997,11 @@ namespace ReikaKalseki.SeaToSea {
 	    		p.GetComponent<NanocarbonTag>().reset();
 	    		Story.StoryGoal.Execute("Nanocarbon", Story.GoalType.Story);
 	    	}
+	    	else if (tt == C2CItems.emperorRootOil.TechType) {
+	    		EmperorRootOil.EmperorRootOilTag tag = p.gameObject.EnsureComponent<EmperorRootOil.EmperorRootOilTag>();
+	    		if (tag.pickupTime < 0)
+	    			tag.pickupTime = DayNightCycle.main.timePassedAsFloat;
+	    	}
 	    }
     
 	    public static float getReachDistance() {
@@ -1083,6 +1068,9 @@ namespace ReikaKalseki.SeaToSea {
 	    		UnityEngine.Object.Destroy(c.gameObject);
 	    	}
 	    	else if (c.unlockTechType == C2CItems.liquidTank.TechType && c.transform.position.y > -500) {
+	    		UnityEngine.Object.Destroy(c.gameObject);
+	    	}
+	    	else if (c.gameObject.name == "FCSDataBox(Clone)") { //lock to C2C way
 	    		UnityEngine.Object.Destroy(c.gameObject);
 	    	}
 	    }
@@ -1184,20 +1172,47 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onPrecursorDoorSpawn(PrecursorKeyTerminal pk) {
-	    	GameObject parent = pk.transform.parent.gameObject;
-	    	PrefabIdentifier pi = parent.GetComponent<PrefabIdentifier>();
-	    	switch(pi.classId) {
-	    		case "0524596f-7f14-4bc2-a784-621fdb23971f":
-	    		case "47027cf0-dca8-4040-94bd-7e20ae1ca086":
-	    			pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_White;
-	    			break;
-	    		case "fdb2bcbb-288a-40b6-bd7a-5585445eb43f":
-	    			bool gate = Math.Abs(parent.transform.position.y+803.8) < 0.25;
-	    			pk.acceptKeyType = gate ? PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Red : PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Orange;
-	    			break;
+	    	try {
+		    	Transform parent = pk.transform.parent;
+		    	PrefabIdentifier pi = parent == null ? null : parent.GetComponent<PrefabIdentifier>();
+		    	if (!pi) {/*
+		    		if (Vector3.Distance(pi.transform.position, gunPoolBarrierTerminal) < 0.5F) {
+		    			pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Orange;
+		    			HashSet<GameObject> barrier = WorldUtil.getObjectsNearMatching(pk.transform.position, 90, isGunBarrier);
+		    			if (barrier.Count == 0) {
+		    			pk.transform.parent = barrier.First().transform;
+		    		}*/
+		    		return;
+		    	}
+		    	switch(pi.classId) {
+		    		case "0524596f-7f14-4bc2-a784-621fdb23971f":
+		    		case "47027cf0-dca8-4040-94bd-7e20ae1ca086":
+		    			pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_White;
+		    			break;
+		    		case "fdb2bcbb-288a-40b6-bd7a-5585445eb43f":
+		    			if (parent.position.y > -100) {
+		    				pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Purple;
+		    				//does not exist parent.GetComponent<PrecursorGlobalKeyActivator>().doorActivationKey = "GunGateDoor";
+		    			}
+		    			else if (Math.Abs(parent.position.y+803.8) < 0.25) {
+			    			pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Red;
+		    				//parent.GetComponent<PrecursorGlobalKeyActivator>().doorActivationKey = "DRFGateDoor";
+		    			}
+		    			break;/*
+		    		case "d26276ab-0c29-4642-bcb8-1a5f8ee42cb2":
+		    			break;*/
+		    	}
+	    	}
+	    	catch (Exception e) {
+	    		SNUtil.log("Caught exception processing precursor door "+pk.gameObject.GetFullHierarchyPath()+" @ "+pk.transform.position+": "+e.ToString());
 	    	}
 	    }
-	    
+	    /*
+	    private static bool isGunBarrier(GameObject go) {
+	    	PrefabIdentifier pi = go.GetComponent<PrefabIdentifier>();
+	    	return pi && pi.ClassId == "d26276ab-0c29-4642-bcb8-1a5f8ee42cb2" && Vector3.Distance(pi.transform.position, gunPoolBarrier) < 0.5F;
+	    }
+	    */
 	    public static void OnInspectableSpawn(InspectOnFirstPickup pk) {/*
 	    	PrefabIdentifier pi = pk.gameObject.GetComponentInParent<PrefabIdentifier>();
 	    	if (pi != null && (pi.ClassId == "7d19f47b-6ec6-4a25-9b28-b3fd7f5661b7" || pi.ClassId == "066e533d-f854-435d-82c6-b28ba59858e0")) {
@@ -1257,6 +1272,12 @@ namespace ReikaKalseki.SeaToSea {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 		    	}
 	    	}/*
+			else if (pi && pi.ClassId == "e1d8b721-0edb-466e-93d3-074dc90d57f2") {
+	    		if (go.transform.position.y < -1200) {
+	    			go.EnsureComponent<TechTag>().type = SeaToSeaMod.prisonPipeRoomTank;
+		    	}
+	    	}*/
+	    	/*
 			else if (pi && pi.ClassId == "407e40cf-69f2-4412-8ab6-45faac5c4ea2") {
 	    		
 	    	}*//*
@@ -1295,7 +1316,7 @@ namespace ReikaKalseki.SeaToSea {
 					    if (!KnownTech.knownTech.Contains(C2CItems.treatment.TechType)) {
 						    HandReticle.main.targetDistance = 15;
 							HandReticle.main.SetIcon(HandReticle.IconType.Interact, 1f);
-						   	HandReticle.main.SetInteractText(lrCachePanelLocaleKey);
+						   	HandReticle.main.SetInteractText("LostRiverCachePanel");
 					    }
 					});
 					ht.onHandClick.AddListener(hte => {
@@ -1327,7 +1348,7 @@ namespace ReikaKalseki.SeaToSea {
 				ht.onHandHover = new HandTargetEvent();
 				ht.onHandHover.AddListener(hte => {
 				    HandReticle.main.SetIcon(HandReticle.IconType.Info, 1f);
-				   	HandReticle.main.SetInteractText(prawnBayLocaleKey);
+				   	HandReticle.main.SetInteractText("PrawnBayDoorHeatWarn");
 				   	HandReticle.main.SetTargetDistance(8);
 				});
 				Vector3 p1 = new Vector3(991.1F, 1F, -3.2F);
@@ -1354,14 +1375,75 @@ namespace ReikaKalseki.SeaToSea {
 				lv.invincible = true;
 				lv.data.maxHealth = 40000;
 				lv.health = lv.data.maxHealth;
-	    		return;
+	    	}
+	    	else if (pi && SeaToSeaMod.lrCoralClusters.Contains(pi.ClassId)) {
+	    		string name = go.name;
+	    		go.EnsureComponent<TechTag>().type = C2CItems.brineCoral;
+	    		//if (!hard) require azurite battery if not set from 1600 to 750
+	    		//	go.EnsureComponent<Rigidbody>().mass = 750;
+	    		GameObject pfb = ObjectUtil.lookupPrefab(VanillaResources.LARGE_QUARTZ.prefab);
+	    		ObjectUtil.makeMapRoomScannable(go, C2CItems.brineCoral);
+	    		Drillable d = go.EnsureComponent<Drillable>();
+	    		d.copyObject(pfb.GetComponent<Drillable>());
+	    		go.name = name;
+	    		/*
+	    		d.deleteWhenDrilled = true;
+	    		d.kChanceToSpawnResources = 1;
+	    		d.lootPinataOnSpawn = true;
+	    		d.minResourcesToSpawn = 1;
+	    		d.maxResourcesToSpawn = 2;*/
+	    		d.resources = new Drillable.ResourceType[]{new Drillable.ResourceType(){techType = C2CItems.brineCoralPiece.TechType, chance = 1}};
+	    		go.EnsureComponent<BrineCoralTag>();
 	    	}
 	    	else if (pi && pi.ClassId == "58247109-68b9-411f-b90f-63461df9753a" && Vector3.Distance(deepDegasiTablet, go.transform.position) <= 0.2) {
 	    		GameObject go2 = ObjectUtil.createWorldObject(C2CItems.brokenOrangeTablet.ClassID);
 	    		go2.transform.position = go.transform.position;
 	    		go2.transform.rotation = go.transform.rotation;
 	    		UnityEngine.Object.Destroy(go);
-	    		return;
+	    	}
+	    	else if (pi && (pi.ClassId == "92fb421e-a3f6-4b0b-8542-fd4faee4202a" || pi.classId == "53ffa3e8-f2f7-43b8-a5c7-946e766aff64")) {
+	    		for (int i = 0; i < purpleTabletsToBreak.Count; i++) {
+	    			Vector3 pos = purpleTabletsToBreak[i];
+	    			if (Vector3.Distance(pos, go.transform.position) <= 0.2) {
+	    				GameObject go2 = ObjectUtil.createWorldObject(i == 2 ? SeaToSeaMod.purpleTabletPartA.ClassID : "83b61f89-1456-4ff5-815a-ecdc9b6cc9e4");
+			    		go2.transform.position = go.transform.position;
+			    		go2.transform.rotation = go.transform.rotation;
+			    		UnityEngine.Object.Destroy(go);
+	    			}
+	    		}
+	    	}
+	    	else if (pi && pi.classId == "83b61f89-1456-4ff5-815a-ecdc9b6cc9e4") { //broken purple tablet
+	    		GameObject light = ObjectUtil.lookupPrefab("53ffa3e8-f2f7-43b8-a5c7-946e766aff64").GetComponentInChildren<Light>().gameObject;
+	    		Vector3 rel = light.transform.localPosition;
+	    		light = UnityEngine.Object.Instantiate(light);
+	    		light.transform.parent = pi.transform;
+	    		light.transform.localPosition = rel;
+	    		Light l = light.GetComponent<Light>();
+	    		l.intensity *= 0.67F;
+	    		//l.intensity = 0.4F;
+				//l.range = 18F;
+				//l.color = new Color(0.573, 0.404, 1.000, 1.000);
+				l.shadows = LightShadows.Soft;
+				FlickeringLight f = light.EnsureComponent<FlickeringLight>();
+				f.dutyCycle = 0.5F;
+				f.updateRate = 0.3F;
+				f.fadeRate = 5F;
+				go.EnsureComponent<TabletFragmentTag>();
+				/*
+				GameObject models = ObjectUtil.getChildObject(pi.gameObject, "precursor_key_cracked_01");
+				MeshRenderer[] parts = models.GetComponentsInChildren<MeshRenderer>();
+				SNUtil.log("Checking fragmentation of purple tablet @ "+go.transform.position+": "+parts.Length+" in map "+purpleTabletsToRemoveParts.toDebugString());
+				if (parts.Length == 2) {
+					foreach (KeyValuePair<Vector3, bool[]> kvp in purpleTabletsToRemoveParts) {
+		    			if (Vector3.Distance(kvp.Key, go.transform.position) <= 0.2) {
+							SNUtil.log("Found match "+kvp.Value.toDebugString());
+							for (int i = 0; i < parts.Length; i++) {
+								parts[i].gameObject.SetActive(i >= kvp.Value.Length || kvp.Value[i]);
+							}
+							break;
+		    			}
+					}
+				}*/
 	    	}
 	    	else if (pi && pi.ClassId == "1c34945a-656d-4f70-bf86-8bc101a27eee") {
 	    		go.EnsureComponent<C2CMoth>();
@@ -1395,6 +1477,12 @@ namespace ReikaKalseki.SeaToSea {
 	    		go.transform.position = auroraStorageModule.position;
 	    		go.transform.rotation = auroraStorageModule.rotation;
 	    	}*/
+	    	else if (pi && pi.ClassId == auroraDepthModule.prefabName && Vector3.Distance(auroraDepthModule.position, go.transform.position) <= 0.2) {
+	    		GameObject go2 = ObjectUtil.createWorldObject(SeaToSeaMod.brokenAuroraDepthModule.ClassID);
+	    		go2.transform.position = go.transform.position;
+	    		go2.transform.rotation = go.transform.rotation;
+	    		UnityEngine.Object.Destroy(go);
+	    	}
 	    	else if (pi && pi.ClassId == "bc9354f8-2377-411b-be1f-01ea1914ec49" && Vector3.Distance(auroraRepulsionGunTerminal, go.transform.position) <= 0.2) {
 	    		pi.GetComponent<StoryHandTarget>().goal = SeaToSeaMod.auroraTerminal;
 	    	}
@@ -1464,12 +1552,14 @@ namespace ReikaKalseki.SeaToSea {
 	    		bool flag = false;
 		    	//SNUtil.log("Trying to blue prawn bay fire "+gameObject.name+" @ "+transform.position);
 				foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) {
-		    		if (!r)
+		    		if (!r || r.name == null || r.materials == null || r.materials.Length == 0)
 		    			continue;
 		    		//SNUtil.log("Checking renderer "+r.name+" in "+r.gameObject.GetFullHierarchyPath());
 					if (auroraPrawnFireColors.ContainsKey(r.name)) {
 		    			foreach (Material m in r.materials) {
 			    			//SNUtil.log("Setting color to "+auroraPrawnFireColors[r.name]);
+			    			if (!m)
+			    				continue;
 							m.color = auroraPrawnFireColors[r.name];
 							flag = true;
 						}
@@ -1480,10 +1570,15 @@ namespace ReikaKalseki.SeaToSea {
 					l.color = new Color(0.55F, 0.67F, 1F);
 				if (flag && age >= 0.5F) {
 					Light l2 = ObjectUtil.addLight(gameObject);
-					l2.color = l.color;
-					l2.intensity = 0.4F;
-					l2.range = 32F;
-					l2.name = "BlueFireLight";
+					if (l2) {
+						l2.color = l.color;
+						l2.intensity = 0.4F;
+						l2.range = 32F;
+						l2.name = "BlueFireLight";
+					}
+					else {
+						SNUtil.log("Error when bluing fire @ "+transform.position+": no second light was added");
+					}
 				
 		    		//SNUtil.log("Bluing complete. Destroying component.");
 					UnityEngine.Object.Destroy(this);
@@ -1540,6 +1635,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void updateSeamothModules(SeaMoth sm, int slotID, TechType tt, bool added) {
+	    	sm.gameObject.GetComponent<C2CMoth>().recalculateModules();
 	    	sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 	    	sm.gameObject.EnsureComponent<SeamothTetherController>().recalculateModule();
 	    	if (added && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
@@ -1705,7 +1801,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static void onHoverVehicleUpgrades(VehicleUpgradeConsoleInput v) {
 			HandReticle main = HandReticle.main;
 		   	if (!v.docked && !SeaToSeaMod.anywhereSeamothModuleCheatActive && GameModeUtils.currentEffectiveMode != GameModeOption.Creative) {
-				main.SetInteractText(dockUpgradesLocaleKey); //locale key
+				main.SetInteractText("DockToChangeVehicleUpgrades"); //locale key
 				main.SetIcon(HandReticle.IconType.HandDeny, 1f);
 		   	}
 			else if (v.equipment != null) {
@@ -1716,7 +1812,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void tryKnife(DIHooks.KnifeAttempt k) {
 	    	LifeformScanningSystem.instance.onObjectSeen(k.target.gameObject, false);
-	    	if (CraftData.GetTechType(k.target.gameObject) == TechType.BlueAmoeba) {
+	    	TechType tt = CraftData.GetTechType(k.target.gameObject);
+	    	if (tt == TechType.BlueAmoeba || tt == SeaToSeaMod.gelFountain.TechType) {
 	    		k.allowKnife = true;
 	    		return;
 	    	}
@@ -1876,6 +1973,14 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (tt == TechType.LaserCutter && hasLaserCutterUpgrade()) {
 				TooltipFactory.WriteDescription(sb, "\nCutting Temperature upgraded to allow cutting selected seabase structural elements");
 			}
+	    	else if (tt == C2CItems.emperorRootOil.TechType) {
+	    		EmperorRootOil.EmperorRootOilTag tag = go.GetComponent<EmperorRootOil.EmperorRootOilTag>();
+	    		if (tag && tag.pickupTime >= 0) {
+	    			float age = DayNightCycle.main.timePassedAsFloat-tag.pickupTime;
+	    			float pct = (float)MathUtil.linterpolate(age, 0, EmperorRootOil.LIFESPAN, 100, 0, true);
+	    			TooltipFactory.WriteDescription(sb, "\n"+pct.ToString("0.0")+"% freshness remaining");
+	    		}
+	    	}
 		}
 	    
 	    public static void interceptBulkheadLaserCutter(DIHooks.BulkheadLaserCutterHoverCheck ch) {
@@ -1888,8 +1993,11 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 		public static void onKnifed(GameObject go) {
-	    	if (CraftData.GetTechType(go) == TechType.BlueAmoeba)
+	    	TechType tt = CraftData.GetTechType(go);
+	    	if (tt == TechType.BlueAmoeba)
 	    		DIHooks.fireKnifeHarvest(go, new Dictionary<TechType, int>{{CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 1}});
+	    	else if (tt == SeaToSeaMod.gelFountain.TechType)
+	    		go.GetComponent<GelFountainTag>().onKnifed();
 		}
 	    
 	    public static void interceptItemHarvest(DIHooks.KnifeHarvest h) {
@@ -1897,12 +2005,16 @@ namespace ReikaKalseki.SeaToSea {
 	    		if (h.objectType == C2CItems.kelp.TechType) {
 	    			GlowKelpTag tag = h.hit.FindAncestor<GlowKelpTag>();
 	    			h.drops[h.defaultDrop] = 2;
-	    			float f = tag.isFarmed() ? 0 : 0.05F;
+	    			float f = tag.isFarmed() ? 0 : 0.25F;
+	    			TechType egg = CustomEgg.getEgg(C2CItems.purpleHolefish.TechType).TechType;
+	    			f -= Inventory.main.GetPickupCount(egg)*0.2F; //100% chance if 0, 80% chance if 1, down to 0% at >= 5
+	    			/*
 	    			WaterPark wp = tag.getACU();
 	    			if (wp && wp.GetComponentInChildren<PurpleHolefishTag>())
-	    				f = 0.015F;
+	    				f = 0.06F;
+	    				*/
 	    			if (f > 0 && UnityEngine.Random.Range(0F, 1F) <= f)
-	    				h.drops[CustomEgg.getEgg(SeaToSeaMod.purpleHolefish.TechType).TechType] = 1;
+	    				h.drops[egg] = 1;
 	    		}
 		    	if (ObjectUtil.isFarmedPlant(h.hit) && WorldUtil.isPlantInNativeBiome(h.hit)) {
 		        	h.drops[h.defaultDrop] = h.drops[h.defaultDrop]*2;
@@ -1915,6 +2027,17 @@ namespace ReikaKalseki.SeaToSea {
 		       	KnownTech.Add(TechType.SeamothElectricalDefense);
 	    		SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
 		    }
+	    }
+	    
+	    public static void onCyclopsDamage(SubRoot r, DamageInfo di) {/*
+	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && !KnownTech.Contains(TechType.CyclopsShieldModule)) {
+				float healthFraction = r.live.GetHealthFraction();
+				float num = (100f - r.damageManager.overshieldPercentage) / 100f;
+	    		if (healthFraction < num) { //health below auto regen level
+			       	KnownTech.Add(TechType.CyclopsShieldModule);
+		    		SNUtil.triggerTechPopup(TechType.CyclopsShieldModule);
+	    		}
+		    }*/
 	    }
 	    
 	    public static bool chargerConsumeEnergy(IPowerInterface pi, float amt, out float consumed, Charger c) {
@@ -2034,6 +2157,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	return ret;
 	    }
 	    
+	    //Not called anymore, because kick to main menu when die now
 	    public static void onPlayerRespawned(Survival s, Player ep, bool post) {
 	    	if (post) {
 	    		bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
@@ -2048,11 +2172,34 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onItemsLost() {
+	    	/* no longer necessary because kick to main menu instead
 	    	foreach (InventoryItem ii in ((IEnumerable<InventoryItem>)Inventory.main.container)) {
 	    		if (ii != null && ii.item && ii.item.GetTechType() == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType) {
 	    			ii.item.destroyOnDeath = true;
 	    		}
-	    	}
+	    	}*/
+	    }
+	    
+	    public static void onDeath() {
+	    	//SNUtil.writeToChat("You died);
+	    	//IngameMenu.main.QuitGame(true);
+	    	playerDied = true;
+	    	setupDeathScreen();
+	    }
+	    
+	    private static void setupDeathScreen() {
+			uGUI.main.respawning.Hide();
+			DamageFX.main.ClearHudDamage();
+		    Player.main.SuffocationReset();
+		    IngameMenu.main.gameObject.SetActive(true);
+		    IngameMenu.main.ChangeSubscreen("QuitConfirmation");
+		    UnityEngine.UI.Text txt = ObjectUtil.getChildObject(IngameMenu.main.currentScreen, "Header").GetComponent<UnityEngine.UI.Text>();
+		    txt.text = "You died. Please reload your save.";
+		    txt.fontSize = 20;
+		    ObjectUtil.getChildObject(IngameMenu.main.currentScreen, "ButtonNo").SetActive(false);
+		    GameObject yes = ObjectUtil.getChildObject(IngameMenu.main.currentScreen, "ButtonYes");
+		    yes.GetComponentInChildren<UnityEngine.UI.Text>().text = "Main Menu";
+		    yes.transform.localPosition = new Vector3(0, yes.transform.localPosition.y, yes.transform.localPosition.z);
 	    }
 	    
 	    public static void onSelfScan() {
@@ -2063,13 +2210,14 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public static void onScanComplete(PDAScanner.EntryData data) {
+	    	C2CProgression.instance.onScanComplete(data);
 	    	LifeformScanningSystem.instance.onScanComplete(data);
 	    }
 	    
 	    public static void onDataboxTooltipCalculate(BlueprintHandTarget tgt) {
 	    	LiveMixin lv = tgt.GetComponent<LiveMixin>();
 	    	if (lv && lv.health < lv.maxHealth) {
-		    	HandReticle.main.SetInteractText(needRepairDataboxLocaleKey);
+		    	HandReticle.main.SetInteractText("NeedRepairDataBox");
 				HandReticle.main.SetIcon(HandReticle.IconType.HandDeny, 1f);
 	    	}
 	    }
@@ -2086,7 +2234,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		check.placeable = false;
 	    		return;
 	    	}
-			if (Builder.constructableTechType == SeaToSeaMod.geyserFilter.TechType) {
+			if (Builder.constructableTechType == C2CItems.geyserFilter.TechType) {
 	    		check.placeable = !check.placeOn && GeyserFilterLogic.findGeyser(Builder.GetGhostModel().transform.position);
 	    		check.ignoreSpaceRequirements = check.placeable;
 				//check.ignoreSpaceRequirements = true;
@@ -2291,7 +2439,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void onMeteorImpact(GameObject meteor, Pickupable drop) {
 	    	if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.MeteorPrompt).key)) {
-	    		Story.StoryGoal.Execute(METEOR_GOAL, Story.GoalType.Story);
+	    		Story.StoryGoal.Execute(C2CProgression.METEOR_GOAL, Story.GoalType.Story);
 	    	}
 	    }
 	    
@@ -2328,6 +2476,32 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static void mergeDeathrunFragmentScanCount(TechType tt, int amt) {
 	    	PDAHandler.EditFragmentsToScan(tt, Math.Max(amt, ReikaKalseki.Reefbalance.ReefbalanceMod.getScanCountOverride(tt)));
+	    }
+	    
+	    public static bool allowSaving(bool orig) {
+	    	if (!orig)
+	    		return false;
+	    	if (GameModeUtils.currentEffectiveMode == GameModeOption.Creative)
+	    		return true;
+	    	Player ep = Player.main;
+	    	if (DayNightCycle.main && DayNightCycle.main.timePassedAsFloat-lastO2PipeTime <= 0.5)
+	    		return true;
+	    	if (ep.IsSwimming() && ep.transform.position.y < 0)
+	    		return false;
+	    	if (ep.currentWaterPark)
+	    		return false;
+	    	if (ep.currentSub && ep.currentSub.powerRelay && ep.currentSub.powerRelay.GetPower() > 0)
+	    		return true;
+	    	if (ep.precursorOutOfWater)
+	    		return true;
+	    	if (BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.ALZ || WaterTemperatureSimulation.main.GetTemperature(ep.transform.position) > 150)
+	    		return false;
+	    	if (!SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE)) {
+	    		Vehicle v = ep.GetVehicle();
+	    		if (v && v.IsPowered())
+	    			return true;
+	    	}
+	    	return false;
 	    }
 	}
 }
