@@ -41,13 +41,14 @@ namespace ReikaKalseki.SeaToSea {
 			addPOI("crashmesa", C2CHooks.crashMesa);
 			addPOI("voidpod", VoidSpikesBiome.signalLocation);
 			addPOI("pod6base", new Vector3(338.5F, -110, 286.5F));
+			addPOI("keen", new Vector3(-822, -290, -873));
 			addPOI("bkelpbase", C2CHooks.bkelpBaseGeoCenter+Vector3.up*30);
 			addPOI("trailerbase", C2CHooks.trailerBaseBioreactor+Vector3.up*20);
 			addPOI("dunearch", new Vector3(-1610, -334, 92));
 			addPOI("mountainpod", new Vector3(993, -260, 1379));
 			addPOI("mountainbase", C2CHooks.mountainBaseGeoCenter);
-			addPOI("sunbeamsite", new Vector3(301, 15, 1086));
-			addPOI("islandwreck", new Vector3(-763, 20, -1104));
+			addPOI("sunbeamsite", WorldUtil.SUNBEAM_SITE);
+			addPOI("islandwreck", WorldUtil.DEGASI_FLOATING_BASE);
 			addPOI("cragwreck", new Vector3(330, -266, -1451));
 			addPOI("mtnislandcave", new Vector3(372, -90, 1039));
 			addPOI("treadertunnel", new Vector3(-1250, -277, -725));

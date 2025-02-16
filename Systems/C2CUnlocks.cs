@@ -66,6 +66,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	//do NOT unlock sulfur acid alt; is unlocked with crys sulfur 
 	    	
 	    	//TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HydrochloricAcid, C2CRecipes.getAltBleach().TechType);
+	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.brineCoral, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType);
 		}
 	}
 	

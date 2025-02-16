@@ -23,6 +23,20 @@ namespace ReikaKalseki.SeaToSea
 	    internal readonly Vector3 pod6Location = new Vector3(363, -110, 309);
 	    internal readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 	    
+		private readonly Dictionary<string, StoryGoal> locationGoals = new Dictionary<string, StoryGoal>() { 
+	    	{"OZZY_FORK_DEEP_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-645.6F, -102.7F, -16.2F), 12, "ozzyforkdeeproom")},
+	    	{"UNDERISLANDS_BLOCKED_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-124.38F, -200.69F, 855F), 5, "underislandsblockedroom")},
+	    	{"FLOATING_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-662.55F, 5.50F, -1064.35F), 25, "floatarch", vec => vec.y > 0 && vec.y < 22.5F)},
+	    	{"PLANT_ALCOVE", StoryHandler.instance.createLocationGoal(new Vector3(375, 22, 870), 15, "islandalcove", vec => vec.y > 15 && vec.y < 30F)},
+	    	{"MUSHTREE", StoryHandler.instance.createLocationGoal(new Vector3(-879.7F, -138, 590.4F), 4, "mushtree")},
+	    	{"MUSHTREE_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-777.5F, -229.8F, 404.8F), 12, "musharch")},
+	    	{"CRAG_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-90.2F, -287.4F, -1261.5F), 6, "cragarch")},
+	    	{"KOOSH_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(1344.8F, -309.2F, 730.7F), 8, "koosharch")},
+	    	{"LR_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-914.7F, -621.2F, 1078.4F), 6, "lrarch")},
+	    };  
+	    
+	    internal static readonly string METEOR_GOAL = "meteorhit";
+	    
 	    private readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
 	    	//new Vector3(66, -100, -608), big obvious but empty one
@@ -34,6 +48,8 @@ namespace ReikaKalseki.SeaToSea
     
     	private readonly HashSet<TechType> gatedTechnologies = new HashSet<TechType>();
     	private readonly HashSet<string> requiredProgression = new HashSet<string>();
+    	
+    	private readonly List<TechType> pipeRoomTechs = new List<TechType>();
 		
 		private C2CProgression() {
 	    	StoryHandler.instance.addListener(this);
@@ -41,8 +57,7 @@ namespace ReikaKalseki.SeaToSea
 			StoryHandler.instance.registerTrigger(new StoryTrigger("AuroraRadiationFixed"), new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F));
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Orange), new DelayedStoryEffect(SeaToSeaMod.crashMesaRadio, 0.00004F));
 			StoryHandler.instance.registerTrigger(new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth), new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000015F));
-			
-			
+						
 			StoryGoal pod12Radio = new StoryGoal("RadioKoosh26", Story.GoalType.Radio, 0);
 			DelayedStoryEffect ds = new DelayedStoryEffect(pod12Radio, 0.00008F);
 			StoryHandler.instance.registerTrigger(new StoryTrigger("SunbeamCheckPlayerRange"), ds);
@@ -64,7 +79,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.BaseMoonpool));
 			*/
 			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new ProgressionTrigger(doDunesCheck)), new DunesPrompt());
-			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new StoryTrigger(C2CHooks.METEOR_GOAL)), new MeteorPrompt());
+			StoryHandler.instance.registerTrigger(new PDAPromptCondition(new StoryTrigger(METEOR_GOAL)), new MeteorPrompt());
 			
 			addPDAPrompt(PDAMessages.Messages.FollowRadioPrompt, hasMissedRadioSignals);
 			
@@ -72,6 +87,16 @@ namespace ReikaKalseki.SeaToSea
 			StoryHandler.instance.registerTrigger(new ProgressionTrigger(canUnlockEnzy42Recipe), new TechUnlockEffect(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 6));
 			
 			StoryHandler.instance.registerTrigger(new ProgressionTrigger(canSunbeamCountdownBegin), new DelayedStoryEffect(SeaToSeaMod.sunbeamCountdownTrigger, 0.001F, 90));
+			
+			foreach (StoryGoal g in locationGoals.Values) {
+				StoryHandler.instance.registerTickedGoal(g);
+			}
+			
+			//StoryHandler.instance.registerChainedRedirect("PrecusorPrisonAquariumIncubatorActive", null); //deregister
+			
+			pipeRoomTechs.Add(TechType.PrecursorPipeRoomIncomingPipe);
+			pipeRoomTechs.Add(TechType.PrecursorPipeRoomOutgoingPipe);
+			pipeRoomTechs.Add(SeaToSeaMod.prisonPipeRoomTank);
 		
 			gatedTechnologies.Add(TechType.Kyanite);
 			gatedTechnologies.Add(TechType.Sulphur);
@@ -99,6 +124,7 @@ namespace ReikaKalseki.SeaToSea
 			gatedTechnologies.Add(TechType.CyclopsHullModule3);
 			gatedTechnologies.Add(TechType.CyclopsThermalReactorModule);
 			gatedTechnologies.Add(TechType.CyclopsFireSuppressionModule);
+			gatedTechnologies.Add(TechType.CyclopsShieldModule);
 			gatedTechnologies.Add(TechType.StasisRifle);
 			gatedTechnologies.Add(TechType.LaserCutter);
 			gatedTechnologies.Add(TechType.ReinforcedDiveSuit);
@@ -121,12 +147,16 @@ namespace ReikaKalseki.SeaToSea
     		return new ReadOnlyCollection<TechType>(gatedTechnologies.ToList());
     	}
     	
+    	public StoryGoal getLocationGoal(string key) {
+    		return locationGoals[key];
+    	}
+    	
     	private bool canSunbeamCountdownBegin(Player ep) {
     		return StoryGoalManager.main.completedGoals.Contains("OnPlayRadioSunbeam3") && ep.GetVehicle() is SeaMoth;
     	}
     	
     	private bool canUnlockEnzy42Recipe(Player ep) {
-    		return PDAEncyclopedia.entries.ContainsKey("HeroPeeper") && KnownTech.knownTech.Contains(SeaToSeaMod.processor.TechType);
+    		return PDAEncyclopedia.entries.ContainsKey("HeroPeeper") && KnownTech.knownTech.Contains(C2CItems.processor.TechType);
     	}
 	    
 	    private bool hasMissedRadioSignals(Player ep) {
@@ -173,7 +203,7 @@ namespace ReikaKalseki.SeaToSea
 	    	return false;
 	    }
 	    
-	    private PDAPrompt addPDAPrompt(PDAMessages.Messages m, Func<Player, bool> condition, float ch = 0.01F) {
+	    private PDAPrompt addPDAPrompt(PDAMessages.Messages m, Predicate<Player> condition, float ch = 0.01F) {
 	    	return addPDAPrompt(m, new ProgressionTrigger(condition), ch);
 	    }
 	    
@@ -212,6 +242,16 @@ namespace ReikaKalseki.SeaToSea
     		return true;
     	}
 		
+		public void onScanComplete(PDAScanner.EntryData data) {
+    		if (pipeRoomTechs.Contains(data.key)) {
+    			foreach (TechType tt in pipeRoomTechs) {
+    				if (!PDAScanner.complete.Contains(tt))
+    					return;
+    			}
+    			SeaToSeaMod.enviroSimulation.unlock();
+    		}
+		}
+		
 		public void NotifyGoalComplete(string key) {
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
 				if (key.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
@@ -221,19 +261,38 @@ namespace ReikaKalseki.SeaToSea
 					VoidSpikesBiome.instance.activateSignal();
 				}
 				else if (key.Contains(SeaToSeaMod.crashMesaRadio.key)) {
-					Player.main.gameObject.EnsureComponent<CrashMesaCallback>().Invoke("trigger", 25);
+					Player.main.gameObject.EnsureComponent<DelayedPromptsCallback>().Invoke("triggerCrashMesa", 25);
 				}
 			}
 			else if (key == PDAManager.getPage("voidpod").id) { //id is pda page story key
 				SeaToSeaMod.voidSpikeDirectionHint.activate(4);
+			}
+			else if (key == SeaToSeaMod.auroraTerminal.key) {
+    			PDAManager.getPage("auroraringterminalinfo").unlock(false);
 			}
 			else {
 				switch(key) {
 					case "SunbeamCheckPlayerRange":
 						Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
 					break;
+					case "JellyPDAExterior":
+						Player.main.gameObject.EnsureComponent<DelayedPromptsCallback>().Invoke("triggerJellySeamothDepth", 5);
+					break;
 					case "drfwarperheat":
 						KnownTech.Add(C2CItems.cyclopsHeat.TechType);
+					break;
+					case "stepcaveterminal":
+						KnownTech.Add(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType);
+						//SNUtil.triggerTechPopup(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType);
+					break;
+					case "prisonpipeterminal": //removed, scanning the four tanks is now the trigger
+						//KnownTech.Add(CraftingItems.getItem(CraftingItems.Items.FluidPump).TechType);
+					break;
+					case "prisoneggterminal":
+						//KnownTech.Add(C2CItems.incubatorInjector.TechType);
+					break;
+					case "prisonhighterminal": //removed
+						//KnownTech.Add(TechType.HatchingEnzymes);						
 					break;
 				}
 			}
@@ -248,6 +307,24 @@ namespace ReikaKalseki.SeaToSea
     			return true;
     		Spawnable s = ItemRegistry.instance.getItem(tt);
     		return s is DIPrefab && ((DIPrefab)s).getOwnerMod() == SeaToSeaMod.modDLL;
+	    }
+	    
+	    public static void onSeamothDepthChit() {
+    		if (StoryGoalManager.main.IsGoalComplete("seamothdepthchit2")) {
+    			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 3);
+    			KnownTech.Add(TechType.VehicleHullModule1);
+    			SNUtil.triggerTechPopup(TechType.VehicleHullModule1);
+    		}
+    		else if (StoryGoalManager.main.IsGoalComplete("seamothdepthchit1")) {
+    			StoryGoal.Execute("seamothdepthchit2", Story.GoalType.Story);
+    			SNUtil.writeToChat("2/3 Data Entries Recovered");
+    			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 2);
+    		}
+    		else {
+    			StoryGoal.Execute("seamothdepthchit1", Story.GoalType.Story);
+    			SNUtil.writeToChat("1/3 Data Entries Recovered");
+    			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 1);
+    		}
 	    }
 	}
 	
@@ -305,7 +382,34 @@ namespace ReikaKalseki.SeaToSea
 		
 	}
 	
-	class CrashMesaCallback : MonoBehaviour {
+	class DelayedPromptsCallback : MonoBehaviour {
+			
+		void triggerCrashMesa() {
+			SoundManager.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click
+			SoundManager.playSound("event:/player/story/RadioShallows22NoSignalAlt"); //"signal coordinates corrupted"
+			PDAManager.getPage("crashmesahint").unlock(false);
+		}
+		
+		void triggerSanctuary() {
+			if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key)) {
+				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.SanctuaryPrompt).key);
+				SeaToSeaMod.sanctuaryDirectionHint.activate(12);
+			}
+		}
+		
+		void triggerJellySeamothDepth() {
+			if (Player.main.GetPDA().isOpen) {
+				Invoke("triggerJellySeamothDepth", 2);
+				return;
+			}
+			if (!PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.JellySeamothDepthPrompt).key)) {
+				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.JellySeamothDepthPrompt).key);
+			}
+		}
+		
+	}
+	
+	class JellyPDADelCallback : MonoBehaviour {
 			
 		void trigger() {
 			SoundManager.playSound("event:/tools/scanner/new_encyclopediea"); //triple-click

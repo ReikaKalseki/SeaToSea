@@ -78,8 +78,14 @@ namespace ReikaKalseki.SeaToSea {
 		private float lastTimeUnlock = -1;
 		private HashSet<TechType> unlocksRightNow = new HashSet<TechType>();
 		
+		private readonly DrunkVisual drunkVisual;
+		
 		private FCSIntegrationSystem() {
 	    	isFCSLoaded = QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub");
+	    	if (isFCSLoaded) {
+	    		drunkVisual = new DrunkVisual();
+	    		ScreenFXManager.instance.addOverride(drunkVisual);
+	    	}
 		}
 		
 		public bool isLoaded() {
@@ -666,7 +672,7 @@ namespace ReikaKalseki.SeaToSea {
 			BioReactorHandler.SetBioReactorCharge(fcsBiofuel, 18000);
 			
 	       	TechData rec = RecipeUtil.copyRecipe(td);
-			rec.Ingredients.Add(new Ingredient(SeaToSeaMod.purpleBoomerang.TechType, 2));
+			rec.Ingredients.Add(new Ingredient(C2CItems.purpleBoomerang.TechType, 2));
 			rec.Ingredients.Add(new Ingredient(TechType.Benzene, 1));
 			rec.Ingredients.Add(new Ingredient(C2CItems.sanctuaryPlant.seed.TechType, 1));
 			rec.Ingredients.ForEach(i => {if (i.techType == EcoceanMod.glowOil.TechType || i.techType == CraftingItems.getItem(CraftingItems.Items.WeakAcid).TechType)i.amount *= 2;});
@@ -768,14 +774,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//private Rigidbody player;			
 			
-		    private static RadialBlurScreenFXController shaderController;
-		    private static RadialBlurScreenFX shader;
-			
 			protected override void Update() {		
-				if (!shader) {
-			    	shaderController = Camera.main.GetComponent<RadialBlurScreenFXController>();
-			    	shader = Camera.main.GetComponent<RadialBlurScreenFX>();
-				}
 				//if (!player)
 				//	player = GetComponent<Rigidbody>();
 				float dT = Time.deltaTime;
@@ -796,16 +795,12 @@ namespace ReikaKalseki.SeaToSea {
 					nextShaderRecalculation = time+dur;
 					shaderIntensityTarget = UnityEngine.Random.Range(0.33F, 1.5F);
 					shaderIntensityMoveSpeed = Mathf.Abs(shaderIntensity-shaderIntensityTarget)/dur;
-				}
-				if (shader) {				
+				}			
 					if (shaderIntensityTarget > shaderIntensity)
 						shaderIntensity = Mathf.Min(shaderIntensityTarget, shaderIntensity+dT*shaderIntensityMoveSpeed);
 					else if (shaderIntensityTarget < shaderIntensity)
 						shaderIntensity = Mathf.Max(shaderIntensityTarget, shaderIntensity-dT*shaderIntensityMoveSpeed);
-					shaderController.enabled = false;
-					shader.amount = 4*shaderIntensity;
-					shader.enabled = true;
-				}
+					FCSIntegrationSystem.instance.drunkVisual.effect = 4*shaderIntensity;
 				//player.AddForce(currentPush, ForceMode.VelocityChange);
 				if (UnityEngine.Random.Range(0F, 1F) < 0.04F)
 					SNUtil.shakeCamera(UnityEngine.Random.Range(0.4F, 1.5F), UnityEngine.Random.Range(0.25F, 0.75F), UnityEngine.Random.Range(0.125F, 0.67F));
@@ -817,8 +812,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		    
 		    void OnDisable() {
-				if (shaderController)
-					shaderController.enabled = true;
+				FCSIntegrationSystem.instance.drunkVisual.effect = 0;
 		    }
 		    
 		    void OnDestroy() {
@@ -831,6 +825,23 @@ namespace ReikaKalseki.SeaToSea {
 				m.elapseWhen = DayNightCycle.main.timePassedAsFloat+duration;
 				return m;
 			}
+			
+		}
+		
+		class DrunkVisual : ScreenFXManager.ScreenFXOverride {
+			
+			internal float effect = 0;
+			
+			internal DrunkVisual() : base(100) {
+				
+			}
+	    	
+	    	public override void onTick() {
+		    	if (effect > 0) {
+	    			ScreenFXManager.instance.registerOverrideThisTick(ScreenFXManager.instance.radialShader);
+	    			ScreenFXManager.instance.radialShader.amount = effect;
+		    	}
+	    	}
 			
 		}
 		

@@ -104,6 +104,9 @@ namespace ReikaKalseki.SeaToSea {
 			map[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
 			map[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
 			
+			int n = C2CHooks.purpleTabletsToBreak.Count+1+SeaToSeaMod.worldgen.getCount("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4"); //+1 for the broken one in front of gun
+			map[TechType.PrecursorKey_PurpleFragment] = n;//hard ? n : n-1; //allow missing one in not-hard
+			
 			TechType seaVoyager = TechType.None;
 			if (TechTypeHandler.TryGetModdedTechType("SeaVoyager", out seaVoyager))
 				map[seaVoyager] = hard ? 18 : 12;
@@ -131,14 +134,14 @@ namespace ReikaKalseki.SeaToSea {
 		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.kelp, 0.08F, glassForest));
 		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.mountainGlow, 0.3F, BiomeRegions.Other));
 		ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, sanctuary));
-		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(SeaToSeaMod.purpleBoomerang, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Boomerang), glassForest));
-		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(SeaToSeaMod.purpleHoopfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Spinefish), glassForest));
+		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleBoomerang, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Boomerang), glassForest));
+		ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleHoopfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Spinefish), glassForest));
 		ACUEcosystems.ACUMetabolism met = ACUEcosystems.getMetabolismForAnimal(TechType.RabbitRay);
-		ACUEcosystems.addPredatorType(SeaToSeaMod.purpleHolefish.TechType, met.relativeValue*2F, met.metabolismPerSecond, met.normalizedPoopChance, false, glassForest);
+		ACUEcosystems.addPredatorType(C2CItems.purpleHolefish.TechType, met.relativeValue*2F, met.metabolismPerSecond, met.normalizedPoopChance, false, glassForest);
 		met = ACUEcosystems.getMetabolismForAnimal(TechType.Jellyray);
-		ACUEcosystems.addPredatorType(SeaToSeaMod.sanctuaryray.TechType, met.relativeValue*1.25F, met.metabolismPerSecond, met.normalizedPoopChance, false, sanctuary);
+		ACUEcosystems.addPredatorType(C2CItems.sanctuaryray.TechType, met.relativeValue*1.25F, met.metabolismPerSecond, met.normalizedPoopChance, false, sanctuary);
 		met = ACUEcosystems.getMetabolismForAnimal(TechType.Stalker);
-		ACUEcosystems.addPredatorType(SeaToSeaMod.deepStalker.TechType, met.relativeValue*1.5F, met.metabolismPerSecond*0.5F, met.normalizedPoopChance*1.25F, true, BiomeRegions.GrandReef);
+		ACUEcosystems.addPredatorType(C2CItems.deepStalker.TechType, met.relativeValue*1.5F, met.metabolismPerSecond*0.5F, met.normalizedPoopChance*1.25F, true, BiomeRegions.GrandReef);
 		ACUEcosystems.getMetabolismForAnimal(TechType.BoneShark).addBiome(glassForest);
 		ACUEcosystems.getMetabolismForAnimal(TechType.Gasopod).addBiome(sanctuary);
 		ACUEcosystems.getMetabolismForAnimal(TechType.Mesmer).addBiome(sanctuary);
@@ -175,6 +178,13 @@ namespace ReikaKalseki.SeaToSea {
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
 		RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
 		//RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
+		
+		C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.acuCleanerBlock.TechType);
+		C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.acuBoosterBlock.TechType);
+		C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.planktonFeederBlock.TechType);
+		C2CRecipes.replaceFiberMeshWithMicroFilter(EcoceanMod.planktonScoop.TechType);
+		
+		//GenUtil.registerWorldgen(new PositionedPrefab(ExscansionMod.alienBase.ClassID, new Vector3())); //step cave
 		
 		Spawnable baseglass = ItemRegistry.instance.getItem("BaseGlass");
 		int amt = RecipeUtil.removeIngredient(TechType.BaseWaterPark, baseglass != null ? baseglass.TechType : TechType.Glass).amount;
@@ -219,25 +229,25 @@ namespace ReikaKalseki.SeaToSea {
 		FoodEffectSystem.instance.addPoisonEffect(C2CItems.kelp.seed.TechType, 250, 30);
 		FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.alkali.seed.TechType, 75, 30, DamageType.Acid, SeaToSeaMod.itemLocale.getEntry(C2CItems.alkali.ClassID).getField<string>("eateffect"));
 		
-		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleHolefish.TechType, 60, 30);
-		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleBoomerang.TechType, 50, 30);
-		FoodEffectSystem.instance.addPoisonEffect(SeaToSeaMod.purpleHoopfish.TechType, 80, 30);
+		FoodEffectSystem.instance.addPoisonEffect(C2CItems.purpleHolefish.TechType, 60, 30);
+		FoodEffectSystem.instance.addPoisonEffect(C2CItems.purpleBoomerang.TechType, 50, 30);
+		FoodEffectSystem.instance.addPoisonEffect(C2CItems.purpleHoopfish.TechType, 80, 30);
 		
 		FoodEffectSystem.instance.addVomitingEffect(C2CItems.sanctuaryPlant.seed.TechType, 60, 40, 5, 2, 5);
 		FoodEffectSystem.instance.addEffect(C2CItems.sanctuaryPlant.seed.TechType, (s, go) => PlayerMovementSpeedModifier.add(1.8F, 180), FoodEffectSystem.instance.getLocaleEntry("speed"));
 		
 		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
 		
-		BaseRoomSpecializationSystem.instance.registerModdedObject(SeaToSeaMod.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
-		BaseRoomSpecializationSystem.instance.registerModdedObject(SeaToSeaMod.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
+		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.alkali, 0.1F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.healFlower, 0.1F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.2F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1F);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.125F);
 		
-		BaseRoomSpecializationSystem.instance.setDisplayValue(SeaToSeaMod.purpleBoomerang.TechType, 0.2F); //lava boomerang is 0.15
-		BaseRoomSpecializationSystem.instance.setDisplayValue(SeaToSeaMod.purpleHoopfish.TechType, 0.2F); //hoopfish is 0.2
+		BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleBoomerang.TechType, 0.2F); //lava boomerang is 0.15
+		BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleHoopfish.TechType, 0.2F); //hoopfish is 0.2
 		
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.25F);
 		BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1.25F);
@@ -285,6 +295,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.removeIngredient(tt, TechType.Battery);
 			RecipeUtil.removeIngredient(tt, TechType.Lubricant);
 			RecipeUtil.addIngredient(tt, C2CItems.t2Battery.TechType, 1);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType, 1);
 		}
 		ItemUnlockLegitimacySystem.instance.add("TechPistol", "TechPistol", () => Story.StoryGoalManager.main.completedGoals.Contains("Iridium"));
 		
@@ -297,6 +308,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(tt, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 2);
 			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
 			RecipeUtil.addIngredient(tt, TechType.Polyaniline, 1);
+			RecipeUtil.addIngredient(tt, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType, 2);
 			RecipeUtil.addIngredient(tt, TechType.MercuryOre, 2);
 		}
 		ItemUnlockLegitimacySystem.instance.add("SeamothArms", "SeamothDrillArmModule", () => Story.StoryGoalManager.main.completedGoals.Contains("Iridium"));

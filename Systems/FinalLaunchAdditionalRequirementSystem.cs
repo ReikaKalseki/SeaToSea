@@ -26,9 +26,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly Dictionary<TechType, RequiredItem> requiredItems = new Dictionary<TechType, RequiredItem>();
 		
-		private readonly HashSet<string> biomes = new HashSet<string>();
-		private readonly HashSet<BiomeGoal> biomeGoals = new HashSet<BiomeGoal>();
-		
 		internal static readonly string NEED_CARGO_PDA = "needlaunchcargo";
 		
 		private FinalLaunchAdditionalRequirementSystem() {
@@ -49,7 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(TechType.Mesmer, 1, "A predator that uses psychological manipulation");
 			addRequiredItem(TechType.Jumper, 2, "A small cave-dwelling scavenger");
 			
-			addRequiredItem(SeaToSeaMod.deepStalker.TechType, 1, "A semi-intelligent predator with a strong attraction to shiny objects, adapted for deep water");
+			addRequiredItem(C2CItems.deepStalker.TechType, 1, "A semi-intelligent predator with a strong attraction to shiny objects, adapted for deep water");
 			
 			addRequiredItem(TechType.Bladderfish, 2, "A fish with water filtering capabilities");
 			addRequiredItem(TechType.Peeper, hard ? 6 : 3, "Enzyme host peeper").setSorting(2000).setAdditionalCheck(pp => {
@@ -72,7 +69,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(C2CItems.healFlower.seed.TechType, 4, "Leaves coated in oils suitable for medical applications");
 			addRequiredItem(C2CItems.mountainGlow.seed.TechType, 1, "Aggressively parasitic flora that eats its host from within");
 			addRequiredItem(C2CItems.sanctuaryPlant.seed.TechType, 2, "A glowing seed-bearing organ from a plant on the verge of extinction");
-			addRequiredItem(SeaToSeaMod.purpleHolefish.TechType, 1, "A large slow-moving herbivore whose life revolves around the kelp it feeds on and lays eggs in");
+			addRequiredItem(C2CItems.purpleHolefish.TechType, 1, "A large slow-moving herbivore whose life revolves around the kelp it feeds on and lays eggs in");
 			
 			addRequiredItem(TechType.PrecursorIonCrystal, hard ? 8 : 3, "Alien Power Storage Units").setSorting(1000);
 			addRequiredItem(TechType.Diamond, 1, "*").setSorting(1000);
@@ -82,22 +79,6 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredItem(TechType.PrecursorKey_Blue, 1, "*").setSorting(3000);
 			addRequiredItem(TechType.PrecursorKey_White, 1, "*").setSorting(3000);
 			addRequiredItem(TechType.PrecursorKey_Red, 1, "*").setSorting(3000);
-			
-			biomes.Add("dunes");
-			biomes.Add("bloodKelp");
-			biomes.Add("UnderwaterIslands");
-			biomes.Add("mountains");
-			biomes.Add("kooshZone");
-			//biomes.Add("crashedShip");
-			//biomes.Add("cragField"); has no trigger
-			biomes.Add("grandreef");
-			biomes.Add("SparseReef");
-			//biomes.Add("SeaTreaderPath");
-			biomes.Add("mushroomForest");
-			biomes.Add("grassyPlateaus");
-			biomes.Add("kelpForest");
-			biomes.Add("FloatingIsland");
-			biomes.Add("JellyshroomCaves");
 		}
 		
 		public RequiredItem addRequiredItem(TechType tt, int amt, string desc) {
@@ -135,30 +116,6 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
-		private void generateBiomeGoalList() {
-			foreach (string biome in biomes) {
-				foreach (BiomeGoal bg in BiomeGoalTracker.main.goalData.goals) {
-					if (bg.biome == biome) {
-						biomeGoals.Add(bg);
-						break;
-					}
-				}
-			}
-		}
-		
-		private bool visitedAllBiomes() {
-			if (biomeGoals.Count == 0) {
-				generateBiomeGoalList();
-			}
-			foreach (BiomeGoal s in biomeGoals) {
-				if (!StoryGoalManager.main.IsGoalComplete(s.key)) {
-					SNUtil.writeToChat("Missing biome goal '"+s+"' in "+s.biome);
-					return false;
-				}
-			}
-			return true;
-		}
-		
 		internal void forceLaunch() {
 			forceLaunch(UnityEngine.Object.FindObjectOfType<LaunchRocket>());
 		}
@@ -184,11 +141,6 @@ namespace ReikaKalseki.SeaToSea {
 		public bool checkIfScannedAllLifeforms() {
 			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(LifeformScanningSystem.instance.hasScannedEverything(), null, PDAMessages.Messages.NeedScansMessage);
 		}
-		/*
-		public bool checkIfVisitedAllBiomes() {
-			return checkConditionAndShowPDAAndVoicelogIfNot(visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
-		}
-		*/
 			
 		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
 			updateCounts(lockers);

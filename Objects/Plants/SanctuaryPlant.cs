@@ -176,12 +176,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (isHarvested()) {
 			  	HandReticle.main.SetProgress(getGrowthProgress());
 				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
-				HandReticle.main.SetInteractText(C2CHooks.sanctuaryPlantGrowingLocaleKey);
+				HandReticle.main.SetInteractText("SanctuaryPlantGrowing");
 			   	HandReticle.main.SetTargetDistance(8);
 			}
 			else {
 			   	HandReticle.main.SetIcon(HandReticle.IconType.Interact, 1f);
-			   	HandReticle.main.SetInteractText(C2CHooks.sanctuaryPlantClickLocaleKey);
+			   	HandReticle.main.SetInteractText("SanctuaryPlantClick");
 			   	HandReticle.main.SetTargetDistance(8);
 			}
 		}

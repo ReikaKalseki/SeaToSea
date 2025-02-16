@@ -274,12 +274,34 @@
 			
 		</pda>
 	</WeakEnzyme42>
+	<Electrolytes>
+		<name>
+			Electrolytes
+		</name>
+		<desc>
+			Various electrochemically active compounds in an acidic aqueous solution.
+		</desc>
+		<pda>
+			
+		</pda>
+	</Electrolytes>
+	<MicroFilter>
+		<name>
+			MicroFilter
+		</name>
+		<desc>
+			A dense mesh of coated fibers, tight enough to block all but the smallest of particles suspended in water.
+		</desc>
+		<pda>
+			
+		</pda>
+	</MicroFilter>
 	<Nanocarbon>
 		<name>
 			Nanocarbon
 		</name>
 		<desc>
-			Carbon nanotubes, woven together into sheets which are then heat-fused together. An advanced industrial product not producible by standard fabrication technology.
+			Carbon nanotubes, woven together into sheets which are then heat-fused together to form an ultrastrong shell. An advanced industrial product not producible by standard fabrication technology.
 			
 			&lt;b&gt;Will break down when submerged in water.&lt;/b&gt;
 		</desc>
@@ -376,6 +398,19 @@
 			
 		</pda>
 	</KharaaTreatment>
+	<Geogel>
+		<name>
+			Lithogel
+		</name>
+		<desc>
+			A tarry hydrophobic substance found leaking from certain geologically active fissures, similar to Terran crude oil. Highly flammable, but also contains an interesting mix of chemicals with potential medical applications.
+			
+			&lt;b&gt;Will dissolve in water.&lt;/b&gt;
+		</desc>
+		<pda>
+			
+		</pda>
+	</Geogel>
 	<FCSFuel>
 		<name>
 			High-Performance Lubricant
@@ -409,6 +444,30 @@
 			
 		</pda>
 	</Paint>
+	<BrineCoralPiece>
+		<name>
+			Brine Coral Chunk
+		</name>
+		<desc>
+			A small chunk of brine coral, laden with electrically active materials.
+		</desc>
+		<pda>
+			
+		</pda>
+	</BrineCoralPiece>
+	<EmperorRootOil>
+		<name>
+			Emperor Oil
+		</name>
+		<desc>
+			A substance leaked from fissures in the roots of the same name.
+			
+			&lt;b&gt;Rapidly breaks down when removed from the plant.&lt;/b&gt;
+		</desc>
+		<pda>
+			
+		</pda>
+	</EmperorRootOil>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite
@@ -495,6 +554,20 @@
 			iridium
 		</header>
 	</IRIDIUM>
+	<CALCITE>
+		<name>
+			Calcite
+		</name>
+		<desc>
+			Crystalline calcium carbonate. Useful in some chemical reactions.
+		</desc>
+		<pda>
+			Calcite is a very common mineral on Earth, but on 4546B can only be found in highly mineralized regions, where the concentrations of dissolved calcium ions are so high that they precipitate out of solution. As it is also highly susceptible to acidic environments, it is only found high above the brine flows in the Lost River, mostly in small pockets in the cave roof.
+		</pda>
+		<header>
+			calcite
+		</header>
+	</CALCITE>
 	<ALKALI_PLANT>
 		<name>
 			Alkali Vines
@@ -593,6 +666,25 @@
 			SanctuaryPlant
 		</header>
 	</SANCTUARY_PLANT>
+	<EMPEROR_ROOT>
+		<name>
+			Emperor Root
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			These roots, found only in this cave in this aquarium, likely are the last surviving specimens of a once wide-ranging flora species. Given their similarity to the roots found in the blood kelp regions, they are almost certainly closely related, and this likely extends to their harvestable oils as well.
+			
+			Assessment: Unique source of certain biological materials
+		</pda>
+		<category>
+			Lifeforms/Flora/Exploitable
+		</category>
+		<header>
+			emperorroot
+		</header>
+	</EMPEROR_ROOT>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony
@@ -619,6 +711,42 @@
 			Assessment: Further study will enable mechanical imitation of a similar filtration process
 		</pda>
 	</GEYSER_CORAL>
+	<GEL_FOUNTAIN>
+		<name>
+			Lithogel Vent
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			The porous nature of these sunken islands allows water, rich with corrosive compounds from the volcanic activity below, to penetrate the rock and trigger numerous chemical reactions. This chemical slurry accumulates until it gradually oozes out of weak points in the structure.
+			
+			This quantity is too small to be used, but it should be possible to release the pressure more dramatically, allowing for a single large chemical emission, though pressure will need to build again before the process can be repeated.
+			
+			Assessment: Intermittent source of potentially valuable chemical compounds
+		</pda>
+	</GEL_FOUNTAIN>
+	<BRINE_CORAL>
+		<name>
+			Brine Coral
+		</name>
+		<desc>
+			Coral clusters adapted to life submerged in caustic brine.
+		</desc>
+		<pda>
+			The corrosive nature of the brine running along the floor of the Lost River is inhospitable to most species of flora or fauna, but this coral species seems to have evolved to utilize the high density of electrolytes to drive its biochemical processes.
+			
+			This adaptation, however, constrains this coral to the brine; if removed it rapidly begins to lose these compounds and will quickly die.
+			
+			Assessment: May contain electrolytic compounds useful in electronics manufacturing, though best harvested without removing from the brine
+		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			brinecoral
+		</header>
+	</BRINE_CORAL>
 	<DeepStalker>
 		<name>
 			Abyssal Stalker
@@ -809,7 +937,7 @@
 			Azurite Battery
 		</name>
 		<desc>
-			A better battery, with significantly greater storage density. Its material construction precludes being adapted into a vehicular power cell.
+			A better battery, with significantly greater storage density. Its material construction precludes being adapted into a vehicular power cell. Outputs significantly greater voltage than a basic battery.
 		</desc>
 		<pda>
 			

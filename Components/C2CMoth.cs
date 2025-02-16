@@ -59,6 +59,7 @@ namespace ReikaKalseki.SeaToSea
 			private SeaMoth seamoth;
 			private TemperatureDamage temperatureDamage;
 			private VFXVehicleDamages damageFX;
+			private FMOD_CustomLoopingEmitter engineSounds;
 			private VehicleAccelerationModifier speedModifier;
 			private SeamothTetherController tethers;
 			private Rigidbody body;
@@ -81,8 +82,13 @@ namespace ReikaKalseki.SeaToSea
 			
 			private float speedBonus;
 			
+			private Vector3 jitterTorque;
+			private Vector3 jitterTorqueTarget;
+			
 			private int stuckCells = 0;
 			private bool touchingKelp = false;
+			
+			private bool hasVoidStealth = false;
 			
 			//private Renderer deepStalkerStorageDamage;
 			
@@ -121,8 +127,8 @@ namespace ReikaKalseki.SeaToSea
 				go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge/250F)*0.25F+0.75F));
 			}
 			
-			internal void applySpeedBoost() {
-				if (speedBonus > 0.5F)
+			internal void applySpeedBoost(float charge) {
+				if (speedBonus > 0.5F || !seamoth.HasEnoughEnergy(5))
 					return;
 				speedBonus = 2F;
 				seamoth.ConsumeEnergy(5);
@@ -156,6 +162,9 @@ namespace ReikaKalseki.SeaToSea
 					seamoth = GetComponent<SeaMoth>();
 				if (!body)
 					body = GetComponent<Rigidbody>();
+				if (!engineSounds) {
+					engineSounds = GetComponentInChildren<EngineRpmSFXManager>().gameObject.GetComponent<FMOD_CustomLoopingEmitter>();
+				}
 				
 				if (!speedModifier) {
 					speedModifier = seamoth.gameObject.AddComponent<VehicleAccelerationModifier>();
@@ -205,6 +214,28 @@ namespace ReikaKalseki.SeaToSea
 				if (boostSoundEvent != null && boostSoundEvent.Value.hasHandle()) {
 					ATTRIBUTES_3D attr = transform.position.To3DAttributes();
 					boostSoundEvent.Value.set3DAttributes(ref attr.position, ref attr.velocity, ref attr.forward);
+				}
+				
+				if (engineSounds && engineSounds.evt.isValid()) {
+					if (hasVoidStealth) {
+						engineSounds.evt.setVolume(0.25F);
+					}
+					else {
+						engineSounds.evt.setVolume(1+speedBonus);
+					}
+				}
+				
+				if (speedBonus > 0) {
+					float jitter = ((speedBonus+1)*(speedBonus+1))-1; //0.25 -> 0.56, 3 -> 8
+					Vector3 add = jitterTorque*tickTime*jitter*40000;
+					body.AddTorque(add, ForceMode.Force);
+					//SNUtil.writeToChat("Adding jitter: "+add);
+				}
+				if ((jitterTorque-jitterTorqueTarget).sqrMagnitude < 0.01) {
+					jitterTorqueTarget = MathUtil.getRandomVectorAround(Vector3.zero, 3).setLength(1);
+				}
+				else {
+					jitterTorque += (jitterTorqueTarget-jitterTorque)*Mathf.Min(1, tickTime*5);
 				}
 				
 				bool kooshCave = false;
@@ -286,6 +317,14 @@ namespace ReikaKalseki.SeaToSea
 						lastMeltSound = time;
 					}
 				}
+			}
+		
+			public void recalculateModules() {
+				if (!seamoth) {
+					Invoke("recalculateModules", 0.5F);
+					return;
+				}
+				hasVoidStealth = InventoryUtil.vehicleHasUpgrade(seamoth, C2CItems.voidStealth.TechType);
 			}
 			
 		}

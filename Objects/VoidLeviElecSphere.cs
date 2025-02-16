@@ -47,6 +47,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float spawnTime;
 		
+		void Awake() {
+			LargeWorldStreamer.main.MakeEntityTransient(gameObject);
+		}
+		
 		private void Update() {
 			GetComponent<ParticleSystem>().Play(true);
 			if (spawnTime <= 0)

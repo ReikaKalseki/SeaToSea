@@ -22,7 +22,6 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly float biomeRadius = 240;
 		public static readonly Vector3 biomeCenter = new Vector3(-107, -481, 953);
 		
-		public static readonly string biomeName = "Glass Forest";
 		public static readonly float waterTemperature = 35;
     
 	    public static readonly Vector3 wreckCtrPos1 = new Vector3(-110.76F, -499F, 940.19F);
@@ -39,13 +38,15 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 		
-		private UnderwaterIslandsFloorBiome() : base(biomeName, 0.8F) {
+		private UnderwaterIslandsFloorBiome() : base("Glass Forest", 0.8F) {
 			
 		}
 		
 		public override void register() {
 			UnityEngine.Random.InitState(234761897);
         	GenUtil.registerWorldgen(new PositionedPrefab(VanillaCreatures.GHOST_LEVIATHAN.prefab, new Vector3(-125, -450, 980)));
+        	
+        	createDiscoveryStoryGoal(0, SeaToSeaMod.miscLocale.getEntry("glassforestenter"));
 			
 			atmoFX.Patch();
 			/*
@@ -57,12 +58,12 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//GenUtil.registerWorldgen(atmoFX.ClassID, biomeCenter, Quaternion.identity, go => go.transform.localScale = Vector3.one*(biomeRadius+50));
 			
-			GenUtil.registerSlotWorldgen(C2CItems.kelp.ClassID, C2CItems.kelp.PrefabFileName, C2CItems.kelp.TechType, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
+			GenUtil.registerPrefabWorldgen(C2CItems.kelp, EntitySlot.Type.Medium, LargeWorldEntity.CellLevel.Batch, BiomeType.UnderwaterIslands_ValleyFloor, 1, 3.2F);
 			//GenUtil.registerSlotWorldgen(kelp.ClassID, kelp.PrefabFileName, kelp.TechType, false, BiomeType.UnderwaterIslands_Geyser, 1, 2F);
 			
-			creatureCounts[SeaToSeaMod.purpleBoomerang.ClassID] = 300;
-			creatureCounts[SeaToSeaMod.purpleHolefish.ClassID] = 60;
-			creatureCounts[SeaToSeaMod.purpleHoopfish.ClassID] = 250;
+			creatureCounts[C2CItems.purpleBoomerang.ClassID] = 300;
+			creatureCounts[C2CItems.purpleHolefish.ClassID] = 60;
+			creatureCounts[C2CItems.purpleHoopfish.ClassID] = 250;
 			
 			foreach (KeyValuePair<string, int> kvp in creatureCounts) {
 				for (int i = 0; i < kvp.Value; i++) {
@@ -185,7 +186,7 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fog.dayNightColor.colorKeys = keys;
 			//vol.fog.dayNightColor.
 			*/
-			vol.overrideBiome = UnderwaterIslandsFloorBiome.biomeName;
+			vol.overrideBiome = UnderwaterIslandsFloorBiome.instance.biomeName;
 		}
 	}
 }

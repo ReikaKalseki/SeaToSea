@@ -39,6 +39,9 @@
 		<degasi>
 			The decaying remains of a seabase, once inhabited by the survivors of the Degasi
 		</degasi>
+		<seamothdepth>
+			A few data cards hidden in secluded locations by Maida, away from the other Degasi crew, bearing data on the construction of modules to improve Seamoth depth resistance
+		</seamothdepth>
 	</JELLYSHROOM>
 	<POD3>
 		<name>
@@ -396,6 +399,9 @@
 		<floater>
 			Giant versions of the buoyant floater organisms encountered attached to some rocks, holding the entire landmass afloat
 		</floater>
+		<tablet>
+			The remains of a strange alien device, broken during a cave-in
+		</tablet>
 	</FLOATISLAND>
 	<MOUNTAINISLAND>
 		<name>
@@ -414,7 +420,7 @@
 			A PDA from a group of Aurora survivors, documenting their arrival on the island from a location to the east and their discoveries of various structures, items, topography, and lifeforms on the island
 		</beachpda>
 		<cavepda>
-			A PDA from an Aurora survivor, paranoid and desperate about their circumstances, and making note of the fates of their fellow survivors, as well as describing a red alien device they threw away at the eastern end of the island
+			A PDA from an Aurora survivor, paranoid and desperate about their circumstances, and making note of the fates of their fellow survivors, as well as describing a red alien device they threw away at the western end of the island
 		</cavepda>
 		<arch>
 			An alien teleporter, leading to a corresponding structure in a cave on a floating island
@@ -425,6 +431,9 @@
 		<tablet>
 			A shattered, red tablet of non-human design 
 		</tablet>
+		<purpletablets>
+			Broken fragments of a strange alien tablet scattered around the island, many in or near a series of cave systems, above and below water
+		</purpletablets>
 		<plantalcove>
 			A small skylit alcove in the above-water cave system, host to a new species of plant not encountered anywhere else on 4546B
 		</plantalcove>
@@ -494,7 +503,7 @@
 			Fragments of a bioprocessor machine
 		</bioproc>
 		<liqbr>
-			A databox containing the blueprints for a liquid breathing system
+			A databox containing the complex chemical formula for an oxygen-bearing fluid, suitable for liquid-based respiration
 		</liqbr>
 	</DUNEARCH>
 	<GRANDREEF>
@@ -653,7 +662,7 @@
 
 		</pda>
 		<databox>
-			A databox containing the complex chemical formula for an oxygen-bearing fluid, suitable for liquid-based respiration
+			A databox containing the blueprints for a liquid breathing system
 		</databox>
 		<speed>
 			A databox for a module to give the seamoth a speed boost, shoved in an air vent by the force of the crash
