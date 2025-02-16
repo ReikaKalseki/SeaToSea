@@ -27,7 +27,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override void onFired(SeaMoth sm, int slotID, float charge) { //charge is 0-1
-			sm.GetComponent<C2CMoth>().applySpeedBoost();
+			sm.GetComponent<C2CMoth>().applySpeedBoost(charge);
 		}
 		
 		protected override float getChargingPowerCost() {

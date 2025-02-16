@@ -32,6 +32,28 @@
 		Sounds/pdaprompt/voidspike.ogg
 	</pda>
   </voidspikeenter>
+  <glassforestenter>
+	<name>
+		
+	</name>
+	<desc>
+		This ecological biome is dominated by volcanic activity. The water here is rich with chemical materials.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/glassforest-enter.ogg
+	</pda>
+  </glassforestenter>
+  <sanctuaryenter>
+	<name>
+		
+	</name>
+	<desc>
+		Scans of this biome indicate this location supports the only remaining specimens of nearby lifeforms.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/sanctuary-enter.ogg
+	</pda>
+  </sanctuaryenter>
   <aurorafire>
 	<name>
 		
@@ -241,6 +263,28 @@
 		Sounds/pdaprompt/liq-br-selfscan-hard.ogg
 	</pda>
   </liqbrselfscanhard>
+  <auroraringterminal_c2c>
+	<name>
+		
+	</name>
+	<desc>
+		Technology blueprint corruption was detected on your PDA. Your databank was repaired to maximize productivity.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/auroraringterminal.ogg
+	</pda>
+  </auroraringterminal_c2c>
+  <hiddenseamothprompt>
+	<name>
+		
+	</name>
+	<desc>
+		Detecting data storage items elsewhere in this cave system.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/hiddenseamothprompt.ogg
+	</pda>
+  </hiddenseamothprompt>
   <bulkheadLaserCutterUpgrade>
 	<name>
 		Laser Cutter Temperature Upgrade
@@ -266,6 +310,17 @@
 		Now completes recipes with 33% less energy required
 	</pda>
   </bioprocessorBoost>
+  <jellyshroomSeamothDepth>
+	<name>
+		Seamoth Depth Data
+	</name>
+	<desc>
+		&lt;color=#FFA622FF&gt;Seamoth&lt;/color&gt;\n&lt;color=#74C8F8FF&gt;Depth Data&lt;/color&gt;
+	</desc>
+	<pda>
+		
+	</pda>
+  </jellyshroomSeamothDepth>
   <HUDAlerts>
 	<name>
 		
@@ -295,105 +350,6 @@
 		Reduced Liquid Respiration Efficiency
 	</influngwarn>
   </HUDAlerts>
-  <DockToChangeVehicleUpgrades>
-	<name>
-		
-	</name>
-	<desc>
-		Vehicle upgrades can only be exchanged while docked
-	</desc>
-	<pda>
-		
-	</pda>
-  </DockToChangeVehicleUpgrades>
-  <PrawnBayDoorHeatWarn>
-	<name>
-		
-	</name>
-	<desc>
-		WARNING: Extreme temperatures on the other side of this doorway
-	</desc>
-	<pda>
-		
-	</pda>
-  </PrawnBayDoorHeatWarn>
-  <LostRiverCachePanel>
-	<name>
-		
-	</name>
-	<desc>
-		Upload human biological data
-	</desc>
-	<pda>
-		
-	</pda>
-  </LostRiverCachePanel>
-  <NeedRepairDataBox>
-	<name>
-		
-	</name>
-	<desc>
-		Repair databox to recover blueprint
-	</desc>
-	<pda>
-		
-	</pda>
-  </NeedRepairDataBox>
-  <SanctuaryPlantGrowing>
-	<name>
-		
-	</name>
-	<desc>
-		Growing a new core
-	</desc>
-	<pda>
-		
-	</pda>
-  </SanctuaryPlantGrowing>
-  <SanctuaryPlantClick>
-	<name>
-		
-	</name>
-	<desc>
-		Harvest core
-	</desc>
-	<pda>
-		
-	</pda>
-  </SanctuaryPlantClick>
-  <CampfireCooking>
-	<name>
-		
-	</name>
-	<desc>
-		Smoking fish
-	</desc>
-	<pda>
-		
-	</pda>
-  </CampfireCooking>
-  <CampfireClick>
-	<name>
-		
-	</name>
-	<desc>
-		Supply a raw fish to smoke
-	</desc>
-	<pda>
-		
-	</pda>
-  </CampfireClick>
-  <SmokedNoExpire>
-	<name>
-		
-	</name>
-	<desc>
-		Remains good indefinitely.
-	</desc>
-	<pda>
-		
-	</pda>
-  </SmokedNoExpire>
   <TrackerPage>
 	<name>
 		

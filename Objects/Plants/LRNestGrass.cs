@@ -34,7 +34,10 @@ namespace ReikaKalseki.SeaToSea {
 			r.material.SetColor("_SpecColor", new Color(0.15F, 1, 0.75F, 1));
 			r.material.SetVector("_ObjectUp", new Color(0.0F, 0.4F, 1F, 0));
 			go.EnsureComponent<LRNestGrassTag>();
-			
+			/*
+			CapsuleCollider cc = Ecocean.PlantHidingCollider.addToObject<CapsuleCollider>(go); causes damage so hiding in is a bad idea
+			cc.radius = 4;
+			cc.height = 4;*/
 			return go;
 	    }
 		

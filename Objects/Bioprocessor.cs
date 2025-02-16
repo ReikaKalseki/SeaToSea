@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class Bioprocessor : CustomMachine<BioprocessorLogic> {
 		
 		internal static readonly Dictionary<TechType, BioRecipe> recipes = new Dictionary<TechType, BioRecipe>();
-		internal static readonly Dictionary<TechType, DuplicateRecipeDelegate> delegates = new Dictionary<TechType, DuplicateRecipeDelegate>();
+		private static readonly Dictionary<TechType, DuplicateRecipeDelegate> delegates = new Dictionary<TechType, DuplicateRecipeDelegate>();
 		
 		internal static readonly Arrow leftArrow = new Arrow("arrowL", "", "", "");
 		internal static readonly Arrow rightArrow = new Arrow("arrowR", "", "", "");
@@ -71,6 +71,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(new TypeInput(TechType.SeaTreaderPoop), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
 			addRecipe(new TypeInput(C2CItems.kelp), CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 180, 3, 8);
 			addRecipe(new SparklePeeperInput(), CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 45, 200, 2, 1, true);
+			//addRecipe(new TypeInput(SeaToSeaMod.geogel), CraftingItems.getItem(CraftingItems.Items.FilteredGeoGel).TechType, 3, 60, 250, 1, 1, true);
 		}
 		
 		public static void addRecipe(BioInput inp, TechType o, int enzy, float secs, float energy, int inamt = 1, int outamt = 1, bool preventUnlock = false) {
@@ -245,7 +246,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
-			SeaToSeaMod.processor.initializeMachine(gameObject);
+			C2CItems.processor.initializeMachine(gameObject);
 			setEmissiveColor(new Color(0, 0, 1));
 		}
 		
@@ -344,7 +345,7 @@ namespace ReikaKalseki.SeaToSea {
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
 										n *= 2;
-										InventoryUtil.forceRemoveItem(sc, kelp[0]);
+										InventoryUtil.forceRemoveItem(sc, kelp[0]); //list is updated in realtime
 									}
 									addItemToInventory(currentOperation.outputItem, n);
 									SNUtil.log("Bioprocessor crafted "+currentOperation.outputItem.AsString()+" x"+n);
@@ -369,11 +370,14 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				else {
 					//SNUtil.writeToChat("Looking for recipe");
-					foreach (BioRecipe r in Bioprocessor.recipes.Values) {
-						if (canRunRecipe(sc, r)) {
-							//SNUtil.writeToChat("Found "+r);
-							setRecipe(r);
-							break;
+					IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
+					if (enzy != null && enzy.Count > 0) {
+						foreach (BioRecipe r in Bioprocessor.recipes.Values) {
+							if (canRunRecipe(sc, r, enzy.Count)) {
+								//SNUtil.writeToChat("Found "+r);
+								setRecipe(r);
+								break;
+							}
 						}
 					}
 				}
@@ -425,12 +429,11 @@ namespace ReikaKalseki.SeaToSea {
 			lastColorChange = time;
 		}
 		
-		private bool canRunRecipe(StorageContainer sc, BioRecipe r) {
+		private bool canRunRecipe(StorageContainer sc, BioRecipe r, int enzy) {
 			if (!KnownTech.knownTech.Contains(r.outputItem))
 				return false;
 			IEnumerable<InventoryItem> ing = r.inputItem.getMatchingItems(sc);
-			IList<InventoryItem> enzy = sc.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
-			return ing != null && enzy != null && enzy.Count >= r.enzyCount && ing.Count() >= r.inputCount;
+			return ing != null && enzy >= r.enzyCount && ing.Count() >= r.inputCount;
 		}
 		
 		private void setRecipe(BioRecipe r) {

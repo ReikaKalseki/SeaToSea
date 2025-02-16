@@ -151,7 +151,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal void updateLocale() {
 			LanguageHandler.SetLanguageLine(TechType.AsString(), "Smoked "+Language.main.Get(rawFish));
-			LanguageHandler.SetLanguageLine("Tooltip_"+TechType.AsString(), Language.main.Get("Tooltip_"+cookedFish.AsString())+" "+Language.main.Get(C2CHooks.smokedNoExpireLocaleKey));
+			LanguageHandler.SetLanguageLine("Tooltip_"+TechType.AsString(), Language.main.Get("Tooltip_"+cookedFish.AsString())+" "+Language.main.Get("SmokedNoExpire"));
 			SNUtil.log("Relocalized smoked fish "+this+" > "+TechType.AsString()+" > "+Language.main.Get(TechType), SNUtil.diDLL);
 		}
 		
@@ -174,11 +174,15 @@ namespace ReikaKalseki.SeaToSea {
 				live = GetComponent<LiveMixin>();
 			if (!light)
 				light = GetComponentInChildren<Light>();
-			live.health = live.maxHealth;
-			live.invincible = true;
+			if (live) {
+				live.health = live.maxHealth;
+				live.invincible = true;
+			}
 			
 			if (!fire) {
 				fire = ObjectUtil.getChildObject(gameObject, "Extinguishable_Fire_small(Clone)");
+				if (!fire)
+					return;
 				fire.transform.localPosition = Vector3.up*0.23F;
 				fire.transform.localRotation = Quaternion.identity;
 				fire.transform.localScale = new Vector3(0.5F, 1, 0.5F);
@@ -219,12 +223,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (cooking != null) {
 			  	HandReticle.main.SetProgress(cookProgress);
 				HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
-				HandReticle.main.SetInteractText(C2CHooks.campfireCookingLocaleKey);
+				HandReticle.main.SetInteractText("CampfireCooking");
 			   	HandReticle.main.SetTargetDistance(8);
 			}
 			else {
 			   	HandReticle.main.SetIcon(HandReticle.IconType.Interact, 1f);
-			   	HandReticle.main.SetInteractText(C2CHooks.campfireUseLocaleKey);
+			   	HandReticle.main.SetInteractText("CampfireClick");
 			   	HandReticle.main.SetTargetDistance(8);
 			}
 		}

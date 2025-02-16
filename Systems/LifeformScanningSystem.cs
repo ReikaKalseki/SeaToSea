@@ -45,6 +45,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void tick(float time) {
+			if (!Story.StoryGoalManager.main.IsGoalComplete("Goal_Scanner")) {
+				return;
+			}
 			if (needsPDAUpdate >= 0 && time >= needsPDAUpdate) {
 				PDAManager.getPage(NEED_SCANS_PDA).update(generatePDAContent(), true);
 				PDAManager.getPage(NEED_SCANS_PDA).unlock();
@@ -145,7 +148,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal bool isDummiedOut(TechType tt) {
-			if (tt == SeaToSeaMod.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
+			if (tt == C2CItems.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
 				return true;
 			if (tt == TechType.BasaltChunk || tt == TechType.SeaEmperor || tt == TechType.BloodGrass || tt == TechType.SmallFan)
 				return true;
@@ -189,6 +192,18 @@ namespace ReikaKalseki.SeaToSea {
 					needsPDAUpdate = DayNightCycle.main.timePassedAsFloat+0.5F;
 				}
 			}
+		}
+		
+		internal void onBiomeDiscovered() {
+			needsPDAUpdate = DayNightCycle.main.timePassedAsFloat+0.5F;
+		}
+			
+		public string getLocalDescription(Vector3 pos) {
+			BiomeBase bb = BiomeBase.getBiome(pos);
+			if (bb != null && BiomeDiscoverySystem.instance.isDiscovered(bb))
+				return WorldUtil.getRegionalDescription(pos, false);
+			else
+				return "Unexplored Area";
 		}
 	    
 	    class LifeformEntry : IComparable<LifeformEntry> {
@@ -242,7 +257,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			public string getLastSeen() {
-				return seenAt.magnitude > 0.5F ? WorldUtil.getRegionalDescription(seenAt, false) : null;
+				return seenAt.magnitude > 0.5F ? instance.getLocalDescription(seenAt) : null;
 			}
 			
 			public bool isIdentityKnown() {

@@ -31,7 +31,6 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly float biomeVolumeRadius = 200;
 		
-		public static readonly string biomeName = "Void Spikes";
 		public static readonly float waterTemperature = 18;
 	    
 	    //public static Color? waterColor;
@@ -59,7 +58,7 @@ namespace ReikaKalseki.SeaToSea {
 		private bool delayTeleportOutUntilEnterSeamoth = false;
 		private bool delayTeleportInUntilEnterSeamoth = false;
 		
-		private VoidSpikesBiome() : base(biomeName, 0.4F) {
+		private VoidSpikesBiome() : base("Void Spikes", 0.4F) {
 			generator = new VoidSpikes((end500m+end900m)/2);
 	      	generator.count = CLUSTER_COUNT;
 	      	//generator.scaleXZ = 16;
@@ -125,6 +124,8 @@ namespace ReikaKalseki.SeaToSea {
 			signal.register("32e48451-8e81-428e-9011-baca82e9cd32", signalLocation);
 			signal.addWorldgen(UnityEngine.Random.rotationUniform);
 			
+			createDiscoveryStoryGoal(10, SeaToSeaMod.miscLocale.getEntry("voidspikeenter"));
+			
 			atmoFX.Patch();
 			
 			GenUtil.registerWorldgen(PDAManager.getPage(PDA_KEY).getPDAClassID(), signalLocation+Vector3.down*1.25F, UnityEngine.Random.rotationUniform);
@@ -168,8 +169,8 @@ namespace ReikaKalseki.SeaToSea {
 			VoidSpikeLeviathanSystem.instance.tick(ep);
 	    	if (ep.currentSub == null && UnityEngine.Random.Range(0, (int)(10/Time.timeScale)) == 0) {
 			   	if (Vector3.Distance(pos, end500m) <= biomeVolumeRadius/2) {
-					if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
-						PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
+					//moved to biome storygoals if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.PROMPTS))
+					//	PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.VoidSpike).key);
 			   	}
 				else {
 					tickTeleportCheck(ep);
@@ -367,7 +368,7 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fogMaxDistance = 100;
 			vol.fogStartDistance = 20;
 			vol.fogColor = new Color(vol.fogColor.r*0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b*1.25F), vol.fogColor.a);
-			vol.overrideBiome = VoidSpikesBiome.biomeName;
+			vol.overrideBiome = VoidSpikesBiome.instance.biomeName;
 		}
 	}
 }

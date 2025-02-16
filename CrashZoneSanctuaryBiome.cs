@@ -23,13 +23,11 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly Vector3 biomeCenter = new Vector3(1111.16F, -360.5F, -985F);
 		private static readonly Simplex3DGenerator edgeFuzz = (Simplex3DGenerator)new Simplex3DGenerator(2376547).setFrequency(0.1);
 		
-		public static readonly string biomeName = "Glowing Sanctuary";
-		
 		public static readonly CrashZoneSanctuaryBiome instance = new CrashZoneSanctuaryBiome();
 		
 		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 		
-		private CrashZoneSanctuaryBiome() : base(biomeName, 1F) {
+		private CrashZoneSanctuaryBiome() : base("Glowing Sanctuary", 1F) {
 			creatureCounts[VanillaCreatures.BLADDERFISH.prefab] = 36;
 			creatureCounts[VanillaCreatures.BOOMERANG.prefab] = 48;
 			creatureCounts[VanillaCreatures.CAVECRAWLER.prefab] = 27;
@@ -55,7 +53,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			*/
 			
-			creatureCounts[SeaToSeaMod.sanctuaryray.ClassID] = 18;
+			createDiscoveryStoryGoal(5, SeaToSeaMod.miscLocale.getEntry("sanctuaryenter"));
+			
+			creatureCounts[C2CItems.sanctuaryray.ClassID] = 18;
 			
 			foreach (KeyValuePair<string, int> kvp in creatureCounts) {
 				for (int i = 0; i < kvp.Value; i++) {

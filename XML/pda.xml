@@ -533,6 +533,19 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </drfwarperheat>
+  <stepcaveterminal>
+	<name>
+		Microfiltering Technology
+	</name>
+	<pda>
+		This small outpost seems to have once been a site of biological research.
+		
+		While the biological data cannot be interpreted due to its reliance on unknown scientific principles and references to unknown biological organisms, a blueprint for a filter capable of separating microscopic particles from water, something normally only producible in specialized facilities, has been extracted and added to your databank.
+	</pda>
+	<category>
+		DownloadedData/Precursor/Terminal
+	</category>
+  </stepcaveterminal>
   <captaindoor>
 	<name>
 		Captain's Quarters Door Code
@@ -550,6 +563,41 @@
 		DownloadedData/Codes
 	</category>
   </captaindoor>
+  <auroraringterminalinfo>
+	<name>
+		Blueprint Repair Logs
+	</name>
+	<pda>
+		Your technology blueprints were partially corrupted. Though redundancies in the fabricator and other manufacturing technology ensured you were still able to operate these devices, these measures significantly slowed the production process.
+		
+		All crafting processes should now be noticeably faster.
+	</pda>
+	<category>
+		DownloadedData
+	</category>
+  </auroraringterminalinfo>
+	<envirosim>
+		<name>
+			Environment Simulation
+		</name>
+		<scanprompt>
+			Aquarium With Simulated Environment
+		</scanprompt>
+		<desc>
+			
+		</desc>
+		<pda>
+			This mechanism is transporting large volumes of water from many surface biomes, presumably to allow for the simulation of their conditions within an artificial space.
+			
+			A small amount of this water is channeled to these small aquariums, which are likely prototypes of the main intent for this functionality; the primary target for most of the surface water is in all probability elsewhere in this facility.
+		</pda>
+		<category>
+			
+		</category>
+		<header>
+			DownloadedData/AlienData
+		</header>
+	</envirosim>
   <needlaunchcargo>
 	<name>
 		Alterra Desired Research Sample Manifest

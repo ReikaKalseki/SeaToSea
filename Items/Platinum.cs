@@ -16,7 +16,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class Platinum : BasicCustomOre {
 		
 		public Platinum(string id, string name, string desc, VanillaResources template) : base(id, name, desc, template) {
-			
+			collectSound = "event:/loot/pickup_diamond";
 		}
 		
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

@@ -1,0 +1,123 @@
+<Root>
+  <DockToChangeVehicleUpgrades>
+	<name>
+		
+	</name>
+	<desc>
+		Vehicle upgrades can only be exchanged while docked
+	</desc>
+	<pda>
+		
+	</pda>
+  </DockToChangeVehicleUpgrades>
+  <PrawnBayDoorHeatWarn>
+	<name>
+		
+	</name>
+	<desc>
+		WARNING: Extreme temperatures on the other side of this doorway
+	</desc>
+	<pda>
+		
+	</pda>
+  </PrawnBayDoorHeatWarn>
+  <LostRiverCachePanel>
+	<name>
+		
+	</name>
+	<desc>
+		Upload human biological data
+	</desc>
+	<pda>
+		
+	</pda>
+  </LostRiverCachePanel>
+  <NeedRepairDataBox>
+	<name>
+		
+	</name>
+	<desc>
+		Repair databox to recover blueprint
+	</desc>
+	<pda>
+		
+	</pda>
+  </NeedRepairDataBox>
+  <SanctuaryPlantGrowing>
+	<name>
+		
+	</name>
+	<desc>
+		Growing a new core
+	</desc>
+	<pda>
+		
+	</pda>
+  </SanctuaryPlantGrowing>
+  <SanctuaryPlantClick>
+	<name>
+		
+	</name>
+	<desc>
+		Harvest core
+	</desc>
+	<pda>
+		
+	</pda>
+  </SanctuaryPlantClick>
+  <GelFountainRecharging>
+	<name>
+		
+	</name>
+	<desc>
+		Pressure building
+	</desc>
+	<pda>
+		
+	</pda>
+  </GelFountainRecharging>
+  <GelFountainClick>
+	<name>
+		
+	</name>
+	<desc>
+		Pressurized
+	</desc>
+	<pda>
+		
+	</pda>
+  </GelFountainClick>
+  <CampfireCooking>
+	<name>
+		
+	</name>
+	<desc>
+		Smoking fish
+	</desc>
+	<pda>
+		
+	</pda>
+  </CampfireCooking>
+  <CampfireClick>
+	<name>
+		
+	</name>
+	<desc>
+		Supply a raw fish to smoke
+	</desc>
+	<pda>
+		
+	</pda>
+  </CampfireClick>
+  <SmokedNoExpire>
+	<name>
+		
+	</name>
+	<desc>
+		Remains good indefinitely.
+	</desc>
+	<pda>
+		
+	</pda>
+  </SmokedNoExpire>
+</Root>

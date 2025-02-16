@@ -14,7 +14,7 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {
-		internal class GlassForestWreck : MonoBehaviour {
+		public class GlassForestWreck : MonoBehaviour {
 		
 			private float lastCheckTime = -1;
         	
@@ -36,6 +36,8 @@ namespace ReikaKalseki.SeaToSea
 				foreach (GameObject go in ObjectUtil.getChildObjects(gameObject, "*Starship_work*")) {
 					ObjectUtil.applyGravity(go);
 				}*/
+				
+				/*
 				foreach (Transform t in interior.transform) {
 					addGravity(t);
 				}
@@ -44,7 +46,10 @@ namespace ReikaKalseki.SeaToSea
 				}
 				foreach (Transform t in exterior.transform) {
 					addGravity(t);
-				}
+				}*/
+				UnityEngine.Object.Destroy(interior);
+				UnityEngine.Object.Destroy(interior2);
+				UnityEngine.Object.Destroy(exterior);
 			}
 		
 			private void addGravity(Transform t) {
@@ -55,7 +60,7 @@ namespace ReikaKalseki.SeaToSea
 					if (cc) {
 						ObjectUtil.applyGravity(t.gameObject);
 						GlassForestWreckProp prop = t.gameObject.EnsureComponent<GlassForestWreckProp>();
-						prop.Invoke("fixInPlace", 60);
+						prop.init("glassforestwreck", 90);
 					}
 					else {
 						UnityEngine.Object.DestroyImmediate(t.gameObject);
@@ -67,46 +72,31 @@ namespace ReikaKalseki.SeaToSea
 				float time = DayNightCycle.main.timePassedAsFloat;
 				if (time-lastCheckTime >= 1) {
 					lastCheckTime = time;
-					if (ObjectUtil.getChildObject(gameObject, "Slots") || ObjectUtil.getChildObject(gameObject, "ExteriorEntities/ExplorableWreckHull01") || !ObjectUtil.getChildObject(gameObject, "InteriorEntities/bed_02").GetComponent<GlassForestWreckProp>())
+					if (ObjectUtil.getChildObject(gameObject, "Slots") || ObjectUtil.getChildObject(gameObject, "ExteriorEntities/ExplorableWreckHull01") || !GetComponentInChildren<GlassForestWreckProp>())
 						Apply();
 				}
 			}
 			
 		}
 	
-	class GlassForestWreckProp : MonoBehaviour {
+	class GlassForestWreckProp : PhysicsSettlingProp {
 		
 		private static readonly Vector3 vent1 = new Vector3(-134.15F, -501, 940.29F);
 		private static readonly Vector3 vent2 = new Vector3(-125.20F, -503, 936.16F);
 		
-		private Rigidbody body;
-		
-		private float time;
-		
-		void Update() {
-			if (!body)
-				body = GetComponentInChildren<Rigidbody>();
-			time += Time.deltaTime;
-			Vector3 pos = transform.position;
-			
+		protected virtual void onUpdate() {
+			Vector3 pos = transform.position;			
 			//keep the vents clear
-			if (Vector3.Distance(pos, vent1) <= 1.8F) {
+			if (Vector3.Distance(pos, vent1) <= 2F) {
 				body.isKinematic = false;
-				body.AddForce((pos-vent1).normalized*5, ForceMode.VelocityChange);
+				body.AddForce((pos-vent1).normalized*15, ForceMode.VelocityChange);
 				return;
 			}
-			if (Vector3.Distance(pos, vent2) <= 1.8F) {
+			if (Vector3.Distance(pos, vent2) <= 2F) {
 				body.isKinematic = false;
-				body.AddForce((pos-vent2).normalized*5, ForceMode.VelocityChange);
+				body.AddForce((pos-vent2).normalized*15, ForceMode.VelocityChange);
 				return;
 			}
-				
-			if (time > 1.5F && body.velocity.magnitude < 0.1 && !GetComponent<PropulseCannonAmmoHandler>())
-				fixInPlace();
-		}
-		
-		void fixInPlace() {
-			body.isKinematic = true;
 		}
 		
 	}
