@@ -119,6 +119,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			ObjectUtil.cleanUpOriginObjects(this);
 			gameObject.layer = LayerID.Useable;
 			if (!light)
 				light = GetComponentInChildren<Light>();

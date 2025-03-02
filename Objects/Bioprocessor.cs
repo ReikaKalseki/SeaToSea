@@ -88,7 +88,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private static TechType createRecipeDelegate(BioRecipe r, bool preventUnlock = false) {			
 			BasicCraftingItem to = CraftingItems.getItemByTech(r.outputItem);
-			string rec = " (x"+r.outputCount+")";
+			string rec = " (x"+r.outputCount+")\n("+Mathf.CeilToInt(r.powerPerSecond*r.processTime)+" Power)";
 			DuplicateRecipeDelegate item = to == null ? new DuplicateRecipeDelegate(r.outputItem, rec) : new DuplicateRecipeDelegate(to, rec);
 			item.category = bioprocCategory;
 			item.group = TechGroup.Resources;

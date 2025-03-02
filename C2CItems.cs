@@ -62,12 +62,16 @@ namespace ReikaKalseki.SeaToSea
     public static PurpleHolefish purpleHolefish;
     public static PurpleBoomerang purpleBoomerang;
     public static PurpleHoopfish purpleHoopfish;
+    //public static GiantRockGrub giantRockGrub;
+    public static BloodKelpBroodmother broodmother;
     public static VoidSpikeLeviathan voidSpikeLevi;
     
     public static TechType brineCoral;
-    public static BrineCoralPiece brineCoralPiece;
-    
+    public static WorldCollectedItem brineCoralPiece;    
     public static EmperorRootOil emperorRootOil;
+    public static WorldCollectedItem bkelpBumpWormItem;
+    //public static WorldCollectedItem brineSalt;   
+    //public static WorldCollectedItem wateryGel;   
     
     public static Bioprocessor processor;
     public static RebreatherRecharger rebreatherCharger;
@@ -80,6 +84,7 @@ namespace ReikaKalseki.SeaToSea
     public static CraftTree.Type hatchingEnzymes;
     
     private static readonly Dictionary<TechType, IngotDefinition> ingots = new Dictionary<TechType, IngotDefinition>();
+    private static readonly Dictionary<TechType, IngotDefinition> ingotsByUnpack = new Dictionary<TechType, IngotDefinition>();
     private static readonly Dictionary<TechType, TechType> brokenTablets = new Dictionary<TechType, TechType>();
     
     internal static void registerTabletTechKey(BrokenTablet tb) {
@@ -127,6 +132,32 @@ namespace ReikaKalseki.SeaToSea
 		heatSink = new SeamothHeatSink();
 		bandage = new CurativeBandage();
 		treatment = new KharaaTreatment();
+		bkelpBumpWormItem = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BKelpBumpWormItem"), "WorldEntities/Natural/StalkerTooth");
+		bkelpBumpWormItem.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BumpWormItem");
+		bkelpBumpWormItem.inventorySize = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? new Vector2int(3, 2) : new Vector2int(2, 1);
+		bkelpBumpWormItem.renderModify = (r) => {
+			r.transform.localScale = new Vector3(8, 8, 6);
+			r.materials[0].SetFloat("_Shininess", 0);
+			r.materials[0].SetFloat("_SpecInt", 0.2F);
+			r.materials[0].SetFloat("_Fresnel", 0F);
+			RenderUtil.setEmissivity(r, 0.75F);
+		};
+		bkelpBumpWormItem.Patch();
+		
+		/*
+		Color c = new Color(0.5F, 1.6F, 0.8F);
+		brineSalt = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BrineSalt"), "WorldEntities/Natural/salt");
+		brineSalt.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BrineSalt");
+		brineSalt.renderModify = (r) => {
+			r.materials[0].SetColor("_Color", c);
+			r.materials[0].SetColor("_SpecColor", c);
+		};
+		brineSalt.Patch();
+		
+		c = new Color(0.5F, 0.8F, 1.6F);
+		wateryGel = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("WateryGel"), "WorldEntities/Natural/salt");
+		wateryGel.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/WateryGel");
+		wateryGel.Patch();*/
    	}
    
    	internal static void addCraftingItems() {
@@ -146,6 +177,10 @@ namespace ReikaKalseki.SeaToSea
 	    purpleHoopfish = new PurpleHoopfish(SeaToSeaMod.itemLocale.getEntry("PurpleHoopfish"));
 	    purpleHoopfish.cookableIntoBase = 1;
 	    purpleHoopfish.Patch();
+	    //giantRockGrub = new GiantRockGrub(SeaToSeaMod.itemLocale.getEntry("GiantRockGrub"));
+	    //giantRockGrub.Patch();
+	    broodmother = new BloodKelpBroodmother(SeaToSeaMod.itemLocale.getEntry("BloodKelpBroodmother"));
+	    broodmother.Patch();
 	    
 	    WaterParkCreature.waterParkCreatureParameters[deepStalker.TechType] = SNUtil.getModifiedACUParams(TechType.Stalker, 1, 1, 1, 1.5F);
 	    WaterParkCreature.waterParkCreatureParameters[sanctuaryray.TechType] = SNUtil.getModifiedACUParams(TechType.Jellyray, 1, 1, 1, 1.25F);
@@ -245,7 +280,13 @@ namespace ReikaKalseki.SeaToSea
 	    brineCoral = SNUtil.addTechTypeToVanillaPrefabs(e, SeaToSeaMod.lrCoralClusters.ToArray());
 	    SNUtil.addPDAEntry(brineCoral, e.key, e.name, 3, e.getField<string>("category"), e.pda, e.getField<string>("header"));
 	    
-	    brineCoralPiece = new BrineCoralPiece(SeaToSeaMod.itemLocale.getEntry("BrineCoralPiece"));
+	    brineCoralPiece = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BrineCoralPiece"), VanillaResources.TITANIUM.prefab);
+	    brineCoralPiece.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BrineCoralPiece");
+	    brineCoralPiece.renderModify = (r) => {
+			GameObject mdl = RenderUtil.setModel(r, ObjectUtil.getChildObject(ObjectUtil.lookupPrefab("908d3f0e-04b9-42b4-80c8-a70624eb5455"), "lost_river_skull_coral_01"));
+			//r = mdl.GetComponentInChildren<Renderer>();
+			//RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/BrineCoralPiece"); //no such texture
+	    };
 	    brineCoralPiece.Patch();
 		
 		e = SeaToSeaMod.itemLocale.getEntry("EMPEROR_ROOT");
@@ -316,7 +357,7 @@ namespace ReikaKalseki.SeaToSea
         
 		//override first aid kit
         UsableItemRegistry.instance.addUsableItem(TechType.FirstAidKit, (s, go) => {
-		if (SeaToSeaMod.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+		if (C2CUtil.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(20, 20);
 				ht.activate();
@@ -325,7 +366,7 @@ namespace ReikaKalseki.SeaToSea
 	    	return false;
 		});
         UsableItemRegistry.instance.addUsableItem(bandage.TechType, (s, go) => {
-	    	if (SeaToSeaMod.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
+	    	if (C2CUtil.playerCanHeal() && !Player.main.GetComponent<HealingOverTime>() && Player.main.GetComponent<LiveMixin>().AddHealth(0.1F) > 0.05) {
 				HealingOverTime ht = Player.main.gameObject.EnsureComponent<HealingOverTime>();
 				ht.setValues(50, 5);
 				ht.activate();
@@ -339,7 +380,7 @@ namespace ReikaKalseki.SeaToSea
 						UnityEngine.Object.DestroyImmediate(ds);
 				}
 				Ecocean.FoodEffectSystem.instance.clearNegativeEffects();
-				ObjectUtil.removeComponent<FCSIntegrationSystem.Drunk>(Player.main.gameObject);
+				ObjectUtil.removeComponent<Drunk>(Player.main.gameObject);
 				return true;
 			}
 	    	return false;
@@ -347,6 +388,10 @@ namespace ReikaKalseki.SeaToSea
         UsableItemRegistry.instance.addUsableItem(treatment.TechType, (s, go) => {
 		   	float time = DayNightCycle.main.timePassedAsFloat;
 			return LiquidBreathingSystem.instance.useKharaaTreatment();
+		});
+		UsableItemRegistry.instance.addUsableItem(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, (s, go) => {
+		   	float time = DayNightCycle.main.timePassedAsFloat;
+			return LiquidBreathingSystem.instance.applyTemporaryKharaaTreatment();
 		});
 		
 		IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery));
@@ -379,6 +424,12 @@ namespace ReikaKalseki.SeaToSea
     		unpackingRecipe = unpack;
     	}
     	
+    	public void pickupUnpacked() {
+    		for (int i = 0; i < count; i++) {
+    			InventoryUtil.addItem(material);
+    		}
+    	}
+    	
     }
    
    	internal static void addIngot(TechType item, BasicCraftingItem ing, DuplicateRecipeDelegateWithRecipe unpack, int amt) {
@@ -386,11 +437,17 @@ namespace ReikaKalseki.SeaToSea
    	}
    
    	internal static void addIngot(TechType item, TechType ing, DuplicateRecipeDelegateWithRecipe unpack, int amt) {
-   		ingots[item] = new IngotDefinition(item, ing, unpack, amt);
+   		IngotDefinition id = new IngotDefinition(item, ing, unpack, amt);
+   		ingots[item] = id;
+   		ingotsByUnpack[unpack.TechType] = id;
    	}
     
     internal static IngotDefinition getIngot(TechType item) {
     	return ingots[item];
+    }
+    
+    internal static IngotDefinition getIngotByUnpack(TechType item) {
+   		return ingotsByUnpack.ContainsKey(item) ? ingotsByUnpack[item] : null;
     }
     
     internal static List<IngotDefinition> getIngots() {

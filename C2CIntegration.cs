@@ -104,9 +104,6 @@ namespace ReikaKalseki.SeaToSea {
 			map[TechType.ExosuitPropulsionArmFragment] = hard ? 12 : 6;
 			map[TechType.ExosuitTorpedoArmFragment] = hard ? 12 : 6;
 			
-			int n = C2CHooks.purpleTabletsToBreak.Count+1+SeaToSeaMod.worldgen.getCount("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4"); //+1 for the broken one in front of gun
-			map[TechType.PrecursorKey_PurpleFragment] = n;//hard ? n : n-1; //allow missing one in not-hard
-			
 			TechType seaVoyager = TechType.None;
 			if (TechTypeHandler.TryGetModdedTechType("SeaVoyager", out seaVoyager))
 				map[seaVoyager] = hard ? 18 : 12;
@@ -183,6 +180,8 @@ namespace ReikaKalseki.SeaToSea {
 		C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.acuBoosterBlock.TechType);
 		C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.planktonFeederBlock.TechType);
 		C2CRecipes.replaceFiberMeshWithMicroFilter(EcoceanMod.planktonScoop.TechType);
+		RecipeUtil.removeIngredient(EcoceanMod.planktonScoop.TechType, EcoceanMod.mushroomVaseStrand.seed.TechType); //since in the mesh
+		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType, EcoceanMod.mushroomVaseStrand.seed.TechType, 3);
 		
 		//GenUtil.registerWorldgen(new PositionedPrefab(ExscansionMod.alienBase.ClassID, new Vector3())); //step cave
 		
@@ -238,6 +237,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
 		
+		MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType, 5);
+		MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, 40);
+		
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.alkali, 0.1F);
@@ -258,6 +260,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
 			BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material)*ingot.count/2F);
+		
+		foreach (string s in SeaToSeaMod.lrCoralClusters)
+			LootDistributionHandler.EditLootDistributionData(s, BiomeType.ActiveLavaZone_Chamber_Ceiling, 0, 0);
 		
 		Type t;
 		TechType tt;
@@ -327,6 +332,7 @@ namespace ReikaKalseki.SeaToSea {
 			InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Patch", SeaToSeaMod.modDLL, filterDeathrun);
 		
 		FCSIntegrationSystem.instance.applyPatches();
+		DEIntegrationSystem.instance.applyPatches();
 		ItemUnlockLegitimacySystem.instance.applyPatches();
     }
 		

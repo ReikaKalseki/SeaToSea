@@ -159,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public bool checkIfVisitedAllBiomes() {
-			return SeaToSeaMod.checkConditionAndShowPDAAndVoicelogIfNot(visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
+			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
 		}
 		
 	}

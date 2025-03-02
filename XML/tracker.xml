@@ -54,6 +54,9 @@
 		<databox>
 			A databox containing the blueprint for a compass
 		</databox>
+		<cavehint>
+			A weak signal of Alterra fabrication vehicle technology, in one of the deepest points of the kelp forest somewhere between lifepods 3 and 5
+		</cavehint>
 		<geyser>
 			A cave south of lifepod 3 containing an undersea geyser, several broken Nanolathing Drones, and extremely high numbers of both Crashfish and Drooping Stingers
 		</geyser>
@@ -125,7 +128,30 @@
 		<salve>
 			A species of red flora, the leaves of which are coated in oils that have medicinal properties
 		</salve>
+		<wreck>
+			A large wreck full of broken technology
+		</wreck>
 	</POD6>
+	<SOUTHGRASS>
+		<name>
+			Southern Grassy Plateaus
+		</name>
+		<desc>
+
+		</desc>
+		<pda>
+			
+		</pda>
+		<wreck>
+			A small wreck with many fragments of technology useful for building survival equipment
+		</wreck>
+		<stepcave>
+			A small alien research outpost in a branch of a large cave
+		</stepcave>
+		<salve>
+			A species of red flora, the leaves of which are coated in oils that have medicinal properties
+		</salve>
+	</SOUTHGRASS>
 	<KOOSH>
 		<name>
 			Bulb Zone

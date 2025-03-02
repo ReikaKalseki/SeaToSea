@@ -27,24 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			
-			ObjectUtil.removeChildObject(world, "Slots");
-			ObjectUtil.removeChildObject(world, "Starship_exploded_debris_*");
-			ObjectUtil.removeChildObject(world, "Starship_cargo_*");
-			ObjectUtil.removeChildObject(world, "*starship_work*");
-			ObjectUtil.removeChildObject(world, "*DataBox*");
-			ObjectUtil.removeChildObject(world, "*Spawner*");
-			ObjectUtil.removeChildObject(world, "*PDA*");
-			ObjectUtil.removeChildObject(world, "*Wrecks_LaserCutFX*");
-			//ObjectUtil.removeChildObject(world, "InteriorEntities");
-			//ObjectUtil.removeChildObject(world, "InteriorProps");
-			GameObject exterior = ObjectUtil.getChildObject(world, "ExteriorEntities");
-			ObjectUtil.removeChildObject(exterior, "ExplorableWreckHull01");
-			ObjectUtil.removeChildObject(exterior, "ExplorableWreckHull02");
-			
-			ObjectUtil.removeComponent<StarshipDoor>(world);
-			ObjectUtil.removeComponent<StarshipDoorLocked>(world);
-			ObjectUtil.removeComponent<Sealed>(world);
-			ObjectUtil.removeComponent<LaserCutObject>(world);
+			cleanup(world);
 			
 			world.EnsureComponent<FallingGFWreckTag>();
 				
@@ -59,6 +42,34 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.fullyEnable(world);
 			return world;
 	    }
+		
+		internal static void cleanup(GameObject world) {
+			tryRemoveObjects(world, "Slots");
+			tryRemoveObjects(world, "Starship_exploded_debris_*");
+			tryRemoveObjects(world, "Starship_cargo_*");
+			tryRemoveObjects(world, "*starship_work*");
+			tryRemoveObjects(world, "*DataBox*");
+			tryRemoveObjects(world, "*Spawner*");
+			tryRemoveObjects(world, "*PDA*");
+			tryRemoveObjects(world, "*Wrecks_LaserCutFX*");
+			//tryRemoveObjects(world, "InteriorEntities");
+			//tryRemoveObjects(world, "InteriorProps");
+			GameObject exterior = ObjectUtil.getChildObject(world, "ExteriorEntities");
+			tryRemoveObjects(exterior, "ExplorableWreckHull01");
+			tryRemoveObjects(exterior, "ExplorableWreckHull02");
+			
+			ObjectUtil.removeComponent<StarshipDoor>(world);
+			ObjectUtil.removeComponent<StarshipDoorLocked>(world);
+			ObjectUtil.removeComponent<Sealed>(world);
+			ObjectUtil.removeComponent<LaserCutObject>(world);
+		}
+		
+		private static void tryRemoveObjects(GameObject go, string name) {
+			if (ObjectUtil.removeChildObject(go, name, recursive: true) <= 0) {
+				SNUtil.log("Failed to find any '"+name+"' objects to remove from "+go.GetFullHierarchyPath()+"!");
+				ObjectUtil.dumpObjectData(go, false);
+			}
+		}
 			
 	}
 		
@@ -93,6 +104,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float nextShakeableTime = 0;
 		
 		void Start() {
+			//FallingGlassForestWreck.cleanup(gameObject);
 			ObjectUtil.fullyEnable(gameObject);
 		}
 		
