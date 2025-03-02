@@ -285,6 +285,17 @@
 		Sounds/pdaprompt/hiddenseamothprompt.ogg
 	</pda>
   </hiddenseamothprompt>
+  <bkelpnestprompt>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		Sounds/pdaprompt/bkelpnestprompt.ogg
+	</pda>
+  </bkelpnestprompt>
   <bulkheadLaserCutterUpgrade>
 	<name>
 		Laser Cutter Temperature Upgrade
@@ -349,6 +360,9 @@
 	<influngwarn>
 		Reduced Liquid Respiration Efficiency
 	</influngwarn>
+	<teleportrecovery>
+		Recovering From Rescue Warp
+	</teleportrecovery>
   </HUDAlerts>
   <TrackerPage>
 	<name>

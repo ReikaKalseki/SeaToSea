@@ -40,6 +40,9 @@ namespace ReikaKalseki.SeaToSea
 						//item.glowIntensity = 2;
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.2F, 0.6F, 1F, 1), 2);
 					break;
+					case Items.DimLuminol:
+						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(190/255F, 130/255F, 205/255F, 1));
+					break;
 					case Items.TreaderEnzymes:
 						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(107/255F, 80/255F, 62/255F, 1));
 					break;
@@ -183,6 +186,14 @@ namespace ReikaKalseki.SeaToSea
 						};
 						item.glowIntensity = 1;
 					break;
+					case Items.Tungsten:
+						item.renderModify = r => {
+							r.materials[0].SetFloat("_Fresnel", 0.3F);
+							r.materials[0].SetFloat("_Shininess", 20F);
+							r.materials[0].SetFloat("_SpecInt", 18F);
+						};
+						item.glowIntensity = 0;
+					break;
 					case Items.BrokenT2Battery:
 						item.renderModify = r => {
 							GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
@@ -239,6 +250,7 @@ namespace ReikaKalseki.SeaToSea
 		public enum Items {
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.AramidFibers,		"WorldEntities/Natural/aerogel")]HoneycombComposite,
 			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/aerogel")]Nanocarbon,
+			[Item(typeof(NotFabricable),		TechCategory.BasicMaterials, 	TechType.Unobtanium,		"WorldEntities/Natural/CrashPowder")]Tungsten,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/hydrochloricacid")]SulfurAcid,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]CrystalLens,
@@ -249,6 +261,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem), 	TechCategory.AdvancedMaterials,	TechType.Unobtanium,		"WorldEntities/Natural/aramidfibers")]HeatSealant,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.GasPod,			"WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]DimLuminol,
 			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/FiberMesh")]SmartPolymer,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.AcidMushroom,		"WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Lubricant,			"WorldEntities/Natural/Lubricant")]Motor,

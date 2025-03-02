@@ -93,6 +93,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			ObjectUtil.cleanUpOriginObjects(this);
 			if (!aoe)
 				aoe = GetComponent<SphereCollider>();
 			if (!fruiter)
@@ -146,7 +147,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 	    void OnTriggerStay(Collider other) {
-			if (EnvironmentalDamageSystem.instance.isPlayerInOcean() && DayNightCycle.main.timePassedAsFloat-lastDamageTime >= 0.05F && !other.isTrigger && other.gameObject.FindAncestor<Player>()) {
+			if (EnvironmentalDamageSystem.instance.isPlayerInOcean() && DayNightCycle.main.timePassedAsFloat-lastDamageTime >= 0.05F && !other.isTrigger && ObjectUtil.isPlayer(other)) {
 				bool suit = false;
 				bool trash;
 				C2CItems.hasSealedOrReinforcedSuit(out trash, out suit);

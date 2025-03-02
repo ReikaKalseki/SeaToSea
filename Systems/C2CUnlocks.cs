@@ -52,6 +52,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.SeaTreaderPoop, CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType);
 	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.GasPod, CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType);
+	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HeatBlade, TechType.HeatBlade);
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.AdvancedWiringKit, TechType.AdvancedWiringKit);
 	    	
@@ -68,6 +70,15 @@ namespace ReikaKalseki.SeaToSea {
 	    	//TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HydrochloricAcid, C2CRecipes.getAltBleach().TechType);
 	    	
 	    	TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.brineCoral, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType);
+	    	
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.PurpleStalkSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.EyesPlantSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.RedBasketPlantSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.SnakeMushroomSpore, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
+	    	TechnologyUnlockSystem.instance.addDirectUnlock(TechType.RedConePlantSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
+	    	
+	    	//TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.brineSalt.TechType, C2CRecipes.getBrineSaltConversion().TechType);
+	    	//TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.wateryGel.TechType, C2CRecipes.getGelWaterConversion().TechType);
 		}
 	}
 	

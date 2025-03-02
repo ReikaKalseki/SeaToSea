@@ -65,6 +65,7 @@ namespace ReikaKalseki.SeaToSea
 			[Material(typeof(Avolite),			"KYANITE",	0.75F)]		PHASE_CRYSTAL,	
 			[Material(typeof(BasicCustomOre),	"SILVER")]				IRIDIUM,
 			[Material(typeof(Calcite),			"MAGNETITE", 0.2F)]		CALCITE,
+			[Material(typeof(Obsidian),			"KYANITE", 0.2F)]		OBSIDIAN,
 		}
 		
 		public class Material : Attribute {

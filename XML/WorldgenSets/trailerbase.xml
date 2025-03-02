@@ -26,6 +26,16 @@
     <xmlID>be657ce4-0fe0-4505-aaaa-3a63d00ab0bd</xmlID>
   </customprefab>
   <customprefab>
+    <prefab>ScannerRoomMarker_AbandonedBase</prefab>
+    <tech>ScannerRoomMarker_AbandonedBase</tech>
+    <position>
+      <x>1310.68994140625</x>
+      <y>-78.6399993896484</y>
+      <z>-421.269989013672</z>
+    </position>
+    <xmlID>be657ce4-0fe0-4505-aaaa-3a63d00ab0bd</xmlID>
+  </customprefab>
+  <customprefab>
     <prefab>seabase</prefab>
 	<identifier>trailerbase</identifier>
     <position>

@@ -752,4 +752,38 @@
     <xmlID>dc76efd0-c003-4d71-a921-21aae1370b5a</xmlID>
     <tech>PartialPurpleTablet_B</tech>
   </customprefab>
+  <customprefab>
+    <prefab>PartialPurpleTablet_B</prefab>
+    <position>
+      <x>368.124816894531</x>
+      <y>55.948673248291</y>
+      <z>1050.81091308594</z>
+    </position>
+    <rotation>
+      <x>1.72397875785828</x>
+      <y>359.987182617188</y>
+      <z>359.148406982422</z>
+      <quaternion>
+        <x>0.0150443995371461</x>
+        <y>0</y>
+        <z>-0.00742904748767614</z>
+        <w>0.999859273433685</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>1</x>
+      <y>1</y>
+      <z>1</z>
+    </scale>
+    <xmlID>5185063c-5a6d-49e9-8a7d-bf0e39be777a</xmlID>
+    <tech>PartialPurpleTablet_B</tech>
+  </customprefab>
+  <customprefab>
+    <prefab>LockedPrecursorDoor_GunPoolDoor</prefab>
+    <position>
+      <x>481.808</x>
+      <y>-125.032</y>
+      <z>1257.852</z>
+    </position>
+  </customprefab>
 </Root>

@@ -46,22 +46,6 @@
       <y>-164.376998901367</y>
       <z>-645.607849121094</z>
     </position>
-    <rotation>
-      <x>0</x>
-      <y>0</y>
-      <z>0</z>
-      <quaternion>
-        <x>0</x>
-        <y>0</y>
-        <z>0</z>
-        <w>1</w>
-      </quaternion>
-    </rotation>
-    <scale>
-      <x>1</x>
-      <y>1</y>
-      <z>1</z>
-    </scale>
     <xmlID>5edc4c30-d16f-432a-bd80-9389b2060cf6</xmlID>
     <tech>ScannerRoomMarker_AlienBase</tech>
   </customprefab>
@@ -89,6 +73,32 @@
       <z>1</z>
     </scale>
     <xmlID>86ad319c-aa3f-48af-afe1-a6adac3b6d31</xmlID>
+    <tech>PrecursorIonCrystal</tech>
+  </customprefab>
+  <customprefab>
+    <prefab>38ebd2e5-9dcc-4d7a-ada4-86a22e01191a</prefab>
+    <position>
+      <x>51.383602142334</x>
+      <y>-168.633346557617</y>
+      <z>-659.662963867188</z>
+    </position>
+    <rotation>
+      <x>21.0684623718262</x>
+      <y>4.35188865661621</y>
+      <z>30.6960525512695</z>
+      <quaternion>
+        <x>0.186055690050125</x>
+        <y>-0.0123578794300556</y>
+        <z>0.25333896279335</z>
+        <w>0.949236571788788</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>1</x>
+      <y>1</y>
+      <z>1</z>
+    </scale>
+    <xmlID>2bad4412-d82b-4653-9945-2a9dc9789669</xmlID>
     <tech>PrecursorIonCrystal</tech>
   </customprefab>
   <customprefab>
@@ -804,7 +814,7 @@
     <position>
       <x>12.6393375396729</x>
       <y>-169.340393066406</y>
-      <z>-639.948974609375</z>
+      <z>-642.248974609375</z>
     </position>
     <rotation>
       <x>0</x>
@@ -829,7 +839,7 @@
     <position>
       <x>16.6301536560059</x>
       <y>-169.352737426758</y>
-      <z>-639.969909667969</z>
+      <z>-642.269909667969</z>
     </position>
     <rotation>
       <x>0</x>
@@ -904,7 +914,7 @@
     <position>
       <x>14.6432657241821</x>
       <y>-169.571975708008</y>
-      <z>-639.942443847656</z>
+      <z>-642.242443847656</z>
     </position>
     <rotation>
       <x>0</x>
@@ -923,6 +933,30 @@
       <z>0.99999988079071</z>
     </scale>
     <xmlID>812610b5-2da2-43e7-9158-b0624cd60625</xmlID>
+  </customprefab>
+  <customprefab>
+    <prefab>7e1e5d12-7169-4ff9-abcd-520f11196764</prefab>
+    <position>
+      <x>14.6432657241821</x>
+      <y>-166.71975708008</y>
+      <z>-642.242443847656</z>
+    </position>
+    <rotation>
+      <x>0</x>
+      <y>270.399810791016</y>
+      <z>0</z>
+      <quaternion>
+        <x>0</x>
+        <y>0.704635381698608</y>
+        <z>0</z>
+        <w>-0.709569573402405</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>0.99999988079071</x>
+      <y>1</y>
+      <z>0.99999988079071</z>
+    </scale>
   </customprefab>
   <customprefab>
     <prefab>81cf2223-455d-4400-bac3-a5bcd02b3638</prefab>
