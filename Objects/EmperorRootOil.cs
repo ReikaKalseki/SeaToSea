@@ -15,30 +15,22 @@ using SMLHelper.V2.Assets;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	public class EmperorRootOil : Spawnable {
+	public class EmperorRootOil : WorldCollectedItem {
 		
 		public static readonly float LIFESPAN = 90;
 		private static float lastInventoryTickTime;
 	        
-	    internal EmperorRootOil(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
+	    internal EmperorRootOil(XMLLocale.LocaleEntry e) : base(e, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d") {
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/EmperorRootOil");
 			OnFinishedPatching += () => {
 				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<EmperorRootOilTag>().addField("pickupTime"));
 			};
 	    }
-		
-		protected override Atlas.Sprite GetItemSprite() {
-			return TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/EmperorRootOil");
-		}
 			
-	    public override GameObject GetGameObject() {
-			GameObject world = ObjectUtil.createWorldObject("18229b4b-3ed3-4b35-ae30-43b1c31a6d8d"); //blood oil
-			Renderer r = world.GetComponentInChildren<Renderer>();
-			setupRendering(r, true);
-			world.SetActive(false);
-			world.EnsureComponent<TechTag>().type = TechType;
-			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
-			world.EnsureComponent<EmperorRootOilTag>();
-			return world;
+	    public override void prepareGameObject(GameObject go, Renderer[] rr) {
+			foreach (Renderer r in rr)
+				setupRendering(r, true);
+			go.EnsureComponent<EmperorRootOilTag>();
 	    }
 			
 	    public static void setupRendering(Renderer r, bool light) {

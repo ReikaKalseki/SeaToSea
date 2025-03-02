@@ -113,6 +113,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		void Update() {
+			ObjectUtil.cleanUpOriginObjects(this);
 			if (!renderer)
 				renderer = GetComponentInChildren<Renderer>();
 			Player ep = Player.main;

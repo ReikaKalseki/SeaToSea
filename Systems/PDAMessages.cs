@@ -36,6 +36,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("underislandgeyserminerals")]UnderwaterIslandsPrompt,
 			[Message("sanctuaryprompt")]SanctuaryPrompt,
 			[Message("hiddenseamothprompt")]JellySeamothDepthPrompt,
+			[Message("bkelpnestprompt")]BloodKelpNestPrompt,
 			[Message("meteorprompt")]MeteorPrompt,
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("needscaneverything")]NeedScansMessage,

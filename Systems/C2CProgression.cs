@@ -22,6 +22,7 @@ namespace ReikaKalseki.SeaToSea
 	    internal readonly Vector3 pod3Location = new Vector3(-33, -23, 409);
 	    internal readonly Vector3 pod6Location = new Vector3(363, -110, 309);
 	    internal readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
+	    internal readonly Vector3 pod2Location = new Vector3(-489, -500, 1328);
 	    
 		private readonly Dictionary<string, StoryGoal> locationGoals = new Dictionary<string, StoryGoal>() { 
 	    	{"OZZY_FORK_DEEP_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-645.6F, -102.7F, -16.2F), 12, "ozzyforkdeeproom")},
@@ -33,15 +34,22 @@ namespace ReikaKalseki.SeaToSea
 	    	{"CRAG_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-90.2F, -287.4F, -1261.5F), 6, "cragarch")},
 	    	{"KOOSH_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(1344.8F, -309.2F, 730.7F), 8, "koosharch")},
 	    	{"LR_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-914.7F, -621.2F, 1078.4F), 6, "lrarch")},
+	    	{"SOUTH_GRASS_WRECK", StoryHandler.instance.createLocationGoal(new Vector3(-29.19F, -103.46F, -608.40F), 20, "southgrasswreck")},
+	    	{"EAST_GRASS_WRECK", StoryHandler.instance.createLocationGoal(new Vector3(346.79F, -90.34F, 429.63F), 20, "eastgrasswreck")},
 	    };  
 	    
 	    internal static readonly string METEOR_GOAL = "meteorhit";
 	    
 	    private readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 	    	new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
-	    	//new Vector3(66, -100, -608), big obvious but empty one
 	    	new Vector3(-621, -130, -190),//new Vector3(-672, -100, -176),
 	    	//new Vector3(-502, -80, -102), //empty in vanilla, and right by pod 17
+	    };
+	    
+	    internal readonly Vector3[] bkelpNestBumps = new Vector3[]{
+	    	new Vector3(-847.46F, -530.82F, 1273.73F),
+	    	new Vector3(-863.82F, -532.87F, 1302.29F),
+	    	new Vector3(-841.12F, -535.97F, 1304.40F),
 	    };
 	    
 	    private float lastDunesEntry = -1;
@@ -73,6 +81,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.UnderwaterIslandsPrompt, isInUnderwaterIslands);
 			addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => isNearKelpCave(ep) && !isJustStarting(ep));
 			addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, hasMissedKelpCavePromptLate);
+			addPDAPrompt(PDAMessages.Messages.BloodKelpNestPrompt, ep => Vector3.Distance(pod2Location, ep.transform.position) <= 100);
 			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));
@@ -326,6 +335,13 @@ namespace ReikaKalseki.SeaToSea
     			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 1);
     		}
 	    }
+    	
+    	public static void spawnPOIMarker(string id, Vector3 at) {
+    		if (StoryGoalManager.main.IsGoalComplete(id))
+    			return;
+    		DIMod.areaOfInterestMarker.spawnGenericSignalHolder(at);
+    		StoryGoal.Execute(id, Story.GoalType.Story);
+    	}
 	}
 	
 	internal class PDAPromptCondition : ProgressionTrigger {

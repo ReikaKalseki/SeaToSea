@@ -16,6 +16,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
+	[Obsolete]
 	public class IncubatorInjector : CustomMachine<IncubatorInjectorLogic>, MultiTexturePrefab {
 		
 		static IncubatorInjector() {

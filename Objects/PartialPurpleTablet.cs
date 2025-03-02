@@ -27,10 +27,11 @@ namespace ReikaKalseki.SeaToSea {
 			
 	    public override GameObject GetGameObject() {
 			GameObject go = ObjectUtil.createWorldObject("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4");
+			GameObject mdl = ObjectUtil.getChildObject(go, "precursor_key_cracked_01");
 			if (!includePartA)
-				ObjectUtil.removeChildObject(go, "precursor_key_cracked_01/PrecursorKeyCracked_01");
+				ObjectUtil.removeChildObject(mdl, "PrecursorKeyCracked_01");
 			if (!includePartB)
-				ObjectUtil.removeChildObject(go, "precursor_key_cracked_01/PrecursorKeyCracked_02");
+				ObjectUtil.removeChildObject(mdl, "PrecursorKeyCracked_02");
 			return go;
 	    }
 

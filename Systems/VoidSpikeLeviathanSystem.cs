@@ -668,9 +668,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		
 			public void OnTouch(Collider collider) {
-	    		Player ep = collider.gameObject.FindAncestor<Player>();
 	    		//SNUtil.writeToChat(collider+">"+ep);
-	    		if (ep) {
+	    		if (ObjectUtil.isPlayer(collider)) {
 	    			VoidSpikeLeviathanSystem.instance.onFlashHit();
 	    			return;
 	    		}

@@ -54,6 +54,10 @@ namespace ReikaKalseki.SeaToSea
 			
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time-lastBrineCheck >= 1) {
+				if (transform.position.y >= -500) {
+					UnityEngine.Object.Destroy(gameObject);
+					return;
+				}
 				isInBrine = false;
 				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position+Vector3.up, 2, Vector3.up, 0.1F, 1, QueryTriggerInteraction.Collide)) {
 					if (hit.transform && hit.transform.GetComponent<AcidicBrineDamageTrigger>()) {

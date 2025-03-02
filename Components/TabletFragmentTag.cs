@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea
 		
 		private ParticleSystem[] particles;
 		
+		private float lastRenderUpdateTime;
+		
 		void Update() {
 			if (models == null)
 				models = ObjectUtil.getChildObject(gameObject, "precursor_key_cracked_01").GetComponentsInChildren<MeshRenderer>();
@@ -37,17 +39,21 @@ namespace ReikaKalseki.SeaToSea
 				sparker.transform.parent = transform;
 				sparker.transform.localScale = new Vector3(0.4F, 0.4F, 0.4F);
 				sparker.transform.localPosition = models.Length > 1 ? Vector3.zero : models[0].transform.localPosition;
+			}
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (sparker && time-lastRenderUpdateTime > 0.5F) {
 				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
 				ObjectUtil.removeChildObject(sparker, "ElecLight");
 				ObjectUtil.removeChildObject(sparker, "xElec");
+				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
+				ObjectUtil.removeChildObject(gameObject, "xUnderwaterElecSource_medium");
 				foreach (ParticleSystemRenderer r in sparker.GetComponentsInChildren<ParticleSystemRenderer>()) {
 					foreach (Material m in r.materials) {
 						m.SetColor("_Color", light.color);
 						m.SetVector("_ScrollSpeed", Vector4.one*-0.01F);
 					}
 				}
-				ObjectUtil.removeComponent<DamagePlayerInRadius>(sparker);
-				ObjectUtil.removeChildObject(gameObject, "xUnderwaterElecSource_medium(Clone)");
+				lastRenderUpdateTime = time;
 			}
 			if (particles == null) {
 				particles = sparker.GetComponentsInChildren<ParticleSystem>();

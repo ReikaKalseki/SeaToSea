@@ -80,8 +80,12 @@ namespace ReikaKalseki.SeaToSea {
     		live = gameObject.FindAncestor<LiveMixin>();
 		}
 		
+		void Update() {
+			ObjectUtil.cleanUpOriginObjects(this);
+		}
+		
 	    void OnTriggerStay(Collider other) {
-			if (!other.isTrigger && other.gameObject.FindAncestor<Player>()) {
+			if (!other.isTrigger && ObjectUtil.isPlayer(other)) {
 				float dt = Time.deltaTime;
 				if (other.gameObject.FindAncestor<LiveMixin>().AddHealth((isGrown ? 0.2F : 0.5F)*dt) > 0.00001F) {
 					if (isGrown && live != null)
