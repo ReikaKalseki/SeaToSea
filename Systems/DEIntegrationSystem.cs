@@ -195,9 +195,10 @@ namespace ReikaKalseki.SeaToSea {
 				ObjectUtil.removeChildObject(mdl, "root", false);
 				mdl.transform.SetParent(gp.model.transform.parent);
 				mdl.transform.localPosition = gp.model.transform.localPosition;
-				UnityEngine.Object.Destroy(gp.model);
-				UnityEngine.Object.Destroy(gp);
+				UnityEngine.Object.DestroyImmediate(gp.model);
+				UnityEngine.Object.DestroyImmediate(gp);
 				Renderer r = root.GetComponentInChildren<Renderer>();
+				//SNUtil.log("Adjusting Thalassacean cud renderer "+r.gameObject.GetFullHierarchyPath());
 				Color clr = new Color(0.67F, 0.95F, 0.2F, 0.5F);//new Color(0.4F, 0.3F, 0.1F);
 				Animator a = root.GetComponentInChildren<Animator>();
 				a.transform.localScale = Vector3.one*2;

@@ -335,8 +335,7 @@ namespace ReikaKalseki.SeaToSea {
 					used = triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
 					//used = true;
 				}
-				else
-				if (v) {
+				else if (v) {
 					int trash;
 					v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak / ENVIRO_RATE_SCALAR));
 					used = true;
@@ -548,8 +547,7 @@ namespace ReikaKalseki.SeaToSea {
 				float rad = Vector3.Distance(WorldUtil.lavaCastleCenter, pos);
 				if (rad < WorldUtil.lavaCastleInnerRadius)
 					ret = "LavaCastleInner";
-				else
-				if (rad < WorldUtil.lavaCastleRadius)
+				else if (rad < WorldUtil.lavaCastleRadius)
 					ret = "LavaCastle";
 			}
 			if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
@@ -614,8 +612,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (depthClass == 2) {
 						num = 1.5F;
 					}
-					else
-					if (depthClass == 3) {
+					else if (depthClass == 3) {
 						num = 2;
 					}
 				}
@@ -627,8 +624,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (liquid) {
 						increaseStart = 99999;
 					}
-					else
-					if (hasRebreatherV2) {
+					else if (hasRebreatherV2) {
 						increaseStart = depthDamageStart;
 						rate = 4F;
 					}

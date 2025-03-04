@@ -55,7 +55,7 @@ namespace ReikaKalseki.SeaToSea {
 			ObjectUtil.removeComponent<Rigidbody>(world);
 			ObjectUtil.removeComponent<WorldForces>(world);
 			BoxCollider bc = world.GetComponent<BoxCollider>();
-			bc.size = Vector3.Scale(bc.size, new Vector3(1.25F, 1.25F, 3.5F));
+			bc.size = Vector3.Scale(bc.size, new Vector3(1.5F, 1.5F, 4.0F));
 			//ObjectUtil.removeComponent<GoalObject>(world);
 			//ObjectUtil.removeChildObject(world, "EmitPoint");
 			Renderer r = world.GetComponentInChildren<Renderer>();

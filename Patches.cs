@@ -643,8 +643,7 @@ namespace ReikaKalseki.SeaToSea {
 								injectHook(codes, i, refInsn, false);
 								i -= 4;
 							}
-							else
-							if (m.Name == "SetTextAlpha" && m.DeclaringType.Name == "uGUI_Ping") {
+							else if (m.Name == "SetTextAlpha" && m.DeclaringType.Name == "uGUI_Ping") {
 								injectHook(codes, i, refInsn, true);
 								i -= 4;
 							}
@@ -1590,6 +1589,48 @@ namespace ReikaKalseki.SeaToSea {
 				List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 				try {
 					InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStartWaterFilter", false, typeof(FiltrationMachine)));
+					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+				}
+				catch (Exception e) {
+					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+	
+		[HarmonyPatch(typeof(UpdateSwimCharge))]
+		[HarmonyPatch("FixedUpdate")]
+		public static class SwimChargeHook {
+		
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				List<CodeInstruction> codes = new List<CodeInstruction>();
+				try {
+					codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+					codes.Add(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickSwimCharge", false, typeof(UpdateSwimCharge)));
+					codes.Add(new CodeInstruction(OpCodes.Ret));
+					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+				}
+				catch (Exception e) {
+					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+	
+		[HarmonyPatch(typeof(uGUI_InventoryTab))]
+		[HarmonyPatch("Start")]
+		public static class InvStartHook {
+		
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+				try {
+					InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStartInvUI", false, typeof(uGUI_InventoryTab)));
 					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
 				}
 				catch (Exception e) {
