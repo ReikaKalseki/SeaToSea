@@ -78,8 +78,7 @@ namespace ReikaKalseki.SeaToSea {
 			}			
 			if (shaderIntensityTarget > shaderIntensity)
 				shaderIntensity = Mathf.Min(shaderIntensityTarget, shaderIntensity + dT * shaderIntensityMoveSpeed);
-			else
-			if (shaderIntensityTarget < shaderIntensity)
+			else if (shaderIntensityTarget < shaderIntensity)
 				shaderIntensity = Mathf.Max(shaderIntensityTarget, shaderIntensity - dT * shaderIntensityMoveSpeed);
 			drunkVisual.effect = 4 * shaderIntensity;
 			//player.AddForce(currentPush, ForceMode.VelocityChange);

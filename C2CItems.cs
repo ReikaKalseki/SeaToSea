@@ -38,6 +38,8 @@ namespace ReikaKalseki.SeaToSea
     public static RebreatherV2 rebreatherV2;
     public static LiquidTank liquidTank;
     
+    public static ChargeFinRelay chargeFinRelay;
+    
     public static BreathingFluid breathingFluid;
     public static SeamothHeatSink heatSink;
     public static CurativeBandage bandage;
@@ -109,7 +111,8 @@ namespace ReikaKalseki.SeaToSea
         
 	    CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getField<string>("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
 	    CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CHelmet", e.getField<string>("helmet"), SpriteManager.Get(TechType.Rebreather));
-        
+	    CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CModElectronics", e.getField<string>("modelectric"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/modelectronic"));
+		        
 	    brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 	    brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
 	    brokenOrangeTablet = new BrokenTablet(TechType.PrecursorKey_Orange);
@@ -127,7 +130,8 @@ namespace ReikaKalseki.SeaToSea
 		sealGloves = new SealedGloves();				
 		t2Battery = new AzuriteBattery();		
         rebreatherV2 = new RebreatherV2();		
-        liquidTank = new LiquidTank();        
+        liquidTank = new LiquidTank();   	
+        chargeFinRelay = new ChargeFinRelay();         
 		breathingFluid = new BreathingFluid();
 		heatSink = new SeamothHeatSink();
 		bandage = new CurativeBandage();
@@ -228,6 +232,8 @@ namespace ReikaKalseki.SeaToSea
         rebreatherV2.Patch();
 		
         liquidTank.Patch();
+        
+        chargeFinRelay.Patch();
         
 		bandage.Patch();
 		CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
@@ -457,6 +463,11 @@ namespace ReikaKalseki.SeaToSea
     internal static void setChemistry(TechType item) {
 		RecipeUtil.changeRecipePath(item, "Resources", "C2Chemistry");
 		RecipeUtil.setItemCategory(item, TechGroup.Resources, chemistryCategory);
+    }
+    
+    internal static void setModElectronics(TechType item) {
+		RecipeUtil.changeRecipePath(item, CraftTree.Type.Workbench, "C2CModElectronics");
+		RecipeUtil.setItemCategory(item, TechGroup.Workbench, TechCategory.Workbench);
     }
    
    public static bool hasSealedOrReinforcedSuit(out bool isSealed, out bool isReinf) {

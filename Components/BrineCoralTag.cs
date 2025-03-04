@@ -14,13 +14,15 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {
-	internal class BrineCoralTag : MonoBehaviour {
+	internal class BrineCoralTag : MonoBehaviour, IPropulsionCannonAmmo {
 		
 		public static Color particleColor = new Color(0.05F, 0.33F, 0.05F);
 		
 		private Drillable resource;
 		
 		private bool isInBrine;
+		
+		private float timeOutOfBrine;
 		
 		private float lastBrineCheck = -1;
 		
@@ -73,9 +75,48 @@ namespace ReikaKalseki.SeaToSea
 				else
 					pp.Play();
 			}
-			if (!isInBrine) {
-				resource.kChanceToSpawnResources = Mathf.Max(0.2F, resource.kChanceToSpawnResources-Time.deltaTime/30F); //30s
+			if (isInBrine) {
+				timeOutOfBrine = 0;
 			}
+			else {
+				timeOutOfBrine += Time.deltaTime;
+				if (timeOutOfBrine >= 10) { //10s grace period, and will reset this grace period if back in brine
+					resource.kChanceToSpawnResources = Mathf.Max(0.2F, resource.kChanceToSpawnResources-Time.deltaTime/30F); //10s and then 30s drop, to 0 at 40s
+				}
+			}
+		}
+		
+		public void onDrilled() {
+			GetComponent<ResourceTracker>().Unregister();
+			UnityEngine.Object.Destroy(gameObject, 0.5F);
+		}
+		
+		public void OnGrab() {
+			GetComponent<ResourceTracker>().Unregister();
+		}
+	
+		public void OnShoot() {
+			
+		}
+	
+		public void OnRelease() {
+			if (resource.health[0] > 50) {
+				ResourceTracker rt = GetComponent<ResourceTracker>();
+				rt.Register();
+				rt.StartUpdatePosition();
+			}
+		}
+	
+		public void OnImpact() {
+			
+		}
+	
+		public bool GetAllowedToGrab() {
+			return true;
+		}
+	
+		public bool GetAllowedToShoot() {
+			return false;
 		}
 		
 	}

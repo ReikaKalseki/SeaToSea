@@ -598,6 +598,21 @@
 			DownloadedData/AlienData
 		</header>
 	</envirosim>
+  <rescuewarp>
+	<name>
+		Emergency Rescue Warp
+	</name>
+	<pda>
+		All Alterra suits contain the necessary hardware to use "Alterra Emergency Rescue Warp™" technology. This highly experimental technology is capable of returning you to the surface from any intact Alterra Seabase™.
+		
+		Note: The warp field is highly unstable and can only transport your own body and select Alterra™ equipment. Any unrecognized materials or tools with high power flow risk disrupting the field and safety interlocks will engage to prevent use in this circumstance.
+		
+		Disclaimer: The Alterra Corporation™ makes no guarantees as to your return location or your physical state after transport.
+	</pda>
+	<category>
+		Welcome/StartGear
+	</category>
+  </rescuewarp>
   <needlaunchcargo>
 	<name>
 		Alterra Desired Research Sample Manifest

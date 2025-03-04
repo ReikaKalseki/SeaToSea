@@ -52,6 +52,31 @@
     <xmlID>886f898f-84aa-49a9-af79-3642b003fe5d</xmlID>
   </customprefab>
   <customprefab>
+    <prefab>databox</prefab>
+	<tech>ChargeFinRelay</tech>
+    <position>
+      <x>-1216.41174316406</x>
+      <y>-221.378448486328</y>
+      <z>25.2652530670166</z>
+    </position>
+    <rotation>
+      <x>352.021636962891</x>
+      <y>245.624908447266</y>
+      <z>14.1106901168823</z>
+      <quaternion>
+        <x>0.140393450856209</x>
+        <y>0.827433705329895</y>
+        <z>-0.00837245769798756</z>
+        <w>-0.543666362762451</w>
+      </quaternion>
+    </rotation>
+    <scale>
+      <x>0.75</x>
+      <y>0.75</y>
+      <z>0.75</z>
+    </scale>
+  </customprefab>
+  <customprefab>
     <prefab>3981a55f-0754-466a-8932-6e245b4ef846</prefab>
     <position>
       <x>-652.067138671875</x>

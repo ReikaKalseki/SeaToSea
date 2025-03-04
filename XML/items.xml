@@ -458,7 +458,7 @@
 	</BKelpBumpWorm>
 	<BKelpBumpWormItem>
 		<name>
-			Crawler Larva
+			Blood Crawler Larva
 		</name>
 		<desc>
 			An immature Blood Crawler. Contains high levels of certain biological compounds.
@@ -1084,6 +1084,17 @@
 			
 		</pda>
 	</t2battery>
+	<ChargeFinRelay>
+		<name>
+			Charging Relay
+		</name>
+		<desc>
+			An upgrade to your suit electronics to allow swim charge fins to redirect some of their charge to tools not actively being used, allowing you to charge everything in your inventory, though at reduced rate if not held.
+		</desc>
+		<pda>
+			
+		</pda>
+	</ChargeFinRelay>
 	<CyclopsHeat>
 		<name>
 			Cyclops Heat Dissipation Module

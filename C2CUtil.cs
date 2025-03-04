@@ -17,7 +17,7 @@ using ReikaKalseki.DIAlterra;
 
 namespace ReikaKalseki.SeaToSea {
 	
-	internal static class C2CUtil {
+	public static class C2CUtil {
     
 		//exclusion radius, target count, max range
 		internal static readonly Dictionary<Vector3, Tuple<float, int, float>> mercurySpawners = new Dictionary<Vector3, Tuple<float, int, float>>() {
@@ -44,6 +44,10 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal static readonly HashSet<BiomeBase> safeBiomes = new HashSet<BiomeBase>();
 		//safe at surface
+		
+		private static readonly SoundManager.SoundData rescueSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "rescuewarp", "Sounds/rescuewarp.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
+			
+		private static UnityEngine.UI.Button rescuePDAButton;
 		
 		static C2CUtil() {
 			safeBiomes.Add(VanillaBiomes.SHALLOWS);
@@ -83,6 +87,19 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		public static void createRescuePDAButton() {
+			if (rescuePDAButton)
+				return;
+			rescuePDAButton = SNUtil.createPDAUIButtonUnderTab<uGUI_InventoryTab>(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/RescueUIBtn"), requestRescue);
+			rescuePDAButton.name = "RescueButton";
+			rescuePDAButton.transform.localPosition = new Vector3(0, rescuePDAButton.transform.localPosition.y, rescuePDAButton.transform.localPosition.z);
+		}
+		
+		public static void requestRescue() {
+			Player.main.GetPDA().Close();
+			Player.main.gameObject.EnsureComponent<TeleportCallback>().StartCoroutine("raiseConfirmationDialog");
+		}
+		
 		public static bool rescue() {
 			if (!Player.main.currentSub)
 				return false;
@@ -93,7 +110,7 @@ namespace ReikaKalseki.SeaToSea {
 				TechType.Scanner,
 				TechType.Knife,
 				TechType.HeatBlade,
-				TechType.StasisRifle,
+				//TechType.StasisRifle,
 				TechType.AirBladder,
 				TechType.Seaglide,
 				TechType.Fins,
@@ -143,9 +160,66 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		class TeleportCallback : MonoBehaviour {
+			
+			private IEnumerator raiseConfirmationDialog() {
+				yield return new WaitForSeconds(0.67F);
+				GameObject root = UnityEngine.Object.Instantiate(IngameMenu.main.gameObject);
+				root.name = "RescueConfirmation";
+				ObjectUtil.removeChildObject(root, "PleaseWait");
+				ObjectUtil.removeChildObject(root, "Options");
+				ObjectUtil.removeChildObject(root, "Feedback");
+				ObjectUtil.removeChildObject(root, "Developer");
+				ObjectUtil.removeChildObject(root, "PleaseWait");
+				ObjectUtil.removeChildObject(root, "QuitConfirmationWithSaveWarning");
+				ObjectUtil.removeChildObject(root, "Legend");
+				ObjectUtil.removeChildObject(root, "Main");
+				//GameObject main = ObjectUtil.getChildObject(root, "Main");
+				GameObject go = ObjectUtil.getChildObject(root, "QuitConfirmation");
+				ObjectUtil.removeComponent<IngameMenu>(root);
+				ObjectUtil.removeComponent<LanguageUpdater>(root);
+				ObjectUtil.removeComponent<IngameMenuQuitConfirmation>(go);
+				uGUI_InputGroup grp = go.EnsureComponent<uGUI_InputGroup>();
+				grp.Select(false);
+				UWE.FreezeTime.Begin("RescueConfirm", true);
+				UnityEngine.UI.Text txt = ObjectUtil.getChildObject(go, "Header").GetComponent<UnityEngine.UI.Text>();
+				txt.text = "Are you sure you want to do this?";
+				txt.fontSize = 20;
+				GameObject yes = ObjectUtil.getChildObject(go, "ButtonYes");
+				UnityEngine.UI.Button b = yes.GetComponentInChildren<UnityEngine.UI.Button>();
+				GameObject yesBtn = b.gameObject;
+				UnityEngine.UI.Image img = b.image;
+				UnityEngine.Object.DestroyImmediate(b);
+				b = yesBtn.EnsureComponent<UnityEngine.UI.Button>();
+				b.image = img;
+				root.transform.SetParent(IngameMenu.main.gameObject.transform.parent);
+				root.transform.localPosition = IngameMenu.main.gameObject.transform.localPosition;
+				root.SetActive(true);
+				go.SetActive(true);
+				b.onClick.AddListener(() => {
+					unlockUI(grp);
+					if (!rescue()) {
+						if (Player.main.currentSub)
+							SNUtil.writeToChat("You can only carry certified low-power Alterra equipment during the emergency rescue warp.");
+						else
+							SNUtil.writeToChat("Rescue warp can only be initiate from inside an Alterra seabase or mobile base platform.");
+					}
+				});
+				ObjectUtil.getChildObject(go, "ButtonNo").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+				   	unlockUI(grp);
+				});
+				yield break;
+			}
+			
+			private void unlockUI(uGUI_InputGroup grp) {
+				grp.Deselect();
+				UWE.FreezeTime.End("RescueConfirm");
+				UnityEngine.Object.Destroy(grp.transform.parent.gameObject);
+			}
 		
 			private IEnumerator triggerTeleportCutscene() {
-				yield return new WaitForSeconds(3F);
+				yield return new WaitForSeconds(1F);
+				SoundManager.playSoundAt(rescueSound, Player.main.transform.position, false, 40, 1);
+				yield return new WaitForSeconds(2F);
 				UWE.Utils.EnterPhysicsSyncSection();
 				base.gameObject.SendMessage("DisableHeadCameraController", null, SendMessageOptions.RequireReceiver);
 				uGUI.main.respawning.Show();
@@ -191,12 +265,44 @@ namespace ReikaKalseki.SeaToSea {
 			Vector3 ctr = Vector3.down;
 			Vector3 rand = MathUtil.getRandomVectorAround(ctr, range);
 			BiomeBase bb = BiomeBase.getBiome(rand);
-			if (!safeBiomes.Contains(bb)) {
+			while (!safeBiomes.Contains(bb)) {
 				rand = MathUtil.getRandomVectorAround(ctr, range);
 				bb = BiomeBase.getBiome(rand);
 			}
 			return rand;
 		}
+		/*
+		public static GameObject createMergedPropGun(bool toInv = false) {
+			GameObject prop = ObjectUtil.createWorldObject(TechType.PropulsionCannon);
+			GameObject repl = ObjectUtil.lookupPrefab(TechType.RepulsionCannon);
+			prop.EnsureComponent<RepulsionCannon>().copyObject(repl.GetComponent<RepulsionCannon>());
+			prop.EnsureComponent<PropGunTypeSwapper>().applyMode();
+			if (toInv)
+				Inventory.main.Pickup(prop.GetComponent<Pickupable>());
+			else
+				prop.SetActive(true);
+			return prop;
+		}
+		
+		public class PropGunTypeSwapper : MonoBehaviour {
+			
+			public bool isPropMode = true;
+			
+			public void applyMode() {
+				if (isPropMode) {
+					GetComponent<PropulsionCannon>().enabled = true;
+					GetComponent<PropulsionCannonWeapon>().enabled = true;
+					GetComponent<RepulsionCannon>().enabled = false;
+					//RenderUtil.swapTextures(GetComponentInChildren<Renderer>().materials[0]);
+				}
+				else {
+					GetComponent<PropulsionCannon>().enabled = false;
+					GetComponent<PropulsionCannonWeapon>().enabled = false;
+					GetComponent<RepulsionCannon>().enabled = true;
+				}
+			}
+			
+		}*/
 		/*
 	public static bool hasNoGasMask() {
    		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;

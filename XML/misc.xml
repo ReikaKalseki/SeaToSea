@@ -279,7 +279,7 @@
 		
 	</name>
 	<desc>
-		Detecting data storage items elsewhere in this cave system.
+		Detecting vehicle blueprint data somewhere in this cave system, in a deeper area.
 	</desc>
 	<pda>
 		Sounds/pdaprompt/hiddenseamothprompt.ogg
@@ -290,7 +290,7 @@
 		
 	</name>
 	<desc>
-		
+		Detecting unusually high concentrations of organic materials in the local cave systems.
 	</desc>
 	<pda>
 		Sounds/pdaprompt/bkelpnestprompt.ogg
@@ -430,5 +430,8 @@
 	<helmet>
 		Masks
 	</helmet>
+	<modelectric>
+		Electronics
+	</modelectric>
   </CraftingNodes>
 </Root>
