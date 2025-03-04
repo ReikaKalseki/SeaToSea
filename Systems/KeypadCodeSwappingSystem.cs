@@ -77,7 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 					continue;
 				string key = "EncyDesc_"+c.encyKey;
 				string code = c.getRandomizedDoorCode();
-				LanguageHandler.SetLanguageLine(key, Language.main.Get(key).Replace(c.oldCode, code));
+				CustomLocaleKeyDatabase.registerKey(key, Language.main.Get(key).Replace(c.oldCode, code));
 		    	SNUtil.log("Swapping code in ency entry "+c.encyKey+": "+c.oldCode+" > "+c);
 			}
 		}

@@ -48,7 +48,6 @@ namespace ReikaKalseki.SeaToSea {
 		private bool hasTemporaryKharaaTreatment;
 		private bool startedUsingTemporaryKharaaTreatment;
 		private float kharaaTreatmentRemainingTime;
-		private float lastTimerWarningTime;
 		
 		private LiquidBreathingSystem() {
 	    	
@@ -217,9 +216,13 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		public static GameObject getO2Label(uGUI_OxygenBar gui) {
+			return ObjectUtil.getChildObject(gui.gameObject, "OxygenTextLabel");
+		}
+		
 		public void updateOxygenGUI(uGUI_OxygenBar gui) {
 			uGUI_CircularBar bar = gui.bar;
-			Text t = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextLabel").GetComponent<Text>();
+			Text t = getO2Label(gui).GetComponent<Text>();
 			Text tn = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextValue").GetComponent<Text>();
 			if (baseO2BarTexture == null) {
 				baseO2BarTexture = bar.texture;
@@ -324,6 +327,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 		internal void tickLiquidBreathing(bool has, bool active) {
 			Player ep = Player.main;
+			if (!ep || !DIHooks.isWorldLoaded())
+				return;
 			if (!meters) {
 				uGUI_OxygenBar o2bar = UnityEngine.Object.FindObjectOfType<uGUI_OxygenBar>();
 				if (o2bar) {
@@ -337,7 +342,9 @@ namespace ReikaKalseki.SeaToSea {
 				meters.gameObject.SetActive(has);
 				if (has) {
 					Battery b = Inventory.main.equipment.GetItemInSlot("Tank").item.GetComponent<Battery>();
+					meters.primaryTankBar.currentTime = b.charge;
 					meters.primaryTankBar.currentFillLevel = b.charge/b.capacity;
+					meters.treatmentBar.currentTime = hasTemporaryKharaaTreatment ? -1 : kharaaTreatmentRemainingTime;
 					meters.treatmentBar.currentFillLevel = hasTemporaryKharaaTreatment ? 1 : kharaaTreatmentRemainingTime/getTreatmentDuration();
 				}
 			}
@@ -351,21 +358,9 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				if (ep.infectedMixin.IsInfected() && kharaaTreatmentRemainingTime > 0) {
 					kharaaTreatmentRemainingTime = Mathf.Max(0, kharaaTreatmentRemainingTime - Time.deltaTime);
-					if (DayNightCycle.main.timePassedAsFloat - lastTimerWarningTime >= 62) {
-						lastTimerWarningTime = DayNightCycle.main.timePassedAsFloat;
-						if (Mathf.Abs(kharaaTreatmentRemainingTime - getTreatmentDuration() / 2F) < 5) {
-							EnvironmentalDamageSystem.instance.playPDABeep();
-							SNUtil.writeToChat("Kharaa treatment at 50%");
-						}
-						else
-						if (kharaaTreatmentRemainingTime <= 60) {
-							EnvironmentalDamageSystem.instance.playPDABeep();
-							SNUtil.writeToChat("Kharaa treatment has 60 seconds remaining");
-						}
-					}
 				}
 			}
-			else {
+			else if (!has || startedUsingTemporaryKharaaTreatment) {
 				clearTempTreatment();
 			}
 		}
@@ -419,11 +414,15 @@ namespace ReikaKalseki.SeaToSea {
 			internal Image background;
 			internal Image foreground;
 			
+			internal Text timer;
+			
 			internal bool leftSide;
 			
 			internal float currentFillLevel = 0;
+			internal float currentTime = 0;
 			
 			public float overrideValue = -1;
+			public float overrideTime = -1;
 			
 			public Color currentColor;
 			
@@ -460,25 +459,55 @@ namespace ReikaKalseki.SeaToSea {
 					foreground.transform.rotation = Quaternion.identity;
 					fillBar.SetActive(true);
 				}
+				if (!timer) {
+					GameObject lbl = UnityEngine.Object.Instantiate(LiquidBreathingSystem.getO2Label(gameObject.FindAncestor<uGUI_OxygenBar>()));
+					lbl.name = "SideBarText";
+					timer = lbl.GetComponent<Text>();
+					timer.transform.SetParent(transform, false);
+					timer.transform.localPosition = Vector3.zero;
+					timer.transform.rotation = Quaternion.identity;
+					timer.alignment = leftSide ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight;
+					timer.resizeTextForBestFit = false;
+					timer.fontSize = 30;
+				}
+				
 				if (leftSide) {
-					transform.localRotation = Quaternion.Euler(0, 0, 202.5F);
+					fillBar.transform.localRotation = Quaternion.Euler(0, 0, 202.5F);
 					foreground.transform.localRotation = Quaternion.Euler(0, 0, 157.5F);
+					if (timer)
+						timer.transform.localPosition = new Vector3(-60, 64, 0);
 				}
 				else {
-					transform.localRotation = Quaternion.Euler(0, 0, 22.5F);
+					fillBar.transform.localRotation = Quaternion.Euler(0, 0, 22.5F);
 					foreground.transform.localRotation = Quaternion.Euler(0, 0, -22.5F);
 					foreground.fillClockwise = false;
+					if (timer)
+						timer.transform.localPosition = new Vector3(60, 64, 0);
 				}
+				
 				float f = currentFillLevel * 0.395F + 0.0625F; //this fraction is because it does not fill the bar, slightly more than 3/8 to use up texture
 				if (overrideValue >= 0)
 					f = overrideValue;
 				foreground.fillAmount = f;
 				currentColor = currentFillLevel < 0.5F ? new Color(1, currentFillLevel*2, 0, 1) : new Color(1-(currentFillLevel-0.5F)*2, 1, 0, 1);
 				if (currentFillLevel < 0.1) { //make flash if very low
-					float ff = (1+Mathf.Sin(DayNightCycle.main.timePassedAsFloat*Mathf.Deg2Rad*(float)MathUtil.linterpolate(currentFillLevel, 240, 960, 0.1, 0, true)))*0.5F;
+					float ff = (1+Mathf.Sin(DayNightCycle.main.timePassedAsFloat*Mathf.Deg2Rad*(float)MathUtil.linterpolate(currentFillLevel, 0.1, 0, 240, 4800, true)))*0.5F;
 					currentColor = Color.Lerp(currentColor, Color.white, ff);
 				}
 				foreground.color = currentColor;
+				
+				if (timer) {
+					f = currentTime;
+					if (overrideTime >= 0)
+						f = overrideTime;
+					if (f >= 0) {
+						TimeSpan ts = TimeSpan.FromSeconds(f);
+						timer.text = f >= 3600 ? ts.ToString(@"hh\:mm\:ss") : ts.ToString(@"mm\:ss");
+					}
+					else {
+						timer.text = "N/A";
+					}
+				}
 			}
 			
 		}

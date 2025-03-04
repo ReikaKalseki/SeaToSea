@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -53,6 +54,18 @@ namespace ReikaKalseki.SeaToSea {
 			StayAtLeashPosition leash = world.GetComponent<StayAtLeashPosition>();
 			
 			ObjectUtil.removeComponent<CrawlerJumpRandom>(world);
+			
+			GameObject soundRef = ObjectUtil.lookupPrefab(VanillaCreatures.BLOODCRAWLER.prefab);
+			List<FMODAsset> sounds = soundRef.GetComponentsInChildren<FMOD_CustomEmitter>().Where(fc => !(fc is FMOD_CustomLoopingEmitter)).Select(fc => fc.asset).ToList();
+			List<FMODAsset> soundLoops = soundRef.GetComponentsInChildren<FMOD_CustomLoopingEmitter>().Select(fc => fc.asset).ToList();
+			foreach (FMOD_CustomEmitter snd in world.GetComponentsInChildren<FMOD_CustomEmitter>()) {
+				List<FMODAsset> li = snd is FMOD_CustomLoopingEmitter ? soundLoops : sounds;
+				if (li.Count > 0) {
+					snd.asset = soundLoops[0];
+					snd.gameObject.EnsureComponent<SoundPitchScale>().pitch = 0.33F;
+					soundLoops.RemoveAt(0);
+				}
+			}
 		}
 		
 		public override BehaviourType getBehavior() {
@@ -61,7 +74,31 @@ namespace ReikaKalseki.SeaToSea {
 			
 	}
 	
+	class SoundPitchScale : MonoBehaviour {
+		
+		public float pitch = 1;
+		
+		private FMOD_CustomEmitter sound;
+		
+		void Start() {
+			sound = GetComponent<FMOD_CustomEmitter>();
+		}
+		
+		void Update() {
+			if (sound) {
+				FMOD.Studio.EventInstance evt = sound.GetEventInstance();
+				if (evt.isValid() && evt.hasHandle()) {
+					evt.setPitch(pitch);
+				}
+			}
+		}
+		
+	}
+	
 	class BloodKelpBroodmotherTag : MonoBehaviour {
+		
+		private static readonly SoundManager.SoundData spitSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "broodmotherspit", "Sounds/broodmotherspit.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
+		private static readonly SoundManager.SoundData idleSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "broodmotheridle", "Sounds/broodmotheridle.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
 		
 		private Renderer[] renders;
 		private CaveCrawler creature;
@@ -74,6 +111,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private float lastTickTime = -1;
 		private float nextSpitTime = -1;
+		
+		private float nextSoundTime = -1;
 		
 		void Start() {
 			attack = GetComponent<CrawlerAttackLastTarget>();
@@ -105,6 +144,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (attack && target.target && time >= nextSpitTime) {
 				shoot(target.target);
 			}
+			if (time >= nextSoundTime) {
+				SoundManager.playSoundAt(idleSound, transform.position, false, 40, 1);
+				nextSoundTime = time+UnityEngine.Random.Range(3F, 10F);
+			}
 		}
 		
 		public void shoot(GameObject target) {
@@ -115,6 +158,7 @@ namespace ReikaKalseki.SeaToSea {
 			Vector3 diff = target.transform.position - Vector3.up * 0.5F - shot.transform.position;
 			shot.GetComponent<Rigidbody>().velocity = 18 * diff.normalized;
 			nextSpitTime = DayNightCycle.main.timePassedAsFloat + UnityEngine.Random.Range(0.5F, 2F);
+			SoundManager.playSoundAt(spitSound, transform.position, false, 40, 1);
 		}
 		
 	}

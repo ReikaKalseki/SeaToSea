@@ -150,8 +150,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void updateLocale() {
-			LanguageHandler.SetLanguageLine(TechType.AsString(), "Smoked "+Language.main.Get(rawFish));
-			LanguageHandler.SetLanguageLine("Tooltip_"+TechType.AsString(), Language.main.Get("Tooltip_"+cookedFish.AsString())+" "+Language.main.Get("SmokedNoExpire"));
+			CustomLocaleKeyDatabase.registerKey(TechType.AsString(), "Smoked "+Language.main.Get(rawFish));
+			CustomLocaleKeyDatabase.registerKey("Tooltip_"+TechType.AsString(), Language.main.Get("Tooltip_"+cookedFish.AsString())+" "+Language.main.Get("SmokedNoExpire"));
 			SNUtil.log("Relocalized smoked fish "+this+" > "+TechType.AsString()+" > "+Language.main.Get(TechType), SNUtil.diDLL);
 		}
 		

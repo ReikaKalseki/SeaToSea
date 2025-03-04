@@ -225,9 +225,9 @@ namespace ReikaKalseki.SeaToSea
 					}
 				}
 				
-				if (speedBonus > 0) {
+				if (speedBonus > 0.5F) { //during boost only
 					float jitter = ((speedBonus+1)*(speedBonus+1))-1; //0.25 -> 0.56, 3 -> 8
-					Vector3 add = jitterTorque*tickTime*jitter*40000;
+					Vector3 add = jitterTorque*tickTime*jitter*35000;
 					body.AddTorque(add, ForceMode.Force);
 					//SNUtil.writeToChat("Adding jitter: "+add);
 				}

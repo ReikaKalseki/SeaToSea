@@ -174,7 +174,8 @@ namespace ReikaKalseki.SeaToSea
         
         BasicCraftingItem electro = CraftingItems.getItem(CraftingItems.Items.Electrolytes);
         electro.craftingTime = 1;
-        electro.addIngredient(C2CItems.sanctuaryPlant.seed, hard ? 3 : 2).addIngredient(C2CItems.brineCoralPiece, 4).addIngredient(sulfurAcid, 1);
+        electro.numberCrafted = 2;
+        electro.addIngredient(C2CItems.sanctuaryPlant.seed, 4).addIngredient(C2CItems.brineCoralPiece, 3).addIngredient(sulfurAcid, 1);
         
         //BasicCraftingItem pump = CraftingItems.getItem(CraftingItems.Items.FluidPump);
         //pump.craftingTime = 5;
@@ -358,7 +359,7 @@ namespace ReikaKalseki.SeaToSea
         C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN), 9).addIngredient(armor, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 8);
         C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
         C2CItems.heatSinkModule.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(TechType.Pipe, 5).addIngredient(motor, 1).addIngredient(TechType.Benzene, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5);
-        C2CItems.speedModule.addIngredient(TechType.Nickel, 5).addIngredient(motor, 4).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(electro, 6).addIngredient(TechType.Gravsphere, 1);
+        C2CItems.speedModule.addIngredient(TechType.Nickel, 5).addIngredient(motor, 4).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(electro, hard ? 3 : 2).addIngredient(TechType.Gravsphere, 1);
         C2CItems.lightModule.addIngredient(TechType.LEDLight, 3).addIngredient(TechType.WiringKit, 1).addIngredient(TechType.CopperWire, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);
        	C2CItems.tetherModule.addIngredient(TechType.ExosuitPropulsionArmModule, 1).addIngredient(TechType.WiringKit, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1);
         C2CItems.cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(heatSeal, 4);
@@ -367,10 +368,11 @@ namespace ReikaKalseki.SeaToSea
 		C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
         C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(SeaToSeaMod.geogel, 4).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(C2CItems.bkelpBumpWormItem.TechType, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
         C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(C2CItems.breathingFluid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
-        C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.CopperWire, 1).addIngredient(TechType.Lithium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);
+        C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.Lithium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 3);
         C2CItems.bandage.addIngredient(TechType.FirstAidKit, 1).addIngredient(SeaToSeaMod.geogel, 1).addIngredient(C2CItems.healFlower.seed, 3).addIngredient(TechType.JellyPlant, 1).addIngredient(TechType.Bleach, 1);
 		C2CItems.treatment.addIngredient(C2CItems.bandage, 1).addIngredient(TechType.Glass, 1).addIngredient(TechType.Titanium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42), 2);
-		C2CItems.addMainItems();
+		C2CItems.chargeFinRelay.addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 4).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.Magnetite, 4);
+        C2CItems.addMainItems();
         /*
 		rec = RecipeUtil.createUncrafting(t2Battery.TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
       	rec.Ingredients.Add(new Ingredient(t2Battery.TechType, 1));
@@ -487,6 +489,9 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
         RecipeUtil.removeIngredient(TechType.PrecursorIonPowerCell, TechType.Silicone);
         
+        C2CItems.setModElectronics(TechType.PrecursorIonBattery);
+        C2CItems.setModElectronics(TechType.PrecursorIonPowerCell);
+        
         addItemToRecipe(TechType.CyclopsShieldModule, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1);
         addItemToRecipe(TechType.CyclopsShieldModule, electro.TechType, 1);
         
@@ -582,10 +587,11 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.VehicleHullModule1, TechType.Silicone, 2);
         addItemToRecipe(TechType.VehicleHullModule2, TechType.AdvancedWiringKit, 1);
         addItemToRecipe(TechType.VehicleHullModule2, TechType.BloodOil, 3);
+        addItemToRecipe(TechType.VehicleHullModule2, TechType.AluminumOxide, 9);
         addItemToRecipe(TechType.VehicleHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
         //addItemToRecipe(TechType.VehicleHullModule3, armor.TechType, 2);
         addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 1);
-        addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+        addItemToRecipe(TechType.VehicleHullModule3, comb.TechType, hard ? 2 : 1); //down from 2 because of all the new stuff
         addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 2);
         addItemToRecipe(TechType.VehicleHullModule3, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 9);
         if (hard)
