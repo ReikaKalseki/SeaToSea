@@ -964,6 +964,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
+				if (VanillaBiomes.ILZ.isInBiome(p.transform.position))
+				    Story.StoryGoal.Execute("ILZAzurite", Story.GoalType.Story);
 				bool seal;
 				bool reinf;
 				if (prawn || !C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
@@ -992,6 +994,12 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType) {
 				Story.StoryGoal.Execute("Avolite", Story.GoalType.Story);
+			}
+			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType) {
+				Story.StoryGoal.Execute("Calcite", Story.GoalType.Story);
+			}
+			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType) {
+				Story.StoryGoal.Execute("Obsidian", Story.GoalType.Story);
 			}
 			else if (tt == C2CItems.alkali.seed.TechType) {
 				Story.StoryGoal.Execute("AlkaliVine", Story.GoalType.Story);
@@ -2685,7 +2693,7 @@ namespace ReikaKalseki.SeaToSea {
 						foreach (EnergyMixin e in Inventory.main.storageRoot.GetComponentsInChildren<EnergyMixin>(true)) {
 							PlayerTool tool = e.GetComponent<PlayerTool>();
 							if (tool) {
-								float add = tool == held ? chargeAmount*0.8F : chargeAmount*0.25F; //80% efficiency on held, 25% efficiency on non-helds
+								float add = tool == held ? chargeAmount*0.9F : chargeAmount*0.33F; //90% efficiency on held, 33% efficiency on non-helds
 								if (e && e.AddEnergy(add))
 									charging = true;
 							}

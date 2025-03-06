@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly HashSet<BiomeBase> safeBiomes = new HashSet<BiomeBase>();
 		//safe at surface
 		
-		private static readonly SoundManager.SoundData rescueSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "rescuewarp", "Sounds/rescuewarp.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
+		private static readonly SoundManager.SoundData rescueSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "rescuewarp", "Sounds/rescue.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
 			
 		private static UnityEngine.UI.Button rescuePDAButton;
 		
@@ -92,7 +92,9 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			rescuePDAButton = SNUtil.createPDAUIButtonUnderTab<uGUI_InventoryTab>(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/RescueUIBtn"), requestRescue);
 			rescuePDAButton.name = "RescueButton";
-			rescuePDAButton.transform.localPosition = new Vector3(0, rescuePDAButton.transform.localPosition.y, rescuePDAButton.transform.localPosition.z);
+			rescuePDAButton.transform.localPosition = new Vector3(-12, rescuePDAButton.transform.localPosition.y, rescuePDAButton.transform.localPosition.z);
+			rescuePDAButton.GetComponent<UnityEngine.UI.Image>().color = new Color(1.5F, 0.5F, 0.5F, 1);
+
 		}
 		
 		public static void requestRescue() {

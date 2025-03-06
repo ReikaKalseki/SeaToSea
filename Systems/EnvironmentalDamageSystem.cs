@@ -72,8 +72,7 @@ namespace ReikaKalseki.SeaToSea {
 		private float playerPressureDamageSince;
 		private float playerPressureDamageDuration;
 		
-		private float recoveryWarningStartTime;
-		private float recoveryWarningDuration;
+		private float recoveryWarningEndTime;
     	
 		internal float TEMPERATURE_OVERRIDE = -1;
     	
@@ -378,8 +377,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void setRecoveryWarning(float dur) {
-			recoveryWarningStartTime = DayNightCycle.main.timePassedAsFloat;
-			recoveryWarningDuration = dur;
+			recoveryWarningEndTime = DayNightCycle.main.timePassedAsFloat+dur;
 		}
     	
 		private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
@@ -608,6 +606,7 @@ namespace ReikaKalseki.SeaToSea {
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType;
 				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
+				bool rebreatherV2Functional = hasRebreatherV2 && !isRecoveryWarningActive();
 				if (!hasRebreather) {
 					if (depthClass == 2) {
 						num = 1.5F;
@@ -624,7 +623,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (liquid) {
 						increaseStart = 99999;
 					}
-					else if (hasRebreatherV2) {
+					else if (rebreatherV2Functional) {
 						increaseStart = depthDamageStart;
 						rate = 4F;
 					}
@@ -764,7 +763,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
     	
 		private bool isRecoveryWarningActive() {
-			return recoveryWarningStartTime > 0 && recoveryWarningDuration > 0 && DayNightCycle.main.timePassedAsFloat - recoveryWarningStartTime <= recoveryWarningDuration;
+			return recoveryWarningEndTime > 0 && DayNightCycle.main.timePassedAsFloat <= recoveryWarningEndTime;
 		}
     	
 		private CustomHUDWarning createHUDWarning(GameObject template, string key, EnviroAlert e, int pri, Color? c = null) {

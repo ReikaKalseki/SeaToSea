@@ -34,6 +34,7 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly bool isDeELoaded;
 		
 		private readonly HashSet<TechType> creatures = new HashSet<TechType>();
+		private readonly HashSet<TechType> eggs = new HashSet<TechType>();
 		private TechType thelassaceanType;
 		private TechType lrThelassaceanType;
 		private TechType jellySpinnerType;
@@ -86,6 +87,22 @@ namespace ReikaKalseki.SeaToSea {
 			creatures.Add(findCreature("Filtorb"));
 			creatures.Add(findCreature("GulperLeviathan"));
 			creatures.Add(findCreature("GulperLeviathanBaby"));
+			creatures.Add(findCreature("GrandGlider"));
+			creatures.Add(findCreature("Axetail"));
+			creatures.Add(findCreature("RibbonRay"));
+			creatures.Add(findCreature("Filtorb"));
+			creatures.Add(findCreature("TriangleFish"));
+			creatures.Add(findCreature("RubyClownPincher"));
+			creatures.Add(findCreature("SapphireClownPincher"));
+			creatures.Add(findCreature("EmeraldClownPincher"));
+			creatures.Add(findCreature("AmberClownPincher"));
+			creatures.Add(findCreature("CitrineClownPincher"));
+			
+			eggs.Add(findCreature("GrandGliderEgg"));
+			eggs.Add(findCreature("StellarThalassaceanEgg"));
+			eggs.Add(findCreature("JasperThalassaceanEgg"));
+			eggs.Add(findCreature("TwisteelEgg"));
+			eggs.Add(findCreature("GulperEgg"));
 			
 			int amt = RecipeUtil.removeIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType).amount;
 			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, thalassaceanCud.TechType, amt);
@@ -97,7 +114,17 @@ namespace ReikaKalseki.SeaToSea {
 			amt = RecipeUtil.removeIngredient(C2CItems.breathingFluid.TechType, TechType.Eyeye).amount;
 			RecipeUtil.addIngredient(C2CItems.breathingFluid.TechType, jellySpinnerType, amt*3/2); //from 2 to 3
 			
-			//TODO other creatures
+			foreach (TechType tt in eggs) {
+				ECCLibrary.CreatureEggAsset egg = (ECCLibrary.CreatureEggAsset)SNUtil.getModPrefabByTechType(tt);
+				foreach (LootDistributionData.BiomeData bd in egg.BiomesToSpawnIn) {
+					float f = bd.probability;
+					f = Mathf.Min(f, 0.75F)*0.67F;
+					f = Mathf.Round(f*20F)/20F; //round to nearest 0.05
+					f = Mathf.Max(f, 0.05F);
+					SNUtil.log("Reducing spawn chance of "+egg.ClassID+" in "+Enum.GetName(typeof(BiomeType), bd.biome)+" from "+bd.probability+" to "+f);
+					LootDistributionHandler.EditLootDistributionData(egg.ClassID, bd.biome, f, 1);
+				}
+			}
 		}
 		
 		private TechType findCreature(string id) {
@@ -109,6 +136,15 @@ namespace ReikaKalseki.SeaToSea {
 				throw new Exception("Could not find DeE TechType for '"+id+"'");
 			return tt;
 		}
+	    
+	    [Obsolete("Unimplemented")]
+	    public void convertEgg(string type, float r) {
+	    	foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(Player.main.transform.position, r)) {
+	    		if (pi && pi.ClassId == type) {
+	    			//TODO
+	    		}
+	    	}
+	    }
 	    
 	    internal class C2CThalassacean : MonoBehaviour {
 	    	
@@ -127,6 +163,8 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 			
 			void Update() {
+	    		if (!DayNightCycle.main)
+	    			return;
 	    		if (!mouthInteract)
 	    			mouthInteract = ObjectUtil.getChildObject(gameObject, MOUTH_NAME);
 	    		
