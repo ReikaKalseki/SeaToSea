@@ -82,6 +82,7 @@ namespace ReikaKalseki.SeaToSea
 			addPDAPrompt(PDAMessages.Messages.KelpCavePrompt, ep => isNearKelpCave(ep) && !isJustStarting(ep));
 			addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, hasMissedKelpCavePromptLate);
 			addPDAPrompt(PDAMessages.Messages.BloodKelpNestPrompt, ep => Vector3.Distance(pod2Location, ep.transform.position) <= 100);
+			addPDAPrompt(PDAMessages.Messages.TrailerBasePrompt, ep => VanillaBiomes.CRASH.isInBiome(ep.transform.position) && WorldUtil.isInsideAurora2D(ep.transform.position, 200));
 			/*
 			PDAPrompt kelpLate = addPDAPrompt(PDAMessages.Messages.KelpCavePromptLate, new TechTrigger(TechType.HighCapacityTank), 0.0001F);
 			addPDAPrompt(kelpLate, new TechTrigger(TechType.StasisRifle));

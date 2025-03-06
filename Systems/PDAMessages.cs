@@ -37,6 +37,7 @@ namespace ReikaKalseki.SeaToSea
 			[Message("sanctuaryprompt")]SanctuaryPrompt,
 			[Message("hiddenseamothprompt")]JellySeamothDepthPrompt,
 			[Message("bkelpnestprompt")]BloodKelpNestPrompt,
+			[Message("trailerbase")]TrailerBasePrompt,
 			[Message("meteorprompt")]MeteorPrompt,
 			[Message("needlaunchcargo")]NeedLaunchCargoMessage,
 			[Message("needscaneverything")]NeedScansMessage,

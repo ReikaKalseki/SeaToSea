@@ -130,6 +130,7 @@ namespace ReikaKalseki.SeaToSea {
 						LifeformEntry le = new LifeformEntry(tt);
 						requiredLifeforms[tt] = le;
 						addOrCreateEntry(le);
+						//SNUtil.log("Adding "+le.objectType.AsString()+" to lifeform scanning system: "+le.category);
 					}
 				}
 				loadSave();

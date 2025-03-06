@@ -175,6 +175,17 @@
 		Sounds/pdaprompt/dunearchprompt.ogg
 	</pda>
   </dunearch>
+  <trailerbase>
+	<name>
+		
+	</name>
+	<desc>
+		Picking up multiple titanium signatures in this area. Scans do not match the Aurora.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/trailerbaseprompt.ogg
+	</pda>
+  </trailerbase>
   <followradio>
 	<name>
 		

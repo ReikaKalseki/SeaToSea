@@ -227,7 +227,7 @@ namespace ReikaKalseki.SeaToSea
 				
 				if (speedBonus > 0.5F) { //during boost only
 					float jitter = ((speedBonus+1)*(speedBonus+1))-1; //0.25 -> 0.56, 3 -> 8
-					Vector3 add = jitterTorque*tickTime*jitter*35000;
+					Vector3 add = jitterTorque*tickTime*jitter*25000;
 					body.AddTorque(add, ForceMode.Force);
 					//SNUtil.writeToChat("Adding jitter: "+add);
 				}
@@ -235,7 +235,7 @@ namespace ReikaKalseki.SeaToSea
 					jitterTorqueTarget = MathUtil.getRandomVectorAround(Vector3.zero, 3).setLength(1);
 				}
 				else {
-					jitterTorque += (jitterTorqueTarget-jitterTorque)*Mathf.Min(1, tickTime*5);
+					jitterTorque += (jitterTorqueTarget-jitterTorque)*Mathf.Min(1, tickTime*9);
 				}
 				
 				bool kooshCave = false;
