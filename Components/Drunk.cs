@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 using HarmonyLib;
 using System.Reflection;
@@ -97,6 +98,16 @@ namespace ReikaKalseki.SeaToSea {
 		    
 		void OnDestroy() {
 			OnDisable();
+		}
+		
+		public override void saveToXML(XmlElement e) {
+			base.saveToXML(e);
+			e.addProperty("intensity", intensity);
+		}
+		
+		public override void readFromXML(XmlElement e) {
+			base.readFromXML(e);
+			intensity = (float)e.getFloat("intensity", 0);
 		}
 			
 		public static Drunk add(float duration) {

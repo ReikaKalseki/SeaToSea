@@ -249,6 +249,9 @@
 		<room>
 			A room containing a number of databoxes, originally blocked by a dislodged titanium door 
 		</room>
+		<geogel>
+			Cave systems inside the larger islands, and fissures within them leaking tarry compounds
+		</geogel>
 	</UNDERISLANDS>
 	<BKELPTRENCH>
 		<name>
@@ -287,7 +290,7 @@
 			An alien structure containing a number of Ion Cubes, and a terminal with data indicating a possible function of these caches
 		</cache>
 		<nest>
-			A nest for [unfinished] tucked inside a large cave
+			A blood crawler nesting site tucked inside a large cave, guarded by large "Crawler Broodmother" variants of the species
 		</nest>
 		<levi>
 			An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water
@@ -327,6 +330,12 @@
 		<levi>
 			Ethereal, hammer-headed, juvenile leviathans that make use of forceful ramming to hunt their prey; Highly aggressive
 		</levi>
+		<coral>
+			A species of coral whose bodies collect caustic brine, able to be harvested for electrolytic compounds, but which rapidly lose this ability if removed from the brine
+		</coral>
+		<cove>
+			A section of the biome where the brine, filtered by the nearby Cove Tree, loses its toxic properties, and which is among the safest regions encountered in the crater
+		</cove>
 	</LOSTRIVER>
 	<DRF>
 		<name>
@@ -383,6 +392,35 @@
 			A download of alien structural data, indicating how to tap into the energy running through alien structures
 		</tap>
 	</LAVACASTLE>
+	<ILZ>
+		<name>
+			Lava Castle
+		</name>
+		<desc>
+
+		</desc>
+		<pda>
+
+		</pda>
+		<kyanite>
+			Large kyanite crystals, formed via high levels of volcanic activity, but which need special hardware to harvest
+		</kyanite>
+		<azurite>
+			A huge volume of azurite deposited on the roof of the central dome in the chamber
+		</azurite>
+		<castle>
+			A large central dome in the chamber with energy readings from within, and tunnels providing access to the interior
+		</castle>
+		<mushroom>
+			Orange mushroom-shaped flora which channel magma from below, periodically erupting into dangerous lava bombs which impact on the ground below
+		</mushroom>
+		<obsidian>
+			Crystals of obsidian glass that form where lava bombs impact the cave floor and burst, exposing the superheated magma to seawater
+		</obsidian>
+		<pit>
+			A large sinkhole, containing a central upwelling of magma from which inexhaustible mineral resources can be collected
+		</pit>
+	</ILZ>
 	<CRAG>
 		<name>
 			Crag Field
@@ -618,6 +656,9 @@
 		<vent>
 			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
 		</vent>
+		<vasestrand>
+			A plant-like filter-feeding organism found only in proximity to a large coral tree
+		</vasestrand>
 	</MUSHROOMS>
 	<MOUNTAINPOD>
 		<name>

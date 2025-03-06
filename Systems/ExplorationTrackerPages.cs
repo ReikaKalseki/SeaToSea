@@ -73,18 +73,18 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("meteor", Finding.fromScan(Auroresource.AuroresourceMod.dunesMeteor)).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload3"));
 	    	
 	    	p = addPage(TrackerPages.UNDERISLANDS, new BiomeTrigger(VanillaBiomes.UNDERISLANDS));
-	    	p.addFinding("glass", Finding.fromTracker(TrackerPages.GLASSFOREST)).addFinding("piezo", Finding.fromScan(Ecocean.EcoceanMod.piezo)).addFinding("wreck", Finding.fromStory(FallingGlassForestWreck.STORY_TAG)).addFinding("farmer", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.farmerBlock)).addFinding("databox", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("room", Finding.fromStory(C2CProgression.instance.getLocationGoal("UNDERISLANDS_BLOCKED_ROOM")));
+	    	p.addFinding("glass", Finding.fromTracker(TrackerPages.GLASSFOREST)).addFinding("piezo", Finding.fromScan(Ecocean.EcoceanMod.piezo)).addFinding("wreck", Finding.fromStory(FallingGlassForestWreck.STORY_TAG)).addFinding("farmer", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.farmerBlock)).addFinding("databox", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("room", Finding.fromStory(C2CProgression.instance.getLocationGoal("UNDERISLANDS_BLOCKED_ROOM"))).addFinding("geogel", Finding.fromScan(SeaToSeaMod.gelFountain));
 	    	
 	    	p = addPage(TrackerPages.BKELPTRENCH, new TrackerPageAnyFindingsTrigger(TrackerPages.BKELPTRENCH));
 	    	p.addFinding("pod1", Finding.fromEncy("bkelpbase")).addFinding("pda", Finding.fromEncy("bkelpbase2")).addFinding("chit", Finding.fromStory(SeaToSeaMod.bioProcessorBoost.goal)).addFinding("databox", Finding.fromUnlock(C2CItems.depth1300));//TODO .addFinding("caves", Finding.(??));
 	    	
 	    	p = addPage(TrackerPages.NBKELP, new ProgressionTrigger(ep => BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.BLOODKELPNORTH && ep.transform.position.y < -400));
-	    	p.addFinding("pod2", Finding.fromEncy("Lifepod1")).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload2"));//TODO .addFinding("nest", Finding.(??));
+	    	p.addFinding("pod2", Finding.fromEncy("Lifepod1")).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload2")).addFinding("nest", Finding.fromScan(SeaToSeaMod.bkelpBumpWorm));
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 	    	
 	    	p = addPage(TrackerPages.LOSTRIVER, new BiomeTrigger(VanillaBiomes.LOSTRIVER));
-	    	p.addFinding("drf", Finding.fromTracker(TrackerPages.DRF)).addFinding("cache", Finding.fromUnlock(C2CItems.treatment)).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton)).addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur")).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("LR_ARCH")));
+	    	p.addFinding("drf", Finding.fromTracker(TrackerPages.DRF)).addFinding("cache", Finding.fromUnlock(C2CItems.treatment)).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton)).addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur")).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("LR_ARCH"))).addFinding("coral", Finding.fromScan(C2CItems.brineCoral)).addFinding("cove", Finding.fromBiome(VanillaBiomes.COVE)).addFinding("calcite", Finding.fromStory("Calcite"));
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathanJuvenile));
 	    	
@@ -93,6 +93,9 @@ namespace ReikaKalseki.SeaToSea
 	    	
 	    	p = addPage(TrackerPages.LAVACASTLE, new StoryTrigger("Precursor_LavaCastle_Log1")); //1 is the entry into the castle, Precursor_LavaCastle_Log2 is the lava castle hint
 	    	p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock));
+	    	
+	    	p = addPage(TrackerPages.ILZ, new BiomeTrigger(VanillaBiomes.ILZ));
+	    	p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter));
 	    	
 	    	p = addPage(TrackerPages.CRAG, new BiomeTrigger(VanillaBiomes.CRAG));
 	    	p.addFinding("pod7", Finding.fromEncy("LifepodRandom")).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH")));
@@ -123,7 +126,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("treepda", Finding.fromEncy("treepda")).addFinding("chit", Finding.fromStory(SeaToSeaMod.laserCutterBulkhead.goal)).addFinding("bacteria", Finding.fromEncy("ency_"+SeaToSeaMod.mushroomBioFragment.ClassID));
 	    	
 	    	p = addPage(TrackerPages.MUSHROOMS, new BiomeTrigger(VanillaBiomes.MUSHROOM));
-	    	p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy("Lifepod4")).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromEncy("ency_"+SeaToSeaMod.geyserCoral.ClassID)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH")));
+	    	p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy("Lifepod4")).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromEncy("ency_"+SeaToSeaMod.geyserCoral.ClassID)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH"))).addFinding("vasestrand", Finding.fromScan(Ecocean.EcoceanMod.mushroomVaseStrand));
 	    	
 	    	p = addPage(TrackerPages.MOUNTAINPOD, new TrackerPageAnyFindingsTrigger(TrackerPages.MOUNTAINPOD));
 	    	p.addFinding("podpda", Finding.fromEncy("mountainpodearly")).addFinding("podpda2", Finding.fromEncy("mountainpodlate")).addFinding("mask", Finding.fromUnlock(C2CItems.rebreatherV2)).addFinding("stealth", Finding.fromUnlock(C2CItems.voidStealth)).addFinding("knife", Finding.fromUnlock(TechType.HeatBlade)).addFinding("battery", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.batteryBlock)).addFinding("basepda", Finding.fromEncy("mountaincave"));
@@ -230,6 +233,7 @@ namespace ReikaKalseki.SeaToSea
 		LOSTRIVER, //garg skull, powerseal, large sulfur; lostriver
 		DRF, //story terminal [Precursor_LostRiverBase_DataDownload1], damage report [Precursor_LostRiverBase_DataDownload3], scan PrecursorLostRiverLabEgg, white tablet, kharaa progress [Precursor_LostRiverBase_Log3], cyclopsheat, scan PrecursorWarper, scan seadragon skeleton [PrecursorSeaDragonSkeleton]; first DRF pda message []
 		LAVACASTLE, //kyanite, blue tablet, ion power, ATP tap; pda message
+		ILZ,
 		CRAG, //pod 7 [LifepodRandom], planktonscoop; crag biome
 		FLOATISLAND, //degasi [FLOATDEGASI page], keen meeting site [RendezvousFloatingIsland], teleporter (-662.55, 5.50, -1064.35) R = 25, but Y > 0 && Y < 22.5; prox to floating island and above y=20
 		MOUNTAINISLAND, //gun [GUN page], teleporter activation [PrecursorMountainTeleporterActive], beach PDA, cave cache [t2 battery recipe], red tablet; MENTION MOUNTAINBASE ["came from elsewhere"] in the beach PDA entry; prox to sunbeam site or has beach pda
@@ -373,6 +377,10 @@ namespace ReikaKalseki.SeaToSea
 		
 		internal static FindingTrigger fromStory(StoryGoal g) {
 			return fromStory(g.key);
+		}
+		
+		internal static FindingTrigger fromBiome(BiomeBase bb) {
+			return new FindingTrigger(() => BiomeDiscoverySystem.instance.isDiscovered(bb), () => BiomeDiscoverySystem.instance.forceDiscovery(bb));
 		}
 		
 	}

@@ -55,7 +55,7 @@ namespace ReikaKalseki.SeaToSea {
 				string code = dd.getRandomizedDoorCode();
 				foreach(KeypadDoorConsole pad in pi.GetComponentsInChildren<KeypadDoorConsole>())
 					pad.accessCode = code;
-		    	SNUtil.log("Swapping code on "+pi.name+" @ "+pi.transform.position+": "+dd.oldCode+" > "+code+" in "+dd.encyKey);
+		    	SNUtil.log("Swapping code on "+pi.name+" @ "+pi.transform.position+": "+dd.oldCode+" > "+code+" in "+dd.encyKey, SNUtil.diDLL);
 		    	/*
 		    	if (pi.ClassId == CAPTAIN_DOOR) {
 		    		StarshipDoor s = pi.GetComponentInChildren<StarshipDoor>();
@@ -78,7 +78,7 @@ namespace ReikaKalseki.SeaToSea {
 				string key = "EncyDesc_"+c.encyKey;
 				string code = c.getRandomizedDoorCode();
 				CustomLocaleKeyDatabase.registerKey(key, Language.main.Get(key).Replace(c.oldCode, code));
-		    	SNUtil.log("Swapping code in ency entry "+c.encyKey+": "+c.oldCode+" > "+c);
+		    	SNUtil.log("Swapping code in ency entry "+c.encyKey+": "+c.oldCode+" > "+c, SNUtil.diDLL);
 			}
 		}
 		

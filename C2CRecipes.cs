@@ -32,6 +32,7 @@ namespace ReikaKalseki.SeaToSea
     //private static DuplicateRecipeDelegateWithRecipe altBleach;
     private static DuplicateRecipeDelegateWithRecipe t2BatteryRepair;
     //private static DuplicateRecipeDelegateWithRecipe altLuminol;
+    private static DuplicateRecipeDelegateWithRecipe replGunDeConversion;
     
     //private static DuplicateRecipeDelegateWithRecipe brineSaltConversion;
     //private static DuplicateRecipeDelegateWithRecipe gelWaterConversion;
@@ -162,7 +163,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem heatSeal = CraftingItems.getItem(CraftingItems.Items.HeatSealant);
         heatSeal.craftingTime = 5;
         heatSeal.numberCrafted = 1;
-        heatSeal.addIngredient(sealedFabric, 1).addIngredient(TechType.Aerogel, 2).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 2).addIngredient(C2CItems.mountainGlow.seed, 3);
+        heatSeal.addIngredient(sealedFabric, 1).addIngredient(TechType.Aerogel, 2).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5).addIngredient(C2CItems.mountainGlow.seed, 3);
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
         tankWall.craftingTime = 2.5F;
@@ -427,6 +428,20 @@ namespace ReikaKalseki.SeaToSea
        	brineSaltConversion.suffixName = " Conversion";
        	brineSaltConversion.Patch();
        	*/
+       	
+       	rec = new TechData();
+		rec.Ingredients.Add(new Ingredient(TechType.RepulsionCannon, 1));
+       	replGunDeConversion = new DuplicateRecipeDelegateWithRecipe(TechType.PropulsionCannon, rec);
+       	replGunDeConversion.setRecipe();
+       	replGunDeConversion.craftTime = 5;
+       	replGunDeConversion.category = TechCategory.Workbench;
+       	replGunDeConversion.group = TechGroup.Workbench;
+       	replGunDeConversion.craftingType = CraftTree.Type.Workbench;
+       	replGunDeConversion.craftingMenuTree = new string[]{"PropulsionCannonMenu"};
+       	replGunDeConversion.unlock = TechType.RepulsionCannon;
+       	replGunDeConversion.ownerMod = SeaToSeaMod.modDLL;
+       	replGunDeConversion.suffixName = " conversion";
+       	replGunDeConversion.Patch();
 		
 		//SurvivalHandler.GiveHealthOnConsume(bandage.TechType, 50, false);
         
@@ -555,6 +570,8 @@ namespace ReikaKalseki.SeaToSea
         	addItemToRecipe(kvp.Key, traceMetal.TechType, Math.Max(kvp.Value, amt));
         }
         
+        RecipeUtil.modifyIngredients(TechType.RepulsionCannon, (i) => i.techType != TechType.PropulsionCannon);
+        
         addItemToRecipe(TechType.Cyclops, armor.TechType, 4);
         addItemToRecipe(TechType.Cyclops, electro.TechType, 3);
         addItemToRecipe(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
@@ -572,9 +589,9 @@ namespace ReikaKalseki.SeaToSea
         //addItemToRecipe(TechType.ExosuitJetUpgradeModule, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 4);
         addItemToRecipe(TechType.ExosuitJetUpgradeModule, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 5);
         
-        addItemToRecipe(TechType.CyclopsHullModule1, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 15);
+        addItemToRecipe(TechType.CyclopsHullModule1, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 8);
         addItemToRecipe(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
-        addItemToRecipe(TechType.CyclopsHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType, 83);
+        addItemToRecipe(TechType.CyclopsHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType, 12);
         
         addItemToRecipe(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
@@ -594,7 +611,7 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.VehicleHullModule3, comb.TechType, hard ? 2 : 1); //down from 2 because of all the new stuff
         addItemToRecipe(TechType.VehicleHullModule3, CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 2);
         addItemToRecipe(TechType.VehicleHullModule3, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 9);
-        if (hard)
+        //if (hard)
         	addItemToRecipe(TechType.VehicleHullModule3, TechType.Nickel, 4);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.PlasteelIngot);
         RecipeUtil.removeIngredient(TechType.VehicleHullModule3, TechType.AluminumOxide);
@@ -872,6 +889,10 @@ namespace ReikaKalseki.SeaToSea
     
     public static DuplicateRecipeDelegateWithRecipe getT2BatteryRepair() {
     	return t2BatteryRepair;
+    }
+    
+    public static DuplicateRecipeDelegateWithRecipe getPropGunDeConversion() {
+    	return replGunDeConversion;
     }
     /*
     public static TechData getHatchingEnzymeRecipe() {

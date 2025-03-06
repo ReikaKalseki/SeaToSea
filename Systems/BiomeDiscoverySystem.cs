@@ -131,6 +131,16 @@ namespace ReikaKalseki.SeaToSea {
 				LifeformScanningSystem.instance.onBiomeDiscovered();
 			}
 		}
+	
+		public void forceDiscovery(BiomeBase bb) {
+			if (bb == null || bb == BiomeBase.UNRECOGNIZED)
+				return;
+			if (!basicEntryGoal.ContainsKey(bb)) {
+				SNUtil.log("No cached biome goal to apply for biome "+bb);
+				return;
+			}
+			StoryGoal.Execute(basicEntryGoal[bb], Story.GoalType.Story);
+		}
 		
 		public bool isDiscovered(BiomeBase bb) {
 			if (bb == null || bb == BiomeBase.UNRECOGNIZED)
