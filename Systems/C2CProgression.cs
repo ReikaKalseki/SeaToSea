@@ -321,6 +321,7 @@ namespace ReikaKalseki.SeaToSea
 	    
 	    public static void onSeamothDepthChit() {
     		if (StoryGoalManager.main.IsGoalComplete("seamothdepthchit2")) {
+    			StoryGoal.Execute("seamothdepthchit3", Story.GoalType.Story);
     			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 3);
     			KnownTech.Add(TechType.VehicleHullModule1);
     			SNUtil.triggerTechPopup(TechType.VehicleHullModule1);
@@ -336,6 +337,10 @@ namespace ReikaKalseki.SeaToSea
     			SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 1);
     		}
 	    }
+    	
+    	public static bool isSeamothDepth1UnlockedLegitimately() {
+    		return StoryGoalManager.main.IsGoalComplete("seamothdepthchit2"); //2 for now because 3 did not exist at time of creation
+    	}
     	
     	public static void spawnPOIMarker(string id, Vector3 at) {
     		if (StoryGoalManager.main.IsGoalComplete(id))

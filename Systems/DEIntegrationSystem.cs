@@ -252,6 +252,11 @@ namespace ReikaKalseki.SeaToSea {
 				root.GetComponent<SphereCollider>().radius = 0.7F;
 	    	}
 	    	
+	    	void Update() {
+	    		if (transform.position.setY(0).sqrMagnitude < 0.04 && !gameObject.FindAncestor<Creature>())
+	    			UnityEngine.Object.Destroy(gameObject);
+	    	}
+	    	
 	    }
 		
 	}

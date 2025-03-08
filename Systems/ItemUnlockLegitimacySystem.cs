@@ -39,7 +39,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void add(string mod, string item, Func<bool> valid) {
-			add(mod, item, valid, (pp, ep) => {Inventory.main.DestroyItem(pp.GetTechType()); SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/gravsphere/explode"), ep.transform.position);});
+			add(mod, item, valid, (pp, ep) => {
+				Inventory.main.DestroyItem(pp.GetTechType());
+				SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/gravsphere/explode"), ep.transform.position);
+			});
 		}
 		
 		internal void add(string mod, string item, Func<bool> valid, Action<Pickupable, Player> take) {
@@ -55,17 +58,46 @@ namespace ReikaKalseki.SeaToSea {
 		
 		internal void tick(Player ep) {
 			if (anyLoaded) {
-			    Pickupable pp = Inventory.main.GetHeld();
-			    if (pp) {
-			    	TechType tt = pp.GetTechType();
-			    	if (keyedData.ContainsKey(tt)) {
-			    		ItemGate ig = keyedData[tt];
-			    		if (!ig.validityCheck.Invoke()) {
-					    	ig.failureEffect.Invoke(pp, ep);
-			    		}
-			    	}
-			    }
+				Pickupable pp = Inventory.main.GetHeld();
+				if (pp) {
+					TechType tt = pp.GetTechType();
+					if (keyedData.ContainsKey(tt)) {
+						ItemGate ig = keyedData[tt];
+						if (!ig.validityCheck.Invoke()) {
+							ig.failureEffect.Invoke(pp, ep);
+						}
+					}
+				}
 			}
+		}
+		
+		public void validateModule(Vehicle v, int slotID, TechType tt) {
+			InventoryItem ii = v.GetSlotItem(slotID);
+			if (ii != null && ii.item && SpawnedItemTracker.isSpawned(ii.item)) {
+				destroyModule(v.modules, ii, v.slotIDs[slotID]);
+			}
+		}
+		
+		public void validateModules(SubRoot sub) {
+	    	Equipment modules = sub.isCyclops && sub.upgradeConsole ? sub.upgradeConsole.modules : null;
+	    	if (modules != null) {
+		    	foreach (string slot in SubRoot.slotNames) {
+					InventoryItem ii = modules.GetItemInSlot(slot);
+					if (ii != null && ii.item && SpawnedItemTracker.isSpawned(ii.item)) {
+						destroyModule(modules, ii, slot);
+					}
+				}
+	    	}
+		}
+		
+		public void destroyModule(Equipment modules, InventoryItem ii, string slot) {
+			TechType tt = ii.item.GetTechType();
+			((IItemsContainer)modules).RemoveItem(ii, true, false); //cast is necessary to hit the right method
+			//((IItemsContainer)modules).UpdateContainer();
+			UnityEngine.Object.Destroy(ii.item.gameObject);
+			SNUtil.writeToChat("Destroying cheated module: " + Language.main.Get(tt) + " in " + modules.owner.name + " slot " + slot);
+			SoundManager.playSoundAt(SoundManager.buildSound("event:/tools/gravsphere/explode"), modules.owner.transform.position);
+			Player.main.GetPDA().Close();
 		}
 
 		class ItemGate {
@@ -95,10 +127,10 @@ namespace ReikaKalseki.SeaToSea {
 			private TechType tryFindItem() {
 				TechType tt = TechType.None;
 				if (!TechTypeHandler.TryGetModdedTechType(techTypeName, out tt))
-					if (!TechTypeHandler.TryGetModdedTechType(techTypeName.ToLowerInvariant(), out tt))
-						TechTypeHandler.TryGetModdedTechType(techTypeName.setLeadingCase(false), out tt);
+				if (!TechTypeHandler.TryGetModdedTechType(techTypeName.ToLowerInvariant(), out tt))
+					TechTypeHandler.TryGetModdedTechType(techTypeName.setLeadingCase(false), out tt);
 				if (tt == TechType.None && isModLoaded)
-					SNUtil.log("Could not find TechType for '"+techTypeName+"' in mod '"+sourceMod+"'");
+					SNUtil.log("Could not find TechType for '" + techTypeName + "' in mod '" + sourceMod + "'");
 				return tt;
 			}
 			

@@ -305,6 +305,8 @@ namespace ReikaKalseki.SeaToSea {
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + SeaToSeaMod.tunnelLight.TechType.AsString(), Language.main.Get("Tooltip_" + TechType.LEDLight.AsString()));
 	    	
 			CustomLocaleKeyDatabase.registerKey(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
+			
+			EcoceanMod.lavaShroom.pdaPage.append("\n\n"+SeaToSeaMod.miscLocale.getEntry("Appends").getField<string>("lavashroom"));
 	    	
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_" + TechType.VehicleHullModule3.AsString()).Replace("maximum", "900m"));
 	    	
@@ -1741,17 +1743,20 @@ namespace ReikaKalseki.SeaToSea {
 			sm.gameObject.EnsureComponent<C2CMoth>().recalculateModules();
 			sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 			sm.gameObject.EnsureComponent<SeamothTetherController>().recalculateModule();
-			if (added && sm.torpedoSilos != null && slotID < sm.torpedoSilos.Length && tt == C2CItems.heatSinkModule.TechType) {
-				sm.torpedoSilos[slotID].SetActive(true);
-			}
+			if (added && GameModeUtils.currentEffectiveMode != GameModeOption.Creative && !SNUtil.canUseDebug())
+				ItemUnlockLegitimacySystem.instance.validateModule(sm, slotID, tt);
 		}
 	    
 		public static void updateCyclopsModules(SubRoot sm) {
 			sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
+			if (GameModeUtils.currentEffectiveMode != GameModeOption.Creative && !SNUtil.canUseDebug())
+				ItemUnlockLegitimacySystem.instance.validateModules(sm);
 		}
 	    
 		public static void updatePrawnModules(Exosuit sm, int slotID, TechType tt, bool added) {
 			sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
+			if (added && GameModeUtils.currentEffectiveMode != GameModeOption.Creative && !SNUtil.canUseDebug())
+				ItemUnlockLegitimacySystem.instance.validateModule(sm, slotID, tt);
 		}
 	    
 		public static void useSeamothModule(SeaMoth sm, TechType tt, int slotID) {
@@ -1835,7 +1840,7 @@ namespace ReikaKalseki.SeaToSea {
 				C2CMoth cm = hit.FindAncestor<C2CMoth>();
 				if (cm)
 					cm.onHitByLavaBomb(bomb);
-				if (hit.layer == Voxeland.GetTerrainLayerMask() || hit.layer == 30) {
+				if (hit.layer == Voxeland.GetTerrainLayerMask() || hit.layer == 30) { //for some reason this sometimes causes multiple (1-3!) to drop but that is actually a good thing
 					GameObject bs = ObjectUtil.createWorldObject(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).ClassID);
 					bs.transform.position = bomb.transform.position;
 					/*
@@ -2608,6 +2613,8 @@ namespace ReikaKalseki.SeaToSea {
 			Player ep = Player.main;
 			Survival s = ep.GetComponent<Survival>();
 			if (s.water < 10 || s.food < 10)
+				return false;
+			if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) < 400)
 				return false;
 			if (ep.currentEscapePod)
 				return true;

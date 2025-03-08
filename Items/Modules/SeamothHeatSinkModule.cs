@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 		}*/
 
 		public override SeamothModule.SeamothModuleStorage getStorage() {
-			return new SeamothModule.SeamothModuleStorage("HEAT SINK STORAGE", 3, 4).addAmmo(C2CItems.heatSink);
+			return new SeamothModule.SeamothModuleStorage("HEAT SINK STORAGE", StorageAccessType.TORPEDO, 3, 4).addAmmo(C2CItems.heatSink);
 		}
 
 		public override void prepareGameObject(GameObject go, Renderer[] r) {

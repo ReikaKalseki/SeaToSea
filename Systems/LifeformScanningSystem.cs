@@ -25,6 +25,34 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly Dictionary<TechType, LifeformEntry> requiredLifeforms = new Dictionary<TechType, LifeformEntry>();
 		private readonly SortedDictionary<string, List<LifeformEntry>> byCategory = new SortedDictionary<string, List<LifeformEntry>>();
 		
+		private readonly HashSet<TechType> alienBaseScans = new HashSet<TechType>() {
+			TechType.PrecursorPrisonArtifact1,
+			TechType.PrecursorPrisonArtifact2,
+			TechType.PrecursorPrisonArtifact3,
+			TechType.PrecursorPrisonArtifact4,
+			TechType.PrecursorPrisonArtifact5,
+			TechType.PrecursorPrisonArtifact6,
+			TechType.PrecursorPrisonArtifact7,
+			TechType.PrecursorPrisonArtifact8,
+			TechType.PrecursorPrisonArtifact9,
+			TechType.PrecursorPrisonArtifact10,
+			TechType.PrecursorPrisonArtifact11,
+			TechType.PrecursorPrisonArtifact12,
+			TechType.PrecursorPrisonArtifact13,
+			TechType.PrecursorLostRiverLabBones,
+			TechType.PrecursorWarper,
+			TechType.PrecursorFishSkeleton,
+			TechType.PrecursorLostRiverLabRays,
+			TechType.PrecursorLostRiverLabEgg,
+			TechType.PrecursorPrisonLabEmperorEgg,
+			TechType.PrecursorPrisonLabEmperorFetus,
+			TechType.PrecursorPipeRoomIncomingPipe,
+			TechType.PrecursorPipeRoomOutgoingPipe,
+			TechType.PrecursorPrisonIonGenerator,
+			TechType.PrecursorSeaDragonSkeleton,
+			TechType.HugeSkeleton,
+		};
+		
 		internal static readonly string NEED_SCANS_PDA = "needencyscans";
 		
 		private readonly string xmlPathRoot;
@@ -165,6 +193,8 @@ namespace ReikaKalseki.SeaToSea {
 			if (pfb != null && VanillaFlora.getFromID(pfb) != null)
 				return true;
 			if (pfb != null && VanillaResources.getFromID(pfb) != null)
+				return true;
+			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && alienBaseScans.Contains(tt))
 				return true;
 			GameObject prefab = ObjectUtil.lookupPrefab(tt);
 			if (prefab) {
