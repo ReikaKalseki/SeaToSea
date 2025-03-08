@@ -111,6 +111,10 @@ namespace ReikaKalseki.SeaToSea
 							if (tt == TechType.VehicleHullModule1 || tt == TechType.VehicleHullModule2 || tt == TechType.VehicleHullModule3 || tt == C2CItems.depth1300.TechType) {
 								ItemUnlockLegitimacySystem.instance.destroyModule(seamoth.modules, ii, seamoth.slotIDs[idx]);
 								seamoth.liveMixin.TakeDamage(10); //stop cheating
+								KnownTech.Remove(TechType.VehicleHullModule1);
+								KnownTech.Remove(TechType.VehicleHullModule2);
+								KnownTech.Remove(TechType.VehicleHullModule3);
+								KnownTech.Remove(C2CItems.depth1300.TechType);
 							}
 						}
 					}
