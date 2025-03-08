@@ -98,6 +98,24 @@ namespace ReikaKalseki.SeaToSea
 				useSeamothVehicleTemperature = false;
 				vehicleTemperature = WaterTemperatureSimulation.main.GetTemperature(transform.position);
 				useSeamothVehicleTemperature = true;
+				
+				validateDepthModules();
+			}
+			
+			void validateDepthModules() {
+				if (!C2CProgression.isSeamothDepth1UnlockedLegitimately()) {
+					foreach (int idx in seamoth.slotIndexes.Values) {
+						InventoryItem ii = seamoth.GetSlotItem(idx);
+						if (ii != null && ii.item) {
+							TechType tt = ii.item.GetTechType();
+							if (tt == TechType.VehicleHullModule1 || tt == TechType.VehicleHullModule2 || tt == TechType.VehicleHullModule3 || tt == C2CItems.depth1300.TechType) {
+								ItemUnlockLegitimacySystem.instance.destroyModule(seamoth.modules, ii, seamoth.slotIDs[idx]);
+								seamoth.liveMixin.TakeDamage(10); //stop cheating
+							}
+						}
+					}
+					
+				}
 			}
 			
 			void Update() {
@@ -202,7 +220,8 @@ namespace ReikaKalseki.SeaToSea
 					speedModifier.accelerationMultiplier *= Mathf.Exp(-stuckCells*0.2F);
 				if (touchingKelp)
 					speedModifier.accelerationMultiplier *= 0.3F;
-				speedModifier.accelerationMultiplier *= Mathf.Max(0.1F, health);
+				if (health < 0.9F)
+					speedModifier.accelerationMultiplier *= Mathf.Max(0.1F, health/0.9F);
 				if (tethers.isTowing())
 					speedModifier.accelerationMultiplier *= 0.6F;
 				//SNUtil.writeToChat(speedBonus.ToString("0.000"));
@@ -325,6 +344,7 @@ namespace ReikaKalseki.SeaToSea
 					return;
 				}
 				hasVoidStealth = InventoryUtil.vehicleHasUpgrade(seamoth, C2CItems.voidStealth.TechType);
+				validateDepthModules();
 			}
 			
 		}

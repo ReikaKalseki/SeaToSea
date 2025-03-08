@@ -164,6 +164,17 @@
 		Sounds/pdaprompt/treaderpooprompt.ogg
 	</pda>
   </treaderpoo>
+  <obsidian>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		Sounds/pdaprompt/obsidianprompt.ogg
+	</pda>
+  </obsidian>
   <dunearch>
 	<name>
 		
@@ -416,6 +427,20 @@
 		
 	</pda>
   </EnzymePeeperDisplay>
+  <Appends>
+	<name>
+		
+	</name>
+	<desc>
+		
+	</desc>
+	<pda>
+		
+	</pda>
+	<lavashroom>
+		Assessment: Ejected lava bombs may produce useful materials upon rupture as the superheated core is suddenly exposed to seawater.
+	</lavashroom>
+  </Appends>
   <CraftingNodes>
 	<name>
 		
