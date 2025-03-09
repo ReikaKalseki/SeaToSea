@@ -122,8 +122,6 @@ namespace ReikaKalseki.SeaToSea {
 		private static TechType techPistol = TechType.None;
 		private static bool searchedTechPistol = false;
 	    
-		private static TechType unpackedIngotToDestroy = TechType.None;
-	    
 		private static float lastO2PipeTime = -1;
 	    
 		private static bool playerDied;
@@ -349,11 +347,6 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	
 			float time = DayNightCycle.main.timePassedAsFloat;
-	    	
-			if (unpackedIngotToDestroy != TechType.None) {
-				Inventory.main.DestroyItem(unpackedIngotToDestroy);
-				unpackedIngotToDestroy = TechType.None;
-			}
 	    	
 			if (IngameMenu.main && Time.timeSinceLevelLoad - IngameMenu.main.lastSavedStateTime >= SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.SAVETHRESH) * 60F && time - lastSaveAlertTime >= SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.SAVECOOL) * 60F && allowSaving(true)) {
 				SNUtil.writeToChat("It has been " + Utils.PrettifyTime((int)(Time.timeSinceLevelLoad - IngameMenu.main.lastSavedStateTime)) + " since you last saved; you should do so again soon.");
@@ -953,7 +946,8 @@ namespace ReikaKalseki.SeaToSea {
 			EnvironmentalDamageSystem.instance.tickPlayerEnviroAlerts(warn);
 		}
     
-		public static void onItemPickedUp(Pickupable p, Exosuit prawn, bool isKnife) {
+		public static void onItemPickedUp(DIHooks.ItemPickup ip) {
+			Pickupable p = ip.item;
 			AvoliteSpawner.instance.cleanPickedUp(p);
 			ObjectUtil.removeComponent<SinkingGroundChunk>(p.gameObject);
 			FCSIntegrationSystem.instance.modifyPeeperFood(p);
@@ -962,7 +956,7 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.IngotDefinition ingot = C2CItems.getIngotByUnpack(tt);
 			if (ingot != null) {
 				ingot.pickupUnpacked();
-				unpackedIngotToDestroy = tt; //need to delegate until later because this is called before it is actually added to the inv
+				ip.destroy = true;
 			}
 			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType) {
 				Story.StoryGoal.Execute("Azurite", Story.GoalType.Story);
@@ -970,12 +964,12 @@ namespace ReikaKalseki.SeaToSea {
 				    Story.StoryGoal.Execute("ILZAzurite", Story.GoalType.Story);
 				bool seal;
 				bool reinf;
-				if (prawn || !C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
-					LiveMixin lv = prawn ? prawn.liveMixin : Player.main.gameObject.GetComponentInParent<LiveMixin>();
+				if (ip.prawn || !C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+					LiveMixin lv = ip.prawn ? ip.prawn.liveMixin : Player.main.gameObject.GetComponentInParent<LiveMixin>();
 					float dmg = lv.maxHealth * (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.3F : 0.2F);
 					if (Vector3.Distance(p.transform.position, Azurite.mountainBaseAzurite) <= 8)
 						dmg *= 0.75F;
-					if (prawn)
+					if (ip.prawn)
 						dmg *= 0.04F; //do about 2% damage
 					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, p.gameObject);
 				}
@@ -987,7 +981,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (!c.currentlyHasPlatinum() && !c.GetComponent<WaterParkCreature>()) {
 						float chance = Mathf.Clamp01(1F - Vector3.Distance(c.transform.position, p.transform.position) / 90F);
 						if (UnityEngine.Random.Range(0F, 1F) <= chance)
-							c.triggerPtAggro(prawn ? prawn.gameObject : Player.main.gameObject);
+							c.triggerPtAggro(ip.prawn ? ip.prawn.gameObject : Player.main.gameObject);
 					}
 				}
 			}
@@ -1017,7 +1011,7 @@ namespace ReikaKalseki.SeaToSea {
 				bool reinf;
 				bool seal;
 				C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf);
-				if (!prawn && !reinf) {
+				if (!ip.prawn && !reinf) {
 					LiveMixin lv = Player.main.gameObject.GetComponentInParent<LiveMixin>();
 					float dmg = 40 + (WaterTemperatureSimulation.main.GetTemperature(Player.main.transform.position) - 90) / 3;
 					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Heat, Player.main.gameObject);
@@ -1053,6 +1047,8 @@ namespace ReikaKalseki.SeaToSea {
 					thala = WorldUtil.getClosest<DEIntegrationSystem.C2CThalassacean>(p.transform.position);
 				if (thala && Vector3.Distance(thala.transform.position, p.transform.position) < 30)
 					thala.lastCollect = DayNightCycle.main.timePassedAsFloat;
+				if (!thala)
+					ip.destroy = true; //destroy collected from 000
 			}
 		}
     
@@ -1460,6 +1456,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				};
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+				d.kChanceToSpawnResources = 1;
 				d.minResourcesToSpawn = hard ? 1 : 2;
 				d.maxResourcesToSpawn = hard ? 3 : 4;
 				go.EnsureComponent<BrineCoralTag>();
