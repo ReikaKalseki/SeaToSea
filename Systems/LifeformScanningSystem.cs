@@ -26,6 +26,8 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly SortedDictionary<string, List<LifeformEntry>> byCategory = new SortedDictionary<string, List<LifeformEntry>>();
 		
 		private readonly HashSet<TechType> alienBaseScans = new HashSet<TechType>() {
+			TechType.PrecursorEnergyCore,
+			//TechType.PrecursorScanner,
 			TechType.PrecursorPrisonArtifact1,
 			TechType.PrecursorPrisonArtifact2,
 			TechType.PrecursorPrisonArtifact3,

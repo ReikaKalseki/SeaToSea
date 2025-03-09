@@ -75,6 +75,8 @@ namespace ReikaKalseki.SeaToSea {
 			thalassaceanCud.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/ThalassaceanCud");
 			thalassaceanCud.Patch();
 			
+			BioReactorHandler.SetBioReactorCharge(thalassaceanCud.TechType, BaseBioReactor.GetCharge(TechType.Hoopfish));
+			
 			thelassaceanType = findCreature("StellarThalassacean");
 			lrThelassaceanType = findCreature("JasperThalassacean");
 			

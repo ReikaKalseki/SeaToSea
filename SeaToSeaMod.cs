@@ -558,13 +558,13 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			if (!QModManager.API.QModServices.Main.ModPresent("TerrainPatcher")) {
-				string msg = "TerrainPatcher may be an optional dependency for SeaToSea, but its use is strongly recommended to ensure biomes appear as intended.";
-				SNUtil.createPopupWarning(msg, true/*, SNUtil.createPopupButton("Download", () => {
+				string msg = "TerrainPatcher is a required dependency for SeaToSea!";
+				SNUtil.createPopupWarning(msg, false/*, SNUtil.createPopupButton("Download", () => {
 				System.Diagnostics.Process.Start("https://github.com/Esper89/Subnautica-TerrainPatcher/releases/download/v0.4/TerrainPatcher-v0.4.zip");
 				Application.Quit(64);
 			}), SNUtil.createPopupButton("Ignore")*/
 				);
-				SNUtil.log(msg + " You should add this mod if at all possible.");
+				throw new Exception(msg);
 			}
 			if (!QModManager.API.QModServices.Main.ModPresent("AgonyRadialCraftingTabs")) {
 				string msg = "RadialTabs is recommended when using SeaToSea to ensure that all crafting nodes in fabricator UIs remain onscreen.";
@@ -574,6 +574,12 @@ namespace ReikaKalseki.SeaToSea {
 			}), SNUtil.createPopupButton("Ignore")*/
 				);
 				SNUtil.log(msg + " You should add this mod if at all possible.");
+			}
+			string fn = "generated.optoctreepatch";
+			if (File.Exists(Path.Combine(Path.GetDirectoryName(modDLL.Location), fn))) {
+				string msg = "Delete "+fn+" from your install directory. This is an old file from previous versions and will conflict with new terrain patches.";
+				SNUtil.createPopupWarning(msg, false);
+				throw new Exception(msg);
 			}
 		}
     

@@ -17,7 +17,7 @@ namespace ReikaKalseki.SeaToSea {
 	
 	public class EmperorRootOil : WorldCollectedItem {
 		
-		public static readonly float LIFESPAN = 90;
+		public static readonly float LIFESPAN = 120; //was 90
 		private static float lastInventoryTickTime;
 	        
 	    internal EmperorRootOil(XMLLocale.LocaleEntry e) : base(e, "18229b4b-3ed3-4b35-ae30-43b1c31a6d8d") {
