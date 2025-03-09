@@ -494,15 +494,15 @@ namespace ReikaKalseki.SeaToSea
         
         addItemToRecipe(TechType.ReactorRod, sulfurAcid.TechType, 1);
         
-        RecipeUtil.modifyIngredients(TechType.PrecursorIonBattery, i => {i.amount *= 2; return false;});
+        RecipeUtil.modifyIngredients(TechType.PrecursorIonBattery, i => {i.amount *= (i.techType == TechType.Gold ? 5 : 2); return i.techType == TechType.Silver;});
         addItemToRecipe(TechType.PrecursorIonBattery, TechType.PowerCell, 1);
-        addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2);
         addItemToRecipe(TechType.PrecursorIonBattery, CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 4);
         addItemToRecipe(TechType.PrecursorIonBattery, electro.TechType, 2);
-        RecipeUtil.getRecipe(TechType.PrecursorIonBattery).craftAmount = 2;
+        //RecipeUtil.getRecipe(TechType.PrecursorIonBattery).craftAmount = 2;
+        RecipeUtil.modifyIngredients(TechType.PrecursorIonPowerCell, i => {if (i.techType == TechType.PrecursorIonBattery) i.amount = 1; return i.techType == TechType.Silicone;});
         addItemToRecipe(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
         addItemToRecipe(TechType.PrecursorIonPowerCell, TechType.MercuryOre, 2);
-        RecipeUtil.removeIngredient(TechType.PrecursorIonPowerCell, TechType.Silicone);
+        addItemToRecipe(TechType.PrecursorIonPowerCell, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 5);
         
         C2CItems.setModElectronics(TechType.PrecursorIonBattery);
         C2CItems.setModElectronics(TechType.PrecursorIonPowerCell);

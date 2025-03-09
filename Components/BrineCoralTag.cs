@@ -87,6 +87,32 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public void onDrilled() {
+			//SNUtil.writeToChat("Drilled "+gameObject.name+" @ "+transform.position+", exo="+resource.drillingExo);
+			if (resource.drillingExo) { //need to manually do drops in this case for some reason
+				float drops = UnityEngine.Random.Range(resource.minResourcesToSpawn, (float)resource.maxResourcesToSpawn) * resource.kChanceToSpawnResources;
+				int n = (int)drops;
+				if (UnityEngine.Random.Range(0F, 1F) < (drops - (int)drops))
+					n++;
+				Vector3 pos = resource.drillingExo.transform.position + new Vector3(0f, 0.8f, 0f);
+				for (int i = 0; i < n; i++) {
+					Pickupable pp = ObjectUtil.createWorldObject(C2CItems.brineCoralPiece.ClassID).GetComponent<Pickupable>();
+					pp.transform.position = Vector3.Lerp(gameObject.transform.position, pos, Time.deltaTime * 5f);
+					if (!resource.drillingExo.storageContainer.container.HasRoomFor(pp)) {
+						if (Player.main.GetVehicle() == resource.drillingExo) {
+							ErrorMessage.AddMessage(Language.main.Get("ContainerCantFit"));
+						}
+					}
+					else {
+						string arg = Language.main.Get(pp.GetTechName());
+						ErrorMessage.AddMessage(Language.main.GetFormat<string>("VehicleAddedToStorage", arg));
+						uGUI_IconNotifier.main.Play(pp.GetTechType(), uGUI_IconNotifier.AnimationType.From, null);
+						pp = pp.Initialize();
+						InventoryItem item = new InventoryItem(pp);
+						resource.drillingExo.storageContainer.container.UnsafeAdd(item);
+						pp.PlayPickupSound();
+					}
+				}
+			}
 			GetComponent<ResourceTracker>().Unregister();
 			UnityEngine.Object.Destroy(gameObject, 0.5F);
 		}

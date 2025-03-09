@@ -263,6 +263,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		foreach (string s in SeaToSeaMod.lrCoralClusters)
 			LootDistributionHandler.EditLootDistributionData(s, BiomeType.ActiveLavaZone_Chamber_Ceiling, 0, 0);
+	
+		AuroresourceMod.dunesMeteor.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 15);
+		AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 40);
 		
 		Type t;
 		TechType tt;
