@@ -214,6 +214,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }*/
 	    internal class C2CThalassaceanCudTag : MonoBehaviour {
 	    	
+	    	private float lastParentageCheck;
+	    	
 	    	void Start() {
 	    		Invoke("setupRenderer", 0.5F);
 	    	}
@@ -253,8 +255,12 @@ namespace ReikaKalseki.SeaToSea {
 	    	}
 	    	
 	    	void Update() {
-	    		if (transform.position.setY(0).sqrMagnitude < 0.04 && !gameObject.FindAncestor<Creature>())
-	    			UnityEngine.Object.Destroy(gameObject);
+	    		float time = DayNightCycle.main.timePassedAsFloat;
+	    		if (time-lastParentageCheck >= 1) {
+		    		lastParentageCheck = time;
+		    		if (!gameObject.FindAncestor<Creature>())
+		    			UnityEngine.Object.Destroy(gameObject);
+	    		}
 	    	}
 	    	
 	    }
