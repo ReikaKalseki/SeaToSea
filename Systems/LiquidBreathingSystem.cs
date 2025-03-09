@@ -397,6 +397,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (!treatmentBar) {
 					treatmentBar = createBar("Treatment");
 				}
+				treatmentBar.gameObject.SetActive(!Story.StoryGoalManager.main.completedGoals.Contains("Infection_Progress5"));
 			}
 			
 			private LiquidBreathingHUDMeterUnit createBar(string name) {
