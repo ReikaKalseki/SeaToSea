@@ -1643,6 +1643,46 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 	
+		[HarmonyPatch(typeof(Crash))]
+		[HarmonyPatch("Detonate")]
+		public static class CrashfishExplodeHook {
+		
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+				try {
+					InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onCrashfishExplode", false, typeof(Crash)));
+					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+				}
+				catch (Exception e) {
+					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+	
+		[HarmonyPatch(typeof(Player))]
+		[HarmonyPatch("set_currentWaterPark")]
+		public static class EnterWaterParkHook {
+		
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+				try {
+					InstructionHandlers.patchInitialHook(codes, new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onSetPlayerACU", false, typeof(Player), typeof(WaterPark)));
+					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+				}
+				catch (Exception e) {
+					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+	
 	}
 	
 	static class PatchLib {

@@ -143,7 +143,7 @@ namespace ReikaKalseki.SeaToSea {
 					string seen = le.getLastSeen();
 					string name = has || le.isIdentityKnown() ? Language.main.Get(le.objectType) : le.getHint(seen != null);
 					if (showAll)
-						name += " ["+Language.main.Get(le.objectType)+"]";
+						name += " ["+le.objectType.AsString()+"="+Language.main.Get(le.objectType)+"]";
 					string color = has ? "20FF40" : (seen != null ? "FFE020" : "FF2040");
 					desc += string.Format("\t<color=#{0}>{1}</color> ({2})\n", color, name, has ? "Analyzed" : (seen != null ? "Last Seen Near "+seen : "Not Yet Encountered"));
 				}
@@ -188,7 +188,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal bool isDummiedOut(TechType tt) {
 			if (tt == C2CItems.voidSpikeLevi.TechType && !VoidSpikeLeviathanSystem.instance.isLeviathanEnabled())
 				return true;
-			if (tt == TechType.BasaltChunk || tt == TechType.SeaEmperor || tt == TechType.BloodGrass || tt == TechType.SmallFan)
+			if (tt == TechType.BasaltChunk || tt == TechType.SeaEmperor || tt == TechType.SeaEmperorJuvenile || tt == TechType.BloodGrass || tt == TechType.SmallFan)
 				return true;
 			return false;
 		}
@@ -213,11 +213,11 @@ namespace ReikaKalseki.SeaToSea {
 			if (prefab) {
 				if (prefab.GetComponent<Creature>())
 					return true;
-				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && CraftData.GetTechType(prefab) == tt && prefab.GetComponentInChildren<Collider>()) { //scannable
+				if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && CraftData.GetTechType(prefab) == tt && prefab.GetComponentInChildren<Collider>()) { //interactable
 					string key = PDAScanner.GetEntryData(tt).encyclopedia;
-					if (!string.IsNullOrEmpty(key) && PDAEncyclopedia.mapping.ContainsKey(key)) {
+					if (!string.IsNullOrEmpty(key) && PDAEncyclopedia.mapping.ContainsKey(key)) { //scannable
 						PDAEncyclopedia.EntryData ed = PDAEncyclopedia.mapping[key];
-						if (ed != null) {
+						if (ed != null && ed.key != "") { //has page, skip one dummied page
 							if (ed.path.StartsWith("planetarygeology", StringComparison.InvariantCultureIgnoreCase) || ed.path.StartsWith("lifeforms", StringComparison.InvariantCultureIgnoreCase))
 								return true;
 						}
@@ -227,12 +227,12 @@ namespace ReikaKalseki.SeaToSea {
 			return false;
 		}
 		
-		internal void onObjectSeen(GameObject go, bool identity) { //call from getting attacked by, from mousing over, from touching
+		internal void onObjectSeen(GameObject go, bool identity, bool allowACU = false) { //call from getting attacked by, from mousing over, from touching, entering their ACU
 			getRequiredLifeforms(); //populate list
 			TechType tt = CraftData.GetTechType(go);
 			if (requiredLifeforms.ContainsKey(tt)) {
-				if (!go.GetComponent<WaterParkItem>()) {
-					requiredLifeforms[tt].seeAt(go.transform.position, identity);
+				if (allowACU || !go.GetComponent<WaterParkItem>()) {
+					requiredLifeforms[tt].seeAt(go, identity);
 					needsPDAUpdate = DayNightCycle.main.timePassedAsFloat+0.5F;
 				}
 			}
@@ -275,6 +275,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			private Vector3 seenAt = Vector3.zero;
 			private bool identityKnown;
+			private bool seenACU;
 			
 			internal LifeformEntry(TechType tt) {
 				objectType = tt;
@@ -329,18 +330,25 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			public string getLastSeen() {
-				return seenAt.magnitude > 0.5F ? instance.getLocalDescription(seenAt) : null;
+				return seenAt.magnitude > 0.5F ? (seenACU ? "In an ACU" : instance.getLocalDescription(seenAt)) : null;
 			}
 			
 			public bool isIdentityKnown() {
 				return identityKnown;
 			}
 			
-			internal bool seeAt(Vector3 vec, bool identity) {
+			internal bool seeAt(GameObject go, bool identity) {
+				Vector3 vec = go.transform.position;
 				if (!(identity && !identityKnown) && seenAt.magnitude > 0.5F && (vec-seenAt).sqrMagnitude < 100)
 					return false;
 				seenAt = vec;
 				identityKnown |= identity;
+				if (go.GetComponent<WaterParkItem>()) {
+					seenACU = true;
+				}
+				else {
+					seenACU = false;
+				}
 				return true;
 			}
 			

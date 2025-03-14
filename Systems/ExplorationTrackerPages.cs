@@ -51,10 +51,10 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("pda", Finding.fromEncy("LifepodSeaglide")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("terminal", Finding.fromStory("Story_AuroraConsole1")).addFinding("jelly", Finding.fromTracker(TrackerPages.JELLYSHROOM)).addFinding("room", Finding.fromStory(C2CProgression.instance.getLocationGoal("OZZY_FORK_DEEP_ROOM")));
 	    	
 	    	p = addPage(TrackerPages.POD6, new PositionTrigger(pod6Base, 80));
-	    	p.addFinding("wreck", Finding.fromStory("EAST_GRASS_WRECK")).addFinding("pda", Finding.fromEncy("LifepodCrashZone2")).addFinding("seacrown", Finding.fromScan(TechType.SeaCrown)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
+	    	p.addFinding("wreck", Finding.fromStory(C2CProgression.instance.getLocationGoal("EAST_GRASS_WRECK"))).addFinding("pda", Finding.fromEncy("LifepodCrashZone2")).addFinding("seacrown", Finding.fromScan(TechType.SeaCrown)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
 	    	
 	    	p = addPage(TrackerPages.SOUTHGRASS, new PositionTrigger(POITeleportSystem.instance.getPosition("stepcave"), 150));
-	    	p.addFinding("wreck", Finding.fromStory("SOUTH_GRASS_WRECK")).addFinding("stepcave", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
+	    	p.addFinding("wreck", Finding.fromStory(C2CProgression.instance.getLocationGoal("SOUTH_GRASS_WRECK"))).addFinding("stepcave", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
 	    	
 	    	p = addPage(TrackerPages.KOOSH, new BiomeTrigger(VanillaBiomes.KOOSH));
 	    	p.addFinding("pda", Finding.fromEncy("Lifepod2")).addFinding("mushkoosh", Finding.fromEncy("ency_"+SeaToSeaMod.geyserCoral.ClassID)).addFinding("mercury", Finding.fromScan(TechType.MercuryOre)).addFinding("reinf", Finding.fromUnlock(TechType.ReinforcedDiveSuit)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("KOOSH_ARCH")));
@@ -128,7 +128,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("treepda", Finding.fromEncy("treepda")).addFinding("chit", Finding.fromStory(SeaToSeaMod.laserCutterBulkhead.goal)).addFinding("bacteria", Finding.fromEncy("ency_"+SeaToSeaMod.mushroomBioFragment.ClassID));
 	    	
 	    	p = addPage(TrackerPages.MUSHROOMS, new BiomeTrigger(VanillaBiomes.MUSHROOM));
-	    	p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy("Lifepod4")).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromEncy("ency_"+SeaToSeaMod.geyserCoral.ClassID)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH"))).addFinding("vasestrand", Finding.fromScan(Ecocean.EcoceanMod.mushroomVaseStrand));
+	    	p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy("Lifepod4")).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromScan(SeaToSeaMod.geyserCoral.TechType)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH"))).addFinding("vasestrand", Finding.fromScan(Ecocean.EcoceanMod.mushroomVaseStrand));
 	    	
 	    	p = addPage(TrackerPages.MOUNTAINPOD, new TrackerPageAnyFindingsTrigger(TrackerPages.MOUNTAINPOD));
 	    	p.addFinding("podpda", Finding.fromEncy("mountainpodearly")).addFinding("podpda2", Finding.fromEncy("mountainpodlate")).addFinding("mask", Finding.fromUnlock(C2CItems.rebreatherV2)).addFinding("stealth", Finding.fromUnlock(C2CItems.voidStealth)).addFinding("knife", Finding.fromUnlock(TechType.HeatBlade)).addFinding("battery", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.batteryBlock)).addFinding("basepda", Finding.fromEncy("mountaincave"));
@@ -170,19 +170,19 @@ namespace ReikaKalseki.SeaToSea
 			return page;
 		}
 		
-		internal string getEncyKey(TrackerPages pg) {
+		public string getEncyKey(TrackerPages pg) {
 			return pages[pg].encyPage.id;
 		}
 		
-		internal int countFindings(TrackerPages pg, bool requireOptional) {
+		public int countFindings(TrackerPages pg, bool requireOptional) {
 			return pages[pg].countCompleteFindings(requireOptional);
 		}
 		
-		internal bool isComplete(TrackerPages pg, bool requireOptional) {
+		public bool isComplete(TrackerPages pg, bool requireOptional) {
 			return pages[pg].isComplete(requireOptional);
 		}
 		
-		internal bool isFullyComplete(bool requireOptional) {
+		public bool isFullyComplete(bool requireOptional) {
 			foreach (TrackerPages p in Enum.GetValues(typeof(TrackerPages))) {
 				if (!isComplete(p, requireOptional))
 					return false;
@@ -220,7 +220,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 	}
 	
-	internal enum TrackerPages {
+	public enum TrackerPages {
 		POD3, //compass databox, geyser cave [nanolathing drones]; pod3 radio
 		POD19, //highcap br, pda to floatisland, precursor cache, vehicle upgrade console, cyclops fire suppress; pod 19 radio
         POD17, //pda, jellyshroom page, seamoth fragment, large nearby wreck (gibberish console [Story_AuroraConsole1], that deep room (-645.6, -102.7, -16.2) prox); pod 17 prox
@@ -308,7 +308,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		internal bool isComplete(bool requireOptional) {
-			return countCompleteFindings(requireOptional) == findings.Count;
+			return countCompleteFindings(requireOptional) >= findings.Count;
 		}
 		
 		private string generatePDAContent() {

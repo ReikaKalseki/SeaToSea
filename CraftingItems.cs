@@ -281,6 +281,7 @@ namespace ReikaKalseki.SeaToSea
 			//[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]FilteredGeoGel,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/benzene")]Electrolytes,
 			//[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/Lubricant")]FluidPump,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/EnameledGlass")]ObsidianGlass,
 		}
 		
 		private static Item getAttr(Items key) {

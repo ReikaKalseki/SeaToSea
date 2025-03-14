@@ -142,12 +142,13 @@ namespace ReikaKalseki.SeaToSea {
 			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(LifeformScanningSystem.instance.hasScannedEverything(), null, PDAMessages.Messages.NeedScansMessage);
 		}
 		
-		public bool checkIfCollectedAllEncyData() {
+		public bool checkIfCollectedAllEncyData() {/*
 			return C2CUtil.checkConditionsAndShowPDAAndFirstVoicelogIfNot(
 				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingAuroraData().Any(), null, PDAMessages.Messages.NeedAuroraDataMessage),
 				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingDegasiData().Any(), null, PDAMessages.Messages.NeedDegasiDataMessage),
 				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingAlienData().Any(), null, PDAMessages.Messages.NeedAlienTerminalsMessage)
-			);
+			);*/
+			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(DataCollectionTracker.instance.isFullyComplete(), null, PDAMessages.Messages.NeedDataMessage);
 		}
 			
 		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
