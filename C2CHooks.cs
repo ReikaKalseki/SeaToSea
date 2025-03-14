@@ -245,6 +245,8 @@ namespace ReikaKalseki.SeaToSea {
 			InventoryUtil.forEachOfType(Inventory.main.container, C2CItems.emperorRootOil.TechType, ii => InventoryUtil.forceRemoveItem(Inventory.main.container, ii));
 	        
 			BrokenTablet.updateLocale();
+		
+			PDAScanner.mapping[TechType.SeaEmperorJuvenile] = PDAScanner.mapping[TechType.SeaEmperorBaby]; //make juveniles scannable into baby page, so not missable
 			
 			PDAManager.getPage("rescuewarp").unlock(false);
 	    	
@@ -355,8 +357,11 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 			if (FCSIntegrationSystem.instance.isLoaded())
 				FCSIntegrationSystem.instance.tickNotifications(time);
+			if (DEIntegrationSystem.instance.isLoaded())
+				DEIntegrationSystem.instance.tickVoidThalassaceanSpawner(ep);
 	    	
 			LifeformScanningSystem.instance.tick(time);
+			DataCollectionTracker.instance.tick(time);
 			EmperorRootOil.tickInventory(ep, time);
 	    	
 			if (Camera.main && Vector3.Distance(ep.transform.position, Camera.main.transform.position) > 5) {
@@ -914,6 +919,9 @@ namespace ReikaKalseki.SeaToSea {
 					dmg.setValue(0);
 				}
 			}
+			if (dmg.type == DamageType.Heat && DEIntegrationSystem.instance.isLoaded() && CraftData.GetTechType(dmg.target) == DEIntegrationSystem.instance.getRubyPincher()) {
+				dmg.setValue(dmg.getAmount() * 0.5F);
+			}
 			if (dmg.type == DamageType.Normal && VanillaBiomes.VOID.isInBiome(dmg.target.transform.position)) {
 				SeaMoth sm = dmg.target.FindAncestor<SeaMoth>();
 				if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
@@ -1235,16 +1243,19 @@ namespace ReikaKalseki.SeaToSea {
 				switch (pi.classId) {
 					case "0524596f-7f14-4bc2-a784-621fdb23971f":
 					case "47027cf0-dca8-4040-94bd-7e20ae1ca086":
-						pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_White;
+						new ChangePrecursorDoor(PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_White).applyToObject(pk);
 						break;
 					case "fdb2bcbb-288a-40b6-bd7a-5585445eb43f":
 						if (parent.position.y > -100) {
-							pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Purple;
+							new ChangePrecursorDoor(PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Purple).applyToObject(pk);
 							//does not exist parent.GetComponent<PrecursorGlobalKeyActivator>().doorActivationKey = "GunGateDoor";
 						}
 						else if (Math.Abs(parent.position.y + 803.8) < 0.25) {
-							pk.acceptKeyType = PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Red;
+							new ChangePrecursorDoor(PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Red).applyToObject(pk);
 							//parent.GetComponent<PrecursorGlobalKeyActivator>().doorActivationKey = "DRFGateDoor";
+						}
+						else if (Math.Abs(parent.position.y + 803.8) < 15) { //the original
+							new ChangePrecursorDoor(PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Orange).applyToObject(pk);
 						}
 						break;/*
 		    		case "d26276ab-0c29-4642-bcb8-1a5f8ee42cb2":
@@ -1746,6 +1757,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 		public static void updateCyclopsModules(SubRoot sm) {
 			sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
+			C2CUtil.resizeCyclopsStorage(sm);
 			if (GameModeUtils.currentEffectiveMode != GameModeOption.Creative && !SNUtil.canUseDebug())
 				ItemUnlockLegitimacySystem.instance.validateModules(sm);
 		}
@@ -1857,8 +1869,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 	    
-		public static void onPlanktonActivated(PlanktonCloudTag cloud, Collider hit) {
-			SeaMoth sm = hit.gameObject.FindAncestor<SeaMoth>();
+		public static void onPlanktonActivated(PlanktonCloudTag cloud, GameObject hit) {
+			SeaMoth sm = hit.GetComponent<SeaMoth>();
 			if (sm) {
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				float amt = UnityEngine.Random.Range(hard ? 15 : 8, hard ? 25 : 15);
@@ -2004,6 +2016,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
 			}
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfCollectedAllEncyData()) {
+				return;
+			}
 			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
 			//	return;
 			//}
@@ -2039,7 +2054,7 @@ namespace ReikaKalseki.SeaToSea {
 	    
 		public static float getRadiationLevel(DIHooks.RadiationCheck ch) {
 			//SNUtil.writeToChat(ch.originalValue+" @ "+VoidSpikesBiome.instance.getDistanceToBiome(ch.position));
-			if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius + 225)
+			if (VoidSpikesBiome.instance.getDistanceToBiome(ch.position) <= VoidSpikesBiome.biomeVolumeRadius + 75)
 				return 0;
 			float dd = Vector3.Distance(ch.position, bkelpBaseGeoCenter);
 			if (dd <= 80) {
@@ -2333,6 +2348,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static void onScanComplete(PDAScanner.EntryData data) {
 			C2CProgression.instance.onScanComplete(data);
 			LifeformScanningSystem.instance.onScanComplete(data);
+			DataCollectionTracker.instance.onScanComplete(data);
 		}
 	    
 		public static void onDataboxTooltipCalculate(BlueprintHandTarget tgt) {

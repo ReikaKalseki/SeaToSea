@@ -203,6 +203,9 @@
 		<arch>
 			A small wreck next to a large stone arch
 		</arch>
+		<emperor>
+			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
+		</emperor>
 	</DUNECENTRAL>
 	<METEOR>
 		<name>
@@ -295,6 +298,9 @@
 		<levi>
 			An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water
 		</levi>
+		<emperor>
+			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
+		</emperor>
 	</NBKELP>
 	<LOSTRIVER>
 		<name>
@@ -440,6 +446,9 @@
 		<arch>
 			A strange alien arch hidden in a small cave
 		</arch>
+		<emperor>
+			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
+		</emperor>
 	</CRAG>
 	<FLOATISLAND>
 		<name>
@@ -601,6 +610,9 @@
 		<base>
 			A long-abandoned seabase built by the Degasi survivors in a cave deep underwater
 		</base>
+		<emperor>
+			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
+		</emperor>
 	</GRANDREEF>
 	<MUSHTREE>
 		<name>
@@ -867,5 +879,8 @@
 		<vent>
 			A strange vent of alien design, periodically ingesting and then expelling peepers, seemingly causing them to trail glowing sparkles after being emitted
 		</vent>
+		<emperor>
+			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
+		</emperor>
 	</MOUNTAINS>
 </Root>

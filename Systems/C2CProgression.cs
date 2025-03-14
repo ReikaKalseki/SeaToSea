@@ -36,6 +36,15 @@ namespace ReikaKalseki.SeaToSea
 	    	{"LR_ARCH", StoryHandler.instance.createLocationGoal(new Vector3(-914.7F, -621.2F, 1078.4F), 6, "lrarch")},
 	    	{"SOUTH_GRASS_WRECK", StoryHandler.instance.createLocationGoal(new Vector3(-29.19F, -103.46F, -608.40F), 20, "southgrasswreck")},
 	    	{"EAST_GRASS_WRECK", StoryHandler.instance.createLocationGoal(new Vector3(346.79F, -90.34F, 429.63F), 20, "eastgrasswreck")},
+	    	{"LR_LAB", StoryHandler.instance.createLocationGoal(new Vector3(-1119.8F, -683.1F, -688.2F), 8, "lrlab")},
+	    	{"SEE_GUN", StoryHandler.instance.createLocationGoal(new Vector3(402.3F, 19.7F, 1118.9F), 160, "see_gun")},
+	    	{"SEE_ATP", StoryHandler.instance.createLocationGoal(WorldUtil.lavaCastleCenter, 80, "see_atp")},
+	    	{"SPARSE_CACHE", StoryHandler.instance.createLocationGoal(new Vector3(-889.8F, -305.6F, -815.3F), 10, "sparse_cache")},
+	    	{"DUNES_CACHE", StoryHandler.instance.createLocationGoal(new Vector3(-1224.6F, -393.3F, 1078.9F), 18, "dunes_cache")},
+	    	{"NBKELP_CACHE", StoryHandler.instance.createLocationGoal(new Vector3(-624.0F, -558.7F, 1485.9F), 18, "nbkelp_cache")},
+	    	{"FLOATISLAND_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_FLOATING_BASE, 50, "floatisland_degasi")},
+	    	{"JELLY_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_JELLY_BASE, 50, "jelly_degasi")},
+	    	{"DGR_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_DGR_BASE, 75, "dgr_degasi")},
 	    };  
 	    
 	    internal static readonly string METEOR_GOAL = "meteorhit";
@@ -158,6 +167,8 @@ namespace ReikaKalseki.SeaToSea
     	}
     	
     	public StoryGoal getLocationGoal(string key) {
+			if (!locationGoals.ContainsKey(key))
+				throw new Exception("No such location goal '"+key+"'");
     		return locationGoals[key];
     	}
     	

@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea {
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_KELP, true);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.COMPACT_SEEDS, false);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.REINF_GLASS, true);
-    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LARGE_CYCLOCKER, true);
+    	//ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LARGE_CYCLOCKER, true);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LANTERN_SPEED, hard ? 0.2F : 0.4F);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.NO_BUILDER_CLEAR, true);
     	
@@ -151,6 +151,9 @@ namespace ReikaKalseki.SeaToSea {
 		
 		ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1.0F);
 		
+		if (hard)
+			RecipeUtil.addIngredient(TechType.RocketStage3, AqueousEngineeringMod.ionRod.TechType, RecipeUtil.removeIngredient(TechType.RocketStage3, TechType.ReactorRod).amount);
+		
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, EcoceanMod.glowOil.TechType, hard ? 3 : 2);
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
 		RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 5);
@@ -238,7 +241,7 @@ namespace ReikaKalseki.SeaToSea {
 		FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
 		
 		MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType, 5);
-		MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, 40);
+		MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, 60);
 		
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
 		BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);

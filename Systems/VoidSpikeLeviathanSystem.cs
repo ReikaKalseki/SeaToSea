@@ -39,6 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 	    
 	    public static readonly string PASSIVATION_GOAL = "SeaEmperorBabiesHatched";//"PrecusorPrisonAquariumIncubatorActive";
 	    
+	    public static bool disableStealthInterruptions = false;
+	    
 	    private readonly List<SoundManager.SoundData> distantRoars = new List<SoundManager.SoundData>();
 	    
 	    private readonly SoundManager.SoundData empSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-emp", "Sounds/voidlevi/emp6.ogg", SoundManager.soundMode3D);
@@ -91,7 +93,7 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 		
 		private VoidSpikeLeviathanSystem() {
-	    	for (int i = 0; i <= 2; i++) {
+	    	for (int i = 0; i <= 3; i++) {
 	    		distantRoars.Add(SoundManager.registerSound(SeaToSeaMod.modDLL, "voidlevi-roar-far-"+i, "Sounds/voidlevi/roar-distant-"+i+".ogg", SoundManager.soundMode3D));
 	    	}
 	    	fxHook = new LeviathanVisualFX();
@@ -612,6 +614,8 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 	    
 	    public void temporarilyDisableSeamothStealth(SeaMoth sm, float duration) {
+	    	if (disableStealthInterruptions)
+	    		return;
 	    	if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
 	    		duration *= 1.5F;
 	    	SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();

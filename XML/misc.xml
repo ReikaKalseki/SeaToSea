@@ -230,6 +230,39 @@
 		Sounds/pdaprompt/cannot-launch-need-scans.ogg
 	</pda>
   </needscaneverything>
+  <needallauroradata>
+	<name>
+		
+	</name>
+	<desc>
+		???
+	</desc>
+	<pda>
+		Sounds/pdaprompt/needallauroradata.ogg
+	</pda>
+  </needallauroradata>
+  <needalldegasidata>
+	<name>
+		
+	</name>
+	<desc>
+		???
+	</desc>
+	<pda>
+		Sounds/pdaprompt/needalldegasidata.ogg
+	</pda>
+  </needalldegasidata>
+  <needalienterminals>
+	<name>
+		
+	</name>
+	<desc>
+		???
+	</desc>
+	<pda>
+		Sounds/pdaprompt/needalienterminals.ogg
+	</pda>
+  </needalienterminals>
   <unfinishedexplore>
 	<name>
 		

@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 			addRecipe(new TypeInput(C2CItems.alkali), CraftingItems.getItem(CraftingItems.Items.Sealant).TechType, 4, 30, 600, 5);
 			addRecipe(new TypeInput(TechType.GasPod), CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType, 1, 15, 240, 3, 5);
 			addRecipe(new TypeInput(TechType.SnakeMushroomSpore), CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 2, 90, 1500, 2);
-			addRecipe(new TypeInput(TechType.HatchingEnzymes), CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 4, 120, 3000, 6);
+			addRecipe(new TypeInput(TechType.HatchingEnzymes), CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 6, 120, 3000, 2);
 			addRecipe(new TypeInput(TechType.SeaTreaderPoop), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, 1, 5, 120, 1, 4, true);
 			addRecipe(new TypeInput(C2CItems.kelp), CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType, 2, 15, 180, 3, 8);
 			addRecipe(new SparklePeeperInput(), CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, 1, 45, 200, 2, 1, true);
