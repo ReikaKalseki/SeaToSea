@@ -131,4 +131,15 @@
 		
 	</pda>
   </BKelpBumpWormClick>
+  <EnzymesNotKnown>
+	<name>
+		
+	</name>
+	<desc>
+		You do not know how to use this!
+	</desc>
+	<pda>
+		
+	</pda>
+  </EnzymesNotKnown>
 </Root>

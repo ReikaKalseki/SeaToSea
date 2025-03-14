@@ -65,7 +65,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private static void tryRemoveObjects(GameObject go, string name) {
-			if (ObjectUtil.removeChildObject(go, name, recursive: true) <= 0) {
+			if (ObjectUtil.removeChildObject(go, name) <= 0) {
 				SNUtil.log("Failed to find any '"+name+"' objects to remove from "+go.GetFullHierarchyPath()+"!");
 				ObjectUtil.dumpObjectData(go, false);
 			}

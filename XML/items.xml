@@ -991,6 +991,26 @@
 			voidlevi
 		</header>
 	</VoidSpikeLevi>
+	<VoidThalassacean>
+		<name>
+			 Pelagic Thalassacean
+		</name>
+		<desc>
+			A large filter feeder that jealously guards its food sources.
+		</desc>
+		<pda>
+			A large filter feeder in the leviathan size range, adapted for life in the open water where the seafloor is inaccessibly deep. Due to the high levels of microbial life in the crater edge, these specimens grow somewhat larger than their counterparts found inside the crater.
+			
+			Like the other variants of this species, the pelagic thalassacean is capable of bursts of high speed, but where those species use this capability purely defensively to evade predators, pelagic thalassaceans use it aggressively; When an intruder to their territory is detected, the thalassacean will engage in hit-and-run ramming attacks.
+			
+			These attacks, while not nearly as dangerous as that from the predatory species on 4546B, are still capable of damaging submersibles, especially after repeated impacts.
+			
+			Assessment: Low to moderate threat, mostly from vehicular impact. Use their size to your advantage during evasive maneuvers.
+		</pda>
+		<header>
+			
+		</header>
+	</VoidThalassacean>
 	<SeamothVoidStealth>
 		<name>
 			Acoustic Suppression Module
@@ -1106,6 +1126,17 @@
 			
 		</pda>
 	</CyclopsHeat>
+	<CyclopsStorage>
+		<name>
+			Cyclops Storage Module
+		</name>
+		<desc>
+			Increases the size of the cyclops onboard lockers. Effect stacks nonlinearly.
+		</desc>
+		<pda>
+			
+		</pda>
+	</CyclopsStorage>
 	<redkey>
 		<name>
 			Red Tablet

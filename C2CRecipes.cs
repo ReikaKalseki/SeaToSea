@@ -62,21 +62,23 @@ namespace ReikaKalseki.SeaToSea
        	
        	C2CItems.addIngot(TechType.Titanium, TechType.TitaniumIngot, item, 10);
        	
-       	createCompressedIngot(TechType.Quartz, "41919ae1-1471-4841-a524-705feb9c2d20", 18, 6, 0.6F, 5, "Boule");
-       	createCompressedIngot(TechType.AluminumOxide, "41919ae1-1471-4841-a524-705feb9c2d20", 30, 3, 0.4F, "Ruby", 8, "Boule");
-       	createCompressedIngot(TechType.Copper, "41919ae1-1471-4841-a524-705feb9c2d20", 6.5F, 4, 0.4F);
-       	createCompressedIngot(TechType.Silver, "41919ae1-1471-4841-a524-705feb9c2d20", 24, 8, 0);
+       	string tiingot = "41919ae1-1471-4841-a524-705feb9c2d20";
+       	createCompressedIngot(TechType.Quartz, tiingot, 18, 6, 0.6F, 5, "Boule");
+       	createCompressedIngot(TechType.AluminumOxide, tiingot, 30, 3, 0.4F, "Ruby", 8, "Boule");
+       	createCompressedIngot(TechType.Copper, tiingot, 6.5F, 4, 0.4F);
+       	createCompressedIngot(TechType.Silver, tiingot, 24, 8, 0);
        	createCompressedIngot(TechType.Gold, "4ae90608-40da-45ce-8480-e2f0133f96b2", 12, 5, 0);
        	createCompressedIngot(TechType.Lead, "4ae90608-40da-45ce-8480-e2f0133f96b2", 25, 2, 0);
        	createCompressedIngot(TechType.Lithium, "c483f597-c78a-42e9-bad5-3be9ef47aa81", 2.5F, 6, 0.5F, 10, "Plate");
        	createCompressedIngot(TechType.Magnetite, "a06157cc-8de8-4fec-85a6-76b2aee1e263", 30, 7, 0.5F, 6, "Bar");
-       	createCompressedIngot(TechType.Nickel, "41919ae1-1471-4841-a524-705feb9c2d20", 8, 8, 0.6F);
-       	createCompressedIngot(TechType.Kyanite, "41919ae1-1471-4841-a524-705feb9c2d20", 30, 3, 0.7F, 6, "Boule");
-       	createCompressedIngot(TechType.Salt, "b334fbb1-224b-4082-bb69-d4a39051aaca", 6, 1, 0.6F, 8, "Block");
-       	createCompressedIngot(TechType.Sulphur, "b334fbb1-224b-4082-bb69-d4a39051aaca", 0.5F, 0, 1.0F, 6, "Block");
-       	createCompressedIngot(TechType.Diamond, "41919ae1-1471-4841-a524-705feb9c2d20", 24, 0, 1.2F, 5, "Boule");
+       	createCompressedIngot(TechType.Nickel, tiingot, 8, 8, 0.6F);
+       	createCompressedIngot(TechType.Kyanite, tiingot, 30, 3, 0.7F, 6, "Boule");
+       	createCompressedIngot(TechType.Salt, VanillaResources.LEAD.prefab, 6, 1, 0.6F, 8, "Block");
+       	createCompressedIngot(TechType.Sulphur, VanillaResources.LEAD.prefab, 0.5F, 0, 1.0F, 6, "Block");
+       	createCompressedIngot(TechType.Diamond, tiingot, 24, 0, 1.2F, 5, "Boule");
+       	createCompressedIngot(TechType.MercuryOre, VanillaResources.TITANIUM.prefab, 0.75F, 0, 0F, "Mercury", 8, "Block");
        	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), "4ae90608-40da-45ce-8480-e2f0133f96b2", 18, 2, 0.25F);
-       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), "a06157cc-8de8-4fec-85a6-76b2aee1e263", 40, 5, 0.8F, 8, "Ingot");
+       	createCompressedIngot(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), "a06157cc-8de8-4fec-85a6-76b2aee1e263", 40, 5, 0.8F, 8);
        	
        	C2CItems.IngotDefinition qi = C2CItems.getIngot(TechType.Quartz);
        	TechData glassRec = RecipeUtil.getRecipe(TechType.Glass);
@@ -169,9 +171,13 @@ namespace ReikaKalseki.SeaToSea
         tankWall.craftingTime = 2.5F;
         tankWall.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 9).addIngredient(heatSeal, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.SmartPolymer), 1);
         
+        BasicCraftingItem microfilter = CraftingItems.getItem(CraftingItems.Items.MicroFilter);
+        microfilter.craftingTime = 6F;
+        microfilter.addIngredient(TechType.Titanium, 2).addIngredient(C2CItems.mountainGlow.seed, hard ? 2 : 1).addIngredient(TechType.FiberMesh, 5).addIngredient(TechType.Diamond, 1).addIngredient(TechType.AluminumOxide, hard ? 3 : 2);
+        
         BasicCraftingItem fuel = CraftingItems.getItem(CraftingItems.Items.RocketFuel);
         fuel.craftingTime = 6;
-        fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, 3).addIngredient(TechType.CrashPowder, 2).addIngredient(TechType.PrecursorIonCrystal, 1);
+        fuel.addIngredient(TechType.Sulphur, 8).addIngredient(TechType.Kyanite, hard ? 4 : 3).addIngredient(TechType.CrashPowder, hard ? 3 : 2).addIngredient(TechType.PrecursorIonCrystal, hard ? 2 : 1).addIngredient(microfilter, 1);
         
         BasicCraftingItem electro = CraftingItems.getItem(CraftingItems.Items.Electrolytes);
         electro.craftingTime = 1;
@@ -181,10 +187,6 @@ namespace ReikaKalseki.SeaToSea
         //BasicCraftingItem pump = CraftingItems.getItem(CraftingItems.Items.FluidPump);
         //pump.craftingTime = 5;
         //pump.addIngredient(TechType.PlasteelIngot, 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(motor, 4).addIngredient(TechType.Pipe, 10);
-        
-        BasicCraftingItem microfilter = CraftingItems.getItem(CraftingItems.Items.MicroFilter);
-        microfilter.craftingTime = 6F;
-        microfilter.addIngredient(TechType.Titanium, 2).addIngredient(C2CItems.mountainGlow.seed, hard ? 2 : 1).addIngredient(TechType.FiberMesh, 5).addIngredient(TechType.Diamond, 1).addIngredient(TechType.AluminumOxide, hard ? 3 : 2);
         
         BasicCraftingItem dimlum = CraftingItems.getItem(CraftingItems.Items.DimLuminol);
         dimlum.craftingTime = 6F;
@@ -255,8 +257,8 @@ namespace ReikaKalseki.SeaToSea
        	altFiberMesh.Patch();
        	
        	rec = new TechData();
-        rec.Ingredients.Add(new Ingredient(TechType.Sulphur, 5));
-        rec.Ingredients.Add(new Ingredient(TechType.DisinfectedWater, 2));
+        rec.Ingredients.Add(new Ingredient(TechType.Sulphur, 4));
+        rec.Ingredients.Add(new Ingredient(TechType.BigFilteredWater, 2));
         rec.Ingredients.Add(new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
        	altSulfurAcid = new DuplicateRecipeDelegateWithRecipe(CraftingItems.getItem(CraftingItems.Items.SulfurAcid), rec);
        	altSulfurAcid.category = C2CItems.chemistryCategory;
@@ -265,7 +267,7 @@ namespace ReikaKalseki.SeaToSea
        	altSulfurAcid.craftingMenuTree = new string[]{"Resources", "C2Chemistry"};
        	altSulfurAcid.ownerMod = SeaToSeaMod.modDLL;
        	altSulfurAcid.craftTime = 9;
-       	altSulfurAcid.setRecipe(2);
+       	altSulfurAcid.setRecipe(5);
        	altSulfurAcid.unlock = TechType.Sulphur;
        	altSulfurAcid.allowUnlockPopups = true;
        	altSulfurAcid.Patch();
@@ -364,9 +366,10 @@ namespace ReikaKalseki.SeaToSea
         C2CItems.lightModule.addIngredient(TechType.LEDLight, 3).addIngredient(TechType.WiringKit, 1).addIngredient(TechType.CopperWire, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);
        	C2CItems.tetherModule.addIngredient(TechType.ExosuitPropulsionArmModule, 1).addIngredient(TechType.WiringKit, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1);
         C2CItems.cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(heatSeal, 4);
+        C2CItems.cyclopsStorage.addIngredient(TechType.VehicleStorageModule, 2).addIngredient(TechType.ComputerChip, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 1);
         C2CItems.sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
         C2CItems.t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
-		C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
+        C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(microfilter, 2).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
         C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(SeaToSeaMod.geogel, 4).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(C2CItems.bkelpBumpWormItem.TechType, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2);
         C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(C2CItems.breathingFluid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
         C2CItems.heatSink.addIngredient(TechType.Titanium, 4).addIngredient(TechType.Lithium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 3);
@@ -523,20 +526,21 @@ namespace ReikaKalseki.SeaToSea
         });
         addItemToRecipe(TechType.RocketBaseLadder, TechType.WiringKit, 4);
         RecipeUtil.modifyIngredients(TechType.RocketStage1, i => i.techType != TechType.PlasteelIngot);
-        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), 1);
-        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), 1);
-        addItemToRecipe(TechType.RocketStage1, TechType.CrashPowder, 3);
-        addItemToRecipe(TechType.RocketStage1, TechType.Diamond, 4);
+        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.IRIDIUM), hard ? 2 : 1);
+        addItemToRecipe(TechType.RocketStage1, CustomMaterials.getIngot(CustomMaterials.Materials.PLATINUM), hard ? 3 : 2);
+        addItemToRecipe(TechType.RocketStage1, C2CItems.getIngot(TechType.Diamond).ingot, hard ? 3 : 2);
+        addItemToRecipe(TechType.RocketStage1, CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, hard ? 12 : 6);
         RecipeUtil.modifyIngredients(TechType.RocketStage2, i => i.techType == TechType.Kyanite || i.techType == TechType.Sulphur);
-        addItemToRecipe(TechType.RocketStage2, tankWall.TechType, 2);
-        addItemToRecipe(TechType.RocketStage2, fuel.TechType, 4);
-        addItemToRecipe(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.HoneycombComposite).TechType, 2);
+        addItemToRecipe(TechType.RocketStage2, tankWall.TechType, hard ? 3 : 2);
+        addItemToRecipe(TechType.RocketStage2, fuel.TechType, hard ? 6 : 4);
+        addItemToRecipe(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, hard ? 9 : 6);
         RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 8; return i.techType == TechType.ComputerChip;});
-        addItemToRecipe(TechType.RocketStage3, C2CItems.t2Battery.TechType, 1);
+        addItemToRecipe(TechType.RocketStage3, C2CItems.t2Battery.TechType, hard ? 4 : 2);
         addItemToRecipe(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
         addItemToRecipe(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
         addItemToRecipe(TechType.RocketStage3, TechType.ReactorRod, 4);
-        addItemToRecipe(TechType.RocketStage3, electro.TechType, 5);
+        addItemToRecipe(TechType.RocketStage3, electro.TechType, hard ? 8 : 5);
+        addItemToRecipe(TechType.RocketStage3, C2CItems.getIngot(TechType.Magnetite).ingot, hard ? 5 : 3);
         
         addItemToRecipe(TechType.HighCapacityTank, TechType.Aerogel, 1);
         
@@ -819,7 +823,10 @@ namespace ReikaKalseki.SeaToSea
     	ingot.unlockRequirement = TechType.Unobtanium;
     	ingot.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/Ingot/"+refName.ToLowerInvariant());
     	ingot.renderModify = r => {
-    		RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Items/World/Ingot/"+item);
+    		//if (item == TechType.MercuryOre)
+    		//	RenderUtil.copyTextures(VanillaResources.LARGE_MERCURY.prefab, r);
+    		//else
+    			RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Items/World/Ingot/"+item);
     		RenderUtil.setGlossiness(r, specInt, shiny, fresnel);
     		if (item == TechType.Quartz || item == TechType.Diamond) {
     			RenderUtil.makeTransparent(r);
@@ -834,8 +841,23 @@ namespace ReikaKalseki.SeaToSea
     			root.EnsureComponent<Magnetic>();
     			root.GetComponent<WorldForces>().underwaterGravity *= 0.67F;
     		}
+    		if (item == TechType.Salt) {
+    			GameObject root = r.gameObject.FindAncestor<PrefabIdentifier>().gameObject;
+    			SaltGrindable cg = root.EnsureComponent<SaltGrindable>();
+    			cg.techType = C2CItems.getIngot(TechType.Salt).ingot; //fetch not use local var because patch() is not called yet
+    			//cg.chooseRandomResource = (cg0) => ObjectUtil.lookupPrefab(Ecocean.MushroomVaseStrand.filterDrops.getRandomEntry());
+    			//cg.dropTable = Ecocean.MushroomVaseStrand.filterDrops;
+    			/*
+    			cg.resourceChoice.AddListener(res => {
+					res.drop = ObjectUtil.lookupPrefab(Ecocean.MushroomVaseStrand.filterDrops.getRandomEntry());
+				});*/
+    			cg.numberToYieldMin = 1;
+    			cg.numberToYieldMax = 2;
+    		}
     		PrefabIdentifier pi = r.gameObject.FindAncestor<PrefabIdentifier>();
     		ObjectUtil.removeComponent<Eatable>(pi.gameObject);
+    		if (item == TechType.MercuryOre)
+    			r.transform.localScale *= 1.5F;
     	};
        	//ingot.ownerMod = modDLL;
     	ingot.Patch();
@@ -857,6 +879,14 @@ namespace ReikaKalseki.SeaToSea
        	unpack.Patch();
        	
        	C2CItems.addIngot(item, ingot, unpack, amt);
+    }
+    
+    class SaltGrindable : CustomGrindable {
+    	
+    	public override GameObject chooseRandomResource() {
+    		return ObjectUtil.lookupPrefab(Ecocean.MushroomVaseStrand.filterDrops.getRandomEntry());
+    	}
+    	
     }
     
     public static DuplicateRecipeDelegateWithRecipe getAlternateEnzyme() {

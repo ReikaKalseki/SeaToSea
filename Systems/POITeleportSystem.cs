@@ -35,8 +35,8 @@ namespace ReikaKalseki.SeaToSea {
 			addPOI("prawnbay", new Vector3(986, 6, -1.6F)).setActions(prepareAurora);
 			addPOI("cove", new Vector3(-855, -881, 403));
 			addPOI("lavacastle", new Vector3(-32, -1204, 142));
-			addPOI("degasi1", new Vector3(85, -260, -356));
-			addPOI("degasi2", new Vector3(-643, -505, -944.5F));
+			addPOI("degasi1", WorldUtil.DEGASI_JELLY_BASE);
+			addPOI("degasi2", WorldUtil.DEGASI_DGR_BASE);
 			addPOI("treaderpod", SeaToSeaMod.treaderSignal.initialPosition+Vector3.up*10);
 			addPOI("crashmesa", C2CHooks.crashMesa);
 			addPOI("voidpod", VoidSpikesBiome.signalLocation);
@@ -78,6 +78,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public Vector3 getPosition(string key) {
+			if (!data.ContainsKey(key))
+				throw new Exception("No such POI '"+key+"'");
 			return data[key].position;
 		}
 		

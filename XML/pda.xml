@@ -639,6 +639,23 @@
 		Advanced
 	</category>
   </needencyscans>
+  <needencydata>
+	<name>
+		Data Recording Status
+	</name>
+	<pda>
+		It is imperative that you collect comprehensive records of the ultimate fates of both the Aurora and its crew, as well as that of the Degasi survivors.
+	</pda>
+	<alien>
+		Additionally, given the clear evidence of intelligent alien activity on 4546B, collecting as much of their research data as possible has been added to your assigned tasks.
+	</alien>
+	<prefix>
+		Your current data collection progress is:
+	</prefix>
+	<category>
+		Advanced
+	</category>
+  </needencydata>
   <notvisitedallbiomes>
 	<name>
 		Biome Survey Required

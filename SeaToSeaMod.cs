@@ -324,7 +324,7 @@ namespace ReikaKalseki.SeaToSea {
 			lrNestGrass.Patch();
 	    
 			//PrecursorFabricatorConsole.CraftingIdentifier ci = new PrecursorFabricatorConsole.RecipeID(TechType.HatchingEnzymes, C2CRecipes.getHatchingEnzymeRecipe(), "HatchEnzymes");
-			prisonEnzymeConsole = new PrecursorFabricatorConsole(C2CRecipes.getHatchingEnzymeFab(), "PrecursorEnzymes", new Color(0.8F, 0.8F, 0.8F));
+			prisonEnzymeConsole = new PrecursorFabricatorConsole(C2CRecipes.getHatchingEnzymeFab(), "PrecursorEnzymes", new Color(0.8F, 0.8F, 0.8F)).addStoryGate("PrecursorPrisonAquariumIncubatorActive", mouseoverLocale.getEntry("EnzymesNotKnown").desc);
 			prisonEnzymeConsole.Patch();
 	    
 			CustomLocaleKeyDatabase.registerKeys(mouseoverLocale);
@@ -443,8 +443,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
     
 		private static void initHandlers() {
+			POITeleportSystem.instance.populate();
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
-			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);			
+			DataCollectionTracker.instance.register();
 		}
     
 		[QModPostPatch]
@@ -481,8 +483,7 @@ namespace ReikaKalseki.SeaToSea {
 						LootDistributionHandler.EditLootDistributionData(s, bb, 0, 1);
 				}
 			}
-        
-			POITeleportSystem.instance.populate();
+			
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
         
 			C2CIntegration.addPostCompat();

@@ -24,6 +24,7 @@ namespace ReikaKalseki.SeaToSea
     
     public static SeamothVoidStealthModule voidStealth;
     public static CyclopsHeatModule cyclopsHeat;
+    public static CyclopsStorageModule cyclopsStorage;
     public static SeamothDepthModule depth1300;
     public static SeamothPowerSealModule powerSeal;
     public static SeamothHeatSinkModule heatSinkModule;
@@ -125,7 +126,8 @@ namespace ReikaKalseki.SeaToSea
         speedModule = new SeamothSpeedModule();
         lightModule = new VehicleLightModule();
         tetherModule = new SeamothTetherModule();
-        cyclopsHeat = new CyclopsHeatModule();        
+        cyclopsHeat = new CyclopsHeatModule(); 
+        cyclopsStorage = new CyclopsStorageModule();
 		sealSuit = new SealedSuit();   
 		sealGloves = new SealedGloves();				
 		t2Battery = new AzuriteBattery();		
@@ -223,6 +225,9 @@ namespace ReikaKalseki.SeaToSea
         
         cyclopsHeat.preventNaturalUnlock();
         cyclopsHeat.Patch();
+        
+        cyclopsStorage.preventNaturalUnlock();
+        cyclopsStorage.Patch();
         
         sealGloves.Patch(); //has to be before suit since suit references this in craft
         sealSuit.Patch();

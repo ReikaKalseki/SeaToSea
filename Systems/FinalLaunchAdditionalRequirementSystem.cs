@@ -95,11 +95,6 @@ namespace ReikaKalseki.SeaToSea {
 			return null;
 		}
 		
-		internal IEnumerable<string> getMissingAlienTerminals() {
-			List<string> missing = new List<string>();
-			return missing;
-		}
-		
 		internal void updateCounts(List<StorageContainer> lockers) {
 			foreach (RequiredItem ri in requiredItems.Values) {
 				ri.currentlyHas = 0;
@@ -147,8 +142,12 @@ namespace ReikaKalseki.SeaToSea {
 			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(LifeformScanningSystem.instance.hasScannedEverything(), null, PDAMessages.Messages.NeedScansMessage);
 		}
 		
-		public bool checkIfCollectedAllAlienTerminals() {
-			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(!getMissingAlienTerminals().Any(), null, PDAMessages.Messages.NeedAlienTerminalsMessage);
+		public bool checkIfCollectedAllEncyData() {
+			return C2CUtil.checkConditionsAndShowPDAAndFirstVoicelogIfNot(
+				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingAuroraData().Any(), null, PDAMessages.Messages.NeedAuroraDataMessage),
+				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingDegasiData().Any(), null, PDAMessages.Messages.NeedDegasiDataMessage),
+				Tuple.Create<bool, string, PDAMessages.Messages>(!DataCollectionTracker.instance.getMissingAlienData().Any(), null, PDAMessages.Messages.NeedAlienTerminalsMessage)
+			);
 		}
 			
 		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
