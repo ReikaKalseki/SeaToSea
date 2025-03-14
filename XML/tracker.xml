@@ -342,6 +342,9 @@
 		<cove>
 			A section of the biome where the brine, filtered by the nearby Cove Tree, loses its toxic properties, and which is among the safest regions encountered in the crater
 		</cove>
+		<calcite>
+			Translucent crystals of calcium carbonate in pockets in the ceiling
+		</calcite>
 	</LOSTRIVER>
 	<DRF>
 		<name>
@@ -400,7 +403,7 @@
 	</LAVACASTLE>
 	<ILZ>
 		<name>
-			Lava Castle
+			Inactive Lava Zone
 		</name>
 		<desc>
 

@@ -230,39 +230,17 @@
 		Sounds/pdaprompt/cannot-launch-need-scans.ogg
 	</pda>
   </needscaneverything>
-  <needallauroradata>
+  <needalldata>
 	<name>
 		
 	</name>
 	<desc>
-		???
+		Open your PDA to see your current directive to gather data on the status of the Aurora's crew, and the circumstances of the alien vaccine development program and quarantine.
 	</desc>
 	<pda>
-		Sounds/pdaprompt/needallauroradata.ogg
+		Sounds/pdaprompt/needalldata.ogg
 	</pda>
-  </needallauroradata>
-  <needalldegasidata>
-	<name>
-		
-	</name>
-	<desc>
-		???
-	</desc>
-	<pda>
-		Sounds/pdaprompt/needalldegasidata.ogg
-	</pda>
-  </needalldegasidata>
-  <needalienterminals>
-	<name>
-		
-	</name>
-	<desc>
-		???
-	</desc>
-	<pda>
-		Sounds/pdaprompt/needalienterminals.ogg
-	</pda>
-  </needalienterminals>
+  </needalldata>
   <unfinishedexplore>
 	<name>
 		

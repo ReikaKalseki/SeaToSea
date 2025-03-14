@@ -307,15 +307,19 @@ namespace ReikaKalseki.SeaToSea {
 				return desc;
 		}
 		
-		internal List<DataDownloadEntry> getMissingAlienData() {
+		public bool isFullyComplete() {
+			return getMissingAuroraData().Count == 0 && getMissingDegasiData().Count == 0 && getMissingAlienData().Count == 0 && alienBaseScans.All(e => e.isScanned());
+		}
+		
+		public List<DataDownloadEntry> getMissingAlienData() {
 			return getMissingData(requiredAlienData);
 		}
 		
-		internal List<DataDownloadEntry> getMissingAuroraData() {
+		public List<DataDownloadEntry> getMissingAuroraData() {
 			return getMissingData(requiredAuroraData);
 		}
 		
-		internal List<DataDownloadEntry> getMissingDegasiData() {
+		public List<DataDownloadEntry> getMissingDegasiData() {
 			return getMissingData(requiredDegasiData);
 		}
 		
@@ -328,11 +332,11 @@ namespace ReikaKalseki.SeaToSea {
 			return li;
 		}
 	    
-	    internal class DataDownloadEntry : IComparable<DataDownloadEntry> {
+	    public class DataDownloadEntry : IComparable<DataDownloadEntry> {
 	    	
-			internal readonly string encyKey;
-			internal readonly LocationDescriptor location;
-			internal readonly string category;
+			public readonly string encyKey;
+			public readonly LocationDescriptor location;
+			public readonly string category;
 			internal readonly PDAEncyclopedia.EntryData pdaPage;
 			
 			internal readonly string hint;
@@ -397,10 +401,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    }
 	    
-	    class AlienScanEntry : IComparable<AlienScanEntry> {
+	    public class AlienScanEntry : IComparable<AlienScanEntry> {
 	    	
-			internal readonly LocationDescriptor location;
-			internal readonly TechType tech;
+			public readonly LocationDescriptor location;
+			public readonly TechType tech;
 			
 			internal AlienScanEntry(LocationDescriptor f, TechType tt) {
 				location = f;
@@ -428,10 +432,10 @@ namespace ReikaKalseki.SeaToSea {
 	    	
 	    }
 	    
-	    internal class LocationDescriptor {
+	    public class LocationDescriptor {
 			
-			internal readonly Func<bool> checkSeen;
-			internal readonly Func<string> getDescription;
+			public readonly Func<bool> checkSeen;
+			public readonly Func<string> getDescription;
 			
 			internal LocationDescriptor(Story.StoryGoal goal, string desc) : this(goal.key, desc) {
 				

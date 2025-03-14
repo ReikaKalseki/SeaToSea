@@ -953,6 +953,18 @@ namespace ReikaKalseki.SeaToSea {
 		public static void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
 			EnvironmentalDamageSystem.instance.tickPlayerEnviroAlerts(warn);
 		}
+		
+		public static void onSetPlayerACU(Player ep, WaterPark w) {
+			if (w) {
+				foreach (WaterParkItem wp in w.items) {
+					LifeformScanningSystem.instance.onObjectSeen(wp.gameObject, true, true);
+				}
+			}
+		}
+		
+		public static void onCrashfishExplode(Crash c) {
+			LifeformScanningSystem.instance.onObjectSeen(c.gameObject, false);
+		}
     
 		public static void onItemPickedUp(DIHooks.ItemPickup ip) {
 			Pickupable p = ip.item;
@@ -2013,10 +2025,10 @@ namespace ReikaKalseki.SeaToSea {
 			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfScannedAllLifeforms()) {
 				return;
 			}
-			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfCollectedAllEncyData()) {
 				return;
 			}
-			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfCollectedAllEncyData()) {
+			if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfFullyLoaded()) {
 				return;
 			}
 			//if (!FinalLaunchAdditionalRequirementSystem.instance.checkIfVisitedAllBiomes()) {
