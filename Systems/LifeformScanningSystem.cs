@@ -21,45 +21,22 @@ namespace ReikaKalseki.SeaToSea {
 	public class LifeformScanningSystem {
 		
 		public static readonly LifeformScanningSystem instance = new LifeformScanningSystem();
+		
+		internal static readonly string NEED_SCANS_PDA = "needencyscans";
+		
+		internal static readonly string UNEXPLORED_LOCATION_TEXT = "Unexplored Area";
+		
+		private readonly string oldSaveDir;
+		private readonly string saveFileName = "lifeform_scans.dat";
 	    
 		private readonly Dictionary<TechType, LifeformEntry> requiredLifeforms = new Dictionary<TechType, LifeformEntry>();
 		private readonly SortedDictionary<string, List<LifeformEntry>> byCategory = new SortedDictionary<string, List<LifeformEntry>>();
 		
-		private readonly HashSet<TechType> alienBaseScans = new HashSet<TechType>() {
-			TechType.PrecursorEnergyCore,
-			//TechType.PrecursorScanner,
-			TechType.PrecursorPrisonArtifact1,
-			TechType.PrecursorPrisonArtifact2,
-			TechType.PrecursorPrisonArtifact3,
-			TechType.PrecursorPrisonArtifact4,
-			TechType.PrecursorPrisonArtifact5,
-			TechType.PrecursorPrisonArtifact6,
-			TechType.PrecursorPrisonArtifact7,
-			TechType.PrecursorPrisonArtifact8,
-			TechType.PrecursorPrisonArtifact9,
-			TechType.PrecursorPrisonArtifact10,
-			TechType.PrecursorPrisonArtifact11,
-			TechType.PrecursorPrisonArtifact12,
-			TechType.PrecursorPrisonArtifact13,
-			TechType.PrecursorLostRiverLabBones,
-			TechType.PrecursorThermalPlant,
-			TechType.PrecursorWarper,
-			TechType.PrecursorTeleporter,
-			TechType.PrecursorFishSkeleton,
-			TechType.PrecursorLostRiverLabRays,
-			TechType.PrecursorLostRiverLabEgg,
-			TechType.PrecursorPrisonLabEmperorEgg,
-			TechType.PrecursorPrisonLabEmperorFetus,
-			TechType.PrecursorPipeRoomIncomingPipe,
-			TechType.PrecursorPipeRoomOutgoingPipe,
-			TechType.PrecursorPrisonIonGenerator,
-			TechType.PrecursorSeaDragonSkeleton,
+		private readonly HashSet<TechType> additionalScans = new HashSet<TechType>() {
 			TechType.HugeSkeleton,
+			TechType.CaveSkeleton,
+			TechType.PrecursorSeaDragonSkeleton,
 		};
-		
-		internal static readonly string NEED_SCANS_PDA = "needencyscans";
-		
-		private readonly string xmlPathRoot;
 		
 		private float needsPDAUpdate = -1;
 		
@@ -68,11 +45,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static bool showAll = false;
 		
 		private LifeformScanningSystem() {
-			xmlPathRoot = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "lifeform_scans");
+			oldSaveDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "lifeform_scans");
+			if (Directory.Exists(oldSaveDir) && Directory.Exists(SNUtil.savesDir)) {
+				migrateSaveData();
+			}
 		}
 		
 		public void register() {
-			//IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
+			//loaded on first use, not load event IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
 		}
 		
@@ -95,8 +75,34 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		private void migrateSaveData() {
+			SNUtil.log("Migrating lifeform scan data from "+oldSaveDir+" to "+SNUtil.savesDir);
+			bool all = true;
+			foreach (string xml in Directory.GetFiles(oldSaveDir)) {
+				if (xml.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase)) {
+					string save = Path.Combine(SNUtil.savesDir, Path.GetFileNameWithoutExtension(xml));
+					if (Directory.Exists(save)) {
+						SNUtil.log("Moving lifeform scan data "+xml+" to "+save);
+						File.Move(xml, Path.Combine(save, saveFileName));
+					}
+					else {
+						SNUtil.log("No save found for '"+xml+", skipping");
+						all = false;
+					}
+				}
+			}
+			SNUtil.log("Migration complete.");
+			if (all) {
+				SNUtil.log("All files moved, deleting old folder.");
+				Directory.Delete(oldSaveDir);
+			}
+			else {
+				SNUtil.log("Some files could not be moved so the old folder will not be deleted.");
+			}
+		}
+		
 		private void loadSave() {
-			string path = Path.Combine(xmlPathRoot, SaveLoadManager.main.currentSlot+".xml");
+			string path = Path.Combine(SNUtil.getCurrentSaveDir(), saveFileName);
 			if (File.Exists(path)) {
 				XmlDocument doc = new XmlDocument();
 				doc.Load(path);
@@ -111,7 +117,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void save() {
-			string path = Path.Combine(xmlPathRoot, SaveLoadManager.main.currentSlot+".xml");
+			string path = Path.Combine(SNUtil.getCurrentSaveDir(), saveFileName);
 			XmlDocument doc = new XmlDocument();
 			XmlElement rootnode = doc.CreateElement("Root");
 			doc.AppendChild(rootnode);
@@ -120,7 +126,6 @@ namespace ReikaKalseki.SeaToSea {
 				le.saveToXML(e);
 				doc.DocumentElement.AppendChild(e);
 			}
-			Directory.CreateDirectory(xmlPathRoot);
 			doc.Save(path);
 		}
 		
@@ -193,12 +198,16 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			else if (BasicCustomPlant.getPlant(tt) != null)
 				return true;
+			else if (tt == Ecocean.EcoceanMod.glowOil.TechType || tt == Ecocean.EcoceanMod.celeryTree || tt == Ecocean.EcoceanMod.piezo.TechType || tt == Ecocean.EcoceanMod.plankton.TechType ||tt == Ecocean.EcoceanMod.voidBubble.TechType)
+				return true;
+			else if (DEIntegrationSystem.instance.isLoaded() && tt == DEIntegrationSystem.instance.getVoidThalassacean().TechType)
+				return true;
 			string pfb = CraftData.GetClassIdForTechType(tt);
 			if (pfb != null && VanillaFlora.getFromID(pfb) != null)
 				return true;
 			if (pfb != null && VanillaResources.getFromID(pfb) != null)
 				return true;
-			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && alienBaseScans.Contains(tt))
+			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && additionalScans.Contains(tt))
 				return true;
 			GameObject prefab = ObjectUtil.lookupPrefab(tt);
 			if (prefab) {
@@ -235,16 +244,32 @@ namespace ReikaKalseki.SeaToSea {
 			
 		public string getLocalDescription(Vector3 pos) {
 			BiomeBase bb = BiomeBase.getBiome(pos);
-			if (bb != null && BiomeDiscoverySystem.instance.isDiscovered(bb))
-				return WorldUtil.getRegionalDescription(pos, false);
-			else
-				return "Unexplored Area";
+			string ret;
+			if (bb != null && BiomeDiscoverySystem.instance.isDiscovered(bb)) {
+				ret = WorldUtil.getRegionalDescription(pos, false);
+			}
+			else {
+				ret = UNEXPLORED_LOCATION_TEXT;
+				foreach (KeyValuePair<WorldUtil.CompassDirection, Vector3> kvp in WorldUtil.compassAxes) {
+					BiomeBase near = BiomeBase.getBiome(pos+kvp.Value*250);
+					if (near != null && BiomeDiscoverySystem.instance.isDiscovered(near)) {
+						string opp = WorldUtil.getOpposite(kvp.Key).ToString();
+						ret += " ("+opp[0]+opp.Substring(1).ToLowerInvariant()+" of "+near+")";
+						break;
+					}
+				}
+			}
+			ret += ", "+(int)(-pos.y)+"m depth";
+			if (bb.isCaveBiome())
+				ret += " (Cave)";
+			return ret;
 		}
 	    
 	    class LifeformEntry : IComparable<LifeformEntry> {
 	    	
 			internal readonly TechType objectType;
 			internal readonly string category;
+			internal readonly PDAEncyclopedia.EntryData pdaPage;
 			
 			private readonly string hint;
 			
@@ -254,8 +279,8 @@ namespace ReikaKalseki.SeaToSea {
 			internal LifeformEntry(TechType tt) {
 				objectType = tt;
 				
-				PDAEncyclopedia.EntryData data = getEncyData();
-				category = data == null ? "General" : SNUtil.getDescriptiveEncyPageCategoryName(data);
+				pdaPage = getEncyData();
+				category = pdaPage == null ? "General" : SNUtil.getDescriptiveEncyPageCategoryName(pdaPage);
 				if (tt == TechType.PrecursorDroid)
 					category = Language.main.Get("EncyPath_Lifeforms/Fauna");
 				else if (tt == TechType.PrecursorIonCrystal)
@@ -265,9 +290,12 @@ namespace ReikaKalseki.SeaToSea {
 				GameObject pfb = ObjectUtil.lookupPrefab(tt);
 				if (pfb) {
 					Creature c = pfb.GetComponent<Creature>();
-					bool levi = c is ReaperLeviathan || c is GhostLeviatanVoid || c is GhostLeviathan || c is Reefback || c is SeaDragon || c is SeaEmperorJuvenile;
-					if (levi) {
-						hint = "Unknown Leviathan";
+					bool leviA = c is ReaperLeviathan || c is GhostLeviatanVoid || c is GhostLeviathan || c is SeaDragon;
+					bool leviP = c is Reefback || c is SeaEmperorJuvenile || c is SeaEmperorBaby;
+					if (DEIntegrationSystem.instance.isLoaded())
+						leviA |= tt == DEIntegrationSystem.instance.getVoidThalassacean().TechType || tt == DEIntegrationSystem.instance.getGulper();
+					if (leviA || leviP) {
+						hint = leviA ? "Unknown Aggressive Leviathan" : "Unknown Leviathan";
 					}
 					else if (c is Warper || pfb.GetComponent<MeleeAttack>() || pfb.GetComponent<RangeAttacker>()) {
 						hint = "Unknown Aggressive Fauna";
@@ -275,14 +303,23 @@ namespace ReikaKalseki.SeaToSea {
 					else if (c) {
 						hint = "Unknown Fauna";
 					}
-					if (!levi && category.Contains("Fauna")) {
+					bool fauna = category.Contains("Fauna");
+					bool flora = category.Contains("Flora");
+					if (!leviA && !leviP && (fauna || flora)) {
 						float size = 0;
 						foreach (Renderer cc in pfb.GetComponentsInChildren<Renderer>(true))
 							size += cc.bounds.size.magnitude;
-						if (size >= 32)
-							hint += " (Large)";
-						else if (size <= 8F)
-							hint += " (Small)";
+						if (size >= 96 && fauna)
+							hint += " - Leviathan";
+						else if (size >= 32)
+							hint += " - Large";
+						else if (size <= 6F)
+							hint += " - Small";
+						else if (size <= 1.5F)
+							hint += " - Tiny";
+					}
+					if (pdaPage != null && !leviA && !leviP && (flora || fauna)) {
+						hint += ", "+Language.main.Get(pdaPage.nodes[pdaPage.nodes.Length-1]);
 					}
 				}
 			}

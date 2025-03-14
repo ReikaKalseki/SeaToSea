@@ -45,7 +45,9 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly HashSet<BiomeBase> safeBiomes = new HashSet<BiomeBase>();
 		//safe at surface
 		
-		private static readonly SoundManager.SoundData rescueSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "rescuewarp", "Sounds/rescue.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
+		private static readonly SoundManager.SoundData rescueSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "rescuewarp", "Sounds/rescue.ogg", SoundManager.soundMode3D, s => {
+			SoundManager.setup3D(s, 64);
+		}, SoundSystem.masterBus);
 			
 		private static UnityEngine.UI.Button rescuePDAButton;
 		
@@ -57,6 +59,14 @@ namespace ReikaKalseki.SeaToSea {
 			safeBiomes.Add(VanillaBiomes.GRANDREEF);
 			safeBiomes.Add(VanillaBiomes.SPARSE);
 			safeBiomes.Add(VanillaBiomes.TREADER);
+		}
+		
+		public static bool checkConditionsAndShowPDAAndFirstVoicelogIfNot(params Tuple<bool, string, PDAMessages.Messages>[] checks) {
+			foreach (Tuple<bool, string, PDAMessages.Messages> check in checks) {
+				if (!checkConditionAndShowPDAAndVoicelogIfNot(check.Item1, check.Item2, check.Item3))
+					return false;
+			}
+			return true;
 		}
 		
 		public static bool checkConditionAndShowPDAAndVoicelogIfNot(bool check, string page, PDAMessages.Messages msg) {
@@ -207,7 +217,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				});
 				ObjectUtil.getChildObject(go, "ButtonNo").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
-				   	unlockUI(grp);
+					unlockUI(grp);
 				});
 				yield break;
 			}
@@ -309,40 +319,40 @@ namespace ReikaKalseki.SeaToSea {
 	public static bool hasNoGasMask() {
    		return Inventory.main.equipment.GetCount(TechType.Rebreather) == 0 && Inventory.main.equipment.GetCount(rebreatherV2.TechType) == 0;
 	}*/
-		/*
-   public static void generateLavaCastleAzurite() {
-   	List<GameObject> azurite = new List<GameObject>();
-   	string azur = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID;
-   	foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
-   		if (pi.ClassId == "407e40cf-69f2-4412-8ab6-45faac5c4ea2") {
-   			for (int ang = 0; ang < 360; ang += 10) {
-   				float a = UnityEngine.Random.Range(ang-5F, ang+5F);
-   				float r = 16;
-   				Vector3 dt = new Vector3(Mathf.Cos(a)*r, -UnityEngine.Random.Range(0, UnityEngine.Random.Range(25, 40)), Mathf.Sin(a)*r);
-   				Vector3 vec = pi.transform.position+dt;
-   					Ray ray = new Ray(vec, -dt.setY(0));
-   					if (UWE.Utils.RaycastIntoSharedBuffer(ray, 24, Voxeland.GetTerrainLayerMask(), QueryTriggerInteraction.Ignore) > 0) {
-   						RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
-   						if (hit.transform != null) {
-							bool flag = true;
-							foreach (PrefabIdentifier pi2 in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(hit.point, 9F)) {
-								if (pi2.ClassId == azur) {
-									flag = false;
-									break;
+		
+		public static void generateLavaCastleAzurite() {
+			List<GameObject> azurite = new List<GameObject>();
+			string azur = CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID;
+			foreach (PrefabIdentifier pi in UnityEngine.Object.FindObjectsOfType<PrefabIdentifier>()) {
+				if (pi.ClassId == "407e40cf-69f2-4412-8ab6-45faac5c4ea2") {
+					for (int ang = 0; ang < 360; ang += 10) {
+						float a = UnityEngine.Random.Range(ang - 5F, ang + 5F);
+						float r = 16;
+						Vector3 dt = new Vector3(Mathf.Cos(a) * r, -UnityEngine.Random.Range(0, UnityEngine.Random.Range(25, 40)), Mathf.Sin(a) * r);
+						Vector3 vec = pi.transform.position + dt;
+						Ray ray = new Ray(vec, -dt.setY(0));
+						if (UWE.Utils.RaycastIntoSharedBuffer(ray, 24, Voxeland.GetTerrainLayerMask(), QueryTriggerInteraction.Ignore) > 0) {
+							RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
+							if (hit.transform != null) {
+								bool flag = true;
+								foreach (PrefabIdentifier pi2 in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(hit.point, 9F)) {
+									if (pi2.ClassId == azur) {
+										flag = false;
+										break;
+									}
 								}
+								if (!flag)
+									continue;
+								GameObject go = ObjectUtil.createWorldObject(azur);
+								go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
+								go.transform.Rotate(Vector3.up * UnityEngine.Random.Range(0F, 360F), Space.Self);
+								go.transform.position = hit.point;
+								azurite.Add(go);
 							}
-							if (!flag)
-								continue;
-   							GameObject go = ObjectUtil.createWorldObject(azur);
-							go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
-							go.transform.Rotate(Vector3.up*UnityEngine.Random.Range(0F, 360F), Space.Self);
-							go.transform.position = hit.point;
-							azurite.Add(go);
-   						}
-   					}
-   			}
-   		}
-   	}
+						}
+					}
+				}
+			}
 	   	
 			string path = BuildingHandler.instance.getDumpFile("lavacastle_vents");
 			XmlDocument doc = new XmlDocument();
@@ -357,7 +367,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			doc.Save(path);
-   }*/
+		}
 	   
 		public static void generateLRNestPlants() {
 			Vector3 p1 = new Vector3(-786, -762.6F, -321);
@@ -406,6 +416,30 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			doc.Save(path);
+		}
+		
+		public static void resizeCyclopsStorage(SubRoot sub) { //vanilla is 3x6
+			int amt = sub && sub.upgradeConsole && sub.upgradeConsole.modules != null ? sub.upgradeConsole.modules.GetCount(C2CItems.cyclopsStorage.TechType) : 0;
+			int slots = 18; //18 vanilla base
+			if (QModManager.API.QModServices.Main.ModPresent("MoreCyclopsUpgrades"))
+				slots += 6 + amt * 6 + (amt / 2) * 12; //https://i.imgur.com/JUr54tB.png
+			else
+				slots += 18 * amt + 18 * (amt / 2); //https://i.imgur.com/K5UaRHZ.png
+			//int w = Math.Min(3+amt, 6);
+			//int h = 6+amt*2;
+			int w = 3;
+			int h = slots / w;
+			while (w < 6 && h >= 9) {
+				w++;
+				while (slots % w != 0)
+					w++;
+				h = slots / w;
+			}
+			
+			foreach (CyclopsLocker cl in sub.GetComponentsInChildren<CyclopsLocker>()) {
+				StorageContainer sc = cl.GetComponent<StorageContainer>();
+				sc.Resize(w, h);
+			}
 		}
 		
 	}

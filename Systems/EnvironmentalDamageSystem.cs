@@ -213,13 +213,15 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			//SBUtil.writeToChat("not skipped");
 			float temperature = dmg.GetTemperature();
+			TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
+			if (te != null)
+				temperature = Mathf.Max(temperature, te.temperature);
 			float f = 1;
 			float f0 = 1;
 			float fw = 0;
 			float time = DayNightCycle.main.timePassedAsFloat;
 			//SNUtil.writeToChat(biome+" for "+dmg.gameObject);
 			if (dmg.player) {
-				TemperatureEnvironment te = temperatures.ContainsKey(biome) ? temperatures[biome] : null;
 				/*GameObject ripple = getRippleCylinder();
 	    		if (ripple) {
 					ripple.SetActive(prawn || (te != null && te.isLavaZone && isPlayerInOcean()));

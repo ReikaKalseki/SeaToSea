@@ -253,7 +253,10 @@ namespace ReikaKalseki.SeaToSea {
 					tc = Color.gray;
 				}
 				else {
-					if (isKharaaTreatmentActive()) {
+					if (SNUtil.isPlayerCured()) {
+						tc = Color.green;
+					}
+					else if (isKharaaTreatmentActive()) {
 						tc = kharaaTreatmentRemainingTime > 0 ? Color.white : Color.yellow;
 					}
 					else {
@@ -374,7 +377,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 		public bool hasReducedCapacity() {
-			return !isKharaaTreatmentActive() && !Story.StoryGoalManager.main.completedGoals.Contains("Infection_Progress5") && hasLiquidBreathing();
+			return !isKharaaTreatmentActive() && !SNUtil.isPlayerCured() && hasLiquidBreathing();
 		}
 	    
 		class OxygenAreaWithLiquidSupport : MonoBehaviour {
@@ -397,7 +400,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (!treatmentBar) {
 					treatmentBar = createBar("Treatment");
 				}
-				treatmentBar.gameObject.SetActive(!Story.StoryGoalManager.main.completedGoals.Contains("Infection_Progress5"));
+				treatmentBar.gameObject.SetActive(!SNUtil.isPlayerCured());
 			}
 			
 			private LiquidBreathingHUDMeterUnit createBar(string name) {

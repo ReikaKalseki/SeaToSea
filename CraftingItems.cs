@@ -191,6 +191,7 @@ namespace ReikaKalseki.SeaToSea
 							r.materials[0].SetFloat("_Fresnel", 0.3F);
 							r.materials[0].SetFloat("_Shininess", 20F);
 							r.materials[0].SetFloat("_SpecInt", 18F);
+							r.materials[0].SetColor("_SpecColor", new Color(1, 0.5F, 0.25F));
 						};
 						item.glowIntensity = 0;
 					break;
@@ -271,6 +272,7 @@ namespace ReikaKalseki.SeaToSea
 			[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/WiringKit")]LathingDrone,
 			[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]KelpEnzymes,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,	"WorldEntities/Natural/Silicone")]FuelTankWall,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/FiberMesh")]MicroFilter,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Kyanite,			"WorldEntities/Natural/benzene")]RocketFuel,
 			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Tools/Battery")]BrokenT2Battery,
 			[Item(typeof(NotFabricable),		TechCategory.Misc, 				TechType.Unobtanium,		"WorldEntities/Seeds/CreepvinePiece")]AmoeboidSample,
@@ -279,7 +281,6 @@ namespace ReikaKalseki.SeaToSea
 			//[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]FilteredGeoGel,
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/benzene")]Electrolytes,
 			//[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/Lubricant")]FluidPump,
-			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/FiberMesh")]MicroFilter,
 		}
 		
 		private static Item getAttr(Items key) {
