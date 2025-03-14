@@ -333,6 +333,17 @@
 			
 		</pda>
 	</Tungsten>
+	<ObsidianGlass>
+		<name>
+			Composite Glass
+		</name>
+		<desc>
+			A complex multilayered glass capable of withstanding extremely high pressures, temperatures, and impact.
+		</desc>
+		<pda>
+			
+		</pda>
+	</ObsidianGlass>
 	<breathfluid>
 		<name>
 			Breathing Fluid

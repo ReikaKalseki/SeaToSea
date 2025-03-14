@@ -165,7 +165,7 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem heatSeal = CraftingItems.getItem(CraftingItems.Items.HeatSealant);
         heatSeal.craftingTime = 5;
         heatSeal.numberCrafted = 1;
-        heatSeal.addIngredient(sealedFabric, 1).addIngredient(TechType.Aerogel, 2).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5).addIngredient(C2CItems.mountainGlow.seed, 3);
+        heatSeal.addIngredient(sealedFabric, 1).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5).addIngredient(C2CItems.mountainGlow.seed, 3);
         
         BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
         tankWall.craftingTime = 2.5F;
@@ -191,6 +191,10 @@ namespace ReikaKalseki.SeaToSea
         BasicCraftingItem dimlum = CraftingItems.getItem(CraftingItems.Items.DimLuminol);
         dimlum.craftingTime = 6F;
         dimlum.addIngredient(TechType.DisinfectedWater, 1).addIngredient(TechType.PurpleStalkSeed, 2).addIngredient(TechType.EyesPlantSeed, 1).addIngredient(TechType.RedBasketPlantSeed, 1).addIngredient(TechType.SnakeMushroomSpore, 2).addIngredient(TechType.RedConePlantSeed, 1);
+        
+        BasicCraftingItem obsidiglass = CraftingItems.getItem(CraftingItems.Items.ObsidianGlass);
+        obsidiglass.craftingTime = 3F;
+        obsidiglass.addIngredient(TechType.EnameledGlass, 1).addIngredient(TechType.Aerogel, 2).addIngredient(C2CItems.getIngot(TechType.Quartz).ingot, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN), 3);
         
         C2CItems.addCraftingItems();
         
@@ -359,7 +363,7 @@ namespace ReikaKalseki.SeaToSea
 		//do not remove creepvine, as lubricant is needed earlier than this
 		
         C2CItems.voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
-        C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN), 9).addIngredient(armor, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 8);
+        C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(obsidiglass, 3).addIngredient(armor, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 8);
         C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
         C2CItems.heatSinkModule.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(TechType.Pipe, 5).addIngredient(motor, 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5);
         C2CItems.speedModule.addIngredient(TechType.Nickel, 5).addIngredient(motor, 4).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(electro, hard ? 3 : 2).addIngredient(TechType.Gravsphere, 1);
@@ -534,12 +538,12 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.RocketStage2, tankWall.TechType, hard ? 3 : 2);
         addItemToRecipe(TechType.RocketStage2, fuel.TechType, hard ? 6 : 4);
         addItemToRecipe(TechType.RocketStage2, CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, hard ? 9 : 6);
-        RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) i.amount = 8; return i.techType == TechType.ComputerChip;});
-        addItemToRecipe(TechType.RocketStage3, C2CItems.t2Battery.TechType, hard ? 4 : 2);
+        RecipeUtil.modifyIngredients(TechType.RocketStage3, i => {if (i.techType == TechType.EnameledGlass) {i.amount = 5; i.techType = obsidiglass.TechType;} return i.techType == TechType.ComputerChip;});
+        addItemToRecipe(TechType.RocketStage3, C2CItems.t2Battery.TechType, hard ? 3 : 2);
         addItemToRecipe(TechType.RocketStage3, CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 8);
         addItemToRecipe(TechType.RocketStage3, TechType.AdvancedWiringKit, 3);
         addItemToRecipe(TechType.RocketStage3, TechType.ReactorRod, 4);
-        addItemToRecipe(TechType.RocketStage3, electro.TechType, hard ? 8 : 5);
+        addItemToRecipe(TechType.RocketStage3, electro.TechType, hard ? 6 : 4);
         addItemToRecipe(TechType.RocketStage3, C2CItems.getIngot(TechType.Magnetite).ingot, hard ? 5 : 3);
         
         addItemToRecipe(TechType.HighCapacityTank, TechType.Aerogel, 1);
@@ -579,7 +583,7 @@ namespace ReikaKalseki.SeaToSea
         addItemToRecipe(TechType.Cyclops, armor.TechType, 4);
         addItemToRecipe(TechType.Cyclops, electro.TechType, 3);
         addItemToRecipe(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 4);
-        addItemToRecipe(TechType.Exosuit, CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType, 12);
+        addItemToRecipe(TechType.Exosuit, obsidiglass.TechType, 4);
         RecipeUtil.removeIngredient(TechType.Exosuit, TechType.EnameledGlass);
         
         RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
@@ -595,7 +599,7 @@ namespace ReikaKalseki.SeaToSea
         
         addItemToRecipe(TechType.CyclopsHullModule1, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 8);
         addItemToRecipe(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
-        addItemToRecipe(TechType.CyclopsHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType, 12);
+        addItemToRecipe(TechType.CyclopsHullModule2, obsidiglass.TechType, 4);
         
         addItemToRecipe(TechType.LaserCutter, TechType.AluminumOxide, 2);
         RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);
