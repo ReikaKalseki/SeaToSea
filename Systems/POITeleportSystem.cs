@@ -68,6 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 			addPOI("dunesgeode", new Vector3(-1419, -585, 376));
 			addPOI("geysercave", C2CProgression.instance.dronePDACaveEntrance+new Vector3(5, 0, 5));
 			addPOI("glassforest", UnderwaterIslandsFloorBiome.wreckCtrPos1.setY(-480));
+			addPOI("voidwreck", new Vector3(-66, -445, -1863));
 			addPOI("voidspikes", VoidSpikesBiome.end500m);
 			addPOI("sanctuary", CrashZoneSanctuaryBiome.biomeCenter+Vector3.up*30);
 			addPOI("deepvoid", ((VoidSpikesBiome.signalLocation+VoidSpikesBiome.voidEndpoint500m)/2F).setY(-950)).setActions(() => {
