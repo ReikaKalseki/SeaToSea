@@ -255,7 +255,7 @@ namespace ReikaKalseki.SeaToSea
 					//SNUtil.writeToChat("Adding jitter: "+add);
 				}
 				if ((jitterTorque-jitterTorqueTarget).sqrMagnitude < 0.01) {
-					jitterTorqueTarget = MathUtil.getRandomVectorAround(Vector3.zero, 3).setLength(1);
+					jitterTorqueTarget = UnityEngine.Random.onUnitSphere;//MathUtil.getRandomVectorAround(Vector3.zero, 3).setLength(1);
 				}
 				else {
 					jitterTorque += (jitterTorqueTarget-jitterTorque)*Mathf.Min(1, tickTime*9);
@@ -275,7 +275,7 @@ namespace ReikaKalseki.SeaToSea
 						Vector3 vel = body.velocity;
 						Vector3 vec = Vector3.zero;
 						if (vel.magnitude < 0.2)
-							vec = MathUtil.getRandomVectorAround(Vector3.zero, 1).setLength(0.6F);
+							vec = UnityEngine.Random.onUnitSphere*0.6F;
 						else
 							vec = MathUtil.rotateVectorAroundAxis(Vector3.Cross(vel, Vector3.up), seamoth.transform.forward, UnityEngine.Random.Range(0F, 360F)).setLength(0.8F);
 						body.AddForce(vec, ForceMode.VelocityChange);

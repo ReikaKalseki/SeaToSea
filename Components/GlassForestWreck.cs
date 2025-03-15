@@ -80,11 +80,11 @@ namespace ReikaKalseki.SeaToSea
 		}
 	
 	class GlassForestWreckProp : PhysicsSettlingProp {
-		
+		/*
 		private static readonly Vector3 vent1 = new Vector3(-134.15F, -501, 940.29F);
 		private static readonly Vector3 vent2 = new Vector3(-125.20F, -503, 936.16F);
 		
-		protected virtual void onUpdate() {
+		protected override void onUpdate() {
 			Vector3 pos = transform.position;			
 			//keep the vents clear
 			if (Vector3.Distance(pos, vent1) <= 2F) {
@@ -97,7 +97,7 @@ namespace ReikaKalseki.SeaToSea
 				body.AddForce((pos-vent2).normalized*15, ForceMode.VelocityChange);
 				return;
 			}
-		}
+		}*/
 		
 	}
 }
