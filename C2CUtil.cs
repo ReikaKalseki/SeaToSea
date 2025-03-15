@@ -241,8 +241,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			
 				yield return new WaitForSeconds(1f);
-				LargeWorldStreamer streamer = LargeWorldStreamer.main;
-				while (!streamer.IsWorldSettled()) {
+				while (!LargeWorldStreamer.main.IsWorldSettled()) {
 					yield return UWE.CoroutineUtils.waitForNextFrame;
 				}
 			

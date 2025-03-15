@@ -121,6 +121,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void forceLaunch(LaunchRocket r) {
+			GameStatistics.collect().submit();
 			LaunchRocket.SetLaunchStarted();
 			PlayerTimeCapsule.main.Submit(null);
 			r.StartCoroutine(r.StartEndCinematic());

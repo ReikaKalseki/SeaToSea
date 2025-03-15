@@ -43,11 +43,12 @@ namespace ReikaKalseki.SeaToSea {
     	//ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LARGE_CYCLOCKER, true);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.LANTERN_SPEED, hard ? 0.2F : 0.4F);
     	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.NO_BUILDER_CLEAR, true);
+    	ReefbalanceMod.config.attachOverride(RBConfig.ConfigEntries.URANPERROD, hard ? 4 : 3);
     	
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.SPEED, f => Mathf.Clamp(f, 0.5F, 1F));
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.REENTRY_RATE, f => Mathf.Clamp(f, 0.5F, 2F));
     	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.REENTRY_WARNING, f => Mathf.Clamp(f, 0.5F, 4F));
-    	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.GEYSER_RESOURCE_RATE, 0.5F);
+    	AuroresourceMod.config.attachOverride(ARConfig.ConfigEntries.GEYSER_RESOURCE_RATE, 1.5F);
     	
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.POO_RATE, f => Mathf.Clamp(f, 0.25F, hard ? 3F : 4F));
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.ATPTAPRATE, f => hard ? 10 : 15);
@@ -223,6 +224,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		FallingMaterialSystem.instance.clear();
 		FallingMaterialSystem.instance.addMaterial(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 100);
+		GeyserMaterialSpawner.addBiomeRateMultiplier(UnderwaterIslandsFloorBiome.instance, 3);
 		
 		FoodEffectSystem.instance.addVomitingEffect(C2CItems.mountainGlow.seed.TechType, 60, 60, 8, 4F, 20);			
 		FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.mountainGlow.seed.TechType, 50, 30, DamageType.Heat, SeaToSeaMod.itemLocale.getEntry(C2CItems.mountainGlow.ClassID).getField<string>("eateffect"));

@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			if (time >= nextPushRecalculation) {
 				nextPushRecalculation = time + UnityEngine.Random.Range(0.5F, 1.5F);
-				currentPush = MathUtil.getRandomVectorAround(Vector3.zero, 1F).setLength(UnityEngine.Random.Range(0.25F, 1.0F))*intensity;
+				currentPush = UnityEngine.Random.onUnitSphere*UnityEngine.Random.Range(0.25F, 1.0F)*intensity;
 				if (!Player.main.IsSwimming())
 					currentPush = currentPush.setY(0);
 			}
