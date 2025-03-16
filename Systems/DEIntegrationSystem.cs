@@ -171,6 +171,8 @@ namespace ReikaKalseki.SeaToSea {
 			
 			voidThelassacean = new VoidThalassacean(SeaToSeaMod.itemLocale.getEntry("VoidThalassacean"));
 			voidThelassacean.Patch();
+			
+			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(filtorbType, 4, "A water-rich organism with a defense mechanism against being grabbed");
 		}
 		
 		private TechType findCreature(string id) {

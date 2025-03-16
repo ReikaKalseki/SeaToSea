@@ -18,7 +18,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		private Rocket rocket;
 		private RocketLocker[] lockers;
-		private readonly List<StorageContainer> containers = new List<StorageContainer>();
+		private readonly List<ItemsContainer> containers = new List<ItemsContainer>();
 			
 		private float lastPDAUpdate = -1;
 		
@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea {
 		   	containers.Clear();
 		    foreach (RocketLocker cl in lockers) {
 		        StorageContainer sc = cl.GetComponent<StorageContainer>();
-		        containers.Add(sc);
+		        containers.Add(sc.container);
 		        sc.Resize(6, 8);
 		    }	
 		}
@@ -47,7 +47,10 @@ namespace ReikaKalseki.SeaToSea {
 		   	float time = DayNightCycle.main.timePassedAsFloat;
 		   	if (time-lastPDAUpdate >= 0.5F) {
 		   		lastPDAUpdate = time;		   		
-		   		FinalLaunchAdditionalRequirementSystem.instance.updateContentsAndPDAPageChecklist(rocket, containers);
+		   		List<ItemsContainer> li = new List<ItemsContainer>(containers);
+		   		if (Player.main.precursorOutOfWater && Player.main.transform.position.y > 30) //in rocket
+		   			li.Add(Inventory.main.container);
+		   		FinalLaunchAdditionalRequirementSystem.instance.updateContentsAndPDAPageChecklist(rocket, li);
 		   	}
 		}
 			

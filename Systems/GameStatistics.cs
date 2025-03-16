@@ -29,7 +29,7 @@ using ReikaKalseki.SeaToSea;
 namespace ReikaKalseki.SeaToSea {
 	
 	public class GameStatistics {
-		//TODO add cheat commands, story goal times, death stats, etc
+		//TODO add cheat commands, death stats, etc
 		
 		private List<SubRoot> bases = new List<SubRoot>();
 		private List<Vehicle> vehicles = new List<Vehicle>();
@@ -64,22 +64,33 @@ namespace ReikaKalseki.SeaToSea {
 					cyclops.Add(s);
 			}
 			
+			bases.Sort((b1, b2) => b2.transform.position.y.CompareTo(b1.transform.position.y));
+			
 			xmlDoc = new XmlDocument();
 			xmlDoc.AppendChild(xmlDoc.CreateElement("Root"));
 			
-			XmlElement e = xmlDoc.DocumentElement.addChild("Bases");
+			XmlElement e = xmlDoc.DocumentElement.addChild("Player");
+			e.addProperty("health", Player.main.liveMixin.health);
+			Survival sv = Player.main.GetComponent<Survival>();
+			if (sv) {
+				e.addProperty("food", sv.food);
+				e.addProperty("water", sv.water);
+			}
+			collectStorage(e.addProperty("inventory"), Inventory.main.container);
+			collectStorage(e.addProperty("equipment"), Inventory.main.equipment);
+			
+			e = xmlDoc.DocumentElement.addChild("Bases");
 			foreach (SubRoot sub in bases) {
 				XmlElement e2 = e.addChild("Base");
 				Vector3 pos = sub.transform.position;
-				BiomeBase bb = BiomeBase.getBiome(pos);
 				e2.addProperty("centerX", pos.x);
 				e2.addProperty("centerY", pos.y);
 				e2.addProperty("centerZ", pos.z);
-				e2.addProperty("biome", bb.displayName);
-				e2.addProperty("cellSize", sub.GetComponentsInChildren<BaseCell>().Length);
-				e2.addProperty("scannerCount", sub.GetComponentsInChildren<MapRoomFunctionality>().Length);
-				e2.addProperty("moonpoolCount", sub.GetComponentsInChildren<VehicleDockingBay>().Length);
-				e2.addProperty("acuCount", sub.GetComponentsInChildren<WaterPark>().Length);
+				e2.addProperty("biome", WorldUtil.getRegionalDescription(pos, false));
+				e2.addProperty("cellSize", sub.GetComponentsInChildren<BaseCell>(true).Length);
+				e2.addProperty("scannerCount", sub.GetComponentsInChildren<MapRoomFunctionality>(true).Length);
+				e2.addProperty("moonpoolCount", sub.GetComponentsInChildren<VehicleDockingBay>(true).Length);
+				e2.addProperty("acuCount", sub.GetComponentsInChildren<WaterPark>(true).Length);
 				e2.addProperty("currentPower", sub.powerRelay.GetPower());
 				e2.addProperty("maxPower", sub.powerRelay.GetMaxPower());
 				collectStorage(e2, sub.gameObject);
@@ -97,21 +108,27 @@ namespace ReikaKalseki.SeaToSea {
 			e = xmlDoc.DocumentElement.addChild("Vehicles");
 			foreach (Vehicle v in vehicles) {
 				XmlElement e2 = e.addChild("Vehicle");
-				e2.addProperty("type", CraftData.GetTechType(v.gameObject).AsString());
+				e2.addProperty("type", getObjectType(v));
 				foreach (TechType tt in InventoryUtil.getVehicleUpgrades(v)) {
 					e2.addProperty("module", tt.AsString());
 				}
 			}
 			
 			e = xmlDoc.DocumentElement.addChild("StoryGoals");
+			/*
 			foreach (string goal in StoryGoalManager.main.completedGoals) {
 				XmlElement e2 = e.addChild("Goal");
 				e2.addProperty("key", goal);
 				e2.addProperty("unlockTime", 0);
-			}
+			}*/
+			StoryHandler.instance.forAllGoalsNewerThan(9999999, (k, g) => {
+				XmlElement e2 = e.addChild("Unlock");    
+				e2.addProperty("tech", g.goal);
+				e2.addProperty("unlockTime", g.unlockTime);
+			});
 			
 			e = xmlDoc.DocumentElement.addChild("TechUnlocks");
-			TechUnlockTracker.forAllUnlocksNewerThan(-1, (tt, u) => {
+			TechUnlockTracker.forAllUnlocksNewerThan(9999999, (tt, u) => {
 				XmlElement e2 = e.addChild("Unlock");    
 				e2.addProperty("tech", tt.AsString());
 				e2.addProperty("unlockTime", u.unlockTime);
@@ -129,12 +146,44 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void collectStorage(XmlElement root, GameObject from) {
-			foreach (StorageContainer sc in from.GetComponentsInChildren<StorageContainer>()) {
-				XmlElement e3 = root.addChild("storage");
-				e3.addProperty("type", CraftData.GetTechType(sc.gameObject).AsString());
-				XmlElement items = e3.addChild("items");
-				InventoryUtil.forEach(sc.container, ii => items.addProperty(ii.item.GetTechType().AsString()));
+			XmlElement e = root.addChild("inventories");
+			foreach (StorageContainer sc in from.GetComponentsInChildren<StorageContainer>(true)) {
+				XmlElement e3 = e.addChild("storage");
+				e3.addProperty("type", getObjectType(sc));
+				collectStorage(e3, sc.container);
 			}
+		}
+		
+		private void collectStorage(XmlElement e3, Equipment sc) {
+			XmlElement items = e3.addChild("items");
+			foreach (KeyValuePair<string, InventoryItem> kvp in sc.equipment) {
+				if (kvp.Value != null) {
+					TechType tt = kvp.Value.item.GetTechType();
+					XmlElement added = items.addProperty(kvp.Key, tt.AsString());
+					added.SetAttribute("displayName", Language.main.Get(tt));
+				}
+			}
+		}
+		
+		private void collectStorage(XmlElement e3, ItemsContainer sc) {
+			Dictionary<TechType, int> counts = new Dictionary<TechType, int>();
+			InventoryUtil.forEach(sc, ii => {
+				TechType tt = ii.item.GetTechType();
+				int has = counts.ContainsKey(tt) ? counts[tt] : 0;
+				counts[tt] = has + 1;
+			});
+			if (counts.Count == 0)
+				return;
+			XmlElement items = e3.addChild("items");
+			foreach (KeyValuePair<TechType, int> kvp in counts) {
+				XmlElement added = items.addProperty(kvp.Key.AsString(), kvp.Value);
+				added.SetAttribute("displayName", Language.main.Get(kvp.Key));
+			}
+		}
+		
+		private string getObjectType(Component c) {
+			TechType tt = CraftData.GetTechType(c.gameObject);
+			return tt == TechType.None ? c.gameObject.name : tt.AsString();
 		}
 		
 		public void writeToFile(string file) {
@@ -143,7 +192,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public void submit() {
-			
+			string file = Path.Combine(SNUtil.getCurrentSaveDir(), "finalStatistics.xml");
+			writeToFile(file);
 		}
 
 	}
