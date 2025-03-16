@@ -162,7 +162,7 @@ namespace ReikaKalseki.SeaToSea {
 		RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, EcoceanMod.glowOil.TechType, 3);
 		//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);
 			
-		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3, "Oil containing frequency-discriminating chemoluminescent seeds");		
+		//FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.glowOil.TechType, 3, "Oil containing frequency-discriminating chemoluminescent seeds");		
 		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.lavaShroom.seed.TechType, 2, "Flora adapted for and frequently becoming sources of extreme heat");
 		//FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.mushroomStack.seed.TechType, 1, "Decorative, luminous flora ");
 		FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(EcoceanMod.pinkLeaves.seed.TechType, 1, "A vibrantly pink plant almost wiped out by the aurora's impact");

@@ -68,6 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 		public void buildSet() {
 			if (requiredAuroraData.Count > 0)
 				return;
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 			string genericPDA = "PDA Log";
 			string genericHint = "Data Download";
 			addRequiredData("Aurora_DriveRoom_Terminal1", "Black Box Data", auroraGoal, requiredAuroraData);
@@ -101,7 +102,13 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredData("dunearch", "Unknown Survivor Log", unknownLocation, requiredAuroraData).setVisible("dunearchhint");
 			addRequiredData("RendezvousFloatingIsland", "Rendezvous Log", unknownLocation, requiredAuroraData).setVisible("LifepodKeenLog");
 			addRequiredData("CaptainPDA", "Aurora Captain Log", unknownLocation, requiredAuroraData).setVisible("RadioCaptainsQuartersCode");
-			//InnerBiomeWreckLore7 "you've both been equally incompetent"
+			if (hard) {
+				addRequiredData("Aurora_Locker_PDA1", "Aurora Data Log", auroraGoal, requiredAuroraData); //Degasi secondary mission
+				addRequiredData("Aurora_Cargo_PDA1", "Aurora Conversation Log", auroraGoal, requiredAuroraData); //Yu and Berkeley
+				addRequiredData("Aurora_Living_Area_PDA2b", "Aurora Conversation Log", auroraGoal, requiredAuroraData); //"You're dumping me"
+				addRequiredData("InnerBiomeWreckLore7", "Aurora Conversation Log", unknownLocation, requiredAuroraData); //"you've both been equally incompetent"
+				addRequiredData("OuterBiomeWreckLore9", "Aurora Conversation Log", unknownLocation, requiredAuroraData); //"suspicious keyword 'religious'"
+			}
 			
 			LocationDescriptor floatislandBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("FLOATISLAND_DEGASI"), "Floating Island Degasi Base");
 			LocationDescriptor jellyBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("JELLY_DEGASI"), "Jellyshroom Caves Degasi Base");
@@ -110,15 +117,18 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredData("IslandsPDABase1Desk", genericPDA, floatislandBaseGoal, requiredDegasiData); //2
 			addRequiredData("IslandsPDAExterior", genericPDA, floatislandBaseGoal, requiredDegasiData); //3
 			addRequiredData("IslandsPDABase1Interior", genericPDA, floatislandBaseGoal, requiredDegasiData); //paul1
-			addRequiredData("JellyPDARoom2Locker", genericPDA, floatislandBaseGoal, requiredDegasiData); //4, tablet
+			if (hard)
+				addRequiredData("JellyPDARoom2Locker", genericPDA, floatislandBaseGoal, requiredDegasiData); //4, tablet
 			addRequiredData("IslandsPDABase1a", genericPDA, floatislandBaseGoal, requiredDegasiData); //bart3
-			addRequiredData("JellyPDABreadcrumb", genericPDA, jellyBaseGoal, requiredDegasiData);
+			if (hard)
+				addRequiredData("JellyPDABreadcrumb", genericPDA, jellyBaseGoal, requiredDegasiData);
 			addRequiredData("JellyPDABrokenCorridor", genericPDA, jellyBaseGoal, requiredDegasiData); //5
 			addRequiredData("JellyPDARoom2Desk", genericPDA, jellyBaseGoal, requiredDegasiData); //6
 			addRequiredData("JellyPDARoom1Desk", genericPDA, jellyBaseGoal, requiredDegasiData); //bart1
 			addRequiredData("JellyPDAObservatory", genericPDA, jellyBaseGoal, requiredDegasiData); //bart2
 			addRequiredData("JellyPDARoom1Locker", genericPDA, jellyBaseGoal, requiredDegasiData); //paul2
-			addRequiredData("JellyPDAExterior", genericPDA, dgrBaseGoal, requiredDegasiData); //rant
+			if (hard)
+				addRequiredData("JellyPDAExterior", genericPDA, dgrBaseGoal, requiredDegasiData); //rant
 			addRequiredData("DeepPDA1", genericPDA, dgrBaseGoal, requiredDegasiData); //7
 			addRequiredData("DeepPDA2", genericPDA, dgrBaseGoal, requiredDegasiData); //8
 			addRequiredData("DeepPDA3", genericPDA, dgrBaseGoal, requiredDegasiData); //9

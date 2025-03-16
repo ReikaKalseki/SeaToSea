@@ -94,6 +94,7 @@ namespace ReikaKalseki.SeaToSea {
 			registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
 			registerBiomeEnvironment("LavaPitEntrance", 320, 15, 0.5F, 5, 25);
 			temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
+			registerBiomeEnvironment("ILZCastleTunnel", 450, 18, 0.5F, 4, 20); //the lavafall entrance
     		
 			registerBiomeEnvironment("AuroraPrawnBay", 150, 10F, 2.5F, 9999, 0);
 			registerBiomeEnvironment("AuroraPrawnBayDoor", 200, 40F, 2.5F, 9999, 0);
