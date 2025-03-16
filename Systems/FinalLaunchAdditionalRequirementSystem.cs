@@ -38,7 +38,7 @@ namespace ReikaKalseki.SeaToSea {
 			});
 			addRequiredItem(TechType.LavaLizard, 1, "A creature with extreme thermal resistance due to regular direct lava exposure");
 			addRequiredItem(TechType.Crabsnake, 1, "A symbiotic predator");
-			addRequiredItem(TechType.Cutefish, 1, "A highly intelligent herbivore");
+			addRequiredItem(TechType.Cutefish, hard ? 3 : 1, "A highly intelligent herbivore");
 			if (hard) {
 				addRequiredItem(TechType.RabbitRay, 1, "A small ray species with vibration-detection capabilities, suitable for aquariums");
 				addRequiredItem(TechType.SpineEel, 1, "A transparent-bodied predator");
@@ -95,12 +95,12 @@ namespace ReikaKalseki.SeaToSea {
 			return null;
 		}
 		
-		internal void updateCounts(List<StorageContainer> lockers) {
+		internal void updateCounts(List<ItemsContainer> lockers) {
 			foreach (RequiredItem ri in requiredItems.Values) {
 				ri.currentlyHas = 0;
 			}
-			foreach (StorageContainer sc in lockers) {
-				foreach (KeyValuePair<TechType, ItemsContainer.ItemGroup> kvp in sc.container._items) {
+			foreach (ItemsContainer sc in lockers) {
+				foreach (KeyValuePair<TechType, ItemsContainer.ItemGroup> kvp in sc._items) {
 					TechType tt = kvp.Key;
 					if (!requiredItems.ContainsKey(tt))
 						continue;
@@ -152,7 +152,7 @@ namespace ReikaKalseki.SeaToSea {
 			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(DataCollectionTracker.instance.isFullyComplete(), null, PDAMessages.Messages.NeedDataMessage);
 		}
 			
-		internal void updateContentsAndPDAPageChecklist(Rocket r, List<StorageContainer> lockers) {
+		internal void updateContentsAndPDAPageChecklist(Rocket r, List<ItemsContainer> lockers) {
 			updateCounts(lockers);
 			PDAManager.getPage(FinalLaunchAdditionalRequirementSystem.NEED_CARGO_PDA).update(generateCargoPDAContent(), true);
 		}

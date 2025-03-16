@@ -36,6 +36,7 @@ namespace ReikaKalseki.SeaToSea {
 			TechType.HugeSkeleton,
 			TechType.CaveSkeleton,
 			TechType.PrecursorSeaDragonSkeleton,
+			TechType.ReaperSkeleton,
 		};
 		
 		private float needsPDAUpdate = -1;
@@ -330,7 +331,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			
 			public string getLastSeen() {
-				return seenAt.magnitude > 0.5F ? (seenACU ? "In an ACU" : instance.getLocalDescription(seenAt)) : null;
+				return seenAt.magnitude > 0.5F ? (seenACU ? "an ACU" : instance.getLocalDescription(seenAt)) : null;
 			}
 			
 			public bool isIdentityKnown() {
