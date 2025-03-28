@@ -31,7 +31,7 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		public override void generate(List<GameObject> li) {			
+		public override bool generate(List<GameObject> li) {			
 			GameObject rock = ObjectUtil.createWorldObject("a474e5fa-1552-4cea-abdb-945f85ed4b1a");
 			rock.transform.position = position;
 			rock.transform.localScale = new Vector3(150, 1, 150);
@@ -42,6 +42,11 @@ namespace ReikaKalseki.SeaToSea
 					li.Add(spawnPlant(vf, vf.maximumSink));
 				}
 			}
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Global;
 		}
 		
 		private GameObject spawnPlant(VanillaFlora f, double sink = 0) {

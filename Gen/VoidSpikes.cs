@@ -113,7 +113,15 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
-		public override void generate(List<GameObject> generated) {
+		public override bool generate(List<GameObject> generated) {/*
+			if (!Player.main)
+				return false;
+			Vector3 pos = Player.main.transform.position;
+			if (pos.y > -300)
+				return false;
+			BiomeBase bb = BiomeBase.getBiome(pos);
+			if (bb != VanillaBiomes.VOID && bb != VoidSpikesBiome.instance)
+				return false;*/
 			UnityEngine.Random.InitState(SNUtil.getWorldSeedInt());
 			if (shouldRerollCounts)
 				rerollCounts();
@@ -144,6 +152,11 @@ namespace ReikaKalseki.SeaToSea
 				ent.transform.position = MathUtil.interpolate(VoidSpikesBiome.end500m, VoidSpikesBiome.end900m, UnityEngine.Random.Range(0.25F, 0.75F));
 				generated.Add(ent);
 			}
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.VeryFar;
 		}
 		
 		private bool posIntersectsAnySpikes(Vector3 vec, string why) {
@@ -201,7 +214,7 @@ namespace ReikaKalseki.SeaToSea
 			private float centralScale;
 			private float edgeFactor;
 			
-			public Action<List<GameObject>> additionalGen = null;
+			public Func<List<GameObject>, bool> additionalGen = null;
 						
 			internal SpikeCluster(Vector3 vec, bool aux, float f) : base(vec) {
 				edgeFactor = f;
@@ -231,7 +244,7 @@ namespace ReikaKalseki.SeaToSea
 				return position+Vector3.up*0.5F*centralScale;
 			}
 			
-			public override void generate(List<GameObject> li) {
+			public override bool generate(List<GameObject> li) {
 				centralSpike = new VoidSpike(position);
 				centralSpike.spawner = spawner;
 				centralSpike.setScale(centralScale);
@@ -290,7 +303,7 @@ namespace ReikaKalseki.SeaToSea
 				
 				generateDeco(li);
 				if (additionalGen != null) {
-					additionalGen(li);
+					additionalGen.Invoke(li);
 				}
 
 				for (int i = 0; i < fishCount; i++) {
@@ -310,6 +323,11 @@ namespace ReikaKalseki.SeaToSea
 				atmo.transform.localScale = Vector3.one*75;
 				li.Add(atmo);
 				SNUtil.log("Generated atmo "+atmo+" @ "+atmo.transform.position);*/
+				return true;
+			}
+			
+			public override LargeWorldEntity.CellLevel getCellLevel() {
+				return LargeWorldEntity.CellLevel.VeryFar;
 			}
 			
 			private void generateDeco(List<GameObject> li) {

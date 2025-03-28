@@ -93,10 +93,12 @@ namespace ReikaKalseki.SeaToSea
 			mushrooms = UnityEngine.Random.Range(0, 7); //0-6
 		}
 		
-		public override void generate(List<GameObject> li) {
-			base.generate(li);
+		public override bool generate(List<GameObject> li) {
+			bool flag = base.generate(li);
 			
 			li.AddRange(gennedMushrooms);
+			
+			return flag;
 		}
 		
 		protected override VanillaFlora selectPlant(VanillaFlora choice) {

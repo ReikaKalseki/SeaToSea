@@ -41,9 +41,15 @@ namespace ReikaKalseki.SeaToSea {
 			Renderer[] r0 = world.GetComponentsInChildren<Renderer>();
 			foreach (ParticleSystem pp in world.GetComponentsInChildren<ParticleSystem>()) {
 				ParticleSystem.MainModule main = pp.main;
-				if (isDrip)
+				if (isDrip) {
 					main.startSizeMultiplier *= 0.25F;
+					main.startLifetimeMultiplier *= 0.67F;
+				}
 				main.startColor = Color.white.ToAlpha(main.startColor.color.a);
+			}
+			if (isDrip) {
+				world.GetComponent<VFXDestroyAfterSeconds>().lifeTime *= 0.67F;
+				world.GetComponent<VFXUnparentAfterSeconds>().timer *= 0.67F;
 			}
 			foreach (Renderer r in r0) {
 				GameObject go = r.gameObject;

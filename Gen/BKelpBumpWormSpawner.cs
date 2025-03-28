@@ -33,13 +33,14 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 			
-	    public override void generate(List<GameObject> li) {
+	    public override bool generate(List<GameObject> li) {
 			float r = 9;
 			foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(position, r)) {
 				if (pi.ClassId == "26ce64dd-e703-470d-a0e4-acd43841bdd8" || pi.ClassId == "53e89f85-44a6-4ccf-9790-efae4b5fcae9" || pi.ClassId == "2dd42944-a73f-4443-ba90-bf45956e72f0" || VanillaFlora.DEEP_MUSHROOM.includes(pi.ClassId)) {
 					UnityEngine.Object.Destroy(pi.gameObject);
 				}
 			}
+			int placed = 0;
 			for (int i = 0; i < 40; i++) {
 				Vector3 pos = MathUtil.getRandomVectorAround(position, r);
 				if (pos.y < position.y) {
@@ -56,16 +57,24 @@ namespace ReikaKalseki.SeaToSea {
 						go.transform.position = hit.point;
 						go.transform.RotateAroundLocal(go.transform.up, UnityEngine.Random.Range(0F, 360F));
 						li.Add(go);
+						placed++;
 					}
 				}
 			}
+			if (placed < 3)
+				return false;
 			for (int i = 0; i < 1; i++) {
 				GameObject grub = ObjectUtil.createWorldObject(C2CItems.broodmother.ClassID);
 				grub.transform.rotation = Quaternion.identity;
 				grub.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*6, 3);
 				li.Add(grub);
 			}
-	    }
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Far;
+		}
 			
 	}
 }

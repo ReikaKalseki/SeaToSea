@@ -71,6 +71,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static GeoGel geogelDrip;
 		public static GeoGelFog geogelFog;
 		public static GeoGelFog geogelFogDrip;
+		public static PostCoveDome postCoveDome;
     
 		public static PowerSealModuleFragment powersealModuleFragment;
 		public static EjectedHeatSink ejectedHeatSink;
@@ -351,6 +352,9 @@ namespace ReikaKalseki.SeaToSea {
 			geogelFog.Patch();
 			geogelFogDrip = new GeoGelFog(true);
 			geogelFogDrip.Patch();
+	    
+			postCoveDome = new PostCoveDome(itemLocale.getEntry("POST_COVE_DOME"));
+			postCoveDome.Patch();
         
 			addPDAEntries();
 			/*
@@ -456,6 +460,7 @@ namespace ReikaKalseki.SeaToSea {
 			mushroomBioFragment.postRegister();
 			geyserCoral.postRegister();
 			gelFountain.postRegister();
+			postCoveDome.postRegister();
 		
 			int n = C2CHooks.purpleTabletsToBreak.Count + 1; //+1 for the broken one in front of gun
 			n += SeaToSeaMod.worldgen.getCount("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4");
@@ -682,6 +687,8 @@ namespace ReikaKalseki.SeaToSea {
 			irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Floor_Far, 1, 0.67F);
 			irid.registerWorldgen(BiomeType.InactiveLavaZone_Corridor_Wall, 1, 0.6F);
 			irid.registerWorldgen(BiomeType.InactiveLavaZone_Chamber_Ceiling, 1, 0.5F);
+			
+			LootDistributionHandler.EditLootDistributionData(PostCoveDomeGenerator.hotResourceDome.ClassID, BiomeType.InactiveLavaZone_Corridor_Ceiling, 0.5F, 1);
     	
 			BasicCustomOre calcite = CustomMaterials.getItem(CustomMaterials.Materials.CALCITE);
 			calcite.registerWorldgen(BiomeType.BonesField_Cave_Ceiling, 1, 1.2F);

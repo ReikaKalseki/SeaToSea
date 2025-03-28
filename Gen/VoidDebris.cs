@@ -37,7 +37,7 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		public override void generate(List<GameObject> li) {		
+		public override bool generate(List<GameObject> li) {		
 			for (int i = 0; i < 6; i++) {
 				li.Add(generateObjectInRange(6, 0.1F, 6));
 			}
@@ -56,6 +56,11 @@ namespace ReikaKalseki.SeaToSea
 			DamagedDataboxSystem.instance.onDataboxSpawn(go);
 			ObjectUtil.fullyEnable(go);
 			VoidSpikesBiome.checkAndAddWaveBob(go, true);
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Global;
 		}
 		/*
 		[Obsolete]

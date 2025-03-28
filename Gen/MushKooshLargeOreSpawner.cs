@@ -38,17 +38,16 @@ namespace ReikaKalseki.SeaToSea {
 	    }
 		
 		public override void saveToXML(XmlElement e) {
-			e.addProperty("rotation", rotation);
+			PositionedPrefab.saveRotation(e, rotation);
 			e.addProperty("isKoosh", isKoosh);
 		}
 		
 		public override void loadFromXML(XmlElement e) {
-			XmlElement rot = e.getDirectElementsByTagName("rotation")[0];
-			rotation = rot.getQuaternion("quaternion").Value;
+			rotation = PositionedPrefab.readRotation(e);
 			isKoosh = e.getBoolean("isKoosh");
 		}
 			
-	    public override void generate(List<GameObject> li) {
+	    public override bool generate(List<GameObject> li) {
 			if (WorldUtil.getObjectsNearWithComponent<Drillable>(position, 6).Count == 0 && UnityEngine.Random.Range(0F, 1F) < (isKoosh ? 0.8F : 0.6F)) {
 				VanillaResources res = (isKoosh ? kooshTable : mushroomTable).getRandomEntry();
 				GameObject obj = ObjectUtil.createWorldObject(res.prefab);
@@ -56,7 +55,12 @@ namespace ReikaKalseki.SeaToSea {
 				obj.transform.rotation = rotation;
 				li.Add(obj);
 			}
-	    }
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Medium;
+		}
 			
 	}
 }
