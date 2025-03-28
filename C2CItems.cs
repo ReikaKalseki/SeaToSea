@@ -54,6 +54,8 @@ namespace ReikaKalseki.SeaToSea
     
     public static TechType emperorRootCommon;
     public static readonly Dictionary<string, EmperorRoot> emperorRoots = new Dictionary<string, EmperorRoot>();
+    //public static TechType postCoveTreeCommon;
+    //public static readonly Dictionary<DecoPlants, PostCoveTree> postCoveTrees = new Dictionary<DecoPlants, PostCoveTree>();
     
     public static BrokenTablet brokenRedTablet;
     public static BrokenTablet brokenWhiteTablet;
@@ -311,6 +313,15 @@ namespace ReikaKalseki.SeaToSea
 	    emperorRootOil = new EmperorRootOil(SeaToSeaMod.itemLocale.getEntry("EmperorRootOil"));
 	    emperorRootOil.Patch();
 		
+	    /*
+		e = SeaToSeaMod.itemLocale.getEntry("POST_COVE_TREE");
+		foreach (DecoPlants pfb in PostCoveTree.templates.Keys) {
+			postCoveTrees[pfb] = new PostCoveTree(e, pfb);
+			postCoveTrees[pfb].Patch();
+		}
+		postCoveTreeCommon = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
+		PostCoveTree.postRegister().encyclopedia = SNUtil.addPDAEntry(postCoveTreeCommon, e.key, e.name, 5, e.getField<string>("category"), e.pda, e.getField<string>("header")).id;
+		*/
 		BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed)*1.5F);
 		BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil)*0.8F);
 		BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));

@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea
 			debris = new PodDebris(vec);
 		}
 		
-		public override void generate(List<GameObject> li) {
+		public override bool generate(List<GameObject> li) {
 			debris.generateRecognizablePieces = false;
 			debris.scrapCount = Math.Max(1, (int)(intensity*UnityEngine.Random.Range(2, 6)));
 			debris.paperCount = 0;
@@ -41,7 +41,11 @@ namespace ReikaKalseki.SeaToSea
 			debris.yBaseline = position.y+0.55F;
 			debris.areaSpread = 0.5F;
 			debris.bounds = new Vector3(4, 0, 4);
-			debris.generate(li);
+			return debris.generate(li);
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Far;
 		}
 		
 		public override void loadFromXML(XmlElement e) {

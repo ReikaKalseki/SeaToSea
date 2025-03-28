@@ -21,7 +21,7 @@ namespace ReikaKalseki.SeaToSea {
 	public class DataCollectionTracker {
 		
 		private static readonly LocationDescriptor unknownLocation = new LocationDescriptor(() => true, "Unknown Location");
-		private static readonly LocationDescriptor auroraGoal = new LocationDescriptor(() => true, "The Aurora"); //always known location
+		private static readonly LocationDescriptor auroraGoal = new LocationDescriptor(() => true, "Aboard The Aurora"); //always known location
 		
 		public static readonly DataCollectionTracker instance = new DataCollectionTracker();
 		
@@ -110,9 +110,9 @@ namespace ReikaKalseki.SeaToSea {
 				addRequiredData("OuterBiomeWreckLore9", "Aurora Conversation Log", unknownLocation, requiredAuroraData); //"suspicious keyword 'religious'"
 			}
 			
-			LocationDescriptor floatislandBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("FLOATISLAND_DEGASI"), "Floating Island Degasi Base");
-			LocationDescriptor jellyBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("JELLY_DEGASI"), "Jellyshroom Caves Degasi Base");
-			LocationDescriptor dgrBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("DGR_DEGASI"), "Deep Grand Reef Degasi Base");
+			LocationDescriptor floatislandBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("FLOATISLAND_DEGASI"), "Detected at the Floating Island Degasi Base");
+			LocationDescriptor jellyBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("JELLY_DEGASI"), "Detected in the Jellyshroom Caves Degasi Base");
+			LocationDescriptor dgrBaseGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("DGR_DEGASI"), "Detected in the Deep Grand Reef Degasi Base");
 			addRequiredData("IslandsPDABase1bDesk", genericPDA, floatislandBaseGoal, requiredDegasiData); //1
 			addRequiredData("IslandsPDABase1Desk", genericPDA, floatislandBaseGoal, requiredDegasiData); //2
 			addRequiredData("IslandsPDAExterior", genericPDA, floatislandBaseGoal, requiredDegasiData); //3
@@ -135,16 +135,16 @@ namespace ReikaKalseki.SeaToSea {
 			addRequiredData("DeepPDA4", genericPDA, dgrBaseGoal, requiredDegasiData); //paul3
 			
 			LocationDescriptor anywhere = new LocationDescriptor(() => true, "No Specific Location");
-			LocationDescriptor gunGoal = new LocationDescriptor("Precursor_Gun_DataDownload2", "Quarantine Enforcement Platform");
-			LocationDescriptor drfGoal = new LocationDescriptor("Precursor_LostRiverBase_Log2", "Disease Research Facility");
-			LocationDescriptor atpGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("SEE_ATP"), "Alien Thermal Plant");
-			LocationDescriptor pcfGoal = new LocationDescriptor("Precursor_Prison_MoonPool_Log1", "Primary Containment Facility");
-			LocationDescriptor lrlabGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("LR_LAB"), "Lost River Lab Cache");
+			LocationDescriptor gunGoal = new LocationDescriptor("Precursor_Gun_DataDownload2", "Detected in the Quarantine Enforcement Platform");
+			LocationDescriptor drfGoal = new LocationDescriptor("Precursor_LostRiverBase_Log2", "Detected in the Disease Research Facility");
+			LocationDescriptor atpGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("SEE_ATP"), "Detected in the Alien Thermal Plant");
+			LocationDescriptor pcfGoal = new LocationDescriptor("Precursor_Prison_MoonPool_Log1", "Detected in the Primary Containment Facility");
+			LocationDescriptor lrlabGoal = new LocationDescriptor(C2CProgression.instance.getLocationGoal("LR_LAB"), "Detected in the Lost River Lab Cache");
 			addRequiredData("Precursor_Gun_DataDownload1", genericHint, gunGoal, requiredAlienData);
 			addRequiredData("Precursor_Gun_DataDownload2", genericHint, gunGoal, requiredAlienData);
-			addRequiredData("Precursor_SparseReefCache_DataDownload1", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("SPARSE_CACHE"), "Sparse Reef Sanctuary"), requiredAlienData);
-			addRequiredData("Precursor_Cache_DataDownload2", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("NBKELP_CACHE"), "Blood Kelp Sanctuary"), requiredAlienData);
-			addRequiredData("Precursor_Cache_DataDownload3", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("DUNES_CACHE"), "Dunes Sanctuary"), requiredAlienData);
+			addRequiredData("Precursor_SparseReefCache_DataDownload1", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("SPARSE_CACHE"), "Detected in the Sparse Reef Sanctuary"), requiredAlienData);
+			addRequiredData("Precursor_Cache_DataDownload2", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("NBKELP_CACHE"), "Detected in the Blood Kelp Sanctuary"), requiredAlienData);
+			addRequiredData("Precursor_Cache_DataDownload3", genericHint, new LocationDescriptor(C2CProgression.instance.getLocationGoal("DUNES_CACHE"), "Detected in the Dunes Sanctuary"), requiredAlienData);
 			addRequiredData("Precursor_Cache_DataDownloadLostRiver", genericHint, lrlabGoal, requiredAlienData);
 			addRequiredData("Precursor_LostRiverBase_DataDownload1", genericHint, drfGoal, requiredAlienData);
 			addRequiredData("Precursor_LostRiverBase_DataDownload3", genericHint, drfGoal, requiredAlienData);
@@ -281,7 +281,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (showAll)
 					name += " [" + Language.main.Get(le.tech) + "]";
 				string color = has ? "20FF40" : (seen ? "FFE020" : "FF2040");
-				desc += string.Format("\t<color=#{0}>{1}</color> ({2})\n", color, name, has ? "Analyzed" : (seen ? "Last Seen In Or Near " + le.location.getDescription() : "Not Yet Encountered"));
+				desc += string.Format("\t<color=#{0}>{1}</color> ({2})\n", color, name, has ? "Collected" : (seen ? le.location.getDescription() : unknownLocation.getDescription()));
 			}
 			return desc;
 		}
@@ -311,7 +311,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (showAll)
 						name += " ["+Language.main.Get("Ency_"+le.encyKey)+"]";
 					string color = has ? "20FF40" : (seen ? "FFE020" : "FF2040");
-					desc += string.Format("\t<color=#{0}>{1}</color> ({2})\n", color, name, has ? "Collected" : (seen ? "Last Seen In Or Near "+le.location.getDescription() : "Unknown Location"));
+					desc += string.Format("\t<color=#{0}>{1}</color> ({2})\n", color, name, has ? "Collected" : (seen ? le.location.getDescription() : unknownLocation.getDescription()));
 				}
 				desc += "\n\n";
 				return desc;

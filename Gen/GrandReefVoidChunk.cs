@@ -76,7 +76,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("scale", scale);
 		}
 		
-		public override void generate(List<GameObject> generated) {			
+		public override bool generate(List<GameObject> generated) {			
 			rock = ObjectUtil.createWorldObject(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
@@ -137,6 +137,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			
 			//rotateProps(); //about central axis
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.VeryFar;
 		}
 		
 		private void rotateProps() {

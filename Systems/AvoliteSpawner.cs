@@ -24,7 +24,8 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public readonly int AVOLITE_COUNT = FCSIntegrationSystem.instance.isLoaded() ? 13 : 9;//6;
 		private readonly int SCRAP_COUNT = 45;//60;//UnityEngine.Random.Range(45, 71); //45-70
-		private readonly string xmlPathRoot;
+		private readonly string oldSaveDir = Path.Combine(Path.GetDirectoryName(SeaToSeaMod.modDLL.Location), "avolite_spawns");
+		private static readonly string saveFileName = "AvoSpawns.dat";
 		
 		private string avo;
 		
@@ -39,9 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly Dictionary<string, int> objectCounts = new Dictionary<string, int>();
 		private readonly Dictionary<string, int> objectCountsToGo = new Dictionary<string, int>();
 		
-		private AvoliteSpawner() {		
-			xmlPathRoot = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "avolite_spawns");
-			
+		private AvoliteSpawner() {				
 			spawnerObject = new SunbeamDebrisObject();
 		}
 		
@@ -91,6 +90,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 			IngameMenuHandler.Main.RegisterOnLoadEvent(loadSave);
 			IngameMenuHandler.Main.RegisterOnSaveEvent(save);
+			SNUtil.migrateSaveDataFolder(oldSaveDir, ".xml", saveFileName);
 			
 			avo = CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).ClassID;
 		}
@@ -100,7 +100,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void loadSave() {
-			string path = Path.Combine(xmlPathRoot, SaveLoadManager.main.currentSlot+".xml");
+			string path = Path.Combine(SNUtil.getCurrentSaveDir(), saveFileName);
 			if (File.Exists(path)) {
 				XmlDocument doc = new XmlDocument();
 				doc.Load(path);
@@ -122,7 +122,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		private void save() {
-			string path = Path.Combine(xmlPathRoot, SaveLoadManager.main.currentSlot+".xml");
+			string path = Path.Combine(SNUtil.getCurrentSaveDir(), saveFileName);
 			XmlDocument doc = new XmlDocument();
 			XmlElement rootnode = doc.CreateElement("Root");
 			doc.AppendChild(rootnode);
@@ -131,7 +131,6 @@ namespace ReikaKalseki.SeaToSea {
 				go.saveToXML(e);
 				doc.DocumentElement.AppendChild(e);
 			}
-			Directory.CreateDirectory(xmlPathRoot);
 			doc.Save(path);
 		}
 		

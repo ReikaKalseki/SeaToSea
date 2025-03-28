@@ -185,11 +185,16 @@ namespace ReikaKalseki.SeaToSea
 			return dist <= r*r;
 		}
 		
-		public override void generate(List<GameObject> generated) {
+		public override bool generate(List<GameObject> generated) {
 			generateSpike();
 			generateFlora();
 			generateResources();
 			collateGenerated(generated);
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.VeryFar;
 		}
 		
 		internal void collateGenerated(List<GameObject> generated) {

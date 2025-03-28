@@ -799,6 +799,46 @@
 			emperorroot
 		</header>
 	</EMPEROR_ROOT>
+	<POST_COVE_TREE>
+		<name>
+			Glasswood Vine
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			????
+		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			glassvine
+		</header>
+	</POST_COVE_TREE>
+	<POST_COVE_DOME>
+		<name>
+			Glass Coral
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			A distant relative of the floater, glass coral has repurposed its air-production capabilities towards creating an insulating air gap under its external shell to shield its sensitive core from the ambient heat of its environment.
+			
+			Given the extreme water pressure at these depths, the shell of the floater is a far cry from the soft jellylike membrane of those in the shallows, and has instead been reinforced with a composite of silicate materials and volcanic glass to be able to maintain an air space under such large compressive forces.
+			
+			Like the standard floater, glass coral survives by extracting minerals and energy from the rock it lies upon. While the shell of a mature specimen is too strong to penetrate, juvenile organisms are likely sufficiently fragile to allow themselves to be harvested.
+			
+			Assessment: Possible source of knowledge for deep-sea structural applications, and a potential source of rare materials when young
+		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			postcovedome
+		</header>
+	</POST_COVE_DOME>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony
