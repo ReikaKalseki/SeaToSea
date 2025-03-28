@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		public override void generate(List<GameObject> li) {
+		public override bool generate(List<GameObject> li) {
 			SNUtil.log("Generating void spike deep debris @ "+position);
 			
 			GameObject platform = spawner(platformPrefab);
@@ -101,6 +101,11 @@ namespace ReikaKalseki.SeaToSea
 			foreach (VoidWreckProp s in pieces) {
 				li.Add(generateObjectInRange(refPos, 3.5F, s));
 			}
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Global;
 		}
 		
 		public Vector3 getPDALocation() {

@@ -76,7 +76,7 @@ namespace ReikaKalseki.SeaToSea
 			e.addProperty("yBaseline", yBaseline);
 		}
 		
-		public override void generate(List<GameObject> li) {		
+		public override bool generate(List<GameObject> li) {		
 			for (int i = 0; i < 6*debrisAmount; i++) {
 				li.Add(generateObjectInRange(9, 0.125F, 9));
 			}
@@ -110,6 +110,11 @@ namespace ReikaKalseki.SeaToSea
 				GameObject drop = generateObjectInRange(18, 0, 18, 0, mtl.prefab, false);
 				li.Add(drop);
 			}
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Global;
 		}
 		
 		private GameObject generateObjectInRange(float dx, float dy, float dz, float offsetY = 0, string pfb = null, bool scale = true) {

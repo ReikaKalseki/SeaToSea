@@ -36,7 +36,7 @@ namespace ReikaKalseki.SeaToSea
 			
 		}
 		
-		public override void generate(List<GameObject> li) {
+		public override bool generate(List<GameObject> li) {
 			//SBUtil.log("Attempting "+count+" plants in "+fuzz+" of "+position+".");
 			for (int i = 0; i < count; i++) {
 				Vector3 vec = MathUtil.getRandomVectorAround(position, fuzz);
@@ -51,6 +51,11 @@ namespace ReikaKalseki.SeaToSea
 				//SBUtil.log("success "+go+" = "+vf.getName()+" @ "+vec);
 				li.Add(go);
 			}
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Medium;
 		}
 		
 		protected virtual VanillaFlora selectPlant(VanillaFlora choice) {

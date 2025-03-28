@@ -29,7 +29,7 @@ using ReikaKalseki.SeaToSea;
 namespace ReikaKalseki.SeaToSea {
 	
 	public class GameStatistics {
-		//TODO add cheat commands, death stats, etc
+		//TODO add cheat commands, etc
 		
 		private List<SubRoot> bases = new List<SubRoot>();
 		private List<Vehicle> vehicles = new List<Vehicle>();
@@ -121,26 +121,32 @@ namespace ReikaKalseki.SeaToSea {
 				e2.addProperty("key", goal);
 				e2.addProperty("unlockTime", 0);
 			}*/
-			StoryHandler.instance.forAllGoalsNewerThan(9999999, (k, g) => {
+			StoryHandler.instance.forAllNewerThan(9999999, g => {
 				XmlElement e2 = e.addChild("Unlock");    
 				e2.addProperty("tech", g.goal);
-				e2.addProperty("unlockTime", g.unlockTime);
+				e2.addProperty("unlockTime", g.eventTime);
 			});
 			
 			e = xmlDoc.DocumentElement.addChild("TechUnlocks");
-			TechUnlockTracker.forAllUnlocksNewerThan(9999999, (tt, u) => {
+			TechUnlockTracker.instance.forAllNewerThan(9999999, u => {
 				XmlElement e2 = e.addChild("Unlock");    
-				e2.addProperty("tech", tt.AsString());
-				e2.addProperty("unlockTime", u.unlockTime);
+				e2.addProperty("tech", u.tech.AsString());
+				e2.addProperty("unlockTime", u.eventTime);
 			});
 			
 			e = xmlDoc.DocumentElement.addChild("Cheats");
 			{
 				XmlElement e2 = e.addChild("SpawnedItems");
-				SpawnedItemTracker.forAllSpawns(s => {
+				SpawnedItemTracker.instance.forAll(s => {
 					XmlElement e3 = e2.addChild("SpawnedItem");    
 					e3.addProperty("item", s.itemType.AsString());
-					e3.addProperty("spawnTime", s.spawnTime);
+					e3.addProperty("spawnTime", s.eventTime);
+				});
+				e2 = e.addChild("Commands");
+				CommandTracker.instance.forAll(s => {
+					XmlElement e3 = e2.addChild("Command");    
+					e3.addProperty("command", s.command);
+					e3.addProperty("runTime", s.eventTime);
 				});
 			}
 		}

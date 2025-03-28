@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 		}
 			
-	    public override void generate(List<GameObject> li) {	
+	    public override bool generate(List<GameObject> li) {	
 			foreach (KeyValuePair<TechType, int> kvp in SeaTreaderTunnelLocker.itemList) {
 				for (int i = 0; i < kvp.Value; i++) {
 					GameObject go = ObjectUtil.createWorldObject(kvp.Key);
@@ -58,7 +58,12 @@ namespace ReikaKalseki.SeaToSea {
 					prop.Invoke("fixInPlace", 45);
 				}
 			}
-	    }
+			return true;
+		}
+		
+		public override LargeWorldEntity.CellLevel getCellLevel() {
+			return LargeWorldEntity.CellLevel.Medium;
+		}
 		
 		public static void addItem(TechType item, int amt) {
 			if (itemList.ContainsKey(item))

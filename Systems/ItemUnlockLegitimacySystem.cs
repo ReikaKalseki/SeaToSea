@@ -73,7 +73,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public void validateModule(Vehicle v, int slotID, TechType tt) {
 			InventoryItem ii = v.GetSlotItem(slotID);
-			if (ii != null && ii.item && SpawnedItemTracker.isSpawned(ii.item)) {
+			if (ii != null && ii.item && SpawnedItemTracker.instance.isSpawned(ii.item)) {
 				destroyModule(v.modules, ii, v.slotIDs[slotID]);
 			}
 		}
@@ -83,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (modules != null) {
 		    	foreach (string slot in SubRoot.slotNames) {
 					InventoryItem ii = modules.GetItemInSlot(slot);
-					if (ii != null && ii.item && SpawnedItemTracker.isSpawned(ii.item)) {
+					if (ii != null && ii.item && SpawnedItemTracker.instance.isSpawned(ii.item)) {
 						destroyModule(modules, ii, slot);
 					}
 				}
