@@ -2637,7 +2637,7 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			Player ep = Player.main;
 			Survival s = ep.GetComponent<Survival>();
-			if (s.water < 10 || s.food < 10)
+			if (GameModeUtils.RequiresSurvival() && (s.water < 10 || s.food < 10))
 				return false;
 			if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) < 400)
 				return false;

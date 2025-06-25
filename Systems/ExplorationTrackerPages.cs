@@ -115,7 +115,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("main", Finding.fromEncy("IslandsPDABase1Interior")).addFinding("outside", Finding.fromEncy("IslandsPDAExterior")).addFinding("return", Finding.fromEncy("IslandsPDABase1a")).addFinding("init", Finding.fromEncy("IslandsPDABase1bDesk"));
 	    	
 	    	p = addPage(TrackerPages.DUNEARCH, new PositionTrigger(POITeleportSystem.instance.getPosition("dunearch"), 120));
-	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(C2CItems.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.liquidTank));
+	    	p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(C2CItems.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.breathingFluid));
 	    	if (hard)
 	    		p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 	    	
@@ -137,7 +137,7 @@ namespace ReikaKalseki.SeaToSea
 	    	p.addFinding("treader", Finding.fromScan(TechType.SeaTreader)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("pda", Finding.fromEncy("treaderpod")).addFinding("enzy", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes))).addFinding("basepda", Finding.fromEncy("treadercave")).addFinding("databox", Finding.fromUnlock(TechType.VehicleHullModule2));
 	    	
 	    	p = addPage(TrackerPages.GLASSFOREST, new StoryTrigger(UnderwaterIslandsFloorBiome.instance.discoveryGoal));
-	    	p.addFinding("databox", Finding.fromUnlock(C2CItems.breathingFluid)).addFinding("speed", Finding.fromUnlock(C2CItems.speedModule)).addFinding("bioproc", Finding.fromUnlock(C2CItems.processor)).addFinding("deepvine", Finding.fromStory("DeepvineSamples"));
+	    	p.addFinding("databox", Finding.fromUnlock(C2CItems.liquidTank)).addFinding("speed", Finding.fromUnlock(C2CItems.speedModule)).addFinding("bioproc", Finding.fromUnlock(C2CItems.processor)).addFinding("deepvine", Finding.fromStory("DeepvineSamples"));
 	    	if (hard)
 	    		p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 	    	
