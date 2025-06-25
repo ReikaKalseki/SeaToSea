@@ -75,7 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 	}
 	
-	class PostCoveDomeTag : MonoBehaviour {
+	public class PostCoveDomeTag : MonoBehaviour {
 		
 		private Renderer[] renderers;
 		
@@ -117,13 +117,18 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 		
+		public static int maximumDomeChildren = 16;
+		public static bool fastReproduction = false;
+		
 		void spawnOffspring() {
 			IEnumerable<Vector3> li = WorldUtil.getObjectsNearWithComponent<PostCoveDomeGenerator.ResourceDomeTag>(transform.position, 24).Select(tag => tag.transform.position);
-			GameObject go = PostCoveDomeGenerator.placeRandomResourceDome(gameObject, li);
-			if (go) {
-				go.GetComponent<PostCoveDomeGenerator.ResourceDomeTag>().growFade = 1;
+			if (li.Count() < maximumDomeChildren) {
+				GameObject go = PostCoveDomeGenerator.placeRandomResourceDome(gameObject, li);
+				if (go) {
+					go.GetComponent<PostCoveDomeGenerator.ResourceDomeTag>().growFade = 1;
+				}
 			}
-			Invoke("spawnOffspring", UnityEngine.Random.Range(30F, 120F));
+			Invoke("spawnOffspring", fastReproduction ? 1 : UnityEngine.Random.Range(30F, 120F));
 		}
 		
 	}
