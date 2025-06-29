@@ -41,5 +41,6 @@ $RECYCLE.BIN/
 
 obj/*
 bin/*
+XML/WorldgenSets-temp/*
 
 npp session
