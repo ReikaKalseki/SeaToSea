@@ -252,10 +252,11 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				ret = UNEXPLORED_LOCATION_TEXT;
 				foreach (KeyValuePair<WorldUtil.CompassDirection, Vector3> kvp in WorldUtil.compassAxes) {
-					BiomeBase near = BiomeBase.getBiome(pos+kvp.Value*250);
+					Vector3 dp = pos+kvp.Value*250;
+					BiomeBase near = BiomeBase.getBiome(dp);
 					if (near != null && BiomeDiscoverySystem.instance.isDiscovered(near)) {
 						string opp = WorldUtil.getOpposite(kvp.Key).ToString();
-						ret += " ("+opp[0]+opp.Substring(1).ToLowerInvariant()+" of "+near+")";
+						ret += " ("+opp[0]+opp.Substring(1).ToLowerInvariant()+" of "+WorldUtil.getRegionalDescription(dp, false)+")";
 						break;
 					}
 				}

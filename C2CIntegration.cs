@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea {
     	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.ATPTAPRATE, f => hard ? 10 : 15);
     	if (hard)
     		AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.LEISUREDECO, f => Mathf.Max(f, 18));
+    	AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.PILLARHULL, f => hard ? 2 : 4);
     	
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
     	ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RESSCAN, true);
