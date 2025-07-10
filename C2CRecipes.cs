@@ -46,6 +46,8 @@ namespace ReikaKalseki.SeaToSea
     private static readonly List<TechType> specialRecipes = new List<TechType>();
     
     internal static void addItemsAndRecipes() {
+    	SNUtil.log("Applying recipe changes");
+    	
     	bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
     	
        	TechData rec = new TechData();

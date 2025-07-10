@@ -444,6 +444,8 @@ namespace ReikaKalseki.SeaToSea {
 			SNUtil.addMultiScanUnlock(TechType.NuclearReactor, 7, TechType.NuclearReactor, 1, false);
 			
 			SpriteHandler.RegisterSprite(C2CItems.brineCoral, TextureManager.getSprite(modDLL, "Textures/BrineCoralIcon"));
+			
+			C2CIntegration.prePostAdd();
 		}
     
 		private static void initHandlers() {

@@ -14,37 +14,53 @@ using SMLHelper.V2.Utility;
 
 namespace ReikaKalseki.SeaToSea
 {
-		[Obsolete]
 		internal class C2CVoyager : MonoBehaviour {
 		
 			private static readonly float MIN_VOID_TIME = 10;
-		
-			private LiveMixin[] damageable;
+			private static readonly float STRONG_VOID_TIME = 20;
+			
 			private Rigidbody body;
+			private LiveMixin live;
+			private PowerRelay power;
 			
 			private float voidTime = 0;
 			
 			void Update() {
-				if (damageable == null)
-					damageable = GetComponentsInChildren<LiveMixin>();
 				if (!body)
 					body = GetComponent<Rigidbody>();
+				if (!live)
+					live = GetComponent<LiveMixin>();
+				if (!power)
+					power = GetComponent<PowerRelay>();
 				
-				if (isInVoid())
+				if (shouldSink())
 					voidTime += Time.deltaTime;
 				else
 					voidTime = 0;
 				
 				if (voidTime >= MIN_VOID_TIME) {
-					float f = (float)MathUtil.linterpolate(voidTime-MIN_VOID_TIME, 0, 30, 0, 5, true);
-					f *= (float)MathUtil.linterpolate(-transform.position.y, 0, 25, 1, 0, true);
+					float f2 = (float)MathUtil.linterpolate(voidTime-STRONG_VOID_TIME, 0, 10, 0, 0.5F, true);
+					float f = (float)MathUtil.linterpolate(voidTime-MIN_VOID_TIME, 0, STRONG_VOID_TIME-MIN_VOID_TIME, 0, 50, true);
+					if (voidTime < STRONG_VOID_TIME)
+						f *= (float)MathUtil.linterpolate(-transform.position.y, 0, 25, 1, f2, true);
 					body.AddForce(Vector3.down*Time.deltaTime*f, ForceMode.VelocityChange);
 				}
 			}
         	
 			void Start() {
-				damageable = GetComponentsInChildren<LiveMixin>();
 				base.InvokeRepeating("tick", 0f, 0.5F);
+				base.InvokeRepeating("slowTick", 0f, 5F);
+				
+				foreach (Constructable c in GetComponentsInChildren<Constructable>()) {
+					UnityEngine.Object.Destroy(c.gameObject);
+				}
+				
+				Renderer decals = ObjectUtil.getChildObject(gameObject, "Model/Exterior/Decals").GetComponent<MeshRenderer>();
+				Material decal = decals.materials[4];
+				decal.SetTexture("_MainTex", TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeaVoyagerDecal_MainTex"));
+				decal.SetTexture("_SpecTex", TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeaVoyagerDecal_MainTex"));
+				decal.SetTexture("_EmissionMap", TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeaVoyagerDecal_Illum"));
+				decal.SetTexture("_Illum", TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeaVoyagerDecal_Illum"));
 			}
 
 			private void OnKill() {
@@ -53,19 +69,26 @@ namespace ReikaKalseki.SeaToSea
 			
 			void OnDisable() {
 				base.CancelInvoke("tick");
+				base.CancelInvoke("slowTick");
 			}
 
 			internal void tick() {
 				if (voidTime >= MIN_VOID_TIME) {
-					if (damageable != null) {
-						LiveMixin lv = damageable.GetRandom<LiveMixin>();
-						lv.TakeDamage(Mathf.Clamp(UnityEngine.Random.Range(15F, 25F), lv.maxHealth*0.1F, lv.maxHealth*0.25F), lv.transform.position, DamageType.Cold, gameObject);
-					}
+					bool sunk = transform.position.y < -20;
+					if (live)
+						live.TakeDamage(sunk ? 50 : 10);
+					float trash;
+					if (power)
+						power.ConsumeEnergy(sunk ? 5 : 2, out trash);
 				}
 			}
+
+			internal void slowTick() {
+				ReikaKalseki.Ecocean.ECHooks.attractToSoundPing(this, true, 1);
+			}
 			
-			private bool isInVoid() {
-				return VanillaBiomes.VOID.isInBiome(transform.position.setY(-5));
+			private bool shouldSink() {
+				return VanillaBiomes.VOID.isInBiome(transform.position.setY(-5)) || transform.position.y < -16; //once sunk stay sunk
 			}
 			
 		}
