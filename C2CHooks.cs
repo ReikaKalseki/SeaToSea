@@ -1586,7 +1586,7 @@ namespace ReikaKalseki.SeaToSea {
 				go.EnsureComponent<Magnetic>();
 			}
 	    	
-			SubRoot sub = go.GetComponent<SubRoot>();
+	    	SubRoot sub = ((bool)pi ? pi.GetComponent<SubRoot>() : go.GetComponent<SubRoot>());
 			if (sub) {
 				go.EnsureComponent<Magnetic>();
 				if (sub.isCyclops)
@@ -1768,6 +1768,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	    
 		public static void updateCyclopsModules(SubRoot sm) {
+			if (C2CIntegration.seaVoyager != TechType.None && sm.GetType() == C2CIntegration.seaVoyagerComponent) { //this is the load hook as it has no SkyAppliers
+				sm.gameObject.EnsureComponent<C2CVoyager>();
+				return;
+			}
 			sm.gameObject.EnsureComponent<BrightLightController>().recalculateModule();
 			C2CUtil.resizeCyclopsStorage(sm);
 			if (GameModeUtils.currentEffectiveMode != GameModeOption.Creative && !SNUtil.canUseDebug())
@@ -2388,6 +2392,8 @@ namespace ReikaKalseki.SeaToSea {
 				check.ignoreSpaceRequirements = check.placeable;
 				//check.ignoreSpaceRequirements = true;
 			}
+			if (C2CIntegration.seaVoyager != TechType.None && check.placeOn && check.placeOn.gameObject.GetComponentInParent(C2CIntegration.seaVoyagerComponent))
+				check.placeable = false;
 		}
 	    
 		public static void onHandSend(GameObject target, HandTargetEventType e, GUIHand hand) {/*
