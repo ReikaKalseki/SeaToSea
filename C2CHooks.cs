@@ -236,8 +236,17 @@ namespace ReikaKalseki.SeaToSea {
 			scanToScannerRoom.Add(C2CItems.kelp.TechType);
 			scanToScannerRoom.Add(C2CItems.broodmother.TechType);
 		}
+		
+		//[System.Runtime.InteropServices.DllImport("WorldgenCheck.dll", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl)]
+		//public static extern bool handleWorldgenIntegrity(string s);
 	    
-		public static void onWorldLoaded() {	    	
+		public static void onWorldLoaded() {
+			HarmonyLib.Patches info = HarmonyLib.Harmony.GetPatchInfo(typeof(FCSIntegrationSystem).GetMethod("init", BindingFlags.Instance | BindingFlags.NonPublic));
+			
+						
+			if (WorldgenIntegrityChecks.checkWorldgenIntegrity(false))
+				WorldgenIntegrityChecks.throwError();
+			
 			Inventory.main.equipment.onEquip += onEquipmentAdded;
 			Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 	    	
@@ -370,6 +379,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 	    	
 			ItemUnlockLegitimacySystem.instance.tick(ep);
+			
+			if (Time.deltaTime > 0)
+				BKelpBumpWormSpawner.tickSpawnValidation(ep);
 	    	
 			if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 				Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
@@ -568,6 +580,9 @@ namespace ReikaKalseki.SeaToSea {
 				ch.setValue(ch.getValue() - 0.1F); //was 0.25
 			if (WorldUtil.isInDRF(Player.main.transform.position))
 				ch.setValue(ch.getValue() * 0.5F);
+			if ((Player.main.transform.position-C2CHooks.crashMesa).sqrMagnitude <= 2500) {
+				ch.setValue(ch.getValue() * 0.4F);
+			}
 		}
 	    
 		public static float getSeaglideSpeed(float f) { //1.45 by default

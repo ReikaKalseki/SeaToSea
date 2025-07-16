@@ -103,7 +103,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			//GenUtil.registerWorldgen(generator);
 			int seed = SNUtil.getInstallSeed();
-			IEnumerable<WorldGenerator> gens = generator.split(seed);
+			IEnumerable<VoidSpikes.SpikeCluster> gens = generator.split(seed);
 			foreach (VoidSpikes.SpikeCluster gen in gens) {
 				GenUtil.registerWorldgen(gen);
 				if (entryPoint == null || Vector3.Distance(gen.position, end500m) < Vector3.Distance(entryPoint.position, end500m)) {

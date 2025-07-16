@@ -50,7 +50,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public override bool generate(List<GameObject> li) {
 			if (WorldUtil.getObjectsNearWithComponent<Drillable>(position, 6).Count == 0 && UnityEngine.Random.Range(0F, 1F) < (isKoosh ? 0.8F : 0.6F)) {
 				VanillaResources res = (isKoosh ? kooshTable : mushroomTable).getRandomEntry();
-				GameObject obj = ObjectUtil.createWorldObject(res.prefab);
+				GameObject obj = spawner(res.prefab);
 				obj.transform.position = position;
 				obj.transform.rotation = rotation;
 				li.Add(obj);

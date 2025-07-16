@@ -123,7 +123,7 @@ namespace ReikaKalseki.SeaToSea {
 		void spawnOffspring() {
 			IEnumerable<Vector3> li = WorldUtil.getObjectsNearWithComponent<PostCoveDomeGenerator.ResourceDomeTag>(transform.position, 24).Select(tag => tag.transform.position);
 			if (li.Count() < maximumDomeChildren) {
-				GameObject go = PostCoveDomeGenerator.placeRandomResourceDome(gameObject, li);
+				GameObject go = PostCoveDomeGenerator.placeRandomResourceDome(gameObject, li, id => ObjectUtil.createWorldObject(id));
 				if (go) {
 					go.GetComponent<PostCoveDomeGenerator.ResourceDomeTag>().growFade = 1;
 				}

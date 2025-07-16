@@ -153,4 +153,37 @@
 		
 	</pda>
   </BreakPostCoveDomeResource>
+  <NoBioprocBasePower>
+	<name>
+		
+	</name>
+	<desc>
+		Seabase has no power supply
+	</desc>
+	<pda>
+		
+	</pda>
+  </NoBioprocBasePower>
+  <WeakBioprocBasePower>
+	<name>
+		
+	</name>
+	<desc>
+		Seabase power supply is too weak for this machine
+	</desc>
+	<pda>
+		
+	</pda>
+  </WeakBioprocBasePower>
+  <NoGeyserToFilter>
+	<name>
+		
+	</name>
+	<desc>
+		Geyser filter needs to be placed over a geyser!
+	</desc>
+	<pda>
+		
+	</pda>
+  </NoGeyserToFilter>
 </Root>

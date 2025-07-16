@@ -16,16 +16,15 @@
 		DownloadedData/Codes
 	</category>
 	<radio>
-		[distant reaper calls faintly audible throughout]
-		[quiet] This is lifepod 10. We're RIGHT NEXT to one of those awful monsters. We-
+		This is lifepod 10. We're RIGHT NEXT to one of those awful monsters. We-
 		
-		[other voice, whispering] Shut up, it'll hear us!
+		Shut up, it'll hear us!
 		
-		[first person, whispering, offmic] If we don't send out a distress we'll never make it out of here! Hear us or not, sooner or later it'll get curious and find its way in!
+		If we don't send out a distress we'll never make it out of here! Hear us or not, sooner or later it'll get curious and find its way in!
 		
-		[quiet but not whispering] We came down behind the aurora, just barely missed the deep water. Bring the big guns...you'll need them.
+		We came down behind the aurora, just barely missed the deep water. Bring the big guns...you'll need them.
 		
-		[second person] What guns? Didn't you hear about what happened on obrax- [cut off]
+		What guns? Didn't you hear about what happened on obrax-
 	</radio>
 	<radioSound>
 		Sounds/vo/radio_crashmesa.ogg

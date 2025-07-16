@@ -80,7 +80,7 @@ namespace ReikaKalseki.SeaToSea
 			foreach (Prop s in items) {
 				//SNUtil.writeToChat("Added "+s);
 				for (int i = 0; i < 2; i++) {
-					GameObject item = ObjectUtil.createWorldObject(s.prefab.baseTemplate.prefab, true, false);//spawner(s.prefab.ClassID);
+					GameObject item = spawner(s.prefab.baseTemplate.prefab);//spawner(s.prefab.ClassID);
 					item.SetActive(false);
 					ObjectUtil.refillItem(item);
 					con.container.AddItem(item.GetComponent<Pickupable>());
@@ -89,11 +89,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			li.Add(bag);
 			
-			GameObject go = ObjectUtil.createWorldObject("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
+			GameObject go = spawner("12c95e66-fb54-47b3-87f1-8e318394b839");//flashlight
 			go.SetActive(false);
 			ObjectUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());
-			go = ObjectUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
+			go = spawner("9ef36033-b60c-4f8b-8c3a-b15035de3116"); //repair tool
 			go.SetActive(false);
 			ObjectUtil.refillItem(go);
 			con.container.AddItem(go.GetComponent<Pickupable>());

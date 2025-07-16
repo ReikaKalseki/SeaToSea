@@ -244,6 +244,10 @@ namespace ReikaKalseki.SeaToSea {
 		internal FMOD_CustomLoopingEmitter soundLoop;
 		private bool setCollision;
 		
+		private float lastPowerCheck;
+		
+		private string powerErrorKey;
+		
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
 			C2CItems.processor.initializeMachine(gameObject);
@@ -285,6 +289,35 @@ namespace ReikaKalseki.SeaToSea {
 			data.addProperty("required", enzyRequired);
 		}
 		
+		public static string defaultPowerErrorKey = null;
+		
+		private void checkPower() {
+			powerErrorKey = defaultPowerErrorKey;
+			SubRoot sub = getSub();
+			PowerRelay pwr = sub.powerRelay;
+			if (!pwr) {
+				powerErrorKey = "NoBioprocBasePower";
+				return;
+			}
+			bool valid = false;
+			foreach (IPowerInterface src in pwr.inboundPowerSources) {
+				if (src is SolarPanel) {
+					
+				}				
+				else if (src.GetMaxPower() >= 400) {
+					valid = true;
+					break;
+				}
+			}
+			if (!valid || pwr.GetMaxPower() < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 3000 : 1000)) {
+				powerErrorKey = "WeakBioprocBasePower";
+			}
+		}
+		
+		public override string getErrorHover() {
+			return powerErrorKey;
+		}
+		
 		protected override void updateEntity(float seconds) {
 			if (mainRenderer == null)
 				mainRenderer = ObjectUtil.getChildObject(gameObject, "model").GetComponent<Renderer>();
@@ -303,12 +336,18 @@ namespace ReikaKalseki.SeaToSea {
 				setCollision = true;
 			}
 			
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time-lastPowerCheck >= 5) {
+				checkPower();
+				lastPowerCheck = time;
+			}
+			
 			//soundLoop.attributes.position = transform.position.toFMODVector();
 			
 			if (operationCooldown > 0) {
 				operationCooldown -= seconds;
 			}
-			else if (consumePower(Bioprocessor.POWER_COST_IDLE*seconds)) {
+			else if (powerErrorKey == null && consumePower(Bioprocessor.POWER_COST_IDLE*seconds)) {
 				setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");
@@ -388,8 +427,8 @@ namespace ReikaKalseki.SeaToSea {
 				setEmissiveColor(offlineColor);
 				operationCooldown = 5;
 			}
-			if (currentOperation != null && DayNightCycle.main.timePassedAsFloat-lastWorkingSound >= soundLoop.length-0.1F) {
-				lastWorkingSound = DayNightCycle.main.timePassedAsFloat;
+			if (currentOperation != null && time-lastWorkingSound >= soundLoop.length-0.1F) {
+				lastWorkingSound = time;
 				//SNUtil.playSoundAt(SNUtil.getSound("event:/sub_module/workbench/working"), gameObject.transform.position);
 				SoundManager.playSoundAt(Bioprocessor.workingSound, gameObject.transform.position);
 			}

@@ -52,7 +52,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (UWE.Utils.RaycastIntoSharedBuffer(ray, vec.magnitude, Voxeland.GetTerrainLayerMask()) > 0) {
 					RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
 					if (hit.transform != null) {
-						GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.bkelpBumpWorm.ClassID);
+						GameObject go = spawner(SeaToSeaMod.bkelpBumpWorm.ClassID);
 						go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
 						go.transform.position = hit.point;
 						go.transform.RotateAroundLocal(go.transform.up, UnityEngine.Random.Range(0F, 360F));
@@ -64,7 +64,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (placed < 3)
 				return false;
 			for (int i = 0; i < 1; i++) {
-				GameObject grub = ObjectUtil.createWorldObject(C2CItems.broodmother.ClassID);
+				GameObject grub = spawner(C2CItems.broodmother.ClassID);
 				grub.transform.rotation = Quaternion.identity;
 				grub.transform.position = MathUtil.getRandomVectorAround(position+Vector3.up*6, 3);
 				li.Add(grub);
@@ -74,6 +74,42 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public override LargeWorldEntity.CellLevel getCellLevel() {
 			return LargeWorldEntity.CellLevel.Far;
+		}
+		
+		private static float bkelpCheckTimer = 0;
+		
+		public static void tickSpawnValidation(Player ep) {
+			Vector3 root = C2CProgression.instance.bkelpNestBumps[0];
+			if (ep && (ep.transform.position-root).sqrMagnitude <= 10000) {
+				bkelpCheckTimer += Time.deltaTime;
+				if (bkelpCheckTimer >= 30) {
+					doSpawnCheck();
+					bkelpCheckTimer = 0;
+				}
+			}
+			else {
+				bkelpCheckTimer = 0;
+			}
+		}
+		
+		private static void doSpawnCheck() {
+			bool any = false;
+			foreach (Vector3 pos in C2CProgression.instance.bkelpNestBumps) {
+				if (any)
+					break;
+				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(pos, 25)) {
+					if (pi.ClassId == SeaToSeaMod.bkelpBumpWorm.ClassID) {
+						any = true;
+						break;
+					}
+				}
+			}
+			if (!any) {
+				SNUtil.writeToChat("Regenerating nest");
+				foreach (Vector3 pos in C2CProgression.instance.bkelpNestBumps) {
+					GenUtil.fireGenerator(new BKelpBumpWormSpawner(pos + Vector3.down * 3), new List<GameObject>());
+				}
+			}
 		}
 			
 	}
