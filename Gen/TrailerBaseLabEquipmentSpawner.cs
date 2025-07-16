@@ -43,7 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 	    public override bool generate(List<GameObject> li) {	
 			foreach (KeyValuePair<string, int> kvp in TrailerBaseLabEquipmentSpawner.itemList) {
 				for (int i = 0; i < kvp.Value; i++) {
-					GameObject go = ObjectUtil.createWorldObject(kvp.Key);
+					GameObject go = spawner(kvp.Key);
 					go.transform.position = MathUtil.getRandomVectorAround(position, 0.4F);
 					go.GetComponent<Rigidbody>().isKinematic = false;
 					go.EnsureComponent<WorldForces>().underwaterGravity = 3;

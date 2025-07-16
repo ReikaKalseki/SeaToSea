@@ -435,9 +435,6 @@ namespace ReikaKalseki.SeaToSea {
 				});
 			}
         
-			SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("kharaaTreatmentRemainingTime", BindingFlags.Instance | BindingFlags.NonPublic), () => LiquidBreathingSystem.instance);
-        	SaveSystem.addPlayerSaveCallback(typeof(EnvironmentalDamageSystem).GetField("recoveryWarningEndTime", BindingFlags.Instance | BindingFlags.NonPublic), () => EnvironmentalDamageSystem.instance);
-        
 			SNUtil.addMultiScanUnlock(TechType.PowerTransmitter, 2, TechType.PowerTransmitter, 1, false);
 			SNUtil.addMultiScanUnlock(TechType.LEDLight, 2, TechType.LEDLight, 1, false);
 			SNUtil.addMultiScanUnlock(TechType.ThermalPlant, 4, TechType.ThermalPlant, 1, false);
@@ -449,6 +446,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
     
 		private static void initHandlers() {
+			Harmony h = harmony;
+			SaveSystem.addPlayerSaveCallback(typeof(LiquidBreathingSystem).GetField("kharaaTreatmentRemainingTime", BindingFlags.Instance | BindingFlags.NonPublic), () => LiquidBreathingSystem.instance);
+        	SaveSystem.addPlayerSaveCallback(typeof(EnvironmentalDamageSystem).GetField("recoveryWarningEndTime", BindingFlags.Instance | BindingFlags.NonPublic), () => EnvironmentalDamageSystem.instance);
+        
 			POITeleportSystem.instance.populate();
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);			
@@ -548,6 +549,8 @@ namespace ReikaKalseki.SeaToSea {
 				{ "All_Items_1x1", false },
 				{ "Radiant Depths", true }, //TODO id might be wrong, also might be 2.0
 				{ "SubnauticaAutosave", true },
+				{ "SeaToSeaWorldGenFixer", true },
+				{ "FCSIntegrationRemover", true },
 				{ "aaaaaaaaaa", true },
 			};
 			foreach (QModManager.API.IQMod mod in QModManager.API.QModServices.Main.GetAllMods()) {

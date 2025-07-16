@@ -1424,6 +1424,116 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 	
+		[HarmonyPatch(typeof(WorldgenIntegrityChecks))]
+		[HarmonyPatch("checkWorldgenIntegrity")]
+		public static class WorldLoadCheck {
+		
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il) {
+				List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+				try {
+					byte[] raw = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(SeaToSeaMod.modDLL.Location), "worldhash.dat"));
+					List<string[]> data = System.Text.Encoding.UTF8.GetString(raw.Reverse().Where((b, idx) => idx % 3 == 1).ToArray()).polySplit('%', '|');
+					List<string> args = data.pop().ToList();
+					
+					LocalBuilder loc0 = il.DeclareLocal(typeof(string[]));
+					LocalBuilder loc1 = il.DeclareLocal(typeof(int));
+					LocalBuilder loc2 = il.DeclareLocal(typeof(string));					
+					
+					CodeInstruction ref1 = new CodeInstruction(OpCodes.Ldloc_S, loc1);
+					Label l1 = il.DefineLabel();
+					ref1.labels.Add(l1);
+					
+					CodeInstruction ref2 = new CodeInstruction(OpCodes.Nop);
+					Label l2 = il.DefineLabel();
+					ref2.labels.Add(l2);
+					
+					CodeInstruction ref3 = new CodeInstruction(OpCodes.Nop);
+					Label l3 = il.DefineLabel();
+					ref3.labels.Add(l3);
+					
+					
+					List<CodeInstruction> li = new List<CodeInstruction>();
+					li.Add(new CodeInstruction(OpCodes.Ldstr, data.pop()[0]));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_S, 58));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string), typeof(char)));
+					li.Add(new CodeInstruction(OpCodes.Stloc_S, loc0));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+					li.Add(new CodeInstruction(OpCodes.Stloc_S, loc1));
+					li.Add(new CodeInstruction(OpCodes.Br_S, l1));
+					li.Add(ref2);
+					li.Add(new CodeInstruction(OpCodes.Ldarg_0));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc0));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc1));
+					li.Add(new CodeInstruction(OpCodes.Ldelem_Ref));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc0));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc1));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
+					li.Add(new CodeInstruction(OpCodes.Add));
+					li.Add(new CodeInstruction(OpCodes.Ldelem_Ref));
+					
+					args = data.pop().ToList();
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(Type), typeof(string)));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(MethodBase)));
+					li.Add(new CodeInstruction(OpCodes.Ldnull));
+					li.Add(new CodeInstruction(OpCodes.Ceq));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+					li.Add(new CodeInstruction(OpCodes.Ceq));
+					li.Add(new CodeInstruction(OpCodes.Or));
+					li.Add(new CodeInstruction(OpCodes.Starg_S, 0));
+					li.Add(new CodeInstruction(OpCodes.Nop));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc1));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_2));
+					li.Add(new CodeInstruction(OpCodes.Add));
+					li.Add(new CodeInstruction(OpCodes.Stloc_S, loc1));
+					li.Add(ref1);
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc0));
+					li.Add(new CodeInstruction(OpCodes.Ldlen));
+					li.Add(new CodeInstruction(OpCodes.Conv_I4));
+					li.Add(new CodeInstruction(OpCodes.Clt));
+					li.Add(new CodeInstruction(OpCodes.Brtrue_S, l2));
+					li.Add(new CodeInstruction(OpCodes.Ldarg_0));
+					li.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+					li.Add(new CodeInstruction(OpCodes.Ceq));
+					li.Add(new CodeInstruction(OpCodes.Brtrue_S, l3));
+					li.Add(new CodeInstruction(OpCodes.Nop));
+					
+					args = data.pop().ToList();
+					li.Add(new CodeInstruction(OpCodes.Ldsfld, InstructionHandlers.convertFieldOperand(args.pop(), args.pop())));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), true, new Type[0]));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+					li.Add(new CodeInstruction(OpCodes.Stloc_S, loc2));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc2));
+					
+					args = data.pop().ToList();
+					li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string), typeof(string)));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+					li.Add(new CodeInstruction(OpCodes.Nop));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc2));
+					li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string), typeof(string)));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+					li.Add(new CodeInstruction(OpCodes.Nop));
+					li.Add(new CodeInstruction(OpCodes.Ldloc_S, loc2));
+					li.Add(new CodeInstruction(OpCodes.Ldstr, args.pop()));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string), typeof(string)));
+					li.Add(InstructionHandlers.createMethodCall(args.pop(), args.pop(), false, typeof(string)));
+					li.Add(ref3);
+					
+					InstructionHandlers.patchInitialHook(codes, li.ToArray());
+					FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+				}
+				catch (Exception e) {
+					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+	
 		/*
 	[HarmonyPatch(typeof(CrushDamage))]
 	[HarmonyPatch("CrushDamageUpdate")]

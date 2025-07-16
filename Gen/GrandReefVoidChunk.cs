@@ -77,7 +77,7 @@ namespace ReikaKalseki.SeaToSea
 		}
 		
 		public override bool generate(List<GameObject> generated) {			
-			rock = ObjectUtil.createWorldObject(TERRAIN_CHUNK);
+			rock = spawner(TERRAIN_CHUNK);
 			rock.transform.position = position;
 			rock.transform.localScale = scale;
 			rock.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.up);
@@ -97,7 +97,7 @@ namespace ReikaKalseki.SeaToSea
 						use.y -= 0.05F;
 					}
 					if (position.y-use.y < 1.9) {
-						GameObject go = ObjectUtil.createWorldObject(p.getRandomPrefab(true));
+						GameObject go = spawner(p.getRandomPrefab(true));
 						go.transform.position = pos.Value;
 						go.transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0F, 360F), Vector3.up);
 						setPlantHeight(plantYAvg, p, go);

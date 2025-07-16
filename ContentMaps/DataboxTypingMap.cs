@@ -50,6 +50,10 @@ namespace ReikaKalseki.SeaToSea
 			}
 		}
 		
+		public bool isEmpty() {
+			return data.Count <= 0;
+		}
+		
 		public void addValue(double x, double y, double z, TechType type) {
 			addValue(new Vector3((float)x, (float)y, (float)z), type);
 		}

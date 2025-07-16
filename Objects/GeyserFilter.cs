@@ -126,7 +126,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		public override bool isWorking() {
-			return true;
+			return (bool)liveGeyser;
+		}
+		
+		public override string getErrorHover() {
+			return liveGeyser ? null : "NoGeyserToFilter";
 		}
 		
 		public override float getProgressScalar() {

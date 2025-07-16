@@ -51,7 +51,7 @@ namespace ReikaKalseki.SeaToSea {
 		
 		public static readonly FCSIntegrationSystem instance = new FCSIntegrationSystem();
 		
-		private readonly bool isFCSLoaded;
+		private bool isFCSLoaded;
 		
 		private Type drillController;
 		private Type drillOreManager;
@@ -80,7 +80,11 @@ namespace ReikaKalseki.SeaToSea {
 		
 		
 		private FCSIntegrationSystem() {
-	    	isFCSLoaded = QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub");
+			init();
+		}
+		
+		private void init() {
+			isFCSLoaded = QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub");
 	    	if (isFCSLoaded) {
 	    		
 	    	}
@@ -354,6 +358,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		
 		internal void applyPatches() {
+			if (QModManager.API.QModServices.Main.ModPresent("FCSAlterraHub") != isFCSLoaded)
+				throw new Exception("Modlist consistency failure");
 			if (isFCSLoaded)
 				doApplyPatches();
 		}
@@ -522,89 +528,89 @@ namespace ReikaKalseki.SeaToSea {
 			paint.addIngredient(TechType.PurpleStalkSeed, 1);
 			paint.Patch();
 			
-			assignRecipe("ahsLeftCornerRailing", 1);
-			assignRecipe("ahsLeftCornerwGlassRailing", 1, basicGlass());
-			assignRecipe("ahsRightCornerRailing", 1);
-			assignRecipe("ahsRightCornerwGlassRailing", 1, basicGlass());
-			assignRecipe("ahsrailing", 1);
-			assignRecipe("ahsrailingglass", 1, basicGlass());
-			assignRecipe("CabinetMediumTall", 2);
-			assignRecipe("CabinetTall", 3);
-			assignRecipe("CabinetTallWide", 4);
-			assignRecipe("CabinetTVStand", 3);
-			assignRecipe("CabinetWide", 3);
-			assignRecipe("Curtain", 0, fabric());
-			assignRecipe("DisplayBoard", 1, electronicsTier2(2));
+			doAssignRecipe("ahsLeftCornerRailing", 1);
+			doAssignRecipe("ahsLeftCornerwGlassRailing", 1, basicGlass());
+			doAssignRecipe("ahsRightCornerRailing", 1);
+			doAssignRecipe("ahsRightCornerwGlassRailing", 1, basicGlass());
+			doAssignRecipe("ahsrailing", 1);
+			doAssignRecipe("ahsrailingglass", 1, basicGlass());
+			doAssignRecipe("CabinetMediumTall", 2);
+			doAssignRecipe("CabinetTall", 3);
+			doAssignRecipe("CabinetTallWide", 4);
+			doAssignRecipe("CabinetTVStand", 3);
+			doAssignRecipe("CabinetWide", 3);
+			doAssignRecipe("Curtain", 0, fabric());
+			doAssignRecipe("DisplayBoard", 1, electronicsTier2(2));
 			assignRecipe("Elevator", 3, electronicsTier2(), motorized(2));
-			assignRecipe("EmptyObservationTank", 2, strongGlass());
-			assignRecipe("FCSCrewBunkBed", 2, fabric(2));
-			assignRecipe("FCSCrewLocker", 2);
-			assignRecipe("FCSCuringCabinet", 2, new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Glass, 1));
+			doAssignRecipe("EmptyObservationTank", 2, strongGlass());
+			doAssignRecipe("FCSCrewBunkBed", 2, fabric(2));
+			doAssignRecipe("FCSCrewLocker", 2);
+			doAssignRecipe("FCSCuringCabinet", 2, new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Glass, 1));
 			assignRecipe("FCSJukeBox", 1, new Ingredient[]{new Ingredient(TechType.ComputerChip, 1), new Ingredient(luminolDrop.TechType, 1)}, speaker());
-			assignRecipe("FCSJukeBoxSpeaker", 2, speaker());
-			assignRecipe("FCSJukeBoxSubWoofer", 2, speaker());
-			assignRecipe("FCSMicrowave", 1, electronicsTier1());
+			doAssignRecipe("FCSJukeBoxSpeaker", 2, speaker());
+			doAssignRecipe("FCSJukeBoxSubWoofer", 2, speaker());
+			doAssignRecipe("FCSMicrowave", 1, electronicsTier1());
 			assignRecipe("FCSRug", 0, fabric(3), new Ingredient[]{new Ingredient(paint.TechType, 1)});
-			assignRecipe("FCSShower", 2, new Ingredient(TechType.Glass, 2), new Ingredient(TechType.Pipe, 5));
-			assignRecipe("FCSSink", 2, new Ingredient(TechType.Pipe, 5));
-			assignRecipe("FCSToilet", 1, new Ingredient(TechType.Pipe, 5));
-			assignRecipe("FCSStairs", 2);
+			doAssignRecipe("FCSShower", 2, new Ingredient(TechType.Glass, 2), new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("FCSSink", 2, new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("FCSToilet", 1, new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("FCSStairs", 2);
 			assignRecipe("FCSStove", 2, electronicsTier1(2), strongGlass(1));
-			assignRecipe("FireExtinguisherRefueler", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.Pipe, 5));
-			assignRecipe("FloodLEDLight", 1, new Ingredient(TechType.Quartz, 2));
-			assignRecipe("FloorShelf01", 1);
-			assignRecipe("FloorShelf02", 3);
-			assignRecipe("FloorShelf03", 2);
-			assignRecipe("FloorShelf04", 3);
-			assignRecipe("FloorShelf05", 3);
-			assignRecipe("FloorShelf06", 2);
-			assignRecipe("FloorShelf07", 2);
-			assignRecipe("HologramPoster", 0, new Ingredient(TechType.Quartz, 1), new Ingredient(luminolDrop.TechType, 1), new Ingredient(TechType.Magnetite, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
-			assignRecipe("LedLightStickLong", 1, new Ingredient(TechType.Quartz, 3));
-			assignRecipe("LedLightStickShort", 1, new Ingredient(TechType.Quartz, 1));
-			assignRecipe("LedLightStickWall", 1, new Ingredient(TechType.Quartz, 2));
-			assignRecipe("MiniFountainFilter", 1, new Ingredient(TechType.Pipe, 5));
-			assignRecipe("MountSmartTV", 1, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(paint.TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 3), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 3));
-			assignRecipe("NeonBarStool", 2, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonPlanter", 2, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonShelf01", 3, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonShelf02", 2, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonShelf03", 1, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonTable01", 1, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("NeonTable02", 1, new Ingredient(luminolDrop.TechType, 1));
-			assignRecipe("OutsideSign", 2, new Ingredient(TechType.Quartz, 2), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Silver, 1));
-			assignRecipe("pccpu", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 2));
-			assignRecipe("pcmonitor", 1, new Ingredient(TechType.WiringKit, 1), new Ingredient(paint.TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 2), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 2));
-			assignRecipe("PeeperLoungeBar", 3, new Ingredient(TechType.ComputerChip, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1));
+			doAssignRecipe("FireExtinguisherRefueler", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("FloodLEDLight", 1, new Ingredient(TechType.Quartz, 2));
+			doAssignRecipe("FloorShelf01", 1);
+			doAssignRecipe("FloorShelf02", 3);
+			doAssignRecipe("FloorShelf03", 2);
+			doAssignRecipe("FloorShelf04", 3);
+			doAssignRecipe("FloorShelf05", 3);
+			doAssignRecipe("FloorShelf06", 2);
+			doAssignRecipe("FloorShelf07", 2);
+			doAssignRecipe("HologramPoster", 0, new Ingredient(TechType.Quartz, 1), new Ingredient(luminolDrop.TechType, 1), new Ingredient(TechType.Magnetite, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
+			doAssignRecipe("LedLightStickLong", 1, new Ingredient(TechType.Quartz, 3));
+			doAssignRecipe("LedLightStickShort", 1, new Ingredient(TechType.Quartz, 1));
+			doAssignRecipe("LedLightStickWall", 1, new Ingredient(TechType.Quartz, 2));
+			doAssignRecipe("MiniFountainFilter", 1, new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("MountSmartTV", 1, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(paint.TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 3), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 3));
+			doAssignRecipe("NeonBarStool", 2, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonPlanter", 2, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonShelf01", 3, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonShelf02", 2, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonShelf03", 1, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonTable01", 1, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("NeonTable02", 1, new Ingredient(luminolDrop.TechType, 1));
+			doAssignRecipe("OutsideSign", 2, new Ingredient(TechType.Quartz, 2), new Ingredient(TechType.CopperWire, 1), new Ingredient(TechType.Silver, 1));
+			doAssignRecipe("pccpu", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 2));
+			doAssignRecipe("pcmonitor", 1, new Ingredient(TechType.WiringKit, 1), new Ingredient(paint.TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 2), new Ingredient(TechType.Quartz, 2), new Ingredient(luminolDrop.TechType, 2));
+			doAssignRecipe("PeeperLoungeBar", 3, new Ingredient(TechType.ComputerChip, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1));
 			assignRecipe("QuantumPowerBankCharger", 0, new Ingredient[]{new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, reinforced(2), electronicsTier1(4));
 			assignRecipe("QuantumTeleporter", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 1), new Ingredient(EcoceanMod.glowOil.TechType, 4)}, electronicsTier3());
 			//assignRecipe("QuantumTeleporterVehiclePad", 8, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 4), new Ingredient(TechType.PrecursorIonCrystal, 5), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2), new Ingredient(EcoceanMod.glowOil.TechType, 8)}, electronicsTier3());
-			assignRecipe("Recycler", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 2));
-			assignRecipe("RingLight", 1, new Ingredient(TechType.Quartz, 2));
-			assignRecipe("Seabreeze", 3, electronicsTier1());
-			assignRecipe("Sofa1", 1, fabric(1));
-			assignRecipe("Sofa2", 3, fabric(2));
-			assignRecipe("Sofa3", 2, fabric(2));
+			doAssignRecipe("Recycler", 1, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 2));
+			doAssignRecipe("RingLight", 1, new Ingredient(TechType.Quartz, 2));
+			doAssignRecipe("Seabreeze", 3, electronicsTier1());
+			doAssignRecipe("Sofa1", 1, fabric(1));
+			doAssignRecipe("Sofa2", 3, fabric(2));
+			doAssignRecipe("Sofa3", 2, fabric(2));
 			assignRecipe("TableSmartTV", "MountSmartTV");
-			assignRecipe("TrashReceptacle", 3);
+			doAssignRecipe("TrashReceptacle", 3);
 			assignRecipe("WallSign", "OutsideSign");
 			
-			notBuyableTechs.Add(assignRecipe("AlterraHubDepot", 6, electronicsTier2(1)));
-			notBuyableTechs.Add(assignRecipe("DronePortPad", 8, reinforcedStrong(2)));
-			notBuyableTechs.Add(assignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1)));
+			notBuyableTechs.Add(doAssignRecipe("AlterraHubDepot", 6, electronicsTier2(1)));
+			notBuyableTechs.Add(doAssignRecipe("DronePortPad", 8, reinforcedStrong(2)));
+			notBuyableTechs.Add(doAssignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1)));
 			assignRecipe("PatreonStatue", 2, new Ingredient[]{new Ingredient(TechType.Quartz, 1)}, electronicsTier1());
 			
-			assignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.AdvancedWiringKit, 1)});
-			assignRecipe("AlterraSolarCluster", 0, new Ingredient[]{new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 2), new Ingredient(TechType.Gold, 3), new Ingredient(TechType.WiringKit, 1)});
-			assignRecipe("JetStreamT242", 4, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 2), new Ingredient(TechType.Silicone, 4));
-			assignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
+			doAssignRecipe("AlterraGen", 5, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.AdvancedWiringKit, 1)});
+			doAssignRecipe("AlterraSolarCluster", 0, new Ingredient[]{new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 2), new Ingredient(TechType.Gold, 3), new Ingredient(TechType.WiringKit, 1)});
+			doAssignRecipe("JetStreamT242", 4, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 2), new Ingredient(TechType.Silicone, 4));
+			doAssignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
 			assignRecipe("TelepowerPylon", 4, new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3)}, electronicsTier3());
-			assignRecipe("UniversalCharger", 2, electronicsTier2(4));
+			doAssignRecipe("UniversalCharger", 2, electronicsTier2(4));
 			
 			TechType plat = findFCSItem("WindSurferPlatform_Kit");
 			RecipeUtil.addRecipe(plat, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
 			CraftDataHandler.SetItemSize(plat, new Vector2int(3, 3));
-			assignRecipe("WindSurferPlatform_Kit", 0, floatingPlatform(10));
+			doAssignRecipe("WindSurferPlatform_Kit", 0, floatingPlatform(10));
 			
 			TechType turb = findFCSItem("WindSurfer_Kit");
 			RecipeUtil.addRecipe(turb, TechGroup.Machines, TechCategory.Machines, new string[]{"Machines"});
@@ -613,7 +619,7 @@ namespace ReikaKalseki.SeaToSea {
 			
 			TechType tt = findFCSItem("WindSurferOperator");
 			//RecipeUtil.addRecipe(tt, TechGroup.Constructor, TechCategory.Constructor, null, 1, CraftTree.Type.Constructor);
-			assignRecipe("WindSurferOperator", 0, new Ingredient[]{new Ingredient(TechType.Silicone, 8), new Ingredient(TechType.TitaniumIngot, 2), new Ingredient(TechType.Polyaniline, 2), new Ingredient(TechType.CopperWire, 5), new Ingredient(TechType.AdvancedWiringKit, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 5)});
+			doAssignRecipe("WindSurferOperator", 0, new Ingredient[]{new Ingredient(TechType.Silicone, 8), new Ingredient(TechType.TitaniumIngot, 2), new Ingredient(TechType.Polyaniline, 2), new Ingredient(TechType.CopperWire, 5), new Ingredient(TechType.AdvancedWiringKit, 2), new Ingredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 5)});
 			TechnologyUnlockSystem.instance.addDirectUnlock(tt, plat);
 			TechnologyUnlockSystem.instance.addDirectUnlock(tt, turb);
 			
@@ -624,16 +630,16 @@ namespace ReikaKalseki.SeaToSea {
 			assignRecipe("MiniMedBay", 4, new Ingredient[]{new Ingredient(C2CItems.bandage.TechType, 4)}, electronicsTier3());
 			
 			assignRecipe("AutoCrafter", 4, new Ingredient[]{new Ingredient(TechType.AluminumOxide, 3)}, motorized(2), electronicsTier3());
-			assignRecipe("DeepDrillerLightDuty", 0, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Diamond, 6), new Ingredient(TechType.PlasteelIngot, 1));
-			assignRecipe("DeepDrillerMK3", 0, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 8), new Ingredient(TechType.Diamond, 9), new Ingredient(TechType.PlasteelIngot, 2));
+			doAssignRecipe("DeepDrillerLightDuty", 0, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Diamond, 6), new Ingredient(TechType.PlasteelIngot, 1));
+			doAssignRecipe("DeepDrillerMK3", 0, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 8), new Ingredient(TechType.Diamond, 9), new Ingredient(TechType.PlasteelIngot, 2));
 			assignRecipe("HydroponicHarvester", 2, strongGlass(), motorized());
 			assignRecipe("MatterAnalyzer", 3, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1)}, electronicsTier3());
 			assignRecipe("Replicator", 4, new Ingredient[]{new Ingredient(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1)}, electronicsTier3(), strongGlass(1));
 			
-			assignRecipe("AlterraStorage", 5, electronicsTier3());
+			doAssignRecipe("AlterraStorage", 5, electronicsTier3());
 			assignRecipe("DSSAntenna", 6, electronicsTier1(3), new Ingredient[]{new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1), new Ingredient(TechType.Polyaniline, 2)});
-			assignRecipe("DSSFloorServerRack", 3, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 4));
-			assignRecipe("DSSWallServerRack", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 3));
+			doAssignRecipe("DSSFloorServerRack", 3, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 4));
+			doAssignRecipe("DSSWallServerRack", 2, new Ingredient(TechType.AdvancedWiringKit, 1), new Ingredient(TechType.ComputerChip, 3));
 			assignRecipe("DSSItemDisplay", "MountSmartTV");
 			assignRecipe("DSSTerminalMonitor", "MountSmartTV");
 			
@@ -642,10 +648,10 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addRecipe(findFCSItem("PaintCan"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
 			RecipeUtil.addRecipe(findFCSItem("DSSServer"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
 			RecipeUtil.addRecipe(findFCSItem("DSSTransceiver"), TechGroup.Personal, TechCategory.Tools, new string[]{"Personal", "Tools"});
-			assignRecipe("PaintTool", 2, new Ingredient(TechType.Battery, 1), new Ingredient(TechType.Pipe, 5));
-			assignRecipe("PaintCan", 1, new Ingredient(paint.TechType, 4));
-			assignRecipe("DSSServer", 0, new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
-			assignRecipe("DSSTransceiver", 0, new Ingredient(TechType.ComputerChip, 2), new Ingredient(TechType.WiringKit, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(TechType.Gold, 2), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1));
+			doAssignRecipe("PaintTool", 2, new Ingredient(TechType.Battery, 1), new Ingredient(TechType.Pipe, 5));
+			doAssignRecipe("PaintCan", 1, new Ingredient(paint.TechType, 4));
+			doAssignRecipe("DSSServer", 0, new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
+			doAssignRecipe("DSSTransceiver", 0, new Ingredient(TechType.ComputerChip, 2), new Ingredient(TechType.WiringKit, 1), new Ingredient(TechType.Magnetite, 4), new Ingredient(TechType.Gold, 2), new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1));
 			
 			fcsBiofuel = findFCSItem("FCSBioFuel");
 			TechData td = RecipeUtil.addRecipe(fcsBiofuel, TechGroup.Resources, C2CItems.chemistryCategory, new string[]{"Resources", "C2Chemistry"});
@@ -689,7 +695,7 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (string item in refItem) {
 				li = RecipeUtil.combineIngredients(li, RecipeUtil.getRecipe(findFCSItem(item)).Ingredients);
 			}
-			return assignRecipe(id, 0, li.ToArray());
+			return doAssignRecipe(id, 0, li.ToArray());
 		}
 		
 		public TechType assignRecipe(string id, int titanium, Ingredient[] set1, Ingredient[] set2, Ingredient[] set3 = null) {
@@ -698,10 +704,10 @@ namespace ReikaKalseki.SeaToSea {
 			li.AddRange(set2);
 			if (set3 != null)
 				li.AddRange(set3);
-			return assignRecipe(id, titanium, li.ToArray());
+			return doAssignRecipe(id, titanium, li.ToArray());
 		}
 		
-		public TechType assignRecipe(string id, int titanium, params Ingredient[] items) {
+		public TechType doAssignRecipe(string id, int titanium, params Ingredient[] items) {
 			TechType tt = TechType.None;
 			try {
 				tt = findFCSItem(id);

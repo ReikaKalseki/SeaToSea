@@ -153,7 +153,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 			
 	    public override bool generate(List<GameObject> li) {
-			GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.postCoveDome.ClassID);
+			GameObject go = spawner(SeaToSeaMod.postCoveDome.ClassID);
 			go.transform.position = position;
 			go.transform.rotation = rotation;
 			li.Add(go);
@@ -161,7 +161,7 @@ namespace ReikaKalseki.SeaToSea {
 			HashSet<Vector3> placed = new HashSet<Vector3>();
 			int failed = 0;
 			for (int i = 0; i < 24; i++) {
-				GameObject go2 = placeRandomResourceDome(go, placed);
+				GameObject go2 = placeRandomResourceDome(go, placed, spawner);
 				if (go2) {
 					li.Add(go2);
 					placed.Add(go2.transform.position);
@@ -182,7 +182,7 @@ namespace ReikaKalseki.SeaToSea {
 			return LargeWorldEntity.CellLevel.Far;
 		}
 		
-		public static GameObject placeRandomResourceDome(GameObject from, IEnumerable<Vector3> avoid) {
+		public static GameObject placeRandomResourceDome(GameObject from, IEnumerable<Vector3> avoid, Func<string, GameObject> spawner) {
 			Vector3 pos = MathUtil.getRandomVectorAround(from.transform.position + from.transform.up * 5, 6);
 			Vector3 vec = -from.transform.up * 15;
 			Ray ray = new Ray(pos, vec);
@@ -197,7 +197,7 @@ namespace ReikaKalseki.SeaToSea {
 						}
 					}
 					Spawnable rt = from.transform.position.y < PostCoveDome.HOT_THRESHOLD ? hotResourceDome : coolResourceDome;
-					GameObject go2 = ObjectUtil.createWorldObject(rt.ClassID);
+					GameObject go2 = spawner(rt.ClassID);
 					go2.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
 					go2.transform.position = hit.point;
 					go2.transform.RotateAroundLocal(go2.transform.up, UnityEngine.Random.Range(0F, 360F));
