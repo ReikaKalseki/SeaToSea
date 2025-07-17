@@ -1522,7 +1522,7 @@ namespace ReikaKalseki.SeaToSea {
 					li.Add(ref3);
 					
 					InstructionHandlers.patchInitialHook(codes, li.ToArray());
-					FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
+					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
 					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");

@@ -163,6 +163,13 @@ namespace ReikaKalseki.SeaToSea {
 			harmony = new Harmony(MOD_KEY);
 			Harmony.DEBUG = true;
 			FileLog.logPath = Path.Combine(Path.GetDirectoryName(modDLL.Location), "harmony-log.txt");
+			try {
+				if (File.Exists(FileLog.logPath))
+					File.Delete(FileLog.logPath);
+			}
+			catch (Exception ex) {
+				SNUtil.log("Could not clean up harmony log: "+ex);
+			}
 			FileLog.Log("Ran mod register, started harmony (harmony log)");
 			SNUtil.log("Ran mod register, started harmony");
 			try {
