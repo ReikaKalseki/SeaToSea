@@ -1,21 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class BreathingFluid : BasicCraftingItem {
-		
+
 		public BreathingFluid() : base(SeaToSeaMod.itemLocale.getEntry("breathfluid"), "WorldEntities/Natural/polyaniline") {
 			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BreathFluid");
 			unlockRequirement = TechType.Unobtanium;//SeaToSeaMod.rebreatherV2.TechType;
@@ -24,13 +24,13 @@ namespace ReikaKalseki.SeaToSea {
 			inventorySize = new Vector2int(3, 3);
 			renderModify = r => {
 				r.transform.localScale = new Vector3(2.4F, 2.4F, 1);
-				RenderUtil.setPolyanilineColor(r, new Color(1, 158/255F, 201/255F, 1.5F));
+				RenderUtil.setPolyanilineColor(r, new Color(1, 158 / 255F, 201 / 255F, 1.5F));
 				r.materials[1].SetFloat("_Shininess", 5F);
 				r.materials[1].SetFloat("_SpecInt", 12F);
 				r.materials[1].SetFloat("_Fresnel", 0F);
 			};
 		}
-		
+
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 		}
@@ -55,9 +55,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"Resources", "C2Chemistry"};
+				return new string[] { "Resources", "C2Chemistry" };
 			}
 		}
-		
+
 	}
 }

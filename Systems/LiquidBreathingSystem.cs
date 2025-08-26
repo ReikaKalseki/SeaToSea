@@ -1,63 +1,62 @@
 ﻿using System;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEngine;
-using UnityEngine.UI;
+using ReikaKalseki.DIAlterra;
+using ReikaKalseki.SeaToSea;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class LiquidBreathingSystem {
-		
+
 		public static readonly LiquidBreathingSystem instance = new LiquidBreathingSystem();
-		
+
 		internal static readonly float ITEM_VALUE = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 1800 : 2700;
 		//seconds
 		internal static readonly float TANK_CHARGE = 10 * 60;
 		//how much time you can spend (total) of liquid before returning to a base with a charger
 		internal static readonly float TANK_CAPACITY = 2.5F * 60;
 		//per "air tank" before you need to go back to a powered air-filled space
-		
+
 		private static readonly string customHUDText = "CF<size=30>X</size>•O<size=30>Y</size>";
-		
+
 		private LiquidBreathingHUDMeters meters;
-	    
+
 		private Texture2D baseO2BarTexture;
 		private Color baseO2BarColor;
 		private Texture2D baseO2BubbleTexture;
 		private float baseOverlayAlpha2;
 		private float baseOverlayAlpha1;
 		private string baseLabel;
-	    
+
 		private float lastRechargeRebreatherTime = -1;
 		private float rechargingTintStrength = 0;
-	    
+
 		private float forceAllowO2 = 0;
-	    
+
 		private float lastUnequippedTime = -1;
-	    
+
 		private bool hasTemporaryKharaaTreatment;
 		private bool startedUsingTemporaryKharaaTreatment;
-		private float kharaaTreatmentRemainingTime;
-		
+		public float kharaaTreatmentRemainingTime { get; private set; }
+
 		private LiquidBreathingSystem() {
-	    	
+
 		}
-	    
+
 		public void onEquip() {
 			InfectedMixin inf = Player.main.GetComponent<InfectedMixin>();
 			inf.SetInfectedAmount(Mathf.Max(inf.infectedAmount, 0.25F));
 		}
-	    
+
 		public void onUnequip() {
 			float amt = Player.main.oxygenMgr.GetOxygenAvailable();
 			lastUnequippedTime = DayNightCycle.main.timePassedAsFloat;
@@ -65,11 +64,11 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat("Removed "+amt+" oxygen, player now has "+Player.main.oxygenMgr.GetOxygenAvailable());
 			SoundManager.playSoundAt(SoundManager.buildSound(Player.main.IsUnderwater() ? "event:/player/Puke_underwater" : "event:/player/Puke"), Player.main.lastPosition, false, 12);
 		}
-	    
+
 		public float getLastUnequippedTime() {
 			return lastUnequippedTime;
 		}
-	    
+
 		public void refreshGui() {
 			lastRechargeRebreatherTime = DayNightCycle.main.timePassedAsFloat;
 		}
@@ -90,17 +89,17 @@ namespace ReikaKalseki.SeaToSea {
 	    	if (rem > 0)
 	    		o.RemoveOxygen(rem);
 	    }*/
-	    
+
 		public float getFuelLevel() {
-			Battery b = getTankBattery();
+			Battery b = this.getTankBattery();
 			return b ? b.charge : 0;
 		}
-	    
+
 		public float getAvailableFuelSpace() {
-			Battery b = getTankBattery();
+			Battery b = this.getTankBattery();
 			return b ? b.capacity - b.charge : 0;
 		}
-	    
+
 		private Battery getTankBattery() {
 			InventoryItem tank = Inventory.main.equipment.GetItemInSlot("Tank");
 			if (tank.item.GetTechType() != C2CItems.liquidTank.TechType)
@@ -108,7 +107,7 @@ namespace ReikaKalseki.SeaToSea {
 			Battery b = tank.item.gameObject.GetComponent<Battery>();
 			return b;
 		}
-	    
+
 		private Oxygen getTankTank() {
 			InventoryItem tank = Inventory.main.equipment.GetItemInSlot("Tank");
 			if (tank.item.GetTechType() != C2CItems.liquidTank.TechType)
@@ -116,39 +115,33 @@ namespace ReikaKalseki.SeaToSea {
 			Oxygen b = tank.item.gameObject.GetComponent<Oxygen>();
 			return b;
 		}
-	    
+
 		public float rechargePlayerLiquidBreathingFuel(float amt) {
-			Battery b = getTankBattery();
+			Battery b = this.getTankBattery();
 			if (!b)
 				return 0;
 			float add = Mathf.Min(amt, b.capacity - b.charge);
 			if (add > 0) {
 				b.charge += add;
-				refreshGui();
+				this.refreshGui();
 			}
 			return add;
 		}
-	    
+
 		public bool isLiquidBreathingActive(Player ep) {
-			if (isInPoweredArea(ep))
+			if (this.isInPoweredArea(ep))
 				return false;
 			Vehicle v = ep.GetVehicle();
 			if (v && !v.IsPowered())
 				return true;
 			SubRoot sub = ep.currentSub;
-			if (sub && sub.powerRelay && !sub.powerRelay.IsPowered())
-				return true;
-			return /*!ep.IsInsideWalkable() && */(ep.IsUnderwater() || ep.IsSwimming());
+			return (sub && sub.powerRelay && !sub.powerRelay.IsPowered()) || ep.IsUnderwater() || ep.IsSwimming();
 		}
-	    
+
 		public bool isO2BarAbleToFill(Player ep) {
-			if (hasTankButNoMask())
-				return false;
-			if (EnvironmentalDamageSystem.instance.isPlayerRecoveringFromPressure())
-				return false;
-			return !hasLiquidBreathing() || isInPoweredArea(ep) || !isLiquidBreathingActive(ep);
+			return !this.hasTankButNoMask() && !EnvironmentalDamageSystem.instance.isPlayerRecoveringFromPressure() && (!this.hasLiquidBreathing() || this.isInPoweredArea(ep) || !this.isLiquidBreathingActive(ep));
 		}
-	    
+
 		public bool isInPoweredArea(Player p) {
 			if (!p)
 				return false;
@@ -160,25 +153,23 @@ namespace ReikaKalseki.SeaToSea {
 			if (v && v.IsPowered())
 				return true;
 			SubRoot sub = p.currentSub;
-			if (sub && sub.powerRelay && sub.powerRelay.IsPowered())
-				return true;
-			return p.precursorOutOfWater;
+			return (sub && sub.powerRelay && sub.powerRelay.IsPowered()) || p.precursorOutOfWater;
 		}
-	    
+
 		public bool tryFillPlayerO2Bar(Player p, ref float amt, bool force = false) {
-			if (hasTankButNoMask()) {
+			if (this.hasTankButNoMask()) {
 				amt = 0;
 				return false;
 			}
-			if (!hasLiquidBreathing())
+			if (!this.hasLiquidBreathing())
 				return true;
 			if (!force) {
-				if (!isInPoweredArea(p)) {
+				if (!this.isInPoweredArea(p)) {
 					amt = 0;
 					return false;
 				}
 			}
-			Battery b = getTankBattery();
+			Battery b = this.getTankBattery();
 			if (!b) {
 				amt = 0;
 				return false;
@@ -191,39 +182,39 @@ namespace ReikaKalseki.SeaToSea {
 			//SNUtil.writeToChat(amt+" > "+b.charge);
 			return amt > 0;
 		}
-	    
+
 		public bool hasTankButNoMask() {
 			return Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == C2CItems.liquidTank.TechType;
 		}
-	    
+
 		public bool hasLiquidBreathing() {
 			return Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType && Inventory.main.equipment.GetTechTypeInSlot("Tank") == C2CItems.liquidTank.TechType;
 		}
-	    
+
 		public void checkLiquidBreathingSupport(OxygenArea a) {
 			OxygenAreaWithLiquidSupport oxy = a.gameObject.GetComponent<OxygenAreaWithLiquidSupport>();
 			//SNUtil.writeToChat("Check pipe: "+oxy+" > "+(oxy != null ? oxy.supplier+"" : "null"));
 			if (oxy != null && oxy.supplier != null && DayNightCycle.main.timePassedAsFloat - oxy.lastVerify < 5) {
-				refillFrom(oxy.supplier, Time.deltaTime);
+				this.refillFrom(oxy.supplier, Time.deltaTime);
 			}
 		}
-	    
+
 		public void refillFrom(RebreatherRechargerLogic lgc, float seconds) {
-			if (hasLiquidBreathing()) {
-				float add = lgc.consume(getAvailableFuelSpace(), seconds);
-				float added = rechargePlayerLiquidBreathingFuel(add);
+			if (this.hasLiquidBreathing()) {
+				float add = lgc.consume(this.getAvailableFuelSpace(), seconds);
+				float added = this.rechargePlayerLiquidBreathingFuel(add);
 				lgc.refund(add - added); //if somehow added less than space, refund it
 			}
 		}
-		
+
 		public static GameObject getO2Label(uGUI_OxygenBar gui) {
-			return ObjectUtil.getChildObject(gui.gameObject, "OxygenTextLabel");
+			return gui.gameObject.getChildObject("OxygenTextLabel");
 		}
-		
+
 		public void updateOxygenGUI(uGUI_OxygenBar gui) {
 			uGUI_CircularBar bar = gui.bar;
 			Text t = getO2Label(gui).GetComponent<Text>();
-			Text tn = ObjectUtil.getChildObject(gui.gameObject, "OxygenTextValue").GetComponent<Text>();
+			Text tn = gui.gameObject.getChildObject("OxygenTextValue").GetComponent<Text>();
 			if (baseO2BarTexture == null) {
 				baseO2BarTexture = bar.texture;
 				baseO2BarColor = bar.borderColor;
@@ -231,12 +222,12 @@ namespace ReikaKalseki.SeaToSea {
 				baseOverlayAlpha1 = gui.overlay1Alpha;
 				baseOverlayAlpha2 = gui.overlay2Alpha;
 				baseLabel = t.text; //O<size=30>2</size>
-				//RenderUtil.dumpTexture("o2bar_core", baseO2BarTexture);
-				//RenderUtil.dumpTexture("o2bar_bubble", baseO2BubbleTexture);
-			}	    	
-	    	
-			bool pink = hasLiquidBreathing();
-	    	
+									//RenderUtil.dumpTexture("o2bar_core", baseO2BarTexture);
+									//RenderUtil.dumpTexture("o2bar_bubble", baseO2BubbleTexture);
+			}
+
+			bool pink = this.hasLiquidBreathing();
+
 			bar.edgeWidth = pink ? 0.25F : 0.2F;
 			bar.borderWidth = pink ? 0.1F : 0.2F;
 			bar.borderColor = pink ? new Color(1, 0.6F, 0.82F) : baseO2BarColor;
@@ -245,7 +236,7 @@ namespace ReikaKalseki.SeaToSea {
 			bar.overlay1Alpha = pink ? Math.Min(1, baseOverlayAlpha1 * 2) : baseOverlayAlpha1;
 			bar.overlay2Alpha = pink ? Math.Min(1, baseOverlayAlpha2 * 2) : baseOverlayAlpha2;
 			t.text = pink ? customHUDText /*"O<size=30>2</size><size=20>(aq)</size>"*/ : baseLabel;
-			bool inactive = !isLiquidBreathingActive(Player.main);
+			bool inactive = !this.isLiquidBreathingActive(Player.main);
 			Color tc = Color.white;
 			if (pink) {
 				if (inactive) {
@@ -253,37 +244,30 @@ namespace ReikaKalseki.SeaToSea {
 					tc = Color.gray;
 				}
 				else {
-					if (SNUtil.isPlayerCured()) {
-						tc = Color.green;
-					}
-					else if (isKharaaTreatmentActive()) {
-						tc = kharaaTreatmentRemainingTime > 0 ? Color.white : Color.yellow;
-					}
-					else {
-						tc = Color.Lerp(Color.red, Color.yellow, 0.5F);
-					}
+					tc = SNUtil.isPlayerCured()
+						? Color.green
+						: this.isKharaaTreatmentActive()
+							? kharaaTreatmentRemainingTime > 0 ? Color.white : Color.yellow
+							: Color.Lerp(Color.red, Color.yellow, 0.5F);
 				}
 			}
 			tn.color = tc;
 			bar.color = Color.white;
-	    	
+
 			float time = DayNightCycle.main.timePassedAsFloat;
-			if (time - lastRechargeRebreatherTime <= 0.5) {
-				rechargingTintStrength = Math.Min(1, rechargingTintStrength * 1.01F + 0.025F);
-			}
-			else {
-				rechargingTintStrength = Math.Max(0, rechargingTintStrength * 0.992F - 0.0125F);
-			}
+			rechargingTintStrength = time - lastRechargeRebreatherTime <= 0.5
+				? Math.Min(1, (rechargingTintStrength * 1.01F) + 0.025F)
+				: Math.Max(0, (rechargingTintStrength * 0.992F) - 0.0125F);
 			if (pink && rechargingTintStrength > 0) {
-				float f = 1 - 0.33F * (0.5F + rechargingTintStrength * 0.5F);
+				float f = 1 - (0.33F * (0.5F + (rechargingTintStrength * 0.5F)));
 				bar.color = new Color(f, f, 1);
 			}
 		}
-	    
+
 		public bool isO2BarFlashingRed() {
 			return Player.main.GetDepth() >= 400 && EnvironmentalDamageSystem.instance.isPlayerInOcean() && Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType;
 		}
-	    
+
 		public void applyToBasePipes(RebreatherRechargerLogic machine, Transform seabase) {
 			foreach (Transform child in seabase) {
 				IPipeConnection root = child.gameObject.GetComponent<IPipeConnection>();
@@ -300,34 +284,30 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}
-	    
+
 		internal bool useKharaaTreatment() {
-			float dur = getTreatmentDuration();
+			float dur = this.getTreatmentDuration();
 			if (kharaaTreatmentRemainingTime > Mathf.Max(dur * 0.01F, 60))
 				return false;
 			kharaaTreatmentRemainingTime = dur;
 			return true;
 		}
-	    
+
 		internal bool applyTemporaryKharaaTreatment() {
-			if (hasTemporaryKharaaTreatment || !hasLiquidBreathing() || !isInPoweredArea(Player.main))
+			if (hasTemporaryKharaaTreatment || !this.hasLiquidBreathing() || !this.isInPoweredArea(Player.main))
 				return false;
 			hasTemporaryKharaaTreatment = true;
 			return true;
 		}
-	    
+
 		public float getTreatmentDuration() {
 			return SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 2400 : 7200;
 		}
-	    
+
 		private bool isKharaaTreatmentActive() {
 			return kharaaTreatmentRemainingTime > 0 || hasTemporaryKharaaTreatment;
 		}
-	    
-		public float getRemainingTreatmentTime() {
-			return kharaaTreatmentRemainingTime;
-		}
-	    
+
 		internal void tickLiquidBreathing(bool has, bool active) {
 			Player ep = Player.main;
 			if (!ep || !DIHooks.isWorldLoaded())
@@ -346,16 +326,16 @@ namespace ReikaKalseki.SeaToSea {
 				if (has) {
 					Battery b = Inventory.main.equipment.GetItemInSlot("Tank").item.GetComponent<Battery>();
 					meters.primaryTankBar.currentTime = b.charge;
-					meters.primaryTankBar.currentFillLevel = b.charge/b.capacity;
+					meters.primaryTankBar.currentFillLevel = b.charge / b.capacity;
 					meters.treatmentBar.currentTime = hasTemporaryKharaaTreatment ? -1 : kharaaTreatmentRemainingTime;
-					meters.treatmentBar.currentFillLevel = hasTemporaryKharaaTreatment ? 1 : kharaaTreatmentRemainingTime/getTreatmentDuration();
+					meters.treatmentBar.currentFillLevel = hasTemporaryKharaaTreatment ? 1 : kharaaTreatmentRemainingTime / this.getTreatmentDuration();
 				}
 			}
 			if (has && active) {
-				if (startedUsingTemporaryKharaaTreatment && (isInPoweredArea(ep) || !hasLiquidBreathing())) {
-					clearTempTreatment();
+				if (startedUsingTemporaryKharaaTreatment && (this.isInPoweredArea(ep) || !this.hasLiquidBreathing())) {
+					this.clearTempTreatment();
 				}
-				if (hasTemporaryKharaaTreatment && !startedUsingTemporaryKharaaTreatment && !isInPoweredArea(ep) && hasLiquidBreathing()) {
+				if (hasTemporaryKharaaTreatment && !startedUsingTemporaryKharaaTreatment && !this.isInPoweredArea(ep) && this.hasLiquidBreathing()) {
 					startedUsingTemporaryKharaaTreatment = true;
 					SNUtil.writeToChat("Kharaa treatment engaged");
 				}
@@ -364,10 +344,10 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			else if (!has || startedUsingTemporaryKharaaTreatment) {
-				clearTempTreatment();
+				this.clearTempTreatment();
 			}
 		}
-	    
+
 		public void clearTempTreatment() {
 			if (hasTemporaryKharaaTreatment) {
 				hasTemporaryKharaaTreatment = false;
@@ -375,97 +355,96 @@ namespace ReikaKalseki.SeaToSea {
 				SNUtil.writeToChat("Weak kharaa treatment cleared");
 			}
 		}
-	    
+
 		public bool hasReducedCapacity() {
-			return !isKharaaTreatmentActive() && !SNUtil.isPlayerCured() && hasLiquidBreathing();
+			return !this.isKharaaTreatmentActive() && !SNUtil.isPlayerCured() && this.hasLiquidBreathing();
 		}
-	    
+
 		class OxygenAreaWithLiquidSupport : MonoBehaviour {
-	    	
+
 			internal RebreatherRechargerLogic supplier;
 			internal float lastVerify;
-	    	
+
 		}
-		
+
 		public class LiquidBreathingHUDMeters : MonoBehaviour {
-			
+
 			internal LiquidBreathingHUDMeterUnit primaryTankBar;
 			internal LiquidBreathingHUDMeterUnit treatmentBar;
-			
+
 			void Update() {
 				if (!primaryTankBar) {
-					primaryTankBar = createBar("Primary");
+					primaryTankBar = this.createBar("Primary");
 					primaryTankBar.leftSide = true;
 				}
 				if (!treatmentBar) {
-					treatmentBar = createBar("Treatment");
+					treatmentBar = this.createBar("Treatment");
 				}
 				treatmentBar.gameObject.SetActive(!SNUtil.isPlayerCured());
 			}
-			
+
 			private LiquidBreathingHUDMeterUnit createBar(string name) {
 				GameObject go = new GameObject(name);
 				go.transform.SetParent(transform, false);
 				go.layer = gameObject.layer;
 				return go.EnsureComponent<LiquidBreathingHUDMeterUnit>();
 			}
-			
+
 		}
-		
+
 		public class LiquidBreathingHUDMeterUnit : MonoBehaviour {
-			
+
 			internal GameObject fillBar;
 			internal Image background;
 			internal Image foreground;
-			
+
 			internal Text timer;
-			
+
 			internal bool leftSide;
-			
+
 			internal float currentFillLevel = 0;
 			internal float currentTime = 0;
-			
+
 			public float overrideValue = -1;
 			public float overrideTime = -1;
-			
+
 			public Color currentColor;
-			
+
 			void rebuild() {
 				TextureManager.refresh();
 				foreground.sprite = Sprite.Create(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/LiquidBreathingFuelBar"), new Rect(0, 0, 128, 128), Vector2.zero);
 			}
-			
+
 			void Update() {
 				if (!fillBar) {
 					fillBar = new GameObject("Bar");
 					fillBar.transform.SetParent(transform, false);
 					fillBar.layer = gameObject.layer;
 					fillBar.transform.localPosition = Vector3.zero;//new Vector3(0.55F, -0.55F, 0);
-					fillBar.transform.localScale = Vector3.one*2.5F;
+					fillBar.transform.localScale = Vector3.one * 2.5F;
 					GameObject go = new GameObject("Background");
 					go.transform.SetParent(fillBar.transform, false);
 					go.layer = gameObject.layer;
-					this.background = go.AddComponent<Image>();
-					this.background.sprite = Sprite.Create(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/LiquidBreathingFuelBarBack"), new Rect(0, 0, 128, 128), Vector2.zero);
-					this.background.rectTransform.offsetMin = new Vector2(-32f, -32f);
-					this.background.rectTransform.offsetMax = new Vector2(32f, 32f);
+					background = go.AddComponent<Image>();
+					background.sprite = Sprite.Create(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/LiquidBreathingFuelBarBack"), new Rect(0, 0, 128, 128), Vector2.zero);
+					background.rectTransform.offsetMin = new Vector2(-32f, -32f);
+					background.rectTransform.offsetMax = new Vector2(32f, 32f);
 					GameObject go2 = new GameObject("Foreground");
 					go2.transform.SetParent(fillBar.transform, false);
 					go2.layer = gameObject.layer;
-					this.foreground = go2.AddComponent<Image>();
-					this.foreground.sprite = Sprite.Create(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/LiquidBreathingFuelBar"), new Rect(0, 0, 128, 128), Vector2.zero);
-					this.foreground.rectTransform.offsetMin = new Vector2(-32f, -32f);
-					this.foreground.rectTransform.offsetMax = new Vector2(32f, 32f);
-					this.foreground.type = Image.Type.Filled;
-					this.foreground.fillMethod = Image.FillMethod.Radial360;
-					this.foreground.fillClockwise = true;
-					this.foreground.fillOrigin = (int)Image.Origin360.Bottom;
+					foreground = go2.AddComponent<Image>();
+					foreground.sprite = Sprite.Create(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/LiquidBreathingFuelBar"), new Rect(0, 0, 128, 128), Vector2.zero);
+					foreground.rectTransform.offsetMin = new Vector2(-32f, -32f);
+					foreground.rectTransform.offsetMax = new Vector2(32f, 32f);
+					foreground.type = Image.Type.Filled;
+					foreground.fillMethod = Image.FillMethod.Radial360;
+					foreground.fillClockwise = true;
+					foreground.fillOrigin = (int)Image.Origin360.Bottom;
 					foreground.transform.rotation = Quaternion.identity;
 					fillBar.SetActive(true);
 				}
 				if (!timer) {
-					GameObject lbl = UnityEngine.Object.Instantiate(LiquidBreathingSystem.getO2Label(gameObject.FindAncestor<uGUI_OxygenBar>()));
-					lbl.name = "SideBarText";
+					GameObject lbl = UnityEngine.Object.Instantiate(LiquidBreathingSystem.getO2Label(gameObject.FindAncestor<uGUI_OxygenBar>())).setName("SideBarText");
 					timer = lbl.GetComponent<Text>();
 					timer.transform.SetParent(transform, false);
 					timer.transform.localPosition = Vector3.zero;
@@ -474,7 +453,7 @@ namespace ReikaKalseki.SeaToSea {
 					timer.resizeTextForBestFit = false;
 					timer.fontSize = 30;
 				}
-				
+
 				if (leftSide) {
 					fillBar.transform.localRotation = Quaternion.Euler(0, 0, 202.5F);
 					foreground.transform.localRotation = Quaternion.Euler(0, 0, 157.5F);
@@ -488,18 +467,18 @@ namespace ReikaKalseki.SeaToSea {
 					if (timer)
 						timer.transform.localPosition = new Vector3(60, 64, 0);
 				}
-				
-				float f = currentFillLevel * 0.395F + 0.0625F; //this fraction is because it does not fill the bar, slightly more than 3/8 to use up texture
+
+				float f = (currentFillLevel * 0.395F) + 0.0625F; //this fraction is because it does not fill the bar, slightly more than 3/8 to use up texture
 				if (overrideValue >= 0)
 					f = overrideValue;
 				foreground.fillAmount = f;
-				currentColor = currentFillLevel < 0.5F ? new Color(1, currentFillLevel*2, 0, 1) : new Color(1-(currentFillLevel-0.5F)*2, 1, 0, 1);
+				currentColor = currentFillLevel < 0.5F ? new Color(1, currentFillLevel * 2, 0, 1) : new Color(1 - ((currentFillLevel - 0.5F) * 2), 1, 0, 1);
 				if (currentFillLevel < 0.1) { //make flash if very low
 					float ff = (1+Mathf.Sin(DayNightCycle.main.timePassedAsFloat*Mathf.Deg2Rad*(float)MathUtil.linterpolate(currentFillLevel, 0.1, 0, 240, 4800, true)))*0.5F;
 					currentColor = Color.Lerp(currentColor, Color.white, ff);
 				}
 				foreground.color = currentColor;
-				
+
 				if (timer) {
 					f = currentTime;
 					if (overrideTime >= 0)
@@ -513,9 +492,9 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 }

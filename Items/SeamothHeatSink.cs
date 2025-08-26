@@ -1,21 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class SeamothHeatSink : BasicCraftingItem {
-		
+
 		public SeamothHeatSink() : base(SeaToSeaMod.itemLocale.getEntry("SeamothHeatSink"), "WorldEntities/Natural/CopperWire") {
 			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/Seamothheatsink");
 			craftingSubCategory = "Tools";
@@ -26,7 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 				EjectedHeatSink.setTexture(r);
 			};
 		}
-		
+
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 		}
@@ -51,9 +51,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"Torpedoes"};
+				return new string[] { "Torpedoes" };
 			}
 		}
-		
+
 	}
 }

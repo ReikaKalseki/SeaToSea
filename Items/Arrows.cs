@@ -1,24 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class Arrow : BasicCraftingItem {
-		
+
 		public Arrow(string id, string name, string desc, string template) : base(id, name, desc, template) {
-			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/"+id);
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/" + id);
 		}
-		
+
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			base.prepareGameObject(go, r);
 		}
@@ -40,6 +40,6 @@ namespace ReikaKalseki.SeaToSea {
 				return TechCategory.Misc;
 			}
 		}
-		
+
 	}
 }

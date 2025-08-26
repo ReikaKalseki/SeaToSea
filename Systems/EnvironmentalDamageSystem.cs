@@ -1,58 +1,57 @@
 ﻿using System;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEngine;
-using UnityEngine.UI;
+using ReikaKalseki.DIAlterra;
+using ReikaKalseki.SeaToSea;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-using ReikaKalseki.DIAlterra;
-using ReikaKalseki.SeaToSea;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class EnvironmentalDamageSystem {
-		
+
 		public static readonly EnvironmentalDamageSystem instance = new EnvironmentalDamageSystem();
-    
+
 		public static readonly float ENVIRO_RATE_SCALAR = 4;
-    	
+
 		private readonly static Vector3 lavaPitEntranceCenter = new Vector3(260.6F, -838F, 688.2F);
 		private readonly static Vector3 lavaPitTunnelMid = new Vector3(145.8F, -1225F, 528F);
 		private readonly static double lavaPitEntranceRadius = 130;
 		internal readonly static double lavaPitEntranceDepthStart = 900;
 		internal readonly static double lavaPitEntranceDepthMaxTemp = 1100;
-    	
+
 		//private readonly static Vector3 auroraPrawnBayCenter = new Vector3(996, 2.5F, -26.5F);//new Vector3(1003, 4, -18);
 		//private readonly static Vector3 auroraTopLeftBack = new Vector3(1010, 13, ?);
 		//private readonly static Vector3 auroraBottomRightFront = new Vector3(?, ?, ?);
 		private readonly static Vector3 auroraFireCeilingTunnel = new Vector3(1047.3F, 1, 2);
 		internal readonly static Vector3 auroraPrawnBayDoor = new Vector3(984, 8.5F, -36.2F);
-    	
+
 		private readonly static Vector3 auroraPrawnBayCornerPatch = new Vector3(976.95F, 8.85F, -23.55F);
 		private readonly static Vector3 auroraPrawnBayLineA1 = new Vector3(995, 2.6F, -38.6F);
 		private readonly static Vector3 auroraPrawnBayLineA2 = new Vector3(1023.5F, 2.6F, -12.7F);
 		private readonly static Vector3 auroraPrawnBayLineB1 = new Vector3(981.3F, 2.6F, -21.4F);
 		private readonly static Vector3 auroraPrawnBayLineB2 = new Vector3(1010.9F, 2.6F, 9.9F);
-    	
+
 		public readonly static float highO2UsageStart = 400;
 		internal readonly static float depthFXRippleStart = 450;
 		public readonly static float depthDamageStart = 500;
 		public readonly static float depthDamageMax = 600;
-    	
+
 		private readonly Dictionary<string, TemperatureEnvironment> temperatures = new Dictionary<string, TemperatureEnvironment>();
 		private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
 		private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
-    	
+
 		private readonly Bounds prisonAquariumExpanded;
-		
+
 		private readonly SoundManager.SoundData pdaBeep;
-		
+
 		internal CustomHUDWarning lrPoisonHUDWarning;
 		internal CustomHUDWarning lrLeakHUDWarning;
 		internal CustomHUDWarning extremeHeatHUDWarning;
@@ -60,46 +59,46 @@ namespace ReikaKalseki.SeaToSea {
 		internal CustomHUDWarning o2ConsumptionMaxedOutHUDWarning;
 		internal CustomHUDWarning infectedLungsHUDWarning;
 		internal CustomHUDWarning teleportRecoveryHUDWarning;
-		
+
 		private readonly List<CustomHUDWarning> warnings = new List<CustomHUDWarning>();
-		
+
 		private float cyclopsHeatDamage;
 		private float playerHeatDamage;
-		
+
 		private float cyclopsPowerLeak;
 		private float vehiclePowerLeak;
-		
+
 		private float playerPressureDamageSince;
 		private float playerPressureDamageDuration;
-		
+
 		private float recoveryWarningEndTime;
-    	
+
 		internal float TEMPERATURE_OVERRIDE = -1;
-    	
+
 		//private GameObject prawnBayHeatRippleCylinder;
-    	
+
 		//private DepthRippleFX depthWarningFX1;
 		//private DepthDarkeningFX depthWarningFX2;
-		
+
 		private EnvironmentalDamageSystem() {
-			registerBiomeEnvironment("ILZCorridor", 90, 8, 0.5F, 40, 9);
-			registerBiomeEnvironment("ILZCorridorDeep", 120, 9, 0.5F, 20, 12);
-			registerBiomeEnvironment("ILZChamber", 150, 10, 0.5F, 10, 15);
-			registerBiomeEnvironment("LavaPit", 200, 12, 0.5F, 8, 20);
-			registerBiomeEnvironment("LavaFalls", 300, 15, 0.5F, 5, 25);
-			registerBiomeEnvironment("LavaLakes", 350, 18, 0.5F, 2, 40);
-			registerBiomeEnvironment("LavaLakes_LavaPool", 400, 18, 0.5F, 2, 40);
-			registerBiomeEnvironment("ilzLava", 1200, 24, 0.5F, 0, 100); //in lava
-			registerBiomeEnvironment("LavaCastle", 240, 18, 0.5F, 4, 20);
-			registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
-			registerBiomeEnvironment("LavaPitEntrance", 320, 15, 0.5F, 5, 25);
+			this.registerBiomeEnvironment("ILZCorridor", 90, 8, 0.5F, 40, 9);
+			this.registerBiomeEnvironment("ILZCorridorDeep", 120, 9, 0.5F, 20, 12);
+			this.registerBiomeEnvironment("ILZChamber", 150, 10, 0.5F, 10, 15);
+			this.registerBiomeEnvironment("LavaPit", 200, 12, 0.5F, 8, 20);
+			this.registerBiomeEnvironment("LavaFalls", 300, 15, 0.5F, 5, 25);
+			this.registerBiomeEnvironment("LavaLakes", 350, 18, 0.5F, 2, 40);
+			this.registerBiomeEnvironment("LavaLakes_LavaPool", 400, 18, 0.5F, 2, 40);
+			this.registerBiomeEnvironment("ilzLava", 1200, 24, 0.5F, 0, 100); //in lava
+			this.registerBiomeEnvironment("LavaCastle", 240, 18, 0.5F, 4, 20);
+			this.registerBiomeEnvironment("LavaCastleInner", 360, 18, 0.5F, 4, 20);
+			this.registerBiomeEnvironment("LavaPitEntrance", 320, 15, 0.5F, 5, 25);
 			temperatures["ILZChamber_Dragon"] = temperatures["ILZChamber"];
-			registerBiomeEnvironment("ILZCastleTunnel", 450, 18, 0.5F, 4, 20); //the lavafall entrance
-    		
-			registerBiomeEnvironment("AuroraPrawnBay", 150, 10F, 2.5F, 9999, 0);
-			registerBiomeEnvironment("AuroraPrawnBayDoor", 200, 40F, 2.5F, 9999, 0);
-			registerBiomeEnvironment("AuroraFireCeilingTunnel", 175, 2.5F, 1.5F, 9999, 0);
-    		
+			this.registerBiomeEnvironment("ILZCastleTunnel", 450, 18, 0.5F, 4, 20); //the lavafall entrance
+
+			this.registerBiomeEnvironment("AuroraPrawnBay", 150, 10F, 2.5F, 9999, 0);
+			this.registerBiomeEnvironment("AuroraPrawnBayDoor", 200, 40F, 2.5F, 9999, 0);
+			this.registerBiomeEnvironment("AuroraFireCeilingTunnel", 175, 2.5F, 1.5F, 9999, 0);
+
 			lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 			lrLeakage["LostRiver_BonesField"] = 1;
 			lrLeakage["LostRiver_BonesField_LakePit"] = 1.5F;
@@ -112,7 +111,7 @@ namespace ReikaKalseki.SeaToSea {
 			lrLeakage["LostRiver_Canyon"] = 1.75F;
 			lrLeakage["LostRiver_SkeletonCave"] = 1.75F; //around the six eye skull
 			lrLeakage["Precursor_LostRiverBase"] = 1;
-		   			   	
+
 			lrPoisonDamage["LostRiver_BonesField_Corridor"] = 8;
 			lrPoisonDamage["LostRiver_GhostTree"] = 8;
 			lrPoisonDamage["LostRiver_GhostTree_Skeleton"] = 8;
@@ -125,7 +124,7 @@ namespace ReikaKalseki.SeaToSea {
 			lrPoisonDamage["LostRiver_Junction_Skeleton"] = 15;
 			lrPoisonDamage["LostRiver_GhostTree_Lower"] = 15;
 			lrPoisonDamage["Precursor_LostRiverBase"] = 15;
-		    
+
 			foreach (string kvp in new HashSet<string>(lrLeakage.Keys)) {
 				lrLeakage[kvp + "_Water"] = lrLeakage[kvp] * 1.5F;
 				lrLeakage[kvp + "_Lake"] = lrLeakage[kvp] * 1.5F;
@@ -136,58 +135,58 @@ namespace ReikaKalseki.SeaToSea {
 				lrPoisonDamage[kvp + "_Lake"] = lrPoisonDamage[kvp] * 1.5F;
 				lrPoisonDamage[kvp + "_LakePit"] = lrPoisonDamage[kvp] * 1.5F;
 			}
-		    
+
 			prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents * 2);
 			prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
-		    
+
 			pdaBeep = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "pda_beep", "Sounds/pdabeep.ogg");
 		}
-    	
+
 		private void registerBiomeEnvironment(string b, float t, float dmg, float w, int cf, float dmgC) {
 			temperatures[b] = new TemperatureEnvironment(b, t, dmg, w, cf, dmgC);
 		}
-    	
+
 		public void playPDABeep() {
-			playPDABeep(Player.main.transform.position);
+			this.playPDABeep(Player.main.transform.position);
 		}
-    	
+
 		public void playPDABeep(Vector3 pos) {
 			SoundManager.playSoundAt(pdaBeep, pos, false, -1);
 		}
-    	
+
 		public bool isPositionInAuroraPrawnBay(Vector3 pos) {
 			double d1 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineA1, auroraPrawnBayLineA2);
 			double d2 = MathUtil.getDistanceToLineSegment(pos, auroraPrawnBayLineB1, auroraPrawnBayLineB2);
 			double d3 = MathUtil.getDistanceToLineSegment(pos, (auroraPrawnBayLineA1 + auroraPrawnBayLineB1) / 2F, (auroraPrawnBayLineA2 + auroraPrawnBayLineB2) / 2F);
 			return Math.Min(d1, Math.Min(d3, d2)) <= 6.25 || (pos - auroraPrawnBayCornerPatch).sqrMagnitude <= 36;
 		}
-    	
+
 		public bool isPlayerInOcean() {
 			Player ep = Player.main;
 			bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
-			return inWater && !ep.currentWaterPark && !(isInPrecursor(ep.gameObject) && ep.transform.position.y < -1300);
+			return inWater && !ep.currentWaterPark && !(this.isInPrecursor(ep.gameObject) && ep.transform.position.y < -1300);
 		}
-    	
+
 		public bool isInPrecursor(GameObject go) {
-			string biome = getBiome(go).ToLowerInvariant();
+			string biome = this.getBiome(go).ToLowerInvariant();
 			return biome.Contains("prison") || biome.Contains("precursor") || prisonAquariumExpanded.Contains(go.transform.position);
 		}
 		/*
     	private GameObject getRippleCylinder() {
     		if (!prawnBayHeatRippleCylinder) {/*
 	    		GameObject go = ObjectUtil.lookupPrefab("3877d31d-37a5-4c94-8eef-881a500c58bc");
-	    		go = ObjectUtil.getChildObject(go, "Extinguishable_Fire_medium");
-	    		prawnBayHeatRippleCylinder = UnityEngine.Object.Instantiate(ObjectUtil.getChildObject(go, "x_Fire_Cylindrical"));
+	    		go = go.getChildObject("Extinguishable_Fire_medium");
+	    		prawnBayHeatRippleCylinder = UnityEngine.Object.Instantiate(go.getChildObject("x_Fire_Cylindrical"));
 	    		prawnBayHeatRippleCylinder.transform.localScale = new Vector3(0.1F, 0.5F, 0.1F);
 	    		Material m = prawnBayHeatRippleCylinder.GetComponentInChildren<Renderer>().materials[0];
 	    		m.color = new Color(0.07F, 0, 0, 0);
 	    		m.SetColor("_ColorStrength", Color.clear);
 	    		*/
-/*
-    		}
-    		return prawnBayHeatRippleCylinder;
-       	}*/
-		
+		/*
+                    }
+                    return prawnBayHeatRippleCylinder;
+                }*/
+
 		public void tickTemperatureDamages(TemperatureDamage dmg) {
 			if (C2CHooks.skipEnviroDamage)
 				return;
@@ -198,14 +197,14 @@ namespace ReikaKalseki.SeaToSea {
 			//depthWarningFX1 = Camera.main.gameObject.EnsureComponent<DepthRippleFX>();
 			//depthWarningFX2 = Camera.main.gameObject.EnsureComponent<DepthDarkeningFX>();
 			//SBUtil.writeToChat("Doing enviro damage on "+dmg+" in "+dmg.gameObject+" = "+dmg.player);
-			string biome = getBiome(dmg.gameObject);//Player.main.GetBiomeString();
+			string biome = this.getBiome(dmg.gameObject);//Player.main.GetBiomeString();
 			bool prawn = biome == "AuroraPrawnBay" || biome == "AuroraPrawnBayDoor";
 			bool aurora = prawn || biome == "AuroraFireCeilingTunnel";
 			bool diveSuit = dmg.player && dmg.player.HasReinforcedGloves() && dmg.player.HasReinforcedSuit();
 			if (aurora && !diveSuit && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key) && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key)) {
-				triggerAuroraPrawnBayWarning();
+				this.triggerAuroraPrawnBayWarning();
 			}
-			if (dmg.player && !isPlayerInOcean()) {
+			if (dmg.player && !this.isPlayerInOcean()) {
 				playerPressureDamageDuration = Mathf.Max(0, playerPressureDamageDuration - Time.deltaTime);
 				if (playerPressureDamageDuration > 0)
 					dmg.liveMixin.TakeDamage((SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 3 : 1) / ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
@@ -228,10 +227,10 @@ namespace ReikaKalseki.SeaToSea {
 					ripple.SetActive(prawn || (te != null && te.isLavaZone && isPlayerInOcean()));
 					ripple.transform.position = Player.main.transform.position+Vector3.down*0.6F;
 	    		}*/
-				if ((prawn && !dmg.player.HasReinforcedSuit()) || (te != null && te.isLavaZone && isPlayerInOcean())) {
+				if ((prawn && !dmg.player.HasReinforcedSuit()) || (te != null && te.isLavaZone && this.isPlayerInOcean())) {
 					WBOIT wb = MainCamera.camera.GetComponent<WBOIT>();
 					wb.nextTemperatureUpdate = Time.time + 1F;
-					wb.temperatureScalar = prawn ? 5 : 2F + Mathf.Clamp01(te.temperature - 250 / 150F); //lava >2x only when the player is free swimming
+					wb.temperatureScalar = prawn ? 5 : 2F + Mathf.Clamp01(te.temperature - (250 / 150F)); //lava >2x only when the player is free swimming
 					wb.temperatureRefractEnabled = true;
 					wb.compositeMaterial.EnableKeyword("FX_TEMPERATURE_REFRACT");
 					//wb.compositeMaterial.SetTexture(wb.temperatureTexPropertyID, wb.temperatureRefractTex);
@@ -246,7 +245,7 @@ namespace ReikaKalseki.SeaToSea {
 				float baseVal = 49;
 				if (dmg.minDamageTemperature > baseVal && dmg.minDamageTemperature <= 75) { //stop repeating forever
 					float add = dmg.minDamageTemperature - baseVal; //how much above default it is
-					dmg.minDamageTemperature = baseVal + add * 2;
+					dmg.minDamageTemperature = baseVal + (add * 2);
 				}
 			}
 			if (temperature >= dmg.minDamageTemperature) {
@@ -265,14 +264,14 @@ namespace ReikaKalseki.SeaToSea {
 					if (!v || !(v.docked || v.precursorOutOfWater)) {
 						if (v && v is Exosuit) {
 							foreach (TechType tt in InventoryUtil.getVehicleUpgrades(v)) {
-								float f2 = getHeatDamageModuleFactor(tt);
+								float f2 = this.getHeatDamageModuleFactor(tt);
 								amt *= f2;
 							}
 						}
 						dmg.liveMixin.TakeDamage(amt, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.player && !diveSuit) {
 							Survival s = Player.main.GetComponent<Survival>();
-							s.water = Mathf.Clamp(s.water - amt * fw, 0f, 100f);
+							s.water = Mathf.Clamp(s.water - (amt * fw), 0f, 100f);
 						}
 						if (temperature > 105) {//do not do at vents/geysers
 							playerHeatDamage = time; //this also covers the seamoth
@@ -287,7 +286,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 			}
-			
+
 			if (dmg.player) {
 				float depth = dmg.player.GetDepth();
 				bool rb = LiquidBreathingSystem.instance.hasLiquidBreathing();
@@ -295,58 +294,54 @@ namespace ReikaKalseki.SeaToSea {
 				//depthWarningFX2.setIntensities(rb ? 0 : depth);
 				if (depth > depthDamageStart && !rb) {
 					float f2 = depth >= depthDamageMax ? 1 : (float)MathUtil.linterpolate(depth, depthDamageStart, depthDamageMax, 0, 1);
-					f2 *= 1 + playerPressureDamageDuration * 0.2F;
+					f2 *= 1 + (playerPressureDamageDuration * 0.2F);
 					dmg.liveMixin.TakeDamage((SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 50 : 30) * 0.25F * f2 / ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Pressure, null);
 					playerPressureDamageSince = time;
 					playerPressureDamageDuration += Time.deltaTime;
-					ObjectUtil.removeComponent<HealingOverTime>(dmg.player.gameObject);
+					dmg.player.gameObject.removeComponent<HealingOverTime>();
 				}
-				bool seal;
-				bool reinf;
-				if (!C2CItems.hasSealedOrReinforcedSuit(out seal, out reinf)) {
+				if (!C2CItems.hasSealedOrReinforcedSuit(out bool seal, out bool reinf)) {
 					//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
-					float amt = getLRPoison(biome);
+					float amt = this.getLRPoison(biome);
 					if (amt > 0) {
 						dmg.liveMixin.TakeDamage(amt / ENVIRO_RATE_SCALAR, dmg.transform.position, DamageType.Poison, null);
 					}
 				}
 			}
-			float leak = getLRPowerLeakage(biome) * 0.9F;
+			float leak = this.getLRPowerLeakage(biome) * 0.9F;
 			if (leak > 0) {
 				Vehicle v = dmg.player ? dmg.player.GetVehicle() : dmg.gameObject.FindAncestor<Vehicle>();
-				if (triggerPowerLeakage(v, dmg.player, leak)) {
+				if (this.triggerPowerLeakage(v, dmg.player, leak)) {
 					if (PDAManager.getPage("lostrivershortcircuit").unlock())
-						playPDABeep();
+						this.playPDABeep();
 				}
 				if (!dmg.player)
 					vehiclePowerLeak = time;
 			}
 		}
-	 	
+
 		private bool triggerPowerLeakage(Vehicle v, Player ep, float leak) {
 			float innerLeakFactor = 1;
 			if (v) {
-				bool upgrade;
-				leak *= getLRLeakFactor(v, out upgrade);
+				leak *= this.getLRLeakFactor(v, out bool upgrade);
 				if (upgrade)
 					innerLeakFactor = 0.5F;
 			}
 			if (leak > 0) {
 				bool used = false;
 				if (ep) {
-					used = triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
+					used = this.triggerPowerLeakage(Inventory.main.container, leak, innerLeakFactor);
 					//used = true;
 				}
 				else if (v) {
-					int trash;
-					v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out trash), leak / ENVIRO_RATE_SCALAR));
+					v.ConsumeEnergy(Math.Min(v.energyInterface.TotalCanProvide(out int trash), leak / ENVIRO_RATE_SCALAR));
 					used = true;
 					foreach (StorageContainer sc in v.GetComponentsInChildren<StorageContainer>(true))
 						if (!sc.gameObject.FindAncestor<Player>())
-							triggerPowerLeakage(sc.container, leak, innerLeakFactor);
+							this.triggerPowerLeakage(sc.container, leak, innerLeakFactor);
 					foreach (SeamothStorageContainer sc in v.GetComponentsInChildren<SeamothStorageContainer>(true))
 						if (!sc.gameObject.FindAncestor<Player>())
-							triggerPowerLeakage(sc.container, leak, innerLeakFactor);
+							this.triggerPowerLeakage(sc.container, leak, innerLeakFactor);
 				}
 				return used;
 			}
@@ -354,35 +349,31 @@ namespace ReikaKalseki.SeaToSea {
 				return false;
 			}
 		}
-	 	
+
 		internal float getHeatDamageModuleFactor(TechType tt) {
-			if (tt == TechType.ExosuitThermalReactorModule)
-				return 0.8F;
-			if (tt + "" == "ExosuitThermalModuleMk2")
-				return 0.67F;
-			return 1;
+			return tt == TechType.ExosuitThermalReactorModule ? 0.8F : tt + "" == "ExosuitThermalModuleMk2" ? 0.67F : 1;
 		}
-    	
+
 		internal void triggerAuroraPrawnBayWarning() {
 			if (Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0)
 				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn).key);
 			else
 				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.AuroraFireWarn_NoRad).key);
 		}
-    	
+
 		internal bool isPlayerRecoveringFromPressure() {
 			return playerPressureDamageDuration > 0 || DayNightCycle.main.timePassedAsFloat - playerPressureDamageSince < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 15 : 8);
 		}
-		
+
 		internal void resetCooldowns() {
 			playerPressureDamageDuration = 0;
 			playerPressureDamageSince = -1;
 		}
-		
+
 		internal void setRecoveryWarning(float dur) {
-			recoveryWarningEndTime = DayNightCycle.main.timePassedAsFloat+dur;
+			recoveryWarningEndTime = DayNightCycle.main.timePassedAsFloat + dur;
 		}
-    	
+
 		private float getLRLeakFactor(Vehicle v, out bool hasUpgrade) {
 			if (v.docked || v.precursorOutOfWater) {
 				hasUpgrade = false;
@@ -407,7 +398,7 @@ namespace ReikaKalseki.SeaToSea {
 			leak *= fb;
 			return leak;
 		}
-    	
+
 		private bool triggerPowerLeakage(ItemsContainer c, float leak, float relativeFactor) {
 			bool found = false;
 			foreach (InventoryItem item in c) {
@@ -415,7 +406,7 @@ namespace ReikaKalseki.SeaToSea {
 					Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
 					//SBUtil.writeToChat(item.item.GetTechType()+": "+string.Join(",", (object[])item.item.gameObject.GetComponentsInChildren<MonoBehaviour>()));
 					if (b != null && b.capacity > 100) {
-						b.charge = Math.Max(b.charge - leak * b.capacity / 200F * relativeFactor, 0);
+						b.charge = Math.Max(b.charge - (leak * b.capacity / 200F * relativeFactor), 0);
 						//SBUtil.writeToChat("Discharging item "+item.item.GetTechType());
 						//used = true;
 						found = true;
@@ -424,7 +415,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return found;
 		}
-    	
+
 		public void tickCyclopsDamage(CrushDamage dmg) {
 			if (C2CHooks.skipEnviroDamage)
 				return;
@@ -444,7 +435,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (sub.powerRelay.GetPower() > 0)
 						VoidSpikeLeviathanSystem.instance.triggerCyclopsEMP(sub, time);
 				}
-				TemperatureEnvironment temp = getLavaHeatDamage(dmg.gameObject);
+				TemperatureEnvironment temp = this.getLavaHeatDamage(dmg.gameObject);
 				//SBUtil.writeToChat("heat: "+temp);
 				if (temp != null) {
 					//SBUtil.writeToChat("immune: "+immune);
@@ -462,17 +453,16 @@ namespace ReikaKalseki.SeaToSea {
 						cyclopsHeatDamage = time;
 					}
 				}
-				float leak = getLRPowerLeakage(dmg.gameObject);
+				float leak = this.getLRPowerLeakage(dmg.gameObject);
 				//SBUtil.writeToChat("leak "+leak);
 				if (leak > 0) {
 					leak *= 1.8F; //+80% more for cyclops (still less than 1/3 as fast per % as seamoth and more than 50% slower than prawn)
-		    		
+
 					SubControl con = dmg.gameObject.GetComponentInParent<SubControl>();
 					if (con.cyclopsMotorMode.engineOn)
 						leak *= 1.25F;
 					if (con.appliedThrottle)
 						leak *= 1.5F;
-					float trash;
 					float f = 0;
 					foreach (Battery b in InventoryUtil.getCyclopsPowerCells(sub)) {
 						if (b && !Mathf.Approximately(b.capacity, 1000))
@@ -482,55 +472,53 @@ namespace ReikaKalseki.SeaToSea {
 					leak *= f;
 					if (leak > 0) {
 						cyclopsPowerLeak = time;
-						sub.powerRelay.ConsumeEnergy(leak * 2.5F, out trash);
+						sub.powerRelay.ConsumeEnergy(leak * 2.5F, out float trash);
 						foreach (StorageContainer sc in sub.GetComponentsInChildren<StorageContainer>(true)) {
 							if (!sc.gameObject.FindAncestor<Vehicle>() && !sc.gameObject.FindAncestor<Player>()) //skip vehicle because will be included later in the docked call
-								triggerPowerLeakage(sc.container, leak, 1);
+								this.triggerPowerLeakage(sc.container, leak, 1);
 						}
 						foreach (VehicleDockingBay d in sub.GetComponentsInChildren<VehicleDockingBay>(true)) {
 							if (d.dockedVehicle)
-								triggerPowerLeakage(d.dockedVehicle, null, leak * 0.5F);
+								this.triggerPowerLeakage(d.dockedVehicle, null, leak * 0.5F);
 						}
 						if (PDAManager.getPage("lostrivershortcircuit").unlock())
-							playPDABeep();
+							this.playPDABeep();
 					}
 				}
 			}
 		}
-    	
+
 		public TemperatureEnvironment getLavaHeatDamage(GameObject go) {
-			return getLavaHeatDamage(getBiome(go));//p.GetBiomeString());
+			return this.getLavaHeatDamage(this.getBiome(go));//p.GetBiomeString());
 		}
-   
+
 		public TemperatureEnvironment getLavaHeatDamage(string biome) {
 			return biome != null && temperatures.ContainsKey(biome) ? temperatures[biome] : null;
 		}
-    	
+
 		public float getLRPoison(GameObject go) {
-			return getLRPoison(getBiome(go));//p.GetBiomeString());
+			return this.getLRPoison(this.getBiome(go));//p.GetBiomeString());
 		}
-   
+
 		public float getLRPoison(string biome) {
 			return biome != null && lrPoisonDamage.ContainsKey(biome) ? lrPoisonDamage[biome] : 0;
 		}
-    	
+
 		public float getLRPowerLeakage(GameObject go) {
-			return getLRPowerLeakage(getBiome(go));//p.GetBiomeString());
+			return this.getLRPowerLeakage(this.getBiome(go));//p.GetBiomeString());
 		}
-   
+
 		public float getLRPowerLeakage(string biome) {
 			float ret = biome != null && lrLeakage.ContainsKey(biome) ? lrLeakage[biome] : -1;
 			if (ret > 0 && !SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
 				ret *= 0.8F;
 			return ret;
 		}
-    	
+
 		public string getBiome(GameObject go) {
-			if (!go)
-				return null;
-			return getBiome(go.transform.position);
+			return !go ? null : this.getBiome(go.transform.position);
 		}
-    	
+
 		public string getBiome(Vector3 pos) {
 			if (!WaterBiomeManager.main)
 				return "";
@@ -551,9 +539,9 @@ namespace ReikaKalseki.SeaToSea {
 				else if (rad < WorldUtil.lavaCastleRadius)
 					ret = "LavaCastle";
 			}
-			if (pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
+			if ((pos.y <= -lavaPitEntranceDepthStart && MathUtil.isPointInCylinder(lavaPitEntranceCenter, pos, lavaPitEntranceRadius, 999)) || Vector3.Distance(lavaPitTunnelMid, pos) <= 60)
 				ret = "LavaPitEntrance";
-			if (isPositionInAuroraPrawnBay(pos))
+			if (this.isPositionInAuroraPrawnBay(pos))
 				ret = "AuroraPrawnBay";
 			if (Vector3.Distance(auroraPrawnBayDoor, pos) <= 3)
 				ret = "AuroraPrawnBayDoor";
@@ -561,10 +549,10 @@ namespace ReikaKalseki.SeaToSea {
 				ret = "AuroraFireCeilingTunnel";
 			return ret;
 		}
-    	
+
 		public float getWaterTemperature(Vector3 pos) {
-			string biome = getBiome(pos);
-			TemperatureEnvironment temp = getLavaHeatDamage(biome);
+			string biome = this.getBiome(pos);
+			TemperatureEnvironment temp = this.getLavaHeatDamage(biome);
 			float ret = temp != null ? temp.temperature : -1000;
 			if (biome == "ILZCorridor" && pos.y <= -1100 && pos.y >= -1175) {
 				ret = (float)MathUtil.linterpolate(-pos.y, 1100, 1175, temperatures["ILZCorridor"].temperature, temperatures["ILZCorridorDeep"].temperature);
@@ -574,7 +562,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return ret;
 		}
-    	
+
 		public float getPlayerO2Rate(Player ep) {
 			if (C2CHooks.skipO2)
 				return 3F;
@@ -598,18 +586,18 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return 99999f;
 		}
-	    
+
 		public float getPlayerO2Use(Player ep, float breathingInterval, int depthClass) {
 			if (C2CHooks.skipO2)
 				return 1;
 			if (!GameModeUtils.RequiresOxygen())
 				return 0;
 			float num = 1;
-			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting && isPlayerInOcean()) {
+			if (ep.mode != Player.Mode.Piloting && ep.mode != Player.Mode.LockedPiloting && this.isPlayerInOcean()) {
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				bool hasRebreatherV2 = Inventory.main.equipment.GetTechTypeInSlot("Head") == C2CItems.rebreatherV2.TechType;
 				bool hasRebreather = hasRebreatherV2 || Inventory.main.equipment.GetTechTypeInSlot("Head") == TechType.Rebreather;
-				bool rebreatherV2Functional = hasRebreatherV2 && !isRecoveryWarningActive();
+				bool rebreatherV2Functional = hasRebreatherV2 && !this.isRecoveryWarningActive();
 				if (!hasRebreather) {
 					if (depthClass == 2) {
 						num = 1.5F;
@@ -644,7 +632,7 @@ namespace ReikaKalseki.SeaToSea {
 							num *= (float)MathUtil.linterpolate(depth, highO2UsageStart, depthDamageStart, 1, 1.5F, true);
 						}
 						if (depth >= depthDamageStart) {
-							num *= 1 + playerPressureDamageDuration * 0.2F;
+							num *= 1 + (playerPressureDamageDuration * 0.2F);
 						}
 					}
 					//SNUtil.writeToChat(depth.ToString("000.0")+"/"+increaseStart+"&"+rate+">"+num.ToString("00.000"));
@@ -654,18 +642,18 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return breathingInterval * num;
 		}
-	   
+
 		public void tickPlayerEnviroAlerts(RebreatherDepthWarnings warn) {
 			if (C2CHooks.skipEnviroDamage)
 				return;
 			if (!(warn.alerts[0] is EnviroAlert))
-				upgradeAlertSystem(warn);
-	   		
+				this.upgradeAlertSystem(warn);
+
 			if (DIHooks.getWorldAge() < 0.25F)
 				return;
-	   		
+
 			bool flagged = false;
-			bool inOcean = isPlayerInOcean();
+			bool inOcean = this.isPlayerInOcean();
 			for (int i = 0; i < warnings.Count; i++) {
 				CustomHUDWarning w = warnings[i];
 				if (!flagged && w.shouldShow(Player.main, inOcean)) {
@@ -677,7 +665,7 @@ namespace ReikaKalseki.SeaToSea {
 					w.setActive(false);
 				}
 			}
-	   		
+
 			if (!inOcean) {
 				return;
 			}
@@ -691,7 +679,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}
-	   
+
 		private void upgradeAlertSystem(RebreatherDepthWarnings warn) {
 			List<EnviroAlert> li = new List<EnviroAlert>();
 			foreach (RebreatherDepthWarnings.DepthAlert a in warn.alerts) {
@@ -701,80 +689,79 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			warn.alerts.Clear();
 			warn.alerts.AddRange(li);
-	   		
+
 			EnviroAlert crush = new EnviroAlert(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.depthDamageStart && !LiquidBreathingSystem.instance.hasLiquidBreathing(), SeaToSeaMod.miscLocale.getEntry("deepair"));
 			crush.preventiveItem.Clear();
 			warn.alerts.Add(crush);
-	   		
+
 			O2IncreasingAlert o2Up = new O2IncreasingAlert(warn);
 			warn.alerts.Add(o2Up);
-	   		
+
 			InfectedLungAlert infLung = new InfectedLungAlert(warn);
 			infLung.preventiveItem.Clear();
 			warn.alerts.Add(infLung);
-	   		
-			EnviroAlert poison = new EnviroAlert(warn, p => getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
+
+			EnviroAlert poison = new EnviroAlert(warn, p => this.getLRPoison(p.gameObject) > 0, SeaToSeaMod.miscLocale.getEntry("lrpoison"));
 			poison.preventiveItem.Clear();
 			poison.preventiveItem.Add(C2CItems.sealSuit.TechType);
 			poison.preventiveItem.Add(TechType.ReinforcedDiveSuit);
 			warn.alerts.Add(poison);
-	   		
-			//GameObject hud = ObjectUtil.getChildObject(uGUI.main.screenCanvas, "HUD/Content");
+
+			//GameObject hud = uGUI.main.screenCanvas.getChildObject("HUD/Content");
 			GameObject hudTemplate = uGUI.main.GetComponentInChildren<uGUI_RadiationWarning>(true).gameObject;
-			lrPoisonHUDWarning = createHUDWarning(hudTemplate, "chemwarn", () => poison.isActive() && isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
-			o2ConsumptionIncreasingHUDWarning = createHUDWarning(hudTemplate, "o2warn", () => o2Up.isActive() && isPlayerInOcean() && !crush.isActive(), 10);
-			infectedLungsHUDWarning = createHUDWarning(hudTemplate, "influngwarn", () => infLung.isActive() && !crush.isActive(), 10);//, new Color(0.25F, 1F, 0.25F, 1));
-			o2ConsumptionMaxedOutHUDWarning = createHUDWarning(hudTemplate, "pressurewarn", () => crush.isActive() && isPlayerInOcean(), 20);
-			lrLeakHUDWarning = createHUDWarning(hudTemplate, "leakwarn", isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
-			extremeHeatHUDWarning = createHUDWarning(hudTemplate, "heatwarn", isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
+			lrPoisonHUDWarning = this.createHUDWarning(hudTemplate, "chemwarn", () => poison.isActive() && this.isPlayerInOcean(), 50, new Color(0, 1F, 0.5F, 1));
+			o2ConsumptionIncreasingHUDWarning = this.createHUDWarning(hudTemplate, "o2warn", () => o2Up.isActive() && this.isPlayerInOcean() && !crush.isActive(), 10);
+			infectedLungsHUDWarning = this.createHUDWarning(hudTemplate, "influngwarn", () => infLung.isActive() && !crush.isActive(), 10);//, new Color(0.25F, 1F, 0.25F, 1));
+			o2ConsumptionMaxedOutHUDWarning = this.createHUDWarning(hudTemplate, "pressurewarn", () => crush.isActive() && this.isPlayerInOcean(), 20);
+			lrLeakHUDWarning = this.createHUDWarning(hudTemplate, "leakwarn", this.isLeakingLRPower, 0, new Color(1F, 1F, 0.2F, 1));
+			extremeHeatHUDWarning = this.createHUDWarning(hudTemplate, "heatwarn", this.isTakingHeatDamage, 100, new Color(1, 0.875F, 0.75F, 1));
 			extremeHeatHUDWarning.showWhenNotSwimming = (ep) => true;
 			lrLeakHUDWarning.showWhenNotSwimming = (ep) => ep.GetVehicle() || SNUtil.getControllingCamera(ep) || (ep.currentSub && ep.currentSub.isCyclops && ep.isPiloting);
-			teleportRecoveryHUDWarning = createHUDWarning(hudTemplate, "teleportrecovery", isRecoveryWarningActive, -50);//, new Color(0.25F, 1F, 0.25F, 1));
+			teleportRecoveryHUDWarning = this.createHUDWarning(hudTemplate, "teleportrecovery", this.isRecoveryWarningActive, -50);//, new Color(0.25F, 1F, 0.25F, 1));
 			teleportRecoveryHUDWarning.showWhenNotSwimming = (ep) => true;
 			warnings.Sort();
 		}
-    	
+
 		private bool isLeakingLRPower() {
 			Player ep = Player.main;
 			if (!ep)
 				return false;
 			MapRoomCamera cam = SNUtil.getControllingCamera(ep);
 			//SNUtil.writeToChat(cam+"");
-			if (cam && getLRPowerLeakage(cam.gameObject) > 0)
+			if (cam && this.getLRPowerLeakage(cam.gameObject) > 0)
 				return true;
 			Vehicle v = ep.GetVehicle();
 			if (v || (ep.currentSub && ep.currentSub.isCyclops)) {
-				if (getLRPowerLeakage(ep.gameObject) <= 0)
+				if (this.getLRPowerLeakage(ep.gameObject) <= 0)
 					return false;
-				bool upgrade;
-				if (v && getLRLeakFactor(v, out upgrade) <= 0)
+				if (v && this.getLRLeakFactor(v, out bool upgrade) <= 0)
 					return false;
 				float time = DayNightCycle.main.timePassedAsFloat;
 				return time - vehiclePowerLeak <= 1 || time - cyclopsPowerLeak <= 5;
 			}
 			return false;
 		}
-    	
+
 		private bool isTakingHeatDamage() {
 			Player ep = Player.main;
 			if (!ep)
 				return false;
-			if (getLavaHeatDamage(ep.gameObject) == null)
+			if (this.getLavaHeatDamage(ep.gameObject) == null)
 				return false;
 			float time = DayNightCycle.main.timePassedAsFloat;
 			return time - playerHeatDamage <= 1 || time - cyclopsHeatDamage <= 5;
 		}
-    	
+
 		private bool isRecoveryWarningActive() {
 			return recoveryWarningEndTime > 0 && DayNightCycle.main.timePassedAsFloat <= recoveryWarningEndTime;
 		}
-    	
+
 		private CustomHUDWarning createHUDWarning(GameObject template, string key, EnviroAlert e, int pri, Color? c = null) {
-			return createHUDWarning(template, key, e.isActive, pri, c);
+			return this.createHUDWarning(template, key, e.isActive, pri, c);
 		}
-    	
+
 		private CustomHUDWarning createHUDWarning(GameObject template, string key, Func<bool> f, int pri, Color? c = null) {
-			GameObject go = UnityEngine.Object.Instantiate(template);
+			GameObject go = UnityEngine.Object.Instantiate(template).setName("CustomHudWarning_" + key);
 			uGUI_RadiationWarning rad = go.GetComponent<uGUI_RadiationWarning>();
 			CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
 			warn.replace(rad, f);
@@ -782,25 +769,24 @@ namespace ReikaKalseki.SeaToSea {
 			warn.setTexture(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/" + key));
 			warn.transform.SetParent(template.transform.parent, false);
 			warn.priority = pri;
-			go.name = "CustomHudWarning_" + key;
-			ObjectUtil.removeComponent<uGUI_RadiationWarning>(go);
+			go.removeComponent<uGUI_RadiationWarning>();
 			SNUtil.log("Created custom hud warning " + go);
 			go.SetActive(true);
 			warnings.Add(warn);
 			return warn;
 		}
 	}
-	
+
 	public class CustomHUDWarning : MonoBehaviour, IComparable {
-		
+
 		private GameObject overlay;
 		private Text text;
 		private Func<bool> condition;
 		public bool forceShow = false;
 		internal Func<Player, bool> showWhenNotSwimming = (ep) => false;
-		
+
 		public int priority = 0;
-		
+
 		internal void replace(uGUI_RadiationWarning rad, Func<bool> f) {
 			text = rad.text;
 			overlay = rad.warning;
@@ -808,79 +794,79 @@ namespace ReikaKalseki.SeaToSea {
 			text.transform.SetParent(overlay.transform, false);
 			condition = f;
 		}
-		
+
 		internal void setTexture(Texture2D tex) {
 			Image img = overlay.GetComponentInChildren<Image>();
 			img.sprite = img.sprite.setTexture(tex);
 		}
-		
+
 		internal void setText(string s, Color? c = null) {
 			text.text = s;
 			if (c == null || !c.HasValue)
 				c = Color.white;
 			text.color = c.Value;
 		}
-		
+
 		internal string getText() {
 			return text.text;
 		}
-		
+
 		public bool shouldShow(Player ep, bool inOcean) {
 			return forceShow || ((showWhenNotSwimming(ep) || inOcean) && condition());
 		}
-		
+
 		public void setActive(bool active) {
 			if (overlay)
 				overlay.SetActive(active);
 		}
-		
+
 		public int CompareTo(object obj) {
 			return obj is CustomHUDWarning ? ((CustomHUDWarning)obj).priority.CompareTo(priority) : 0; //inverse to put bigger first
 		}
-		
+
 	}
-	
+
 	abstract class DepthFX : MonoBehaviour {
-		
+
 		protected float strength = 0;
 		protected float lastUpdate = 0;
-		
+
 		private void OnPreRender() {
 			if (DayNightCycle.main.timePassedAsFloat - lastUpdate >= 3) {
 				strength *= 0.95F;
 			}
 			enabled = strength > 0.01;
 		}
-		
+
 		internal void setIntensities(float depth) {
 			lastUpdate = DayNightCycle.main.timePassedAsFloat;
-			strength = calculateIntensity(depth);
+			strength = this.calculateIntensity(depth);
 			enabled = strength > 0.01;
 		}
-		
+
 		protected abstract float calculateIntensity(float depth);
 	}
-	
+
 	class DepthRippleFX : DepthFX {
-		
+
 		protected override float calculateIntensity(float depth) {
 			return (float)MathUtil.linterpolate(depth, EnvironmentalDamageSystem.depthFXRippleStart, EnvironmentalDamageSystem.depthDamageStart, 0, 1, true);
 		}
-	
-		private void OnRenderImage(RenderTexture source, RenderTexture destination) {			
+
+		private void OnRenderImage(RenderTexture source, RenderTexture destination) {
 			Material mat = gameObject.GetComponent<MesmerizedScreenFX>().mat;
 			mat.SetFloat(ShaderPropertyID._Amount, strength);
 			mat.SetColor(ShaderPropertyID._ColorStrength, new Color(0, 0, 0, strength));
 			Graphics.Blit(source, destination, mat);
 		}
 	}
-	
+
 	class DepthDarkeningFX : DepthFX {
-		
+
 		protected override float calculateIntensity(float depth) {
 			return (float)MathUtil.linterpolate(depth, EnvironmentalDamageSystem.depthDamageStart, EnvironmentalDamageSystem.depthDamageMax, 0, 1, true);
 		}
-	
+
 		private void OnRenderImage(RenderTexture source, RenderTexture destination) {/*
 			//if (!intermediaryTexture || !intermediaryTexture.IsCreated() || intermediaryTexture.height != source.height || intermediaryTexture.width != source.width)
 			//	intermediaryTexture = new RenderTexture(destination ? destination.descriptor : source.descriptor);
@@ -895,16 +881,16 @@ namespace ReikaKalseki.SeaToSea {
 			Graphics.Blit(intermediaryTexture, destination, mat2);
 			intermediaryTexture.Release();*/
 			//Graphics.Blit(source, destination);
-			
+
 			Material mat = gameObject.GetComponent<CyclopsSmokeScreenFX>().mat;
 			mat.SetFloat(ShaderPropertyID._Amount, strength);
 			mat.color = new Color(0, 0, 0, strength * 1F);
 			Graphics.Blit(source, destination, mat);
 		}
 	}
-	
+
 	public class TemperatureEnvironment {
-		
+
 		public readonly float temperature;
 		public readonly float damageScalar;
 		public readonly float waterScalar;
@@ -912,7 +898,7 @@ namespace ReikaKalseki.SeaToSea {
 		public readonly int cyclopsFireChance;
 		public readonly string biome;
 		public readonly bool isLavaZone;
-		
+
 		internal TemperatureEnvironment(string b, float t, float dmg, float w, int cf, float dmgC) {
 			biome = b;
 			isLavaZone = b.StartsWith("lava", StringComparison.InvariantCultureIgnoreCase) || b.StartsWith("ilz", StringComparison.InvariantCultureIgnoreCase) || b.StartsWith("alz", StringComparison.InvariantCultureIgnoreCase);
@@ -922,61 +908,61 @@ namespace ReikaKalseki.SeaToSea {
 			cyclopsFireChance = cf;
 			damageScalarCyclops = dmgC;
 		}
-		
+
 		public override string ToString() {
 			return string.Format("[TemperatureEnvironment Temperature={0}, DamageScalar={1}, CyclopsFireChance={2}]", temperature, damageScalar, cyclopsFireChance);
 		}
- 
-		
+
+
 	}
-	
+
 	class O2IncreasingAlert : EnviroAlert {
-		
+
 		internal O2IncreasingAlert(RebreatherDepthWarnings warn)
 			: base(warn, ep => ep.GetDepth() >= EnvironmentalDamageSystem.highO2UsageStart && Inventory.main.equipment.GetTechTypeInSlot("Head") != C2CItems.rebreatherV2.TechType, null, null) {
 			preventiveItem.Clear();
 		}
-		
+
 		internal override void fire(RebreatherDepthWarnings warn) {
 			base.fire(warn);
-			
+
 			EnvironmentalDamageSystem.instance.playPDABeep();
 			PDAManager.getPage("deepairuse").unlock();
 		}
-		
+
 		public override string ToString() {
 			return "o2 increase warning";
 		}
-		
+
 	}
-	
+
 	class InfectedLungAlert : EnviroAlert {
-		
+
 		internal InfectedLungAlert(RebreatherDepthWarnings warn)
 			: base(warn, ep => LiquidBreathingSystem.instance.hasReducedCapacity() && EnvironmentalDamageSystem.instance.isPlayerInOcean(), null, null) {
 			preventiveItem.Clear();
 		}
-		
+
 		internal override void fire(RebreatherDepthWarnings warn) {
 			base.fire(warn);
-			
+
 			EnvironmentalDamageSystem.instance.playPDABeep();
 			PDAMessages.Messages msg = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? PDAMessages.Messages.LiquidBreathingSelfScanHard : PDAMessages.Messages.LiquidBreathingSelfScanEasy;
 			PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key);
 		}
-		
+
 		public override string ToString() {
 			return "infected lungs warning";
 		}
-		
+
 	}
-   
+
 	class EnviroAlert : RebreatherDepthWarnings.DepthAlert {
-		
+
 		internal List<TechType> preventiveItem = new List<TechType>(){ TechType.Rebreather };
 		internal readonly Func<Player, bool> applicability;
 		internal bool wasActiveLastTick = false;
-   		
+
 		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, SoundManager.SoundData? snd) {
 			if (!string.IsNullOrEmpty(pda)) {
 				alert = warn.gameObject.AddComponent<PDANotification>();
@@ -986,28 +972,28 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			applicability = f;
 		}
-   		
+
 		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, XMLLocale.LocaleEntry e)
 			: this(warn, f, e.desc, SoundManager.registerPDASound(SeaToSeaMod.modDLL, "enviroAlert_" + e.key, e.pda)) {
-   			
+
 		}
-   		
+
 		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, XMLLocale.LocaleEntry e)
 			: this(warn, depth, e.desc, SoundManager.registerPDASound(SeaToSeaMod.modDLL, "enviroAlert_" + e.key, e.pda)) {
-   			
+
 		}
-   	
+
 		internal EnviroAlert(RebreatherDepthWarnings warn, int depth, string pda, SoundManager.SoundData snd)
 			: this(warn, null, pda, snd) {
 			alertDepth = depth;
 		}
-   	
+
 		internal EnviroAlert(RebreatherDepthWarnings.DepthAlert from) {
-			this.alertDepth = from.alertDepth;
-			this.alert = from.alert;
-			this.alertCooldown = from.alertCooldown;
+			alertDepth = from.alertDepth;
+			alert = from.alert;
+			alertCooldown = from.alertCooldown;
 		}
-   		
+
 		internal virtual void fire(RebreatherDepthWarnings warn) {
 			alertCooldown = true;
 			wasActiveLastTick = true;
@@ -1016,7 +1002,7 @@ namespace ReikaKalseki.SeaToSea {
 				alert.Play();
 			warn.StartCoroutine(warn.ResetAlertCD(this));
 		}
-   		
+
 		internal bool isActive() {
 			Player p = Player.main;
 			bool valid = applicability != null ? applicability(p) : p.GetDepth() >= alertDepth && GameModeUtils.RequiresOxygen();
@@ -1028,11 +1014,11 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			return true;
 		}
-   		
+
 		public override string ToString() {
 			return alert.text + " @ " + alertDepth + "/" + applicability;
 		}
-   	
+
 	}
-	
+
 }

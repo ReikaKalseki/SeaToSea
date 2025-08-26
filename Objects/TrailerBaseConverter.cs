@@ -1,38 +1,41 @@
 ﻿using System;
-using System.IO;
-using System.Xml;
-using System.Linq;
-using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
+
+using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
-using SMLHelper.V2.Assets;
+
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class TrailerBaseConverter : Spawnable {
-	        
+
 		internal TrailerBaseConverter() : base("TrailerBaseConverter", "", "") {
-			
-	    }
-			
-	    public override GameObject GetGameObject() {
+
+		}
+
+		public override GameObject GetGameObject() {
 			GameObject go = new GameObject();
 			go.EnsureComponent<TrailerBaseConverterTag>();
 			go.EnsureComponent<TechTag>().type = TechType;
 			go.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
 			return go;
-	    }
-		
+		}
+
 		class TrailerBaseConverterTag : MonoBehaviour {
-			
+
 			private static readonly HashSet<string> darken = new HashSet<string>(){
 				"BaseCorridorRoomGenericInteriorConnection",
 				"BaseRoomGenericInteriorCoverTop01",
@@ -43,20 +46,20 @@ namespace ReikaKalseki.SeaToSea {
 				"BaseRoomCoverTop",
 				"BaseCorridorInteriorWallHatch",
 			};
-			
+
 			private Text text;
 			private Renderer[] baseParts = null;
-			
+
 			void Update() {
 				if (text) {
-		    		text.text = "<color=#ff0000>ERROR\n\nREACTOR VESSEL\nDAMAGED</color>";
+					text.text = "<color=#ff0000>ERROR\n\nREACTOR VESSEL\nDAMAGED</color>";
 					return;
 				}
 				BaseBioReactorGeometry go = WorldUtil.getClosest<BaseBioReactorGeometry>(C2CHooks.trailerBaseBioreactor);
-		    	if (go && Vector3.Distance(go.transform.position, C2CHooks.trailerBaseBioreactor) < 5F) {
-		    		GameObject child = ObjectUtil.getChildObject(go.gameObject, "UI/Canvas/Text");
-		    		text = child.GetComponent<Text>();
-		    		ObjectUtil.removeChildObject(go.gameObject, "Bio_reactor/Bio_Reactor_glass_geo");
+				if (go && Vector3.Distance(go.transform.position, C2CHooks.trailerBaseBioreactor) < 5F) {
+					GameObject child = go.gameObject.getChildObject("UI/Canvas/Text");
+					text = child.GetComponent<Text>();
+					go.gameObject.removeChildObject("Bio_reactor/Bio_Reactor_glass_geo");
 					baseParts = go.gameObject.FindAncestor<SeabaseReconstruction.WorldgenSeabaseController>().GetComponentsInChildren<Renderer>(true);
 					//SNUtil.log("Checking for decayed textures for "+baseParts.toDebugString(), SNUtil.diDLL);
 					foreach (Renderer r in baseParts) {
@@ -82,7 +85,7 @@ namespace ReikaKalseki.SeaToSea {
 							}
 							if (m.IsKeywordEnabled("MARMO_SIMPLE_GLASS")) {
 								if (m.mainTexture == null) {
-									switch(r.transform.parent.name) {
+									switch (r.transform.parent.name) {
 										case "BaseRoomGenericInteriorWindowSide01":
 											refName = "base_abandoned_interior_room_generic_window_side_01_glass";
 											break;
@@ -100,7 +103,7 @@ namespace ReikaKalseki.SeaToSea {
 							}
 							else if (refName == "base_abandoned_interior_room_generic_window_side_01_glass") {
 								float a = 0;
-								switch(UnityEngine.Random.Range(0, 3)) {
+								switch (UnityEngine.Random.Range(0, 3)) {
 									case 0:
 										a = 0.33F;
 										refName = "base_interior_window_side_01_glass";
@@ -114,7 +117,7 @@ namespace ReikaKalseki.SeaToSea {
 										refName = "base_abandoned_room_generic_wall_frame_02_glass_broken";
 										break;
 								}
-								SNUtil.log("Set glass ref tex to "+refName);
+								SNUtil.log("Set glass ref tex to " + refName);
 								if (a > 0) {
 									Color c = m.GetColor("_Color");
 									m.SetColor("_Color", new Color(c.r, c.g, c.b, a));
@@ -132,20 +135,20 @@ namespace ReikaKalseki.SeaToSea {
 										}
 									}
 									if (found.Count == 0)
-										SNUtil.log("Found no decayed textures of "+refName+", even with mappings");
+										SNUtil.log("Found no decayed textures of " + refName + ", even with mappings");
 									//SNUtil.log("Decayed textures of "+refName+" in "+r.gameObject.GetFullHierarchyPath()+": "+found.toDebugString());
 								}
 								else {
-									SNUtil.log("Found no decayed textures of "+refName);
+									SNUtil.log("Found no decayed textures of " + refName);
 								}
 							}
 						}
 						r.UpdateGIMaterials();
 					}
-		    	}
+				}
 			}
-			
+
 		}
-			
+
 	}
 }

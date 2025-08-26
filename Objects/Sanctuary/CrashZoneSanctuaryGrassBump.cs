@@ -1,36 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
-using System.Collections.Generic;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
+
+using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
-using SMLHelper.V2.Assets;
+
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	[Obsolete]
 	public class CrashZoneSanctuaryGrassBump : Spawnable {
-	        
-	    internal CrashZoneSanctuaryGrassBump() : base("CrashZoneSanctuaryGrassBump", "", "") {
-			
-	    }
-			
-	    public override GameObject GetGameObject() {
+
+		internal CrashZoneSanctuaryGrassBump() : base("CrashZoneSanctuaryGrassBump", "", "") {
+
+		}
+
+		public override GameObject GetGameObject() {
 			string pfb = VanillaFlora.MUSHROOM_BUMP.getRandomPrefab(false);
 			GameObject go = ObjectUtil.createWorldObject(pfb);
-			ObjectUtil.removeComponent<LiveMixin>(go);
-			ObjectUtil.removeComponent<Collider>(go);
-			ObjectUtil.removeComponent<PlantBehaviour>(go);
-			ObjectUtil.removeComponent<FMOD_StudioEventEmitter>(go);
-			ObjectUtil.removeComponent<CoralBlendWhite>(go);
-			ObjectUtil.removeComponent<Light>(go);
+			go.removeComponent<LiveMixin>();
+			go.removeComponent<Collider>();
+			go.removeComponent<PlantBehaviour>();
+			go.removeComponent<FMOD_StudioEventEmitter>();
+			go.removeComponent<CoralBlendWhite>();
+			go.removeComponent<Light>();
 			go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Near;
 			foreach (Renderer r in go.GetComponentsInChildren<Renderer>()) {
 				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/SanctuaryGrassBump");
@@ -46,7 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			return go;
-	    }
-			
+		}
+
 	}
 }

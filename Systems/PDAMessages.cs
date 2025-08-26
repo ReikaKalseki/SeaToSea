@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
-
-using Story;
-
-using SMLHelper.V2.Handlers;
 
 using ReikaKalseki.DIAlterra;
 
-namespace ReikaKalseki.SeaToSea
-{
+using SMLHelper.V2.Handlers;
+
+using Story;
+
+namespace ReikaKalseki.SeaToSea {
 	public static class PDAMessages {
-		
+
 		public static void addAll() {
 			foreach (Messages m in Enum.GetValues(typeof(Messages))) {
 				Message attr = getAttr(m);
@@ -20,7 +19,7 @@ namespace ReikaKalseki.SeaToSea
 				PDAMessagePrompts.instance.addPDAMessage(e);
 			}
 		}
-		
+
 		public enum Messages {
 			//[Message("voidspikeenter")]VoidSpike,
 			[Message("aurorafire")]AuroraFireWarn,
@@ -48,16 +47,16 @@ namespace ReikaKalseki.SeaToSea
 			[Message("liqbrselfscaneasy")]LiquidBreathingSelfScanEasy,
 			[Message("liqbrselfscanhard")]LiquidBreathingSelfScanHard,
 		}
-		
+
 		public static Message getAttr(Messages key) {
 			FieldInfo info = typeof(Messages).GetField(Enum.GetName(typeof(Messages), key));
 			return (Message)Attribute.GetCustomAttribute(info, typeof(Message));
 		}
-		
+
 		public class Message : Attribute {
-			
+
 			public readonly string key;
-			
+
 			public Message(string s) {
 				key = s;
 			}
