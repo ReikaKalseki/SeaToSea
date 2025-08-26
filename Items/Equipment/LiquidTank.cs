@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Crafting;
-
-using UnityEngine;
 using ReikaKalseki.DIAlterra;
 
-namespace ReikaKalseki.SeaToSea
-{
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
+
+using UnityEngine;
+
+namespace ReikaKalseki.SeaToSea {
 	public sealed class LiquidTank : CustomEquipable {
-		
+
 		public LiquidTank() : base(SeaToSeaMod.itemLocale.getEntry("LiquidTank"), "WorldEntities/Tools/HighCapacityTank") {
 			isArmor = true;
-			preventNaturalUnlock();
+			this.preventNaturalUnlock();
 			OnFinishedPatching += () => {
 				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<Battery>().addField("_charge"));
 			};
 		}
 
 		public override Vector2int SizeInInventory {
-			get {return new Vector2int(3, 3);}
+			get { return new Vector2int(3, 3); }
 		}
 
 		public override CraftTree.Type FabricatorType {
@@ -32,10 +32,10 @@ namespace ReikaKalseki.SeaToSea
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"TankMenu"};
+				return new string[] { "TankMenu" };
 			}
 		}
-		
+
 		public override void prepareGameObject(GameObject go, Renderer[] r) {
 			Oxygen o2 = go.EnsureComponent<Oxygen>();
 			o2.oxygenAvailable = 0;
@@ -43,7 +43,7 @@ namespace ReikaKalseki.SeaToSea
 			Battery b = go.EnsureComponent<Battery>();
 			b._capacity = LiquidBreathingSystem.ITEM_VALUE;
 		}
-		
+
 		public override EquipmentType EquipmentType {
 			get {
 				return EquipmentType.Tank;

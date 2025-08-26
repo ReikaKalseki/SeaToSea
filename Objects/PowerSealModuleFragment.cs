@@ -1,34 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
-using System.Collections.Generic;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
+
+using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
-using SMLHelper.V2.Assets;
+
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class PowerSealModuleFragment : Spawnable {
-	        
-	    internal PowerSealModuleFragment() : base("powersealmodulefragment", C2CItems.powerSeal.FriendlyName, C2CItems.powerSeal.Description) {
-			
-	    }
-			
-	    public override GameObject GetGameObject() {
+
+		internal PowerSealModuleFragment() : base("powersealmodulefragment", C2CItems.powerSeal.FriendlyName, C2CItems.powerSeal.Description) {
+
+		}
+
+		public override GameObject GetGameObject() {
 			GameObject world = ObjectUtil.createWorldObject(C2CItems.powerSeal.ClassID);
 			world.EnsureComponent<TechTag>().type = TechType;
 			PrefabIdentifier pi = world.EnsureComponent<PrefabIdentifier>();
 			pi.ClassId = ClassID;
-			ObjectUtil.removeComponent<WorldForces>(world);
-			ObjectUtil.removeComponent<Pickupable>(world);
-			//ObjectUtil.removeComponent<ResourceTracker>(world);
+			world.removeComponent<WorldForces>();
+			world.removeComponent<Pickupable>();
+			//world.removeComponent<ResourceTracker>();
 			ResourceTracker rt = world.EnsureComponent<ResourceTracker>();
 			rt.techType = TechType.Fragment;
 			rt.overrideTechType = TechType.Fragment;
@@ -37,11 +40,11 @@ namespace ReikaKalseki.SeaToSea {
 			world.EnsureComponent<BrokenModule>();
 			Renderer r = world.GetComponentInChildren<Renderer>();
 			return world;
-	    }
-		
+		}
+
 		public void register() {
-			Patch();
-        	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){C2CItems.powerSeal.TechType});
+			this.Patch();
+			KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>() { C2CItems.powerSeal.TechType });
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
 			e.key = TechType;
 			e.blueprint = C2CItems.powerSeal.TechType;
@@ -52,15 +55,15 @@ namespace ReikaKalseki.SeaToSea {
 			e.scanTime = 8;
 			PDAHandler.AddCustomScannerEntry(e);
 		}
-			
+
 	}
-		
+
 	class BrokenModule : MonoBehaviour {
-		
+
 		private VFXController sparker;
-		
+
 		private bool isSparking;
-		
+
 		void Update() {
 			if (!sparker) {
 				GameObject welder = ObjectUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116", false, false);
@@ -84,12 +87,12 @@ namespace ReikaKalseki.SeaToSea {
 					if (rh.transform != null && rh.transform.gameObject) {
 						Pickupable p = rh.transform.gameObject.GetComponent<Pickupable>();
 						if (p) {
-							UnityEngine.Object.DestroyImmediate(p.gameObject);
+							p.gameObject.destroy();
 						}
 					}
 				}
 			}*/
 		}
-		
+
 	}
 }

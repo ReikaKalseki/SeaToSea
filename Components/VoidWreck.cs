@@ -1,56 +1,59 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
-using System.Collections.Generic;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
+
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	[Obsolete]
 	public class VoidWreck : MonoBehaviour, Ecocean.VoidBubbleReaction {
-		
+
 		//private bool acted;
 		//private float timeToAct;
-		
+
 		//private float lastCheckTime = -1;
-			
+
 		void Start() {
-			ObjectUtil.fullyEnable(gameObject);
-			foreach (PrefabPlaceholdersGroup pg in GetComponentsInChildren<PrefabPlaceholdersGroup>(true)) {
-				UnityEngine.Object.DestroyImmediate(pg);
+			gameObject.fullyEnable();
+			foreach (PrefabPlaceholdersGroup pg in this.GetComponentsInChildren<PrefabPlaceholdersGroup>(true)) {
+				pg.destroy();
 			}
-			
-			foreach (PrefabPlaceholder pp in GetComponentsInChildren<PrefabPlaceholder>()) {
-				UnityEngine.Object.DestroyImmediate(pp.gameObject);
+
+			foreach (PrefabPlaceholder pp in this.GetComponentsInChildren<PrefabPlaceholder>()) {
+				pp.gameObject.destroy();
 			}
-			Invoke("Apply", 2.0F);
+			this.Invoke("Apply", 2.0F);
 		}
-		
+
 		void Apply() {
 			//SNUtil.writeToChat("Initializing void wreck");
-			ObjectUtil.removeChildObject(gameObject, "Slots");
-			ObjectUtil.removeChildObject(gameObject, "*DataBox*");
-			ObjectUtil.removeChildObject(gameObject, "*Spawner*");
-			ObjectUtil.removeChildObject(gameObject, "*PDA*");
-			ObjectUtil.removeChildObject(gameObject, "Decoration");
-			ObjectUtil.removeChildObject(gameObject, "Interactable");
-			
-			//ObjectUtil.removeChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/wire_huge");
-			
-			GameObject wire = ObjectUtil.getChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/wire_huge");
-			ObjectUtil.removeChildObject(wire, "wire_huge_01"); //the top cyl
-			ObjectUtil.removeChildObject(wire, "wire_huge_collision/Capsule");
-			ObjectUtil.removeChildObject(wire, "wire_huge_collision/Capsule (1)");
-			
-			GameObject panel0 = ObjectUtil.getChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/hull_01");
+			gameObject.removeChildObject("Slots");
+			gameObject.removeChildObject("*DataBox*");
+			gameObject.removeChildObject("*Spawner*");
+			gameObject.removeChildObject("*PDA*");
+			gameObject.removeChildObject("Decoration");
+			gameObject.removeChildObject("Interactable");
+
+			//gameObject.removeChildObject("ExplorableWreck2_clean/explorable_wreckage_03/wire_huge");
+
+			GameObject wire = gameObject.getChildObject("ExplorableWreck2_clean/explorable_wreckage_03/wire_huge");
+			wire.removeChildObject("wire_huge_01"); //the top cyl
+			wire.removeChildObject("wire_huge_collision/Capsule");
+			wire.removeChildObject("wire_huge_collision/Capsule (1)");
+
+			GameObject panel0 = gameObject.getChildObject("ExplorableWreck2_clean/explorable_wreckage_03/hull_01");
 			GameObject panel = UnityEngine.Object.Instantiate(panel0);
 			Renderer r = panel0.GetComponentInChildren<Renderer>();
 			r.materials[0].SetFloat("_SpecInt", 0.2F);
@@ -60,42 +63,42 @@ namespace ReikaKalseki.SeaToSea {
 			panel.transform.SetParent(panel0.transform.parent);
 			panel.transform.localRotation = Quaternion.Euler(0, 50, 0);
 			panel.transform.localPosition = new Vector3(-29.00F, -4.00F, -19.00F);
-			//ObjectUtil.removeChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/hull_01");
-			ObjectUtil.removeChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/hull_02");
-			ObjectUtil.removeChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/hull_03");
-			//GameObject panel = ObjectUtil.getChildObject(gameObject, "ExplorableWreck2_clean/explorable_wreckage_03/hull_03");
+			//gameObject.removeChildObject("ExplorableWreck2_clean/explorable_wreckage_03/hull_01");
+			gameObject.removeChildObject("ExplorableWreck2_clean/explorable_wreckage_03/hull_02");
+			gameObject.removeChildObject("ExplorableWreck2_clean/explorable_wreckage_03/hull_03");
+			//GameObject panel = gameObject.getChildObject("ExplorableWreck2_clean/explorable_wreckage_03/hull_03");
 			//panel.transform.localRotation = Quaternion.Euler(0, 21, 0);
-				/*
-			GameObject g1 = ObjectUtil.getChildObject(gameObject, "Decoration");
-			GameObject g2 = ObjectUtil.getChildObject(gameObject, "Interactable");
-			
-			Vector3 barPos = new Vector3(-69.61F, -466.25F, -1847.02F);
-			foreach (GameObject bar in ObjectUtil.getChildObjects(g2, "Starship_exploded_debris_19")) {
-				if (Vector3.Distance(bar.transform.position, barPos) < 0.5F)
-					UnityEngine.Object.DestroyImmediate(bar);
-			}
-				
-			foreach (BlueprintHandTarget pp in g1.GetComponentsInChildren<BlueprintHandTarget>()) {
-				UnityEngine.Object.DestroyImmediate(pp.gameObject);
-			}
-			foreach (BlueprintHandTarget pp in g2.GetComponentsInChildren<BlueprintHandTarget>()) {
-				UnityEngine.Object.DestroyImmediate(pp.gameObject);
-			}
-			foreach (StoryHandTarget pp in g1.GetComponentsInChildren<StoryHandTarget>()) {
-				UnityEngine.Object.DestroyImmediate(pp.gameObject);
-			}
-			foreach (StoryHandTarget pp in g2.GetComponentsInChildren<StoryHandTarget>()) {
-				UnityEngine.Object.DestroyImmediate(pp.gameObject);
-			}
-				
-			foreach (PrefabIdentifier rb in g1.GetComponentsInChildren<PrefabIdentifier>()) {
-				applyToRB(rb);
-			}
-			foreach (PrefabIdentifier rb in g2.GetComponentsInChildren<PrefabIdentifier>()) {
-				applyToRB(rb);
-			}*/
+			/*
+        GameObject g1 = gameObject.getChildObject("Decoration");
+        GameObject g2 = gameObject.getChildObject("Interactable");
+
+        Vector3 barPos = new Vector3(-69.61F, -466.25F, -1847.02F);
+        foreach (GameObject bar in g2.getChildObjects("Starship_exploded_debris_19")) {
+            if (Vector3.Distance(bar.transform.position, barPos) < 0.5F)
+                bar.destroy();
+        }
+
+        foreach (BlueprintHandTarget pp in g1.GetComponentsInChildren<BlueprintHandTarget>()) {
+            pp.gameObject.destroy();
+        }
+        foreach (BlueprintHandTarget pp in g2.GetComponentsInChildren<BlueprintHandTarget>()) {
+            pp.gameObject.destroy();
+        }
+        foreach (StoryHandTarget pp in g1.GetComponentsInChildren<StoryHandTarget>()) {
+            pp.gameObject.destroy();
+        }
+        foreach (StoryHandTarget pp in g2.GetComponentsInChildren<StoryHandTarget>()) {
+            pp.gameObject.destroy();
+        }
+
+        foreach (PrefabIdentifier rb in g1.GetComponentsInChildren<PrefabIdentifier>()) {
+            applyToRB(rb);
+        }
+        foreach (PrefabIdentifier rb in g2.GetComponentsInChildren<PrefabIdentifier>()) {
+            applyToRB(rb);
+        }*/
 		}
-			
+
 		private void applyToRB(PrefabIdentifier pi) {
 			string n = pi.name.ToLowerInvariant();
 			if (!n.Contains("modular_wall") && !n.Contains("details") && !n.Contains("virtualentity") && !n.Contains("door") && !n.Contains("vent") && n[0] != 'x' && !n.Contains("crack") && !n.Contains("engine_console") && !n.Contains("wires") && !n.Contains("wall_planter") && !n.Contains("monitor") && !n.Contains("tech_box")) {
@@ -109,28 +112,28 @@ namespace ReikaKalseki.SeaToSea {
 					prop.bump(UnityEngine.Random.Range(5F, 10F));
 				}
 				else {
-					UnityEngine.Object.DestroyImmediate(pi.gameObject);
+					pi.gameObject.destroy();
 				}
 			}
 		}
-			/*
-		void Update() {
-			float time = DayNightCycle.main.timePassedAsFloat;
-			if (!acted) {
-				if (time >= timeToAct) {
-					Apply();
-					acted = true;
-				}
-				else if (time - lastCheckTime >= 1) {
-					lastCheckTime = time;
-					Apply();
-				}
-			}
-		}
-		*/
+		/*
+    void Update() {
+        float time = DayNightCycle.main.timePassedAsFloat;
+        if (!acted) {
+            if (time >= timeToAct) {
+                Apply();
+                acted = true;
+            }
+            else if (time - lastCheckTime >= 1) {
+                lastCheckTime = time;
+                Apply();
+            }
+        }
+    }
+    */
 		public void onVoidBubbleTouch(Ecocean.VoidBubbleTag tag) {
 			tag.fade(1);
 		}
-			
+
 	}
 }

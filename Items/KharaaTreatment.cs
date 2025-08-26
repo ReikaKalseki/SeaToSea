@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Crafting;
-
-using UnityEngine;
 using ReikaKalseki.DIAlterra;
 
-namespace ReikaKalseki.SeaToSea
-{
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
+
+using UnityEngine;
+
+namespace ReikaKalseki.SeaToSea {
 	public class KharaaTreatment : BasicCraftingItem {
-		
+
 		public KharaaTreatment() : base(SeaToSeaMod.itemLocale.getEntry("KharaaTreatment"), "WorldEntities/Natural/FirstAidKit") {
 			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/KharaaTreatment");
 			unlockRequirement = TechType.Unobtanium;//TechType.Workbench;//SeaToSeaMod.healFlower.TechType;
@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea
 
 		public override string[] StepsToFabricatorTab {
 			get {
-				return new string[]{"C2CMedical"};
+				return new string[] { "C2CMedical" };
 			}
 		}
 	}

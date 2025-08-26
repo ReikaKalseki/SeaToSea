@@ -38,6 +38,7 @@ $RECYCLE.BIN/
 *.sln
 *.Settings
 *.log
+*.resx
 
 obj/*
 bin/*

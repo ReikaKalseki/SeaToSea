@@ -1,34 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class EmperorRoot : Spawnable {
-		
+
 		public readonly string basePrefab;
-		
-		public EmperorRoot(XMLLocale.LocaleEntry e, string pfb) : base(e.key+"_"+pfb, e.name, e.desc) {
+
+		public EmperorRoot(XMLLocale.LocaleEntry e, string pfb) : base(e.key + "_" + pfb, e.name, e.desc) {
 			basePrefab = pfb;
 		}
-		
+
 		public override GameObject GetGameObject() {
 			GameObject go = ObjectUtil.createWorldObject(basePrefab);
 			foreach (Light l in go.GetComponentsInChildren<Light>())
-				UnityEngine.Object.Destroy(l.gameObject);
-			GameObject mdl = ObjectUtil.getChildObject(go, "models");
-			go.transform.localScale = Vector3.one*0.3F;
+				l.gameObject.destroy(false);
+			GameObject mdl = go.getChildObject("models");
+			go.transform.localScale = Vector3.one * 0.3F;
 			foreach (Renderer r in mdl.GetComponentsInChildren<Renderer>()) {
-				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Plants/EmperorRoot/"+r.transform.parent.parent.gameObject.name);
+				RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/Plants/EmperorRoot/" + r.transform.parent.parent.gameObject.name);
 				r.materials[0].SetFloat("_Shininess", 2.5F);
 				r.materials[0].SetFloat("_Fresnel", 0.75F);
 				r.materials[0].SetFloat("_SpecInt", /*5F*/0.33F);
@@ -45,24 +45,24 @@ namespace ReikaKalseki.SeaToSea {
 			go.EnsureComponent<EmperorRootTag>();
 			return go;
 		}
-			
-	    protected override void ProcessPrefab(GameObject world) {
+
+		protected override void ProcessPrefab(GameObject world) {
 			base.ProcessPrefab(world);
 			world.EnsureComponent<TechTag>().type = C2CItems.emperorRootCommon;
-	    }
-		
+		}
+
 	}
-	
-	class EmperorRootTag : MonoBehaviour { 
-		
+
+	class EmperorRootTag : MonoBehaviour {
+
 		private HarvestPoint[] oils; //they are made inactive, not deleted, when picked
-		
+
 		public static readonly float REGROW_TIME = 1800F; //30 min
-		
+
 		void Update() {
-			transform.localScale = Vector3.one*0.3F;
+			transform.localScale = Vector3.one * 0.3F;
 			if (oils == null) {
-				PickPrefab[] pp = GetComponentsInChildren<PickPrefab>(true);
+				PickPrefab[] pp = this.GetComponentsInChildren<PickPrefab>(true);
 				oils = new HarvestPoint[pp.Length];
 				for (int i = 0; i < pp.Length; i++) {
 					oils[i] = new HarvestPoint(pp[i]);
@@ -84,30 +84,30 @@ namespace ReikaKalseki.SeaToSea {
 				}*/
 				hp.pickable.gameObject.SetActive(dT >= REGROW_TIME || hp.lastHarvestTime <= 0);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	class HarvestPoint {
-		
+
 		internal readonly PickPrefab pickable;
 		internal readonly ChildObjectIdentifier id;
 		internal readonly Collider[] colliders;
 		internal readonly Renderer[] renders;
-		
+
 		internal float lastHarvestTime = -1;
-		
+
 		internal HarvestPoint(PickPrefab pp) {
 			pickable = pp;
 			id = pp.GetComponent<ChildObjectIdentifier>();
 			colliders = pp.GetComponentsInChildren<Collider>();
 			renders = pp.GetComponentsInChildren<Renderer>();
-			pp.pickedEvent.AddHandler(this.pickable, new UWE.Event<PickPrefab>.HandleFunction(p => {
+			pp.pickedEvent.AddHandler(pickable, new UWE.Event<PickPrefab>.HandleFunction(p => {
 				lastHarvestTime = DayNightCycle.main.timePassedAsFloat;
 				//does not work, probably wrong GO p.gameObject.EnsureComponent<EmperorRootOil.EmperorRootOilTag>().pickupTime = lastHarvestTime;
 			}));
 		}
-		
+
 	}
 }

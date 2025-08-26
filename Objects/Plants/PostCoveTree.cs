@@ -1,57 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	[Obsolete]
 	public class PostCoveTree : Spawnable {
-		
+
 		internal static readonly Dictionary<DecoPlants, float> templates = new Dictionary<DecoPlants, float>(){
 			{DecoPlants.LOST_BRANCHES_4, 0.33F},
 			{DecoPlants.LOST_BRANCHES_5, 0.25F},
 			{DecoPlants.LOST_BRANCHES_6, 0.08F},
 		};
-		
+
 		internal static readonly Dictionary<string, PostCoveTree> types = new Dictionary<string, PostCoveTree>();
-		
+
 		public readonly XMLLocale.LocaleEntry locale;
 		public readonly DecoPlants template;
-		
+
 		private static int FRAGMENT_COUNT;
-		
-		public PostCoveTree(XMLLocale.LocaleEntry e, DecoPlants pfb) : base(e.key+"_"+pfb, e.name, e.desc) {
+
+		public PostCoveTree(XMLLocale.LocaleEntry e, DecoPlants pfb) : base(e.key + "_" + pfb, e.name, e.desc) {
 			locale = e;
 			template = pfb;
-			
-			OnFinishedPatching += () => {types[ClassID] = this;};
+
+			OnFinishedPatching += () => { types[ClassID] = this; };
 		}
-		
+
 		public override GameObject GetGameObject() {
 			GameObject go = ObjectUtil.createWorldObject(template.prefab);
 			foreach (Light l in go.GetComponentsInChildren<Light>())
-				UnityEngine.Object.Destroy(l.gameObject);
+				l.gameObject.destroy(false);
 			go.EnsureComponent<PostCoveTreeTag>();
 			return go;
 		}
-			
-	    protected override void ProcessPrefab(GameObject world) {
+
+		protected override void ProcessPrefab(GameObject world) {
 			base.ProcessPrefab(world);
 			//world.EnsureComponent<TechTag>().type = C2CItems.postCoveTreeCommon;
-	    }
-		
+		}
+
 		public static PDAScanner.EntryData postRegister() {
 			TechType unlock = CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType;
-        	//KnownTechHandler.Main.SetAnalysisTechEntry(C2CItems.postCoveTreeCommon, new List<TechType>(){unlock});
+			//KnownTechHandler.Main.SetAnalysisTechEntry(C2CItems.postCoveTreeCommon, new List<TechType>(){unlock});
 			PDAScanner.EntryData e = new PDAScanner.EntryData();
 			//e.key = C2CItems.postCoveTreeCommon;
 			e.blueprint = unlock;
@@ -62,13 +62,13 @@ namespace ReikaKalseki.SeaToSea {
 				FRAGMENT_COUNT += SeaToSeaMod.worldgen.getCount(pc.ClassID);
 			}*/
 			e.totalFragments = FRAGMENT_COUNT;
-			SNUtil.log("Found "+e.totalFragments+" of post-cove-tree to use as fragments", SeaToSeaMod.modDLL);
+			SNUtil.log("Found " + e.totalFragments + " of post-cove-tree to use as fragments", SeaToSeaMod.modDLL);
 			e.isFragment = true;
 			e.scanTime = 5;
 			PDAHandler.AddCustomScannerEntry(e);
 			return e;
 		}
-		
+
 		public static int getFragmentCount() {
 			return FRAGMENT_COUNT;
 		}
@@ -92,32 +92,33 @@ namespace ReikaKalseki.SeaToSea {
 			e.encyclopedia = page.id;
 			PDAHandler.AddCustomScannerEntry(e);
 		}*/
-		
+
 	}
-	
+
+#pragma warning disable CS0612 // Type or member is obsolete
 	class PostCoveTreeTag : MonoBehaviour {
-		
+
 		private Renderer renderer;
-		
+
 		private bool isHot;
-		
+
 		void Start() {
-			ObjectUtil.removeComponent<DIHooks.FruitPlantTag>(gameObject);
-			ObjectUtil.removeComponent<FruitPlant>(gameObject);
-			foreach (PickPrefab l in GetComponentsInChildren<PickPrefab>())
-				UnityEngine.Object.Destroy(l.gameObject);
-			renderer = GetComponentInChildren<Renderer>();
+			gameObject.removeComponent<DIHooks.FruitPlantTag>();
+			gameObject.removeComponent<FruitPlant>();
+			foreach (PickPrefab l in this.GetComponentsInChildren<PickPrefab>())
+				l.gameObject.destroy(false);
+			renderer = this.GetComponentInChildren<Renderer>();
 			renderer.materials[1].color = Color.clear;
-			PostCoveTree type = PostCoveTree.types[GetComponent<PrefabIdentifier>().ClassId];
+			PostCoveTree type = PostCoveTree.types[this.GetComponent<PrefabIdentifier>().ClassId];
 			transform.localScale = Vector3.one * PostCoveTree.templates[type.template];
 		}
-		
+
 		void Update() {
 			bool hot = transform.position.y < -1040;//VanillaBiomes.ILZ.isInBiome(transform.position) || WaterTemperatureSimulation.main.GetTemperature(transform.position) >= 90;
 			bool retexture = isHot != hot;
 			isHot = hot;
 			if (retexture) {
-				PostCoveTree type = PostCoveTree.types[GetComponent<PrefabIdentifier>().ClassId];
+				PostCoveTree type = PostCoveTree.types[this.GetComponent<PrefabIdentifier>().ClassId];
 				string n = type.template.getName();
 				string tex = "Textures/Plants/PostCoveTree/"+(isHot ? "Hot" : "Cool")+n[n.Length-1];
 				RenderUtil.swapTextures(SeaToSeaMod.modDLL, renderer, tex);
@@ -128,6 +129,7 @@ namespace ReikaKalseki.SeaToSea {
 				renderer.materials[0].SetColor("_GlowColor", Color.white);
 			}
 		}
-		
+
 	}
+#pragma warning restore CS0612 // Type or member is obsolete
 }

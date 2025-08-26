@@ -1,12 +1,12 @@
 ﻿using System;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-using UnityEngine;
-using UnityEngine.UI;
+using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
+using ReikaKalseki.SeaToSea;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
@@ -14,65 +14,64 @@ using SMLHelper.V2.Utility;
 
 using Story;
 
-using ReikaKalseki.DIAlterra;
-using ReikaKalseki.Ecocean;
-using ReikaKalseki.SeaToSea;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class BiomeDiscoverySystem : IStoryGoalListener {
-		
+
 		public static readonly BiomeDiscoverySystem instance = new BiomeDiscoverySystem();
-		
+
 		//private readonly HashSet<string> biomes = new HashSet<string>();
-		
+
 		private readonly Dictionary<BiomeBase, string> basicEntryGoal = new Dictionary<BiomeBase, string>();
 		private readonly Dictionary<BiomeBase, string> exploreGoal = new Dictionary<BiomeBase, string>();
 		private readonly Dictionary<string, BiomeBase> goalMap = new Dictionary<string, BiomeBase>();
-		
+
 		private BiomeDiscoverySystem() {
-			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);	
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 		}
-		
-		public void register() {			
-			mapBiome(VanillaBiomes.SHALLOWS, "Goal_Lifepod2"); //"Aurora suffered orbital hull failure"
-			mapBiome(VanillaBiomes.KELP, "Goal_BiomeKelpForest");
-			mapBiome(VanillaBiomes.REDGRASS, "Goal_BiomeGrassyPlateaus");
-			mapBiome(VanillaBiomes.MUSHROOM, "Goal_BiomeMushroomForest");
-			mapBiome(VanillaBiomes.JELLYSHROOM, "Goal_BiomeJellyCave");
-			mapBiome(VanillaBiomes.DEEPGRAND, "Goal_BiomeDeepGrandReef");
-			mapBiome(VanillaBiomes.KOOSH, "Goal_BiomeKooshZone");
-			mapBiome(VanillaBiomes.DUNES, "Goal_BiomeDunes");
-			mapBiome(VanillaBiomes.CRASH, "Goal_BiomeCrashedShip");
-			mapBiome(VanillaBiomes.SPARSE, "Goal_BiomeSparseReef");
-			mapBiome(VanillaBiomes.MOUNTAINS, "Goal_BiomeMountains");
-			mapBiome(VanillaBiomes.TREADER, "Goal_BiomeSeaTreaderPath");
-			mapBiome(VanillaBiomes.UNDERISLANDS, "Goal_BiomeUnderwaterIslands");
-			mapBiome(VanillaBiomes.BLOODKELP, "Goal_BiomeBloodKelp");
-			mapBiome(VanillaBiomes.BLOODKELPNORTH, "Goal_BiomeBloodKelp2");
-			mapBiome(VanillaBiomes.LOSTRIVER, "Goal_BiomeLostRiver");
-			mapBiome(VanillaBiomes.ILZ, "ILZChamber_Dragon"); //"energy in structure in center of chamber"
-			mapBiome(VanillaBiomes.ALZ, "Emperor_Telepathic_Contact3");
-			mapBiome(VanillaBiomes.AURORA, "Goal_LocationAuroraEntry");
-			mapBiome(VanillaBiomes.FLOATISLAND, "Goal_BiomeFloatingIsland");
-			mapBiome(VanillaBiomes.VOID, "Goal_BiomeVoid");
-			
+
+		public void register() {
+			this.mapBiome(VanillaBiomes.SHALLOWS, "Goal_Lifepod2"); //"Aurora suffered orbital hull failure"
+			this.mapBiome(VanillaBiomes.KELP, "Goal_BiomeKelpForest");
+			this.mapBiome(VanillaBiomes.REDGRASS, "Goal_BiomeGrassyPlateaus");
+			this.mapBiome(VanillaBiomes.MUSHROOM, "Goal_BiomeMushroomForest");
+			this.mapBiome(VanillaBiomes.JELLYSHROOM, "Goal_BiomeJellyCave");
+			this.mapBiome(VanillaBiomes.DEEPGRAND, "Goal_BiomeDeepGrandReef");
+			this.mapBiome(VanillaBiomes.KOOSH, "Goal_BiomeKooshZone");
+			this.mapBiome(VanillaBiomes.DUNES, "Goal_BiomeDunes");
+			this.mapBiome(VanillaBiomes.CRASH, "Goal_BiomeCrashedShip");
+			this.mapBiome(VanillaBiomes.SPARSE, "Goal_BiomeSparseReef");
+			this.mapBiome(VanillaBiomes.MOUNTAINS, "Goal_BiomeMountains");
+			this.mapBiome(VanillaBiomes.TREADER, "Goal_BiomeSeaTreaderPath");
+			this.mapBiome(VanillaBiomes.UNDERISLANDS, "Goal_BiomeUnderwaterIslands");
+			this.mapBiome(VanillaBiomes.BLOODKELP, "Goal_BiomeBloodKelp");
+			this.mapBiome(VanillaBiomes.BLOODKELPNORTH, "Goal_BiomeBloodKelp2");
+			this.mapBiome(VanillaBiomes.LOSTRIVER, "Goal_BiomeLostRiver");
+			this.mapBiome(VanillaBiomes.ILZ, "ILZChamber_Dragon"); //"energy in structure in center of chamber"
+			this.mapBiome(VanillaBiomes.ALZ, "Emperor_Telepathic_Contact3");
+			this.mapBiome(VanillaBiomes.AURORA, "Goal_LocationAuroraEntry");
+			this.mapBiome(VanillaBiomes.FLOATISLAND, "Goal_BiomeFloatingIsland");
+			this.mapBiome(VanillaBiomes.VOID, "Goal_BiomeVoid");
+
 			//no triggers in vanilla
-			createTrigger(VanillaBiomes.GRANDREEF, "grandreef");
-			createTrigger(VanillaBiomes.CRAG, "CragField");
-			createTrigger(VanillaBiomes.COVE, "LostRiver_TreeCove");
-			
+			this.createTrigger(VanillaBiomes.GRANDREEF, "grandreef");
+			this.createTrigger(VanillaBiomes.CRAG, "CragField");
+			this.createTrigger(VanillaBiomes.COVE, "LostRiver_TreeCove");
+
 			StoryHandler.instance.registerTickedGoal(StoryHandler.instance.createLocationGoal(WorldUtil.SUNBEAM_SITE, 1000, "Goal_BiomeMountainIsland", WorldUtil.isMountainIsland));
-						
+
 			foreach (CustomBiome cb in BiomeBase.getCustomBiomes()) {
 				if (cb.discoveryGoal != null) {
-					mapBiome(cb, cb.discoveryGoal.key);
+					this.mapBiome(cb, cb.discoveryGoal.key);
 				}
 				else {
-					createTrigger(cb, cb.biomeName);
+					this.createTrigger(cb, cb.biomeName);
 				}
 			}
-			
+
 			StoryHandler.instance.addListener(this);
 		}
 		/*
@@ -109,39 +108,39 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}*/
-		
+
 		private void mapBiome(BiomeBase bb, string goal) {
 			basicEntryGoal[bb] = goal;
 			goalMap[goal] = bb;
 		}
-		
+
 		private void createTrigger(BiomeBase bb, string id) {
 			BiomeGoal bg = new BiomeGoal();
-			bg.key = "Goal_Biome"+id;
+			bg.key = "Goal_Biome" + id;
 			bg.biome = id;
 			bg.delay = 0;
 			bg.goalType = Story.GoalType.Story;
 			bg.minStayDuration = 2;
-			mapBiome(bb, bg.key);
+			this.mapBiome(bb, bg.key);
 			StoryHandler.instance.registerTickedGoal(bg);
 		}
-		
+
 		public void NotifyGoalComplete(string key) {
 			if (goalMap.ContainsKey(key)) {
 				LifeformScanningSystem.instance.onBiomeDiscovered();
 			}
 		}
-	
+
 		public void forceDiscovery(BiomeBase bb) {
 			if (bb == null || bb == BiomeBase.UNRECOGNIZED)
 				return;
 			if (!basicEntryGoal.ContainsKey(bb)) {
-				SNUtil.log("No cached biome goal to apply for biome "+bb);
+				SNUtil.log("No cached biome goal to apply for biome " + bb);
 				return;
 			}
 			StoryGoal.Execute(basicEntryGoal[bb], Story.GoalType.Story);
 		}
-		
+
 		public bool isDiscovered(BiomeBase bb) {
 			if (bb == null || bb == BiomeBase.UNRECOGNIZED)
 				return true;
@@ -149,29 +148,29 @@ namespace ReikaKalseki.SeaToSea {
 			//	generateBiomeGoalList();
 			//}
 			if (!basicEntryGoal.ContainsKey(bb)) {
-				SNUtil.log("No cached biome goal to check for biome "+bb);
+				SNUtil.log("No cached biome goal to check for biome " + bb);
 				return true;
 			}
 			return StoryGoalManager.main.IsGoalComplete(basicEntryGoal[bb]);
 		}
-		
+
 		public bool visitedAllBiomes() {
 			//if (basicEntryGoal.Count == 0) {
 			//	generateBiomeGoalList();
 			//}
 			foreach (KeyValuePair<BiomeBase, string> kvp in basicEntryGoal) {
 				if (!StoryGoalManager.main.IsGoalComplete(kvp.Value)) {
-					SNUtil.writeToChat("Missing biome goal '"+kvp.Value+" for biome "+kvp.Key);
+					SNUtil.writeToChat("Missing biome goal '" + kvp.Value + " for biome " + kvp.Key);
 					return false;
 				}
 			}
 			return true;
 		}
-		
+
 		public bool checkIfVisitedAllBiomes() {
-			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
+			return C2CUtil.checkConditionAndShowPDAAndVoicelogIfNot(this.visitedAllBiomes(), "notvisitedallbiomes", PDAMessages.Messages.NotSeenBiomesMessage);
 		}
-		
+
 	}
-	
+
 }

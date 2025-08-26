@@ -1,65 +1,64 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Linq;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
+
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.SeaToSea
-{
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+
+namespace ReikaKalseki.SeaToSea {
 	internal class SeamothTetherController : MonoBehaviour {
-		
+
 		private static readonly float POWER_COST = 0.5F; //per second
 		internal static readonly float RANGE = 18F;
-		
+
 		private SeaMoth vehicle;
-		
+
 		private int moduleSlot;
-		
+
 		internal GameObject tetherRoot;
 		private FMOD_CustomLoopingEmitter grabSound;
-		
+
 		private List<Tether> tethers = new List<Tether>();
-		
+
 		private bool towing;
-		
+
 		void FixedUpdate() {
 			if (!vehicle) {
-				vehicle = GetComponent<SeaMoth>();
+				vehicle = this.GetComponent<SeaMoth>();
 			}
-			
+
 			if (!tetherRoot) {
-				tetherRoot = ObjectUtil.getChildObject(gameObject, "TetherRoot");
+				tetherRoot = gameObject.getChildObject("TetherRoot");
 				if (!tetherRoot) {
 					tetherRoot = new GameObject("TetherRoot");
 					tetherRoot.transform.SetParent(transform);
 					tetherRoot.transform.localRotation = Quaternion.identity;
 					tetherRoot.transform.localPosition = Vector3.zero;
-					
+
 					PropulsionCannon template = ObjectUtil.lookupPrefab(TechType.PropulsionCannon).GetComponent<PropulsionCannon>();
 					grabSound = tetherRoot.EnsureComponent<FMOD_CustomLoopingEmitter>();
 					grabSound.copyObject(template.grabbingSound);
-					tetherRoot.name = "TetherRoot";
 				}
 			}
-			
+
 			while (tethers.Count < 5) {
 				tethers.Add(new Tether());
 			}
 
 			if (vehicle && moduleSlot >= 0 && vehicle.IsToggled(moduleSlot)) {
 				//SNUtil.writeToChat("Module is toggled");
-				float energy;
-				float capacity;
-				vehicle.GetEnergyValues(out energy, out capacity);
+				vehicle.GetEnergyValues(out float energy, out float capacity);
 				float dT = Time.deltaTime;
 				float amt = POWER_COST*dT;
 				if (energy <= amt) {
@@ -75,7 +74,7 @@ namespace ReikaKalseki.SeaToSea
 						grabbed.Add(rb);
 					}
 					else {
-						rb = tryFindGrabbableTarget();
+						rb = this.tryFindGrabbableTarget();
 						if (rb && !grabbed.Contains(rb)) {
 							t.grab(rb);
 							grabbed.Add(rb);
@@ -98,11 +97,11 @@ namespace ReikaKalseki.SeaToSea
 					grabSound.Stop();
 			}
 		}
-		
+
 		public bool isTowing() {
 			return towing;
 		}
-		
+
 		private Rigidbody tryFindGrabbableTarget() {
 			List<Rigidbody> available = new List<Rigidbody>();
 			WorldUtil.getGameObjectsNear(transform.position, RANGE, go => {
@@ -127,10 +126,10 @@ namespace ReikaKalseki.SeaToSea
 			});
 			return available.Count == 0 ? null : available.GetRandom();
 		}
-		
+
 		public void recalculateModule() {
 			if (!vehicle) {
-				Invoke("recalculateModule", 0.5F);
+				this.Invoke("recalculateModule", 0.5F);
 				return;
 			}
 			foreach (int idx in vehicle.slotIndexes.Values) {
@@ -142,18 +141,18 @@ namespace ReikaKalseki.SeaToSea
 			}
 			moduleSlot = -1;
 		}
-		
+
 	}
-	
+
 	class Tether {
-		
+
 		private Rigidbody target;
-		
+
 		private readonly List<GameObject> grabSphereFX = new List<GameObject>();
 		private readonly float massScale;
-		
+
 		private VFXElectricLine effect;
-		
+
 		public Tether() {
 			PropulsionCannon template = ObjectUtil.lookupPrefab(TechType.PropulsionCannon).GetComponent<PropulsionCannon>();
 			for (int i = 0; i < 4; i++) {
@@ -164,11 +163,11 @@ namespace ReikaKalseki.SeaToSea
 			}
 			massScale = template.massScalingFactor;
 		}
-		
+
 		internal Rigidbody getTarget() {
 			return target;
 		}
-		
+
 		internal void grab(Rigidbody rb) {
 			target = rb;
 			foreach (GameObject go in grabSphereFX)
@@ -176,7 +175,7 @@ namespace ReikaKalseki.SeaToSea
 			effect.gameObject.SetActive(true);
 			rb.isKinematic = false;
 		}
-		
+
 		internal void drop() {
 			foreach (GameObject go in grabSphereFX) {
 				if (go)
@@ -186,8 +185,8 @@ namespace ReikaKalseki.SeaToSea
 				effect.gameObject.SetActive(false);
 			target = null;
 		}
-		
-		internal void pull(SeamothTetherController mgr, float dT) {			
+
+		internal void pull(SeamothTetherController mgr, float dT) {
 			if (!effect) {
 				GameObject go = ObjectUtil.lookupPrefab("d11dfcc3-bce7-4870-a112-65a5dab5141b");
 				go = go.GetComponent<Gravsphere>().vfxPrefab;
@@ -195,46 +194,46 @@ namespace ReikaKalseki.SeaToSea
 				effect = go.GetComponent<VFXElectricLine>();
 				effect.transform.parent = mgr.tetherRoot.transform;
 			}
-			
+
 			if (!target)
 				return;
 			target.isKinematic = false;
-			
+
 			bool animal = (bool)target.GetComponent<Creature>();
-		
-			Vector3 tgtFX = mgr.transform.position-mgr.transform.forward*1-mgr.transform.up*0.25F;
+
+			Vector3 tgtFX = mgr.transform.position-(mgr.transform.forward*1)-(mgr.transform.up*0.25F);
 			float f = animal ? 2 : 1;
-			Vector3 tgt = mgr.transform.position+(target.transform.position-mgr.transform.position).normalized*5*f;//mgr.transform.position-mgr.transform.forward*8*f-mgr.transform.up*2.5F*f;
+			Vector3 tgt = mgr.transform.position+((target.transform.position-mgr.transform.position).normalized*5*f);//mgr.transform.position-mgr.transform.forward*8*f-mgr.transform.up*2.5F*f;
 			effect.origin = tgtFX;
 			effect.target = target.transform.position;
 			effect.originVector = -mgr.transform.forward;
-			
+
 			Vector3 distance = tgt - target.transform.position;
 			float magnitude = distance.magnitude;
-			if (magnitude > SeamothTetherController.RANGE*2.5F) {
-				SNUtil.writeToChat("Lost grip of "+Language.main.Get(CraftData.GetTechType(target.gameObject).AsString()));
-				drop();
+			if (magnitude > SeamothTetherController.RANGE * 2.5F) {
+				SNUtil.writeToChat("Lost grip of " + Language.main.Get(CraftData.GetTechType(target.gameObject).AsString()));
+				this.drop();
 				return;
 			}
 			float d = Mathf.Clamp(magnitude, 1f, 4f);
-			Vector3 vector = target.velocity + Vector3.Normalize(distance) * (animal ? 300 : 1200) * d * dT / (1f + target.mass * massScale);
-			Vector3 amount = vector * (10f + Mathf.Pow(Mathf.Clamp01(1f - magnitude), 1.75f) * 40f) * dT;
+			Vector3 vector = target.velocity + (Vector3.Normalize(distance) * (animal ? 300 : 1200) * d * dT / (1f + (target.mass * massScale)));
+			Vector3 amount = vector * (10f + (Mathf.Pow(Mathf.Clamp01(1f - magnitude), 1.75f) * 40f)) * dT;
 			vector = UWE.Utils.SlerpVector(vector, Vector3.zero, amount);
 			target.velocity = vector;
-			
+
 			foreach (GameObject go in grabSphereFX) {
 				go.transform.SetParent(mgr.tetherRoot.transform);
-				go.transform.localScale = Vector3.one*(animal ? 5 : 3);
+				go.transform.localScale = Vector3.one * (animal ? 5 : 3);
 				go.transform.position = target.transform.position;
 			}
 		}
-		
+
 		private class GrabbedTarget {
-			
+
 			private Rigidbody body;
 			private Vector3 relativeCenter;
-			
+
 		}
-		
+
 	}
 }

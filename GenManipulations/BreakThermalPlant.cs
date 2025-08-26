@@ -7,55 +7,57 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.Scripting;
-using UnityEngine.UI;
-using System.Collections.Generic;
+
 using ReikaKalseki.DIAlterra;
+
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
 
-namespace ReikaKalseki.SeaToSea
-{		
+using UnityEngine;
+using UnityEngine.Scripting;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+
+namespace ReikaKalseki.SeaToSea {
 	internal class BreakThermalPlant : ManipulationBase {
-		
+
 		private bool disablePowergen;
 		private bool deleteHead;
 		private bool disableBar;
 		private bool deleteBar;
 		private string textOverride;
 		private Color? textColor;
-		
+
 		public override void applyToObject(GameObject go) {
-			ObjectUtil.removeComponent<ThermalPlant>(go);
+			go.removeComponent<ThermalPlant>();
 			if (deleteHead)
-				ObjectUtil.removeChildObject(go, "model/root/head");
-			GameObject text = ObjectUtil.getChildObject(go, "UI/Canvas/Text");
+				go.removeChildObject("model/root/head");
+			GameObject text = go.getChildObject("UI/Canvas/Text");
 			Text t = text.GetComponent<Text>();
 			if (!string.IsNullOrEmpty(textOverride))
 				t.text = textOverride;
 			if (textColor != null && textColor.HasValue)
 				t.color = textColor.Value;
 			if (deleteBar)
-				ObjectUtil.removeChildObject(go, "UI/Canvas/temperatureBar");
+				go.removeChildObject("UI/Canvas/temperatureBar");
 			if (disableBar)
-				ObjectUtil.removeChildObject(go, "UI/Canvas/temperatureBar/temperatureBarForeground");
+				go.removeChildObject("UI/Canvas/temperatureBar/temperatureBarForeground");
 			if (disablePowergen) {
-				ObjectUtil.removeComponent<PowerSource>(go);
-				ObjectUtil.removeComponent<PowerFX>(go);
-				ObjectUtil.removeComponent<PowerRelay>(go);
-				ObjectUtil.removeComponent<PowerSystemPreview>(go);
+				go.removeComponent<PowerSource>();
+				go.removeComponent<PowerFX>();
+				go.removeComponent<PowerRelay>();
+				go.removeComponent<PowerSystemPreview>();
 			}
 		}
-		
+
 		public override void applyToObject(PlacedObject go) {
-			applyToObject(go.obj);
+			this.applyToObject(go.obj);
 		}
-		
+
 		public override void loadFromXML(XmlElement e) {
 			disablePowergen = e.getBoolean("RemovePower");
 			deleteHead = e.getBoolean("DeleteHead");
@@ -64,7 +66,7 @@ namespace ReikaKalseki.SeaToSea
 			textOverride = e.getProperty("SetText", true);
 			textColor = e.getColor("TextColor", false, true);
 		}
-		
+
 		public override void saveToXML(XmlElement e) {
 			e.addProperty("RemovePower", disablePowergen);
 			e.addProperty("DeleteHead", deleteHead);
@@ -75,6 +77,6 @@ namespace ReikaKalseki.SeaToSea
 			if (textColor != null && textColor.HasValue)
 				e.addProperty("TextColor", textColor.Value);
 		}
-		
+
 	}
 }

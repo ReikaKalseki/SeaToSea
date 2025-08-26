@@ -1,25 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
 
 using ReikaKalseki.DIAlterra;
 
+using SMLHelper.V2.Assets;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
+
+using UnityEngine;
+
 namespace ReikaKalseki.SeaToSea {
-	
+
 	public class Avolite : BasicCustomOre {
-		
+
 		public Avolite(string id, string name, string desc, VanillaResources template) : base(id, name, desc, template) {
 			collectSound = "event:/loot/pickup_precursorioncrystal";
 			inventorySize = new Vector2int(2, 1);
 		}
-		
+
 		public override void prepareGameObject(GameObject go, Renderer[] r0) {
 			base.prepareGameObject(go, r0);
 			foreach (Renderer r in r0) {
@@ -35,10 +35,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			go.EnsureComponent<AvoliteTag>();
 		}
-		
+
 	}
-		
+
 	class AvoliteTag : MonoBehaviour {
-			
+
 	}
 }
