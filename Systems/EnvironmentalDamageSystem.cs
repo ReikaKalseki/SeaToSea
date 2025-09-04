@@ -263,7 +263,7 @@ namespace ReikaKalseki.SeaToSea {
 					Vehicle v = dmg.gameObject.GetComponent<Vehicle>();
 					if (!v || !(v.docked || v.precursorOutOfWater)) {
 						if (v && v is Exosuit) {
-							foreach (TechType tt in InventoryUtil.getVehicleUpgrades(v)) {
+							foreach (TechType tt in v.getVehicleUpgrades()) {
 								float f2 = this.getHeatDamageModuleFactor(tt);
 								amt *= f2;
 							}
@@ -380,7 +380,7 @@ namespace ReikaKalseki.SeaToSea {
 				return 0;
 			}
 			float leak = 1;
-			hasUpgrade = InventoryUtil.vehicleHasUpgrade(v, C2CItems.powerSeal.TechType);
+			hasUpgrade = v.vehicleHasUpgrade(C2CItems.powerSeal.TechType);
 			if (hasUpgrade)
 				leak *= 0.2F;
 			//SBUtil.writeToChat(biome+" # "+dmg.gameObject);
@@ -439,7 +439,7 @@ namespace ReikaKalseki.SeaToSea {
 				//SBUtil.writeToChat("heat: "+temp);
 				if (temp != null) {
 					//SBUtil.writeToChat("immune: "+immune);
-					if (!InventoryUtil.cyclopsHasUpgrade(sub, C2CItems.cyclopsHeat.TechType)) {
+					if (!sub.cyclopsHasUpgrade(C2CItems.cyclopsHeat.TechType)) {
 						dmg.liveMixin.TakeDamage(dmg.damagePerCrush * temp.damageScalar * 0.15F, dmg.transform.position, DamageType.Heat, null);
 						if (dmg.soundOnDamage) {
 							dmg.soundOnDamage.Play();
@@ -464,7 +464,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (con.appliedThrottle)
 						leak *= 1.5F;
 					float f = 0;
-					foreach (Battery b in InventoryUtil.getCyclopsPowerCells(sub)) {
+					foreach (Battery b in sub.getCyclopsPowerCells()) {
 						if (b && !Mathf.Approximately(b.capacity, 1000))
 							f++;
 					}

@@ -24,7 +24,7 @@ namespace ReikaKalseki.SeaToSea {
 			inventorySize = new Vector2int(3, 3);
 			renderModify = r => {
 				r.transform.localScale = new Vector3(2.4F, 2.4F, 1);
-				RenderUtil.setPolyanilineColor(r, new Color(1, 158 / 255F, 201 / 255F, 1.5F));
+				r.setPolyanilineColor(new Color(1, 158 / 255F, 201 / 255F, 1.5F));
 				r.materials[1].SetFloat("_Shininess", 5F);
 				r.materials[1].SetFloat("_SpecInt", 12F);
 				r.materials[1].SetFloat("_Fresnel", 0F);

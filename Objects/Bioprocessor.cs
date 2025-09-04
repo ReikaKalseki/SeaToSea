@@ -157,7 +157,7 @@ namespace ReikaKalseki.SeaToSea {
 			BioprocessorLogic lgc = go.GetComponent<BioprocessorLogic>();
 			//lgc.storage = con;
 
-			GameObject mdl = RenderUtil.setModel(go, "model", ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb").getChildObject("Starship_control_terminal_01"));
+			GameObject mdl = go.setModel("model", ObjectUtil.lookupPrefab("6ca93e93-5209-4c27-ba60-5f68f36a95fb").getChildObject("Starship_control_terminal_01"));
 			mdl.transform.localEulerAngles = new Vector3(270, 0, 0);
 
 			GameObject machineMdl = go.getChildObject(MACHINE_GO_NAME);
@@ -348,7 +348,7 @@ namespace ReikaKalseki.SeaToSea {
 						if (nextEnzyTimeRemaining <= 0) {
 							IList<InventoryItem> enzy = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
 							if (enzy != null && enzy.Count >= 1) {
-								InventoryUtil.forceRemoveItem(storage, enzy[0]);
+								storage.forceRemoveItem(enzy[0]);
 								enzyRequired--;
 								SoundManager.playSoundAt(SoundManager.buildSound("event:/loot/pickup_lubricant"), gameObject.transform.position);
 								this.setEmissiveColor(workingColor, cooldown: 1 + this.getOperationTime(currentOperation.secondsPerEnzyme));
@@ -365,12 +365,12 @@ namespace ReikaKalseki.SeaToSea {
 									for (int i = 0; i < currentOperation.inputCount; i++) {
 										InventoryItem ii = ing.ElementAt(0);
 										SNUtil.log("Removing " + ii.item + " (" + ii.item.gameObject.GetInstanceID() + ") from bioproc inventory");
-										InventoryUtil.forceRemoveItem(storage, ii); //list is updated in realtime
+										storage.forceRemoveItem(ii); //list is updated in realtime
 									}
 									int n = currentOperation.outputCount;
 									if (hasKelp) {
 										n *= 2;
-										InventoryUtil.forceRemoveItem(storage, kelp[0]); //list is updated in realtime
+										storage.forceRemoveItem(kelp[0]); //list is updated in realtime
 									}
 									this.addItemToInventory(currentOperation.outputItem, n);
 									SNUtil.log("Bioprocessor crafted " + currentOperation.outputItem.AsString() + " x" + n);

@@ -53,7 +53,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			GameObject air = ObjectUtil.lookupPrefab("7b4b90b8-6294-4354-9ebb-3e5aa49ae453");
 			FMOD_CustomLoopingEmitter snd = air.GetComponentInChildren<FMOD_CustomLoopingEmitter>(true);
-			GameObject mdl = RenderUtil.setModel(go, "discovery_trashcan_01_d", air.getChildObject("model"));
+			GameObject mdl = go.setModel("discovery_trashcan_01_d", air.getChildObject("model"));
 			mdl.transform.localScale = new Vector3(3, 4, 3);
 			lgc.sound = go.EnsureComponent<FMOD_CustomLoopingEmitter>();
 			lgc.sound.copyObject<FMOD_CustomLoopingEmitter>(snd);

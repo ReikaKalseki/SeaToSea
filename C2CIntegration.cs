@@ -284,6 +284,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			FoodEffectSystem.instance.addVomitingEffect(CraftingItems.getItem(CraftingItems.Items.AmoeboidSample).TechType, 100, 100, 20, 4, 10);
 
+			FoodEffectSystem.instance.moraleCallback = MoraleSystem.instance.shiftMorale;
+
 			MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType, 5);
 			MushroomVaseStrand.filterDrops.addEntry(CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, 60);
 
@@ -389,6 +391,14 @@ namespace ReikaKalseki.SeaToSea {
 			t = InstructionHandlers.getTypeBySimpleName("DeathRun.DeathRun");
 			if (t != null)
 				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "Patch", SeaToSeaMod.modDLL, filterDeathrun);
+
+			t = InstructionHandlers.getTypeBySimpleName("Agony.RadialTabs.GhostMoving");
+			if (t != null) {
+				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "OnUpdate", SeaToSeaMod.modDLL, codes => {
+					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, t.FullName, "_speed");
+					codes.Insert(idx + 1, InstructionHandlers.createMethodCall("ReikaKalseki.AqueousEngineering.AEHooks", "getRadialTabAnimSpeed", false, new Type[] { typeof(float) }));
+				});
+			}
 
 			FCSIntegrationSystem.instance.applyPatches();
 			DEIntegrationSystem.instance.applyPatches();

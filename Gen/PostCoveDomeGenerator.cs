@@ -62,7 +62,7 @@ namespace ReikaKalseki.SeaToSea {
 				go.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Medium;
 				Renderer[] rs = go.GetComponentsInChildren<Renderer>();
 				foreach (Renderer r in rs) {
-					Renderer r2 = RenderUtil.setModel(r, mdl).GetComponentInChildren<Renderer>();
+					Renderer r2 = r.setModel(mdl).GetComponentInChildren<Renderer>();
 					r2.transform.localPosition = new Vector3(0, (-0.05F * 0) + 0.02F, 0);
 					r2.transform.localEulerAngles = new Vector3(-90, 0, 0);
 					RenderUtil.swapTextures(SeaToSeaMod.modDLL, r2, "Textures/Plants/PostCoveTree/Res_" + (isHot ? "Hot" : "Cold"));

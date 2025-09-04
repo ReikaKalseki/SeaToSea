@@ -386,8 +386,6 @@ namespace ReikaKalseki.SeaToSea {
 
 			sunbeamCountdownTrigger = new Story.StoryGoal("c2cTriggerSunbeamCountdown", Story.GoalType.Story, 0);
 
-			KnownTech.onAdd += onTechUnlocked;
-
 			//DamageSystem.acidImmune = DamageSystem.acidImmune.AddToArray<TechType>(TechType.Seamoth);
 
 			C2CItems.postAdd();
@@ -542,6 +540,7 @@ namespace ReikaKalseki.SeaToSea {
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CUnlocks).TypeHandle);
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(C2CProgression).TypeHandle);
 			DataCollectionTracker.instance.register();
+			MoraleSystem.instance.register();
 
 			keybinds = new C2CModOptions();
 			OptionsPanelHandler.RegisterModOptions(keybinds);
@@ -661,16 +660,6 @@ namespace ReikaKalseki.SeaToSea {
 
 			e = pdaLocale.getEntry("crashmesahint");
 			crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"));
-		}
-
-		private static void onTechUnlocked(TechType tech, bool vb) {/*
-    	if (tech == TechType.PrecursorKey_Orange) {
-    		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
-    	}
-    	if (tech == TechType.NuclearReactor || tech == TechType.HighCapacityTank || tech == TechType.PrecursorKey_Purple || tech == TechType.SnakeMushroom || tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
-    		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
-    	}*/
-			C2CItems.onTechUnlocked(tech);
 		}
 
 		private static void addOreGen() {
@@ -800,6 +789,11 @@ namespace ReikaKalseki.SeaToSea {
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: " + FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo() + "; Missing scan=" + LifeformScanningSystem.instance.hasScannedEverything()));
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRecover", () => C2CUtil.rescue());
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("debugMorale", arg => MoraleSystem.printMoraleForDebug = arg);
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cMORALEDELTA", arg => {
+				if (SNUtil.canUseDebug())
+					MoraleSystem.instance.shiftMorale(arg);
+			});
 		}
 		/*
     private static void spawnVentKelp(float dist) {

@@ -1067,7 +1067,8 @@
 			Acoustic Suppression Module
 		</name>
 		<desc>
-			Greatly reduces the detectability of basic seamoth systems to passive listeners.
+			Greatly reduces the detectability of basic seamoth systems to passive listeners by redirecting sound energy into an internal crystal matrix.
+			
 			Will not affect active echolocators, or creatures at close range.
 		</desc>
 		<pda>

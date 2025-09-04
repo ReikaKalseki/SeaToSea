@@ -26,6 +26,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly SoundManager.SoundData startPurgingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "startheatsink", "Sounds/startheatsink2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 40);}, SoundSystem.masterBus);
 		private static readonly SoundManager.SoundData meltingSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothmelt", "Sounds/seamothmelt2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		private static readonly SoundManager.SoundData boostSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothboost", "Sounds/seamothboost.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
+		private static readonly SoundManager.SoundData purgeEnergySound = SoundManager.registerSound(SeaToSeaMod.modDLL, "seamothsounddump", "Sounds/stealthsounddump2.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 		//private static readonly SoundManager.SoundData ejectionPrepareSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "heatsinkEjectPrepare", "Sounds/heatsinkejectprepare.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 120);}, SoundSystem.masterBus);
 
 		private static readonly Vector3 sweepArchCave = new Vector3(1570, -338, 1075);
@@ -36,6 +37,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private static readonly float TICK_RATE = 0.1F;
 		private static readonly float HOLD_LOW_TIME = 30.8F;
+
+		public static readonly float MAX_VOIDSTEALTH_ENERGY = 2400;
 
 		public static float getOverrideTemperature(float temp) {
 			if (!useSeamothVehicleTemperature)
@@ -58,21 +61,23 @@ namespace ReikaKalseki.SeaToSea {
 			return temp;
 		}
 
-		private SeaMoth seamoth;
-		private TemperatureDamage temperatureDamage;
+		public SeaMoth seamoth { get; private set; }
+		public TemperatureDamage temperatureDamage { get; private set; }
 		private VFXVehicleDamages damageFX;
 		private FMOD_CustomLoopingEmitter engineSounds;
 		private VehicleAccelerationModifier speedModifier;
 		private SeamothTetherController tethers;
-		private Rigidbody body;
+		public Rigidbody body { get; private set; }
 
 		private float baseDamageAmount;
 
-		private float vehicleTemperature = 25;
+		public float vehicleTemperature { get; private set; }
 
 		private float holdTempLowTime = 0;
 
 		private float temperatureAtPurge = -1;
+
+		public bool isPurgingHeat { get { return temperatureAtPurge >= 0; } }
 
 		private float lastMeltSound = -1;
 		//private float lastPreEjectSound = -1;
@@ -82,19 +87,30 @@ namespace ReikaKalseki.SeaToSea {
 
 		private float lastTickTime = -1;
 
-		private float speedBonus;
+		public float speedBonus { get; private set; }
 
 		private Vector3 jitterTorque;
 		private Vector3 jitterTorqueTarget;
 
-		private int stuckCells = 0;
-		private bool touchingKelp = false;
+		public int stuckCells { get; private set; }
+		public bool touchingKelp { get; private set; }
 
-		private bool hasVoidStealth = false;
+		public float voidStealthStoredEnergy { get; private set; }
+
+		public bool hasVoidStealth = false;
 
 		//private Renderer deepStalkerStorageDamage;
 
 		private PredatoryBloodvine holdingBloodKelp;
+
+		private static uGUI_SeamothHUD seamothHUD;
+		private SeamothWithStealthHUD stealthEnabledSeamothHUDElement;
+
+		public float soundStorageScalar { get { return Mathf.Clamp01(voidStealthStoredEnergy/MAX_VOIDSTEALTH_ENERGY); } } //0-1
+
+		public C2CMoth() {
+			vehicleTemperature = 25;
+		}
 
 		void Start() {
 			useSeamothVehicleTemperature = false;
@@ -131,6 +147,36 @@ namespace ReikaKalseki.SeaToSea {
 		void Update() {
 			if (C2CHooks.skipSeamothTick)
 				return;
+			if (!stealthEnabledSeamothHUDElement) {
+				seamothHUD = UnityEngine.Object.FindObjectOfType<uGUI_SeamothHUD>();
+				if (seamothHUD) {
+					stealthEnabledSeamothHUDElement = seamothHUD.gameObject.EnsureComponent<SeamothWithStealthHUD>();
+					if (!stealthEnabledSeamothHUDElement.root) {
+						GameObject hudRoot = seamothHUD.root.transform.parent.gameObject;
+						uGUI_ExosuitHUD exo = seamothHUD.GetComponent<uGUI_ExosuitHUD>();
+						GameObject go = UnityEngine.Object.Instantiate(exo.root.gameObject).setName("SeamothStealthHUD");
+						go.SetActive(true);
+						go.transform.SetParent(exo.root.transform.parent);
+						go.transform.localPosition = exo.root.transform.localPosition;
+						go.transform.localRotation = exo.root.transform.localRotation;
+						go.transform.localScale = exo.root.transform.localScale;
+						stealthEnabledSeamothHUDElement.init(exo);
+						stealthEnabledSeamothHUDElement.root = go;
+					}
+
+					Image bcg = stealthEnabledSeamothHUDElement.root.getChildObject("Background").GetComponent<Image>();
+					Texture2D tex = TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeamothStealthHUD");
+					bcg.sprite = TextureManager.createSprite(tex);
+					Image bar = stealthEnabledSeamothHUDElement.root.getChildObject("ThrustBar").GetComponent<Image>();
+					Material mat = bar.material;
+					tex = TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/SeamothStealthEnergyBar");
+					bar.sprite = TextureManager.createSprite(tex);
+					bar.material = mat;
+					mat.mainTexture = tex;
+					//bcg.GetComponent<RectTransform>().sizeDelta = new Vector2(tex.width / 2F, tex.height / 2F);
+					//bcg.transform.localPosition = new Vector3(22, 0, 0);
+				}
+			}
 			float time = DayNightCycle.main.timePassedAsFloat;
 			float dT = time-lastTickTime;
 			if (dT >= TICK_RATE) {
@@ -155,6 +201,37 @@ namespace ReikaKalseki.SeaToSea {
 			go.GetComponent<HeatSinkTag>().onFired(Mathf.Clamp01((temperatureAtPurge / 250F * 0.25F) + 0.75F));
 		}
 
+		internal void dumpSoundEnergy() {
+			if (voidStealthStoredEnergy <= 0)
+				return;
+			Utils.PlayOneShotPS(ObjectUtil.lookupPrefab(VanillaCreatures.CRASHFISH.prefab).GetComponent<Crash>().detonateParticlePrefab, transform.position+transform.forward*2, Quaternion.identity);
+			SoundManager.playSoundAt(purgeEnergySound, transform.position, false, -1, 2 * soundStorageScalar);
+			//ECHooks.attractToSoundPing(seamoth, false, 1); //range 400 to attract
+			/*
+			for (int i = 0; i < UWE.Utils.OverlapSphereIntoSharedBuffer(transform.position, 30); i++) {
+				Collider collider = UWE.Utils.sharedColliderBuffer[i];
+				GameObject go = UWE.Utils.GetEntityRoot(collider.gameObject);
+				if (!go)
+					go = collider.gameObject;
+				Creature c = go.GetComponent<Creature>();
+				LiveMixin lv = go.GetComponent<LiveMixin>();
+				if (c != null && lv != null) {
+					lv.TakeDamage(2, transform.position, DamageType.Explosive, gameObject);
+				}
+			}
+			*/
+			float r = 150*Mathf.Clamp(soundStorageScalar, 0.33F, 0.67F); //so minimum 50m <= 33% and max 100m >= 67%
+			/*
+			foreach (AggressiveToPilotingVehicle a in WorldUtil.getObjectsNearWithComponent<AggressiveToPilotingVehicle>(transform.position, r)) {
+				if (a.lastTarget && a.lastTarget.target && a.lastTarget.target == gameObject)
+					a.lastTarget.SetTarget(null);
+			}*/
+			foreach (AttackLastTarget a in WorldUtil.getObjectsNearWithComponent<AttackLastTarget>(transform.position, r)) {
+				a.clearAttackTarget();
+			}
+			voidStealthStoredEnergy = 0;
+		}
+
 		internal void applySpeedBoost(float charge) {
 			if (speedBonus > 0.5F || !seamoth.HasEnoughEnergy(5))
 				return;
@@ -171,14 +248,6 @@ namespace ReikaKalseki.SeaToSea {
 
 		public void OnBloodKelpGrab(PredatoryBloodvine c) {
 			holdingBloodKelp = c;
-		}
-
-		internal bool isPurgingHeat() {
-			return temperatureAtPurge >= 0;
-		}
-
-		public float getTemperature() {
-			return vehicleTemperature;
 		}
 
 		internal void onHitByLavaBomb(LavaBombTag bomb) {
@@ -220,7 +289,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			float health = seamoth.liveMixin.GetHealthFraction();
 
-			float minSpeedBonus = InventoryUtil.isVehicleUpgradeSelected(seamoth, C2CItems.speedModule.TechType) ? 0.25F : 0;
+			float minSpeedBonus = seamoth.isVehicleUpgradeSelected(C2CItems.speedModule.TechType) ? 0.25F : 0;
 			if (speedBonus > minSpeedBonus)
 				speedBonus *= 0.933F;
 			else
@@ -254,6 +323,12 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 
+			if (hasVoidStealth && body) {
+				voidStealthStoredEnergy += tickTime * 0.2F * body.velocity.magnitude;
+				if (voidStealthStoredEnergy >= MAX_VOIDSTEALTH_ENERGY)
+					seamoth.liveMixin.Kill(DamageType.Explosive);
+			}
+
 			if (speedBonus > 0.5F) { //during boost only
 				float jitter = ((speedBonus+1)*(speedBonus+1))-1; //0.25 -> 0.56, 3 -> 8
 				Vector3 add = jitterTorque*tickTime*jitter*25000;
@@ -280,9 +355,7 @@ namespace ReikaKalseki.SeaToSea {
 					kooshCave = true;
 					Vector3 vel = body.velocity;
 					Vector3 vec = Vector3.zero;
-					vec = vel.magnitude < 0.2
-						? UnityEngine.Random.onUnitSphere * 0.6F
-						: MathUtil.rotateVectorAroundAxis(Vector3.Cross(vel, Vector3.up), seamoth.transform.forward, UnityEngine.Random.Range(0F, 360F)).setLength(0.8F);
+					vec = vel.magnitude < 0.2 ? UnityEngine.Random.onUnitSphere * 0.6F : MathUtil.rotateVectorAroundAxis(Vector3.Cross(vel, Vector3.up), seamoth.transform.forward, UnityEngine.Random.Range(0F, 360F)).setLength(0.8F);
 					body.AddForce(vec, ForceMode.VelocityChange);
 				}
 			}
@@ -291,7 +364,7 @@ namespace ReikaKalseki.SeaToSea {
 				VoidSpikesBiome.instance.tickTeleportCheck(seamoth);
 			}
 
-			if (this.isPurgingHeat()) {
+			if (this.isPurgingHeat) {
 				vehicleTemperature -= tickTime * 150;
 				if (vehicleTemperature <= 5) {
 					vehicleTemperature = 5;
@@ -353,8 +426,67 @@ namespace ReikaKalseki.SeaToSea {
 				this.Invoke("recalculateModules", 0.5F);
 				return;
 			}
-			hasVoidStealth = InventoryUtil.vehicleHasUpgrade(seamoth, C2CItems.voidStealth.TechType);
+			hasVoidStealth = seamoth.vehicleHasUpgrade(C2CItems.voidStealth.TechType);
+			if (!hasVoidStealth)
+				voidStealthStoredEnergy = 0;
 			this.validateDepthModules();
+		}
+
+		class SeamothWithStealthHUD : uGUI_ExosuitHUD {
+
+			internal void init(uGUI_ExosuitHUD from) {
+				this.copyObject(from);
+			}
+
+			void Start() {
+				textHealth = root.getChildObject("Health").GetComponent<Text>();
+				textPower = root.getChildObject("Power").GetComponent<Text>();
+				textTemperature = root.getChildObject("Temperature").GetComponent<Text>();
+				imageThrust = root.getChildObject("ThrustBar").GetComponent<Image>();
+				imageThrust.material = new Material(imageThrust.material);
+			}
+
+			private new void Update() {
+				bool flag1 = false;
+				bool flag2 = false;
+				SeaMoth sm = null;
+				if (Player.main) {
+					sm = Player.main.GetVehicle() as SeaMoth;
+					flag1 = (bool)sm && !(Player.main.GetPDA() && Player.main.GetPDA().isInUse);
+					flag2 = flag1 && sm.vehicleHasUpgrade(C2CItems.voidStealth.TechType);
+				}
+				root.SetActive(flag2);
+				if (seamothHUD)
+					seamothHUD.root.SetActive(flag1 && !flag2);
+				if (!flag2)
+					return;
+				sm.GetHUDValues(out float health, out float power);
+				C2CMoth cm = sm.GetComponent<C2CMoth>();
+				float thrust = cm.soundStorageScalar;
+				float temperature = cm.vehicleTemperature;
+				int num4 = Mathf.CeilToInt(health * 100f);
+				if (this.lastHealth != num4) {
+					this.lastHealth = num4;
+					this.textHealth.text = IntStringCache.GetStringForInt(this.lastHealth);
+				}
+				int num5 = Mathf.CeilToInt(power * 100f);
+				if (this.lastPower != num5) {
+					this.lastPower = num5;
+					this.textPower.text = IntStringCache.GetStringForInt(this.lastPower);
+				}
+				if (this.lastThrust != thrust) {
+					this.lastThrust = thrust;
+					this.imageThrust.material.SetFloat(ShaderPropertyID._Amount, this.lastThrust);
+				}
+				this.temperatureSmoothValue = ((this.temperatureSmoothValue < -10000f) ? temperature : Mathf.SmoothDamp(this.temperatureSmoothValue, temperature, ref this.temperatureVelocity, 1f));
+				int num6 = Mathf.CeilToInt(this.temperatureSmoothValue);
+				if (this.lastTemperature != num6) {
+					this.lastTemperature = num6;
+					this.textTemperature.text = IntStringCache.GetStringForInt(this.lastTemperature);
+					this.textTemperatureSuffix.text = Language.main.GetFormat("ThermometerFormat");
+				}
+			}
+
 		}
 
 	}

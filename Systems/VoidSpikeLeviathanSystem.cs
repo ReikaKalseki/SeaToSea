@@ -501,7 +501,7 @@ namespace ReikaKalseki.SeaToSea {
 					double ch = this.getAvoidanceChance(ep, sm, edge, far);
 					//SNUtil.writeToChat(ch+" @ "+sm.transform.position);
 					if (ch > 0 && (ch >= 1 || UnityEngine.Random.Range(0F, 1F) <= ch)) {
-						if (InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
+						if (sm.vehicleHasUpgrade(C2CItems.voidStealth.TechType))
 							return false;
 						//SNUtil.writeToChat("Tried and failed");
 					}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -131,6 +132,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private static float lastSaveAlertTime = -1;
 
+		private static float lastCuddlefishPlay = -1;
+
 		private static TechType loadTechPistol() {
 			if (techPistol == TechType.None && !searchedTechPistol) {
 				techPistol = SNUtil.getTechType("TechPistol");
@@ -219,7 +222,15 @@ namespace ReikaKalseki.SeaToSea {
 
 			DIHooks.waterFilterSpawnEvent += onWaterFilterSpawn;
 
+			DIHooks.onPlayWithCuddlefish += onCuddlefishPlay;
+			DIHooks.onRocketStageCompletedEvent += onRocketStageComplete;
+			DIHooks.onSleepEvent += onSleep;
+			DIHooks.onEatEvent += onEat;
+			DIHooks.getFoodRateEvent += affectFoodRate;
+
 			SNUtil.log("Finished registering main DI event callbacks");
+
+			KnownTech.onAdd += onTechUnlocked;
 
 			BaseSonarPinger.onBaseSonarPingedEvent += onBaseSonarPinged;
 			BaseDrillableGrinder.onDrillableGrindEvent += getGrinderDrillableDrop;
@@ -253,11 +264,13 @@ namespace ReikaKalseki.SeaToSea {
 			if (WorldgenIntegrityChecks.checkWorldgenIntegrity(false))
 				WorldgenIntegrityChecks.throwError();
 
+			MoraleSystem.instance.reset();
+
 			Inventory.main.equipment.onEquip += onEquipmentAdded;
 			Inventory.main.equipment.onUnequip += onEquipmentRemoved;
 
 			//remove all since field does not serialize
-			InventoryUtil.forEachOfType(Inventory.main.container, C2CItems.emperorRootOil.TechType, ii => InventoryUtil.forceRemoveItem(Inventory.main.container, ii));
+			Inventory.main.container.forEachOfType(C2CItems.emperorRootOil.TechType, ii => Inventory.main.container.forceRemoveItem(ii));
 
 			BrokenTablet.updateLocale();
 
@@ -352,6 +365,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			if (skipPlayerTick || !ep || !DIHooks.isWorldLoaded())
 				return;
+
 			//SNUtil.writeToChat(WorldUtil.getRegionalDescription(ep.transform.position));
 
 			if (playerBaseO2 == null) {
@@ -364,6 +378,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			float time = DayNightCycle.main.timePassedAsFloat;
+
+			MoraleSystem.instance.tick(ep);
 
 			if (KeyCodeUtils.GetKeyDown(SeaToSeaMod.keybinds.getBinding(C2CModOptions.PROPGUNSWAP))) {
 				C2CUtil.swapRepulsionCannons();
@@ -573,6 +589,11 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void getSwimSpeed(DIHooks.SwimSpeedCalculation ch) {
+			float morale = MoraleSystem.instance.moralePercentage;
+			if (morale < 25) {
+				ch.setValue(ch.getValue() * Mathf.Lerp(0.5F, 1F, morale / 25F));
+			}
+
 			if (Player.main.motorMode != Player.MotorMode.Dive)
 				return;
 			//SNUtil.writeToChat("Get swim speed, was "+f+", has="+LiquidBreathingSystem.instance.hasLiquidBreathing());
@@ -659,7 +680,40 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				calc.craftingDuration *= 1.5F;
 			}
+			if (!QModManager.API.QModServices.Main.ModPresent("AgonyRadialCraftingTabs")) {
+				float morale = MoraleSystem.instance.moralePercentage;
+				float f = 1;
+				if (morale < 10) {
+					f = Mathf.Lerp(6F, 3F, morale / 10F);
+				}
+				else if (morale < 25) {
+					f = (float)MathUtil.linterpolate(morale, 10, 25, 3, 1.5, true);
+				}
+				else if (morale < 50) {
+					f = (float)MathUtil.linterpolate(morale, 25, 50, 1.5, 1, true);
+				}
+				else if (morale >= 90) {
+					f = (float)MathUtil.linterpolate(morale, 90, 100, 1, 0.5F, true);
+				}
+				calc.craftingDuration *= f;
+				//SNUtil.writeToChat("Morale is " + morale.ToString("0.0") + " -> "+f.ToString("0.00")+"x duration");
+			}
 			return true;
+		}
+
+		public static float getRadialTabAnimSpeed(float orig) {
+			float morale = MoraleSystem.instance.moralePercentage;
+			float f = 1;
+			if (morale < 10) {
+				f = Mathf.Lerp(0.125F, 0.33F, morale / 10F);
+			}
+			else if (morale < 25) {
+				f = (float)MathUtil.linterpolate(morale, 10, 25, 0.33, 0.67, true);
+			}
+			else if (morale < 50) {
+				f = (float)MathUtil.linterpolate(morale, 25, 50, 0.67, 1, true);
+			}
+			return f * orig;
 		}
 
 		public static float getPropulsionCannonForce(PropulsionCannon prop) {
@@ -867,68 +921,76 @@ namespace ReikaKalseki.SeaToSea {
 			if (p != null) {
 				if (dmg.type == DamageType.Heat && Vector3.Distance(p.transform.position, mountainBaseGeoCenter) <= 27) {
 					dmg.setValue(0);
-					return;
 				}
-				bool flag = C2CItems.hasSealedOrReinforcedSuit(out bool seal, out bool reinf);
-				if (!reinf && dmg.type == DamageType.Heat && WaterTemperatureSimulation.main.GetTemperature(p.transform.position) > 270) {
-					dmg.setValue(dmg.getAmount() * 1.25F);
-					return;
-				}
-				else if (flag) {
-					if ((dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) && dmg.dealer != Player.main.gameObject) {
-						//this means something has to deal at least 50 damage to do anything with seal suit, and 20 with reinf (yet most poison is DoT and so does less per)
-						//and lots of other damage is *= Time.deltaTime too, so is tiny per
-						//even LR brine damage is 10 in 1s increments, though is caught by the upper case instead
-						if (dmg.type == DamageType.Acid && dmg.target.GetComponent<AcidicBrineDamage>()) {
-							dmg.setValue(dmg.getAmount() * (seal ? 0.4F : 0.8F)); //from 10 to 4 or 8
-						}
-						else {
-							dmg.setValue(dmg.getAmount() * (seal ? 0.2F : 0.5F));
-							bool skipFlat = false;
-							foreach (DamageOverTime dot in dmg.target.GetComponents<DamageOverTime>()) { //assume is DoT, do not do the flat reduction, just a -80% or -50%
-								if (dot.damageType == dmg.type) {
-									skipFlat = true;
-									break;
-								}
+				else {
+					bool flag = C2CItems.hasSealedOrReinforcedSuit(out bool seal, out bool reinf);
+					if (!reinf && dmg.type == DamageType.Heat && WaterTemperatureSimulation.main.GetTemperature(p.transform.position) > 270) {
+						dmg.setValue(dmg.getAmount() * 1.25F);
+					}
+					else if (flag) {
+						if ((dmg.type == DamageType.Poison || dmg.type == DamageType.Acid || dmg.type == DamageType.Electrical) && dmg.dealer != Player.main.gameObject) {
+							//this means something has to deal at least 50 damage to do anything with seal suit, and 20 with reinf (yet most poison is DoT and so does less per)
+							//and lots of other damage is *= Time.deltaTime too, so is tiny per
+							//even LR brine damage is 10 in 1s increments, though is caught by the upper case instead
+							if (dmg.type == DamageType.Acid && dmg.target.GetComponent<AcidicBrineDamage>()) {
+								dmg.setValue(dmg.getAmount() * (seal ? 0.4F : 0.8F)); //from 10 to 4 or 8
 							}
-							if (!skipFlat) //only do flat reduction on singular hits, which does include Update *= dT, making you immune to gradual health loss from things 
-								dmg.setValue(dmg.getAmount() - 10);
+							else {
+								dmg.setValue(dmg.getAmount() * (seal ? 0.2F : 0.5F));
+								bool skipFlat = false;
+								foreach (DamageOverTime dot in dmg.target.GetComponents<DamageOverTime>()) { //assume is DoT, do not do the flat reduction, just a -80% or -50%
+									if (dot.damageType == dmg.type) {
+										skipFlat = true;
+										break;
+									}
+								}
+								if (!skipFlat) //only do flat reduction on singular hits, which does include Update *= dT, making you immune to gradual health loss from things 
+									dmg.setValue(dmg.getAmount() - 10);
+							}
 						}
 					}
 				}
-			}
-			//SubRoot sub = dmg.target.FindAncestor<SubRoot>();
-			//if (sub && sub.isCyclops)
-			//	SNUtil.writeToChat("Cyclops ["+dmg.target.GetFullHierarchyPath()+"] took "+dmg.amount+" of "+dmg.type+" from '"+dmg.dealer+"'");
-			if (dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture || dmg.type == DamageType.Electrical) {
-				DeepStalkerTag s = dmg.target.FindAncestor<DeepStalkerTag>();
-				if (s) {
-					if (dmg.type == DamageType.Electrical)
-						s.onHitWithElectricDefense();
-					dmg.setValue(dmg.getAmount() * 0.5F); //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
+				float amt = dmg.getAmount();
+				if (amt > 0.01 && !IntroVignette.isIntroActive) { //the panel to the face actually DOES DAMAGE...
+					float dmgRef = Mathf.Clamp(amt, 0, 50);
+					MoraleSystem.instance.shiftMorale(-Mathf.Lerp(5, 80, dmgRef / 50F));
 				}
 			}
-			if (dmg.type == DamageType.Electrical) {
-				VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.FindAncestor<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
-				if (s) {
-					dmg.setValue(0);
-					dmg.lockValue();
+			else {
+				//SubRoot sub = dmg.target.FindAncestor<SubRoot>();
+				//if (sub && sub.isCyclops)
+				//	SNUtil.writeToChat("Cyclops ["+dmg.target.GetFullHierarchyPath()+"] took "+dmg.amount+" of "+dmg.type+" from '"+dmg.dealer+"'");
+				if (dmg.type == DamageType.Normal || dmg.type == DamageType.Drill || dmg.type == DamageType.Puncture || dmg.type == DamageType.Electrical) {
+					DeepStalkerTag s = dmg.target.FindAncestor<DeepStalkerTag>();
+					if (s) {
+						if (dmg.type == DamageType.Electrical)
+							s.onHitWithElectricDefense();
+						dmg.setValue(dmg.getAmount() * 0.5F); //50% resistance to "factorio physical" damage, plus electric to avoid PD killing them
+					}
 				}
-				if (!p && Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
-					dmg.setValue(0);
+				if (dmg.type == DamageType.Electrical) {
+					VoidSpikeLeviathan.VoidSpikeLeviathanAI s = dmg.target.FindAncestor<VoidSpikeLeviathan.VoidSpikeLeviathanAI>();
+					if (s) {
+						dmg.setValue(0);
+						dmg.lockValue();
+					}
+					if (Vector3.Distance(dmg.target.transform.position, bkelpBaseGeoCenter) <= 60 && !dmg.target.FindAncestor<Vehicle>()) {
+						dmg.setValue(0);
+					}
 				}
-			}
-			if (dmg.type == DamageType.Heat && DEIntegrationSystem.instance.isLoaded() && CraftData.GetTechType(dmg.target) == DEIntegrationSystem.instance.getRubyPincher()) {
-				dmg.setValue(dmg.getAmount() * 0.5F);
-			}
-			if (dmg.type == DamageType.Normal && VanillaBiomes.VOID.isInBiome(dmg.target.transform.position)) {
-				SeaMoth sm = dmg.target.FindAncestor<SeaMoth>();
-				if (sm && !InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
-					dmg.setValue(dmg.getAmount() * 1.5F);
-			}
-			GlowKelpTag tag = dmg.target.FindAncestor<GlowKelpTag>();
-			if (tag && (dmg.type == DamageType.Poison || !dmg.target.isFarmedPlant())) {
-				dmg.setValue(0);
+				if (dmg.type == DamageType.Heat && DEIntegrationSystem.instance.isLoaded() && CraftData.GetTechType(dmg.target) == DEIntegrationSystem.instance.getRubyPincher()) {
+					dmg.setValue(dmg.getAmount() * 0.5F);
+				}
+				if (dmg.type == DamageType.Normal && VanillaBiomes.VOID.isInBiome(dmg.target.transform.position)) {
+					SeaMoth sm = dmg.target.FindAncestor<SeaMoth>();
+					if (sm && !sm.vehicleHasUpgrade(C2CItems.voidStealth.TechType))
+						dmg.setValue(dmg.getAmount() * 1.5F);
+				}
+				if (dmg.type == DamageType.Poison || !dmg.target.isFarmedPlant()) {
+					if (dmg.target.FindAncestor<GlowKelpTag>()) {
+						dmg.setValue(0);
+					}
+				}
 			}
 		}
 
@@ -2160,6 +2222,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void onReaperGrab(ReaperLeviathan r, Vehicle v) {
+			MoraleSystem.instance.shiftMorale(v == Player.main.GetVehicle() ? -40 : -20);
 			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && KnownTech.Contains(TechType.BaseUpgradeConsole) && !KnownTech.Contains(TechType.SeamothElectricalDefense)) {
 				KnownTech.Add(TechType.SeamothElectricalDefense);
 				SNUtil.triggerTechPopup(TechType.SeamothElectricalDefense);
@@ -2300,6 +2363,7 @@ namespace ReikaKalseki.SeaToSea {
 				bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 				s.water = Mathf.Max(hard ? 5 : 15, waterToRestore);
 				s.food = Mathf.Max(hard ? 5 : 15, foodToRestore);
+				MoraleSystem.instance.reset();
 			}
 			else {
 				waterToRestore = s.water;
@@ -2335,6 +2399,18 @@ namespace ReikaKalseki.SeaToSea {
 			C2CProgression.instance.onScanComplete(data);
 			LifeformScanningSystem.instance.onScanComplete(data);
 			DataCollectionTracker.instance.onScanComplete(data);
+			MoraleSystem.instance.shiftMorale(1);
+		}
+
+		public static void onTechUnlocked(TechType tech, bool vb) {/*
+    	if (tech == TechType.PrecursorKey_Orange) {
+    		Story.StoryGoal.Execute(SeaToSeaMod.crashMesaRadio.key, SeaToSeaMod.crashMesaRadio.goalType);
+    	}
+    	if (tech == TechType.NuclearReactor || tech == TechType.HighCapacityTank || tech == TechType.PrecursorKey_Purple || tech == TechType.SnakeMushroom || tech == CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType) {
+    		Story.StoryGoal.Execute("RadioKoosh26", Story.GoalType.Radio); //pod 12
+    	}*/
+			C2CItems.onTechUnlocked(tech);
+			MoraleSystem.instance.shiftMorale(2.5F);
 		}
 
 		public static void onDataboxTooltipCalculate(BlueprintHandTarget tgt) {
@@ -2740,6 +2816,104 @@ namespace ReikaKalseki.SeaToSea {
 		public static void onCollectFromVaseStrand(MushroomVaseStrand.MushroomVaseStrandTag plant, TechType item) {
 			if (item == CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType) {
 				Story.StoryGoal.Execute(C2CProgression.TUNGSTEN_GOAL, Story.GoalType.Story);
+			}
+		}
+
+		private static void onRocketStageComplete(Rocket r, int stage, bool anyComplete) {
+			MoraleSystem.instance.shiftMorale(anyComplete ? 20 : 5);
+		}
+
+		private static void onCuddlefishPlay(CuteFishHandTarget target, Player player, CuteFishHandTarget.CuteFishCinematic cinematic) {
+			float time = DayNightCycle.main.timePassedAsFloat;
+			if (time - lastCuddlefishPlay < 600) //10 min
+				return;
+			lastCuddlefishPlay = time;
+			MoraleSystem.instance.shiftMorale(25);
+		}
+
+		public static void onSleep(Bed bed) {
+			MoraleSystem.instance.shiftMorale(AqueousEngineeringMod.config.getInt(AEConfig.ConfigEntries.SLEEPMORALE));
+		}
+
+		public static void onEat(Survival s, GameObject go) {
+			if (go) {
+				Pickupable pp = go.GetComponent<Pickupable>();
+				if (pp) {
+					TechType tt = pp.GetTechType();
+					if (tt == TechType.BigFilteredWater || tt == TechType.DisinfectedWater || tt == TechType.FilteredWater)
+						return;
+					int morale;
+					if (tt == TechType.Coffee) {
+						MoraleSystem.instance.onDrinkCoffee();
+						return;
+					}
+					else if (tt == TechType.StillsuitWater) {
+						morale = -50;
+					}
+					else if (tt == TechType.Bladderfish) {
+						morale = -40;
+					}
+					else if (tt.isRawFish()) {
+						morale = -25;
+					}
+					else {
+						ReadOnlyCollection<ConsumableTracker.ConsumeItemEvent> li = ConsumableTracker.instance.getEvents();
+						int eatsSinceDifferent = 999999;
+						int back = 1;
+						for (int i = li.Count - 2; i >= 0; i--) { //this event is already in the list so start an extra item back
+							ConsumableTracker.ConsumeItemEvent evt = li[i];
+							if (!evt.isEating)
+								continue;
+							if (tt == TechType.BigFilteredWater || tt == TechType.DisinfectedWater || tt == TechType.FilteredWater || tt == TechType.StillsuitWater || tt == TechType.Coffee)
+								continue;
+							//SNUtil.writeToChat("ate "+evt.itemType+" @ "+evt.eventTime);
+							if (MoraleSystem.instance.areFoodsDifferent(evt.itemType, tt)) {
+								eatsSinceDifferent = back;
+								break;
+							}
+							back++;
+						}
+						string msg;
+						switch (back) {
+							case 1: //different from last item -> boost
+								morale = 10;
+								msg = "Morale boost from dietary variety";
+								break;
+							case 2: //if same as last two items then no effect
+							case 3:
+								morale = 0;
+								msg = "Dietary variety recommended for optimum morale";
+								break;
+							case 4: //if have to go back five items then small penalty
+							case 5:
+								morale = -10;
+								msg = "Lack of dietary variety slightly harming morale";
+								break;
+							case 6: //if have to go back five items then moderate penalty
+							case 7:
+							case 8:
+								morale = -20;
+								msg = "Lack of dietary variety substantially harming morale";
+								break;
+							default: //eight or more and you are always eating the same thing, so big penalty
+								morale = -40;
+								msg = "Lack of dietary variety severely harming morale";
+								break;
+						}
+						SNUtil.writeToChat(msg);
+					}
+					MoraleSystem.instance.shiftMorale(morale);
+				}
+			}
+		}
+
+		public static void affectFoodRate(DIHooks.FoodRateCalculation calc) {
+			float morale = MoraleSystem.instance.moralePercentage;
+			if (morale < 40) {
+				calc.rate *= Mathf.Lerp(2.5F, 1, morale / 40F);
+			}
+			else if (morale > 80) {
+				calc.rate *= Mathf.Lerp(1, 0.5F, (morale - 80F) / 20F);
 			}
 		}
 	}

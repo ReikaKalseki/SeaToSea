@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -10,6 +11,10 @@ using ReikaKalseki.SeaToSea;
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Utility;
+
+using Steamworks;
+
+using Unity.Collections;
 
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -56,14 +61,17 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
-		public static void addRecipe(TechType inp, float secs = 2) {
+		public static void addRecipe(TechType inp, float secs = 2, Action<SmokedFish> modify = null) {
 			if (cookMap.ContainsKey(inp))
 				return;
-			if (!CraftData.cookedCreatureList.ContainsKey(inp)) {
+			TechType cooked = inp.getCookedCounterpart();
+			if (inp == TechType.None) {
 				SNUtil.log("Could not add smoking recipe for " + inp.AsString() + "; no cooking recipes");
 				return;
 			}
-			SmokingRecipe sr = new SmokingRecipe(inp, new SmokedFish(inp), secs);
+			SmokingRecipe sr = new SmokingRecipe(inp, new SmokedFish(inp, cooked), secs);
+			if (modify != null)
+				modify.Invoke(sr.output);
 			sr.output.Patch();
 			cookMap[inp] = sr;
 		}
@@ -115,19 +123,27 @@ namespace ReikaKalseki.SeaToSea {
 
 	}
 
-	class SmokedFish : Spawnable {
+	public class SmokedFish : Spawnable {
 
 		private readonly TechType rawFish;
 		private readonly TechType cookedFish;
 		private readonly TechType curedFish;
 
+		public TechType itemTemplate;
+
 		private readonly Atlas.Sprite sprite;
 
-		internal SmokedFish(TechType raw) : base("Smoked" + raw, "", "") {
+		internal SmokedFish(TechType raw, TechType cooked) : base("Smoked" + raw.AsString(), "", "") {
 			rawFish = raw;
 
-			cookedFish = CraftData.cookedCreatureList[raw];
+			cookedFish = cooked;
+
+			if (cookedFish == TechType.None)
+				throw new Exception("No template cooked fish for smoking "+raw.AsString());
+
 			Enum.TryParse("Cured" + rawFish.AsString(), out curedFish);
+
+			itemTemplate = curedFish == TechType.None ? cookedFish : curedFish;
 			/*
 			sprite = RenderUtil.copySprite(SpriteManager.Get(cookedFish));
 			Texture2D repl = new Texture2D(sprite.texture.width, sprite.texture.height, sprite.texture.format, false);
@@ -140,9 +156,32 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			repl.Apply(false, false);
 			sprite.texture = repl;*/
-			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/SmokedFish/" + rawFish.AsString().ToLowerInvariant());
+			string path = "Textures/Items/SmokedFish/" + rawFish.AsString().ToLowerInvariant();
+			sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, path);
+			if (TextureManager.isTextureNotFound(path)) { //generate one if a manual one does not exist
+				Spawnable from = (Spawnable)cookedFish.getModPrefabByTechType();
+				Texture2D tex = from.getPrefabSprite().texture;
+				tex = tex.duplicateTexture();
+				NativeArray<Color32> arr = tex.GetRawTextureData<Color32>();
+				for (int i = 0; i < arr.Length; i++) {
+					Color32 c = arr[i];
+					Color.RGBToHSV(c.toColor(), out float h, out float s, out float v);
+					h = 18/360F;
+					s = 0.41F;
+					v *= 0.75F;
+					Color32 c2 = Color.HSVToRGB(h, s, v).toColor32();
+					c2.a = c.a;
+					arr[i] = c2;
+				}
+				tex.Apply();
+				sprite = ImageUtils.LoadSpriteFromTexture(tex);
+				SNUtil.log("Created runtime sprite for smoked " + rawFish.AsString()+" ["+arr.Length+" texels] = "+tex.width+"x"+tex.height);
+			}
 
 			typeof(ModPrefab).GetField("Mod", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(this, SeaToSeaMod.modDLL);
+			OnFinishedPatching += () => {
+				CraftDataHandler.SetItemSize(TechType, rawFish.getItemSize());
+			};
 		}
 
 		protected sealed override Atlas.Sprite GetItemSprite() {
@@ -150,8 +189,12 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public override GameObject GetGameObject() {
-			GameObject go = ObjectUtil.createWorldObject(curedFish == TechType.None ? cookedFish : curedFish);
+			GameObject go = ObjectUtil.createWorldObject(itemTemplate, true, false);
 			go.GetComponent<Eatable>().waterValue = ObjectUtil.lookupPrefab(cookedFish).GetComponent<Eatable>().waterValue * 0.67F;
+			if (itemTemplate != cookedFish && itemTemplate != curedFish) {
+				GameObject mdl = go.getModelRoot();
+				mdl.transform.parent.gameObject.setModel(mdl.name, ObjectUtil.lookupPrefab(cookedFish).getModelRoot().gameObject);
+			}
 			return go;
 		}
 

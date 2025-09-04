@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public override void onFired(SeaMoth sm, int slotID, float charge) {
 			SeamothStorageContainer sc = this.getStorage(sm, slotID);
-			if ((FREE_CHEAT || sc.container.GetCount(C2CItems.heatSink.TechType) > 0) && !sm.GetComponent<C2CMoth>().isPurgingHeat()) {
+			if ((FREE_CHEAT || sc.container.GetCount(C2CItems.heatSink.TechType) > 0) && !sm.GetComponent<C2CMoth>().isPurgingHeat) {
 				C2CMoth c2c = sm.GetComponent<C2CMoth>();
 				c2c.purgeHeat();
 				if (!FREE_CHEAT)

@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 
 	public class VoidThalassacean : CreatureAsset {
 
-		private static readonly ThalassaceanPrefab template = (ThalassaceanPrefab)SNUtil.getModPrefabByTechType(DEIntegrationSystem.instance.getThalassacean());
+		private static readonly ThalassaceanPrefab template = (ThalassaceanPrefab)DEIntegrationSystem.instance.getThalassacean().getModPrefabByTechType();
 
 		private readonly XMLLocale.LocaleEntry locale;
 

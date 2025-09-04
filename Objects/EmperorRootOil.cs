@@ -45,10 +45,10 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static void tickInventory(Player ep, float time) {
 			if (time - lastInventoryTickTime >= 1) {
-				InventoryUtil.forEachOfType(Inventory.main.container, C2CItems.emperorRootOil.TechType, ii => {
+				Inventory.main.container.forEachOfType(C2CItems.emperorRootOil.TechType, ii => {
 					EmperorRootOilTag tag = ii.item.GetComponent<EmperorRootOilTag>();
 					if (tag && tag.pickupTime > -1 && time - tag.pickupTime >= LIFESPAN) {
-						InventoryUtil.forceRemoveItem(Inventory.main.container, ii);
+						Inventory.main.container.forceRemoveItem(ii);
 					}
 				});
 				lastInventoryTickTime = time;
