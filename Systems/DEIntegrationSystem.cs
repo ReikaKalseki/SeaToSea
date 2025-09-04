@@ -44,6 +44,7 @@ namespace ReikaKalseki.SeaToSea {
 		private TechType jellySpinnerType;
 		private TechType rubyPincherType;
 		private TechType gulperType;
+		private TechType axetailType;
 		private TechType filtorbType;
 
 		private CreatureAsset voidThelassacean;
@@ -118,7 +119,8 @@ namespace ReikaKalseki.SeaToSea {
 			creatures.Add(gulperType);
 			creatures.Add(this.findCreature("GulperLeviathanBaby"));
 			creatures.Add(this.findCreature("GrandGlider"));
-			creatures.Add(this.findCreature("Axetail", true));
+			axetailType = this.findCreature("Axetail", true);
+			creatures.Add(axetailType);
 			creatures.Add(this.findCreature("RibbonRay", true));
 			filtorbType = this.findCreature("Filtorb", true);
 			creatures.Add(filtorbType);
@@ -147,7 +149,7 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.addIngredient(C2CItems.breathingFluid.TechType, jellySpinnerType, amt * 3 / 2); //from 2 to 3
 
 			foreach (TechType tt in eggs) {
-				CreatureEggAsset egg = (CreatureEggAsset)SNUtil.getModPrefabByTechType(tt);
+				CreatureEggAsset egg = (CreatureEggAsset)tt.getModPrefabByTechType();
 				foreach (LootDistributionData.BiomeData bd in egg.BiomesToSpawnIn) {
 					float f = bd.probability;
 					f = Mathf.Min(f, 0.75F) * 0.67F;
@@ -157,7 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 					LootDistributionHandler.EditLootDistributionData(egg.ClassID, bd.biome, f, 1);
 				}
 			}
-			Spawnable filtorb = (Spawnable)SNUtil.getModPrefabByTechType(filtorbType);
+			Spawnable filtorb = (Spawnable)filtorbType.getModPrefabByTechType();
 			foreach (LootDistributionData.BiomeData bd in filtorb.BiomesToSpawnIn) {
 				float f = bd.probability;
 				f = Mathf.Min(f, 0.8F) * 0.75F;
@@ -171,6 +173,8 @@ namespace ReikaKalseki.SeaToSea {
 			voidThelassacean.Patch();
 
 			FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(filtorbType, 4, "A water-rich organism with a defense mechanism against being grabbed");
+
+			CraftDataHandler.SetItemSize(axetailType, new Vector2int(2, 1));
 		}
 
 		private TechType findCreature(string id, bool edible = false) {
@@ -180,8 +184,9 @@ namespace ReikaKalseki.SeaToSea {
 					TechTypeHandler.TryGetModdedTechType(id.setLeadingCase(false), out tt);
 			if (tt == TechType.None)
 				throw new Exception("Could not find DeE TechType for '" + id + "'");
-			if (edible)
-				Campfire.addRecipe(tt);
+			if (edible) {
+				Campfire.addRecipe(tt, tt == axetailType ? 4 : 2, f => f.itemTemplate = TechType.CuredPeeper);
+			}
 			return tt;
 		}
 

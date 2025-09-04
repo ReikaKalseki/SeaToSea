@@ -691,8 +691,8 @@ namespace ReikaKalseki.SeaToSea {
 			fcsBiofuelAlt.setRecipe(2);
 			fcsBiofuelAlt.unlock = TechType.Unobtanium;
 			fcsBiofuelAlt.allowUnlockPopups = true;
-			Spawnable sp = (Spawnable)SNUtil.getModPrefabByTechType(fcsBiofuel);
-			fcsBiofuelAlt.sprite = (Atlas.Sprite)typeof(Spawnable).GetMethod("GetItemSprite", BindingFlags.Instance | BindingFlags.NonPublic, null, CallingConventions.HasThis, new Type[0], null).Invoke(sp, BindingFlags.Default, null, new object[0], null);
+			Spawnable sp = (Spawnable)fcsBiofuel.getModPrefabByTechType();
+			fcsBiofuelAlt.sprite = sp.getPrefabSprite();
 			fcsBiofuelAlt.Patch();
 			StoryHandler.instance.registerTrigger(new TechTrigger(fcsBiofuel), new TechUnlockEffect(fcsBiofuelAlt.TechType));
 		}

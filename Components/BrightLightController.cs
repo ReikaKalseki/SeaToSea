@@ -102,7 +102,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			bool flag1 = hasModule && this.areLightsOn();
-			bool flag2 = flag1 && (cyclops || InventoryUtil.isVehicleUpgradeSelected((Vehicle)vehicle, C2CItems.lightModule.TechType));
+			bool flag2 = flag1 && (cyclops || ((Vehicle)vehicle).isVehicleUpgradeSelected(C2CItems.lightModule.TechType));
 			foreach (Light l in bonusLights) {
 				if (l) {
 					l.gameObject.SetActive(flag1);
@@ -153,13 +153,11 @@ namespace ReikaKalseki.SeaToSea {
 				this.Invoke("recalculateModule", 0.5F);
 				return;
 			}
-			hasModule = vehicle is SubRoot ? InventoryUtil.cyclopsHasUpgrade((SubRoot)vehicle, C2CItems.lightModule.TechType) : InventoryUtil.vehicleHasUpgrade((Vehicle)vehicle, C2CItems.lightModule.TechType);
+			hasModule = vehicle is SubRoot ? ((SubRoot)vehicle).cyclopsHasUpgrade(C2CItems.lightModule.TechType) : ((Vehicle)vehicle).vehicleHasUpgrade(C2CItems.lightModule.TechType);
 		}
 
 		bool areLightsOn() {
-			return vehicle is SeaMoth
-				? ((SeaMoth)vehicle).lightsActive
-				: !(vehicle is SubRoot) || (cyclopsControl && cyclopsControl.floodlightsOn);
+			return vehicle is SeaMoth ? ((SeaMoth)vehicle).lightsActive : !(vehicle is SubRoot) || (cyclopsControl && cyclopsControl.floodlightsOn);
 		}
 
 	}

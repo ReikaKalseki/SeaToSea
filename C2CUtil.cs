@@ -473,9 +473,9 @@ namespace ReikaKalseki.SeaToSea {
 					battCh = e.charge / e.capacity;
 					e.batterySlot.RemoveItem();
 				}
-				InventoryUtil.forceRemoveItem(Inventory.main.container, ii);
+				Inventory.main.container.forceRemoveItem(ii);
 				InventoryUtil.addItem(to);
-				InventoryItem put = InventoryUtil.getItem(Inventory.main.container, to);
+				InventoryItem put = Inventory.main.container.getItem(to);
 				if (put != null) {
 					PlayerTool pt2 = put.item.GetComponent<PlayerTool>();
 					if (batt/* != TechType.None*/) {

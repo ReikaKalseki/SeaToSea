@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea {
 			GeyserFilterLogic lgc = go.GetComponent<GeyserFilterLogic>();
 			//lgc.storage = con;
 
-			GameObject mdl = RenderUtil.setModel(go, "discovery_trashcan_01_d", ObjectUtil.lookupPrefab("8fb8a082-d40a-4473-99ec-1ded36cc6813").getChildObject("Starship_cargo"));
+			GameObject mdl = go.setModel("discovery_trashcan_01_d", ObjectUtil.lookupPrefab("8fb8a082-d40a-4473-99ec-1ded36cc6813").getChildObject("Starship_cargo"));
 			mdl.transform.localRotation = Quaternion.Euler(0, 0, 0);
 			mdl.transform.localPosition = new Vector3(0, -0.05F, -2.25F);
 			float w = 4;//2.5F;

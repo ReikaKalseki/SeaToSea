@@ -37,25 +37,25 @@ namespace ReikaKalseki.SeaToSea {
 				switch (m) {
 					case Items.Luminol:
 						//item.glowIntensity = 2;
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.2F, 0.6F, 1F, 1), 2);
+						item.renderModify = r => r.setPolyanilineColor(new Color(0.2F, 0.6F, 1F, 1), 2);
 						break;
 					case Items.DimLuminol:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(190 / 255F, 130 / 255F, 205 / 255F, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(190 / 255F, 130 / 255F, 205 / 255F, 1));
 						break;
 					case Items.TreaderEnzymes:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(107 / 255F, 80 / 255F, 62 / 255F, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(107 / 255F, 80 / 255F, 62 / 255F, 1));
 						break;
 					case Items.BioEnzymes:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(28 / 255F, 1, 172 / 255F, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(28 / 255F, 1, 172 / 255F, 1));
 						break;
 					case Items.KelpEnzymes:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.5F, 0.0F, 1F, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(0.5F, 0.0F, 1F, 1));
 						break;
 					case Items.Chlorine:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(179 / 255F, 211 / 255F, 97 / 255F, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(179 / 255F, 211 / 255F, 97 / 255F, 1));
 						break;
 					case Items.Sealant:
-						item.renderModify = r => RenderUtil.setPolyanilineColor(r, new Color(0.5F, 0.6F, 1, 1));
+						item.renderModify = r => r.setPolyanilineColor(new Color(0.5F, 0.6F, 1, 1));
 						break;
 					case Items.HoneycombComposite:
 						item.renderModify = r => r.materials[0].EnableKeyword("MARMO_SPECMAP");
@@ -76,7 +76,7 @@ namespace ReikaKalseki.SeaToSea {
 					case Items.CrystalLens:
 						item.inventorySize = new Vector2int(2, 2);
 						item.renderModify = r => {
-							GameObject mdl = RenderUtil.setModel(r, ObjectUtil.lookupPrefab("59381275-1f6e-4bb9-8b00-7bbe77f0df1c").getChildObject("Coral_reef_shell_01"));
+							GameObject mdl = r.setModel(ObjectUtil.lookupPrefab("59381275-1f6e-4bb9-8b00-7bbe77f0df1c").getChildObject("Coral_reef_shell_01"));
 							r = mdl.GetComponentInChildren<Renderer>();
 							RenderUtil.swapToModdedTextures(r, item);
 							RenderUtil.makeTransparent(r);
@@ -104,7 +104,7 @@ namespace ReikaKalseki.SeaToSea {
 						item.renderModify = r => {
 							GameObject vehicleBayPrefab = ObjectUtil.lookupPrefab("dd0298c1-49c2-44a0-8b32-da98e12228fb");
 							GameObject droneObj = vehicleBayPrefab.GetComponent<Constructor>().buildBotPrefab;
-							GameObject mdl = RenderUtil.setModel(r, droneObj.getChildObject("model/constructor_drone")).setName(LATHING_DRONE_RENDER_OBJ_NAME);
+							GameObject mdl = r.setModel(droneObj.getChildObject("model/constructor_drone")).setName(LATHING_DRONE_RENDER_OBJ_NAME);
 							r = mdl.GetComponentInChildren<Renderer>();
 							r.transform.localRotation = Quaternion.identity;
 							r.transform.parent.localRotation = Quaternion.identity;

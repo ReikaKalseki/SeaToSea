@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public override void BuildModOptions() {
-			this.addBinding(PROPGUNSWAP, "(Pro/Re)pulsion Gun Swap", KeyCode.PageUp);
+			this.addBinding(PROPGUNSWAP, "(Pro/Re)pulsion Gun Swap", KeyCode.Backslash);
 		}
 
 		private void addBinding(string id, string name, KeyCode def) {

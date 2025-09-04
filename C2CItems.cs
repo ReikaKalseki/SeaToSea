@@ -299,7 +299,7 @@ namespace ReikaKalseki.SeaToSea {
 			brineCoralPiece = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BrineCoralPiece"), VanillaResources.TITANIUM.prefab);
 			brineCoralPiece.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BrineCoralPiece");
 			brineCoralPiece.renderModify = (r) => {
-				GameObject mdl = RenderUtil.setModel(r, ObjectUtil.lookupPrefab("908d3f0e-04b9-42b4-80c8-a70624eb5455").getChildObject("lost_river_skull_coral_01"));
+				GameObject mdl = r.setModel(ObjectUtil.lookupPrefab("908d3f0e-04b9-42b4-80c8-a70624eb5455").getChildObject("lost_river_skull_coral_01"));
 				//r = mdl.GetComponentInChildren<Renderer>();
 				//RenderUtil.swapTextures(SeaToSeaMod.modDLL, r, "Textures/BrineCoralPiece"); //no such texture
 			};
@@ -422,7 +422,7 @@ namespace ReikaKalseki.SeaToSea {
 			IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery));
 			IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.DenseAzurite));
 			IrreplaceableItemRegistry.instance.registerItem(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL));
-			IrreplaceableItemRegistry.instance.registerItem(C2CItems.voidStealth);
+			IrreplaceableItemRegistry.instance.registerItem(C2CItems.voidStealth, SeamothVoidStealthModule.lossData);
 			IrreplaceableItemRegistry.instance.registerItem(TechType.PrecursorKey_Blue);
 			IrreplaceableItemRegistry.instance.registerItem(TechType.PrecursorKey_Red);
 		}
