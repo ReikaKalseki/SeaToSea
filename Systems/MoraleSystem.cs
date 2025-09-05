@@ -222,7 +222,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void tick(Player ep) {
-			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.NoSurvival || !DIHooks.isWorldLoaded() || ep.cinematicModeActive) {
+			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || ep.cinematicModeActive) {
+				setMorale(75);
 				if (bar)
 					bar.gameObject.SetActive(false);
 				return;

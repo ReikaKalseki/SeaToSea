@@ -235,9 +235,9 @@ namespace ReikaKalseki.SeaToSea {
 			if (blighterEgg != null)
 				FinalLaunchAdditionalRequirementSystem.instance.addRequiredItem(TechType.Blighter, 2, "A small but aggressive carrion feeder, with limited visual sensation");
 
-			C2CRecipes.removeVanillaUnlock(EcoceanMod.planktonScoop.TechType);
-			C2CRecipes.removeVanillaUnlock(AqueousEngineeringMod.wirelessChargerBlock.TechType);
-			C2CRecipes.removeVanillaUnlock(AuroresourceMod.meteorDetector.TechType);
+			EcoceanMod.planktonScoop.TechType.removeUnlockTrigger();
+			AqueousEngineeringMod.wirelessChargerBlock.TechType.removeUnlockTrigger();
+			AuroresourceMod.meteorDetector.TechType.removeUnlockTrigger();
 			GenUtil.getOrCreateDatabox(AqueousEngineeringMod.wirelessChargerBlock.TechType); //needs to be created to be used at runtime
 
 			ItemDisplay.setRendererBehavior(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, new ItemDisplayRenderBehavior() {
@@ -396,7 +396,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (t != null) {
 				InstructionHandlers.patchMethod(SeaToSeaMod.harmony, t, "OnUpdate", SeaToSeaMod.modDLL, codes => {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, t.FullName, "_speed");
-					codes.Insert(idx + 1, InstructionHandlers.createMethodCall("ReikaKalseki.AqueousEngineering.AEHooks", "getRadialTabAnimSpeed", false, new Type[] { typeof(float) }));
+					codes.Insert(idx + 1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRadialTabAnimSpeed", false, new Type[] { typeof(float) }));
 				});
 			}
 

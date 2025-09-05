@@ -768,7 +768,6 @@ namespace ReikaKalseki.SeaToSea {
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFX", f => VoidSpikeLeviathanSystem.instance.doDistantRoar(Player.main, true, f));
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doDebugFlash);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidLeviReefback", VoidSpikeLeviathan.makeReefbackTest);
-			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("relockRecipes", C2CUtil.relockRecipes);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("dumpGameStats", () => GameStatistics.collect().writeToFile(Path.Combine(Path.GetDirectoryName(modDLL.Location), "statdump.xml")));
 
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b && SNUtil.canUseDebug());

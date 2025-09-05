@@ -707,13 +707,13 @@ namespace ReikaKalseki.SeaToSea {
 			Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = hard ? 8 : 12; //from 3
 			Base.CellHullStrength[(int)Base.CellType.Foundation] = hard ? 5 : 6; //from 2
 
-			removeVanillaUnlock(TechType.VehicleHullModule1);
-			removeVanillaUnlock(TechType.VehicleHullModule2);
-			removeVanillaUnlock(TechType.VehicleHullModule3);
-			removeVanillaUnlock(TechType.BaseReinforcement);
-			removeVanillaUnlock(TechType.HeatBlade); //force you to learn it from the mountain cave base
+			TechType.VehicleHullModule1.removeUnlockTrigger();
+			TechType.VehicleHullModule2.removeUnlockTrigger();
+			TechType.VehicleHullModule3.removeUnlockTrigger();
+			TechType.BaseReinforcement.removeUnlockTrigger();
+			TechType.HeatBlade.removeUnlockTrigger(); //force you to learn it from the mountain cave base
 			if (hard)
-				removeVanillaUnlock(TechType.AdvancedWiringKit);
+				TechType.AdvancedWiringKit.removeUnlockTrigger();
 
 			addItemToRecipe(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType, 1);
 			//addItemToRecipe(TechType.PrecursorKey_Purple, TechType.PurpleStalkSeed, 2);
@@ -734,7 +734,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			if (hard) {
 				RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
-				removeVanillaUnlock(TechType.SeamothElectricalDefense);
+				TechType.SeamothElectricalDefense.removeUnlockTrigger();
 				RecipeUtil.clearIngredients(TechType.SeamothElectricalDefense);
 				addItemToRecipe(TechType.SeamothElectricalDefense, C2CItems.t2Battery.TechType, 1);
 				addItemToRecipe(TechType.SeamothElectricalDefense, TechType.AdvancedWiringKit, 1);
@@ -803,15 +803,6 @@ namespace ReikaKalseki.SeaToSea {
 			if (r == null || r.Ingredients is LockedRecipeList)
 				return;
 			r.Ingredients = new LockedRecipeList(r, allowAdd);
-		}
-
-		public static void removeVanillaUnlock(TechType tt) {
-			KnownTechHandler.Main.RemoveAllCurrentAnalysisTechEntry(tt);
-			removedVanillaUnlocks.Add(tt);
-		}
-
-		public static IEnumerable<TechType> getRemovedVanillaUnlocks() {
-			return new System.Collections.ObjectModel.ReadOnlyCollection<TechType>(removedVanillaUnlocks);
 		}
 
 		private static void createCompressedIngot(DIPrefab<VanillaResources> item, string pfbMdl, float specInt, float shiny, float fresnel, int amt = 10, string name = "Ingot") {
