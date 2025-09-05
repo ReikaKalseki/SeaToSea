@@ -88,12 +88,6 @@ namespace ReikaKalseki.SeaToSea {
 			return !EnvironmentalDamageSystem.instance.isPlayerRecoveringFromPressure() && (!ep.IsSwimming() || ep.GetDepth() < EnvironmentalDamageSystem.depthDamageStart || LiquidBreathingSystem.instance.hasLiquidBreathing());
 		}
 
-		internal static void relockRecipes() {
-			foreach (TechType tt in C2CRecipes.getRemovedVanillaUnlocks()) {
-				KnownTech.knownTech.Remove(tt);
-			}
-		}
-
 		public static void createRescuePDAButton() {
 			if (rescuePDAButton)
 				return;
