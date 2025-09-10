@@ -788,7 +788,9 @@ namespace ReikaKalseki.SeaToSea {
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLdebug", () => SNUtil.writeToChat("Rocket launch error: " + FinalLaunchAdditionalRequirementSystem.instance.hasAllCargo() + "; Missing scan=" + LifeformScanningSystem.instance.hasScannedEverything()));
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRFLForce", FinalLaunchAdditionalRequirementSystem.instance.forceLaunch);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("c2cRecover", () => C2CUtil.rescue());
-			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("debugMorale", arg => MoraleSystem.printMoraleForDebug = arg);
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("debugMorale", arg => MoraleSystem.printMoraleForDebug = arg ? 0xffffffff ^ (uint)MoraleSystem.MoraleDebugFlags.STACKTRACE : 0);
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<int>>("debugMoraleInt", arg => MoraleSystem.printMoraleForDebug = (uint)arg);
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<string>>("debugMoraleDetail", MoraleSystem.setMoraleDebugFlags);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<float>>("c2cMORALEDELTA", arg => {
 				if (SNUtil.canUseDebug())
 					MoraleSystem.instance.shiftMorale(arg);

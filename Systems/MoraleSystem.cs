@@ -61,7 +61,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 5; //+5%/s
 
-		public static bool printMoraleForDebug = false;
+		public static uint printMoraleForDebug = 0;
 
 		private readonly Dictionary<BiomeBase, AmbientMoraleInfluence> biomeEffect = new Dictionary<BiomeBase, AmbientMoraleInfluence>();
 		private readonly Dictionary<string, float> goalMorale = new Dictionary<string, float>();
@@ -86,6 +86,37 @@ namespace ReikaKalseki.SeaToSea {
 		public float moralePercentage { get; private set; }
 		public float maxMorale { get; private set; }
 		public float currentMoraleBaseline { get; private set; }
+
+		//private MoraleVisual moraleVisual;
+
+		private BleederAttachTarget bleederTarget;
+
+		public enum MoraleDebugFlags {
+			STACKTRACE = 1,
+			CORE = 2,
+			SHIFT = 4,
+			SET = 8,
+			BIOME = 16,
+			DECO = 32,
+		}
+
+		public static void setMoraleDebugFlags(string names) {
+			if (names.ToLowerInvariant() == "all") {
+				printMoraleForDebug = 0xffffffff;
+			}
+			else {
+				printMoraleForDebug = 0;
+				foreach (string s in names.Split('/')) {
+					if (Enum.TryParse(s.ToUpperInvariant(), out MoraleDebugFlags flag)) {
+						printMoraleForDebug |= (uint)flag;
+					}
+				}
+			}
+		}
+
+		private static bool checkMoraleDebugFlag(MoraleDebugFlags flag) {
+			return (printMoraleForDebug & (uint)flag) != 0;
+		}
 
 		private MoraleSystem() {
 			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-20, -2, -2);
@@ -147,6 +178,9 @@ namespace ReikaKalseki.SeaToSea {
 			goalMorale["Infection_Progress5"] = 200;
 
 			this.reset();
+
+			//moraleVisual = new MoraleVisual();
+			//ScreenFXManager.instance.addOverride(moraleVisual);
 		}
 
 		public void register() {
@@ -215,14 +249,58 @@ namespace ReikaKalseki.SeaToSea {
 
 			if (goal == "Goal_Lifepod2") //exit pod, and this is where morale *actually* begins
 				timeUntilMoraleAdoptsRealValue = 7.5F;
+
+			if (goal == "OnPlayRadioBounceBack") {
+				Player.main.gameObject.EnsureComponent<MoraleEffect9999>().InvokeRepeating("trigger", 7.25F, 1);
+			}
 		}
 
+		class MoraleEffect9999 : MonoBehaviour {
+
+			private int times = 0;
+
+			void trigger() {
+				times++;
+				MoraleSystem.instance.shiftMorale(-6 * times);
+				if (times >= 5) {
+					CancelInvoke("trigger");
+					UnityEngine.Object.Destroy(this, 0.5F);
+				}
+			}
+
+		}
+		/*
+		class MoraleVisual : ScreenFXManager.ScreenFXOverride {
+
+			private float currentEffect;
+
+			internal MoraleVisual() : base(200) {
+
+			}
+
+			public override void onTick() {
+				float targetEffect = (float)MathUtil.linterpolate(MoraleSystem.instance.moralePercentage, 0, 30, 0.2, 0, true);
+				float dE = targetEffect-currentEffect;
+				if (targetEffect <= 0) {
+					currentEffect -= Time.deltaTime;
+				}
+				else if (!Mathf.Approximately(dE, 0)) {
+					currentEffect += dE * 0.5F * Time.deltaTime;
+				}
+				if (currentEffect > 0) {
+					ScreenFXManager.instance.registerOverrideThisTick(ScreenFXManager.instance.telepathyShader);
+					ScreenFXManager.instance.telepathyShader.amount = currentEffect;
+				}
+			}
+
+		}
+*/
 		public void reset() {
 			moralePercentage = INITIAL_MORALE;
 		}
 
 		public void tick(Player ep) {
-			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || ep.cinematicModeActive) {
+			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic()) {
 				setMorale(75);
 				if (bar)
 					bar.gameObject.SetActive(false);
@@ -260,11 +338,14 @@ namespace ReikaKalseki.SeaToSea {
 			if (bar)
 				bar.gameObject.SetActive(true);
 
+			if (!bleederTarget)
+				bleederTarget = ep.GetComponentInChildren<BleederAttachTarget>();
+
 			Vehicle v = ep.GetVehicle();
 			BiomeBase bb = BiomeBase.getBiome(ep.transform.position);
 			AmbientMoraleInfluence amb = bb != null && biomeEffect.ContainsKey(bb) ? biomeEffect[bb] : null;
 
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Morale UI initialized, applying sim");
 
 			float delta = 0;
@@ -277,7 +358,7 @@ namespace ReikaKalseki.SeaToSea {
 					this.setMorale(INITIAL_REAL_MORALE);
 			}
 
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.BIOME))
 				SNUtil.writeToChat("Biome " + bb + " morale ambient " + amb);
 
 			if (time - lastBaselineCheckTime > 1F) {
@@ -287,7 +368,7 @@ namespace ReikaKalseki.SeaToSea {
 					currentMoraleBaseline += e.Invoke(ep);
 				}
 
-				if (printMoraleForDebug)
+				if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 					SNUtil.writeToChat("Computed morale baseline " + currentMoraleBaseline.ToString("0.00"));
 			}
 
@@ -311,7 +392,7 @@ namespace ReikaKalseki.SeaToSea {
 					delta = (float)MathUtil.linterpolate(currentDecoLevel, min, gainCeil, 0, gainLim, true);
 				}
 
-				if (printMoraleForDebug)
+				if (checkMoraleDebugFlag(MoraleDebugFlags.DECO))
 					SNUtil.writeToChat("Base deco morale " + delta.ToString("0.00") + "/s from " + currentDecoLevel);
 
 				delta *= AqueousEngineeringMod.config.getFloat(AEConfig.ConfigEntries.MORALESPEED);
@@ -326,8 +407,8 @@ namespace ReikaKalseki.SeaToSea {
 					delta += amb.moralePerSecondCyclops;
 			}
 			else if (v) {
-				if (printMoraleForDebug)
-					SNUtil.writeToChat("Vehicle is "+v+" with vel "+v.useRigidbody.velocity.magnitude.ToString());
+				//if (checkMoraleDebugFlag(MoraleDebugFlags.))
+				//	SNUtil.writeToChat("Vehicle is "+v+" with vel "+v.useRigidbody.velocity.magnitude.ToString());
 				if (v is SeaMoth sm) {
 					this.resetPrawnTime();
 					delta += (float)MathUtil.linterpolate(sm.useRigidbody.velocity.magnitude, 5, 20, 0, 1.0); //up to 1% per second if moving fast
@@ -361,22 +442,25 @@ namespace ReikaKalseki.SeaToSea {
             */
 			prawnMoraleCooldown = Mathf.Max(prawnMoraleCooldown - (dT / PRAWN_MORALE_COOLDOWN), 0);
 
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Core sim computed to delta "+delta);
 
 			Survival s = ep.GetComponent<Survival>();
 			float f = s ? Mathf.Min(s.water, s.food) : 1;
 			maxMorale = Mathf.Min(ep.liveMixin.health * 1.25F, f * 2); //need both food and water >= 50 and health over 80 for 100%
 
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Max morale " + maxMorale.ToString("0.00") + " from " + f + " & " + ep.liveMixin.health);
 
 			if (ep.GetOxygenAvailable() <= 0.001)
 				delta = -20;
 
+			if (bleederTarget && bleederTarget.occupied)
+				delta = -10;
+
 			delta += currentMoraleBaseline;
 
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Final morale delta " + delta.ToString("0.00") + "/s");
 
 			//SNUtil.writeToChat("Adjusting morale by "+delta.ToString("0.00")+"/s because of "+currentDecoLevel.ToString("0.0"));
@@ -389,16 +473,18 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void shiftMorale(float delta) {
-			if (printMoraleForDebug)
+			if (checkMoraleDebugFlag(MoraleDebugFlags.SHIFT))
 				SNUtil.writeToChat("Shifting morale by " + delta.ToString("0.0"));
 			this.setMorale(moralePercentage + delta);
 		}
 
 		private void setMorale(float f) {
-			if (printMoraleForDebug) {
+			if (checkMoraleDebugFlag(MoraleDebugFlags.SET)) {
 				SNUtil.writeToChat("Setting morale to " + f.ToString("0.0"));
-				//SNUtil.log("Setting morale to " + f.ToString("0.0"));
-				//SNUtil.log(SNUtil.getStacktrace());
+				if (checkMoraleDebugFlag(MoraleDebugFlags.STACKTRACE)) {
+					SNUtil.log("Setting morale to " + f.ToString("0.0"));
+					SNUtil.log(SNUtil.getStacktrace());
+				}
 			}
 			moralePercentage = Mathf.Clamp(f, 0, Mathf.Min(100, maxMorale));
 			if (bar)
