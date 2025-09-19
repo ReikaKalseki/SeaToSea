@@ -237,6 +237,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			LavaBombTag.onLavaBombImpactEvent += onLavaBombHit;
 			ExplodingAnchorPod.onExplodingAnchorPodDamageEvent += onAnchorPodExplode;
+			PredatoryBloodvine.onBloodKelpGrabEvent += onBloodKelpGrab;
+			VoidTongueTag.onVoidTongueGrabEvent += onVoidTongueGrab;
+			VoidTongueTag.onVoidTongueReleaseEvent += onVoidTongueRelease;
 			PlanktonCloudTag.onPlanktonActivationEvent += onPlanktonActivated;
 			VoidBubble.voidBubbleSpawnerTickEvent += tickVoidBubbles;
 			VoidBubble.voidBubbleTickEvent += tickVoidBubble;
@@ -319,6 +322,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_WaterFilter", Language.main.Get("EncyDesc_WaterFilter") + "\n\nNote: In highly mineralized regions, salt collection is both accelerated and may yield additional byproducts.");
+
+			string key = "EncyDesc_"+ TechType.SpottedLeavesPlant.AsString();
+			CustomLocaleKeyDatabase.registerKey(key, Language.main.Get(key) + "\n\nThese compounds appear to be compatible with human digestion.");
 
 			CustomLocaleKeyDatabase.registerKey("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
@@ -1940,6 +1946,22 @@ namespace ReikaKalseki.SeaToSea {
 			if (VoidSpikesBiome.instance.isInBiome(dmg.toDamage.transform.position) && dmg.toDamage.gameObject.FindAncestor<Player>()) {
 				dmg.damageAmount *= 0.67F;
 			}
+		}
+
+		public static void onBloodKelpGrab(PredatoryBloodvine kelp, GameObject tgt) {
+			MoraleSystem.instance.shiftMorale(tgt.isPlayer() ? -40 : -10);
+		}
+
+		public static void onVoidTongueGrab(VoidTongueTag tag, Rigidbody rb) {
+			if (rb.isPlayer() || rb.GetComponent<Vehicle>() || rb.GetComponent<SubRoot>())
+				MoraleSystem.instance.shiftMorale(-200);
+			else if (rb.GetComponent<GhostLeviatanVoid>())
+				MoraleSystem.instance.shiftMorale(-10);
+		}
+
+		public static void onVoidTongueRelease(VoidTongueTag tag, Rigidbody rb) {
+			if (rb.isPlayer() || rb.GetComponent<Vehicle>() || rb.GetComponent<SubRoot>())
+				MoraleSystem.instance.shiftMorale(50);
 		}
 
 		public static void onPlanktonActivated(PlanktonCloudTag cloud, GameObject hit) {
