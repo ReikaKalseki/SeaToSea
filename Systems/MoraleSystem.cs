@@ -121,12 +121,12 @@ namespace ReikaKalseki.SeaToSea {
 		private MoraleSystem() {
 			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-20, -2, -2);
 			biomeEffect[VanillaBiomes.ILZ] = new AmbientMoraleInfluence(-10, 0, -1);
-			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-1, 0, -0.5F);
-			biomeEffect[VanillaBiomes.BLOODKELPNORTH] = new AmbientMoraleInfluence(-1, 0, -0.75F);
+			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-0.75F, 0, -0.33F);
+			biomeEffect[VanillaBiomes.BLOODKELPNORTH] = new AmbientMoraleInfluence(-0.8F, 0, -0.4F);
 			biomeEffect[VanillaBiomes.COVE] = new AmbientMoraleInfluence(2, 2, 2);
-			biomeEffect[VanillaBiomes.CRASH] = new AmbientMoraleInfluence(-5, 0, -2);
-			biomeEffect[VanillaBiomes.DUNES] = new AmbientMoraleInfluence(-0.5F, 0, -1);
-			biomeEffect[VanillaBiomes.GRANDREEF] = new AmbientMoraleInfluence(0.5F, 1, 1);
+			biomeEffect[VanillaBiomes.CRASH] = new AmbientMoraleInfluence(-4, 0, -1);
+			biomeEffect[VanillaBiomes.DUNES] = new AmbientMoraleInfluence(-0.25F, 0, -0.25F);
+			biomeEffect[VanillaBiomes.GRANDREEF] = new AmbientMoraleInfluence(0.25F, 0.5F, 0.5F);
 			biomeEffect[VanillaBiomes.JELLYSHROOM] = new AmbientMoraleInfluence(0, -40, 1);
 			biomeEffect[VanillaBiomes.SHALLOWS] = new AmbientMoraleInfluence(0.05F, -20, 0);
 
@@ -138,10 +138,7 @@ namespace ReikaKalseki.SeaToSea {
 			this.registerBaselineAdjustment(ep => SNUtil.isSunbeamExpected() ? 200 : 0);
 			//hope falls, discontent rises
 			float sunbeamCrisisDuration = 3600; //1h
-			this.registerBaselineAdjustment("PDASunbeamDestroyEventInRange", -200, sunbeamCrisisDuration);
-			this.registerBaselineAdjustment("PDASunbeamDestroyEventOutOfRange", -200, sunbeamCrisisDuration);
-			goalMorale["PDASunbeamDestroyEventInRange"] = -200;
-			goalMorale["PDASunbeamDestroyEventOutOfRange"] = -200;
+			this.registerBaselineAdjustment("SunbeamDestroyed", -200, sunbeamCrisisDuration);
 
 			goalMorale["Precursor_Gun_DisableDenied"] = -100; //No rescue until cure
 
@@ -247,17 +244,39 @@ namespace ReikaKalseki.SeaToSea {
 			if (goalMorale.ContainsKey(goal))
 				this.shiftMorale(goalMorale[goal]);
 
-			if (goal == "Goal_Lifepod2") //exit pod, and this is where morale *actually* begins
-				timeUntilMoraleAdoptsRealValue = 7.5F;
-
-			if (goal == "OnPlayRadioBounceBack") {
-				Player.main.gameObject.EnsureComponent<MoraleEffect9999>().InvokeRepeating("trigger", 7.25F, 1);
+			switch (goal) {
+				case "Goal_Lifepod2": { //exit pod, and this is where morale *actually* begins
+					timeUntilMoraleAdoptsRealValue = 7.5F;
+					break;
+				}
+				case "OnPlayRadioBounceBack": {
+					MoraleEffect9999 e = Player.main.gameObject.EnsureComponent<MoraleEffect9999>();
+					e.InvokeRepeating("trigger", 7.25F, 1);
+					e.Invoke("firstFire", 6.5F);
+					break;
+				}
+				case "PDASunbeamDestroyEventInRange":
+				case "PDASunbeamDestroyEventOutOfRange": {
+					MoraleSystem.instance.shiftMorale(200);
+					bool witness = goal == "PDASunbeamDestroyEventInRange";
+					MoraleDelaySunbeamDestroy e = Player.main.gameObject.EnsureComponent<MoraleDelaySunbeamDestroy>();
+					e.onsite = witness;
+					e.InvokeRepeating("triggerAnticipate", witness ? 28.25F : 18F, 0.05F);
+					e.Invoke("triggerAnticipateRamp", witness ? 31 : 21F);
+					e.Invoke("triggerAnticipateRamp2", witness ? 34 : 22.5F);
+					e.Invoke("trigger", witness ? 36.75F : 27.5F);
+					break;
+				}
 			}
 		}
 
 		class MoraleEffect9999 : MonoBehaviour {
 
 			private int times = 0;
+
+			void firstFire() {
+				MoraleSystem.instance.shiftMorale(20);
+			}
 
 			void trigger() {
 				times++;
@@ -266,6 +285,34 @@ namespace ReikaKalseki.SeaToSea {
 					CancelInvoke("trigger");
 					UnityEngine.Object.Destroy(this, 0.5F);
 				}
+			}
+
+		}
+
+		class MoraleDelaySunbeamDestroy : MonoBehaviour {
+
+			internal bool onsite;
+			private bool rampedAnticipate = false;
+			private bool rampedAnticipate2 = false;
+
+			void triggerAnticipate() {
+				float amt = rampedAnticipate2 ? -0.5F : (rampedAnticipate ? -0.25F : -0.075F); //at 20/s, this is therefore 1.5/s and 5/s
+				MoraleSystem.instance.shiftMorale(onsite ? amt : amt*0.67F);
+			}
+
+			void triggerAnticipateRamp() {
+				rampedAnticipate = true;
+			}
+
+			void triggerAnticipateRamp2() {
+				rampedAnticipate2 = true;
+			}
+
+			void trigger() {
+				StoryGoal.Execute("SunbeamDestroyed", Story.GoalType.Story);
+				MoraleSystem.instance.shiftMorale(-200);
+				CancelInvoke("triggerAnticipate");
+				UnityEngine.Object.Destroy(this, 0.5F);
 			}
 
 		}
