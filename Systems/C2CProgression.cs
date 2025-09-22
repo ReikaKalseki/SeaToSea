@@ -72,13 +72,13 @@ namespace ReikaKalseki.SeaToSea {
 		private C2CProgression() {
 			StoryHandler.instance.addListener(this);
 
-			StoryHandler.instance.registerTrigger(new StoryTrigger("AuroraRadiationFixed"), new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F));
+			StoryHandler.instance.registerTrigger(new StoryTrigger(StoryGoals.AURORA_FIX), new DelayedProgressionEffect(VoidSpikesBiome.instance.fireRadio, VoidSpikesBiome.instance.isRadioFired, 0.00003F));
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Orange), new DelayedStoryEffect(SeaToSeaMod.crashMesaRadio, 0.00004F));
 			StoryHandler.instance.registerTrigger(new ProgressionTrigger(ep => ep.GetVehicle() is SeaMoth), new DelayedProgressionEffect(SeaToSeaMod.treaderSignal.fireRadio, SeaToSeaMod.treaderSignal.isRadioFired, 0.000015F));
 
-			StoryGoal pod12Radio = new StoryGoal("RadioKoosh26", Story.GoalType.Radio, 0);
+			StoryGoal pod12Radio = new StoryGoal(StoryGoals.POD12RADIO, Story.GoalType.Radio, 0);
 			DelayedStoryEffect ds = new DelayedStoryEffect(pod12Radio, 0.00008F);
-			StoryHandler.instance.registerTrigger(new StoryTrigger("SunbeamCheckPlayerRange"), ds);
+			StoryHandler.instance.registerTrigger(new StoryTrigger(StoryGoals.SUNBEAM_DESTROY_START), ds);
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.BaseNuclearReactor), ds);
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.HighCapacityTank), ds);
 			StoryHandler.instance.registerTrigger(new TechTrigger(TechType.PrecursorKey_Purple), ds);
@@ -172,7 +172,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private bool canSunbeamCountdownBegin(Player ep) {
-			return StoryGoalManager.main.completedGoals.Contains("OnPlayRadioSunbeam3") && ep.GetVehicle() is SeaMoth;
+			return StoryGoalManager.main.completedGoals.Contains(StoryGoals.getRadioPlayGoal(StoryGoals.SUNBEAM_FILLER)) && ep.GetVehicle() is SeaMoth;
 		}
 
 		private bool canUnlockEnzy42Recipe(Player ep) {
@@ -192,7 +192,7 @@ namespace ReikaKalseki.SeaToSea {
 		private bool isJustStarting(Player ep) {
 			if (Inventory.main.equipment.GetTechTypeInSlot("Head") != TechType.None || KnownTech.knownTech.Contains(TechType.Seamoth) || KnownTech.knownTech.Contains(TechType.BaseMapRoom) || KnownTech.knownTech.Contains(TechType.BaseRoom))
 				return false;
-			if (StoryGoalManager.main.completedGoals.Contains("OnPlayRadioGrassy25")) //pod 3 radio message play
+			if (StoryGoalManager.main.completedGoals.Contains(StoryGoals.getRadioPlayGoal(StoryGoals.POD3RADIO)))
 				return false;
 			//if (StoryGoalManager.main.completedGoals.Contains("Goal_Builder") || StoryGoalManager.main.completedGoals.Contains("Goal_Seaglide")) //craft build tool or seaglide
 			//	return false;
@@ -200,9 +200,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private bool hasMissedKelpCavePromptLate(Player ep) {
-			if (!StoryGoalManager.main.completedGoals.Contains("OnPlayRadioGrassy25")) //pod 3 radio message play
+			if (!StoryGoalManager.main.completedGoals.Contains(StoryGoals.getRadioPlayGoal(StoryGoals.POD3RADIO)))
 				return false;
-			bool late1 = StoryGoalManager.main.completedGoals.Contains("Goal_LocationAuroraDriveEntry") || StoryGoalManager.main.completedGoals.Contains("SunbeamCheckPlayerRange");
+			bool late1 = StoryGoalManager.main.completedGoals.Contains("Goal_LocationAuroraDriveEntry") || StoryGoalManager.main.completedGoals.Contains(StoryGoals.SUNBEAM_DESTROY_START);
 			bool late2 = KnownTech.knownTech.Contains(TechType.Workbench) || KnownTech.knownTech.Contains(TechType.StasisRifle) || KnownTech.knownTech.Contains(TechType.BaseMoonpool) || KnownTech.knownTech.Contains(TechType.HighCapacityTank);
 			return late1 && late2 && ep.GetBiomeString().ToLowerInvariant().Contains("safe") && !PDAMessagePrompts.instance.isTriggered(PDAMessages.getAttr(PDAMessages.Messages.KelpCavePrompt).key);
 		}
@@ -290,10 +290,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {
 				switch (key) {
-					case "SunbeamCheckPlayerRange":
+					case StoryGoals.SUNBEAM_DESTROY_START:
 						Player.main.gameObject.EnsureComponent<AvoliteSpawner.TriggerCallback>().Invoke("trigger", 39);
 						break;
-					case "JellyPDAExterior":
+					case StoryGoals.MAIDA_SEAMOTH_LOG:
 						Player.main.gameObject.EnsureComponent<DelayedPromptsCallback>().Invoke("triggerJellySeamothDepth", 5);
 						break;
 					case "drfwarperheat":

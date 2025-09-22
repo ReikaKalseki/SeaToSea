@@ -53,6 +53,7 @@
 		<desc>
 		</desc>
 		<pda>
+			A log of the two survivors in pod 3, planning to use a jury-rigged seaglide to reach the Aurora
 		</pda>
 		<databox>
 			A databox containing the blueprint for a compass
@@ -810,6 +811,9 @@
 		<rebreather>
 			The final fragments to create a construction blueprint for a machine to recharge liquid breathing systems
 		</rebreather>
+		<destroy>
+			A recording of the final moments of the crew of the degasi as a team, and the destruction of their final seabase
+		</destroy>
 	</DEGASIEND>
 	<VOID>
 		<name>
