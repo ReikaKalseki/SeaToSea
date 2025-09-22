@@ -36,28 +36,28 @@ namespace ReikaKalseki.SeaToSea {
 			CustomLocaleKeyDatabase.registerKey("EncyPath_Findings", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getField<string>("category"));
 
 			TrackerPage p = this.addPage(TrackerPages.DEGASI1, new PositionTrigger(POITeleportSystem.instance.getPosition("degasi1"), 70));
-			p.addFinding("pda", Finding.fromEncy("JellyPDARoom2Desk")).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("water", Finding.fromUnlock(TechType.BaseFiltrationMachine)).addFinding("breathcharge", Finding.fromEncy(C2CItems.rebreatherCharger.getPDAPage().id)).addFinding("azurite", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite))).addFinding("maidapage", Finding.fromEncy("JellyPDAExterior"));
+			p.addFinding("pda", Finding.fromEncy("JellyPDARoom2Desk")).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("water", Finding.fromUnlock(TechType.BaseFiltrationMachine)).addFinding("breathcharge", Finding.fromEncy(C2CItems.rebreatherCharger.getPDAPage().id)).addFinding("azurite", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite))).addFinding("maidapage", Finding.fromEncy(StoryGoals.MAIDA_SEAMOTH_LOG));
 
 			p = this.addPage(TrackerPages.JELLYSHROOM, new BiomeTrigger(VanillaBiomes.JELLYSHROOM));
 			p.addFinding("mushroom", Finding.fromScan(TechType.SnakeMushroom)).addFinding("seamothdepth", Finding.fromStory("seamothdepthchit1")).addFinding("magnetite", Finding.fromScan(TechType.Magnetite)).addFinding("degasi", Finding.fromTracker(TrackerPages.DEGASI1));
 
-			p = this.addPage(TrackerPages.POD3, new StoryTrigger("OnPlayRadioGrassy25"));
-			p.addFinding("databox", Finding.fromUnlock(TechType.Compass)).addFinding("cavehint", Finding.fromStory("KelpCaveHint")).addFinding("geyser", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.LathingDrone)));
+			p = this.addPage(TrackerPages.POD3, new StoryTrigger(StoryGoals.getRadioPlayGoal(StoryGoals.POD3RADIO)));
+			p.addFinding("pda", Finding.fromEncy(StoryGoals.POD3)).addFinding("databox", Finding.fromUnlock(TechType.Compass)).addFinding("cavehint", Finding.fromStory("KelpCaveHint")).addFinding("geyser", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.LathingDrone)));
 
 			p = this.addPage(TrackerPages.POD19, new PositionTrigger(new Vector3(-808.72F, -299.31F, -872.53F), 150));
-			p.addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy("LifepodKeenLog")).addFinding("cycfire", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("console", Finding.fromUnlock(TechType.BaseUpgradeConsole)).addFinding("nanowrap", Finding.fromUnlock(C2CItems.bandage)).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1")).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));
+			p.addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy(StoryGoals.POD19RENDEZVOUS)).addFinding("cycfire", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("console", Finding.fromUnlock(TechType.BaseUpgradeConsole)).addFinding("nanowrap", Finding.fromUnlock(C2CItems.bandage)).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1")).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));
 
 			p = this.addPage(TrackerPages.POD17, new PositionTrigger(new Vector3(-515.56F, -98.79F, -56.18F), 80));
-			p.addFinding("pda", Finding.fromEncy("LifepodSeaglide")).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("terminal", Finding.fromStory("Story_AuroraConsole1")).addFinding("jelly", Finding.fromTracker(TrackerPages.JELLYSHROOM)).addFinding("room", Finding.fromStory(C2CProgression.instance.getLocationGoal("OZZY_FORK_DEEP_ROOM")));
+			p.addFinding("pda", Finding.fromEncy(StoryGoals.POD17)).addFinding("seamoth", Finding.fromEncy("Seamoth")).addFinding("terminal", Finding.fromStory("Story_AuroraConsole1")).addFinding("jelly", Finding.fromTracker(TrackerPages.JELLYSHROOM)).addFinding("room", Finding.fromStory(C2CProgression.instance.getLocationGoal("OZZY_FORK_DEEP_ROOM")));
 
 			p = this.addPage(TrackerPages.POD6, new PositionTrigger(pod6Base, 80));
-			p.addFinding("wreck", Finding.fromStory(C2CProgression.instance.getLocationGoal("EAST_GRASS_WRECK"))).addFinding("pda", Finding.fromEncy("LifepodCrashZone2")).addFinding("seacrown", Finding.fromScan(TechType.SeaCrown)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
+			p.addFinding("wreck", Finding.fromStory(C2CProgression.instance.getLocationGoal("EAST_GRASS_WRECK"))).addFinding("pda", Finding.fromEncy(StoryGoals.POD6B)).addFinding("seacrown", Finding.fromScan(TechType.SeaCrown)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
 
 			p = this.addPage(TrackerPages.SOUTHGRASS, new PositionTrigger(POITeleportSystem.instance.getPosition("stepcave"), 150));
 			p.addFinding("wreck", Finding.fromStory(C2CProgression.instance.getLocationGoal("SOUTH_GRASS_WRECK"))).addFinding("stepcave", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.MicroFilter).TechType)).addFinding("salve", Finding.fromScan(C2CItems.healFlower));
 
 			p = this.addPage(TrackerPages.KOOSH, new BiomeTrigger(VanillaBiomes.KOOSH));
-			p.addFinding("pda", Finding.fromEncy("Lifepod2")).addFinding("mushkoosh", Finding.fromEncy("ency_" + SeaToSeaMod.geyserCoral.ClassID)).addFinding("mercury", Finding.fromScan(TechType.MercuryOre)).addFinding("reinf", Finding.fromUnlock(TechType.ReinforcedDiveSuit)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("KOOSH_ARCH")));
+			p.addFinding("pda", Finding.fromEncy(StoryGoals.POD12)).addFinding("mushkoosh", Finding.fromEncy("ency_" + SeaToSeaMod.geyserCoral.ClassID)).addFinding("mercury", Finding.fromScan(TechType.MercuryOre)).addFinding("reinf", Finding.fromUnlock(TechType.ReinforcedDiveSuit)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("KOOSH_ARCH")));
 
 			p = this.addPage(TrackerPages.DUNECENTRAL, new BiomeTrigger(VanillaBiomes.DUNES));
 			p.addFinding("shroom", Finding.fromScan(Ecocean.EcoceanMod.glowShroom)).addFinding("azurite", Finding.fromStory("Azurite")).addFinding("suit", Finding.fromUnlock(C2CItems.sealSuit)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromTracker(TrackerPages.DUNEARCH)).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
@@ -79,7 +79,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("pod1", Finding.fromEncy("bkelpbase")).addFinding("pda", Finding.fromEncy("bkelpbase2")).addFinding("chit", Finding.fromStory(SeaToSeaMod.bioProcessorBoost.goal)).addFinding("databox", Finding.fromUnlock(C2CItems.depth1300));//TODO .addFinding("caves", Finding.(??));
 
 			p = this.addPage(TrackerPages.NBKELP, new ProgressionTrigger(ep => BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.BLOODKELPNORTH && ep.transform.position.y < -400));
-			p.addFinding("pod2", Finding.fromEncy("Lifepod1")).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload2")).addFinding("nest", Finding.fromScan(SeaToSeaMod.bkelpBumpWorm)).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
+			p.addFinding("pod2", Finding.fromEncy(StoryGoals.POD2)).addFinding("cache", Finding.fromStory("Precursor_Cache_DataDownload2")).addFinding("nest", Finding.fromScan(SeaToSeaMod.bkelpBumpWorm)).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
 			if (hard)
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
@@ -89,19 +89,19 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathanJuvenile));
 
 			p = this.addPage(TrackerPages.DRF, new StoryTrigger("Precursor_LostRiverBase_Log1"));
-			p.addFinding("terminal1", Finding.fromStory("Precursor_LostRiverBase_DataDownload1")).addFinding("egg", Finding.fromScan(TechType.PrecursorLostRiverLabEgg)).addFinding("damage", Finding.fromStory("Precursor_LostRiverBase_DataDownload3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_White)).addFinding("cycheat", Finding.fromUnlock(C2CItems.cyclopsHeat)).addFinding("disease", Finding.fromStory("Precursor_LostRiverBase_Log3")).addFinding("warper", Finding.fromScan(TechType.PrecursorWarper));
+			p.addFinding("terminal1", Finding.fromStory("Precursor_LostRiverBase_DataDownload1")).addFinding("egg", Finding.fromScan(TechType.PrecursorLostRiverLabEgg)).addFinding("damage", Finding.fromStory(StoryGoals.DRF_DESTROY_LOG)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_White)).addFinding("cycheat", Finding.fromUnlock(C2CItems.cyclopsHeat)).addFinding("disease", Finding.fromStory(StoryGoals.KHARAA_REVEAL)).addFinding("warper", Finding.fromScan(TechType.PrecursorWarper));
 
-			p = this.addPage(TrackerPages.LAVACASTLE, new StoryTrigger("Precursor_LavaCastle_Log1")); //1 is the entry into the castle, Precursor_LavaCastle_Log2 is the lava castle hint
+			p = this.addPage(TrackerPages.LAVACASTLE, new StoryTrigger(StoryGoals.LAVA_CASTLE_ENTRY));
 			p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock));
 
 			p = this.addPage(TrackerPages.ILZ, new BiomeTrigger(VanillaBiomes.ILZ));
 			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter));
 
 			p = this.addPage(TrackerPages.CRAG, new BiomeTrigger(VanillaBiomes.CRAG));
-			p.addFinding("pod7", Finding.fromEncy("LifepodRandom")).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH"))).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
+			p.addFinding("pod7", Finding.fromEncy(StoryGoals.POD7)).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH"))).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
 
 			p = this.addPage(TrackerPages.FLOATISLAND, new ProgressionTrigger(ep => ep.transform.position.y >= 15 && (ep.transform.position - POITeleportSystem.instance.getPosition("islandwreck")).sqrMagnitude <= 150 * 150));
-			p.addFinding("degasi", Finding.fromTracker(TrackerPages.FLOATDEGASI)).addFinding("keen", Finding.fromEncy("RendezvousFloatingIsland")).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("FLOATING_ARCH"))).addFinding("floater", Finding.fromScan(TechType.LargeFloater)).addFinding("tablet", Finding.fromStory("ScanFloatingIslandTablet"));
+			p.addFinding("degasi", Finding.fromTracker(TrackerPages.FLOATDEGASI)).addFinding("keen", Finding.fromEncy(StoryGoals.ISLAND_RENDEZVOUS)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("FLOATING_ARCH"))).addFinding("floater", Finding.fromScan(TechType.LargeFloater)).addFinding("tablet", Finding.fromStory("ScanFloatingIslandTablet"));
 
 			p = this.addPage(TrackerPages.MOUNTAINISLAND, new ProgressionTrigger(ep => WorldUtil.isMountainIsland(ep.transform.position)));
 			p.addFinding("gun", Finding.fromTracker(TrackerPages.GUN)).addFinding("arch", Finding.fromStory("PrecursorMountainTeleporterActive")).addFinding("beachpda", Finding.fromEncy("islandpda")).addFinding("campfire", Finding.fromStory("campfire").setOptional(true)).addFinding("cavepda", Finding.fromEncy("islandcave")).addFinding("battery", Finding.fromUnlock(C2CItems.t2Battery)).addFinding("purpletablets", /*Finding.fromEncy("PrecursorKey_Purple")*/Finding.fromStory("ScanMountainIslandTablet")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Red));
@@ -109,10 +109,10 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("plantalcove", Finding.fromStory(C2CProgression.instance.getLocationGoal("PLANT_ALCOVE")));
 
 			p = this.addPage(TrackerPages.GUN, new StoryTrigger("Goal_BiomePrecursorGunUpper"));
-			p.addFinding("cube", Finding.fromScan(TechType.PrecursorIonCrystal)).addFinding("denied", Finding.fromStory("Precursor_Gun_DisableDenied")).addFinding("jailbreak", Finding.fromStory(Auroresource.AuroresourceMod.laserCutterJailbroken));
+			p.addFinding("cube", Finding.fromScan(TechType.PrecursorIonCrystal)).addFinding("denied", Finding.fromStory(StoryGoals.INFECTED_REJECTION)).addFinding("jailbreak", Finding.fromStory(Auroresource.AuroresourceMod.laserCutterJailbroken));
 
 			p = this.addPage(TrackerPages.FLOATDEGASI, new TrackerPageAnyFindingsTrigger(TrackerPages.FLOATDEGASI));
-			p.addFinding("main", Finding.fromEncy("IslandsPDABase1Interior")).addFinding("outside", Finding.fromEncy("IslandsPDAExterior")).addFinding("return", Finding.fromEncy("IslandsPDABase1a")).addFinding("init", Finding.fromEncy("IslandsPDABase1bDesk"));
+			p.addFinding("main", Finding.fromEncy(StoryGoals.PAUL_START_LOG)).addFinding("outside", Finding.fromEncy(StoryGoals.ISLAND_JELLYSHROOM_PDA)).addFinding("return", Finding.fromEncy(StoryGoals.BART_DEATH_LOG)).addFinding("init", Finding.fromEncy(StoryGoals.FIRST_DEGASI_LOG));
 
 			p = this.addPage(TrackerPages.DUNEARCH, new PositionTrigger(POITeleportSystem.instance.getPosition("dunearch"), 120));
 			p.addFinding("pda", Finding.fromEncy("dunearch")).addFinding("bioproc", Finding.fromEncy(C2CItems.processor.getPDAPage().id)).addFinding("liqbr", Finding.fromUnlock(C2CItems.breathingFluid));
@@ -128,12 +128,12 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("treepda", Finding.fromEncy("treepda")).addFinding("chit", Finding.fromStory(SeaToSeaMod.laserCutterBulkhead.goal)).addFinding("bacteria", Finding.fromEncy("ency_" + SeaToSeaMod.mushroomBioFragment.ClassID));
 
 			p = this.addPage(TrackerPages.MUSHROOMS, new BiomeTrigger(VanillaBiomes.MUSHROOM));
-			p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy("Lifepod4")).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromScan(SeaToSeaMod.geyserCoral.TechType)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH"))).addFinding("vasestrand", Finding.fromScan(Ecocean.EcoceanMod.mushroomVaseStrand));
+			p.addFinding("initpda", Finding.fromEncy("rescuepdalog")).addFinding("khasar", Finding.fromEncy(StoryGoals.POD13)).addFinding("cyclops", Finding.fromEncy("cyclops")).addFinding("highwreck", Finding.fromUnlock(Auroresource.AuroresourceMod.meteorDetector)).addFinding("tree", Finding.fromTracker(TrackerPages.MUSHTREE)).addFinding("mushkoosh", Finding.fromScan(SeaToSeaMod.geyserCoral.TechType)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("MUSHTREE_ARCH"))).addFinding("vasestrand", Finding.fromScan(Ecocean.EcoceanMod.mushroomVaseStrand));
 
 			p = this.addPage(TrackerPages.MOUNTAINPOD, new TrackerPageAnyFindingsTrigger(TrackerPages.MOUNTAINPOD));
 			p.addFinding("podpda", Finding.fromEncy("mountainpodearly")).addFinding("podpda2", Finding.fromEncy("mountainpodlate")).addFinding("mask", Finding.fromUnlock(C2CItems.rebreatherV2)).addFinding("stealth", Finding.fromUnlock(C2CItems.voidStealth)).addFinding("knife", Finding.fromUnlock(TechType.HeatBlade)).addFinding("battery", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.batteryBlock)).addFinding("basepda", Finding.fromEncy("mountaincave"));
 
-			p = this.addPage(TrackerPages.TREADERPOD, new StoryTrigger("OnPlay" + SeaToSeaMod.treaderSignal.storyGate));
+			p = this.addPage(TrackerPages.TREADERPOD, new StoryTrigger(StoryGoals.getRadioPlayGoal(SeaToSeaMod.treaderSignal.storyGate)));
 			p.addFinding("treader", Finding.fromScan(TechType.SeaTreader)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("pda", Finding.fromEncy("treaderpod")).addFinding("enzy", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes))).addFinding("basepda", Finding.fromEncy("treadercave")).addFinding("databox", Finding.fromUnlock(TechType.VehicleHullModule2));
 
 			p = this.addPage(TrackerPages.GLASSFOREST, new StoryTrigger(UnderwaterIslandsFloorBiome.instance.discoveryGoal));
@@ -142,12 +142,12 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
 			p = this.addPage(TrackerPages.CRASH, new BiomeTrigger(VanillaBiomes.CRASH));
-			p.addFinding("pod4", Finding.fromEncy("LifepodDecoy")).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("stasis", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.stasisBlock)).addFinding("sanctuary", Finding.fromStory(CrashZoneSanctuaryBiome.instance.discoveryGoal)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant)));
+			p.addFinding("pod4", Finding.fromEncy(StoryGoals.POD4)).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("stasis", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.stasisBlock)).addFinding("sanctuary", Finding.fromStory(CrashZoneSanctuaryBiome.instance.discoveryGoal)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant)));
 			if (hard)
 				p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 
 			p = this.addPage(TrackerPages.DEGASIEND, new PositionTrigger(C2CHooks.deepDegasiTablet, 80));
-			p.addFinding("end", Finding.fromEncy("DeepPDA3")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(C2CItems.rebreatherCharger));
+			p.addFinding("end", Finding.fromEncy(StoryGoals.PAUL_DEATH_LOG)).addFinding("destroy", Finding.fromEncy(StoryGoals.FINAL_DEGASI_LOG)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(C2CItems.rebreatherCharger));
 
 			p = this.addPage(TrackerPages.VOID, new TrackerPageAnyFindingsTrigger(TrackerPages.VOID));
 			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating)));

@@ -26,6 +26,7 @@ using Story;
 
 using UnityEngine;
 using UnityEngine.UI;
+using Oculus.Newtonsoft.Json;
 
 namespace ReikaKalseki.SeaToSea {
 	public class MoraleSystem {
@@ -57,15 +58,21 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float INITIAL_REAL_MORALE = 10;
 
 		private static readonly float GENERIC_DEAD_LIFEPOD_MORALE_IMPACT = -10;
+		private static readonly float GENERIC_RADIO_MORALE_BOOST = 10;
+		private static readonly float GENERIC_RADIO_MORALE_DURATION = 60*30; //30 min
 		private static readonly float GENERIC_DEAD_LIFEPOD_MORALE_DURATION = 60*10; //10 min
 
 		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 5; //+5%/s
+
+		private static readonly float INITIAL_MORALE_BASELINE = 20;
+
+		public static readonly float MORALE_DAMAGE_COEFFICIENT = 1;
 
 		public static uint printMoraleForDebug = 0;
 
 		private readonly Dictionary<BiomeBase, AmbientMoraleInfluence> biomeEffect = new Dictionary<BiomeBase, AmbientMoraleInfluence>();
 		private readonly Dictionary<string, float> goalMorale = new Dictionary<string, float>();
-		private readonly List<Func<Player, float>> baselineEffects = new List<Func<Player, float>>();
+		private readonly List<Tuple<Func<Player, float>, bool>> persistentEffects = new List<Tuple<Func<Player, float>, bool>>();
 
 		private GameObject barsRoot;
 		private MoraleBar bar;
@@ -86,6 +93,7 @@ namespace ReikaKalseki.SeaToSea {
 		public float moralePercentage { get; private set; }
 		public float maxMorale { get; private set; }
 		public float currentMoraleBaseline { get; private set; }
+		public float currentMoraleForce { get; private set; }
 
 		//private MoraleVisual moraleVisual;
 
@@ -98,6 +106,7 @@ namespace ReikaKalseki.SeaToSea {
 			SET = 8,
 			BIOME = 16,
 			DECO = 32,
+			BASELINE = 64,
 		}
 
 		public static void setMoraleDebugFlags(string names) {
@@ -124,7 +133,7 @@ namespace ReikaKalseki.SeaToSea {
 			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-0.75F, 0, -0.33F);
 			biomeEffect[VanillaBiomes.BLOODKELPNORTH] = new AmbientMoraleInfluence(-0.8F, 0, -0.4F);
 			biomeEffect[VanillaBiomes.COVE] = new AmbientMoraleInfluence(2, 2, 2);
-			biomeEffect[VanillaBiomes.CRASH] = new AmbientMoraleInfluence(-4, 0, -1);
+			biomeEffect[VanillaBiomes.CRASH] = new AmbientMoraleInfluence(-2, 0, -1);
 			biomeEffect[VanillaBiomes.DUNES] = new AmbientMoraleInfluence(-0.25F, 0, -0.25F);
 			biomeEffect[VanillaBiomes.GRANDREEF] = new AmbientMoraleInfluence(0.25F, 0.5F, 0.5F);
 			biomeEffect[VanillaBiomes.JELLYSHROOM] = new AmbientMoraleInfluence(0, -40, 1);
@@ -134,45 +143,59 @@ namespace ReikaKalseki.SeaToSea {
 
 			goalMorale["Goal_BiomeDunes"] = -20; //are you sure what you are doing is worth it
 
+			//-------------------
+			//this is not a baseline, this is a delta/s!
+			//-------------------
 			//"OMG RESCUE!"
-			this.registerBaselineAdjustment(ep => SNUtil.isSunbeamExpected() ? 200 : 0);
+			this.registerPersistentEffect(ep => SNUtil.isSunbeamExpected() ? 200 : 0, false);
 			//hope falls, discontent rises
 			float sunbeamCrisisDuration = 3600; //1h
-			this.registerBaselineAdjustment("SunbeamDestroyed", -200, sunbeamCrisisDuration);
+			this.registerPersistentEffect("SunbeamDestroyed", true, -200, sunbeamCrisisDuration);
 
-			goalMorale["Precursor_Gun_DisableDenied"] = -100; //No rescue until cure
+			goalMorale[StoryGoals.INFECTED_REJECTION] = -100; //No rescue until cure
 
-			//T4 infection gives one-time -50 (via the cinematic) and a continuous -10
-			goalMorale["Precursor_LostRiverBase_DataDownload4"] = -50;
-			this.registerBaselineAdjustment(ep => ep.GetInfectionAmount() > 0.9F ? -10 : 0);
+			//T4 infection gives one-time -50 (via the cinematic) and a continuous -5
+			goalMorale[StoryGoals.INFECTED_CINEMATIC] = -50;
+			this.registerPersistentEffect(ep => ep.GetInfectionAmount() > 0.9F ? -1 : 0, true);
+			this.registerPersistentEffect(ep => ep.GetInfectionAmount() > 0.9F ? -5 : 0, false);
 
-			this.registerBaselineAdjustment("Lifepod2", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //pod12
-			this.registerBaselineAdjustment("LifepodCrashZone2", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //pod6 #2
-			this.registerBaselineAdjustment("LifepodSeaglide", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //pod17, ozzy
-			this.registerBaselineAdjustment("Lifepod3", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT * 2, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //; x2 strength since usually first
-			this.registerBaselineAdjustment("Lifepod1", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //pod2
-			this.registerBaselineAdjustment("Lifepod4", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT / 2F, GENERIC_DEAD_LIFEPOD_MORALE_DURATION * 0.67F); //pod13, khasar; half because Alterra vs Mongolians
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD12RADIO), StoryGoals.POD12);
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD6RADIO), StoryGoals.POD6B);
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD17RADIO), StoryGoals.POD17); //ozzy
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD3RADIO), StoryGoals.POD3, 2F); //x2 strength since usually first
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD2RADIO), StoryGoals.POD2);
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD13RADIO), StoryGoals.POD13, 0.5F); //khasar; half because Alterra vs Mongolians
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD7RADIO), StoryGoals.POD7);
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD19RADIO), StoryGoals.ISLAND_RENDEZVOUS, 1.5F); //only clear once rendezvous fails
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD4RADIO), StoryGoals.POD4); //also add strong negative impulse because of realization of danger
+			goalMorale[StoryGoals.POD4] = -25;
 
-			goalMorale["LifepodDecoy"] = -25;
-			this.registerBaselineAdjustment("LifepodDecoy", GENERIC_DEAD_LIFEPOD_MORALE_IMPACT, GENERIC_DEAD_LIFEPOD_MORALE_DURATION); //pod4; also add strong negative impulse because of realization of danger
+			this.registerPersistentEffect(StoryGoals.POD19RENDEZVOUS, false, 100, sunbeamCrisisDuration*2, StoryGoals.ISLAND_RENDEZVOUS, -50, sunbeamCrisisDuration / 2F); //survivors on an island...except not
 
-			this.registerBaselineAdjustment("LifepodKeenLog", 100, "RendezvousFloatingIsland", -50, sunbeamCrisisDuration / 2F); //survivors on an island...except not
+			this.registerLifepodMoraleShifts("rescuepdalog", "treepda", 1.5F); //hint of rescue...never mind
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(SeaToSeaMod.treaderSignal.storyGate), "treaderpod");
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(VoidSpikesBiome.instance.getSignalKey()), "voidpod");
+			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(SeaToSeaMod.crashMesaRadio.key), "crashmesa");
 
-			this.registerBaselineAdjustment("rescuepdalog", 30, "treepda", -20, 60 * 15); //hint of rescue...never mind
+			this.registerPersistentEffect(StoryGoals.getRadioPlayGoal(StoryGoals.ALTERRA_HQ), false, 5); //+5 from knowing there is a rocket plan
+			this.registerPersistentEffect(StoryGoals.ROCKET_INFO, false, 5); //permanent +5 to baseline after rocket known
 
-			this.registerBaselineAdjustment(ep => SNUtil.isPlayerCured() ? 10 : 0); //permanent +10 after cure
-			this.registerBaselineAdjustment("RocketComplete", 10); //another permanent +10 after rocket built
+			this.registerPersistentEffect(ep => SNUtil.isPlayerCured() ? 5 : 0, true); //permanent +5 after cure
+			this.registerPersistentEffect(ep => SNUtil.isPlayerCured() ? 20 : 0, false); //permanent +20 to baseline after cure
+			this.registerPersistentEffect(StoryGoals.ROCKET_COMPLETE, true, 5); //another permanent +5 after rocket built
+			this.registerPersistentEffect(StoryGoals.ROCKET_COMPLETE, false, 10); //another permanent +10 after rocket built
 
 			//boosts from a few major milestones
-			goalMorale["RepairLifepod"] = 25;
-			goalMorale["Goal_Seamoth"] = 50;
-			goalMorale["AuroraRadiationFixed"] = 40;
-			goalMorale["Goal_Exo"] = 50;
-			goalMorale["Goal_Cyclops"] = 75;
-			goalMorale["Goal_Disable_Gun"] = 100;
-			goalMorale["RocketComplete"] = 100;
-			goalMorale["SeaEmperorBabiesHatched"] = 50;
-			goalMorale["Infection_Progress5"] = 200;
+			goalMorale[StoryGoals.REPAIR_LIFEPOD] = 25;
+			goalMorale[StoryGoals.MAKE_SEAMOTH] = 50;
+			goalMorale[StoryGoals.AURORA_FIX] = 40;
+			goalMorale[StoryGoals.getRadioPlayGoal(StoryGoals.ALTERRA_HQ)] = 20;
+			goalMorale[StoryGoals.MAKE_PRAWN] = 50;
+			goalMorale[StoryGoals.MAKE_CYCLOPS] = 75;
+			goalMorale[StoryGoals.DISABLE_GUN] = 100;
+			goalMorale[StoryGoals.ROCKET_COMPLETE] = 100;
+			goalMorale[StoryGoals.EMPEROR_HATCH] = 50;
+			goalMorale[StoryGoals.CURED] = 200;
 
 			this.reset();
 
@@ -197,31 +220,36 @@ namespace ReikaKalseki.SeaToSea {
 				biomeEffect[bb] = amb;
 		}
 
-		public void registerBaselineAdjustment(ProgressionTrigger check, float effect) {
-			this.registerBaselineAdjustment(ep => check.isReady(ep) ? effect : 0);
+		public void registerLifepodMoraleShifts(string radioGoal, string pdaGoal, float strength = 1) {
+			this.registerPersistentEffect(radioGoal, false, GENERIC_RADIO_MORALE_BOOST*strength, GENERIC_RADIO_MORALE_DURATION, pdaGoal, GENERIC_DEAD_LIFEPOD_MORALE_IMPACT* strength, GENERIC_DEAD_LIFEPOD_MORALE_DURATION);
 		}
 
-		public void registerBaselineAdjustment(string goal1, float effect1, string goal2, float effect2Initial, float fadeTime = -1) {
-			this.registerBaselineAdjustment(ep => {
+		public void registerBaselineAdjustment(ProgressionTrigger check, float effect, bool isForce) {
+			this.registerPersistentEffect(ep => check.isReady(ep) ? effect : 0, isForce);
+		}
+
+		public void registerPersistentEffect(string goal1, bool isForce, float effect1Initial, float fadeTime1, string goal2, float effect2Initial, float fadeTime2 = -1) {
+			this.registerPersistentEffect(ep => {
 				if (StoryGoalManager.main.IsGoalComplete(goal1)) {
 					if (StoryGoalManager.main.IsGoalComplete(goal2)) {
-						if (fadeTime < 0)
+						if (fadeTime2 < 0)
 							return effect2Initial;
 						float since = StoryHandler.instance.getTimeSince(goal2);
-						return since >= fadeTime ? 0 : (float)MathUtil.linterpolate(since, 0, fadeTime, effect2Initial, 0, true);
+						return since >= fadeTime2 ? 0 : (float)MathUtil.linterpolate(since, 0, fadeTime2, effect2Initial, 0, true);
 					}
 					else {
-						return effect1;
+						float since = StoryHandler.instance.getTimeSince(goal1);
+						return since >= fadeTime1 ? 0 : (float)MathUtil.linterpolate(since, 0, fadeTime1, effect1Initial, 0, true);
 					}
 				}
 				else {
 					return 0;
 				}
-			});
+			}, isForce);
 		}
 
-		public void registerBaselineAdjustment(string goal, float initial, float fadeTime = -1) {
-			this.registerBaselineAdjustment(ep => {
+		public void registerPersistentEffect(string goal, bool isForce, float initial, float fadeTime = -1) {
+			this.registerPersistentEffect(ep => {
 				if (StoryGoalManager.main.IsGoalComplete(goal)) {
 					if (fadeTime < 0)
 						return initial;
@@ -231,13 +259,14 @@ namespace ReikaKalseki.SeaToSea {
 				else {
 					return 0;
 				}
-			});
+			}, isForce);
 		}
 
-		public void registerBaselineAdjustment(Func<Player, float> effect) {
+		public void registerPersistentEffect(Func<Player, float> effect, bool isForce) {
 			if (effect == null)
 				throw new Exception("Invalid null effect!");
-			baselineEffects.Add(effect);
+			if (isForce)
+				persistentEffects.Add(new Tuple<Func<Player, float>, bool>(effect, isForce));
 		}
 
 		private void onStoryGoal(string goal) {
@@ -245,7 +274,7 @@ namespace ReikaKalseki.SeaToSea {
 				this.shiftMorale(goalMorale[goal]);
 
 			switch (goal) {
-				case "Goal_Lifepod2": { //exit pod, and this is where morale *actually* begins
+				case StoryGoals.EXIT_POD5: { //exit pod, and this is where morale *actually* begins
 					timeUntilMoraleAdoptsRealValue = 7.5F;
 					break;
 				}
@@ -255,10 +284,10 @@ namespace ReikaKalseki.SeaToSea {
 					e.Invoke("firstFire", 6.5F);
 					break;
 				}
-				case "PDASunbeamDestroyEventInRange":
-				case "PDASunbeamDestroyEventOutOfRange": {
+				case StoryGoals.SUNBEAM_DESTROY_NEAR:
+				case StoryGoals.SUNBEAM_DESTROY_FAR: {
 					MoraleSystem.instance.shiftMorale(200);
-					bool witness = goal == "PDASunbeamDestroyEventInRange";
+					bool witness = goal == StoryGoals.SUNBEAM_DESTROY_NEAR;
 					MoraleDelaySunbeamDestroy e = Player.main.gameObject.EnsureComponent<MoraleDelaySunbeamDestroy>();
 					e.onsite = witness;
 					e.InvokeRepeating("triggerAnticipate", witness ? 28.25F : 18F, 0.05F);
@@ -410,13 +439,21 @@ namespace ReikaKalseki.SeaToSea {
 
 			if (time - lastBaselineCheckTime > 1F) {
 				lastBaselineCheckTime = time;
-				currentMoraleBaseline = 0;
-				foreach (Func<Player, float> e in baselineEffects) {
-					currentMoraleBaseline += e.Invoke(ep);
+				currentMoraleBaseline = INITIAL_MORALE_BASELINE;
+				currentMoraleForce = 0;
+				foreach (Tuple<Func<Player, float>, bool> e in persistentEffects) {
+					float amt = e.Item1.Invoke(ep);
+					bool force = e.Item2;
+					if (checkMoraleDebugFlag(MoraleDebugFlags.BASELINE))
+						SNUtil.writeToChat("Morale "+(force ? "force" : "baseline") +" effect "+e+" > "+amt);
+					if (force)
+						currentMoraleForce += amt;
+					else
+						currentMoraleBaseline += amt;
 				}
 
 				if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
-					SNUtil.writeToChat("Computed morale baseline " + currentMoraleBaseline.ToString("0.00"));
+					SNUtil.writeToChat("Computed morale baseline " + currentMoraleBaseline.ToString("0.00")+" and force " + currentMoraleForce.ToString("0.00"));
 			}
 
 			if (ep.currentSub) {
@@ -505,7 +542,13 @@ namespace ReikaKalseki.SeaToSea {
 			if (bleederTarget && bleederTarget.occupied)
 				delta = -10;
 
-			delta += currentMoraleBaseline;
+			delta += currentMoraleForce;
+			if (moralePercentage > currentMoraleBaseline) {
+				delta -= 1;
+			}
+			else if (moralePercentage < currentMoraleBaseline) {
+				delta += 1;
+			}
 
 			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Final morale delta " + delta.ToString("0.00") + "/s");
