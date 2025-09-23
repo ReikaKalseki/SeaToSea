@@ -369,7 +369,6 @@ namespace ReikaKalseki.SeaToSea {
 		se.encyclopedia = enviroSimulation.id;
 		PDAHandler.AddCustomScannerEntry(se);
         */
-			addCommands();
 			addOreGen();
 
 			GenUtil.registerWorldgen(new PositionedPrefab(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID, Azurite.mountainBaseAzurite, Quaternion.Euler(0, 202.4F, 33.2F)));
@@ -544,6 +543,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			keybinds = new C2CModOptions();
 			OptionsPanelHandler.RegisterModOptions(keybinds);
+			addCommands();
 		}
 
 		[QModPostPatch]

@@ -128,6 +128,10 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private MoraleSystem() {
+
+		}
+
+		public void register() {
 			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-20, -2, -2);
 			biomeEffect[VanillaBiomes.ILZ] = new AmbientMoraleInfluence(-10, 0, -1);
 			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-0.75F, 0, -0.33F);
@@ -170,7 +174,7 @@ namespace ReikaKalseki.SeaToSea {
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD4RADIO), StoryGoals.POD4); //also add strong negative impulse because of realization of danger
 			goalMorale[StoryGoals.POD4] = -25;
 
-			this.registerPersistentEffect(StoryGoals.POD19RENDEZVOUS, false, 100, sunbeamCrisisDuration*2, StoryGoals.ISLAND_RENDEZVOUS, -50, sunbeamCrisisDuration / 2F); //survivors on an island...except not
+			this.registerPersistentEffect(StoryGoals.POD19RENDEZVOUS, false, 100, sunbeamCrisisDuration * 2, StoryGoals.ISLAND_RENDEZVOUS, -50, sunbeamCrisisDuration / 2F); //survivors on an island...except not
 
 			this.registerLifepodMoraleShifts("rescuepdalog", "treepda", 1.5F); //hint of rescue...never mind
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(SeaToSeaMod.treaderSignal.storyGate), "treaderpod");
@@ -201,9 +205,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			//moraleVisual = new MoraleVisual();
 			//ScreenFXManager.instance.addOverride(moraleVisual);
-		}
 
-		public void register() {
 			StoryHandler.instance.addListener(this.onStoryGoal);
 
 			SaveSystem.addPlayerSaveCallback(new SaveHook());
