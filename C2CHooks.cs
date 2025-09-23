@@ -1412,7 +1412,7 @@ namespace ReikaKalseki.SeaToSea {
 				go.EnsureComponent<DEIntegrationSystem.C2CThalassacean>();
 			}
 			else if (SNUtil.match(pi, "61ac1241-e990-4646-a618-bddb6960325b")) {
-				if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 40 && go.transform.position.y < -200) {
+				if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 80 && go.transform.position.y < -200) {
 					PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.TreaderPooPrompt).key);
 				}
 			}/*
