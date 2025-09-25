@@ -40,9 +40,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		//minutes from 100% morale to 0 or 0 to 100%, at max strength
 		private static readonly float CYCLOPS_MORALE_TIME_TO_DECAY = 45;
-		private static readonly float CYCLOPS_MORALE_TIME_TO_FILL = 20;
+		private static readonly float CYCLOPS_MORALE_TIME_TO_FILL = 10;
 		private static readonly float BASE_MORALE_TIME_TO_DECAY = 15;
-		private static readonly float BASE_MORALE_TIME_TO_FILL = 10;
+		private static readonly float BASE_MORALE_TIME_TO_FILL = 5;
 
 		private static readonly float MINUTE_DURATION_TO_PER_SECOND_CONVERSION = 0.6F; //x60 for time in seconds then /100 to per percent
 
@@ -65,6 +65,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 5; //+5%/s
 
 		private static readonly float INITIAL_MORALE_BASELINE = 20;
+		private static readonly float MORALE_RESTORATION_RATE = 0.05F;
 
 		public static readonly float MORALE_DAMAGE_COEFFICIENT = 1;
 
@@ -378,7 +379,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void tick(Player ep) {
-			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic()) {
+			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic() || LaunchRocket.launchStarted || StoryGoalManager.main.IsGoalComplete(StoryGoals.LAUNCH_ROCKET) || !MainCameraControl.main.enabled) {
 				setMorale(75);
 				if (bar)
 					bar.gameObject.SetActive(false);
@@ -546,10 +547,10 @@ namespace ReikaKalseki.SeaToSea {
 
 			delta += currentMoraleForce;
 			if (moralePercentage > currentMoraleBaseline) {
-				delta -= 1;
+				delta -= MORALE_RESTORATION_RATE;
 			}
 			else if (moralePercentage < currentMoraleBaseline) {
-				delta += 1;
+				delta += MORALE_RESTORATION_RATE;
 			}
 
 			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))

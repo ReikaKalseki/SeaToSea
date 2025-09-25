@@ -75,6 +75,7 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			}
 			else {
+				MoraleSystem.instance.shiftMorale(-10);
 				if (PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(msg).key)) {
 					if (!string.IsNullOrEmpty(page))
 						PDAManager.getPage(page).unlock(false);

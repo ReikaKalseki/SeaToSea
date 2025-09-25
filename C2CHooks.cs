@@ -228,6 +228,8 @@ namespace ReikaKalseki.SeaToSea {
 			DIHooks.onEatEvent += onEat;
 			DIHooks.getFoodRateEvent += affectFoodRate;
 
+			DIHooks.targetabilityEvent += checkTargetingSkip;
+
 			SNUtil.log("Finished registering main DI event callbacks");
 
 			KnownTech.onAdd += onTechUnlocked;
@@ -958,8 +960,8 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				float amt = dmg.getAmount();
 				if (amt > 0.01 && !IntroVignette.isIntroActive) { //the panel to the face actually DOES DAMAGE...
-					float dmgRef = Mathf.Clamp(amt, 0, 50);
-					MoraleSystem.instance.shiftMorale(-Mathf.Lerp(5, 80, dmgRef / 50F));
+					float dmgRef = Mathf.Clamp(amt, 10, 50)-10; //0-40
+					MoraleSystem.instance.shiftMorale(-Mathf.Lerp(2, 75, dmgRef / 40F)*MoraleSystem.MORALE_DAMAGE_COEFFICIENT);
 				}
 			}
 			else {
@@ -1140,31 +1142,19 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static float getReachDistance() {
-			return skipRaytrace || Player.main.GetVehicle()
-				? 2
-				: (Player.main.transform.position - lostRiverCachePanel).sqrMagnitude <= 100
-				? 4F
-				: VoidSpikesBiome.instance.isInBiome(Player.main.transform.position) ? 3.5F : 2;
+			return skipRaytrace || Player.main.GetVehicle() ? 2 : (Player.main.transform.position - lostRiverCachePanel).sqrMagnitude <= 100 ? 4F : VoidSpikesBiome.instance.isInBiome(Player.main.transform.position) ? 3.5F : 2;
 		}
 
-		public static bool checkTargetingSkip(bool orig, Transform obj) {
+		public static void checkTargetingSkip(DIHooks.TargetabilityCheck ch) {
 			if (skipRaytrace)
-				return orig;
-			if (!obj || !obj.gameObject)
-				return orig;
-			PrefabIdentifier id = obj.gameObject.FindAncestor<PrefabIdentifier>();
-			if (!id)
-				return orig;
+				return;
 			//SNUtil.log("Checking targeting skip of "+id+" > "+id.ClassId);
-			if (id.ClassId == "b250309e-5ad0-43ca-9297-f79e22915db6" && Vector3.Distance(Player.main.transform.position, lrpowerSealSetpieceCenter) <= 8) { //to allow to hit the things inside the mouth
-																																							//SNUtil.writeToChat("Is lr setpiece");
-				return true;
+			if (ch.prefab.ClassId == "b250309e-5ad0-43ca-9297-f79e22915db6" && Vector3.Distance(Player.main.transform.position, lrpowerSealSetpieceCenter) <= 8) { //to allow to hit the things inside the mouth
+				ch.allowTargeting = false;
 			}
-			if (VoidSpike.isSpike(id.ClassId) && VoidSpikesBiome.instance.isInBiome(obj.position)) {
-				//SNUtil.writeToChat("Is void spike");
-				return true;
+			else if (VoidSpike.isSpike(ch.prefab.ClassId) && VoidSpikesBiome.instance.isInBiome(ch.transform.position)) {
+				ch.allowTargeting = false;
 			}
-			return orig;
 		}
 
 		public static EntityCell getEntityCellForInt3(Array3<EntityCell> data, Int3 raw, BatchCells batch) {
@@ -1678,6 +1668,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			if (pi)
 				KeypadCodeSwappingSystem.instance.handleDoor(pi);
+
+			WeldableWallPanelGeneric panel = go.GetComponent<WeldableWallPanelGeneric>();
+			if (panel && panel.liveMixin)
+				panel.liveMixin.data.canResurrect = true;
 		}
 
 		public static void onFireSpawn(VFXExtinguishableFire fire) {/*
