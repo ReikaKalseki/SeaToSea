@@ -293,21 +293,21 @@ namespace ReikaKalseki.SeaToSea {
 
 			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.processor, 0, BaseRoomSpecializationSystem.RoomTypes.WORK, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
 			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.rebreatherCharger, 0, BaseRoomSpecializationSystem.RoomTypes.MECHANICAL);
-			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.alkali, 0.1F);
-			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.healFlower, 0.1F);
-			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.2F);
-			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1F);
+			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.alkali, 0.125F);
+			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.healFlower, 0.125F);
+			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.kelp, 0.25F);
+			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.sanctuaryPlant, 1.5F);
 			BaseRoomSpecializationSystem.instance.registerModdedObject(C2CItems.mountainGlow, -0.125F);
 
-			BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleBoomerang.TechType, 0.2F); //lava boomerang is 0.15
-			BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleHoopfish.TechType, 0.2F); //hoopfish is 0.2
+			BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleBoomerang.TechType, 0.3F); //lava boomerang is 0.25
+			BaseRoomSpecializationSystem.instance.setDisplayValue(C2CItems.purpleHoopfish.TechType, 0.3F); //hoopfish is 0.2
 
-			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.25F);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1.5F);
 			BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType, 1.25F);
 			BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType, 1.25F);
-			BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.5F);
-			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 1.5F);
-			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2F);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.75F);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 2F);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2.5F);
 
 			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
 				BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material) * ingot.count / 2F);
