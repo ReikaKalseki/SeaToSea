@@ -39,7 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 		private ResourceTracker resource;
 
 		private float spawnTime;
-		private float lastPLayerDistanceCheckTime;
+		private float lastPlayerDistanceCheckTime;
+		private float lastDensityCheckTime;
 
 		void Start() {
 
@@ -52,9 +53,15 @@ namespace ReikaKalseki.SeaToSea {
 			float dT = time-lastTime;
 			if (spawnTime <= 0)
 				spawnTime = time;
-			if (spawnTime > 0 && time - lastPLayerDistanceCheckTime >= 0.5) {
-				lastPLayerDistanceCheckTime = time;
+			if (spawnTime > 0 && time - lastPlayerDistanceCheckTime >= 0.5) {
+				lastPlayerDistanceCheckTime = time;
 				if (Player.main && Vector3.Distance(transform.position, Player.main.transform.position) > 250 && !gameObject.FindAncestor<StorageContainer>()) {
+					gameObject.destroy(false);
+				}
+			}
+			if (spawnTime > 0 && time - lastDensityCheckTime >= 0.5 && time - spawnTime >= 120 && !gameObject.FindAncestor<StorageContainer>()) {
+				lastDensityCheckTime = time;
+				if (WorldUtil.getObjectsNearWithComponent<PlatinumTag>(transform.position, 60).Count > 5) {
 					gameObject.destroy(false);
 				}
 			}

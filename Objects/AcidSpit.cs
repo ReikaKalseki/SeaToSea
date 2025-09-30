@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject tiger = ObjectUtil.lookupPrefab(VanillaFlora.TIGER.getPrefabID());
 			RangedAttackLastTarget att = tiger.GetComponent<RangedAttackLastTarget>();
 			GameObject shot = att.attackTypes[0].ammoPrefab;
-			GameObject world = UnityEngine.Object.Instantiate(shot);
+			GameObject world = shot.clone();
 			*/
 			GameObject world = new GameObject("Acid Spit(Clone)");
 			world.SetActive(false);
@@ -105,7 +105,7 @@ namespace ReikaKalseki.SeaToSea {
 		void Update() {
 			age += Time.deltaTime;
 
-			GameObject particle = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782").GetComponent<GasPod>().gasEffectPrefab);
+			GameObject particle = ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782").GetComponent<GasPod>().gasEffectPrefab.clone();
 			particle.transform.position = transform.position;
 			particle.removeComponent<UWE.TriggerStayTracker>();
 			particle.removeComponent<FMOD_StudioEventEmitter>();

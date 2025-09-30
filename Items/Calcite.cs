@@ -23,7 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 			base.prepareGameObject(go, r0);
 			GameObject rref = r0[0].gameObject;
 			for (int i = 0; i < 4; i++) {
-				GameObject rg = UnityEngine.Object.Instantiate(r0[0].gameObject);
+				GameObject rg = r0[0].gameObject.clone();
 				rg.transform.SetParent(rref.transform);
 				rg.transform.localScale = Vector3.one * (1F - ((i + 1) * 0.05F));
 				rg.transform.localEulerAngles = new Vector3(270, 0, 0);

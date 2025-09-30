@@ -187,7 +187,7 @@ namespace ReikaKalseki.SeaToSea {
 			BasicCraftingItem electro = CraftingItems.getItem(CraftingItems.Items.Electrolytes);
 			electro.craftingTime = 1;
 			electro.numberCrafted = 2;
-			electro.addIngredient(C2CItems.sanctuaryPlant.seed, 4).addIngredient(C2CItems.brineCoralPiece, 3).addIngredient(sulfurAcid, 1);
+			electro.addIngredient(C2CItems.sanctuaryPlant.seed, 4).addIngredient(C2CItems.brineCoralPiece, 3).addIngredient(C2CItems.voltaicBladderfish, 2).addIngredient(sulfurAcid, 1);
 
 			//BasicCraftingItem pump = CraftingItems.getItem(CraftingItems.Items.FluidPump);
 			//pump.craftingTime = 5;
@@ -714,6 +714,7 @@ namespace ReikaKalseki.SeaToSea {
 			TechType.HeatBlade.removeUnlockTrigger(); //force you to learn it from the mountain cave base
 			if (hard)
 				TechType.AdvancedWiringKit.removeUnlockTrigger();
+			TechType.ExoHullModule1.removeUnlockTrigger();
 
 			addItemToRecipe(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType, 1);
 			//addItemToRecipe(TechType.PrecursorKey_Purple, TechType.PurpleStalkSeed, 2);

@@ -186,7 +186,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			internal GameObject spawn(RaycastHit hit) {
-				GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(prefab.getRandomPrefab(true)));
+				GameObject go = ObjectUtil.lookupPrefab(prefab.getRandomPrefab(true)).clone();
 				go.transform.position = hit.point;
 				go.transform.rotation = angleFactor > 0 ? MathUtil.unitVecToRotation((hit.normal * angleFactor) + ((1 - angleFactor) * Vector3.up)) : Quaternion.identity;
 				go.transform.Rotate(new Vector3(0, UnityEngine.Random.Range(0F, 360F), 0), Space.Self);

@@ -40,7 +40,7 @@ namespace ReikaKalseki.SeaToSea {
 				r.receiveShadows = false;
 				r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 			}
-			GameObject r2 = UnityEngine.Object.Instantiate(main.gameObject);
+			GameObject r2 = main.gameObject.clone();
 			r2.transform.SetParent(main.transform.parent);
 			r2.transform.localPosition = Vector3.zero;
 			r2.transform.localScale = Vector3.one;

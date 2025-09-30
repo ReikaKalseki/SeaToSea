@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 				AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.LEISUREDECO, f => Mathf.Max(f, 18));
 			AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.PILLARHULL, f => hard ? 2 : 4);
 			AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.PILLARLIM, f => Mathf.Clamp(f, 1, hard ? 1 : 2));
-			AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.SLEEPMORALE, f => hard ? 10 : 20);
+			//AqueousEngineeringMod.config.attachOverride(AEConfig.ConfigEntries.SLEEPMORALE, f => hard ? 10 : 20);
 
 			ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.LEVISCAN, true);
 			ExscansionMod.config.attachOverride(ESConfig.ConfigEntries.RESSCAN, true);
@@ -166,6 +166,7 @@ namespace ReikaKalseki.SeaToSea {
 			ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, sanctuary));
 			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleBoomerang, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Boomerang), glassForest));
 			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleHoopfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Spinefish), glassForest));
+			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.voltaicBladderfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Bladderfish)*0.3F, BiomeRegions.Other));
 			ACUEcosystems.ACUMetabolism met = ACUEcosystems.getMetabolismForAnimal(TechType.RabbitRay);
 			ACUEcosystems.addPredatorType(C2CItems.purpleHolefish.TechType, met.relativeValue * 2F, met.metabolismPerSecond, met.normalizedPoopChance, false, glassForest);
 			met = ACUEcosystems.getMetabolismForAnimal(TechType.Jellyray);

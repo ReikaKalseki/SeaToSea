@@ -77,7 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				if (!sparker) {
 					GameObject welder = ObjectUtil.createWorldObject("9ef36033-b60c-4f8b-8c3a-b15035de3116", false, false);
-					sparker = UnityEngine.Object.Instantiate(welder.GetComponent<Welder>().fxControl);
+					sparker = welder.GetComponent<Welder>().fxControl.clone();
 					sparker.transform.parent = transform;
 					sparker.transform.localPosition = new Vector3(0, 0.2F, 0);
 					sparker.transform.eulerAngles = Vector3.zero;

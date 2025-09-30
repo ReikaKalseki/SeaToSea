@@ -393,7 +393,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (!bar) {
 						GameObject wb = barsRoot.getChildObject("WaterBar");
 						GameObject fb = barsRoot.getChildObject("FoodBar");
-						GameObject mb = UnityEngine.Object.Instantiate(wb).setName("MoraleBar");
+						GameObject mb = wb.clone().setName("MoraleBar");
 						mb.transform.SetParent(wb.transform.parent);
 						Vector3 diff = fb.transform.localPosition-wb.transform.localPosition;
 						mb.transform.localPosition = wb.transform.localPosition + new Vector3(-diff.x, diff.y, diff.z);
@@ -482,7 +482,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (checkMoraleDebugFlag(MoraleDebugFlags.DECO))
 					SNUtil.writeToChat("Base deco morale " + delta.ToString("0.00") + "/s from " + currentDecoLevel);
 
-				delta *= AqueousEngineeringMod.config.getFloat(AEConfig.ConfigEntries.MORALESPEED);
+				delta *= SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.MORALESPEED);
 
 				switch (currentRoom) {
 					case BaseRoomSpecializationSystem.RoomTypes.LEISURE:
@@ -498,7 +498,7 @@ namespace ReikaKalseki.SeaToSea {
 				//	SNUtil.writeToChat("Vehicle is "+v+" with vel "+v.useRigidbody.velocity.magnitude.ToString());
 				if (v is SeaMoth sm) {
 					this.resetPrawnTime();
-					delta += (float)MathUtil.linterpolate(sm.useRigidbody.velocity.magnitude, 5, 20, 0, 1.0); //up to 1% per second if moving fast
+					delta += (float)MathUtil.linterpolate(sm.useRigidbody.velocity.magnitude, 5, 20, 0, 0.75); //up to 0.75% per second if moving fast
 					if (amb != null)
 						delta += amb.moralePerSecondSeamoth;
 				}

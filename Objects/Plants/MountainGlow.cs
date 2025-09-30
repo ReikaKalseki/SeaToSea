@@ -103,7 +103,7 @@ namespace ReikaKalseki.SeaToSea {
 				r.transform.localPosition = Vector3.down * 0.5F;
 			if (!fruitHolder) {
 				GameObject go = ObjectUtil.lookupPrefab("a17ef178-6952-4a91-8f66-44e1d8ca0575");
-				fruitHolder = UnityEngine.Object.Instantiate(go.getChildObject("fruit_LODs"));
+				fruitHolder = go.getChildObject("fruit_LODs").clone();
 				fruitHolder.transform.SetParent(transform);
 				fruitHolder.transform.localPosition = new Vector3(-0.08F, 6.38F, 0.06F);
 				fruitHolder.transform.localScale = Vector3.one * 0.3F;

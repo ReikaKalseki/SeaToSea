@@ -58,8 +58,8 @@ namespace ReikaKalseki.SeaToSea {
 			go.removeChildObject("Generic_plant_seed");
 
 			GameObject pfb = ObjectUtil.lookupPrefab(TechType.SeaTreaderPoop);
-			GameObject collider = UnityEngine.Object.Instantiate(pfb.getChildObject("Sphere"));
-			GameObject render = UnityEngine.Object.Instantiate(pfb.getChildObject("sea_treader_poop_01"));
+			GameObject collider = pfb.getChildObject("Sphere").clone();
+			GameObject render = pfb.getChildObject("sea_treader_poop_01").clone();
 			render.transform.SetParent(go.transform);
 			collider.transform.SetParent(go.transform);
 
@@ -121,7 +121,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!light)
 				light = this.GetComponentInChildren<Light>();
 			if (!light) {
-				GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab("99bbd145-d50e-4afb-bff0-27b33243642b").GetComponentInChildren<Light>().gameObject);
+				GameObject go = ObjectUtil.lookupPrefab("99bbd145-d50e-4afb-bff0-27b33243642b").GetComponentInChildren<Light>().gameObject.clone();
 				go.transform.SetParent(transform);
 				light = go.GetComponent<Light>();
 			}

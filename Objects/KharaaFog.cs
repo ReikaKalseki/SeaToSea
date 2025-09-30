@@ -29,7 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject podRef = ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782");
 			GasPod pod = podRef.GetComponent<GasPod>();
 			GameObject fog = pod.gasEffectPrefab;
-			GameObject world = UnityEngine.Object.Instantiate(fog);
+			GameObject world = fog.clone();
 			world.SetActive(false);
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;

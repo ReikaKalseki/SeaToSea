@@ -70,7 +70,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			//TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HydrochloricAcid, C2CRecipes.getAltBleach().TechType);
 
-			TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.brineCoral, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType);
+			//TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.brineCoral, CraftingItems.getItem(CraftingItems.Items.Electrolytes).TechType);
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.PurpleStalkSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);
 			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.EyesPlantSeed, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType);

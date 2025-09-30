@@ -156,7 +156,7 @@ namespace ReikaKalseki.SeaToSea {
 		public Tether() {
 			PropulsionCannon template = ObjectUtil.lookupPrefab(TechType.PropulsionCannon).GetComponent<PropulsionCannon>();
 			for (int i = 0; i < 4; i++) {
-				GameObject go = UnityEngine.Object.Instantiate(template.grabbedEffect);
+				GameObject go = template.grabbedEffect.clone();
 				go.SetActive(false);
 				grabSphereFX.Add(go);
 				go.transform.localRotation = UnityEngine.Random.rotationUniform;
@@ -190,7 +190,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!effect) {
 				GameObject go = ObjectUtil.lookupPrefab("d11dfcc3-bce7-4870-a112-65a5dab5141b");
 				go = go.GetComponent<Gravsphere>().vfxPrefab;
-				go = UnityEngine.Object.Instantiate(go);
+				go = go.clone();
 				effect = go.GetComponent<VFXElectricLine>();
 				effect.transform.parent = mgr.tetherRoot.transform;
 			}

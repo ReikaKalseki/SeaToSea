@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public override GameObject GetGameObject() {
-			GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(TechType.PlanterPot).getChildObject("model/Base_interior_Planter_Pot_01"));
+			GameObject go = ObjectUtil.lookupPrefab(TechType.PlanterPot).getChildObject("model/Base_interior_Planter_Pot_01").clone();
 			go.removeChildObject("pot_generic_plant_01");
 			go.transform.localScale = new Vector3(0.2F, 0.2F, 0.5F);
 			GameObject lid = go.getChildObject("Base_exterior_Planter_Tray_ground");

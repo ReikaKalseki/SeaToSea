@@ -64,9 +64,12 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (PlayerDistanceTracker p in this.GetComponentsInChildren<PlayerDistanceTracker>())
 				p.gameObject.destroy();
 			if (!sparker) {
-				sparker = ObjectUtil.createWorldObject("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc");
+				sparker = gameObject.getChildObject("xUnderwaterElecSource_medium");
+				if (!sparker)
+					sparker = ObjectUtil.createWorldObject("ff8e782e-e6f3-40a6-9837-d5b6dcce92bc");
+				sparker.transform.SetParent(transform);
+				Utils.ZeroTransform(sparker.transform);
 				sparker.transform.localScale = new Vector3(0.4F, 0.4F, 0.4F);
-				sparker.transform.parent = transform;
 				//sparker.transform.eulerAngles = new Vector3(325, 180, 0);
 				sparker.removeComponent<DamagePlayerInRadius>();
 				sparker.removeComponent<PlayerDistanceTracker>();
@@ -98,10 +101,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
-		public bool disableSparking() {
-			return gameObject.FindAncestor<AqueousEngineering.ItemDisplayLogic>()
-				? false
-				: (body && !body.isKinematic) || Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>();
+		public virtual bool disableSparking() {
+			return gameObject.FindAncestor<AqueousEngineering.ItemDisplayLogic>() ? false : (body && !body.isKinematic) || Vector3.Distance(C2CHooks.mountainBaseGeoCenter, transform.position) <= 40 || gameObject.FindAncestor<Player>();
 		}
 
 	}

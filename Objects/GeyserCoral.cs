@@ -141,8 +141,8 @@ namespace ReikaKalseki.SeaToSea {
 					GameObject pfb = ObjectUtil.lookupPrefab(VanillaFlora.TABLECORAL_ORANGE.getRandomPrefab(false));
 					int i = plates.Count;
 					GameObject plate = new GameObject("plate"+i);
-					GameObject model = UnityEngine.Object.Instantiate(pfb.GetComponentInChildren<Renderer>().gameObject);
-					GameObject collider = UnityEngine.Object.Instantiate(pfb.GetComponentInChildren<BoxCollider>().gameObject);
+					GameObject model = pfb.GetComponentInChildren<Renderer>().gameObject.clone();
+					GameObject collider = pfb.GetComponentInChildren<BoxCollider>().gameObject.clone();
 					model.transform.SetParent(plate.transform);
 					collider.transform.SetParent(plate.transform);
 

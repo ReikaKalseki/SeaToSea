@@ -57,7 +57,7 @@ namespace ReikaKalseki.SeaToSea {
 				return null;
 			if (!orig.GetComponent<Light>())
 				return null;
-			GameObject go = UnityEngine.Object.Instantiate(orig);
+			GameObject go = orig.clone();
 			go.name += "BonusLight";
 			go.transform.SetParent(orig.transform.parent);
 			go.transform.position = orig.transform.position;

@@ -120,7 +120,7 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 
 			p = this.addPage(TrackerPages.GRANDREEF, new BiomeTrigger(VanillaBiomes.GRANDREEF));
-			p.addFinding("base", Finding.fromTracker(TrackerPages.DEGASIEND)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("poo", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes))).addFinding("sealed", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.SealFabric))).addFinding("bioproc", Finding.fromEncy(C2CItems.processor.getPDAPage().id)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
+			p.addFinding("base", Finding.fromTracker(TrackerPages.DEGASIEND)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("poo", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes))).addFinding("sealed", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.SealFabric))).addFinding("electro", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.Electrolytes))).addFinding("bioproc", Finding.fromEncy(C2CItems.processor.getPDAPage().id)).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe)).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
 			if (hard)
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
@@ -153,7 +153,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating)));
 
 			p = this.addPage(TrackerPages.VOIDSPIKES, new StoryTrigger(VoidSpikesBiome.instance.discoveryGoal));
-			p.addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals"));//TODO .addFinding("levi", Finding.fromScan(SeaToSeaMod.voidSpikeLevi));
+			p.addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals")).addFinding("bladderfish", Finding.fromScan(C2CItems.voltaicBladderfish));//TODO .addFinding("levi", Finding.fromScan(C2CItems.voidSpikeLevi));
 		}
 
 		private TrackerPage addPage(TrackerPages pgs, ProgressionTrigger firstAppear) {

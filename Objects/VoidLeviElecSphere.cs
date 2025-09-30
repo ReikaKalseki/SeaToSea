@@ -33,7 +33,7 @@ namespace ReikaKalseki.SeaToSea {
 			GameObject sm = ObjectUtil.lookupPrefab("1c34945a-656d-4f70-bf86-8bc101a27eee");
 			ElectricalDefense def = sm.GetComponent<SeaMoth>().seamothElectricalDefensePrefab.GetComponent<ElectricalDefense>();
 			GameObject sphere = def.fxElecSpheres[def.fxElecSpheres.Length-1];
-			GameObject world = UnityEngine.Object.Instantiate(sphere);
+			GameObject world = sphere.clone();
 			world.SetActive(false);
 			world.EnsureComponent<TechTag>().type = TechType;
 			world.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;

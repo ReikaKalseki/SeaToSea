@@ -990,6 +990,27 @@
 			purplehoopfish
 		</header>
 	</PurpleHoopfish>
+	<VoltaicBladderfish>
+		<name>
+			Voltaic Lumafish
+		</name>
+		<desc>
+			A ghostly blue glow shines from between the ribs of this fish, warning of a nasty surprise for those that try to catch it.
+		</desc>
+		<pda>
+			Small fish found only in the Void Spikes, this variant of the bladderfish has adapted to its environment in a distinctive and dangerous way, having repurposed the spongy water-storage tissues of its shallow-water counterpart into a biological battery of surprising capacity.
+			
+			This charge is released when the tissue is squeezed, even slightly, delivering an electrical shock in excess of 10000 volts, allowing the fish to evade predation.
+			
+			Assessment: Unsuitable as a nutrient source, but may allow for the crafting of advanced electrolytic materials.
+		</pda>
+		<category>
+			Lifeforms/Fauna/SmallHerbivores
+		</category>
+		<header>
+			voltaicbladderfish
+		</header>
+	</VoltaicBladderfish>
 	<GiantRockGrub>
 		<name>
 			Blood Crawler Larva

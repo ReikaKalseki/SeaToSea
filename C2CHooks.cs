@@ -50,6 +50,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Vector3 auroraFront = new Vector3(1202.43F, -40.16F, 151.54F);
 		internal static readonly Vector3 auroraRepulsionGunTerminal = new Vector3(1029.51F, -8.7F, 35.87F);
 		internal static readonly Vector3 lostRiverCachePanel = new Vector3(-1119.5F, -684.4F, -709.7F);
+		internal static readonly Vector3 voidWreckVoidPatch = new Vector3(-293.58F, -422.65F, -1753.40F);
 		//internal static readonly Vector3 gunPoolBarrier = new Vector3(481.81F, -125.03F, 1257.85F);
 		//internal static readonly Vector3 gunPoolBarrierTerminal = new Vector3();
 		internal static readonly Vector3 gunCenter = new Vector3(460.6F, -99, 1208.4F);
@@ -387,6 +388,10 @@ namespace ReikaKalseki.SeaToSea {
 
 			float time = DayNightCycle.main.timePassedAsFloat;
 
+			if (ep.GetBiomeString() == "observatory") {
+				ObservatoryDiscoverySystem.instance.tick(ep);
+			}
+
 			MoraleSystem.instance.tick(ep);
 
 			if (KeyCodeUtils.GetKeyDown(SeaToSeaMod.keybinds.getBinding(C2CModOptions.PROPGUNSWAP))) {
@@ -492,7 +497,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (ventDist >= 0 && ventDist <= 25) {
 						float f = Math.Min(1, (40 - ventDist) / 32F);
 						foreach (InventoryItem item in Inventory.main.container) {
-							if (item != null) {
+							if (item != null && item.item) {
 								Battery b = item.item.gameObject.GetComponentInChildren<Battery>();
 								if (b != null && Mathf.Approximately(b.capacity, C2CItems.t2Battery.capacity)) {
 									b.charge = Math.Min(b.charge + (0.5F * f), b.capacity);
@@ -594,6 +599,10 @@ namespace ReikaKalseki.SeaToSea {
 				//if (BiomeBase.logBiomeFetch)
 				//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
 			}
+			else if (Vector3.Distance(b.position, voidWreckVoidPatch) <= 40) {
+				b.setValue(VanillaBiomes.VOID.mainID);
+				b.lockValue();
+			}
 		}
 
 		public static void getSwimSpeed(DIHooks.SwimSpeedCalculation ch) {
@@ -660,11 +669,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static float getConstructableSpeed() {
-			return NoCostConsoleCommand.main.fastBuildCheat
-				? 0.01F
-				: !GameModeUtils.RequiresIngredients()
-				? 0.2F
-				: StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key) ? 0.67F : 1F;
+			return NoCostConsoleCommand.main.fastBuildCheat ? 0.01F : !GameModeUtils.RequiresIngredients() ? 0.2F : StoryGoalManager.main.IsGoalComplete(SeaToSeaMod.auroraTerminal.key) ? 0.67F : 1F;
 		}
 
 		public static float getVehicleConstructionSpeed(ConstructorInput inp, TechType made, float time) {
@@ -960,8 +965,15 @@ namespace ReikaKalseki.SeaToSea {
 				}
 				float amt = dmg.getAmount();
 				if (amt > 0.01 && !IntroVignette.isIntroActive) { //the panel to the face actually DOES DAMAGE...
-					float dmgRef = Mathf.Clamp(amt, 10, 50)-10; //0-40
-					MoraleSystem.instance.shiftMorale(-Mathf.Lerp(2, 75, dmgRef / 40F)*MoraleSystem.MORALE_DAMAGE_COEFFICIENT);
+					float hit = 0;
+					if (amt <= 10) {
+						hit = Mathf.Lerp(2, 5, amt/10F);
+					}
+					else {
+						float dmgRef = Mathf.Clamp(amt, 10, 50)-10; //0-40
+						hit = Mathf.Lerp(5, 75, dmgRef / 40F);
+					}
+					MoraleSystem.instance.shiftMorale(-hit*MoraleSystem.MORALE_DAMAGE_COEFFICIENT);
 				}
 			}
 			else {
@@ -1096,6 +1108,15 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (tt == C2CItems.mountainGlow.seed.TechType) {
 				Story.StoryGoal.Execute("Pyropod", Story.GoalType.Story);
+			}
+			else if (tt == C2CItems.voltaicBladderfish.TechType) {
+				if (ip.prawn || !C2CItems.hasSealedOrReinforcedSuit(out bool seal, out bool reinf)) {
+					LiveMixin lv = ip.prawn ? ip.prawn.liveMixin : Player.main.gameObject.GetComponentInParent<LiveMixin>();
+					float dmg = lv.maxHealth * (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 0.15F : 0.1F);
+					if (ip.prawn)
+						dmg *= 0.08F; //do about 2% damage
+					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, p.gameObject);
+				}
 			}
 			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType && VanillaBiomes.ILZ.isInBiome(Player.main.transform.position)) {
 				Story.StoryGoal.Execute("Iridium", Story.GoalType.Story);
@@ -1354,7 +1375,7 @@ namespace ReikaKalseki.SeaToSea {
 			SNUtil.log("Crafterghost for " + tech + ": " + ret);
 			if (tech == TechType.PrecursorKey_Red || tech == TechType.PrecursorKey_White) {
 				ret = ObjectUtil.lookupPrefab(CraftData.GetClassIdForTechType(tech));
-				ret = UnityEngine.Object.Instantiate(ret);
+				ret = ret.clone();
 				ret = ret.getChildObject("Model");
 				VFXFabricating fab = ret.EnsureComponent<VFXFabricating>();
 				fab.localMaxY = 0.1F;
@@ -1424,7 +1445,7 @@ namespace ReikaKalseki.SeaToSea {
 					r.materials[0].SetColor("_Color", new Color(1, 1, 1, /*0.43F*/0.24F));
 					r.materials[0].SetColor("_SpecColor", new Color(0.38F, 1, 0.52F, 1));
 					RenderUtil.setGlossiness(r.materials[0], 50, 0, 0);
-					GameObject copy = UnityEngine.Object.Instantiate(r.gameObject);
+					GameObject copy = r.gameObject.clone();
 					copy.transform.SetParent(r.transform.parent);
 					copy.transform.position = r.transform.position;
 					copy.transform.rotation = r.transform.rotation;
@@ -1501,7 +1522,7 @@ namespace ReikaKalseki.SeaToSea {
 				GameObject bubble = vent.getChildObject("xThermalVent_Dark_Big/xBubbles");
 				int n = 5;
 				for (int i = 0; i <= n; i++) {
-					GameObject p = UnityEngine.Object.Instantiate(bubble);
+					GameObject p = bubble.clone();
 					p.transform.parent = rippleHolder.transform;
 					p.transform.position = Vector3.Lerp(p1, p2, i/(float)n);
 					p.GetComponentInChildren<Renderer>().materials[0].color = new Color(-8, -8, -8, 0.3F);
@@ -1567,7 +1588,7 @@ namespace ReikaKalseki.SeaToSea {
 			else if (SNUtil.match(pi, "83b61f89-1456-4ff5-815a-ecdc9b6cc9e4")) { //broken purple tablet
 				GameObject light = ObjectUtil.lookupPrefab("53ffa3e8-f2f7-43b8-a5c7-946e766aff64").GetComponentInChildren<Light>().gameObject;
 				Vector3 rel = light.transform.localPosition;
-				light = UnityEngine.Object.Instantiate(light);
+				light = light.clone();
 				light.transform.parent = pi.transform;
 				light.transform.localPosition = rel;
 				Light l = light.GetComponent<Light>();
@@ -2848,7 +2869,16 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void onSleep(Bed bed) {
-			MoraleSystem.instance.shiftMorale(AqueousEngineeringMod.config.getInt(AEConfig.ConfigEntries.SLEEPMORALE));
+			float f = 1;
+			switch (bed.GetComponent<PrefabIdentifier>().ClassId) {
+				case "c3994649-d0da-4f8c-bb77-1590f50838b9":
+					f = 0.8F;
+					break;
+				case "cdb374fd-4f38-4bef-86a3-100cc87155b6":
+					f = 1.25F;
+					break;
+			}
+			MoraleSystem.instance.shiftMorale(f*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 10 : 20));
 		}
 
 		public static void onEat(Survival s, GameObject go) {
@@ -2863,11 +2893,18 @@ namespace ReikaKalseki.SeaToSea {
 						MoraleSystem.instance.onDrinkCoffee();
 						return;
 					}
+					else if (tt == TechType.Snack1 || tt == TechType.Snack2 || tt == TechType.Snack3) {
+						morale = 20;
+						PlayerMovementSpeedModifier.add(0.9F, 60*10);
+					}
 					else if (tt == TechType.StillsuitWater) {
 						morale = -50;
 					}
 					else if (tt == TechType.Bladderfish) {
 						morale = -40;
+					}
+					else if (tt == TechType.Hoverfish || tt == TechType.CookedHoverfish || tt == TechType.CuredHoverfish || tt == Campfire.cookMap[TechType.Hoverfish].output.TechType) {
+						morale = -10;
 					}
 					else if (tt.isRawFish()) {
 						morale = -25;

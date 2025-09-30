@@ -22,7 +22,7 @@ namespace ReikaKalseki.SeaToSea {
 			new Vector3(50, 24, 50),
 		};
 
-		private static readonly WeightedRandom<VanillaCreatures> fishTypes = new WeightedRandom<VanillaCreatures>();
+		private static readonly WeightedRandom<string> fishTypes = new WeightedRandom<string>();
 
 		private readonly List<SpikeCluster> spikes = new List<SpikeCluster>();
 
@@ -41,16 +41,20 @@ namespace ReikaKalseki.SeaToSea {
 		public Func<Vector3> spikeLocationProvider = null;
 
 		static VoidSpikes() {
-			fishTypes.addEntry(VanillaCreatures.REGINALD, 75);
-			fishTypes.addEntry(VanillaCreatures.BLADDERFISH, 25);
-			fishTypes.addEntry(VanillaCreatures.EYEYE, 40);
-			fishTypes.addEntry(VanillaCreatures.SHUTTLEBUG, 50);
-			fishTypes.addEntry(VanillaCreatures.SPINEFISH, 100);
-			fishTypes.addEntry(VanillaCreatures.SPADEFISH, 50);
+			fishTypes.addEntry(VanillaCreatures.REGINALD.prefab, 75);
+			fishTypes.addEntry(VanillaCreatures.BLADDERFISH.prefab, 25);
+			fishTypes.addEntry(VanillaCreatures.EYEYE.prefab, 40);
+			fishTypes.addEntry(VanillaCreatures.SHUTTLEBUG.prefab, 50);
+			fishTypes.addEntry(VanillaCreatures.SPINEFISH.prefab, 100);
+			fishTypes.addEntry(VanillaCreatures.SPADEFISH.prefab, 50);
 
-			fishTypes.addEntry(VanillaCreatures.BLIGHTER, 40);
-			fishTypes.addEntry(VanillaCreatures.BLEEDER, 40);
-			fishTypes.addEntry(VanillaCreatures.MESMER, 20);
+			fishTypes.addEntry(VanillaCreatures.BLIGHTER.prefab, 40);
+			fishTypes.addEntry(VanillaCreatures.BLEEDER.prefab, 40);
+			fishTypes.addEntry(VanillaCreatures.MESMER.prefab, 20);
+		}
+
+		internal static void addFish(string id, float weight) {
+			fishTypes.addEntry(id, weight);
 		}
 
 		public VoidSpikes(Vector3 pos) : base(pos) {
@@ -137,7 +141,7 @@ namespace ReikaKalseki.SeaToSea {
 					i--;
 					continue;
 				}
-				GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
+				GameObject fish = spawner.Invoke(fishTypes.getRandomEntry());
 				//SNUtil.log("Spawning fish "+fish+" @ "+vec);
 				fish.transform.position = vec;
 				generated.Add(fish);
@@ -308,7 +312,7 @@ namespace ReikaKalseki.SeaToSea {
 						i--;
 						continue;
 					}
-					GameObject fish = spawner(fishTypes.getRandomEntry().prefab);
+					GameObject fish = spawner.Invoke(fishTypes.getRandomEntry());
 					//SNUtil.log("Spawning fish "+fish+" @ "+vec);
 					fish.transform.position = vec;
 					li.Add(fish);

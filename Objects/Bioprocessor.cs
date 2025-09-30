@@ -294,7 +294,7 @@ namespace ReikaKalseki.SeaToSea {
 					valid++;
 				}
 			}
-			if (valid < 2 || pwr.GetMaxPower() < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 4000 : 1800)) {
+			if (valid < 2 || pwr.GetMaxPower() < (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 2500 : 1200)) {
 				powerErrorKey = "WeakBioprocBasePower";
 			}
 		}

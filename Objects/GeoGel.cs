@@ -45,7 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 			else { //switch render to enzyme 42
 				GameObject pfb = ObjectUtil.lookupPrefab("505e7eff-46b3-4ad2-84e1-0fadb7be306c");
 				Renderer r = world.GetComponentInChildren<Renderer>();
-				GameObject mdl = UnityEngine.Object.Instantiate(pfb.GetComponentInChildren<Animator>().gameObject);
+				GameObject mdl = pfb.GetComponentInChildren<Animator>().gameObject.clone();
 				mdl.removeChildObject("root", false);
 				mdl.transform.SetParent(r.transform.parent);
 				mdl.transform.localPosition = r.transform.localPosition;
