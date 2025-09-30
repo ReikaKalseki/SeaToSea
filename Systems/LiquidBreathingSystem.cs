@@ -444,7 +444,7 @@ namespace ReikaKalseki.SeaToSea {
 					fillBar.SetActive(true);
 				}
 				if (!timer) {
-					GameObject lbl = UnityEngine.Object.Instantiate(LiquidBreathingSystem.getO2Label(gameObject.FindAncestor<uGUI_OxygenBar>())).setName("SideBarText");
+					GameObject lbl = LiquidBreathingSystem.getO2Label(gameObject.FindAncestor<uGUI_OxygenBar>()).clone().setName("SideBarText");
 					timer = lbl.GetComponent<Text>();
 					timer.transform.SetParent(transform, false);
 					timer.transform.localPosition = Vector3.zero;

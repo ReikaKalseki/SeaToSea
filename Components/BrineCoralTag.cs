@@ -37,7 +37,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!particleHolder) {
 				particleHolder = gameObject.getChildObject("dissolveFX");
 				if (!particleHolder) {
-					particleHolder = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782").GetComponent<GasPod>().gasEffectPrefab);
+					particleHolder = ObjectUtil.lookupPrefab("bfe8345c-fe3c-4c2b-9a03-51bcc5a2a782").GetComponent<GasPod>().gasEffectPrefab.clone();
 					particleHolder.removeChildObject("xflash");
 					particleHolder.removeComponent<VFXUnparentAfterSeconds>();
 					particleHolder.removeComponent<VFXDestroyAfterSeconds>();

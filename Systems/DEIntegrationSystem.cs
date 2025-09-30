@@ -303,7 +303,7 @@ namespace ReikaKalseki.SeaToSea {
 				root.removeComponent<FMOD_StudioEventEmitter>();
 				root.removeComponent<ResourceTracker>();
 				GameObject pfb = ObjectUtil.lookupPrefab("505e7eff-46b3-4ad2-84e1-0fadb7be306c");
-				GameObject mdl = UnityEngine.Object.Instantiate(pfb.GetComponentInChildren<Animator>().gameObject);
+				GameObject mdl = pfb.GetComponentInChildren<Animator>().gameObject.clone();
 				mdl.removeChildObject("root", false);
 				mdl.transform.SetParent(gp.model.transform.parent);
 				mdl.transform.localPosition = gp.model.transform.localPosition;

@@ -63,7 +63,7 @@ namespace ReikaKalseki.SeaToSea {
 			//generator.scaleY = 6;
 			generator.generateLeviathan = false;
 			generator.generateAux = true;
-			generator.fishCount = generator.count * 20;
+			generator.fishCount = generator.count * 40;
 			generator.positionValidity = this.isValidSpikeLocation;
 			//generator.depthCallback = getSpikeDepth;
 			generator.spikeLocationProvider = this.getSpikeLocation;

@@ -70,6 +70,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static PurpleHolefish purpleHolefish;
 		public static PurpleBoomerang purpleBoomerang;
 		public static PurpleHoopfish purpleHoopfish;
+		public static VoltaicBladderfish voltaicBladderfish;
 		//public static GiantRockGrub giantRockGrub;
 		public static BloodKelpBroodmother broodmother;
 		public static VoidSpikeLeviathan voidSpikeLevi;
@@ -188,6 +189,8 @@ namespace ReikaKalseki.SeaToSea {
 			purpleHoopfish = new PurpleHoopfish(SeaToSeaMod.itemLocale.getEntry("PurpleHoopfish"));
 			purpleHoopfish.cookableIntoBase = 1;
 			purpleHoopfish.Patch();
+			voltaicBladderfish = new VoltaicBladderfish(SeaToSeaMod.itemLocale.getEntry("VoltaicBladderfish"));
+			voltaicBladderfish.Patch();
 			//giantRockGrub = new GiantRockGrub(SeaToSeaMod.itemLocale.getEntry("GiantRockGrub"));
 			//giantRockGrub.Patch();
 			broodmother = new BloodKelpBroodmother(SeaToSeaMod.itemLocale.getEntry("BloodKelpBroodmother"));
@@ -198,6 +201,7 @@ namespace ReikaKalseki.SeaToSea {
 			WaterParkCreature.waterParkCreatureParameters[purpleBoomerang.TechType] = SNUtil.getModifiedACUParams(TechType.Boomerang, 1, 1, 1, 0.67F);
 			WaterParkCreature.waterParkCreatureParameters[purpleHoopfish.TechType] = SNUtil.getModifiedACUParams(TechType.Hoopfish, 1.2F, 1.2F, 1.2F, 1.25F);
 			WaterParkCreature.waterParkCreatureParameters[purpleHolefish.TechType] = SNUtil.getModifiedACUParams(TechType.HoleFish, 4F, 4F, 4F, 3.0F);
+			WaterParkCreature.waterParkCreatureParameters[voltaicBladderfish.TechType] = SNUtil.getModifiedACUParams(TechType.Bladderfish, 1, 1, 1, 1);
 
 			voidSpikeLevi = new VoidSpikeLeviathan(SeaToSeaMod.itemLocale.getEntry("VoidSpikeLevi"));
 			voidSpikeLevi.register();

@@ -176,7 +176,7 @@ namespace ReikaKalseki.SeaToSea {
     		if (!prawnBayHeatRippleCylinder) {/*
 	    		GameObject go = ObjectUtil.lookupPrefab("3877d31d-37a5-4c94-8eef-881a500c58bc");
 	    		go = go.getChildObject("Extinguishable_Fire_medium");
-	    		prawnBayHeatRippleCylinder = UnityEngine.Object.Instantiate(go.getChildObject("x_Fire_Cylindrical"));
+	    		prawnBayHeatRippleCylinder = go.getChildObject("x_Fire_Cylindrical").clone();
 	    		prawnBayHeatRippleCylinder.transform.localScale = new Vector3(0.1F, 0.5F, 0.1F);
 	    		Material m = prawnBayHeatRippleCylinder.GetComponentInChildren<Renderer>().materials[0];
 	    		m.color = new Color(0.07F, 0, 0, 0);
@@ -761,7 +761,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private CustomHUDWarning createHUDWarning(GameObject template, string key, Func<bool> f, int pri, Color? c = null) {
-			GameObject go = UnityEngine.Object.Instantiate(template).setName("CustomHudWarning_" + key);
+			GameObject go = template.clone().setName("CustomHudWarning_" + key);
 			uGUI_RadiationWarning rad = go.GetComponent<uGUI_RadiationWarning>();
 			CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
 			warn.replace(rad, f);

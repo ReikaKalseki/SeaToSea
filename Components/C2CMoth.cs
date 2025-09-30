@@ -154,7 +154,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (!stealthEnabledSeamothHUDElement.root) {
 						GameObject hudRoot = seamothHUD.root.transform.parent.gameObject;
 						uGUI_ExosuitHUD exo = seamothHUD.GetComponent<uGUI_ExosuitHUD>();
-						GameObject go = UnityEngine.Object.Instantiate(exo.root.gameObject).setName("SeamothStealthHUD");
+						GameObject go = exo.root.gameObject.clone().setName("SeamothStealthHUD");
 						go.SetActive(true);
 						go.transform.SetParent(exo.root.transform.parent);
 						go.transform.localPosition = exo.root.transform.localPosition;

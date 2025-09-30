@@ -415,7 +415,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal void spawnAoEBlast(Vector3 pos, string idName, Action<GameObject> modify = null) {
 			GameObject pfb = ObjectUtil.lookupPrefab(VanillaCreatures.CRABSQUID.prefab).GetComponent<EMPAttack>().ammoPrefab;
 			for (int i = 0; i < 180; i += 30) {
-				GameObject emp = UnityEngine.Object.Instantiate(pfb).setName(idName+"_"+i);
+				GameObject emp = pfb.clone().setName(idName+"_"+i);
 				emp.transform.position = pos;
 				emp.transform.localRotation = Quaternion.Euler(i, 0, 0);
 				//emp.EnsureComponent<VoidLeviElecSphereComponent>().spawn();

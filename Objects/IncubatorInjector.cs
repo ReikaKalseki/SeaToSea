@@ -74,7 +74,7 @@ namespace ReikaKalseki.SeaToSea {
 			c.allowedOutside = true;
 			c.forceUpright = true;
 
-			GameObject mdl2 = UnityEngine.Object.Instantiate(mdl);
+			GameObject mdl2 = mdl.clone();
 			mdl2.transform.SetParent(mdl.transform.parent);
 			mdl2.transform.localRotation = Quaternion.Euler(180, 0, 0);
 			mdl2.transform.localPosition = new Vector3(0, -(0.05F + (0.18F * t / 0.125F)), 2.25F);

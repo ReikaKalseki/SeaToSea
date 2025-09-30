@@ -98,9 +98,9 @@ namespace ReikaKalseki.SeaToSea {
 			BoxCollider box = go.GetComponentInChildren<BoxCollider>();
 			box.size = new Vector3(box.size.x * 0.15F, box.size.y, box.size.z * 0.15F);
 
-			GameObject pot = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(TechType.PlanterPot).getChildObject("model/Base_interior_Planter_Pot_01"));
+			GameObject pot = ObjectUtil.lookupPrefab(TechType.PlanterPot).getChildObject("model/Base_interior_Planter_Pot_01").clone();
 			pot.removeChildObject("pot_generic_plant_01");
-			GameObject cone = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab(TechType.HangingFruit).getChildObject("Fruit_03"));
+			GameObject cone = ObjectUtil.lookupPrefab(TechType.HangingFruit).getChildObject("Fruit_03").clone();
 			cone.removeChildObject("Capsule");
 			pot.transform.SetParent(go.transform);
 			pot.transform.localRotation = Quaternion.Euler(-90, 0, 0);

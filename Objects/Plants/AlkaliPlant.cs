@@ -32,7 +32,7 @@ namespace ReikaKalseki.SeaToSea {
 			/*
 			GameObject seedRef = ObjectUtil.lookupPrefab("daff0e31-dd08-4219-8793-39547fdb745e").GetComponent<Plantable>().model;
 			p.pickupable = go.GetComponentInChildren<Pickupable>();
-			p.model = UnityEngine.Object.Instantiate(seedRef);
+			p.model = seedRef.clone();
 			GrowingPlant grow = p.model.EnsureComponent<GrowingPlant>();
 			grow.seed = p;
 			RenderUtil.setModel(p.model, "coral_reef_plant_middle_05", go.getChildObject("coral_reef_plant_middle_05"));

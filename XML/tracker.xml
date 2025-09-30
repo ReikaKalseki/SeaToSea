@@ -608,6 +608,9 @@
 		<sealed>
 			A databox containing the blueprint for watertight, electrically insulative fabric
 		</sealed>
+		<electro>
+			A databox containing the production instructions for electrolytic compounds, in a very hazardous wreck
+		</electro>
 		<levi>
 			Ethereal, hammer-headed, adolescent leviathans that make use of forceful ramming to repel competitors to their territory, but which in fact feed on microscopic lifeforms in the water
 		</levi>
@@ -854,6 +857,9 @@
 		<items>
 			Strange crystals formed under extreme pressure, with commensurate fabrication applications
 		</items>
+		<bladderfish>
+			Small fish filled with a gel capable of storing large amounts of electricity
+		</bladderfish>
 		<levi>
 			A large, aggressive creature that makes use of light and electricity based attacks
 		</levi>

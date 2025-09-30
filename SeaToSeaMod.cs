@@ -409,6 +409,8 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.purpleHoopfish.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
 			C2CItems.purpleHolefish.addNativeBiome(UnderwaterIslandsFloorBiome.instance);
 			C2CItems.broodmother.addNativeBiome(VanillaBiomes.BLOODKELPNORTH);
+			C2CItems.voltaicBladderfish.addNativeBiome(VoidSpikesBiome.instance);
+			VoidSpikes.addFish(C2CItems.voltaicBladderfish.ClassID, 200);
 
 			initHandlers();
 
@@ -769,6 +771,7 @@ namespace ReikaKalseki.SeaToSea {
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("triggerVoidFlash", VoidSpikeLeviathanSystem.instance.doDebugFlash);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("voidLeviReefback", VoidSpikeLeviathan.makeReefbackTest);
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("dumpGameStats", () => GameStatistics.collect().writeToFile(Path.Combine(Path.GetDirectoryName(modDLL.Location), "statdump.xml")));
+			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("cleanup", C2CUtil.cleanup);
 
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cSMMAnyW", b => anywhereSeamothModuleCheatActive = b && SNUtil.canUseDebug());
 			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action<bool>>("c2cTrackerAll", b => trackerShowAllCheatActive = b && SNUtil.canUseDebug());

@@ -166,7 +166,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			private IEnumerator raiseConfirmationDialog() {
 				yield return new WaitForSeconds(0.67F);
-				GameObject root = UnityEngine.Object.Instantiate(IngameMenu.main.gameObject).setName("RescueConfirmation");
+				GameObject root = IngameMenu.main.gameObject.clone().setName("RescueConfirmation");
 				root.removeChildObject("PleaseWait");
 				root.removeChildObject("Options");
 				root.removeChildObject("Feedback");
@@ -494,5 +494,13 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		public static void cleanup() {
+			int ptc = 0;
+			foreach (PlatinumTag pt in UnityEngine.Object.FindObjectsOfType<PlatinumTag>()) {
+				pt.gameObject.destroy();
+				ptc++;
+			}
+			SNUtil.writeToChat("Removed "+ptc+" platinum.");
+		}
 	}
 }

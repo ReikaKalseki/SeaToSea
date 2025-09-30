@@ -25,7 +25,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public override GameObject GetGameObject() {
-			GameObject go = UnityEngine.Object.Instantiate(ObjectUtil.lookupPrefab("c3994649-d0da-4f8c-bb77-1590f50838b9").getChildObject("bed_narrow"));
+			GameObject go = ObjectUtil.lookupPrefab("c3994649-d0da-4f8c-bb77-1590f50838b9").getChildObject("bed_narrow").clone();
 			go.removeChildObject("bed_narrow");
 			go.removeChildObject("blanket_narrow");
 			go.removeChildObject("end_position");
