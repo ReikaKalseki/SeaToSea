@@ -143,6 +143,10 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static C2CModOptions keybinds;
 
+		//Not in C2CProgression because of classloading timing
+		internal static readonly string ADV_WIRING_GOAL = "NorthCaveAdvWiring";
+		internal static readonly string REINF_DB_GOAL = "C2CVoidWreckReinfDB";
+
 		/*
     public static SoundManager.SoundData voidspikeLeviRoar;
     public static SoundManager.SoundData voidspikeLeviBite;
@@ -571,6 +575,7 @@ namespace ReikaKalseki.SeaToSea {
 			DataboxTypingMap.instance.load();
 			DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
 			DataboxTypingMap.instance.addValue(-483.55, -504.69, 1326.64, C2CItems.tetherModule.TechType);
+			DataboxTypingMap.instance.addValue(-317.05, -438.69, -1742.80, TechType.BaseReinforcement);
 
 			ESHooks.addLeviathan(C2CItems.voidSpikeLevi.TechType);
 			ESHooks.scannabilityEvent += C2CHooks.isItemMapRoomDetectable;
