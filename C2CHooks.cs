@@ -1142,6 +1142,9 @@ namespace ReikaKalseki.SeaToSea {
 			else if (tt == TechType.MercuryOre) {
 				Story.StoryGoal.Execute("Mercury", Story.GoalType.Story);
 			}
+			else if (tt == TechType.AdvancedWiringKit/* && Vector3.Distance(Player.main.transform.position, SeaToSeaMod.ADV_WIRING_POS) <= 10*/) {
+				Story.StoryGoal.Execute(SeaToSeaMod.ADV_WIRING_GOAL, Story.GoalType.Story);
+			}
 			else if (tt == CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType) {
 				p.GetComponent<NanocarbonTag>().reset();
 				Story.StoryGoal.Execute("Nanocarbon", Story.GoalType.Story);
@@ -2461,6 +2464,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static bool onDataboxClick(BlueprintHandTarget tgt) { //return true to prevent use
 			if (tgt.used)
 				return true;
+			if (tgt.unlockTechType == TechType.BaseReinforcement) {
+				StoryGoal.Execute(SeaToSeaMod.REINF_DB_GOAL, Story.GoalType.Story);
+			}
 			LiveMixin lv = tgt.GetComponent<LiveMixin>();
 			return lv && lv.health < lv.maxHealth;
 		}

@@ -707,13 +707,13 @@ namespace ReikaKalseki.SeaToSea {
 			Base.FaceHullStrength[(int)Base.FaceType.BulkheadClosed] = hard ? 8 : 12; //from 3
 			Base.CellHullStrength[(int)Base.CellType.Foundation] = hard ? 5 : 6; //from 2
 
-			TechType.VehicleHullModule1.removeUnlockTrigger();
+			TechType.VehicleHullModule1.removeUnlockTrigger(new StoryTrigger("seamothdepthchit3"));
 			TechType.VehicleHullModule2.removeUnlockTrigger();
 			TechType.VehicleHullModule3.removeUnlockTrigger();
-			TechType.BaseReinforcement.removeUnlockTrigger();
+			TechType.BaseReinforcement.removeUnlockTrigger(new StoryTrigger(SeaToSeaMod.REINF_DB_GOAL));
 			TechType.HeatBlade.removeUnlockTrigger(); //force you to learn it from the mountain cave base
 			if (hard)
-				TechType.AdvancedWiringKit.removeUnlockTrigger();
+				TechType.AdvancedWiringKit.removeUnlockTrigger(new StoryTrigger(SeaToSeaMod.ADV_WIRING_GOAL));
 			TechType.ExoHullModule1.removeUnlockTrigger();
 
 			addItemToRecipe(TechType.PrecursorKey_Purple, CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType, 1);
@@ -735,7 +735,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			if (hard) {
 				RecipeUtil.removeRecipe(TechType.SeamothSolarCharge, true);
-				TechType.SeamothElectricalDefense.removeUnlockTrigger();
+				TechType.SeamothElectricalDefense.removeUnlockTrigger(new StoryTrigger("ReaperGrab"));
 				RecipeUtil.clearIngredients(TechType.SeamothElectricalDefense);
 				addItemToRecipe(TechType.SeamothElectricalDefense, C2CItems.t2Battery.TechType, 1);
 				addItemToRecipe(TechType.SeamothElectricalDefense, TechType.AdvancedWiringKit, 1);
