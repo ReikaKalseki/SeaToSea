@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class VoidWreck : MonoBehaviour, Ecocean.VoidBubbleReaction {
+	public class VoidWreck : WreckHandler, Ecocean.VoidBubbleReaction {
 
 		private float lastTickTime = -1;
 

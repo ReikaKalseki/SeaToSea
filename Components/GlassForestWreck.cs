@@ -16,7 +16,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
-	public class GlassForestWreck : MonoBehaviour {
+	public class GlassForestWreck : WreckHandler {
 
 		private float lastCheckTime = -1;
 
