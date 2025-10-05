@@ -25,14 +25,15 @@ namespace ReikaKalseki.SeaToSea {
 		public static class DataboxRecipeHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxActivate", false, typeof(BlueprintHandTarget)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -46,14 +47,15 @@ namespace ReikaKalseki.SeaToSea {
 		public static class DataboxRepairTooltipHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchEveryReturnPre(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxTooltipCalculate", false, typeof(BlueprintHandTarget)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -67,15 +69,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class DataboxRepairClickHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "BlueprintHandTarget", "used");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onDataboxClick", false, typeof(BlueprintHandTarget));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -89,6 +92,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VoidLeviathanHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.Clear();
@@ -96,10 +100,10 @@ namespace ReikaKalseki.SeaToSea {
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "isSpawnableVoid", false, typeof(string));
 					codes.add(OpCodes.Ret);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -113,6 +117,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VoidLeviathanTypeHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "VoidGhostLeviathansSpawner", "ghostLeviathanPrefab") - 1;
@@ -122,10 +127,10 @@ namespace ReikaKalseki.SeaToSea {
 					codes.Insert(idx, new CodeInstruction(OpCodes.Ldloc_2));
 					codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
 					//FileLog.Log("levitype Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -139,15 +144,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VoidLeviathanBehaviorHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "tickVoidLeviathan", false, typeof(GhostLeviatanVoid));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -161,13 +167,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class WaveBobbingDebrisHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.VoidSpikesBiome", "checkAndAddWaveBob", false, typeof(SkyApplier)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -181,14 +188,15 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VoidSpikeReach {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 2);
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getReachDistance", false, new string[0]);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -202,13 +210,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class OnResourceSpawn {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onResourceSpawn", false, typeof(ResourceTracker)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -222,15 +231,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PlayerO2Rate {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getPlayerO2Rate", false, typeof(Player));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -244,6 +254,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PlayerO2Use {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
@@ -251,10 +262,10 @@ namespace ReikaKalseki.SeaToSea {
 					codes.add(OpCodes.Ldarg_2);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getPlayerO2Use", false, typeof(Player), typeof(float), typeof(int));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -268,15 +279,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PlayerEnviroWarnings {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "tickPlayerEnviroAlerts", false, typeof(RebreatherDepthWarnings));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -290,15 +302,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class EnvironmentalDamageRateChange {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getFirstOpcode(codes, 0, OpCodes.Ldc_R4);
 					codes[idx].operand = 1F / EnvironmentalDamageSystem.ENVIRO_RATE_SCALAR;
 					codes[idx + 1].operand = 1F / EnvironmentalDamageSystem.ENVIRO_RATE_SCALAR;
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -312,15 +325,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class EnvironmentalDamageHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "doEnvironmentalDamage", false, typeof(TemperatureDamage));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -334,15 +348,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleTemperatureHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getVehicleTemperature", false, typeof(Vehicle));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -356,15 +371,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleMoonPoolRechargeRate {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, "0.0025");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getVehicleRechargeAmount", false, typeof(Vehicle));
 					codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -378,15 +394,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleEnviroDamageHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "doEnviroVehicleDamage", false, typeof(CrushDamage));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -458,11 +475,11 @@ namespace ReikaKalseki.SeaToSea {
 					li.add(OpCodes.Pop);
 
 					codes.patchEveryReturnPre(li);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -476,13 +493,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PrecursorDoorTypeHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onPrecursorDoorSpawn", false, typeof(PrecursorKeyTerminal)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -496,13 +514,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class InspectableSpawnHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "OnInspectableSpawn", false, typeof(InspectOnFirstPickup)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -515,13 +534,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class CrafterGhostModelOverride {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchEveryReturnPre(injectHook);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -540,6 +560,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PingVisibilityHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					CodeInstruction refInsn = codes[InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PingInstance", "visible") - 1];
@@ -556,11 +577,11 @@ namespace ReikaKalseki.SeaToSea {
 							}
 						}
 					}
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -584,15 +605,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PingPositionHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PingInstance", "origin");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getApparentPingPosition", false, typeof(PingInstance));
 					codes.RemoveAt(idx + 1);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -606,13 +628,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class ToolBatteryAllowanceHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "addT2BatteryAllowance", false, typeof(EnergyMixin)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -626,13 +649,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class DefaultToolBatteryHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "updateToolDefaultBattery", false, typeof(EnergyMixin)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -646,15 +670,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class SurfaceOxygenIntercept {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "OxygenManager", "AddOxygenAtSurface", true, new Type[]{ typeof(float) });
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "addOxygenAtSurfaceMaybe", false, typeof(OxygenManager), typeof(float));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -668,6 +693,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class OxygenIntercept {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(
@@ -676,10 +702,10 @@ namespace ReikaKalseki.SeaToSea {
 						InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "addO2ToPlayer", false, typeof(OxygenManager), typeof(float)),
 						new CodeInstruction(OpCodes.Starg_S, 1)
 					);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -693,15 +719,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class O2BarTick {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickO2Bar", false, typeof(uGUI_OxygenBar)));
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stloc_S, 4);
 					codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getO2RedPulseTime", false, typeof(float)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -715,13 +742,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class O2AreaInside {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onThingInO2Area", false, typeof(OxygenArea), typeof(Collider)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -735,15 +763,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class AffectSeaglideSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 1.45F);
 					codes.Insert(idx + 1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getSeaglideSpeed", false, typeof(float)));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -757,15 +786,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class LaserCutterSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "LaserCutter", "healthPerWeld");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getLaserCutterSpeed", false, typeof(LaserCutter));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -779,15 +809,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class RepairSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "Welder", "healthPerWeld");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRepairSpeed", false, typeof(Welder));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -801,15 +832,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class ScannerSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldloc_S, 9);
 					codes.Insert(idx + 1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getScannerSpeed", false, typeof(float)));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -823,15 +855,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PropulsionCannonForce {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PropulsionCannon", "attractionForce");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getPropulsionCannonForce", false, typeof(PropulsionCannon));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -845,15 +878,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class PropulsionCannonShootForce {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PropulsionCannon", "shootForce");
 					codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getPropulsionCannonThrowForce", false, typeof(PropulsionCannon));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -867,6 +901,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class RepulsionCannonShootForce {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldc_R4, 70F);
@@ -880,10 +915,10 @@ namespace ReikaKalseki.SeaToSea {
 						InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onRepulsionCannonTryHit", false, typeof(RepulsionCannon), typeof(Rigidbody))
 					}); //after the following add
 						//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -897,15 +932,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class BuildSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getConstructableSpeed", false, new Type[0]);
 					codes.add(OpCodes.Ret);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -919,6 +955,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleBuildSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(
@@ -929,10 +966,10 @@ namespace ReikaKalseki.SeaToSea {
 						new CodeInstruction(OpCodes.Starg_S, 2)
 					);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -946,6 +983,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class RocketBuildSpeed {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "CrafterLogic", "Craft", true, new Type[] {
@@ -954,10 +992,10 @@ namespace ReikaKalseki.SeaToSea {
 					});
 					codes.Insert(idx, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getRocketConstructionSpeed", false, typeof(float)));
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -971,6 +1009,7 @@ namespace ReikaKalseki.SeaToSea {
 	public static class CraftingSpeed {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 			InsnList codes = new InsnList(instructions);
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "CraftData", "GetCraftTime", false, typeof(TechType), typeof(float).MakeByRefType());
@@ -994,16 +1033,17 @@ namespace ReikaKalseki.SeaToSea {
 		public static class TimeCapsuleBypassPrevention {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "collectTimeCapsule", false, typeof(TimeCapsule));
 					codes.add(OpCodes.Ret);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1017,15 +1057,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class O2TooltipHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getO2Tooltip", false, typeof(Oxygen));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1039,15 +1080,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class BatteryTooltipHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "getBatteryTooltip", false, typeof(Battery));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1061,15 +1103,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleUpgradesClick {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "onClickedVehicleUpgrades", false, typeof(VehicleUpgradeConsoleInput));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1083,15 +1126,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class VehicleUpgradesHover {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "onHoverVehicleUpgrades", false, typeof(VehicleUpgradeConsoleInput));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1105,6 +1149,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class StalkerPlatinumSeekingHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					for (int i = codes.Count - 1; i >= 0; i--) {
@@ -1114,10 +1159,10 @@ namespace ReikaKalseki.SeaToSea {
 							codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
 						}
 					}
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1131,6 +1176,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class StalkerAvoidOtherHeldHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx2 = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "CollectShiny", "shinyTarget");
@@ -1138,10 +1184,10 @@ namespace ReikaKalseki.SeaToSea {
 					InstructionHandlers.nullInstructions(codes, idx1, idx2);
 					codes[idx1] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onShinyTargetIsCurrentlyHeldByStalker", false, typeof(CollectShiny));
 					//codes.RemoveRange();
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1155,14 +1201,15 @@ namespace ReikaKalseki.SeaToSea {
 		public static class StalkerToothDropHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "Stalker", "LoseTooth", true, new Type[0]);
 					codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "stalkerTryDropTooth", false, typeof(Stalker));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1176,6 +1223,7 @@ namespace ReikaKalseki.SeaToSea {
 	public static class CraftooltipHook {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 			InsnList codes = new InsnList(instructions);
 			try {
 				codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onCraftMenuTT", false, typeof(TechType)));
@@ -1197,15 +1245,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class RocketLaunchAttemptIntercept {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "tryLaunchRocket", false, typeof(LaunchRocket));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1219,6 +1268,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class ChargerEfficiency {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Call, "PowerSystem", "ConsumeEnergy", false, new Type[] {
@@ -1228,10 +1278,10 @@ namespace ReikaKalseki.SeaToSea {
 					});
 					codes[idx].operand = InstructionHandlers.convertMethodOperand("ReikaKalseki.SeaToSea.C2CHooks", "chargerConsumeEnergy", false, typeof(IPowerInterface), typeof(float), typeof(float).MakeByRefType(), typeof(Charger));
 					codes.Insert(idx, new CodeInstruction(OpCodes.Ldarg_0));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1245,13 +1295,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class CameraTickHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickScannerCamera", false, typeof(MapRoomCamera)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1265,13 +1316,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class EscapePodSpawnHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onSpawnLifepod", false, typeof(EscapePod)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1285,6 +1337,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class SeamothThreeAxisRemoval {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Callvirt, "UnityEngine.Transform", "get_rotation", true, new Type[0]);
@@ -1296,10 +1349,10 @@ namespace ReikaKalseki.SeaToSea {
 					li.invoke("ReikaKalseki.SeaToSea.C2CHooks", "get3AxisSpeed", false, typeof(float), typeof(Vehicle), typeof(Vector3));
 					codes.InsertRange(idx, li);
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1409,7 +1462,7 @@ namespace ReikaKalseki.SeaToSea {
 					//FileLog.Log("Codes are "+InstructionHandlers.toString(codes));
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1424,6 +1477,7 @@ namespace ReikaKalseki.SeaToSea {
 	public static class CrushDamageAmount {
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 			InsnList codes = new InsnList(instructions);
 			try {
 				int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "CrushDamage", "damagePerCrush");
@@ -1447,13 +1501,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class HandSendCheckHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), new CodeInstruction(OpCodes.Ldarg_2), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onHandSend", false, typeof(GameObject), typeof(HandTargetEventType), typeof(GUIHand)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1467,6 +1522,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class ModuleFireCostHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Stfld, "ElectricalDefense", "chargeScalar");
@@ -1474,10 +1530,10 @@ namespace ReikaKalseki.SeaToSea {
 						new CodeInstruction(OpCodes.Ldarg_0),
 						InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "fireSeamothDefence", false, typeof(SeaMoth))
 					});
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1491,6 +1547,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class OnKeypadButtonPress {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldstr, "ResetNumberField");
@@ -1499,10 +1556,10 @@ namespace ReikaKalseki.SeaToSea {
 						new CodeInstruction(OpCodes.Ldarg_0),
 						InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onKeypadFailed", false, typeof(KeypadDoorConsole))
 					});
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1516,13 +1573,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class FireSpawnHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onFireSpawn", false, typeof(VFXExtinguishableFire)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1536,13 +1594,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class SaveAllowHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchEveryReturnPre(InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "allowSaving", false, typeof(bool)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1556,6 +1615,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static class DeathHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					int idx = InstructionHandlers.getLastOpcodeBefore(codes, codes.Count, OpCodes.Ldstr);
@@ -1563,10 +1623,10 @@ namespace ReikaKalseki.SeaToSea {
 					codes.RemoveAt(idx + 1); //remove call StartCoroutine
 					codes.RemoveAt(idx + 1); //remove pop
 					codes.RemoveAt(idx - 1); //remove ldarg0
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1580,13 +1640,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class WaterFilterWarmupHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStartWaterFilter", false, typeof(FiltrationMachine)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1600,15 +1661,16 @@ namespace ReikaKalseki.SeaToSea {
 		public static class SwimChargeHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList();
 				try {
 					codes.add(OpCodes.Ldarg_0);
 					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "tickSwimCharge", false, typeof(UpdateSwimCharge));
 					codes.add(OpCodes.Ret);
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1622,13 +1684,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class InvStartHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onStartInvUI", false, typeof(uGUI_InventoryTab)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());
@@ -1642,13 +1705,14 @@ namespace ReikaKalseki.SeaToSea {
 		public static class EnterWaterParkHook {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
 				InsnList codes = new InsnList(instructions);
 				try {
 					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onSetPlayerACU", false, typeof(Player), typeof(WaterPark)));
-					FileLog.Log("Done patch " + MethodBase.GetCurrentMethod().DeclaringType);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
-					FileLog.Log("Caught exception when running patch " + MethodBase.GetCurrentMethod().DeclaringType + "!");
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
 					FileLog.Log(e.Message);
 					FileLog.Log(e.StackTrace);
 					FileLog.Log(e.ToString());

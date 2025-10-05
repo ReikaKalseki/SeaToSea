@@ -441,7 +441,7 @@ namespace ReikaKalseki.SeaToSea {
 			void Start() {
 				textHealth = root.getChildObject("Health").GetComponent<Text>();
 				textPower = root.getChildObject("Power").GetComponent<Text>();
-				textTemperature = root.getChildObject("Temperature").GetComponent<Text>();
+				textTemperature = root.getChildObject("Temperature/TemperatureValue").GetComponent<Text>();
 				imageThrust = root.getChildObject("ThrustBar").GetComponent<Image>();
 				imageThrust.material = new Material(imageThrust.material);
 			}
