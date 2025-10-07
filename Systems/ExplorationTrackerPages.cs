@@ -43,6 +43,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			p = this.addPage(TrackerPages.POD3, new StoryTrigger(StoryGoals.getRadioPlayGoal(StoryGoals.POD3RADIO)));
 			p.addFinding("pda", Finding.fromEncy(StoryGoals.POD3)).addFinding("databox", Finding.fromUnlock(TechType.Compass)).addFinding("cavehint", Finding.fromStory("KelpCaveHint")).addFinding("geyser", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.LathingDrone)));
+			if (hard)
+				p.addFinding("wiring", Finding.fromUnlock(TechType.AdvancedWiringKit));
 
 			p = this.addPage(TrackerPages.POD19, new PositionTrigger(new Vector3(-808.72F, -299.31F, -872.53F), 150));
 			p.addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("pda", Finding.fromEncy(StoryGoals.POD19RENDEZVOUS)).addFinding("cycfire", Finding.fromUnlock(TechType.CyclopsFireSuppressionModule)).addFinding("console", Finding.fromUnlock(TechType.BaseUpgradeConsole)).addFinding("nanowrap", Finding.fromUnlock(C2CItems.bandage)).addFinding("cache", Finding.fromStory("Precursor_SparseReefCache_DataDownload1")).addFinding("vent", Finding.fromScan(TechType.PrecursorSurfacePipe));

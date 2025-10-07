@@ -211,6 +211,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
 			RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
+			RecipeUtil.addIngredient(C2CItems.treatment.TechType, EcoceanMod.treeMushroomSpores.TechType, 2);
 			//RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
 
 			C2CRecipes.replaceFiberMeshWithMicroFilter(AqueousEngineeringMod.acuCleanerBlock.TechType);

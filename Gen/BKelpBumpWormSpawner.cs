@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -96,20 +97,18 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private static void doSpawnCheck() {
-			bool any = false;
+			HashSet<Vector3> empty = new HashSet<Vector3>(C2CProgression.instance.bkelpNestBumps.ToList());
 			foreach (Vector3 pos in C2CProgression.instance.bkelpNestBumps) {
-				if (any)
-					break;
 				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(pos, 25)) {
 					if (pi.ClassId == SeaToSeaMod.bkelpBumpWorm.ClassID) {
-						any = true;
+						empty.Remove(pos);
 						break;
 					}
 				}
 			}
-			if (!any) {
-				SNUtil.writeToChat("Regenerating nest");
-				foreach (Vector3 pos in C2CProgression.instance.bkelpNestBumps) {
+			if (empty.Count > 0) {
+				foreach (Vector3 pos in empty) {
+					//SNUtil.writeToChat("Regenerating nest @ "+pos);
 					GenUtil.fireGenerator(new BKelpBumpWormSpawner(pos + (Vector3.down * 3)), new List<GameObject>());
 				}
 			}

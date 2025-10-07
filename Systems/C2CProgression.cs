@@ -49,6 +49,14 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static readonly string METEOR_GOAL = "meteorhit";
 		internal static readonly string TUNGSTEN_GOAL = "filtertung";
+		private static readonly HashSet<string> mountainPodVisibilityTriggers = new HashSet<string>{
+			"mountainpodearly",
+			"mountainpodlate",
+			"mountaincave",
+			"islandpda",
+			"islandcave",
+		};
+		internal static readonly string MOUNTAIN_POD_ENTRY_VISIBILITY_GOAL = "mountainPodEntriesVisible";
 
 		private readonly Vector3[] seacrownCaveEntrances = new Vector3[]{
 			new Vector3(279, -140, 288),//new Vector3(300, -120, 288)/**0.67F+pod6Location*0.33F*/,
@@ -270,6 +278,14 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		public void onWorldLoaded() {
+			foreach (string s in mountainPodVisibilityTriggers) {
+				if (StoryGoalManager.main.completedGoals.Contains(s)) {
+					StoryGoal.Execute(MOUNTAIN_POD_ENTRY_VISIBILITY_GOAL, Story.GoalType.Story);
+				}
+			}
+		}
+
 		public void NotifyGoalComplete(string key) {
 			if (key.StartsWith("OnPlay", StringComparison.InvariantCultureIgnoreCase)) {
 				if (key.Contains(SeaToSeaMod.treaderSignal.storyGate)) {
@@ -287,6 +303,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (key == SeaToSeaMod.auroraTerminal.key) {
 				PDAManager.getPage("auroraringterminalinfo").unlock(false);
+			}
+			else if (mountainPodVisibilityTriggers.Contains(key)) {
+				StoryGoal.Execute(MOUNTAIN_POD_ENTRY_VISIBILITY_GOAL, Story.GoalType.Story);
 			}
 			else {
 				switch (key) {

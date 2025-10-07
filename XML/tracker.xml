@@ -64,6 +64,9 @@
 		<geyser>
 			A cave south of lifepod 3 containing an undersea geyser, several broken Nanolathing Drones, and extremely high numbers of both Crashfish and Drooping Stingers
 		</geyser>
+		<wiring>
+			An advanced wiring kit, dropped into a small cave
+		</wiring>
 	</POD3>
 	<POD19>
 		<name>

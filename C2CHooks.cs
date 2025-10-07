@@ -298,6 +298,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			VoidSpikesBiome.instance.onWorldStart();
 			UnderwaterIslandsFloorBiome.instance.onWorldStart();
+			
+			C2CProgression.instance.onWorldLoaded();
 
 			moveToExploitable("SeaCrown");
 			moveToExploitable("SpottedLeavesPlant");
@@ -316,9 +318,9 @@ namespace ReikaKalseki.SeaToSea {
 					continue;
 				string s0 = s;
 				s = s.Replace(" seed", " Sample");
-				s = s.Replace(" spore", " Sample");
+				//s = s.Replace(" spore", " Sample");
 				s = s.Replace(" Seed", " Sample");
-				s = s.Replace(" Spore", " Sample");
+				//s = s.Replace(" Spore", " Sample");
 				if (s != s0)
 					CustomLocaleKeyDatabase.registerKey(k, s);
 			}
@@ -517,6 +519,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (time >= nextBkelpBaseAmbCheckTime) {
 				nextBkelpBaseAmbCheckTime = time + UnityEngine.Random.Range(0.5F, 2.5F);
 				if (Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+					StoryGoal.Execute("SeeBkelpBase", Story.GoalType.Story);
 					if (time >= nextBkelpBaseAmbTime) {
 						SNUtil.log("Queuing bkelp base ambience @ " + ep.transform.position);
 						VanillaMusic.WRECK.play();
@@ -2784,6 +2787,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (bb == UnderwaterIslandsFloorBiome.instance && refpt.y < -500 && sp.item.GetTechType() == TechType.Salt) {
 				id = GeyserMaterialSpawner.getRandomMineral(UnderwaterIslandsFloorBiome.instance);
+			}
+			else if (bb == VanillaBiomes.ILZ && sp.item.GetTechType() == TechType.Salt) {
+				id = CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType;
 			}
 			if (id != TechType.None) {
 				Vector2int sz = CraftData.GetItemSize(id);
