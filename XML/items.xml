@@ -568,6 +568,17 @@
 			
 		</pda>
 	</ThalassaceanCud>
+	<GhostGel>
+		<name>
+			Ghost Membrane
+		</name>
+		<desc>
+			A nearly-transparent elastic and highly electrically insulating material.
+		</desc>
+		<pda>
+			
+		</pda>
+	</GhostGel>
 	<VENT_CRYSTAL>
 		<name>
 			Azurite

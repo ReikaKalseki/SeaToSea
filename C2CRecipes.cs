@@ -170,7 +170,7 @@ namespace ReikaKalseki.SeaToSea {
 			BasicCraftingItem heatSeal = CraftingItems.getItem(CraftingItems.Items.HeatSealant);
 			heatSeal.craftingTime = 5;
 			heatSeal.numberCrafted = 1;
-			heatSeal.addIngredient(sealedFabric, 1).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5).addIngredient(C2CItems.mountainGlow.seed, 3);
+			heatSeal.addIngredient(sealedFabric, 1).addIngredient(sulfurAcid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.GhostGel), hard ? 3 : 2).addIngredient(C2CItems.mountainGlow.seed, 3);
 
 			BasicCraftingItem tankWall = CraftingItems.getItem(CraftingItems.Items.FuelTankWall);
 			tankWall.craftingTime = 2.5F;
@@ -371,7 +371,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			C2CItems.voidStealth.addIngredient(lens, 1).addIngredient(comb, 2).addIngredient(TechType.Aerogel, 12);
 			C2CItems.depth1300.addIngredient(TechType.VehicleHullModule3, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 12).addIngredient(obsidiglass, 3).addIngredient(armor, 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 8);
-			C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5);
+			C2CItems.powerSeal.addIngredient(TechType.Polyaniline, 3).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 6).addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Sealant), 5).addIngredient(CraftingItems.getItem(CraftingItems.Items.GhostGel), hard ? 8 : 5);
 			C2CItems.heatSinkModule.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 2).addIngredient(TechType.Pipe, 5).addIngredient(motor, 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 5);
 			C2CItems.speedModule.addIngredient(TechType.Nickel, 5).addIngredient(motor, 4).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(electro, hard ? 3 : 2).addIngredient(TechType.Gravsphere, 1);
 			C2CItems.lightModule.addIngredient(TechType.LEDLight, 3).addIngredient(TechType.WiringKit, 1).addIngredient(TechType.CopperWire, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);

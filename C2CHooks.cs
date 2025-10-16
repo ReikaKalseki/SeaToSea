@@ -327,6 +327,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_WaterFilter", Language.main.Get("EncyDesc_WaterFilter") + "\n\nNote: In highly mineralized regions, salt collection is both accelerated and may yield additional byproducts.");
+			string ghostLeviNote = " in most cases, but may hold the key to protecting oneself from certain aspects of the ambient environment.";
+			CustomLocaleKeyDatabase.registerKey("EncyDesc_"+TechType.GhostLeviathan.AsString(), Language.main.Get("EncyDesc_" + TechType.GhostLeviathan.AsString()) + ghostLeviNote);
+			CustomLocaleKeyDatabase.registerKey("EncyDesc_" + TechType.GhostLeviathanJuvenile.AsString(), Language.main.Get("EncyDesc_" + TechType.GhostLeviathanJuvenile.AsString()) + ghostLeviNote);
 
 			string key = "EncyDesc_"+ TechType.SpottedLeavesPlant.AsString();
 			CustomLocaleKeyDatabase.registerKey(key, Language.main.Get(key) + "\n\nThese compounds appear to be compatible with human digestion.");
@@ -391,6 +394,7 @@ namespace ReikaKalseki.SeaToSea {
 			float time = DayNightCycle.main.timePassedAsFloat;
 
 			if (ep.GetBiomeString() == "observatory") {
+				MoraleSystem.instance.shiftMorale(MoraleSystem.OBSERVATORY_CONSTANT_BONUS*Time.deltaTime);
 				ObservatoryDiscoverySystem.instance.tick(ep);
 			}
 
@@ -1424,6 +1428,29 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (SNUtil.match(pi, VanillaCreatures.REAPER.prefab)) {
 				go.EnsureComponent<C2CReaper>();
+			}
+			else if (SNUtil.match(pi, VanillaCreatures.GHOST_LEVIATHAN.prefab) || SNUtil.match(pi, VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab)) {
+				Sealed s = go.EnsureComponent<Sealed>();
+				s._sealed = true;
+				s.maxOpenedAmount = 200;
+				s.openedEvent.AddHandler(go, new UWE.Event<Sealed>.HandleFunction(se => {
+					se.openedAmount = 0;
+					se._sealed = true;
+					if (PDAScanner.complete.Contains(TechType.GhostLeviathan) || PDAScanner.complete.Contains(TechType.GhostLeviathanJuvenile))
+						InventoryUtil.addItem(CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
+				}));
+				GenericHandTarget ht = go.EnsureComponent<GenericHandTarget>();
+				ht.onHandHover = new HandTargetEvent();
+				ht.onHandHover.AddListener(hte => {
+					Pickupable held = Inventory.main.GetHeld();
+					if (held && held.GetTechType() == TechType.Scanner)
+						return;
+					if (held && held.GetTechType() == TechType.LaserCutter && (PDAScanner.complete.Contains(TechType.GhostLeviathan) || PDAScanner.complete.Contains(TechType.GhostLeviathanJuvenile))) {
+						HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
+						HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
+						HandReticle.main.SetInteractText("GhostLeviathanSample"); //is a locale key
+					}
+				});
 			}
 			else if (DEIntegrationSystem.instance.isLoaded() && !go.GetComponent<WaterParkCreature>() && SNUtil.match(go, DEIntegrationSystem.instance.getThalassacean(), DEIntegrationSystem.instance.getLRThalassacean())) {
 				go.EnsureComponent<DEIntegrationSystem.C2CThalassacean>();

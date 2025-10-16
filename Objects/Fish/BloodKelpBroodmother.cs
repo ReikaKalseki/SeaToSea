@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 
 	}
 
-	class BloodKelpBroodmotherTag : MonoBehaviour {
+	class BloodKelpBroodmotherTag : MonoBehaviour, DIHooks.StasisReactant {
 
 		private static readonly SoundManager.SoundData spitSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "broodmotherspit", "Sounds/broodmotherspit.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
 		private static readonly SoundManager.SoundData idleSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "broodmotheridle", "Sounds/broodmotheridle.ogg", SoundManager.soundMode3D, s => {SoundManager.setup3D(s, 64);}, SoundSystem.masterBus);
@@ -151,6 +151,10 @@ namespace ReikaKalseki.SeaToSea {
 				SoundManager.playSoundAt(idleSound, transform.position, false, 40, 1);
 				nextSoundTime = time + UnityEngine.Random.Range(3F, 10F);
 			}
+		}
+
+		public void onStasisHit(StasisSphere s) {
+			nextSpitTime = DayNightCycle.main.timePassedAsFloat + 0.5F;
 		}
 
 		public void shoot(GameObject target) {

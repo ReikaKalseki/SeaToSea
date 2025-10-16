@@ -190,9 +190,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (hard)
 				RecipeUtil.addIngredient(TechType.RocketStage3, AqueousEngineeringMod.ionRod.TechType, RecipeUtil.removeIngredient(TechType.RocketStage3, TechType.ReactorRod).amount);
 
-			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, EcoceanMod.glowOil.TechType, hard ? 3 : 2);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, EcoceanMod.glowOil.TechType, hard ? 6 : 3);
-			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType, hard ? 8 : 5);
 			RecipeUtil.addIngredient(TechType.PrecursorKey_White, EcoceanMod.glowOil.TechType, hard ? 6 : 4);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.RocketFuel).TechType, EcoceanMod.glowOil.TechType, 3);
 			//SeaTreaderTunnelLocker.addItem(glowOil.TechType, 2);

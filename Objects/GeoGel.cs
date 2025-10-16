@@ -43,6 +43,7 @@ namespace ReikaKalseki.SeaToSea {
 					c.enabled = false;
 			}
 			else { //switch render to enzyme 42
+				world.EnsureComponent<GeogelTag>();
 				GameObject pfb = ObjectUtil.lookupPrefab("505e7eff-46b3-4ad2-84e1-0fadb7be306c");
 				Renderer r = world.GetComponentInChildren<Renderer>();
 				GameObject mdl = pfb.GetComponentInChildren<Animator>().gameObject.clone();
@@ -80,6 +81,17 @@ namespace ReikaKalseki.SeaToSea {
 			gp.damageInterval = 9999999999;
 			gp.smokeDuration = 5F; //from 15
 			return world;
+		}
+
+	}
+
+	internal class GeogelTag : MonoBehaviour {
+		
+		void Start() {
+			gameObject.removeChildObject("model");
+			gameObject.removeComponent<UWE.TriggerStayTracker>();
+			gameObject.removeComponent<FMOD_StudioEventEmitter>();
+			gameObject.removeComponent<FMOD_CustomEmitter>();
 		}
 
 	}
