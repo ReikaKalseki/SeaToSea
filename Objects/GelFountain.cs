@@ -174,6 +174,8 @@ namespace ReikaKalseki.SeaToSea {
 			go.fullyEnable();
 			go.ignoreCollisions(gameObject);
 			go.transform.position = transform.position + (transform.up * 0.5F);
+			if (!drip)
+				go.EnsureComponent<GeogelTag>();
 			Rigidbody rb = go.GetComponent<Rigidbody>();
 			rb.isKinematic = false;
 			Vector3 vec = MathUtil.getRandomVectorAround(transform.up.normalized, 0.5F)*3;

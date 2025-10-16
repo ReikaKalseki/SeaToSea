@@ -63,6 +63,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float GENERIC_DEAD_LIFEPOD_MORALE_DURATION = 60*10; //10 min
 
 		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 5; //+5%/s
+		internal static readonly float OBSERVATORY_CONSTANT_BONUS = 2; //+2%/s
 
 		private static readonly float INITIAL_MORALE_BASELINE = 20;
 		private static readonly float MORALE_RESTORATION_RATE = 0.05F;
@@ -210,6 +211,67 @@ namespace ReikaKalseki.SeaToSea {
 			StoryHandler.instance.addListener(this.onStoryGoal);
 
 			SaveSystem.addPlayerSaveCallback(new SaveHook());
+
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.CrystalLens), 50);
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.Nanocarbon), 20);
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 10);
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.Motor), 2);
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.BioEnzymes), 5);
+			addItemMorale(CraftingItems.getItem(CraftingItems.Items.LathingDrone), 25);
+			addItemMorale(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 10);
+			addItemMorale(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 20);
+			addItemMorale(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS), 10);
+			addItemMorale(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 5);
+			addItemMorale(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL), 50);
+			addItemMorale(C2CItems.bandage, 10);
+			addItemMorale(C2CItems.breathingFluid, 20);
+			addItemMorale(C2CItems.rebreatherV2, 20);
+			addItemMorale(C2CItems.t2Battery, 10);
+
+			addItemMorale(TechType.VehicleHullModule1, 5);
+			addItemMorale(TechType.VehicleHullModule2, 10);
+			addItemMorale(TechType.VehicleHullModule3, 20);
+			addItemMorale(C2CItems.depth1300, 30);
+
+			addItemMorale(TechType.Silver, 10);
+			addItemMorale(TechType.Gold, 10);
+			addItemMorale(TechType.Nickel, 10);
+			addItemMorale(TechType.Kyanite, 25);
+			addItemMorale(TechType.Magnetite, 5);
+
+			addItemMorale(TechType.PrecursorIonCrystal, 10);
+			addItemMorale(TechType.PrecursorKey_Purple, 10);
+			addItemMorale(TechType.PrecursorKey_Orange, 20);
+			addItemMorale(TechType.PrecursorKey_Blue, 30);
+			addItemMorale(TechType.PrecursorKey_Red, 40);
+			addItemMorale(TechType.PrecursorKey_White, 50);
+
+			addItemMorale(TechType.Tank, 10);
+			addItemMorale(TechType.DoubleTank, 20);
+			addItemMorale(TechType.HighCapacityTank, 30);
+			addItemMorale(TechType.LaserCutter, 25);
+			addItemMorale(TechType.Rebreather, 10);
+			addItemMorale(TechType.Seaglide, 15);
+			addItemMorale(TechType.Fins, 5);
+
+			addItemMorale(TechType.BaseRoom, 40);
+			addItemMorale(TechType.BaseMoonpool, 25);
+			addItemMorale(TechType.BaseFiltrationMachine, 20);
+			addItemMorale(TechType.BaseMapRoom, 10);
+			addItemMorale(TechType.BaseNuclearReactor, 30);
+			addItemMorale(TechType.Workbench, 25);
+			addItemMorale(C2CItems.processor, 50);
+			addItemMorale(AqueousEngineeringMod.grinderBlock, 25);
+
+			addItemMorale(TechType.HatchingEnzymes, 50);
+		}
+
+		public void addItemMorale(ModPrefab pfb, float amt) {
+			addItemMorale(pfb.TechType, amt);
+		}
+
+		public void addItemMorale(TechType tt, float amt) {
+			FirstObtainmentSystem.instance.registerEvent(tt, () => this.shiftMorale(amt));
 		}
 
 		public void registerStoryGoalEffect(string goal, float effect) {
@@ -380,7 +442,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		public void tick(Player ep) {
 			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic() || LaunchRocket.launchStarted || StoryGoalManager.main.IsGoalComplete(StoryGoals.LAUNCH_ROCKET) || !MainCameraControl.main.enabled) {
-				setMorale(75);
+				if (MainCameraControl.main.enabled) //do not re-set morale just because you are in a camera
+					setMorale(75);
 				if (bar)
 					bar.gameObject.SetActive(false);
 				return;

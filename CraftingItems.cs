@@ -232,6 +232,9 @@ namespace ReikaKalseki.SeaToSea {
 						};
 						//item.glowIntensity = 2;
 						break;
+					case Items.GhostGel:
+						item.inventorySize = new Vector2int(1, 1);
+						break;
 				}
 				if (item.sprite == null)
 					item.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/" + id);
@@ -277,9 +280,10 @@ namespace ReikaKalseki.SeaToSea {
 			[Item(typeof(NotFabricable),        TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/CrashPowder")]GeyserMinerals,
 			[Item(typeof(NotFabricable),        TechCategory.VehicleUpgrades,   TechType.Unobtanium,        "WorldEntities/Natural/benzene")]WeakEnzyme42,
 			//[Item(typeof(NotFabricable),		TechCategory.VehicleUpgrades, 	TechType.Unobtanium,		"WorldEntities/Natural/polyaniline")]FilteredGeoGel,
-			[Item(typeof(BasicCraftingItem), TechCategory.VehicleUpgrades,   TechType.Unobtanium,        "WorldEntities/Natural/benzene")]Electrolytes,
+			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades,   TechType.Unobtanium,			"WorldEntities/Natural/benzene")]Electrolytes,
 			//[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/Lubricant")]FluidPump,
-			[Item(typeof(BasicCraftingItem), TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/EnameledGlass")]ObsidianGlass,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,			"WorldEntities/Natural/EnameledGlass")]ObsidianGlass,
+			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,           "WorldEntities/Natural/TwistyBridgesEgg")]GhostGel,
 		}
 
 		private static Item getAttr(Items key) {

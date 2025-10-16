@@ -63,6 +63,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 
+			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.GhostLeviathan, CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
+			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.GhostLeviathanJuvenile, CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
+
 			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.BlueAmoeba, C2CRecipes.getAlternateBacteria().TechType);
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.SulfurAcid).TechType, C2CRecipes.getAltTraceMetal().TechType);

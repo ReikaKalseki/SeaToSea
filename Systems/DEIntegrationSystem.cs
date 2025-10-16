@@ -138,14 +138,13 @@ namespace ReikaKalseki.SeaToSea {
 			eggs.Add(this.findCreature("TwisteelEgg"));
 			eggs.Add(this.findCreature("GulperEgg"));
 
-			int amt = RecipeUtil.removeIngredient(C2CItems.powerSeal.TechType, EcoceanMod.glowOil.TechType).amount;
-			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, thalassaceanCud.TechType, amt);
+			RecipeUtil.addIngredient(C2CItems.powerSeal.TechType, thalassaceanCud.TechType, 4);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.HeatSealant).TechType, thalassaceanCud.TechType, 2);
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.SealFabric).TechType, thalassaceanCud.TechType, 1);
 			RecipeUtil.addIngredient(C2CItems.depth1300.TechType, thalassaceanCud.TechType, 4);
 			RecipeUtil.addIngredient(C2CItems.bandage.TechType, thalassaceanCud.TechType, 1);
 
-			amt = RecipeUtil.removeIngredient(C2CItems.breathingFluid.TechType, TechType.Eyeye).amount;
+			int amt = RecipeUtil.removeIngredient(C2CItems.breathingFluid.TechType, TechType.Eyeye).amount;
 			RecipeUtil.addIngredient(C2CItems.breathingFluid.TechType, jellySpinnerType, amt * 3 / 2); //from 2 to 3
 
 			foreach (TechType tt in eggs) {
