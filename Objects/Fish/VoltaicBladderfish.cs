@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
+using ReikaKalseki.AqueousEngineering;
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
@@ -71,12 +72,53 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 
-	class VoltaicBladderfishTag : MonoBehaviour {
+	class VoltaicBladderfishTag : MonoBehaviour, ReikaKalseki.AqueousEngineering.AmpeelAntennaCreature {
+
+		public static readonly float POWER_EXPONENT = 0.125F;
 
 		private Renderer[] renders;
 
 		private float currentEmissivity = 1;
 		private float targetEmissivity;
+		/*
+		static VoltaicBladderfishTag() {
+			for (int i = 1; i <= 5; i++) {
+				computeMaximumEfficiency(i);
+			}
+		}
+		*/
+		public LiveMixin live {
+			get {
+				return GetComponent<LiveMixin>();
+			}
+		}
+
+		public float ampeelValue {
+			get {
+				return 0F;
+			}
+		}
+
+		public float powerExponentAddition {
+			get {
+				return POWER_EXPONENT;
+			}
+		}
+
+		public static void computeMaximumEfficiency(int acuSize) {
+			SNUtil.log("Voltaic Bladderfish yields for size-"+acuSize+" ACU:");
+			float refAmt = AmpeelAntenna.ACU_COEFFICIENT * AmpeelAntenna.POWER_GEN;
+			int ampSize = 3; //ampeel is 3 units each;
+			int slots = 10*acuSize;
+			int maxEels = slots/ampSize;
+			for (int ampeels = 1; ampeels <= maxEels; ampeels++) {
+				int maxVolt = slots-ampSize*ampeels;
+				for (int volt = 0; volt <= maxVolt; volt++) {
+					float yield = Mathf.Min(AmpeelAntenna.AMPEEL_CAP, Mathf.Pow(ampeels, 1+volt*POWER_EXPONENT));
+					SNUtil.log("    "+ampeels+" ampeels + "+volt+" voltaic: "+(yield*refAmt).ToString("0.00")+" ("+yield.ToString("0.00")+"x)");
+				}
+			}
+		}
 
 		void Update() {
 			if (renders == null)

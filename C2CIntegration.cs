@@ -166,7 +166,7 @@ namespace ReikaKalseki.SeaToSea {
 			ACUEcosystems.addFood(new ACUEcosystems.PlantFood(C2CItems.sanctuaryPlant, 0.2F, sanctuary));
 			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleBoomerang, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Boomerang), glassForest));
 			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.purpleHoopfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Spinefish), glassForest));
-			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.voltaicBladderfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Bladderfish)*0.3F, BiomeRegions.Other));
+			ACUEcosystems.addFood(new ACUEcosystems.AnimalFood(C2CItems.voltaicBladderfish, ACUEcosystems.AnimalFood.calculateFoodValue(TechType.Bladderfish)*0.3F, BiomeRegions.BloodKelp));
 			ACUEcosystems.ACUMetabolism met = ACUEcosystems.getMetabolismForAnimal(TechType.RabbitRay);
 			ACUEcosystems.addPredatorType(C2CItems.purpleHolefish.TechType, met.relativeValue * 2F, met.metabolismPerSecond, met.normalizedPoopChance, false, glassForest);
 			met = ACUEcosystems.getMetabolismForAnimal(TechType.Jellyray);
@@ -184,6 +184,8 @@ namespace ReikaKalseki.SeaToSea {
 			//ACUEcosystems.getAnimalFood(TechType.CaveCrawler).addBiome(sanctuary);
 
 			ACUCallbackSystem.addStalkerToy(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1.0F);
+
+			AmpeelAntenna.ACU_COEFFICIENT = 0.2F;
 
 			if (hard)
 				RecipeUtil.addIngredient(TechType.RocketStage3, AqueousEngineeringMod.ionRod.TechType, RecipeUtil.removeIngredient(TechType.RocketStage3, TechType.ReactorRod).amount);

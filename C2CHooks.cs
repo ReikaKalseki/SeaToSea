@@ -2290,6 +2290,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void tickScannerCamera(MapRoomCamera cam) {
+			cam.gameObject.EnsureComponent<CameraLeviathanAttractor>();
 			Vector3 campos = cam.transform.position;
 			if (VoidSpikesBiome.instance.getDistanceToBiome(campos, true) < 200) {
 				float time = DayNightCycle.main.timePassedAsFloat;
