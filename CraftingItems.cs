@@ -253,6 +253,7 @@ namespace ReikaKalseki.SeaToSea {
 			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.AramidFibers,      "WorldEntities/Natural/aerogel")]HoneycombComposite,
 			[Item(typeof(NotFabricable),        TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/aerogel")]Nanocarbon,
 			[Item(typeof(NotFabricable),        TechCategory.BasicMaterials,    TechType.Unobtanium,        "WorldEntities/Natural/CrashPowder")]Tungsten,
+			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/TwistyBridgesEgg")]GhostGel,
 			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(NotFabricable),        TechCategory.VehicleUpgrades,   TechType.Unobtanium,        "WorldEntities/Natural/hydrochloricacid")]SulfurAcid,
 			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/EnameledGlass")]CrystalLens,
@@ -283,7 +284,6 @@ namespace ReikaKalseki.SeaToSea {
 			[Item(typeof(BasicCraftingItem),	TechCategory.VehicleUpgrades,   TechType.Unobtanium,			"WorldEntities/Natural/benzene")]Electrolytes,
 			//[Item(typeof(BasicCraftingItem),	TechCategory.Electronics, 		TechType.Unobtanium,		"WorldEntities/Natural/Lubricant")]FluidPump,
 			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,			"WorldEntities/Natural/EnameledGlass")]ObsidianGlass,
-			[Item(typeof(BasicCraftingItem),	TechCategory.AdvancedMaterials, TechType.Unobtanium,           "WorldEntities/Natural/TwistyBridgesEgg")]GhostGel,
 		}
 
 		private static Item getAttr(Items key) {
