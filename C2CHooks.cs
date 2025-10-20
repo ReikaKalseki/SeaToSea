@@ -3009,5 +3009,20 @@ namespace ReikaKalseki.SeaToSea {
 				calc.rate *= Mathf.Lerp(1, 0.5F, (morale - 80F) / 20F);
 			}
 		}
+
+		public static float getAmbientHealAmount(float orig) {
+			float ret = orig;
+			float morale = MoraleSystem.instance.moralePercentage;
+			if (morale <= 20) {
+				ret = 0;
+			}
+			else if (morale <= 50) {
+				ret *= (morale-20F)/30F;
+			}
+			else if (morale >= 80) {
+				ret = (float)MathUtil.linterpolate(morale, 80, 100, 1, 4, true);
+			}
+			return ret;
+		}
 	}
 }

@@ -310,6 +310,7 @@ namespace ReikaKalseki.SeaToSea {
 			BaseRoomSpecializationSystem.instance.setDisplayValue(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, 1.75F);
 			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 2F);
 			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 2.5F);
+			BaseRoomSpecializationSystem.instance.setDisplayValue(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, 1.25F);
 
 			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
 				BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material) * ingot.count / 2F);
@@ -322,6 +323,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			AuroresourceMod.dunesMeteor.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 15);
 			AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 40);
+			AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, 10);
 
 			Type t;
 			if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableSmall", out TechType tt)) {

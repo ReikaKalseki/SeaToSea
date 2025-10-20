@@ -693,6 +693,24 @@
 			obsidian
 		</header>
 	</OBSIDIAN>
+	<OXYGENITE>
+		<name>
+			Oxygenite
+		</name>
+		<desc>
+			A crystal with enormous quantities of elemental oxygen trapped in the lattice.
+		</desc>
+		<pda>
+			Oxygenite is a form of metal-organic crystal, with small quantities of metal atoms binding large sections of carbon-based organic structures, forming a lattice with large intramolecular spaces. Oxygenite is notable in that these spaces are filled with densely packed elemental oxygen, allowing it to absorb, hold, and potentially release large quantities of the element.
+			
+			Given the sole location where this mineral has been found, it is likely formed as a waste product of certain forms of chemosynthetic biochemistry, as a means to sequester the useless yet highly volatile oxygen present within their nutrient sources.
+			
+			Assessment: Possible high-density oxygen source
+		</pda>
+		<header>
+			oxygenite
+		</header>
+	</OXYGENITE>
 	<ALKALI_PLANT>
 		<name>
 			Alkali Vines

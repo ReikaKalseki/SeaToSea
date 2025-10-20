@@ -68,7 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 			r.materials[0].SetColor("_Color", Color.white);
 			r.materials[0].SetColor("_SpecColor", Color.white);
 			r.materials[0].SetColor("_GlowColor", Color.white);
-			r.materials[0].SetFloat("_IBLReductionAtNight", 0);
+			r.materials[0].SetFloat("_IBLreductionAtNight", 0);
 			r.materials[0].SetFloat("_EmissionLM", 0);
 			r.materials[0].SetFloat("_EmissionLMNight", 0);
 		}

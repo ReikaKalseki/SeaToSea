@@ -75,6 +75,8 @@ namespace ReikaKalseki.SeaToSea {
 		public static BloodKelpBroodmother broodmother;
 		public static VoidSpikeLeviathan voidSpikeLevi;
 
+		public static LargeOxygenite largeOxygenite;
+
 		public static TechType brineCoral;
 		public static WorldCollectedItem brineCoralPiece;
 		public static EmperorRootOil emperorRootOil;
@@ -174,6 +176,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static void addCraftingItems() {
 			CraftingItems.addAll();
+
+			largeOxygenite = new LargeOxygenite(SeaToSeaMod.itemLocale.getEntry("OXYGENITE"));
+			largeOxygenite.Patch();
 		}
 
 		internal static void addCreatures() {
