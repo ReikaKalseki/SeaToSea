@@ -240,6 +240,7 @@ namespace ReikaKalseki.SeaToSea {
 		private string powerErrorKey;
 
 		private float powerConsumedThisRecipe;
+		private float timeThisRecipe;
 
 		void Start() {
 			SNUtil.log("Reinitializing bioproc");
@@ -335,19 +336,22 @@ namespace ReikaKalseki.SeaToSea {
 			if (operationCooldown > 0) {
 				operationCooldown -= seconds;
 				powerConsumedThisRecipe = 0;
+				timeThisRecipe = 0;
 			}
 			else if (powerErrorKey == null && this.consumePower(Bioprocessor.POWER_COST_IDLE * seconds)) {
+				powerConsumedThisRecipe += powerConsumedLastAttempt;
 				this.setEmissiveColor(noRecipeColor);
 				if (currentOperation != null) {
 					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");
 					float drain = (currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds;
 					if (this.consumePower(drain)) {
 						powerConsumedThisRecipe += drain;
+						timeThisRecipe += seconds;
 						IList<InventoryItem> kelp = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 						bool hasKelp = kelp != null && kelp.Count > 0;
 						//SNUtil.writeToChat("has kelp: "+(kelp == null ? 0 : kelp.Count));
 						this.setEmissiveColor(recipeStalledColor);
-						nextEnzyTimeRemaining -= seconds * (hasKelp ? 1.5F : 1);
+						nextEnzyTimeRemaining -= seconds;
 						//SNUtil.writeToChat("remaining: "+nextEnzyTimeRemaining);
 						if (nextEnzyTimeRemaining <= 0) {
 							IList<InventoryItem> enzy = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType);
@@ -377,9 +381,11 @@ namespace ReikaKalseki.SeaToSea {
 										storage.forceRemoveItem(kelp[0]); //list is updated in realtime
 									}
 									this.addItemToInventory(currentOperation.outputItem, n);
-									string msg = "Bioprocessor crafted " + currentOperation.outputItem.AsString() + " x" + n+" using a total of "+ powerConsumedThisRecipe.ToString("0.0")+" power";
-									SNUtil.log(msg);
+									string msg = prefab.FriendlyName+" crafted " + currentOperation.outputItem.AsString() + " x" + n+" in "+timeThisRecipe.ToString("0.00")+"s using a total of "+ powerConsumedThisRecipe.ToString("0.0")+" power";
 									SNUtil.writeToChat(msg);
+									msg += "\nPower cost factor: " + (powerConsumedThisRecipe / currentOperation.totalEnergyCost).ToString("0.00000") + "x";
+									msg += "\nTime cost factor: " + (timeThisRecipe / currentOperation.processTime).ToString("0.00000") + "x";
+									SNUtil.log(msg);
 									this.setRecipe(null);
 									this.resetEmissiveCooldown();
 									this.setEmissiveColor(completeColor, cooldown: 4);
@@ -463,6 +469,7 @@ namespace ReikaKalseki.SeaToSea {
 			nextEnzyTimeRemaining = r != null ? this.getOperationTime(r.secondsPerEnzyme) : -1;
 			this.setEmissiveColor(r == null ? noRecipeColor : recipeStalledColor);
 			powerConsumedThisRecipe = 0;
+			timeThisRecipe = 0;
 			if (has != had) {
 				SoundManager.playSoundAt(SoundManager.buildSound(r == null ? "event:/sub/seamoth/seamoth_light_off" : "event:/sub/seamoth/seamoth_light_on"), gameObject.transform.position);
 #pragma warning disable CS0642

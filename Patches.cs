@@ -1721,6 +1721,28 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		[HarmonyPatch(typeof(Survival))]
+		[HarmonyPatch("UpdateHunger")]
+		public static class AmbientHealHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList(instructions);
+				try {
+					int idx = codes.getInstruction(0, 0, OpCodes.Ldc_R4, 0.041666668F);
+					codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getAmbientHealAmount", false, typeof(float)));
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
 	}
 
 	static class PatchLib {
