@@ -447,6 +447,11 @@ namespace ReikaKalseki.SeaToSea {
 				float has = ox.oxygenAvailable;
 				if (has > max * 0.75F)
 					return false;
+				OxygenBoost ob = ox.gameObject.EnsureComponent<OxygenBoost>();
+				ob.limit = max;
+				ob.original = ox.oxygenCapacity;
+				ob.oxygen = ox;
+				ox.oxygenCapacity = max;
 				ox.oxygenAvailable = max;
 				return true;
 			});
@@ -466,6 +471,22 @@ namespace ReikaKalseki.SeaToSea {
 				SNUtil.triggerTechPopup(brokenTablets[tech]);
 			else if (tech == CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType || tech == CraftingItems.getItem(CraftingItems.Items.LathingDrone).TechType)
 				SNUtil.triggerTechPopup(tech);
+		}
+
+		class OxygenBoost : MonoBehaviour {
+
+			internal float limit;
+			internal float original;
+			internal Oxygen oxygen;
+
+			void Update() {
+				oxygen.oxygenCapacity = Mathf.Min(limit, oxygen.oxygenAvailable);
+				if (oxygen.oxygenAvailable <= original) {
+					oxygen.oxygenCapacity = original;
+					this.destroy();
+				}
+			}
+
 		}
 
 		internal class IngotDefinition {
