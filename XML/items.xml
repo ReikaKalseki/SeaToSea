@@ -409,6 +409,17 @@
 			- Consumes breathing fluid to refill the main tank, and requires a compatible fluid pump module installed in a seabase to do so
 		</pda>
 	</LiquidTank>
+	<OxygeniteTank>
+		<name>
+			Oxygenite Storage Tank
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+	</OxygeniteTank>
 	<CurativeBandage>
 		<name>
 			Nanowrap Bandages
@@ -433,6 +444,17 @@
 			
 		</pda>
 	</KharaaTreatment>
+	<OxygeniteCharge>
+		<name>
+			Oxygenite Charge
+		</name>
+		<desc>
+			Completely refills any gas-based oxygen tank, and pressurizes it to well above its typical operating capacity.
+		</desc>
+		<pda>
+			
+		</pda>
+	</OxygeniteCharge>
 	<Geogel>
 		<name>
 			Lithogel

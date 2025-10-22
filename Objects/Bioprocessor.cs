@@ -345,7 +345,7 @@ namespace ReikaKalseki.SeaToSea {
 					//SNUtil.writeToChat("ticking recipe: "+currentOperation+", want "+(currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds+" pwr");
 					float drain = (currentOperation.powerPerSecond-Bioprocessor.POWER_COST_IDLE)*seconds;
 					if (this.consumePower(drain)) {
-						powerConsumedThisRecipe += drain;
+						powerConsumedThisRecipe += powerConsumedLastAttempt;
 						timeThisRecipe += seconds;
 						IList<InventoryItem> kelp = storage.container.GetItems(CraftingItems.getItem(CraftingItems.Items.KelpEnzymes).TechType);
 						bool hasKelp = kelp != null && kelp.Count > 0;
@@ -381,7 +381,7 @@ namespace ReikaKalseki.SeaToSea {
 										storage.forceRemoveItem(kelp[0]); //list is updated in realtime
 									}
 									this.addItemToInventory(currentOperation.outputItem, n);
-									string msg = prefab.FriendlyName+" crafted " + currentOperation.outputItem.AsString() + " x" + n+" in "+timeThisRecipe.ToString("0.00")+"s using a total of "+ powerConsumedThisRecipe.ToString("0.0")+" power";
+									string msg = prefab.FriendlyName+" crafted " + Language.main.Get(currentOperation.outputItem) + " x" + n+" in "+timeThisRecipe.ToString("0.00")+"s using a total of "+ powerConsumedThisRecipe.ToString("0.0")+" power";
 									SNUtil.writeToChat(msg);
 									msg += "\nPower cost factor: " + (powerConsumedThisRecipe / currentOperation.totalEnergyCost).ToString("0.00000") + "x";
 									msg += "\nTime cost factor: " + (timeThisRecipe / currentOperation.processTime).ToString("0.00000") + "x";

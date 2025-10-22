@@ -486,6 +486,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		public bool isSpawnableVoid(string biome) {
 			Player ep = Player.main;
+			if (Ecocean.ECHooks.isVoidHeatColumn(ep.transform.position, out Vector3 trash))
+				return false;
 			if (VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position) && this.isLeviathanEnabled() && voidLeviathan && voidLeviathan.activeInHierarchy) {
 				return false;
 			}

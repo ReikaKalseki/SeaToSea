@@ -768,6 +768,9 @@
 		<levi>
 			An ethereal, hammer-headed, adolescent leviathan that makes use of forceful ramming to repel competitors to its territory, but which in fact feeds on microscopic lifeforms in the water; This specimen is colored unusually for its species due to the unique diet the local biome provides
 		</levi>
+		<oxygenite>
+			Large glowing deposits of oxygen-rich crystal
+		</oxygenite>
 	</GLASSFOREST>
 	<CRASH>
 		<name>
@@ -843,6 +846,12 @@
 		<bubble>
 			Strange rising spheres which can stick to vehicles and significantly impede movement
 		</bubble>
+		<tongue>
+			A mysterious yet lethal organism hidden far below the surface, which predates on organisms higher in the water column by luring and then grabbing them from a great distance
+		</tongue>
+		<heat>
+			Columnar upwellings of warm water carrying organic materials from the depths
+		</heat>
 	</VOID>
 	<VOIDSPIKES>
 		<name>

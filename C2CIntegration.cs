@@ -211,6 +211,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			RecipeUtil.addIngredient(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, EcoceanMod.planktonItem.TechType, 1);
 			RecipeUtil.addIngredient(C2CRecipes.getAlternateBacteria().TechType, EcoceanMod.planktonItem.TechType, 2);
+			RecipeUtil.addIngredient(C2CRecipes.getAlternateEnzyme().TechType, EcoceanMod.voidOrganic.TechType, 1);
 			RecipeUtil.addIngredient(C2CItems.treatment.TechType, EcoceanMod.treeMushroomSpores.TechType, 2);
 			//RecipeUtil.addIngredient(TechType.Polyaniline, EcoceanMod.planktonItem.TechType, 2);
 
@@ -223,6 +224,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			RecipeUtil.addIngredient(AqueousEngineeringMod.wirelessChargerBlock.TechType, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 2);
 			RecipeUtil.addIngredient(AqueousEngineeringMod.wirelessChargerBlock.TechType, CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType, 3);
+
+			//Bioprocessor.addRecipe(new TypeInput(EcoceanMod.voidOrganic), CraftingItems.getItem(CraftingItems.Items.).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount * 4, rec.outputCount);
 
 			//GenUtil.registerWorldgen(new PositionedPrefab(ExscansionMod.alienBase.ClassID, new Vector3())); //step cave
 
@@ -323,7 +326,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			AuroresourceMod.dunesMeteor.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType, 15);
 			AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 40);
-			AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, 10);
+			//AuroresourceMod.lavaPitCenter.addDrop(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, 10);
 
 			Type t;
 			if (TechTypeHandler.TryGetModdedTechType("ResourceMonitorBuildableSmall", out TechType tt)) {

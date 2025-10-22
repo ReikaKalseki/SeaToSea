@@ -513,6 +513,17 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			private void setCurrentOre(Transform t) {
+				if (currentOre) {
+					foreach (Renderer r in currentRenderers) {
+						if (r is MeshRenderer) {
+							((MeshRenderer)r).shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+							((MeshRenderer)r).receiveShadows = true;
+						}
+						foreach (Material m in r.materials) {
+							m.DisableKeyword("FX_BUILDING");
+						}
+					}
+				}
 				currentOre = t;
 				if (t) {
 					Pickupable p = t.gameObject.GetComponentInChildren<Pickupable>(true);

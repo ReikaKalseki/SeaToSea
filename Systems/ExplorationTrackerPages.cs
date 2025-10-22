@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 
 using SMLHelper.V2.Assets;
@@ -139,7 +140,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("treader", Finding.fromScan(TechType.SeaTreader)).addFinding("platinum", Finding.fromStory("Platinum")).addFinding("pda", Finding.fromEncy("treaderpod")).addFinding("enzy", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes))).addFinding("basepda", Finding.fromEncy("treadercave")).addFinding("databox", Finding.fromUnlock(TechType.VehicleHullModule2));
 
 			p = this.addPage(TrackerPages.GLASSFOREST, new StoryTrigger(UnderwaterIslandsFloorBiome.instance.discoveryGoal));
-			p.addFinding("databox", Finding.fromUnlock(C2CItems.liquidTank)).addFinding("speed", Finding.fromUnlock(C2CItems.speedModule)).addFinding("bioproc", Finding.fromUnlock(C2CItems.processor)).addFinding("deepvine", Finding.fromStory("DeepvineSamples"));
+			p.addFinding("databox", Finding.fromUnlock(C2CItems.liquidTank)).addFinding("speed", Finding.fromUnlock(C2CItems.speedModule)).addFinding("bioproc", Finding.fromUnlock(C2CItems.processor)).addFinding("deepvine", Finding.fromStory("DeepvineSamples")).addFinding("oxygenite", Finding.fromScan(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE)));
 			if (hard)
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
@@ -152,7 +153,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("end", Finding.fromEncy(StoryGoals.PAUL_DEATH_LOG)).addFinding("destroy", Finding.fromEncy(StoryGoals.FINAL_DEGASI_LOG)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(C2CItems.rebreatherCharger));
 
 			p = this.addPage(TrackerPages.VOID, new TrackerPageAnyFindingsTrigger(TrackerPages.VOID));
-			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating)));
+			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating))).addFinding("heat", Finding.fromScan(EcoceanMod.heatColumnShell)).addFinding("tongue", Finding.fromEncy(EcoceanMod.tongue.pdaPage));
 
 			p = this.addPage(TrackerPages.VOIDSPIKES, new StoryTrigger(VoidSpikesBiome.instance.discoveryGoal));
 			p.addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals")).addFinding("bladderfish", Finding.fromScan(C2CItems.voltaicBladderfish));//TODO .addFinding("levi", Finding.fromScan(C2CItems.voidSpikeLevi));
@@ -367,6 +368,10 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static FindingTrigger fromUnlock(TechType tt) {
 			return new FindingTrigger(() => KnownTech.knownTech.Contains(tt), () => KnownTech.Add(tt));
+		}
+
+		internal static FindingTrigger fromEncy(PDAManager.PDAPage page) {
+			return fromEncy(page.id);
 		}
 
 		internal static FindingTrigger fromEncy(string ency) {

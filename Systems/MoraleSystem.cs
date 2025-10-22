@@ -62,8 +62,8 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float GENERIC_RADIO_MORALE_DURATION = 60*30; //30 min
 		private static readonly float GENERIC_DEAD_LIFEPOD_MORALE_DURATION = 60*10; //10 min
 
-		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 5; //+5%/s
-		internal static readonly float OBSERVATORY_CONSTANT_BONUS = 2; //+2%/s
+		private static readonly float LEISURE_ROOM_CONSTANT_BONUS = 2; //+2%/s
+		internal static readonly float OBSERVATORY_CONSTANT_BONUS = 0.5F; //+0.5%/s
 
 		private static readonly float INITIAL_MORALE_BASELINE = 20;
 		private static readonly float MORALE_RESTORATION_RATE = 0.05F;
