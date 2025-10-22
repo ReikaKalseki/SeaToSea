@@ -803,7 +803,7 @@ namespace ReikaKalseki.SeaToSea {
 				if (SNUtil.canUseDebug())
 					MoraleSystem.instance.shiftMorale(arg);
 			});
-			ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("oxygenite", () => Oxygenite.spawnAt(Player.main.transform.position));
+			//ConsoleCommandsHandler.Main.RegisterConsoleCommand<Action>("oxygenite", () => Oxygenite.spawnAt(Player.main.transform.position));
 		}
 		/*
     private static void spawnVentKelp(float dist) {

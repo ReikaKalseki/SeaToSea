@@ -67,6 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 		private FMOD_CustomLoopingEmitter engineSounds;
 		private VehicleAccelerationModifier speedModifier;
 		private SeamothTetherController tethers;
+		private ECHooks.ECMoth ecocean;
 		public Rigidbody body { get; private set; }
 
 		private float baseDamageAmount;
@@ -92,16 +93,11 @@ namespace ReikaKalseki.SeaToSea {
 		private Vector3 jitterTorque;
 		private Vector3 jitterTorqueTarget;
 
-		public int stuckCells { get; private set; }
-		public bool touchingKelp { get; private set; }
-
 		public float voidStealthStoredEnergy { get; private set; }
 
 		public bool hasVoidStealth = false;
 
 		//private Renderer deepStalkerStorageDamage;
-
-		private PredatoryBloodvine holdingBloodKelp;
 
 		private static uGUI_SeamothHUD seamothHUD;
 		private SeamothWithStealthHUD stealthEnabledSeamothHUDElement;
@@ -240,14 +236,10 @@ namespace ReikaKalseki.SeaToSea {
 			boostSoundEvent = SoundManager.playSoundAt(boostSound, transform.position, false, -1, 1);
 			seamoth.screenEffectModel.SetActive(true);
 			ECHooks.attractToSoundPing(seamoth, false, 0.33F);
-			if (holdingBloodKelp)
-				holdingBloodKelp.release();
+			if (ecocean.holdingBloodKelp)
+				ecocean.holdingBloodKelp.release();
 			if (seamoth.liveMixin.GetHealthFraction() < 0.67F)
 				seamoth.liveMixin.TakeDamage(5);
-		}
-
-		public void OnBloodKelpGrab(PredatoryBloodvine c) {
-			holdingBloodKelp = c;
 		}
 
 		internal void onHitByLavaBomb(LavaBombTag bomb) {
@@ -259,14 +251,14 @@ namespace ReikaKalseki.SeaToSea {
 				seamoth = this.GetComponent<SeaMoth>();
 			if (!body)
 				body = this.GetComponent<Rigidbody>();
+			if (!ecocean)
+				ecocean = this.GetComponent<ECHooks.ECMoth>();
 			if (!engineSounds) {
 				engineSounds = this.GetComponentInChildren<EngineRpmSFXManager>().gameObject.GetComponent<FMOD_CustomLoopingEmitter>();
 			}
 
-			if (!speedModifier) {
-				speedModifier = seamoth.gameObject.AddComponent<VehicleAccelerationModifier>();
-				seamoth.accelerationModifiers = seamoth.GetComponentsInChildren<VehicleAccelerationModifier>();
-			}
+			if (!speedModifier)
+				speedModifier = seamoth.addSpeedModifier();
 			if (!temperatureDamage) {
 				temperatureDamage = this.GetComponent<TemperatureDamage>();
 				baseDamageAmount = temperatureDamage.baseDamagePerSecond;
@@ -278,15 +270,6 @@ namespace ReikaKalseki.SeaToSea {
 
 			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 
-			if (UnityEngine.Random.Range(0F, 1F) < 0.5F) {
-				//stuckCells = GetComponentsInChildren<VoidBubbleTag>().Length;
-				stuckCells = 0;
-				foreach (VoidBubbleTag vb in WorldUtil.getObjectsNearWithComponent<VoidBubbleTag>(transform.position, 24)) {
-					if (vb.isStuckTo(body))
-						stuckCells++;
-				}
-			}
-
 			float health = seamoth.liveMixin.GetHealthFraction();
 
 			float minSpeedBonus = seamoth.isVehicleUpgradeSelected(C2CItems.speedModule.TechType) ? 0.25F : 0;
@@ -295,10 +278,6 @@ namespace ReikaKalseki.SeaToSea {
 			else
 				speedBonus = Mathf.Min(minSpeedBonus, speedBonus + 0.1F);
 			speedModifier.accelerationMultiplier = 1 + speedBonus;
-			if (stuckCells > 0)
-				speedModifier.accelerationMultiplier *= Mathf.Exp(-stuckCells * 0.2F);
-			if (touchingKelp)
-				speedModifier.accelerationMultiplier *= 0.3F;
 			if (health < 0.9F)
 				speedModifier.accelerationMultiplier *= Mathf.Max(0.1F, health / 0.9F);
 			if (tethers.isTowing())
@@ -343,10 +322,15 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			bool kooshCave = false;
+			bool heatColumn = ECHooks.isVoidHeatColumn(transform.position, out Vector3 trash);// time-ecocean.lastTouchHeatBubble <= 0.5F;
+			bool geyser = time-ecocean.lastGeyserTime <= 0.5F;
 
 			if (health < 0.5F) {
-				float force = 1+(Mathf.Pow((0.5F-health)*2, 1.5F)*9);
+				//float force = 1+(Mathf.Pow((0.5F-health)*2, 1.5F)*9);
 				body.AddForce(Vector3.down * tickTime * 50, ForceMode.Acceleration);
+			}
+			if (heatColumn) {
+				body.AddForce(Vector3.up * tickTime * 150, ForceMode.Acceleration);
 			}
 
 			if (VanillaBiomes.KOOSH.isInBiome(transform.position)) {
@@ -364,7 +348,7 @@ namespace ReikaKalseki.SeaToSea {
 				VoidSpikesBiome.instance.tickTeleportCheck(seamoth);
 			}
 
-			if (this.isPurgingHeat) {
+			if (isPurgingHeat) {
 				vehicleTemperature -= tickTime * 150;
 				if (vehicleTemperature <= 5) {
 					vehicleTemperature = 5;
@@ -388,12 +372,22 @@ namespace ReikaKalseki.SeaToSea {
 					Tamb = 25;
 				else if (kooshCave)
 					Tamb = 95;
+				else if (geyser)
+					Tamb = 250;
+				//else if (heatColumn) not necessary, handled in ECHooks getTemp
+				//	Tamb = 72;
 				useSeamothVehicleTemperature = true;
 				float dT = Tamb-vehicleTemperature;
 				float excess = Mathf.Clamp01((vehicleTemperature-400)/400F);
 				float f0 = dT > 0 ? 4F : 25F-(15*excess);
 				float f1 = dT > 0 ? 5F : 1F+(1.5F*excess);
 				float speed = seamoth.useRigidbody.velocity.magnitude;
+
+				if (geyser) //whee, forced convection
+					speed *= 18;
+				else if (heatColumn)
+					speed *= 4;
+
 				if (speed >= 2) {
 					f0 /= 1 + ((speed - 2) / 8F);
 				}

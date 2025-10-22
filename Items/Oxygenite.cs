@@ -46,7 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			l.transform.localPosition = Vector3.up;
 			go.EnsureComponent<OxygeniteTag>();
 		}
-
+		/*
 		public static void spawnAt(Vector3 from) {
 			List<Vector3> spawned = new List<Vector3>();
 			for (int i = 0; i < 300; i++) {
@@ -66,7 +66,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			SNUtil.writeToChat("Spawned oxygenite: "+spawned.toDebugString());
 		}
-
+		*/
 		public static void dumpLocations() {
 			string file = BuildingHandler.instance.dumpPrefabs("oxygeniteSpawns", spawns);
 			SNUtil.writeToChat("Exported " + spawns.Count + " oxygenite to " + file);

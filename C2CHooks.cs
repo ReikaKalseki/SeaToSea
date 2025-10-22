@@ -2813,8 +2813,11 @@ namespace ReikaKalseki.SeaToSea {
 					id = CraftingItems.getItem(CraftingItems.Items.Chlorine).TechType;
 				}
 			}
-			else if (bb == UnderwaterIslandsFloorBiome.instance && refpt.y < -500 && sp.item.GetTechType() == TechType.Salt) {
-				id = GeyserMaterialSpawner.getRandomMineral(UnderwaterIslandsFloorBiome.instance);
+			else if (bb == UnderwaterIslandsFloorBiome.instance && sp.item.GetTechType() == TechType.Salt) {
+				if (refpt.y < -500)
+					id = GeyserMaterialSpawner.getRandomMineral(UnderwaterIslandsFloorBiome.instance);
+				else
+					id = CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType;
 			}
 			else if (bb == VanillaBiomes.ILZ && sp.item.GetTechType() == TechType.Salt) {
 				id = CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType;

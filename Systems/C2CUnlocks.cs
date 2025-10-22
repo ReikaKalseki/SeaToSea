@@ -63,6 +63,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(C2CItems.powerSeal.TechType, C2CItems.powerSeal.TechType);
 
+			//TechnologyUnlockSystem.instance.addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, C2CItems.oxygeniteTank.TechType);
+			TechnologyUnlockSystem.instance.addDirectUnlock(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType, C2CItems.oxygeniteCharge.TechType);
+
 			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.GhostLeviathan, CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
 			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.GhostLeviathanJuvenile, CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
 

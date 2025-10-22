@@ -41,6 +41,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static RebreatherV2 rebreatherV2;
 		public static LiquidTank liquidTank;
+		//public static OxygeniteTank oxygeniteTank;
 
 		public static ChargeFinRelay chargeFinRelay;
 
@@ -48,6 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static SeamothHeatSink heatSink;
 		public static CurativeBandage bandage;
 		public static KharaaTreatment treatment;
+		public static OxygeniteCharge oxygeniteCharge;
 
 		public static AlkaliPlant alkali;
 		public static VentKelp kelp;
@@ -141,11 +143,13 @@ namespace ReikaKalseki.SeaToSea {
 			t2Battery = new AzuriteBattery();
 			rebreatherV2 = new RebreatherV2();
 			liquidTank = new LiquidTank();
+			//oxygeniteTank = new OxygeniteTank();
 			chargeFinRelay = new ChargeFinRelay();
 			breathingFluid = new BreathingFluid();
 			heatSink = new SeamothHeatSink();
 			bandage = new CurativeBandage();
 			treatment = new KharaaTreatment();
+			oxygeniteCharge = new OxygeniteCharge();
 			bkelpBumpWormItem = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BKelpBumpWormItem"), "WorldEntities/Natural/StalkerTooth");
 			bkelpBumpWormItem.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BumpWormItem");
 			bkelpBumpWormItem.inventorySize = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? new Vector2int(3, 2) : new Vector2int(2, 1);
@@ -251,6 +255,7 @@ namespace ReikaKalseki.SeaToSea {
 			rebreatherV2.Patch();
 
 			liquidTank.Patch();
+			//oxygeniteTank.Patch();
 
 			chargeFinRelay.Patch();
 
@@ -258,6 +263,8 @@ namespace ReikaKalseki.SeaToSea {
 			CraftData.useEatSound[bandage.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
 			treatment.Patch();
 			CraftData.useEatSound[treatment.TechType] = CraftData.useEatSound[TechType.FirstAidKit];
+			oxygeniteCharge.Patch();
+			CraftData.useEatSound[oxygeniteCharge.TechType] = CraftData.pickupSoundList[TechType.HighCapacityTank];
 		}
 
 		internal static void addFlora() {
@@ -426,6 +433,22 @@ namespace ReikaKalseki.SeaToSea {
 			UsableItemRegistry.instance.addUsableItem(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType, (s, go) => {
 				float time = DayNightCycle.main.timePassedAsFloat;
 				return LiquidBreathingSystem.instance.applyTemporaryKharaaTreatment();
+			});
+			UsableItemRegistry.instance.addUsableItem(oxygeniteCharge.TechType, (s, go) => {
+				if (LiquidBreathingSystem.instance.hasLiquidBreathing())
+					return false;
+				InventoryItem ii = Inventory.main.equipment.GetItemInSlot("Tank");
+				if (ii == null || !ii.item)
+					return false;
+				Oxygen ox = ii.item.GetComponent<Oxygen>();
+				if (!ox)
+					return false;
+				float max = ox.oxygenCapacity*5;
+				float has = ox.oxygenAvailable;
+				if (has > max * 0.75F)
+					return false;
+				ox.oxygenAvailable = max;
+				return true;
 			});
 
 			IrreplaceableItemRegistry.instance.registerItem(CraftingItems.getItem(CraftingItems.Items.BrokenT2Battery));
