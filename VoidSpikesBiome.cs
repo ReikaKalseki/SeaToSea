@@ -288,6 +288,10 @@ namespace ReikaKalseki.SeaToSea {
 			//lw.cellLevel = LargeWorldEntity.CellLevel.Global;
 			return go;
 		}
+
+		public override bool isVoidBiome() {
+			return true;
+		}
 	}
 
 	class AtmoFX : GenUtil.CustomPrefabImpl {

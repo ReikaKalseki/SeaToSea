@@ -120,6 +120,10 @@ namespace ReikaKalseki.SeaToSea {
 			return 0.5F;
 		}
 
+		public override bool isVoidBiome() {
+			return false;
+		}
+
 		public static void cleanPlantOverlap() { //called manually to compute prebaked positions
 			HashSet<Vector3> positions = new HashSet<Vector3>();
 			foreach (SanctuaryPlantTag sp in UnityEngine.Object.FindObjectsOfType<SanctuaryPlantTag>()) {

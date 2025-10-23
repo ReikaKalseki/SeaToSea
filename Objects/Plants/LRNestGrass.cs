@@ -91,7 +91,7 @@ namespace ReikaKalseki.SeaToSea {
 				LiveMixin lv = other.gameObject.FindAncestor<LiveMixin>();
 				if (lv) {
 					particles.Play();
-					if (lv.GetComponent<Player>() || lv.GetComponent<Vehicle>()) {
+					if (lv.isPlayer() || lv.GetComponent<Vehicle>()) {
 						//lv.TakeDamage(10, transform.position, DamageType.Acid, gameObject);
 						DamageOverTime dot = lv.gameObject.EnsureComponent<NestGrassAcid>();
 						dot.doer = gameObject;

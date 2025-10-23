@@ -155,6 +155,10 @@ namespace ReikaKalseki.SeaToSea {
 		public bool isAtmoFX(PrefabIdentifier pi) {
 			return pi && pi.ClassId == atmoFX.ClassID;
 		}
+
+		public override bool isVoidBiome() {
+			return false;
+		}
 	}
 
 	class GlassForestAtmoFX : GenUtil.CustomPrefabImpl {

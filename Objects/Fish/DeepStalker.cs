@@ -27,9 +27,8 @@ namespace ReikaKalseki.SeaToSea {
 			glowIntensity = 1.25F;
 
 			scanTime = 8;
-			eggBase = TechType.StalkerEgg;
+			eggBase = TechType.Stalker;
 			eggMaturationTime = 2400;
-			acuSizeScale = 2F;
 			eggSpawnRate = 0.25F;
 			eggSpawns.Add(BiomeType.GrandReef_TreaderPath);
 		}
