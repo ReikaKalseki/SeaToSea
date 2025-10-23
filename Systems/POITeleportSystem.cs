@@ -54,6 +54,7 @@ namespace ReikaKalseki.SeaToSea {
 			this.addPOI("redkey", new Vector3(156.5F, -200, 951));
 			this.addPOI("lrcache", new Vector3(-1120, -682, -694));
 			this.addPOI("drf", new Vector3(-248, -800, 281));
+			this.addPOI("lrnest", C2CHooks.lrnest);
 			this.addPOI("khasar", new Vector3(-925, -178, 500));
 			this.addPOI("mushtree", new Vector3(-870, -93, 591));
 			this.addPOI("mushkoosh", new Vector3(712.84F, -222.55F, 532.76F));

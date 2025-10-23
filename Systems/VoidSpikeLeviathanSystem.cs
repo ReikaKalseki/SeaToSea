@@ -239,13 +239,7 @@ namespace ReikaKalseki.SeaToSea {
 			float dt = time-fxHook.lastSonarInterferenceTime;
 			f = 0;
 			if (dt <= SONAR_INTERFERENCE_LENGTH) {
-				f = dt <= SONAR_INTERFERENCE_DELAY
-					? 0.02F
-					: dt <= SONAR_INTERFERENCE_FADE_LENGTH_IN + SONAR_INTERFERENCE_DELAY
-					? 0.02F + (0.98F * (dt - SONAR_INTERFERENCE_DELAY) / SONAR_INTERFERENCE_FADE_LENGTH_IN)
-					: dt > SONAR_INTERFERENCE_LENGTH - SONAR_INTERFERENCE_FADE_LENGTH_OUT
-					? 1 - ((dt - (SONAR_INTERFERENCE_LENGTH - SONAR_INTERFERENCE_FADE_LENGTH_OUT)) / SONAR_INTERFERENCE_FADE_LENGTH_OUT)
-					: 1;
+				f = dt <= SONAR_INTERFERENCE_DELAY ? 0.02F : dt <= SONAR_INTERFERENCE_FADE_LENGTH_IN + SONAR_INTERFERENCE_DELAY ? 0.02F + (0.98F * (dt - SONAR_INTERFERENCE_DELAY) / SONAR_INTERFERENCE_FADE_LENGTH_IN) : dt > SONAR_INTERFERENCE_LENGTH - SONAR_INTERFERENCE_FADE_LENGTH_OUT ? 1 - ((dt - (SONAR_INTERFERENCE_LENGTH - SONAR_INTERFERENCE_FADE_LENGTH_OUT)) / SONAR_INTERFERENCE_FADE_LENGTH_OUT) : 1;
 			}
 			//SNUtil.log("f="+f);
 			fxHook.sonarInterferenceIntensity = f;
@@ -624,6 +618,18 @@ namespace ReikaKalseki.SeaToSea {
 		private class SeamothStealthManager : MonoBehaviour {
 
 			internal float nextStealthValidityTime = -1;
+
+			private float lastBiomeCheckTime;
+
+			void Update() {
+				float time = DayNightCycle.main.timePassedAsFloat;
+				if (time-lastBiomeCheckTime >= 1) {
+					lastBiomeCheckTime = time;
+					BiomeBase at = BiomeBase.getBiome(transform.position);
+					if (!at.isVoidBiome())
+						nextStealthValidityTime = -1;
+				}
+			}
 
 		}
 

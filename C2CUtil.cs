@@ -361,6 +361,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static void generateLRNestPlants() {
 			Vector3 p1 = new Vector3(-786, -762.6F, -321);
 			Vector3 p2 = new Vector3(-801, -764.9F, -280);
+			Vector3 p3 = new Vector3(-788, -751.6F, -321);
 
 			List<GameObject> plants = new List<GameObject>();
 
@@ -390,12 +391,34 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 
-			string path = BuildingHandler.instance.getDumpFile("lr_nest");
+			for (int i = 0; i < 9; i++) {
+				Vector3 rot = UnityEngine.Random.rotationUniform.eulerAngles.normalized;
+				Ray ray = new Ray(p3, rot);
+				if (UWE.Utils.RaycastIntoSharedBuffer(ray, 18, Voxeland.GetTerrainLayerMask(), QueryTriggerInteraction.Ignore) > 0) {
+					RaycastHit hit = UWE.Utils.sharedHitBuffer[0];
+					SNUtil.writeToChat(i + ": " + hit.transform);
+					if (hit.transform != null && hit.normal.y > -0.7F) {
+						bool flag = true;
+						foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(hit.point, 0.2F)) {
+							if (pi.ClassId == SeaToSeaMod.lrNestGrass.ClassID) {
+								flag = false;
+								break;
+							}
+						}
+						if (!flag)
+							continue;
+						GameObject go = ObjectUtil.createWorldObject(SeaToSeaMod.lrNestGrass.ClassID);
+						go.transform.rotation = MathUtil.unitVecToRotation(hit.normal);
+						go.transform.position = hit.point;
+						plants.Add(go);
+					}
+				}
+			}
+
+			string path = BuildingHandler.instance.getDumpFile("lr_nest2");
 			XmlDocument doc = new XmlDocument();
 			XmlElement rootnode = doc.CreateElement("Root");
 			doc.AppendChild(rootnode);
-
-			CustomEgg egg = CustomEgg.getEgg(TechType.SpineEel);
 
 			foreach (GameObject go in plants) {
 				PositionedPrefab pfb = new PositionedPrefab(go.GetComponent<PrefabIdentifier>());

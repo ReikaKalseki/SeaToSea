@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			scanTime = 4;
 
-			eggBase = TechType.GasopodEgg;
+			eggBase = TechType.Gasopod;
 			bigEgg = false;
 			eggMaturationTime = 1200;
 			eggSpawnRate = 1.5F;

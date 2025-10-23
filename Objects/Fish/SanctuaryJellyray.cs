@@ -27,7 +27,7 @@ namespace ReikaKalseki.SeaToSea {
 			glowIntensity = 0.5F;
 
 			scanTime = 5;
-			eggBase = TechType.JellyrayEgg;
+			eggBase = TechType.Jellyray;
 			eggMaturationTime = 3600;
 			//eggSpawnRate = 0.25F;
 			//eggSpawns.Add(BiomeType.GrandReef_TreaderPath);

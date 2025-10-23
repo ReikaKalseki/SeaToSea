@@ -27,11 +27,17 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class CameraLeviathanAttractor : MonoBehaviour{
+	public class CameraLeviathanAttractor : MonoBehaviour, AggroAttractor {
 
 		private float lastLeviCheckTime;
 
 		private MapRoomCamera cam;
+
+		public bool isAggroable {
+			get {
+				return !cam.dockingPoint;
+			}
+		}
 
 		public void Update() {
 			float time = DayNightCycle.main.timePassedAsFloat;

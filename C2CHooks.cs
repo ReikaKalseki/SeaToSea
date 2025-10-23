@@ -56,6 +56,9 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly Vector3 gunCenter = new Vector3(460.6F, -99, 1208.4F);
 		internal static readonly Vector3 mountainCenter = new Vector3(359.9F, 29F, 985.9F);
 
+		internal static readonly Vector3 lrnest = new Vector3(-809, -751, -321);
+		internal static readonly Vector3 lrNestDefender = new Vector3(-754, -716, -279); //new Vector3(-761, -753, -285);
+
 		internal static readonly Vector3 fcsWreckOpenableDoor = new Vector3(88.87F, -420.75F, 1449.10F);
 		internal static readonly Vector3 fcsWreckBlockedDoor = new Vector3(93.01F, -421.27F, 1444.71F);
 
@@ -1123,6 +1126,22 @@ namespace ReikaKalseki.SeaToSea {
 					if (ip.prawn)
 						dmg *= 0.08F; //do about 2% damage
 					lv.TakeDamage(dmg, Player.main.gameObject.transform.position, DamageType.Electrical, p.gameObject);
+				}
+			}
+			else if (CustomEgg.getEgg(TechType.SpineEel).includes(tt)) {
+				//SNUtil.writeToChat((Player.main.transform.position - lrnest).magnitude.ToString());
+				if ((Player.main.transform.position-lrnest).magnitude <= 50) {
+					HashSet<SpineEel> set = WorldUtil.getObjectsNearWithComponent<SpineEel>(lrnest, 120);
+					//SNUtil.writeToChat(set.Count.ToString());
+					for (int i = set.Count; i < 6; i++) {
+						GameObject go = ObjectUtil.createWorldObject(VanillaCreatures.RIVERPROWLER.prefab);
+						go.transform.position = MathUtil.getRandomVectorAround(lrNestDefender, 100);
+						set.Add(go.GetComponent<SpineEel>());
+					}
+					foreach (SpineEel e in set) {
+						AttractToTarget.attractCreatureToTarget(e, Player.main, false, 99999).deleteOnAttack = true;
+						//SNUtil.writeToChat(e.transform.position.ToString());
+					}
 				}
 			}
 			else if (tt == CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM).TechType && VanillaBiomes.ILZ.isInBiome(Player.main.transform.position)) {
