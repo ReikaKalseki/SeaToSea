@@ -45,6 +45,7 @@ namespace ReikaKalseki.SeaToSea {
 			{"FLOATISLAND_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_FLOATING_BASE, 50, "floatisland_degasi")},
 			{"JELLY_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_JELLY_BASE, 50, "jelly_degasi")},
 			{"DGR_DEGASI", StoryHandler.instance.createLocationGoal(WorldUtil.DEGASI_DGR_BASE, 75, "dgr_degasi")},
+			//{"LRNEST", StoryHandler.instance.createLocationGoal(C2CHooks.lrnest, 30, "LRNest")},
 		};
 
 		internal static readonly string METEOR_GOAL = "meteorhit";
