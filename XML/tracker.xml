@@ -277,7 +277,7 @@
 			The remains of Lifepod 1, underneath a large, derelict seabase, and a recording of the pod’s violent entry into the planetary atmosphere and then the ocean 
 		</pod1>
 		<chit>
-			Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 25%
+			Firmware upgrades to overclock the Bioprocessor, increasing energy efficiency by 33%
 		</chit>
 		<databox>
 			A databox containing the blueprint for substantial upgrades to the Seamoth’s depth rating, far beyond the typical design envelope
@@ -352,6 +352,9 @@
 		<calcite>
 			Translucent crystals of calcium carbonate in pockets in the ceiling
 		</calcite>
+		<nest>
+			A small alcove lined with toxic grass, containing numerous creature eggs
+		</nest>
 	</LOSTRIVER>
 	<DRF>
 		<name>
@@ -436,6 +439,9 @@
 		<pit>
 			A large sinkhole, containing a central upwelling of magma from which inexhaustible mineral resources can be collected
 		</pit>
+		<covedome>
+			Dome-shaped corals encased in a thick glassy shell
+		</covedome>
 	</ILZ>
 	<CRAG>
 		<name>

@@ -1131,6 +1131,7 @@ namespace ReikaKalseki.SeaToSea {
 			else if (CustomEgg.getEgg(TechType.SpineEel).includes(tt)) {
 				//SNUtil.writeToChat((Player.main.transform.position - lrnest).magnitude.ToString());
 				if ((Player.main.transform.position-lrnest).magnitude <= 50) {
+					Story.StoryGoal.Execute("LRNest", Story.GoalType.Story);
 					HashSet<SpineEel> set = WorldUtil.getObjectsNearWithComponent<SpineEel>(lrnest, 120);
 					//SNUtil.writeToChat(set.Count.ToString());
 					for (int i = set.Count; i < 6; i++) {

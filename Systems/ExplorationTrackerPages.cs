@@ -87,7 +87,7 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
 			p = this.addPage(TrackerPages.LOSTRIVER, new BiomeTrigger(VanillaBiomes.LOSTRIVER));
-			p.addFinding("drf", Finding.fromTracker(TrackerPages.DRF)).addFinding("cache", Finding.fromUnlock(C2CItems.treatment)).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton)).addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur")).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("LR_ARCH"))).addFinding("coral", Finding.fromScan(C2CItems.brineCoral)).addFinding("cove", Finding.fromBiome(VanillaBiomes.COVE)).addFinding("calcite", Finding.fromStory("Calcite"));
+			p.addFinding("drf", Finding.fromTracker(TrackerPages.DRF)).addFinding("cache", Finding.fromUnlock(C2CItems.treatment)).addFinding("dragon", Finding.fromScan(TechType.PrecursorSeaDragonSkeleton)).addFinding("skull", Finding.fromScan(TechType.HugeSkeleton)).addFinding("seal", Finding.fromUnlock(C2CItems.powerSeal)).addFinding("pda", Finding.fromEncy("lrpowerseal")).addFinding("sulfur", Finding.fromStory("GrabSulfur")).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("LR_ARCH"))).addFinding("coral", Finding.fromScan(C2CItems.brineCoral)).addFinding("cove", Finding.fromBiome(VanillaBiomes.COVE)).addFinding("calcite", Finding.fromStory("Calcite")).addFinding("nest", Finding.fromStory("LRNest"));
 			if (hard)
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathanJuvenile));
 
@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock));
 
 			p = this.addPage(TrackerPages.ILZ, new BiomeTrigger(VanillaBiomes.ILZ));
-			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter));
+			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter)).addFinding("covedome", Finding.fromScan(SeaToSeaMod.postCoveDome.TechType));
 
 			p = this.addPage(TrackerPages.CRAG, new BiomeTrigger(VanillaBiomes.CRAG));
 			p.addFinding("pod7", Finding.fromEncy(StoryGoals.POD7)).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH"))).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));

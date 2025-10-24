@@ -23,6 +23,7 @@ namespace ReikaKalseki.SeaToSea {
 		private Drillable resource;
 
 		private bool isInBrine;
+		private float distanceToBrine;
 
 		private float timeOutOfBrine;
 
@@ -63,10 +64,22 @@ namespace ReikaKalseki.SeaToSea {
 					return;
 				}
 				isInBrine = false;
+				distanceToBrine = 9999;
 				foreach (RaycastHit hit in Physics.SphereCastAll(transform.position + Vector3.up, 2, Vector3.up, 0.1F, 1, QueryTriggerInteraction.Collide)) {
 					if (hit.transform && hit.transform.GetComponent<AcidicBrineDamageTrigger>()) {
 						isInBrine = true;
+						distanceToBrine = -1;
 						break;
+					}
+				}
+				if (!isInBrine) {
+					Ray ray = new Ray(transform.position, Vector3.down);
+					if (UWE.Utils.RaycastIntoSharedBuffer(ray, 18, 1, QueryTriggerInteraction.Collide) > 0) {
+						foreach (RaycastHit hit in UWE.Utils.sharedHitBuffer) {
+							if (hit.transform && hit.transform.GetComponent<AcidicBrineDamageTrigger>()) {
+								distanceToBrine = Mathf.Abs(transform.position.y-hit.point.y);
+							}
+						}
 					}
 				}
 				lastBrineCheck = time;
@@ -81,7 +94,8 @@ namespace ReikaKalseki.SeaToSea {
 				timeOutOfBrine = 0;
 			}
 			else {
-				timeOutOfBrine += Time.deltaTime;
+				float f = (float)MathUtil.linterpolate(distanceToBrine, 4, 10, 1, 4, true);
+				timeOutOfBrine += Time.deltaTime*f;
 				if (timeOutOfBrine >= 10) { //10s grace period, and will reset this grace period if back in brine
 					resource.kChanceToSpawnResources = Mathf.Max(0.2F, resource.kChanceToSpawnResources - (Time.deltaTime / 30F)); //10s and then 30s drop, to 0 at 40s
 				}
