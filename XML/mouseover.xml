@@ -197,4 +197,15 @@
 		
 	</pda>
   </GhostLeviathanSample>
+  <GhostLeviathanSampleCooldown>
+	<name>
+		
+	</name>
+	<desc>
+		Creature needs time to regrow tissue
+	</desc>
+	<pda>
+		
+	</pda>
+  </GhostLeviathanSampleCooldown>
 </Root>

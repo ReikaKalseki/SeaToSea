@@ -8,6 +8,7 @@ using FMOD;
 using FMODUnity;
 
 using ReikaKalseki.DIAlterra;
+using ReikaKalseki.Ecocean;
 using ReikaKalseki.SeaToSea;
 
 using SMLHelper.V2.Assets;
@@ -59,6 +60,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private int randomDepth;
 		private float timeSinceRandomDepthChange;
+
+		private float lastVehicleCheck = -1;
 
 		private Channel? sonarSoundEvent;
 
@@ -119,7 +122,6 @@ namespace ReikaKalseki.SeaToSea {
 
 			internal float lastSonarInterferenceTime = -1;
 			internal float sonarInterferenceIntensity = 0;
-
 			internal LeviathanVisualFX() : base(9999) {
 
 			}
@@ -182,6 +184,12 @@ namespace ReikaKalseki.SeaToSea {
 			if (!day)
 				return;
 			float time = day.timePassedAsFloat;
+			if (VoidSpikesBiome.instance.isInBiome(ep.transform.position) && !ep.GetVehicle() && time-lastVehicleCheck > 1) {
+				lastVehicleCheck = time;
+				if (WorldUtil.getObjectsNearWithComponent<C2CMoth>(ep.transform.position, 400).Count == 0) {
+					ECHooks.attemptTongueGrab();
+				}
+			}
 			this.playDistantRoar(ep, time);
 			float dtf = time-lastFlashTime;
 			float maxL = currentFlashDuration*(1+DAZZLE_FADE_LENGTH);

@@ -46,6 +46,7 @@ namespace ReikaKalseki.SeaToSea {
 			[Message("unfinishedexplore")]NeedFinishExploreTrackerMessage,
 			[Message("liqbrselfscaneasy")]LiquidBreathingSelfScanEasy,
 			[Message("liqbrselfscanhard")]LiquidBreathingSelfScanHard,
+			[Message("needpcfsecurity")]NeedPCFSecurityMessage,
 		}
 
 		public static Message getAttr(Messages key) {

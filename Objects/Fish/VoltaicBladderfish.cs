@@ -132,7 +132,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			foreach (Renderer r in renders) {
-				RenderUtil.setEmissivity(r, currentEmissivity);
+				if (r)
+					RenderUtil.setEmissivity(r, currentEmissivity);
 			}
 
 			transform.localScale = Vector3.one*1.5F;

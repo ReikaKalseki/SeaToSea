@@ -98,6 +98,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		private static float nextSanctuaryPromptCheckTime = -1;
 		private static float nextBkelpBaseAmbCheckTime = -1;
+
+		public static bool inBKelpBase { get; private set; }
+
 		private static float nextBkelpBaseAmbTime = -1;
 		private static float nextCameraEMPTime = -1;
 
@@ -157,6 +160,7 @@ namespace ReikaKalseki.SeaToSea {
 			DIHooks.getBiomeEvent += getBiomeAt;
 			DIHooks.getTemperatureEvent += getWaterTemperature;
 
+			DIHooks.onBaseTickEvent += tickBase;
 			DIHooks.onPlayerTickEvent += tickPlayer;
 			DIHooks.getPlayerInputEvent += controlPlayerInput;
 
@@ -375,6 +379,21 @@ namespace ReikaKalseki.SeaToSea {
 			data.nodes = PDAEncyclopedia.ParsePath(data.path);
 		}
 
+		public static void tickBase(BaseRoot sub) {
+			if (sub.IsLeaking()) {
+				float leak = EnvironmentalDamageSystem.instance.getLRPowerLeakage(sub.gameObject); //ranges from 1 to 1.75
+				float f = 1+leak*4; //1/s base, LR 5-8/s
+				float[] arr = sub.flood.cellWaterLevel;
+				float sum = 0;
+				for (int i = 0; i < arr.Length; i++) {
+					sum += arr[i];
+				}
+				f *= sum / arr.Length;
+				f *= Mathf.Sqrt(arr.Length);
+				sub.powerRelay.ConsumeEnergy(Time.deltaTime * f, out float trash);
+			}
+		}
+
 		public static void tickPlayer(Player ep) {
 			if (playerDied) {
 				C2CUtil.setupDeathScreen();
@@ -525,7 +544,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			if (time >= nextBkelpBaseAmbCheckTime) {
 				nextBkelpBaseAmbCheckTime = time + UnityEngine.Random.Range(0.5F, 2.5F);
-				if (Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60) {
+				inBKelpBase = Vector3.Distance(ep.transform.position, bkelpBaseGeoCenter) <= 60;
+				if (inBKelpBase) {
 					StoryGoal.Execute("SeeBkelpBase", Story.GoalType.Story);
 					if (time >= nextBkelpBaseAmbTime) {
 						SNUtil.log("Queuing bkelp base ambience @ " + ep.transform.position);
@@ -1450,27 +1470,7 @@ namespace ReikaKalseki.SeaToSea {
 				go.EnsureComponent<C2CReaper>();
 			}
 			else if (SNUtil.match(pi, VanillaCreatures.GHOST_LEVIATHAN.prefab) || SNUtil.match(pi, VanillaCreatures.GHOST_LEVIATHAN_BABY.prefab)) {
-				Sealed s = go.EnsureComponent<Sealed>();
-				s._sealed = true;
-				s.maxOpenedAmount = 200;
-				s.openedEvent.AddHandler(go, new UWE.Event<Sealed>.HandleFunction(se => {
-					se.openedAmount = 0;
-					se._sealed = true;
-					if (PDAScanner.complete.Contains(TechType.GhostLeviathan) || PDAScanner.complete.Contains(TechType.GhostLeviathanJuvenile))
-						InventoryUtil.addItem(CraftingItems.getItem(CraftingItems.Items.GhostGel).TechType);
-				}));
-				GenericHandTarget ht = go.EnsureComponent<GenericHandTarget>();
-				ht.onHandHover = new HandTargetEvent();
-				ht.onHandHover.AddListener(hte => {
-					Pickupable held = Inventory.main.GetHeld();
-					if (held && held.GetTechType() == TechType.Scanner)
-						return;
-					if (held && held.GetTechType() == TechType.LaserCutter && (PDAScanner.complete.Contains(TechType.GhostLeviathan) || PDAScanner.complete.Contains(TechType.GhostLeviathanJuvenile))) {
-						HandReticle.main.SetProgress(s.GetSealedPercentNormalized());
-						HandReticle.main.SetIcon(HandReticle.IconType.Progress, 1f);
-						HandReticle.main.SetInteractText("GhostLeviathanSample"); //is a locale key
-					}
-				});
+				go.EnsureComponent<GhostGelTracker>().setup();
 			}
 			else if (DEIntegrationSystem.instance.isLoaded() && !go.GetComponent<WaterParkCreature>() && SNUtil.match(go, DEIntegrationSystem.instance.getThalassacean(), DEIntegrationSystem.instance.getLRThalassacean())) {
 				go.EnsureComponent<DEIntegrationSystem.C2CThalassacean>();
@@ -3046,6 +3046,55 @@ namespace ReikaKalseki.SeaToSea {
 				ret = (float)MathUtil.linterpolate(morale, 80, 100, 1, 4, true);
 			}
 			return ret;
+		}
+
+		public static bool canWarperAggroPlayer(WarperInspectPlayer warp, GameObject target) {
+			if (target.isPlayer() && C2CHooks.inBKelpBase && !WorldUtil.lineOfSight(target, warp.gameObject))
+				return false;
+			if (Vector3.Distance(target.transform.position, warp.transform.position) > warp.maxDistance) {
+				return false;
+			}
+			if (!warp.warper.GetCanSeeObject(target)) {
+				return false;
+			}
+			InfectedMixin component = target.GetComponent<InfectedMixin>();
+			return !(component != null) || component.GetInfectedAmount() <= 0.33f;
+		}
+
+		public static void unfoldKeyTerminal(PrecursorKeyTerminal pk) {
+			if (pk.acceptKeyType == PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Blue && !C2CProgression.instance.isPCFAccessible()) {
+				PDAMessagePrompts.instance.trigger(PDAMessages.getAttr(PDAMessages.Messages.NeedPCFSecurityMessage).key);
+				return;
+			}
+			if (!pk.slotted) {
+				Utils.PlayFMODAsset(pk.openSound, pk.transform, 20f);
+				pk.animator.SetBool("Open", true);
+			}
+		}
+
+		public static void clickKeyTerminal(PrecursorKeyTerminal pk) { //TODO replace with a simple patch to the if below ; also patch hover
+			if (pk.slotted || !C2CProgression.instance.isPCFAccessible()) {
+				return;
+			}
+			TechType techType = pk.ConvertKeyTypeToTechType(pk.acceptKeyType);
+			Pickupable pickupable = Inventory.main.container.RemoveItem(techType);
+			pk.restoreQuickSlot = -1;
+			if (pickupable != null) {
+				pk.restoreQuickSlot = Inventory.main.quickSlots.activeSlot;
+				Inventory.main.ReturnHeld(true);
+				pk.keyObject = pickupable.gameObject;
+				pk.keyObject.transform.SetParent(Inventory.main.toolSocket);
+				pk.keyObject.transform.localPosition = Vector3.zero;
+				pk.keyObject.transform.localRotation = Quaternion.identity;
+				pk.keyObject.SetActive(true);
+				Rigidbody component = pk.keyObject.GetComponent<Rigidbody>();
+				if (component != null) {
+					component.isKinematic = true;
+				}
+				pk.cinematicController.StartCinematicMode(Player.main);
+				Utils.PlayFMODAsset(pk.useSound, pk.transform, 20f);
+				pk.slotted = true;
+			}
 		}
 	}
 }

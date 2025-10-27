@@ -24,6 +24,8 @@ namespace ReikaKalseki.SeaToSea {
 		internal readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 		internal readonly Vector3 pod2Location = new Vector3(-489, -500, 1328);
 
+		public int pcfSecurityNodes = 32; //TODO populate from worldgen
+
 		private readonly Dictionary<string, StoryGoal> locationGoals = new Dictionary<string, StoryGoal>() {
 			{"OZZY_FORK_DEEP_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-645.6F, -102.7F, -16.2F), 12, "ozzyforkdeeproom")},
 			{"UNDERISLANDS_BLOCKED_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-124.38F, -200.69F, 855F), 5, "underislandsblockedroom")},
@@ -363,6 +365,26 @@ namespace ReikaKalseki.SeaToSea {
 				StoryGoal.Execute("seamothdepthchit1", Story.GoalType.Story);
 				SNUtil.writeToChat("1/3 Data Entries Recovered");
 				SNUtil.setBlueprintUnlockProgress(SeaToSeaMod.seamothDepthUnlockTracker, 1);
+			}
+		}
+
+		private string getPCFSecurityGate(int i) {
+			return "PCFNodeClear_"+i;
+		}
+
+		public bool isPCFAccessible() {
+			return StoryGoalManager.main.IsGoalComplete(getPCFSecurityGate(pcfSecurityNodes));
+		}
+
+		public void stepPCFSecurity() {
+			for (int i = pcfSecurityNodes; i > 0; i--) {
+				string key = getPCFSecurityGate(i);
+				string req = i == 1 ? null : getPCFSecurityGate(i-1);
+				if (req == null || StoryGoalManager.main.IsGoalComplete(req)) {
+					StoryGoal.Execute(key, Story.GoalType.Story);
+					SNUtil.writeToChat(i+"/"+pcfSecurityNodes+" security nodes disabled");
+					break;
+				}
 			}
 		}
 
