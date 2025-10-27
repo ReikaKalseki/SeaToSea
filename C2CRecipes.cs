@@ -593,9 +593,11 @@ namespace ReikaKalseki.SeaToSea {
 			addItemToRecipe(TechType.Exosuit, obsidiglass.TechType, 4);
 			RecipeUtil.removeIngredient(TechType.Exosuit, TechType.EnameledGlass);
 
+			//1300m -> ILZ
 			RecipeUtil.removeIngredient(TechType.ExoHullModule1, TechType.PlasteelIngot);
 			addItemToRecipe(TechType.ExoHullModule1, TechType.Kyanite, 3);
 			addItemToRecipe(TechType.ExoHullModule1, armor.TechType, 2);
+			//1700m -> ALZ
 			addItemToRecipe(TechType.ExoHullModule2, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 4);
 			addItemToRecipe(TechType.ExoHullModule2, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType, 2);
 			RecipeUtil.removeIngredient(TechType.ExoHullModule2, TechType.Kyanite);
@@ -604,9 +606,14 @@ namespace ReikaKalseki.SeaToSea {
 			//addItemToRecipe(TechType.ExosuitJetUpgradeModule, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 4);
 			addItemToRecipe(TechType.ExosuitJetUpgradeModule, CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 5);
 
+			//900m
 			addItemToRecipe(TechType.CyclopsHullModule1, CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).TechType, 8);
+			//1300m -> ILZ
 			addItemToRecipe(TechType.CyclopsHullModule2, C2CItems.mountainGlow.seed.TechType, 3);
 			addItemToRecipe(TechType.CyclopsHullModule2, obsidiglass.TechType, 4);
+			//1700m -> ALZ
+			addItemToRecipe(TechType.CyclopsHullModule3, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 6);
+			
 
 			addItemToRecipe(TechType.LaserCutter, TechType.AluminumOxide, 2);
 			RecipeUtil.removeIngredient(TechType.LaserCutter, TechType.Battery);

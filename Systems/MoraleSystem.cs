@@ -134,8 +134,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void register() {
-			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-20, -2, -2);
-			biomeEffect[VanillaBiomes.ILZ] = new AmbientMoraleInfluence(-10, 0, -1);
+			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-5, -0.5F, -0.5F);
+			biomeEffect[VanillaBiomes.ILZ] = new AmbientMoraleInfluence(-1, 0, -0.1F);
 			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-0.75F, 0, -0.33F);
 			biomeEffect[VanillaBiomes.BLOODKELPNORTH] = new AmbientMoraleInfluence(-0.8F, 0, -0.4F);
 			biomeEffect[VanillaBiomes.COVE] = new AmbientMoraleInfluence(2, 2, 2);

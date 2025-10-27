@@ -509,6 +509,52 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		[HarmonyPatch(typeof(PrecursorKeyTerminal))]
+		[HarmonyPatch("OpenDeck")]
+		public static class PrecursorDoorUnfoldHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList();
+				try {
+					codes.add(OpCodes.Ldarg_0);
+					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "unfoldKeyTerminal", false, typeof(PrecursorKeyTerminal));
+					codes.add(OpCodes.Ret);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
+		[HarmonyPatch(typeof(PrecursorKeyTerminal))]
+		[HarmonyPatch("OnHandClick")]
+		public static class PrecursorDoorClickHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList();
+				try {
+					codes.add(OpCodes.Ldarg_0);
+					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "clickKeyTerminal", false, typeof(PrecursorKeyTerminal));
+					codes.add(OpCodes.Ret);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
 		[HarmonyPatch(typeof(InspectOnFirstPickup))]
 		[HarmonyPatch("Start")]
 		public static class InspectableSpawnHook {
@@ -1731,6 +1777,30 @@ namespace ReikaKalseki.SeaToSea {
 				try {
 					int idx = codes.getInstruction(0, 0, OpCodes.Ldc_R4, 0.041666668F);
 					codes.Insert(idx+1, InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "getAmbientHealAmount", false, typeof(float)));
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
+		[HarmonyPatch(typeof(WarperInspectPlayer))]
+		[HarmonyPatch("GetCanInspect")]
+		public static class WarperAggroHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList();
+				try {
+					codes.add(OpCodes.Ldarg_0);
+					codes.add(OpCodes.Ldarg_1);
+					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "canWarperAggroPlayer", false, typeof(WarperInspectPlayer), typeof(GameObject));
+					codes.add(OpCodes.Ret);
 					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {

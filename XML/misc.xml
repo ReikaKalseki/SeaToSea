@@ -296,6 +296,17 @@
 		Sounds/pdaprompt/liq-br-selfscan-hard.ogg
 	</pda>
   </liqbrselfscanhard>
+  <needpcfsecurity>
+	<name>
+		
+	</name>
+	<desc>		
+		Facility security interlocks active. Access currently prohibited.
+	</desc>
+	<pda>
+		Sounds/pdaprompt/needpcfsecurity.ogg
+	</pda>
+  </needpcfsecurity>
   <auroraringterminal_c2c>
 	<name>
 		

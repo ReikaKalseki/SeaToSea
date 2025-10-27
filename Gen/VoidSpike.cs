@@ -513,8 +513,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			private void setCurrentOre(Transform t) {
-				if (currentOre) {
+				if (currentRenderers != null) {
 					foreach (Renderer r in currentRenderers) {
+						if (!(r))
+							continue;
 						if (r is MeshRenderer) {
 							((MeshRenderer)r).shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 							((MeshRenderer)r).receiveShadows = true;
