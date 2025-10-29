@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static bool checkWorldgenIntegrity(bool flag) {
 			xmlLoadFailure = SeaToSeaMod.worldgen.getCount() <= 0;
-			if (flag || xmlLoadFailure || SeaToSeaMod.mushroomBioFragment.getFragmentCount() <= 0 || SeaToSeaMod.geyserCoral.getFragmentCount() <= 0 || DataboxTypingMap.instance.isEmpty()) {
+			if (flag || xmlLoadFailure || SeaToSeaMod.mushroomBioFragment.fragmentCount <= 0 || SeaToSeaMod.geyserCoral.fragmentCount <= 0 || DataboxTypingMap.instance.isEmpty()) {
 				currentErrorText.Clear();
 				currentErrorText.Add("C2C worldgen failed to initialize, and all progression is invalid! Do not continue playing!");
 				if (xmlLoadFailure)

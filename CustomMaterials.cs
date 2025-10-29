@@ -35,7 +35,7 @@ namespace ReikaKalseki.SeaToSea {
 				mappings[m] = item;
 				item.Patch();
 				techs[item.TechType] = item;
-				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2, e.getField<string>("header"));
+				item.addPDAEntry(e.pda, m == Materials.PRESSURE_CRYSTALS ? 5 : 2, e.getString("header"));
 				SNUtil.log(" > " + item);
 			}
 		}

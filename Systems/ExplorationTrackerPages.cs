@@ -34,7 +34,7 @@ namespace ReikaKalseki.SeaToSea {
 			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
 
 			StoryHandler.instance.addListener(this);
-			CustomLocaleKeyDatabase.registerKey("EncyPath_Findings", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getField<string>("category"));
+			CustomLocaleKeyDatabase.registerKey("EncyPath_Findings", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getString("category"));
 
 			TrackerPage p = this.addPage(TrackerPages.DEGASI1, new PositionTrigger(POITeleportSystem.instance.getPosition("degasi1"), 70));
 			p.addFinding("pda", Finding.fromEncy("JellyPDARoom2Desk")).addFinding("databox", Finding.fromUnlock(TechType.HighCapacityTank)).addFinding("water", Finding.fromUnlock(TechType.BaseFiltrationMachine)).addFinding("breathcharge", Finding.fromEncy(C2CItems.rebreatherCharger.getPDAPage().id)).addFinding("azurite", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite))).addFinding("maidapage", Finding.fromEncy(StoryGoals.MAIDA_SEAMOTH_LOG));
@@ -98,7 +98,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock));
 
 			p = this.addPage(TrackerPages.ILZ, new BiomeTrigger(VanillaBiomes.ILZ));
-			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter)).addFinding("covedome", Finding.fromScan(SeaToSeaMod.postCoveDome.TechType));
+			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter)).addFinding("covedome", Finding.fromScan(SeaToSeaMod.postCoveDome.TechType)).addFinding("security", Finding.fromScan(SeaToSeaMod.securityNode.TechType));
 
 			p = this.addPage(TrackerPages.CRAG, new BiomeTrigger(VanillaBiomes.CRAG));
 			p.addFinding("pod7", Finding.fromEncy(StoryGoals.POD7)).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH"))).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
@@ -145,7 +145,7 @@ namespace ReikaKalseki.SeaToSea {
 				p.addFinding("levi", Finding.fromScan(TechType.GhostLeviathan));
 
 			p = this.addPage(TrackerPages.CRASH, new BiomeTrigger(VanillaBiomes.CRASH));
-			p.addFinding("pod4", Finding.fromEncy(StoryGoals.POD4)).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("stasis", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.stasisBlock)).addFinding("sanctuary", Finding.fromStory(CrashZoneSanctuaryBiome.instance.discoveryGoal)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant)));
+			p.addFinding("pod4", Finding.fromEncy(StoryGoals.POD4)).addFinding("crashmesa", Finding.fromUnlock(TechType.VehicleHullModule3)).addFinding("stasis", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.stasisBlock)).addFinding("sanctuary", Finding.fromStory(CrashZoneSanctuaryBiome.instance.discoveryGoal)).addFinding("trailerbase", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HeatSealant))).addFinding("storage", Finding.fromUnlock(C2CItems.cyclopsStorage));
 			if (hard)
 				p.addFinding("reaper", Finding.fromScan(TechType.ReaperLeviathan));
 
@@ -292,7 +292,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		internal TrackerPage addFinding(string key, FindingTrigger trigger) {
-			findings[key] = new Finding(key, locale.getField<string>(key), trigger);
+			findings[key] = new Finding(key, locale.getString(key), trigger);
 			return this;
 		}
 
@@ -332,7 +332,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!any)
 				desc = "";
 			if (incomplete)
-				desc += string.Format("{1}<color=#FF9D14FF>{0}</color>", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getField<string>("incomplete"), any ? "\n" : "");
+				desc += string.Format("{1}<color=#FF9D14FF>{0}</color>", SeaToSeaMod.miscLocale.getEntry("TrackerPage").getString("incomplete"), any ? "\n" : "");
 			return desc;
 		}
 

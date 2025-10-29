@@ -106,7 +106,7 @@ namespace ReikaKalseki.SeaToSea {
 			List<Rigidbody> available = new List<Rigidbody>();
 			WorldUtil.getGameObjectsNear(transform.position, RANGE, go => {
 				Rigidbody rb = go.GetComponent<Rigidbody>();
-				if (rb && !rb.GetComponent<Vehicle>()) {
+				if (rb && !rb.GetComponent<Vehicle>() && !rb.GetComponent<WaterParkItem>()) {
 					Drillable d = go.GetComponent<Drillable>();
 					if (d) {
 						available.Add(rb);

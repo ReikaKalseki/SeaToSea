@@ -24,7 +24,9 @@ namespace ReikaKalseki.SeaToSea {
 		internal readonly Vector3 dronePDACaveEntrance = new Vector3(-80, -79, 262);
 		internal readonly Vector3 pod2Location = new Vector3(-489, -500, 1328);
 
-		public int pcfSecurityNodes = 32; //TODO populate from worldgen
+		public int pcfSecurityNodes = 9999;
+
+		private readonly SoundManager.SoundData securityNodePDALine;
 
 		private readonly Dictionary<string, StoryGoal> locationGoals = new Dictionary<string, StoryGoal>() {
 			{"OZZY_FORK_DEEP_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-645.6F, -102.7F, -16.2F), 12, "ozzyforkdeeproom")},
@@ -122,6 +124,8 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (StoryGoal g in locationGoals.Values) {
 				StoryHandler.instance.registerTickedGoal(g);
 			}
+
+			securityNodePDALine = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "pda_pcf_node", "Sounds/pdaprompt/pcfnode.ogg");
 
 			//StoryHandler.instance.registerChainedRedirect("PrecusorPrisonAquariumIncubatorActive", null); //deregister
 
@@ -382,7 +386,8 @@ namespace ReikaKalseki.SeaToSea {
 				string req = i == 1 ? null : getPCFSecurityGate(i-1);
 				if (req == null || StoryGoalManager.main.IsGoalComplete(req)) {
 					StoryGoal.Execute(key, Story.GoalType.Story);
-					SNUtil.writeToChat(i+"/"+pcfSecurityNodes+" security nodes disabled");
+					Subtitles.main.Add(i + " of " + pcfSecurityNodes + " security nodes disabled.");
+					SoundManager.playSoundAt(securityNodePDALine, Player.main.transform.position, false, -1);
 					break;
 				}
 			}

@@ -18,20 +18,13 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class MushroomTreeBacterialColony : Spawnable {
-
-		private readonly XMLLocale.LocaleEntry locale;
+	public class MushroomTreeBacterialColony : InteractableSpawnable {
 
 		public static readonly Color BLUE_COLOR = new Color(0, 112/255F, 1, 1);
 		public static readonly Color PURPLE_COLOR = new Color(160/255F, 12/255F, 1);
 
-		public static TechType unlock { get; private set; }
-
-		private int FRAGMENT_COUNT;
-
-		internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
-			locale = e;
-
+		internal MushroomTreeBacterialColony(XMLLocale.LocaleEntry e) : base(e) {
+			scanTime = 5;
 			OnFinishedPatching += () => {
 				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<TreeColonyTag>().addField("scanned"));
 			};
@@ -76,32 +69,14 @@ namespace ReikaKalseki.SeaToSea {
 			return world;
 		}
 
-		public int getFragmentCount() {
-			return FRAGMENT_COUNT;
-		}
-
 		public void register() {
 			this.Patch();
 		}
 
 		public void postRegister() {
-			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, "Lifeforms/Coral");
-			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/Bacteria"));
-			page.register();
-			unlock = CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType;
-			KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>() { unlock });
-			PDAScanner.EntryData e = new PDAScanner.EntryData();
-			e.key = TechType;
-			e.blueprint = unlock;
-			e.destroyAfterScan = false;
-			e.locked = true;
-			FRAGMENT_COUNT = SeaToSeaMod.worldgen.getCount(ClassID);
-			e.totalFragments = FRAGMENT_COUNT;
-			SNUtil.log("Found " + e.totalFragments + " " + ClassID + " to use as fragments", SeaToSeaMod.modDLL);
-			e.isFragment = true;
-			e.scanTime = 5;
-			e.encyclopedia = page.id;
-			PDAHandler.AddCustomScannerEntry(e);
+			countGen(SeaToSeaMod.worldgen);
+			setFragment(CraftingItems.getItem(CraftingItems.Items.BacterialSample).TechType, fragmentCount);
+			registerEncyPage();
 		}
 
 		public static void setupWave(Renderer r2, float str = 1) {
@@ -177,7 +152,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		void OnScanned() {
 			scanned = true;
-			SNUtil.addBlueprintNotification(MushroomTreeBacterialColony.unlock);
+			SNUtil.addBlueprintNotification(MushroomTreeBacterialColony.fragmentUnlock);
 		}
 
 	}

@@ -14,16 +14,12 @@ using UnityEngine;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class PostCoveDome : Spawnable {
-
-		public readonly XMLLocale.LocaleEntry locale;
+	public class PostCoveDome : InteractableSpawnable {
 
 		public static readonly float HOT_THRESHOLD = -1070F;
 
-		private int FRAGMENT_COUNT;
-
-		public PostCoveDome(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
-			locale = e;
+		public PostCoveDome(XMLLocale.LocaleEntry e) : base(e) {
+			scanTime = 10;
 		}
 
 		public override GameObject GetGameObject() {
@@ -34,28 +30,10 @@ namespace ReikaKalseki.SeaToSea {
 			return go;
 		}
 
-		public int getFragmentCount() {
-			return FRAGMENT_COUNT;
-		}
-
 		public void postRegister() {
-			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, locale.getField<string>("category"));
-			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, locale.getField<string>("header")));
-			page.register();
-			TechType unlock = CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType;
-			KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>() { unlock });
-			PDAScanner.EntryData e = new PDAScanner.EntryData();
-			e.key = TechType;
-			e.blueprint = unlock;
-			e.destroyAfterScan = false;
-			e.locked = true;
-			FRAGMENT_COUNT = SeaToSeaMod.worldgen.getCount<PostCoveDomeGenerator>();
-			e.totalFragments = FRAGMENT_COUNT;
-			SNUtil.log("Found " + e.totalFragments + " " + ClassID + " to use as fragments", SeaToSeaMod.modDLL);
-			e.isFragment = true;
-			e.scanTime = 10;
-			e.encyclopedia = page.id;
-			PDAHandler.AddCustomScannerEntry(e);
+			countGen<PostCoveDomeGenerator>(SeaToSeaMod.worldgen);
+			setFragment(CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType, fragmentCount);
+			registerEncyPage();
 		}
 
 		public static void setupRenderGloss(Renderer r) {

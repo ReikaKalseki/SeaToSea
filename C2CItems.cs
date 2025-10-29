@@ -111,18 +111,18 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static void preAdd() {
 			XMLLocale.LocaleEntry e = SeaToSeaMod.miscLocale.getEntry("CraftingNodes");
-			chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", e.getField<string>("chemistry"));
+			chemistryCategory = TechCategoryHandler.Main.AddTechCategory("C2Chemistry", e.getString("chemistry"));
 			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, chemistryCategory);
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", e.getField<string>("chemistry"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry"), "Resources");
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2Chemistry", e.getString("chemistry"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/chemistry"), "Resources");
 
-			ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", e.getField<string>("ingots"));
+			ingotCategory = TechCategoryHandler.Main.AddTechCategory("C2CIngots", e.getString("ingots"));
 			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, ingotCategory);
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", e.getField<string>("ingots"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", e.getField<string>("ingotUnpack"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots", e.getString("ingots"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotmaking"), "Resources");
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Fabricator, "C2CIngots2", e.getString("ingotUnpack"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/ingotbreaking"), "Resources");
 
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getField<string>("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CHelmet", e.getField<string>("helmet"), SpriteManager.Get(TechType.Rebreather));
-			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CModElectronics", e.getField<string>("modelectric"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/modelectronic"));
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getString("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CHelmet", e.getString("helmet"), SpriteManager.Get(TechType.Rebreather));
+			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CModElectronics", e.getString("modelectric"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/modelectronic"));
 
 			brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 			brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
@@ -271,7 +271,7 @@ namespace ReikaKalseki.SeaToSea {
 			alkali = new AlkaliPlant();
 			alkali.Patch();
 			XMLLocale.LocaleEntry e = SeaToSeaMod.itemLocale.getEntry(alkali.ClassID);
-			alkali.addPDAEntry(e.pda, 3, e.getField<string>("header"));
+			alkali.addPDAEntry(e.pda, 3, e.getString("header"));
 			SNUtil.log(" > " + alkali);
 			GenUtil.registerPlantWorldgen(alkali, BiomeType.Mountains_IslandCaveFloor, 1, 1F);
 			GenUtil.registerPlantWorldgen(alkali, BiomeType.Mountains_CaveFloor, 1, 0.5F);
@@ -283,20 +283,20 @@ namespace ReikaKalseki.SeaToSea {
 			kelp = new VentKelp();
 			kelp.Patch();
 			e = SeaToSeaMod.itemLocale.getEntry(kelp.ClassID);
-			kelp.addPDAEntry(e.pda, 3, e.getField<string>("header"));
+			kelp.addPDAEntry(e.pda, 3, e.getString("header"));
 			SNUtil.log(" > " + kelp);
 
 			healFlower = new HealingFlower();
 			healFlower.Patch();
 			e = SeaToSeaMod.itemLocale.getEntry(healFlower.ClassID);
-			healFlower.addPDAEntry(e.pda, 5, e.getField<string>("header"));
+			healFlower.addPDAEntry(e.pda, 5, e.getString("header"));
 			SNUtil.log(" > " + healFlower);
 			GenUtil.registerPlantWorldgen(healFlower, BiomeType.GrassyPlateaus_CaveFloor, 1, 2.5F);
 
 			mountainGlow = new MountainGlow();
 			mountainGlow.Patch();
 			e = SeaToSeaMod.itemLocale.getEntry(mountainGlow.ClassID);
-			mountainGlow.addPDAEntry(e.pda, 8, e.getField<string>("header"));
+			mountainGlow.addPDAEntry(e.pda, 8, e.getString("header"));
 			SNUtil.log(" > " + mountainGlow);
 			GenUtil.registerPrefabWorldgen(mountainGlow, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Grass, 1, 0.5F);
 			GenUtil.registerPrefabWorldgen(mountainGlow, EntitySlot.Type.Small, LargeWorldEntity.CellLevel.Medium, BiomeType.Mountains_Rock, 1, 0.1F);
@@ -305,12 +305,12 @@ namespace ReikaKalseki.SeaToSea {
 			sanctuaryPlant = new SanctuaryPlant();
 			sanctuaryPlant.Patch();
 			e = SeaToSeaMod.itemLocale.getEntry(sanctuaryPlant.ClassID);
-			sanctuaryPlant.addPDAEntry(e.pda, 10, e.getField<string>("header"));
+			sanctuaryPlant.addPDAEntry(e.pda, 10, e.getString("header"));
 			SNUtil.log(" > " + sanctuaryPlant);
 
 			e = SeaToSeaMod.itemLocale.getEntry("BRINE_CORAL");
 			brineCoral = SNUtil.addTechTypeToVanillaPrefabs(e, SeaToSeaMod.lrCoralClusters.ToArray());
-			SNUtil.addPDAEntry(brineCoral, e.key, e.name, 3, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+			SNUtil.addPDAEntry(brineCoral, e.key, e.name, 3, e.getString("category"), e.pda, e.getString("header"));
 
 			brineCoralPiece = new WorldCollectedItem(SeaToSeaMod.itemLocale.getEntry("BrineCoralPiece"), VanillaResources.TITANIUM.prefab);
 			brineCoralPiece.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/BrineCoralPiece");
@@ -327,7 +327,7 @@ namespace ReikaKalseki.SeaToSea {
 				emperorRoots[pfb].Patch();
 			}
 			emperorRootCommon = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
-			SNUtil.addPDAEntry(emperorRootCommon, e.key, e.name, 5, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+			SNUtil.addPDAEntry(emperorRootCommon, e.key, e.name, 5, e.getString("category"), e.pda, e.getString("header"));
 
 			emperorRootOil = new EmperorRootOil(SeaToSeaMod.itemLocale.getEntry("EmperorRootOil"));
 			emperorRootOil.Patch();
@@ -339,7 +339,7 @@ namespace ReikaKalseki.SeaToSea {
                 postCoveTrees[pfb].Patch();
             }
             postCoveTreeCommon = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
-            PostCoveTree.postRegister().encyclopedia = SNUtil.addPDAEntry(postCoveTreeCommon, e.key, e.name, 5, e.getField<string>("category"), e.pda, e.getField<string>("header")).id;
+            PostCoveTree.postRegister().encyclopedia = SNUtil.addPDAEntry(postCoveTreeCommon, e.key, e.name, 5, e.getString("category"), e.pda, e.getString("header")).id;
             */
 			BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed) * 1.5F);
 			BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil) * 0.8F);

@@ -18,16 +18,10 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class GelFountain : Spawnable {
+	public class GelFountain : InteractableSpawnable {
 
-		private readonly XMLLocale.LocaleEntry locale;
-
-		//public static TechType unlock { get; private set; }
-
-		//private int FRAGMENT_COUNT;
-
-		internal GelFountain(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
-			locale = e;
+		internal GelFountain(XMLLocale.LocaleEntry e) : base(e) {
+			scanTime = 10;
 			OnFinishedPatching += () => {
 				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<GelFountainTag>().addField("nextHarvestTime"));
 			};
@@ -91,16 +85,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void postRegister() {
-			PDAScanner.EntryData e = new PDAScanner.EntryData();
-			e.key = TechType;
-			e.scanTime = 10;
-			e.locked = true;
-			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, "PlanetaryGeology");
-			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/GelFountain"));
-			page.register();
-			e.encyclopedia = page.id;
-			PDAHandler.AddCustomScannerEntry(e);
-
+			registerEncyPage();
 			GenUtil.registerPrefabWorldgen(this, false, BiomeType.UnderwaterIslands_IslandCaveWall, 1, 3.0F);
 		}
 

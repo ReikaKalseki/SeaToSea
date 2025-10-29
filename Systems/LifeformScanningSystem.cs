@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 
+using AhoCorasick;
+
 using ReikaKalseki.DIAlterra;
 using ReikaKalseki.SeaToSea;
 
@@ -190,7 +192,12 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		internal bool mustScanToLeave(TechType tt) {
-			if (CustomMaterials.getItemByTech(tt) != null)
+			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+			if (tt == C2CItems.brineCoral || tt == C2CItems.emperorRootCommon)
+				return true;
+			else if (tt == Ecocean.EcoceanMod.lavaBomb.TechType)
+				return hard;
+			else if (CustomMaterials.getItemByTech(tt) != null)
 				return true;
 			else if (BasicCustomPlant.getPlant(tt) != null)
 				return true;
@@ -203,7 +210,7 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			if (pfb != null && VanillaResources.getFromID(pfb) != null)
 				return true;
-			if (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) && additionalScans.Contains(tt))
+			if (hard && additionalScans.Contains(tt))
 				return true;
 			GameObject prefab = ObjectUtil.lookupPrefab(tt);
 			if (prefab) {

@@ -73,6 +73,7 @@ namespace ReikaKalseki.SeaToSea {
 		public static GeoGelFog geogelFog;
 		public static GeoGelFog geogelFogDrip;
 		public static PostCoveDome postCoveDome;
+		public static PCFSecurityNode securityNode;
 
 		public static PowerSealModuleFragment powersealModuleFragment;
 		public static EjectedHeatSink ejectedHeatSink;
@@ -352,14 +353,17 @@ namespace ReikaKalseki.SeaToSea {
 			postCoveDome = new PostCoveDome(itemLocale.getEntry("POST_COVE_DOME"));
 			postCoveDome.Patch();
 
+			securityNode = new PCFSecurityNode(itemLocale.getEntry("PCF_SECURITY"));
+			securityNode.Patch();
+
 			addPDAEntries();
 			/*
 	    e = SeaToSeaMod.pdaLocale.getEntry("envirosim");
-	    prisonPipeRoomTank = TechTypeHandler.AddTechType(modDLL, e.key, e.getField<string>("scanprompt"), e.desc);
+	    prisonPipeRoomTank = TechTypeHandler.AddTechType(modDLL, e.key, e.getString("scanprompt"), e.desc);
 	    //prisonPipeRoomTank = new TechType[4];
 	    //for (int i = 0; i < prisonPipeRoomTank.Length; i++)
 	    //	prisonPipeRoomTank[i] = TechTypeHandler.AddTechType(modDLL, e.key+"_"+i, e.name, e.desc);
-	    //SNUtil.addPDAEntry(prisonPipeRoomTank, e.key, e.name, 1, e.getField<string>("category"), e.pda, e.getField<string>("header"));
+	    //SNUtil.addPDAEntry(prisonPipeRoomTank, e.key, e.name, 1, e.getString("category"), e.pda, e.getString("header"));
 	    enviroSimulation = PDAManager.getPage(e.key);
 	    
 		PDAScanner.EntryData se = new PDAScanner.EntryData();
@@ -560,6 +564,8 @@ namespace ReikaKalseki.SeaToSea {
 			geyserCoral.postRegister();
 			gelFountain.postRegister();
 			postCoveDome.postRegister();
+			securityNode.postRegister();
+			C2CProgression.instance.pcfSecurityNodes = worldgen.getCount(securityNode.ClassID);
 
 			int n = C2CHooks.purpleTabletsToBreak.Count + 1; //+1 for the broken one in front of gun
 			n += SeaToSeaMod.worldgen.getCount("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4");
@@ -644,13 +650,13 @@ namespace ReikaKalseki.SeaToSea {
 		private static void addSignalsAndRadio() {
 			XMLLocale.LocaleEntry e = SeaToSeaMod.signalLocale.getEntry("treaderpod");
 			treaderSignal = SignalManager.createSignal(e);
-			treaderSignal.addRadioTrigger(e.getField<string>("sound"));
+			treaderSignal.addRadioTrigger(e.getString("sound"));
 			treaderSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1239, -360, -1193));
 			treaderSignal.addWorldgen();
 			/*
         e = SeaToSeaMod.signalLocale.getEntry("dunearch");
 		duneArchWreckSignal = SignalManager.createSignal(e);
-		duneArchWreckSignal.addRadioTrigger(e.getField<string>("sound"));
+		duneArchWreckSignal.addRadioTrigger(e.getString("sound"));
 		duneArchWreckSignal.register("32e48451-8e81-428e-9011-baca82e9cd32", new Vector3(-1623, -355.6, -98.5));
 		duneArchWreckSignal.addWorldgen();
 		*/
@@ -666,7 +672,7 @@ namespace ReikaKalseki.SeaToSea {
 			sanctuaryDirectionHint.addWorldgen();
 
 			e = pdaLocale.getEntry("crashmesahint");
-			crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getField<string>("radio"), e.getField<string>("radioSound"));
+			crashMesaRadio = SNUtil.addRadioMessage("crashmesaradio", e.getString("radio"), e.getString("radioSound"));
 		}
 
 		private static void addOreGen() {
@@ -832,9 +838,9 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (XMLLocale.LocaleEntry e in pdaLocale.getEntries()) {
 				PDAManager.PDAPage page = PDAManager.createPage(e);
 				if (e.hasField("audio"))
-					page.setVoiceover(e.getField<string>("audio"));
+					page.setVoiceover(e.getString("audio"));
 				if (e.hasField("header"))
-					page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/" + e.getField<string>("header")));
+					page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/" + e.getString("header")));
 				page.register();
 			}
 		}

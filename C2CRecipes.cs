@@ -199,7 +199,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			BasicCraftingItem obsidiglass = CraftingItems.getItem(CraftingItems.Items.ObsidianGlass);
 			obsidiglass.craftingTime = 3F;
-			obsidiglass.addIngredient(TechType.EnameledGlass, 1).addIngredient(TechType.Aerogel, 2).addIngredient(C2CItems.getIngot(TechType.Quartz).ingot, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN), 3);
+			obsidiglass.addIngredient(TechType.EnameledGlass, 1).addIngredient(TechType.Aerogel, 2).addIngredient(C2CItems.getIngot(TechType.Quartz).ingot, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN), 3).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);
 
 			C2CItems.addCraftingItems();
 
@@ -377,7 +377,7 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.lightModule.addIngredient(TechType.LEDLight, 3).addIngredient(TechType.WiringKit, 1).addIngredient(TechType.CopperWire, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol), 2).addIngredient(CraftingItems.getItem(CraftingItems.Items.Tungsten), 1);
 			C2CItems.tetherModule.addIngredient(TechType.ExosuitPropulsionArmModule, 1).addIngredient(TechType.WiringKit, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1);
 			C2CItems.cyclopsHeat.addIngredient(TechType.CyclopsThermalReactorModule, 1).addIngredient(TechType.CyclopsFireSuppressionModule, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.IRIDIUM), 12).addIngredient(heatSeal, 4);
-			C2CItems.cyclopsStorage.addIngredient(TechType.VehicleStorageModule, 2).addIngredient(TechType.ComputerChip, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 1);
+			C2CItems.cyclopsStorage.addIngredient(TechType.VehicleStorageModule, 3).addIngredient(TechType.ComputerChip, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Nanocarbon), 2);
 			C2CItems.sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
 			C2CItems.t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 			C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(microfilter, 2).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
