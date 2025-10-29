@@ -19,17 +19,12 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class GeyserCoral : Spawnable {
-
-		private readonly XMLLocale.LocaleEntry locale;
+	public class GeyserCoral : InteractableSpawnable {
 
 		//public static readonly Color GLOW_COLOR = new Color(1, 112/255F, 0, 1);
 
-		private int FRAGMENT_COUNT;
-
-		internal GeyserCoral(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
-			locale = e;
-
+		internal GeyserCoral(XMLLocale.LocaleEntry e) : base(e) {
+			scanTime = 3;
 			OnFinishedPatching += () => {
 				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<GeyserCoralTag>().addField("scanned"));
 			};
@@ -69,27 +64,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void postRegister() {
-			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, "Lifeforms/Coral");
-			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/GeyserCoral"));
-			page.register();
-			TechType unlock = C2CItems.geyserFilter.TechType;
-			KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>() { unlock });
-			PDAScanner.EntryData e = new PDAScanner.EntryData();
-			e.key = TechType;
-			e.blueprint = unlock;
-			e.destroyAfterScan = false;
-			e.locked = true;
-			FRAGMENT_COUNT = SeaToSeaMod.worldgen.getCount(ClassID) - 1;
-			e.totalFragments = FRAGMENT_COUNT;
-			SNUtil.log("Found " + e.totalFragments + " " + ClassID + " to use as fragments", SeaToSeaMod.modDLL);
-			e.isFragment = true;
-			e.scanTime = 3;
-			e.encyclopedia = page.id;
-			PDAHandler.AddCustomScannerEntry(e);
-		}
-
-		public int getFragmentCount() {
-			return FRAGMENT_COUNT;
+			countGen(SeaToSeaMod.worldgen);
+			setFragment(C2CItems.geyserFilter.TechType, fragmentCount-1);
+			registerEncyPage();
 		}
 
 	}

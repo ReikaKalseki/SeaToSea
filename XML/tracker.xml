@@ -442,6 +442,9 @@
 		<covedome>
 			Dome-shaped corals encased in a thick glassy shell
 		</covedome>
+		<security>
+			Alien security network nodes
+		</security>
 	</ILZ>
 	<CRAG>
 		<name>
@@ -806,6 +809,9 @@
 		<trailerbase>
 			The fragmented and partially buried wreck of a Degasi seabase, likely destroyed by the disturbance caused by the Aurora’s impact, and containing advanced materials and recipes
 		</trailerbase>
+		<storage>
+			Plans for a module that greatly increases the storage capacity of the Cyclops
+		</storage>
 	</CRASH>
 	<DEGASIEND>
 		<name>

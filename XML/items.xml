@@ -890,6 +890,23 @@
 			postcovedome
 		</header>
 	</POST_COVE_DOME>
+	<PCF_SECURITY>
+		<name>
+			Precursor Security Perimeter Node
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			One node in a large security perimeter. Unclear purpose or extent. Encryption algorithms prevent direct override of security parameters, but the mechanism may have other methods by which the security system can be neutralized.
+		</pda>
+		<category>
+			DownloadedData/Precursor
+		</category>
+		<header>
+			pcfnode
+		</header>
+	</PCF_SECURITY>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony
@@ -902,6 +919,12 @@
 			
 			Assessment: Further study may yield insights into manipulation of biochemical reactions
 		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			Bacteria
+		</header>
 	</TREE_BACTERIA>
 	<GEYSER_CORAL>
 		<name>
@@ -915,6 +938,12 @@
 			
 			Assessment: Further study will enable mechanical imitation of a similar filtration process
 		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			GeyserCoral
+		</header>
 	</GEYSER_CORAL>
 	<GEL_FOUNTAIN>
 		<name>
@@ -930,6 +959,12 @@
 			
 			Assessment: Intermittent source of potentially valuable chemical compounds
 		</pda>
+		<category>
+			PlanetaryGeology
+		</category>
+		<header>
+			GelFountain
+		</header>
 	</GEL_FOUNTAIN>
 	<BRINE_CORAL>
 		<name>

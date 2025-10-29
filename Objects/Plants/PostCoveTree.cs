@@ -74,8 +74,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 		/*
 		public void postRegister() {
-			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, locale.getField<string>("category"));
-			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, locale.getField<string>("header")));
+			PDAManager.PDAPage page = PDAManager.createPage("ency_"+ClassID, FriendlyName, locale.pda, locale.getString("category"));
+			page.setHeaderImage(TextureManager.getTexture(SeaToSeaMod.modDLL, locale.getString("header")));
 			page.register();
 			TechType unlock = CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType;
         	KnownTechHandler.Main.SetAnalysisTechEntry(TechType, new List<TechType>(){unlock});

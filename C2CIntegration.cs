@@ -147,6 +147,14 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static void addPostCompat() {
 			bool hard = SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE);
+
+			foreach (CraftingItems.Items i in Enum.GetValues(typeof(CraftingItems.Items))) {
+				DIHooks.gravTrapTechSet.Add(CraftingItems.getItem(i).TechType);
+			}
+			foreach (CustomMaterials.Materials i in Enum.GetValues(typeof(CustomMaterials.Materials))) {
+				DIHooks.gravTrapTechSet.Add(CustomMaterials.getItem(i).TechType);
+			}
+
 			BioRecipe rec = Bioprocessor.getRecipe(TechType.SeaTreaderPoop);
 			Bioprocessor.addRecipe(new TypeInput(AqueousEngineeringMod.poo), CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, rec.enzyCount, rec.processTime, rec.totalEnergyCost, rec.inputCount * 4, rec.outputCount);
 
@@ -274,11 +282,11 @@ namespace ReikaKalseki.SeaToSea {
 			GeyserMaterialSpawner.addBiomeRateMultiplier(UnderwaterIslandsFloorBiome.instance, 3);
 
 			FoodEffectSystem.instance.addVomitingEffect(C2CItems.mountainGlow.seed.TechType, 60, 60, 8, 4F, 20);
-			FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.mountainGlow.seed.TechType, 50, 30, DamageType.Heat, SeaToSeaMod.itemLocale.getEntry(C2CItems.mountainGlow.ClassID).getField<string>("eateffect"));
+			FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.mountainGlow.seed.TechType, 50, 30, DamageType.Heat, SeaToSeaMod.itemLocale.getEntry(C2CItems.mountainGlow.ClassID).getString("eateffect"));
 
 			FoodEffectSystem.instance.addVomitingEffect(C2CItems.kelp.seed.TechType, 250, 250, 20, 1.5F, 2);
 			FoodEffectSystem.instance.addPoisonEffect(C2CItems.kelp.seed.TechType, 250, 30);
-			FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.alkali.seed.TechType, 75, 30, DamageType.Acid, SeaToSeaMod.itemLocale.getEntry(C2CItems.alkali.ClassID).getField<string>("eateffect"));
+			FoodEffectSystem.instance.addDamageOverTimeEffect(C2CItems.alkali.seed.TechType, 75, 30, DamageType.Acid, SeaToSeaMod.itemLocale.getEntry(C2CItems.alkali.ClassID).getString("eateffect"));
 
 			FoodEffectSystem.instance.addPoisonEffect(C2CItems.purpleHolefish.TechType, 60, 30);
 			FoodEffectSystem.instance.addPoisonEffect(C2CItems.purpleBoomerang.TechType, 50, 30);

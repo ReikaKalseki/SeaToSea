@@ -341,7 +341,7 @@ namespace ReikaKalseki.SeaToSea {
 			string key = "EncyDesc_"+ TechType.SpottedLeavesPlant.AsString();
 			CustomLocaleKeyDatabase.registerKey(key, Language.main.Get(key) + "\n\nThese compounds appear to be compatible with human digestion.");
 
-			CustomLocaleKeyDatabase.registerKey("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getField<string>("error"));
+			CustomLocaleKeyDatabase.registerKey("Need_laserCutterBulkhead_Chit", SeaToSeaMod.miscLocale.getEntry("bulkheadLaserCutterUpgrade").getString("error"));
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + TechType.MercuryOre.AsString(), SeaToSeaMod.miscLocale.getEntry("MercuryDesc").desc);
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_Mercury", SeaToSeaMod.miscLocale.getEntry("MercuryDesc").pda);
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + TechType.PrecursorKey_Red.AsString(), SeaToSeaMod.itemLocale.getEntry("redkey").desc);
@@ -355,7 +355,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			CustomLocaleKeyDatabase.registerKey(SeaToSeaMod.deadMelon.TechType.AsString(), Language.main.Get(TechType.MelonPlant));
 
-			EcoceanMod.lavaShroom.pdaPage.append("\n\n" + SeaToSeaMod.miscLocale.getEntry("Appends").getField<string>("lavashroom"));
+			EcoceanMod.lavaShroom.pdaPage.append("\n\n" + SeaToSeaMod.miscLocale.getEntry("Appends").getString("lavashroom"));
 
 			CustomLocaleKeyDatabase.registerKey("Tooltip_" + TechType.VehicleHullModule3.AsString(), Language.main.Get("Tooltip_" + TechType.VehicleHullModule3.AsString()).Replace("maximum", "900m"));
 
@@ -2388,10 +2388,10 @@ namespace ReikaKalseki.SeaToSea {
 				rt.isDetectable = PDAScanner.complete.Contains(rt.resource.techType);
 			}
 			else if (rt.resource.techType == SeaToSeaMod.mushroomBioFragment.TechType) {
-				rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.mushroomBioFragment.getFragmentCount() - 2;
+				rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.mushroomBioFragment.fragmentCount - 2;
 			}
 			else if (rt.resource.techType == SeaToSeaMod.geyserCoral.TechType) {
-				rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.geyserCoral.getFragmentCount() - 4;
+				rt.isDetectable = SNUtil.getFragmentScanCount(rt.resource.techType) > SeaToSeaMod.geyserCoral.fragmentCount - 4;
 			}
 			if (rt.resource.GetComponent<Drillable>()) {
 				rt.isDetectable = StoryGoalManager.main.completedGoals.Contains("OnConstructExosuit") || KnownTech.knownTech.Contains(AqueousEngineeringMod.grinderBlock.TechType);
@@ -3072,29 +3072,8 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
-		public static void clickKeyTerminal(PrecursorKeyTerminal pk) { //TODO replace with a simple patch to the if below ; also patch hover
-			if (pk.slotted || !C2CProgression.instance.isPCFAccessible()) {
-				return;
-			}
-			TechType techType = pk.ConvertKeyTypeToTechType(pk.acceptKeyType);
-			Pickupable pickupable = Inventory.main.container.RemoveItem(techType);
-			pk.restoreQuickSlot = -1;
-			if (pickupable != null) {
-				pk.restoreQuickSlot = Inventory.main.quickSlots.activeSlot;
-				Inventory.main.ReturnHeld(true);
-				pk.keyObject = pickupable.gameObject;
-				pk.keyObject.transform.SetParent(Inventory.main.toolSocket);
-				pk.keyObject.transform.localPosition = Vector3.zero;
-				pk.keyObject.transform.localRotation = Quaternion.identity;
-				pk.keyObject.SetActive(true);
-				Rigidbody component = pk.keyObject.GetComponent<Rigidbody>();
-				if (component != null) {
-					component.isKinematic = true;
-				}
-				pk.cinematicController.StartCinematicMode(Player.main);
-				Utils.PlayFMODAsset(pk.useSound, pk.transform, 20f);
-				pk.slotted = true;
-			}
+		public static bool cannotClickKeyTerminal(PrecursorKeyTerminal pk) {
+			return pk.slotted || (pk.acceptKeyType == PrecursorKeyTerminal.PrecursorKeyType.PrecursorKey_Blue && !C2CProgression.instance.isPCFAccessible());
 		}
 	}
 }

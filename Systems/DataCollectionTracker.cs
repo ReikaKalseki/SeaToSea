@@ -269,8 +269,8 @@ namespace ReikaKalseki.SeaToSea {
 			string desc = ll.pda;
 			bool alien = requiredAlienData.Any(e => e.Value.isCollected());
 			if (alien)
-				desc += "\n" + ll.getField<string>("alien");
-			desc += "\n\n" + ll.getField<string>("prefix") + "\n";
+				desc += "\n" + ll.getString("alien");
+			desc += "\n\n" + ll.getString("prefix") + "\n";
 			desc = this.appendDataList(desc, "Aurora Data", requiredAuroraData);
 			desc = this.appendDataList(desc, "Degasi Data", requiredDegasiData);
 			if (alien)

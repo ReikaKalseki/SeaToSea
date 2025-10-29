@@ -18,11 +18,12 @@ using UnityEngine.UI;
 
 namespace ReikaKalseki.SeaToSea {
 
-	public class BKelpBumpWorm : Spawnable {
+	public class BKelpBumpWorm : InteractableSpawnable {
 
-		internal BKelpBumpWorm(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc) {
+		internal BKelpBumpWorm(XMLLocale.LocaleEntry e) : base(e) {
+			scanTime = 3;
 			OnFinishedPatching += () => {
-				SNUtil.addPDAEntry(this, 3, e.getField<string>("category"), e.pda, e.getField<string>("header"), null);
+				registerEncyPage();
 			};
 		}
 

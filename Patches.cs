@@ -538,11 +538,30 @@ namespace ReikaKalseki.SeaToSea {
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
 				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
-				InsnList codes = new InsnList();
+				InsnList codes = new InsnList(instructions);
 				try {
-					codes.add(OpCodes.Ldarg_0);
-					codes.invoke("ReikaKalseki.SeaToSea.C2CHooks", "clickKeyTerminal", false, typeof(PrecursorKeyTerminal));
-					codes.add(OpCodes.Ret);
+					PatchLib.hookKeyTerminalInteractable(codes);
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
+		[HarmonyPatch(typeof(PrecursorKeyTerminal))]
+		[HarmonyPatch("OnHandHover")]
+		public static class PrecursorDoorHoverHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList(instructions);
+				try {
+					PatchLib.hookKeyTerminalInteractable(codes);
 					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
 				}
 				catch (Exception e) {
@@ -1844,6 +1863,9 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 		}*/
-
+		internal static void hookKeyTerminalInteractable(InsnList codes) {
+			int idx = InstructionHandlers.getInstruction(codes, 0, 0, OpCodes.Ldfld, "PrecursorKeyTerminal", "slotted");
+			codes[idx] = InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "cannotClickKeyTerminal", false, typeof(PrecursorKeyTerminal));
+		}
 	}
 }

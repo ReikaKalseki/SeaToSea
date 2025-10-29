@@ -102,6 +102,7 @@ namespace ReikaKalseki.SeaToSea {
 			lrLeakage["LostRiver_BonesField_Corridor"] = 1;
 			lrLeakage["LostRiver_BonesField"] = 1;
 			lrLeakage["LostRiver_BonesField_LakePit"] = 1.5F;
+			lrLeakage["LostRiver_BonesField_Cave"] = 1;
 			lrLeakage["LostRiver_Junction"] = 1;
 			lrLeakage["LostRiver_TreeCove"] = 0.9F;
 			lrLeakage["LostRiver_Corridor"] = 1;
@@ -765,7 +766,7 @@ namespace ReikaKalseki.SeaToSea {
 			uGUI_RadiationWarning rad = go.GetComponent<uGUI_RadiationWarning>();
 			CustomHUDWarning warn = go.EnsureComponent<CustomHUDWarning>();
 			warn.replace(rad, f);
-			warn.setText(SeaToSeaMod.miscLocale.getEntry("HUDAlerts").getField<string>(key), c);
+			warn.setText(SeaToSeaMod.miscLocale.getEntry("HUDAlerts").getString(key), c);
 			warn.setTexture(TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/HUD/" + key));
 			warn.transform.SetParent(template.transform.parent, false);
 			warn.priority = pri;

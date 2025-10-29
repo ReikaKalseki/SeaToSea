@@ -152,7 +152,7 @@ namespace ReikaKalseki.SeaToSea {
 		public override ScannableItemData ScannableSettings {
 			get {
 				const string path = "Lifeforms/Fauna/Leviathans";
-				return new ScannableItemData(true, 20, path, path.Split('/'), null, TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/" + locale.getField<string>("header")));
+				return new ScannableItemData(true, 20, path, path.Split('/'), null, TextureManager.getTexture(SeaToSeaMod.modDLL, "Textures/PDA/" + locale.getString("header")));
 			}
 		}
 
@@ -183,7 +183,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public void register() {
 			this.Patch();
-			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getField<string>("header"));
+			//SNUtil.addPDAEntry(this, 20, "Lifeforms/Fauna/Leviathans", locale.pda, locale.getString("header"));
 		}
 
 		public static void makeReefbackTest() {
