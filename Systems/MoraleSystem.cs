@@ -72,9 +72,11 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static uint printMoraleForDebug = 0;
 
+		private static readonly MoraleInfluence NO_MORALE_EFFECT = new MoraleInfluence(new ConstantValue<Player>(0), new ConstantValue<Player>(0));
+
 		private readonly Dictionary<BiomeBase, AmbientMoraleInfluence> biomeEffect = new Dictionary<BiomeBase, AmbientMoraleInfluence>();
 		private readonly Dictionary<string, float> goalMorale = new Dictionary<string, float>();
-		private readonly List<Tuple<Func<Player, float>, bool>> persistentEffects = new List<Tuple<Func<Player, float>, bool>>();
+		private readonly List<ConditionalMoraleInfluence> persistentEffects = new List<ConditionalMoraleInfluence>();
 
 		private GameObject barsRoot;
 		private MoraleBar bar;
@@ -134,16 +136,16 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void register() {
-			biomeEffect[VanillaBiomes.ALZ] = new AmbientMoraleInfluence(-5, -0.5F, -0.5F);
-			biomeEffect[VanillaBiomes.ILZ] = new AmbientMoraleInfluence(-1, 0, -0.1F);
-			biomeEffect[VanillaBiomes.BLOODKELP] = new AmbientMoraleInfluence(-0.75F, 0, -0.33F);
-			biomeEffect[VanillaBiomes.BLOODKELPNORTH] = new AmbientMoraleInfluence(-0.8F, 0, -0.4F);
-			biomeEffect[VanillaBiomes.COVE] = new AmbientMoraleInfluence(2, 2, 2);
-			biomeEffect[VanillaBiomes.CRASH] = new AmbientMoraleInfluence(-2, 0, -1);
-			biomeEffect[VanillaBiomes.DUNES] = new AmbientMoraleInfluence(-0.25F, 0, -0.25F);
-			biomeEffect[VanillaBiomes.GRANDREEF] = new AmbientMoraleInfluence(0.25F, 0.5F, 0.5F);
-			biomeEffect[VanillaBiomes.JELLYSHROOM] = new AmbientMoraleInfluence(0, -40, 1);
-			biomeEffect[VanillaBiomes.SHALLOWS] = new AmbientMoraleInfluence(0.05F, -20, 0);
+			registerBiomeEffect(VanillaBiomes.ALZ).setEnv(-5, 0, EnvContext.FREEDIVE).setEnv(-1F, 0, EnvContext.SEAMOTH);
+			registerBiomeEffect(VanillaBiomes.ILZ).setEnv(-0.4F, 0, EnvContext.FREEDIVE).setEnv(-0.1F, 0, EnvContext.SEAMOTH);
+			registerBiomeEffect(VanillaBiomes.BLOODKELP).setEnv(-0.1F, -20F, EnvContext.FREEDIVE).setEnv(0, -10F, EnvContext.SEAMOTH);
+			registerBiomeEffect(VanillaBiomes.BLOODKELPNORTH).setEnv(-0.125F, -25F, EnvContext.FREEDIVE).setEnv(0, -12F, EnvContext.SEAMOTH);
+			registerBiomeEffect(VanillaBiomes.COVE).setEnv(0.5F, 25F).setEnv(1, 50F, EnvContext.SEABASE);
+			registerBiomeEffect(VanillaBiomes.CRASH).setEnv(-1, -50F).setEnv(0, -20F, EnvContext.CYCLOPS);
+			registerBiomeEffect(VanillaBiomes.DUNES).setEnv(-0.1F, -10F).setEnv(0, -5F, EnvContext.CYCLOPS);
+			registerBiomeEffect(VanillaBiomes.GRANDREEF).setEnv(0.25F, 5F).setEnv(0, 2.5F, EnvContext.FREEDIVE).setEnv(0, 10F, EnvContext.SEABASE);
+			registerBiomeEffect(VanillaBiomes.JELLYSHROOM).setEnv(-5, -100, EnvContext.CYCLOPS).setEnv(0, 10F, EnvContext.SEABASE);
+			registerBiomeEffect(VanillaBiomes.SHALLOWS).setEnv(0.05F, 0).setEnv(-1, -100, EnvContext.CYCLOPS).setEnv(0.125F, 5F, EnvContext.SEABASE);
 
 			goalMorale["AuroraExplode"] = -20;
 
@@ -153,7 +155,7 @@ namespace ReikaKalseki.SeaToSea {
 			//this is not a baseline, this is a delta/s!
 			//-------------------
 			//"OMG RESCUE!"
-			this.registerPersistentEffect(ep => SNUtil.isSunbeamExpected() ? 200 : 0, false);
+			this.registerPersistentEffect(ep => SNUtil.isSunbeamExpected(), 0, 200);
 			//hope falls, discontent rises
 			float sunbeamCrisisDuration = 3600; //1h
 			this.registerPersistentEffect("SunbeamDestroyed", true, -200, sunbeamCrisisDuration);
@@ -162,8 +164,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			//T4 infection gives one-time -50 (via the cinematic) and a continuous -5
 			goalMorale[StoryGoals.INFECTED_CINEMATIC] = -50;
-			this.registerPersistentEffect(ep => ep.GetInfectionAmount() > 0.9F ? -1 : 0, true);
-			this.registerPersistentEffect(ep => ep.GetInfectionAmount() > 0.9F ? -5 : 0, false);
+			this.registerPersistentEffect(ep => ep.GetInfectionAmount() > 0.9F, -0.2F, -5);
 
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD12RADIO), StoryGoals.POD12);
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(StoryGoals.POD6RADIO), StoryGoals.POD6B);
@@ -183,13 +184,11 @@ namespace ReikaKalseki.SeaToSea {
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(VoidSpikesBiome.instance.getSignalKey()), "voidpod");
 			this.registerLifepodMoraleShifts(StoryGoals.getRadioPlayGoal(SeaToSeaMod.crashMesaRadio.key), "crashmesa");
 
-			this.registerPersistentEffect(StoryGoals.getRadioPlayGoal(StoryGoals.ALTERRA_HQ), false, 5); //+5 from knowing there is a rocket plan
-			this.registerPersistentEffect(StoryGoals.ROCKET_INFO, false, 5); //permanent +5 to baseline after rocket known
+			this.registerPermanentGoalEffect(StoryGoals.getRadioPlayGoal(StoryGoals.ALTERRA_HQ), 0, 5); //+5 from knowing there is a rocket plan
+			this.registerPermanentGoalEffect(StoryGoals.ROCKET_INFO, 0, 5); //permanent +5 to baseline after rocket known
 
-			this.registerPersistentEffect(ep => SNUtil.isPlayerCured() ? 5 : 0, true); //permanent +5 after cure
-			this.registerPersistentEffect(ep => SNUtil.isPlayerCured() ? 20 : 0, false); //permanent +20 to baseline after cure
-			this.registerPersistentEffect(StoryGoals.ROCKET_COMPLETE, true, 5); //another permanent +5 after rocket built
-			this.registerPersistentEffect(StoryGoals.ROCKET_COMPLETE, false, 10); //another permanent +10 after rocket built
+			this.registerPersistentEffect(ep => SNUtil.isPlayerCured(), 5, 20); //permanent +5/+20 after cure
+			this.registerPermanentGoalEffect(StoryGoals.ROCKET_COMPLETE, 5, 10); //another permanent +5/+10 after rocket built
 
 			//boosts from a few major milestones
 			goalMorale[StoryGoals.REPAIR_LIFEPOD] = 25;
@@ -280,13 +279,20 @@ namespace ReikaKalseki.SeaToSea {
 			goalMorale[goal] = effect;
 		}
 
-		public void registerBiomeEffect(BiomeBase bb, AmbientMoraleInfluence amb) {
-			if (!biomeEffect.ContainsKey(bb))
-				biomeEffect[bb] = amb;
+		public AmbientMoraleInfluence registerBiomeEffect(BiomeBase bb) {
+			AmbientMoraleInfluence amb = new AmbientMoraleInfluence();
+			if (biomeEffect.ContainsKey(bb))
+				amb = biomeEffect[bb];
+			biomeEffect[bb] = amb;
+			return amb;
 		}
 
 		public void registerLifepodMoraleShifts(string radioGoal, string pdaGoal, float strength = 1) {
 			this.registerPersistentEffect(radioGoal, false, GENERIC_RADIO_MORALE_BOOST*strength, GENERIC_RADIO_MORALE_DURATION, pdaGoal, GENERIC_DEAD_LIFEPOD_MORALE_IMPACT* strength, GENERIC_DEAD_LIFEPOD_MORALE_DURATION);
+		}
+
+		public void registerBaselineAdjustment(ProgressionTrigger check, float force, float baseline) {
+			this.registerPersistentEffect(ep => check.isReady(ep), force, baseline);
 		}
 
 		public void registerBaselineAdjustment(ProgressionTrigger check, float effect, bool isForce) {
@@ -327,11 +333,31 @@ namespace ReikaKalseki.SeaToSea {
 			}, isForce);
 		}
 
-		public void registerPersistentEffect(Func<Player, float> effect, bool isForce) {
+		public void registerPermanentGoalEffect(string goal, float force, float baseline) {
+			this.registerPersistentEffect(ep => StoryGoalManager.main.IsGoalComplete(goal), force, baseline);
+		}
+
+		public void registerPersistentEffect(Func<Player, float> effect, bool isForce) { //legacy call
+			Predicate<Player> p = ep => Math.Abs(effect.Invoke(ep)) > 0.001F;
+			registerPersistentEffect(new ConditionalMoraleInfluence(new MoraleInfluence(new CallbackValue<Player>(effect), isForce), p));
+		}
+
+		public void registerPersistentEffect(Predicate<Player> check, float force, float baseline) {
+			registerPersistentEffect(check, new MoraleInfluence(force, baseline));
+		}
+
+		public void registerPersistentEffect(Predicate<Player> check, DynamicValue<Player> force, DynamicValue<Player> baseline) {
+			registerPersistentEffect(check, new MoraleInfluence(force, baseline));
+		}
+
+		public void registerPersistentEffect(Predicate<Player> check, MoraleInfluence i) {
+			registerPersistentEffect(new ConditionalMoraleInfluence(i, check));
+		}
+
+		public void registerPersistentEffect(ConditionalMoraleInfluence effect) {
 			if (effect == null)
 				throw new Exception("Invalid null effect!");
-			if (isForce)
-				persistentEffects.Add(new Tuple<Func<Player, float>, bool>(effect, isForce));
+			persistentEffects.Add(effect);
 		}
 
 		private void onStoryGoal(string goal) {
@@ -503,25 +529,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (checkMoraleDebugFlag(MoraleDebugFlags.BIOME))
 				SNUtil.writeToChat("Biome " + bb + " morale ambient " + amb);
 
-			if (time - lastBaselineCheckTime > 1F) {
-				lastBaselineCheckTime = time;
-				currentMoraleBaseline = INITIAL_MORALE_BASELINE;
-				currentMoraleForce = 0;
-				foreach (Tuple<Func<Player, float>, bool> e in persistentEffects) {
-					float amt = e.Item1.Invoke(ep);
-					bool force = e.Item2;
-					if (checkMoraleDebugFlag(MoraleDebugFlags.BASELINE))
-						SNUtil.writeToChat("Morale "+(force ? "force" : "baseline") +" effect "+e+" > "+amt);
-					if (force)
-						currentMoraleForce += amt;
-					else
-						currentMoraleBaseline += amt;
-				}
-
-				if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
-					SNUtil.writeToChat("Computed morale baseline " + currentMoraleBaseline.ToString("0.00")+" and force " + currentMoraleForce.ToString("0.00"));
-			}
-
+			EnvContext env = EnvContext.UNKNOWN;
 			if (ep.currentSub) {
 				this.resetPrawnTime();
 				if (time - lastDecoCheckTime > 0.5F) {
@@ -530,6 +538,7 @@ namespace ReikaKalseki.SeaToSea {
 				}
 
 				bool cyclops = ep.currentSub.isCyclops;
+				env = cyclops ? EnvContext.CYCLOPS : EnvContext.SEABASE;
 				float min = cyclops ? CYCLOPS_MIN_DECO : BASE_MIN_DECO;
 
 				if (currentDecoLevel < min) {
@@ -554,23 +563,25 @@ namespace ReikaKalseki.SeaToSea {
 				}
 
 				if (amb != null && cyclops)
-					delta += amb.moralePerSecondCyclops;
+					delta += amb.cyclops.moralePerSecondForce.getValue(ep);
 			}
 			else if (v) {
 				//if (checkMoraleDebugFlag(MoraleDebugFlags.))
 				//	SNUtil.writeToChat("Vehicle is "+v+" with vel "+v.useRigidbody.velocity.magnitude.ToString());
 				if (v is SeaMoth sm) {
+					env = EnvContext.SEAMOTH;
 					this.resetPrawnTime();
 					delta += (float)MathUtil.linterpolate(sm.useRigidbody.velocity.magnitude, 5, 20, 0, 0.75); //up to 0.75% per second if moving fast
 					if (amb != null)
-						delta += amb.moralePerSecondSeamoth;
+						delta += amb.seamoth.moralePerSecondForce.getValue(ep);
 				}
 				else if (v is Exosuit p) {
+					env = EnvContext.PRAWN;
 					float bonus = 0.5F*(1-(timeInPrawn/120F)); //"sense of limitless power" -> 0.5%/s fading over 120 seconds (total morale maximum: +30)
 					if (bonus > 0)
 						delta += bonus;
 					if (amb != null)
-						delta += amb.moralePerSecondPrawn;
+						delta += amb.prawn.moralePerSecondForce.getValue(ep);
 					prawnMoraleCooldown = PRAWN_MORALE_COOLDOWN;
 					timeInPrawn += dT;
 				}
@@ -579,10 +590,49 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 			else {
+				env = EnvContext.FREEDIVE;
 				if (amb != null && ep.IsSwimming() && !ep.precursorOutOfWater && ep.transform.position.y < -1)
-					delta += amb.moralePerSecondFreeDiving;
+					delta += amb.freeDiving.moralePerSecondForce.getValue(ep);
 				this.resetPrawnTime();
 			}
+
+
+			if (time - lastBaselineCheckTime > 1F) {
+				lastBaselineCheckTime = time;
+				currentMoraleBaseline = INITIAL_MORALE_BASELINE;
+				currentMoraleForce = 0;
+				foreach (ConditionalMoraleInfluence amt in persistentEffects) {
+					if (!amt.isActive(ep))
+						continue;
+					if (checkMoraleDebugFlag(MoraleDebugFlags.BASELINE))
+						SNUtil.writeToChat("Morale effect "+amt);
+					currentMoraleForce += amt.influence.moralePerSecondForce.getValue(ep);
+					currentMoraleBaseline += amt.influence.moraleBaselineShift.getValue(ep);
+				}
+				if (amb != null) {
+					switch (env) {
+						case EnvContext.FREEDIVE:
+						currentMoraleBaseline += amb.freeDiving.moraleBaselineShift.getValue(ep);
+							break;
+						case EnvContext.CYCLOPS:
+						currentMoraleBaseline += amb.cyclops.moraleBaselineShift.getValue(ep);
+							break;
+						case EnvContext.SEAMOTH:
+						currentMoraleBaseline += amb.seamoth.moraleBaselineShift.getValue(ep);
+							break;
+						case EnvContext.PRAWN:
+						currentMoraleBaseline += amb.prawn.moraleBaselineShift.getValue(ep);
+							break;
+						case EnvContext.SEABASE:
+							currentMoraleBaseline += amb.seabase.moraleBaselineShift.getValue(ep);
+							break;
+					}
+				}
+
+				if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
+					SNUtil.writeToChat("Computed morale baseline " + currentMoraleBaseline.ToString("0.00") + " and force " + currentMoraleForce.ToString("0.00"));
+			}
+
 			/*
             float temp = WaterTemperatureSimulation.main.GetTemperature(ep.transform.position);
             if (temp < 0)
@@ -780,26 +830,100 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
-		public class AmbientMoraleInfluence {
+		public class ConditionalMoraleInfluence {
 
-			public readonly float moralePerSecondFreeDiving;
-			public readonly float moralePerSecondCyclops;
-			public readonly float moralePerSecondSeamoth;
-			public readonly float moralePerSecondPrawn;
+			public readonly MoraleInfluence influence;
+			public readonly Predicate<Player> isActive;
 
-			public AmbientMoraleInfluence(float m, float c, float v = 0) : this(m, c, v, v) {
+			public ConditionalMoraleInfluence(MoraleInfluence i, Predicate<Player> p) {
+				influence = i;
+				isActive = p;
+			}
+
+		}
+
+		public class MoraleInfluence {
+
+			public readonly DynamicValue<Player> moralePerSecondForce;
+			public readonly DynamicValue<Player> moraleBaselineShift;
+
+			public MoraleInfluence(DynamicValue<Player> f, DynamicValue<Player> s) {
+				moralePerSecondForce = f;
+				moraleBaselineShift = s;
+			}
+
+			public MoraleInfluence(float f, float s) : this(new ConstantValue<Player>(f), new ConstantValue<Player>(s)) {
 
 			}
 
-			public AmbientMoraleInfluence(float m, float c, float sm, float p) {
-				moralePerSecondFreeDiving = m;
-				moralePerSecondCyclops = c;
-				moralePerSecondSeamoth = sm;
-				moralePerSecondPrawn = p;
+			public MoraleInfluence(float val, bool isForce) : this(new ConstantValue<Player>(val), isForce) {
+
+			}
+
+			public MoraleInfluence(DynamicValue<Player> val, bool isForce) : this(isForce ? val : new ConstantValue<Player>(0), isForce ? new ConstantValue<Player>(0) : val) {
+
 			}
 
 			public override string ToString() {
-				return moralePerSecondFreeDiving.ToString("0.00") + "/" + moralePerSecondSeamoth.ToString("0.00") + "/" + moralePerSecondPrawn.ToString("0.00") + "/" + moralePerSecondCyclops.ToString("0.00");
+				return string.Format("F=({0}) B=({1})", moralePerSecondForce.ToString("0.00"), moraleBaselineShift.ToString("0.00"));
+			}
+
+		}
+
+		public class AmbientMoraleInfluence {
+
+			public MoraleInfluence freeDiving = NO_MORALE_EFFECT;
+			public MoraleInfluence cyclops = NO_MORALE_EFFECT;
+			public MoraleInfluence seamoth = NO_MORALE_EFFECT;
+			public MoraleInfluence prawn = NO_MORALE_EFFECT;
+			public MoraleInfluence seabase = NO_MORALE_EFFECT;
+
+			public AmbientMoraleInfluence() {
+
+			}
+
+			public AmbientMoraleInfluence(MoraleInfluence m, MoraleInfluence c, MoraleInfluence v = null) : this(m, c, v, v) {
+
+			}
+
+			public AmbientMoraleInfluence(MoraleInfluence m, MoraleInfluence c, MoraleInfluence sm, MoraleInfluence p) {
+				freeDiving = m;
+				cyclops = c;
+				seamoth = sm;
+				prawn = p;
+			}
+
+			public AmbientMoraleInfluence setEnv(float force, float baseline) {
+				foreach (EnvContext e in Enum.GetValues(typeof(EnvContext))) {
+					setEnv(force, baseline, e);
+				}
+				return this;
+			}
+
+			public AmbientMoraleInfluence setEnv(float force, float baseline, EnvContext e) {
+				MoraleInfluence inf = new MoraleInfluence(force, baseline);
+				switch (e) {
+					case EnvContext.FREEDIVE:
+						freeDiving = inf;
+						break;
+					case EnvContext.CYCLOPS:
+						cyclops = inf;
+						break;
+					case EnvContext.SEAMOTH:
+						seamoth = inf;
+						break;
+					case EnvContext.PRAWN:
+						prawn = inf;
+						break;
+					case EnvContext.SEABASE:
+						seabase = inf;
+						break;
+				}
+				return this;
+			}
+
+			public override string ToString() {
+				return freeDiving + "/" + seamoth + "/" + prawn + "/" + cyclops+" / "+seabase;
 			}
 
 		}

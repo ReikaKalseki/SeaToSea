@@ -229,6 +229,10 @@ namespace ReikaKalseki.SeaToSea {
 			acu = gameObject.FindAncestor<WaterPark>();
 			if (grown || acu) {
 				gameObject.SetActive(true);
+				gameObject.removeChildObject("GlowChain");
+				for (int i = 0; i <= 8; i++) {
+					gameObject.addLight(2F, 5F, new Color(0.5F, 0.1F, 1F)).setName("GlowChain").transform.localPosition = Vector3.up*(i+0.5F);
+				}
 			}
 			else {
 				gameObject.transform.localScale = new Vector3(12, 12, 12);

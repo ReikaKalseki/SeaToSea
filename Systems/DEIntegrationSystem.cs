@@ -217,6 +217,35 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		internal class C2CGulper : MonoBehaviour { //stay out of my damn biome
+
+			private SwimBehaviour swim;
+			private LastTarget target;
+			private Creature creature;
+
+			private Vector3 leash = UnderwaterIslandsFloorBiome.biomeCenter.setY(-200);
+
+			void Update() {
+				if (!swim)
+					swim = GetComponent<SwimBehaviour>();
+				if (!creature)
+					creature = GetComponent<Creature>();
+				if (!target)
+					target = GetComponent<LastTarget>();
+				BiomeBase bb = BiomeBase.getBiome(transform.position);
+				bool biome = bb == VanillaBiomes.UNDERISLANDS || bb == UnderwaterIslandsFloorBiome.instance;
+				if (biome) {
+					if (target && target.target && target.transform.position.y < -300)
+						target.target = null;
+					if (creature)
+						creature.leashPosition = leash;
+					if (transform.position.y < -300)
+						swim.SwimTo(leash, 40);
+				}
+			}
+
+		}
+
 		internal class C2CThalassacean : MonoBehaviour {
 
 			public static readonly string MOUTH_NAME = "Mouth"; //already has one

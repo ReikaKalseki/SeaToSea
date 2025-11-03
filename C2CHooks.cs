@@ -263,6 +263,7 @@ namespace ReikaKalseki.SeaToSea {
 			scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType);
 			scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType);
 			scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.OBSIDIAN).TechType);
+			scanToScannerRoom.Add(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE).TechType);
 			scanToScannerRoom.Add(C2CItems.voidSpikeLevi.TechType);
 			scanToScannerRoom.Add(C2CItems.alkali.TechType);
 			scanToScannerRoom.Add(C2CItems.healFlower.TechType);
@@ -1474,6 +1475,9 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (DEIntegrationSystem.instance.isLoaded() && !go.GetComponent<WaterParkCreature>() && SNUtil.match(go, DEIntegrationSystem.instance.getThalassacean(), DEIntegrationSystem.instance.getLRThalassacean())) {
 				go.EnsureComponent<DEIntegrationSystem.C2CThalassacean>();
+			}
+			else if (DEIntegrationSystem.instance.isLoaded() && !go.GetComponent<WaterParkCreature>() && SNUtil.match(go, DEIntegrationSystem.instance.getGulper())) {
+				go.EnsureComponent<DEIntegrationSystem.C2CGulper>();
 			}
 			else if (SNUtil.match(pi, "61ac1241-e990-4646-a618-bddb6960325b")) {
 				if (Vector3.Distance(go.transform.position, Player.main.transform.position) <= 80 && go.transform.position.y < -200) {
@@ -2950,6 +2954,8 @@ namespace ReikaKalseki.SeaToSea {
 				if (pp) {
 					TechType tt = pp.GetTechType();
 					if (tt == TechType.BigFilteredWater || tt == TechType.DisinfectedWater || tt == TechType.FilteredWater)
+						return;
+					if (tt == C2CItems.treatment.TechType || tt == CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42).TechType)
 						return;
 					int morale;
 					if (tt == TechType.Coffee) {

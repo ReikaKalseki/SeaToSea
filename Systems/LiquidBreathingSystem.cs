@@ -289,6 +289,7 @@ namespace ReikaKalseki.SeaToSea {
 			float dur = this.getTreatmentDuration();
 			if (kharaaTreatmentRemainingTime > Mathf.Max(dur * 0.01F, 60))
 				return false;
+			MoraleSystem.instance.shiftMorale(15);
 			kharaaTreatmentRemainingTime = dur;
 			return true;
 		}
@@ -296,6 +297,7 @@ namespace ReikaKalseki.SeaToSea {
 		internal bool applyTemporaryKharaaTreatment() {
 			if (hasTemporaryKharaaTreatment || !this.hasLiquidBreathing() || !this.isInPoweredArea(Player.main))
 				return false;
+			MoraleSystem.instance.shiftMorale(2);
 			hasTemporaryKharaaTreatment = true;
 			return true;
 		}

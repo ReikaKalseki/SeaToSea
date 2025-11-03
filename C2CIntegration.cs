@@ -326,8 +326,9 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (C2CItems.IngotDefinition ingot in C2CItems.getIngots())
 				BaseRoomSpecializationSystem.instance.setDisplayValue(ingot.ingot, BaseRoomSpecializationSystem.instance.getItemDecoValue(ingot.material) * ingot.count / 2F);
 
-			MoraleSystem.instance.registerBiomeEffect(VoidSpikesBiome.instance, new MoraleSystem.AmbientMoraleInfluence(-5, -50, -1));
-			MoraleSystem.instance.registerBiomeEffect(CrashZoneSanctuaryBiome.instance, new MoraleSystem.AmbientMoraleInfluence(10, 5, 5));
+			MoraleSystem.instance.registerBiomeEffect(VoidSpikesBiome.instance).setEnv(0, -10).setEnv(-0.5F, -20, EnvContext.FREEDIVE).setEnv(-5, -100, EnvContext.CYCLOPS);
+			MoraleSystem.instance.registerBiomeEffect(UnderwaterIslandsFloorBiome.instance).setEnv(0, -5).setEnv(0, 0, EnvContext.SEABASE);
+			MoraleSystem.instance.registerBiomeEffect(CrashZoneSanctuaryBiome.instance).setEnv(0.25F, 10).setEnv(0.5F, 20, EnvContext.FREEDIVE).setEnv(0, 20, EnvContext.SEABASE);
 
 			foreach (string s in SeaToSeaMod.lrCoralClusters)
 				LootDistributionHandler.EditLootDistributionData(s, BiomeType.ActiveLavaZone_Chamber_Ceiling, 0, 0);
