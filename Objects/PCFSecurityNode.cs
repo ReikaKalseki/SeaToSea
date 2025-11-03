@@ -77,6 +77,7 @@ namespace ReikaKalseki.SeaToSea {
 			baseObj.EnsureComponent<PCFSecurityNodeTag>();
 			baseObj.GetComponentInChildren<BoxCollider>().gameObject.EnsureComponent<PCFSecurityNodeRelay>();
 			baseObj.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
+			ObjectUtil.makeMapRoomScannable(baseObj, Exscansion.ExscansionMod.alienBase.TechType);
 			return baseObj;
 		}
 

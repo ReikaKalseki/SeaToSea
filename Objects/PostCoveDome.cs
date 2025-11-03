@@ -20,6 +20,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		public PostCoveDome(XMLLocale.LocaleEntry e) : base(e) {
 			scanTime = 10;
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<PostCoveDomeTag>().addField("scanned"));
+			};
 		}
 
 		public override GameObject GetGameObject() {
@@ -54,6 +57,9 @@ namespace ReikaKalseki.SeaToSea {
 	}
 
 	public class PostCoveDomeTag : MonoBehaviour {
+
+		private bool scanned = false;
+		private float scannedFade = 0;
 
 		private Renderer[] renderers;
 
@@ -93,6 +99,11 @@ namespace ReikaKalseki.SeaToSea {
 				computedTexture = true;
 				light.color = isHot ? new Color(1, 0.8F, 0.2F) : new Color(0.2F, 0.6F, 1F);
 			}
+		}
+
+		void OnScanned() {
+			scanned = true;
+			SNUtil.addBlueprintNotification(CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType);
 		}
 
 		public static int maximumDomeChildren = 16;
