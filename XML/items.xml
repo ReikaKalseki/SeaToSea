@@ -344,6 +344,17 @@
 			
 		</pda>
 	</ObsidianGlass>
+	<LavaPlankton>
+		<name>
+			Pyroplankton
+		</name>
+		<desc>
+			Globular colonies of single-celled organisms adapted for extreme heat.
+		</desc>
+		<pda>
+			
+		</pda>
+	</LavaPlankton>
 	<breathfluid>
 		<name>
 			Breathing Fluid

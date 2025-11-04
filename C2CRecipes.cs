@@ -360,7 +360,7 @@ namespace ReikaKalseki.SeaToSea {
 			precursorEnzymeTree = CraftTreeHandler.CreateCustomCraftTreeAndType("PrecursorEnzymes", out precursorEnzymeFab);
 			precursorEnzymeTree.AddCraftingNode(TechType.HatchingEnzymes);
 			//RecipeUtil.changeRecipePath(TechType.HatchingEnzymes, "Resources", "C2Chemistry");
-			RecipeUtil.setItemCategory(TechType.HatchingEnzymes, TechGroup.Uncategorized, TechCategory.Misc); //this removes from PDA
+			RecipeUtil.setItemCategory(TechType.HatchingEnzymes, TechGroup.Resources, C2CItems.precursorCategory); //this removes from PDA
 			C2CItems.setChemistry(TechType.Bleach);
 			C2CItems.setChemistry(TechType.Polyaniline);
 			//C2CItems.setChemistry(TechType.HatchingEnzymes);
@@ -681,19 +681,20 @@ namespace ReikaKalseki.SeaToSea {
 			RecipeUtil.modifyIngredients(TechType.HatchingEnzymes, i => {
 				switch (i.techType) {
 					case TechType.KooshChunk:
-						i.amount = 2;
+						i.amount = 1;
 						break;
 					case TechType.TreeMushroomPiece:
 						i.amount = 4;
 						break;
 					case TechType.RedGreenTentacleSeed:
-						i.amount = 3;
+						i.amount = 2;
 						break;
 				}
 				return false;
 			});
 			addItemToRecipe(TechType.HatchingEnzymes, TechType.ShellGrassSeed, 1);
 			addItemToRecipe(TechType.HatchingEnzymes, C2CItems.emperorRootOil.TechType, 3);
+			addItemToRecipe(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.LavaPlankton).TechType, 5);
 
 			CraftDataHandler.SetItemSize(TechType.ShellGrassSeed, new Vector2int(1, 1));
 			CraftDataHandler.SetItemSize(TechType.RedGreenTentacleSeed, new Vector2int(1, 2));

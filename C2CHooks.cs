@@ -306,7 +306,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			VoidSpikesBiome.instance.onWorldStart();
 			UnderwaterIslandsFloorBiome.instance.onWorldStart();
-			
+
 			C2CProgression.instance.onWorldLoaded();
 
 			moveToExploitable("SeaCrown");
@@ -336,7 +336,7 @@ namespace ReikaKalseki.SeaToSea {
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_Aurora_DriveRoom_Terminal1", Language.main.Get("EncyDesc_Aurora_DriveRoom_Terminal1").Replace("from 8 lifepods", "from 14 lifepods").Replace("T+8hrs: 1", "T+8hrs: 7"));
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_WaterFilter", Language.main.Get("EncyDesc_WaterFilter") + "\n\nNote: In highly mineralized regions, salt collection is both accelerated and may yield additional byproducts.");
 			string ghostLeviNote = " in most cases, but may hold the key to protecting oneself from certain aspects of the ambient environment.";
-			CustomLocaleKeyDatabase.registerKey("EncyDesc_"+TechType.GhostLeviathan.AsString(), Language.main.Get("EncyDesc_" + TechType.GhostLeviathan.AsString()) + ghostLeviNote);
+			CustomLocaleKeyDatabase.registerKey("EncyDesc_" + TechType.GhostLeviathan.AsString(), Language.main.Get("EncyDesc_" + TechType.GhostLeviathan.AsString()) + ghostLeviNote);
 			CustomLocaleKeyDatabase.registerKey("EncyDesc_" + TechType.GhostLeviathanJuvenile.AsString(), Language.main.Get("EncyDesc_" + TechType.GhostLeviathanJuvenile.AsString()) + ghostLeviNote);
 
 			string key = "EncyDesc_"+ TechType.SpottedLeavesPlant.AsString();
@@ -417,7 +417,7 @@ namespace ReikaKalseki.SeaToSea {
 			float time = DayNightCycle.main.timePassedAsFloat;
 
 			if (ep.GetBiomeString() == "observatory") {
-				MoraleSystem.instance.shiftMorale(MoraleSystem.OBSERVATORY_CONSTANT_BONUS*Time.deltaTime);
+				MoraleSystem.instance.shiftMorale(MoraleSystem.OBSERVATORY_CONSTANT_BONUS * Time.deltaTime);
 				ObservatoryDiscoverySystem.instance.tick(ep);
 			}
 
@@ -998,13 +998,13 @@ namespace ReikaKalseki.SeaToSea {
 				if (amt > 0.01 && !IntroVignette.isIntroActive) { //the panel to the face actually DOES DAMAGE...
 					float hit = 0;
 					if (amt <= 10) {
-						hit = Mathf.Lerp(2, 5, amt/10F);
+						hit = Mathf.Lerp(2, 5, amt / 10F);
 					}
 					else {
 						float dmgRef = Mathf.Clamp(amt, 10, 50)-10; //0-40
 						hit = Mathf.Lerp(5, 75, dmgRef / 40F);
 					}
-					MoraleSystem.instance.shiftMorale(-hit*MoraleSystem.MORALE_DAMAGE_COEFFICIENT);
+					MoraleSystem.instance.shiftMorale(-hit * MoraleSystem.MORALE_DAMAGE_COEFFICIENT);
 				}
 			}
 			else {
@@ -1151,7 +1151,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else if (CustomEgg.getEgg(TechType.SpineEel).includes(tt)) {
 				//SNUtil.writeToChat((Player.main.transform.position - lrnest).magnitude.ToString());
-				if ((Player.main.transform.position-lrnest).magnitude <= 50) {
+				if ((Player.main.transform.position - lrnest).magnitude <= 50) {
 					Story.StoryGoal.Execute("LRNest", Story.GoalType.Story);
 					HashSet<SpineEel> set = WorldUtil.getObjectsNearWithComponent<SpineEel>(lrnest, 120);
 					//SNUtil.writeToChat(set.Count.ToString());
@@ -1489,10 +1489,62 @@ namespace ReikaKalseki.SeaToSea {
 	    			go.EnsureComponent<TechTag>().type = SeaToSeaMod.prisonPipeRoomTank;
 		    	}
 	    	}*/
-			/*
 			else if (SNUtil.match(pi, "407e40cf-69f2-4412-8ab6-45faac5c4ea2")) {
-	    		
-	    	}*//*
+				//SNUtil.log("Initialized lava castle smoke");
+				GameObject root = go.getChildObject("CollisionHolder");
+				if (!root) {
+					root = new GameObject("CollisionHolder");
+					root.transform.SetParent(go.transform);
+				}
+				Utils.ZeroTransform(root.transform);
+				Bounds bounds = go.GetComponent<Renderer>().bounds;
+				Vector3 lim = bounds.max;
+				Vector3 dxz = (lim-go.transform.position).setY(0).Rotated(0, -45, 0, go.transform.position);
+				float dy = lim.y-go.transform.position.y;
+				int n = 32;
+				for (int i = 0; i < n; i++) {
+					string nm = "smokeColumnVolumePoint#"+i;
+					GameObject sph = root.getChildObject(nm);
+					if (!sph) {
+						sph = GameObject.CreatePrimitive(PrimitiveType.Sphere).setName(nm);
+						sph.transform.SetParent(root.transform);
+					}
+					float f = i/(float)n;
+					Utils.ZeroTransform(sph.transform);
+					//sph.transform.position = Vector3.Lerp(gg.transform.position, lim, f);
+					Vector3 offset = i == 0 ? Vector3.one*12 : Vector3.zero;
+					sph.transform.position = go.transform.position + offset + dxz * f + Vector3.up * dy * Mathf.Pow(f, 0.475F);
+					sph.transform.localScale = Vector3.one * ((1 + f) * 12 + 2) * 2;
+					sph.GetComponent<Collider>().isTrigger = true;
+					sph.GetComponent<Renderer>().enabled = false;
+					sph.EnsureComponent<LavaCastleSmokeVolumeTrigger>();
+
+					GameObject sparkle = sph.getChildObject("Sparkle");
+					if (!sparkle) {
+						sparkle = ObjectUtil.lookupPrefab("505e7eff-46b3-4ad2-84e1-0fadb7be306c").getChildObject("Leviathan_enzymeBall_anim/root/xBubbles").clone().setName("Sparkle");
+						sparkle.transform.SetParent(sph.transform);
+					}
+					Utils.ZeroTransform(sparkle.transform);
+					sparkle.transform.localScale = Vector3.one * 8;
+					sparkle.transform.localPosition = MathUtil.getRandomVectorAround(Vector3.zero, 0.9F);
+					foreach (Renderer r in sparkle.GetComponentsInChildren<Renderer>()) {
+						foreach (Material m in r.materials)
+							m.SetColor("_Color", new Color(1.5F, 0.9F, 0.6F, 1F));
+					}
+					sparkle.GetComponent<ParticleSystem>().destroy(); //remove bubbles
+					sparkle.GetComponent<ParticleSystemRenderer>().destroy();
+					foreach (ParticleSystem p in sparkle.GetComponentsInChildren<ParticleSystem>()) {
+						ParticleSystem.MainModule main = p.main;
+						main.simulationSpeed = UnityEngine.Random.Range(0.2F, 0.3F)*1.25F;
+						main.startSize = 8*1.5F;
+						main.startLifetime = 1.2F; //from 0.75
+						p.emissionRate = UnityEngine.Random.Range(0.15F, 0.25F)*0.25F;
+						p.Play();
+					}
+				}
+
+
+			}/*
 	    	else if (SNUtil.match(pi, "SeaVoyager")) {
 	    		go.EnsureComponent<C2CVoyager>();
 	    	}*/
@@ -2945,7 +2997,7 @@ namespace ReikaKalseki.SeaToSea {
 					f = 1.25F;
 					break;
 			}
-			MoraleSystem.instance.shiftMorale(f*(SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 10 : 20));
+			MoraleSystem.instance.shiftMorale(f * (SeaToSeaMod.config.getBoolean(C2CConfig.ConfigEntries.HARDMODE) ? 10 : 20));
 		}
 
 		public static void onEat(Survival s, GameObject go) {
@@ -2964,7 +3016,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 					else if (tt == TechType.Snack1 || tt == TechType.Snack2 || tt == TechType.Snack3) {
 						morale = 20;
-						PlayerMovementSpeedModifier.add(0.9F, 60*10);
+						PlayerMovementSpeedModifier.add(0.9F, 60 * 10);
 					}
 					else if (tt == TechType.StillsuitWater) {
 						morale = -50;
@@ -3046,7 +3098,7 @@ namespace ReikaKalseki.SeaToSea {
 				ret = 0;
 			}
 			else if (morale <= 50) {
-				ret *= (morale-20F)/30F;
+				ret *= (morale - 20F) / 30F;
 			}
 			else if (morale >= 80) {
 				ret = (float)MathUtil.linterpolate(morale, 80, 100, 1, 4, true);

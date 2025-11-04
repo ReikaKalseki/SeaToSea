@@ -93,6 +93,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static TechCategory chemistryCategory;
 		public static TechCategory ingotCategory;
+		public static TechCategory precursorCategory;
 
 		public static CraftTree.Type hatchingEnzymes;
 
@@ -123,6 +124,9 @@ namespace ReikaKalseki.SeaToSea {
 			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CMedical", e.getString("medical"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/medical"));
 			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CHelmet", e.getString("helmet"), SpriteManager.Get(TechType.Rebreather));
 			CraftTreeHandler.Main.AddTabNode(CraftTree.Type.Workbench, "C2CModElectronics", e.getString("modelectric"), TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/CraftTab/modelectronic"));
+
+			precursorCategory = TechCategoryHandler.Main.AddTechCategory("C2CPrecursor", e.getString("precursor"));
+			TechCategoryHandler.Main.TryRegisterTechCategoryToTechGroup(TechGroup.Resources, precursorCategory);
 
 			brokenRedTablet = new BrokenTablet(TechType.PrecursorKey_Red);
 			brokenWhiteTablet = new BrokenTablet(TechType.PrecursorKey_White);
