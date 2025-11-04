@@ -32,6 +32,9 @@ namespace ReikaKalseki.SeaToSea {
 
 		public PCFSecurityNode(XMLLocale.LocaleEntry e) : base(e) {
 			scanTime = 2;
+			OnFinishedPatching += () => {
+				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<PCFSecurityNodeTag>().addField("hasBeenHit"));
+			};
 		}
 
 		public override GameObject GetGameObject() {
@@ -100,6 +103,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private float rotation;
 
+		private bool hasBeenHit;
+
 		void Start() {
 			//baseObject = gameObject.getChildObject("Base");
 			fxObject = gameObject.getChildObject("FX");
@@ -123,19 +128,27 @@ namespace ReikaKalseki.SeaToSea {
 			rotation += Time.deltaTime * 30;
 			pillarTrigger.extended = true;
 			pillarTrigger.SetGlowColor(new Color(0, 1, 2.5F, 1), false);
+
+			if (hasBeenHit && pillarTrigger) {
+				pillarTrigger.flare.gameObject.SetActive(false);
+				pillarTrigger.enabled = false;
+				fxObject.SetActive(false);
+				RenderUtil.setEmissivity(baseRender, 0);
+			}
 		}
 
 		public void BashHit() { //prawn hit
-			if (!pillarTrigger || !fxObject.activeInHierarchy)
+			if (hasBeenHit || !pillarTrigger.enabled || !fxObject.activeInHierarchy)
 				return;
 			pillarTrigger.flare.gameObject.SetActive(false);
-			pillarTrigger.destroy();
+			pillarTrigger.enabled = false;
 			C2CProgression.instance.stepPCFSecurity();
 			for (int i = 0; i < 20; i++)
 				WorldUtil.spawnParticlesAt(transform.position+transform.up*1.5F, "361b23ed-58dd-4f45-9c5f-072fa66db88a", 0.5F, true);
 			RenderUtil.setEmissivity(baseRender, 0);
 			fxObject.SetActive(false);
 			SoundManager.playSoundAt(breakSound, transform.position, false, -1);
+			hasBeenHit = true;
 		}
 
 	}

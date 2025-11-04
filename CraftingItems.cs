@@ -254,6 +254,7 @@ namespace ReikaKalseki.SeaToSea {
 			[Item(typeof(NotFabricable),        TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/aerogel")]Nanocarbon,
 			[Item(typeof(NotFabricable),        TechCategory.BasicMaterials,    TechType.Unobtanium,        "WorldEntities/Natural/CrashPowder")]Tungsten,
 			[Item(typeof(NotFabricable),		TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/TwistyBridgesEgg")]GhostGel,
+			[Item(typeof(NotFabricable),        TechCategory.VehicleUpgrades,	TechType.Unobtanium,        "WorldEntities/Natural/CrashPowder")]LavaPlankton,
 			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/Glass")]DenseAzurite,
 			[Item(typeof(NotFabricable),        TechCategory.VehicleUpgrades,   TechType.Unobtanium,        "WorldEntities/Natural/hydrochloricacid")]SulfurAcid,
 			[Item(typeof(BasicCraftingItem),    TechCategory.AdvancedMaterials, TechType.Unobtanium,        "WorldEntities/Natural/EnameledGlass")]CrystalLens,
