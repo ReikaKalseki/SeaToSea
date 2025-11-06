@@ -30,11 +30,11 @@ namespace ReikaKalseki.SeaToSea {
 
 		//private static readonly WeightedRandom<TechType> dropTable = new WeightedRandom<TechType>();
 
-		public PCFSecurityNode(XMLLocale.LocaleEntry e) : base(e) {
+		private readonly bool isLiveVariant;
+
+		public PCFSecurityNode(XMLLocale.LocaleEntry e, bool isLive) : base(e) {
 			scanTime = 2;
-			OnFinishedPatching += () => {
-				SaveSystem.addSaveHandler(ClassID, new SaveSystem.ComponentFieldSaveHandler<PCFSecurityNodeTag>().addField("hasBeenHit"));
-			};
+			isLiveVariant = isLive;
 		}
 
 		public override GameObject GetGameObject() {
@@ -77,7 +77,10 @@ namespace ReikaKalseki.SeaToSea {
 			//baseObj.GetComponent<SphereCollider>().radius = 200;
 			baseObj.removeComponent<SphereCollider>();
 			//BoxCollider bc = baseObj.EnsureComponent<BoxCollider>();
-			baseObj.EnsureComponent<PCFSecurityNodeTag>();
+			if (isLiveVariant)
+				baseObj.EnsureComponent<LivePCFSecurityNodeTag>();
+			else
+				baseObj.EnsureComponent<BrokenPCFSecurityNodeTag>();
 			baseObj.GetComponentInChildren<BoxCollider>().gameObject.EnsureComponent<PCFSecurityNodeRelay>();
 			baseObj.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.VeryFar;
 			ObjectUtil.makeMapRoomScannable(baseObj, Exscansion.ExscansionMod.alienBase.TechType);
@@ -90,20 +93,43 @@ namespace ReikaKalseki.SeaToSea {
 		}
 	}
 
-	class PCFSecurityNodeTag : MonoBehaviour {
+	class BrokenPCFSecurityNodeTag : PCFSecurityNodeTag {
+		void Update() {
+			if (pillarTrigger) {
+				pillarTrigger.flare.gameObject.SetActive(false);
+				pillarTrigger.enabled = false;
+				fxObject.SetActive(false);
+				RenderUtil.setEmissivity(baseRender, 0);
+			}
+		}
+	}
+
+	class LivePCFSecurityNodeTag : PCFSecurityNodeTag {
+		
+		void Update() {
+			Vector3 dist = (Camera.main.transform.position-fxObject.transform.position);
+			float ang = Mathf.Atan2(dist.y, dist.x);
+			fxObject.transform.localEulerAngles = new Vector3(0, ang + rotation, 0);
+
+			rotation += Time.deltaTime * 30;
+			pillarTrigger.extended = true;
+			pillarTrigger.SetGlowColor(new Color(0, 1, 2.5F, 1), false);
+		}
+
+	}
+
+	abstract class PCFSecurityNodeTag : MonoBehaviour {
+
+		//private GameObject baseObject;
+		protected GameObject fxObject;
+
+		protected PrecursorActivatedPillar pillarTrigger;
+
+		protected Renderer baseRender;
+
+		protected float rotation;
 
 		private static readonly SoundManager.SoundData breakSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "pcfnodebreak", "Sounds/pcfnodebreak.ogg", SoundManager.soundMode3D);
-		
-		//private GameObject baseObject;
-		private GameObject fxObject;
-
-		PrecursorActivatedPillar pillarTrigger;
-
-		private Renderer baseRender;
-
-		private float rotation;
-
-		private bool hasBeenHit;
 
 		void Start() {
 			//baseObject = gameObject.getChildObject("Base");
@@ -120,35 +146,25 @@ namespace ReikaKalseki.SeaToSea {
 			baseRender.material.SetColor("_GlowColor", new Color(0, 1, 2.5F, 1));
 		}
 
-		void Update() {
-			Vector3 dist = (Camera.main.transform.position-fxObject.transform.position);
-			float ang = Mathf.Atan2(dist.y, dist.x);
-			fxObject.transform.localEulerAngles = new Vector3(0, ang + rotation, 0);
-
-			rotation += Time.deltaTime * 30;
-			pillarTrigger.extended = true;
-			pillarTrigger.SetGlowColor(new Color(0, 1, 2.5F, 1), false);
-
-			if (hasBeenHit && pillarTrigger) {
-				pillarTrigger.flare.gameObject.SetActive(false);
-				pillarTrigger.enabled = false;
-				fxObject.SetActive(false);
-				RenderUtil.setEmissivity(baseRender, 0);
-			}
-		}
-
 		public void BashHit() { //prawn hit
-			if (hasBeenHit || !pillarTrigger.enabled || !fxObject.activeInHierarchy)
+			if (this is BrokenPCFSecurityNodeTag || !pillarTrigger.enabled || !fxObject.activeInHierarchy)
 				return;
-			pillarTrigger.flare.gameObject.SetActive(false);
-			pillarTrigger.enabled = false;
 			C2CProgression.instance.stepPCFSecurity();
 			for (int i = 0; i < 20; i++)
-				WorldUtil.spawnParticlesAt(transform.position+transform.up*1.5F, "361b23ed-58dd-4f45-9c5f-072fa66db88a", 0.5F, true);
+				WorldUtil.spawnParticlesAt(transform.position + transform.up * 1.5F, "361b23ed-58dd-4f45-9c5f-072fa66db88a", 0.5F, true);
+			SoundManager.playSoundAt(breakSound, transform.position, false, -1);
+			/*
+			pillarTrigger.flare.gameObject.SetActive(false);
+			pillarTrigger.enabled = false;
 			RenderUtil.setEmissivity(baseRender, 0);
 			fxObject.SetActive(false);
-			SoundManager.playSoundAt(breakSound, transform.position, false, -1);
-			hasBeenHit = true;
+			*/
+			GameObject repl = ObjectUtil.createWorldObject(SeaToSeaMod.securityNodeBroken.ClassID);
+			repl.transform.SetParent(transform.parent);
+			repl.transform.position = transform.position;
+			repl.transform.rotation = transform.rotation;
+			repl.transform.localScale = transform.localScale;
+			gameObject.destroy(false, 0.05F);
 		}
 
 	}

@@ -918,6 +918,58 @@
 			pcfnode
 		</header>
 	</PCF_SECURITY>
+	<PCF_SECURITY_BROKEN>
+		<name>
+			Precursor Security Perimeter Node (Disabled)
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+		<category>
+			
+		</category>
+		<header>
+			
+		</header>
+	</PCF_SECURITY_BROKEN>
+	<PIPE_TRAVEL_CONSOLE>
+		<name>
+			Transport Pipe Access Console
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			
+		</pda>
+		<category>
+			
+		</category>
+		<header>
+			
+		</header>
+		<tooltip>
+			Transport Pipe Access Console
+		</tooltip>
+		<tooltipSecondary>
+			Reconfigure Transport Pipe access protocols
+		</tooltipSecondary>
+		<tooltipDisabled>
+			
+		</tooltipDisabled>
+		<popupTitle>
+			Transport Pipe access protocols reconfigured
+		</popupTitle>
+		<popupSubtitle>
+			
+		</popupSubtitle>
+		<popupDescription>
+			Can now use vents and their piping network for rapid travel
+		</popupDescription>
+	</PIPE_TRAVEL_CONSOLE>
 	<TREE_BACTERIA>
 		<name>
 			Bacterial Colony

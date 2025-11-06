@@ -1197,6 +1197,9 @@ namespace ReikaKalseki.SeaToSea {
 				p.GetComponent<NanocarbonTag>().reset();
 				Story.StoryGoal.Execute("Nanocarbon", Story.GoalType.Story);
 			}
+			else if (tt == CraftingItems.getItem(CraftingItems.Items.LavaPlankton).TechType) {
+				Story.StoryGoal.Execute("LavaPlankton", Story.GoalType.Story);
+			}
 			else if (tt == C2CItems.emperorRootOil.TechType) {
 				EmperorRootOil.EmperorRootOilTag tag = p.gameObject.EnsureComponent<EmperorRootOil.EmperorRootOilTag>();
 				if (tag.pickupTime < 0)

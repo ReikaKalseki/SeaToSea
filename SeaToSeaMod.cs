@@ -73,7 +73,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static GeoGelFog geogelFog;
 		public static GeoGelFog geogelFogDrip;
 		public static PostCoveDome postCoveDome;
-		public static PCFSecurityNode securityNode;
+		public static PCFSecurityNode securityNodeLive;
+		public static PCFSecurityNode securityNodeBroken;
+		public static PrecursorPipeFastTravelConsole pipeConsole;
 
 		public static PowerSealModuleFragment powersealModuleFragment;
 		public static EjectedHeatSink ejectedHeatSink;
@@ -353,8 +355,13 @@ namespace ReikaKalseki.SeaToSea {
 			postCoveDome = new PostCoveDome(itemLocale.getEntry("POST_COVE_DOME"));
 			postCoveDome.Patch();
 
-			securityNode = new PCFSecurityNode(itemLocale.getEntry("PCF_SECURITY"));
-			securityNode.Patch();
+			securityNodeLive = new PCFSecurityNode(itemLocale.getEntry("PCF_SECURITY"), true);
+			securityNodeLive.Patch();
+			securityNodeBroken = new PCFSecurityNode(itemLocale.getEntry("PCF_SECURITY_BROKEN"), false);
+			securityNodeBroken.Patch();
+
+			pipeConsole = new PrecursorPipeFastTravelConsole(itemLocale.getEntry("PIPE_TRAVEL_CONSOLE"));
+			pipeConsole.Patch();
 
 			addPDAEntries();
 			/*
@@ -564,8 +571,9 @@ namespace ReikaKalseki.SeaToSea {
 			geyserCoral.postRegister();
 			gelFountain.postRegister();
 			postCoveDome.postRegister();
-			securityNode.postRegister();
-			C2CProgression.instance.pcfSecurityNodes = worldgen.getCount(securityNode.ClassID);
+			securityNodeLive.postRegister();
+			C2CProgression.instance.pcfSecurityNodes = worldgen.getCount(securityNodeLive.ClassID);
+			pipeConsole.setGoal(C2CProgression.pipeTravelEnabled);
 
 			int n = C2CHooks.purpleTabletsToBreak.Count + 1; //+1 for the broken one in front of gun
 			n += SeaToSeaMod.worldgen.getCount("83b61f89-1456-4ff5-815a-ecdc9b6cc9e4");
