@@ -54,6 +54,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		internal static readonly string METEOR_GOAL = "meteorhit";
 		internal static readonly string TUNGSTEN_GOAL = "filtertung";
+		internal static readonly string pipeTravelEnabled = "EnablePipeTravel";
+
 		private static readonly HashSet<string> mountainPodVisibilityTriggers = new HashSet<string>{
 			"mountainpodearly",
 			"mountainpodlate",

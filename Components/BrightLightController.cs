@@ -19,7 +19,7 @@ namespace ReikaKalseki.SeaToSea {
 	internal class BrightLightController : MonoBehaviour {
 
 		private MonoBehaviour vehicle;
-		private Ecocean.ECHooks.ECMoth ecoceanComponent;
+		private Ecocean.ECMoth ecoceanComponent;
 		private CyclopsLightingPanel cyclopsControl;
 
 		private List<Light> bonusLights = new List<Light>();
@@ -92,7 +92,7 @@ namespace ReikaKalseki.SeaToSea {
 					this.rebuildLights(cyclops);
 				}
 				if (!cyclops && !ecoceanComponent) {
-					ecoceanComponent = this.GetComponent<Ecocean.ECHooks.ECMoth>();
+					ecoceanComponent = this.GetComponent<Ecocean.ECMoth>();
 					if (ecoceanComponent)
 						ecoceanComponent.getLightIntensity = () => ecLightIntensity;
 				}

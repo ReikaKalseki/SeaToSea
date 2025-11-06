@@ -67,7 +67,7 @@ namespace ReikaKalseki.SeaToSea {
 		private FMOD_CustomLoopingEmitter engineSounds;
 		private VehicleAccelerationModifier speedModifier;
 		private SeamothTetherController tethers;
-		private ECHooks.ECMoth ecocean;
+		private ECMoth ecocean;
 		public Rigidbody body { get; private set; }
 
 		private float baseDamageAmount;
@@ -252,7 +252,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (!body)
 				body = this.GetComponent<Rigidbody>();
 			if (!ecocean)
-				ecocean = this.GetComponent<ECHooks.ECMoth>();
+				ecocean = this.GetComponent<ECMoth>();
 			if (!engineSounds) {
 				engineSounds = this.GetComponentInChildren<EngineRpmSFXManager>().gameObject.GetComponent<FMOD_CustomLoopingEmitter>();
 			}
@@ -322,15 +322,11 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			bool kooshCave = false;
-			bool heatColumn = ECHooks.isVoidHeatColumn(transform.position, out Vector3 trash);// time-ecocean.lastTouchHeatBubble <= 0.5F;
 			bool geyser = time-ecocean.lastGeyserTime <= 0.5F;
 
 			if (health < 0.5F) {
 				//float force = 1+(Mathf.Pow((0.5F-health)*2, 1.5F)*9);
 				body.AddForce(Vector3.down * tickTime * 50, ForceMode.Acceleration);
-			}
-			if (heatColumn) {
-				body.AddForce(Vector3.up * tickTime * 150, ForceMode.Acceleration);
 			}
 
 			if (VanillaBiomes.KOOSH.isInBiome(transform.position)) {
@@ -385,7 +381,7 @@ namespace ReikaKalseki.SeaToSea {
 
 				if (geyser) //whee, forced convection
 					speed *= 18;
-				else if (heatColumn)
+				else if (ecocean.heatColumn)
 					speed *= 4;
 
 				if (speed >= 2) {

@@ -445,6 +445,9 @@
 		<security>
 			Alien security network nodes
 		</security>
+		<lavaplankton>
+			Colonies of thermophilic plankton, suspended in the smoke columns rising from the lava castle
+		</lavaplankton>
 	</ILZ>
 	<CRAG>
 		<name>
