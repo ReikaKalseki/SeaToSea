@@ -28,11 +28,10 @@ namespace ReikaKalseki.SeaToSea {
 		}, SoundSystem.masterBus);
 
 		static PipeTravelSystem() {
-			impactSounds.Add("event:/sub/seamoth/impact_solid_soft");
 			impactSounds.Add("event:/sub/seamoth/impact_solid_medium");
 			impactSounds.Add("event:/sub/seamoth/impact_solid_hard");
 
-			hurtSounds.Add("event:/player/Pain");
+			//hurtSounds.Add("event:/player/Pain");
 			hurtSounds.Add("event:/player/Pain_no_tank_light");
 			hurtSounds.Add("event:/player/Pain_no_tank");
 			hurtSounds.Add("event:/player/Pain_surface");
@@ -101,7 +100,7 @@ namespace ReikaKalseki.SeaToSea {
 				UnityEngine.UI.Button bRef = btnRef.GetComponent<UnityEngine.UI.Button>();
 				b.image = bRef.image;
 				go.SetActive(true);
-				b.copyFrom(bRef);
+				b.copySprites(bRef);
 				b.onClick.AddListener(() => {
 					targetPosition = pos;
 					unlockUI(menu.GetComponent<uGUI_InputGroup>());
@@ -113,6 +112,9 @@ namespace ReikaKalseki.SeaToSea {
 				yield return new WaitForSeconds(0.1F);
 				if (targetPosition.magnitude < 1F) {
 					GameObject root = IngameMenu.main.gameObject.clone().setName("PipeTravelTargetSelection");
+					root.transform.SetParent(IngameMenu.main.gameObject.transform.parent);
+					root.transform.localPosition = IngameMenu.main.gameObject.transform.localPosition;
+
 					root.removeChildObject("PleaseWait");
 					root.removeChildObject("QuitConfirmationWithSaveWarning");
 					root.removeChildObject("QuitConfirmation");
@@ -143,18 +145,18 @@ namespace ReikaKalseki.SeaToSea {
 					go.removeChildObject("ButtonHelp");
 					go.removeChildObject("ButtonFeedback");
 					go.removeChildObject("ButtonQuitToMainMenu");
-					go.removeChildObject(btnRef.name);
+					btnRef.destroy();
 
-					UnityEngine.UI.Text txt = go.getChildObject("Header").GetComponent<UnityEngine.UI.Text>();
+					UnityEngine.UI.Text txt = main.getChildObject("Header").GetComponent<UnityEngine.UI.Text>();
 					txt.text = "Choose destination";
 
-					root.transform.SetParent(IngameMenu.main.gameObject.transform.parent);
-					root.transform.localPosition = IngameMenu.main.gameObject.transform.localPosition;
 					root.SetActive(true);
 					main.SetActive(true);
 					go.SetActive(true);
 					yield return new WaitForSeconds(0.1F);
 					root.SetActive(true);
+					main.SetActive(true);
+					go.SetActive(true);
 					UWE.FreezeTime.Begin("PipeFastTravelSelect", true);
 				}
 				else {
@@ -166,7 +168,7 @@ namespace ReikaKalseki.SeaToSea {
 			private void unlockUI(uGUI_InputGroup grp) {
 				grp.Deselect();
 				UWE.FreezeTime.End("PipeFastTravelSelect");
-				grp.transform.parent.gameObject.destroy(false);
+				grp.transform.parent.parent.gameObject.destroy(false);
 			}
 
 			private IEnumerator triggerTravelCutscene() {
@@ -185,10 +187,10 @@ namespace ReikaKalseki.SeaToSea {
 				for (int i = 0; i < hitTimes.Count; i++) {
 					float time = hitTimes[i];
 					yield return new WaitForSeconds(time-current);
-					SoundManager.playSoundAt(SoundManager.buildSound(impactSounds.getRandomEntry()), Player.main.transform.position);
+					SoundManager.playSoundAt(SoundManager.buildSound(impactSounds.getRandomEntry()), Player.main.transform.position, false, -1F, 2);
 					float del = UnityEngine.Random.Range(0.1F, 0.33F);
 					yield return new WaitForSeconds(del);
-					SoundManager.playSoundAt(SoundManager.buildSound(hurtSounds.getRandomEntry()), Player.main.transform.position);
+					SoundManager.playSoundAt(SoundManager.buildSound(hurtSounds.getRandomEntry()), Player.main.transform.position, false, -1F, 1F);
 					current = time+del;
 				}
 
@@ -215,13 +217,14 @@ namespace ReikaKalseki.SeaToSea {
 				Player.main.playerController.inputEnabled = true;
 				Player.main.playerController.SetEnabled(true);
 				Player.main.SetCurrentSub(null);
+				yield return new WaitForSeconds(1f);
+				UWE.Utils.ExitPhysicsSyncSection();
+				yield return new WaitForSeconds(2);
 				if (AtmosphereDirector.main) {
 					AtmosphereVolume vol = WorldUtil.getClosest<AtmosphereVolume>(Player.main.transform.position);
 					if (vol)
-						;//AtmosphereDirector.main.AddVolume(vol);
+						AtmosphereDirector.main.AddVolume(vol);
 				}
-				yield return new WaitForSeconds(1f);
-				UWE.Utils.ExitPhysicsSyncSection();
 				//SNUtil.writeToChat("Teleport complete");
 				this.destroy(false);
 				yield break;
