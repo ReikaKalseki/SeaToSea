@@ -28,6 +28,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private readonly SoundManager.SoundData securityNodePDALine;
 
+		public static bool forceAllowPipeTravel = false;
+
 		private readonly Dictionary<string, StoryGoal> locationGoals = new Dictionary<string, StoryGoal>() {
 			{"OZZY_FORK_DEEP_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-645.6F, -102.7F, -16.2F), 12, "ozzyforkdeeproom")},
 			{"UNDERISLANDS_BLOCKED_ROOM", StoryHandler.instance.createLocationGoal(new Vector3(-124.38F, -200.69F, 855F), 5, "underislandsblockedroom")},
@@ -404,6 +406,14 @@ namespace ReikaKalseki.SeaToSea {
 				return;
 			DIMod.areaOfInterestMarker.spawnGenericSignalHolder(at);
 			StoryGoal.Execute(id, Story.GoalType.Story);
+		}
+
+		internal bool isPipeTravelEnabled(out bool isInvisible) {
+			isInvisible = false;
+			if (forceAllowPipeTravel)
+				return true;
+			isInvisible = !StoryGoalManager.main.IsGoalComplete(pipeTravelEnabled);
+			return !isInvisible && StoryGoalManager.main.IsGoalComplete("Precursor_Prison_Aquarium_EmperorLog1") && PDAScanner.complete.Contains(TechType.PrecursorPrisonAquariumPipe) && PDAScanner.complete.Contains(TechType.PrecursorPipeRoomIncomingPipe) && PDAScanner.complete.Contains(TechType.PrecursorPipeRoomOutgoingPipe) && PDAScanner.complete.Contains(TechType.PrecursorSurfacePipe);
 		}
 	}
 

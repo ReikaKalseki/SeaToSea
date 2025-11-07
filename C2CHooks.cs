@@ -1492,6 +1492,9 @@ namespace ReikaKalseki.SeaToSea {
 	    			go.EnsureComponent<TechTag>().type = SeaToSeaMod.prisonPipeRoomTank;
 		    	}
 	    	}*/
+			else if (go.isVent()) {
+				go.EnsureComponent<C2CVentInteraction>();
+			}
 			else if (SNUtil.match(pi, "407e40cf-69f2-4412-8ab6-45faac5c4ea2")) {
 				//SNUtil.log("Initialized lava castle smoke");
 				GameObject root = go.getChildObject("CollisionHolder");
@@ -1538,10 +1541,10 @@ namespace ReikaKalseki.SeaToSea {
 					sparkle.GetComponent<ParticleSystemRenderer>().destroy();
 					foreach (ParticleSystem p in sparkle.GetComponentsInChildren<ParticleSystem>()) {
 						ParticleSystem.MainModule main = p.main;
-						main.simulationSpeed = UnityEngine.Random.Range(0.2F, 0.3F)*1.25F;
-						main.startSize = 8*1.5F;
+						main.simulationSpeed = UnityEngine.Random.Range(0.2F, 0.3F) * 1.25F;
+						main.startSize = 8 * 1.5F;
 						main.startLifetime = 1.2F; //from 0.75
-						p.emissionRate = UnityEngine.Random.Range(0.15F, 0.25F)*0.25F;
+						p.emissionRate = UnityEngine.Random.Range(0.15F, 0.25F) * 0.25F;
 						p.Play();
 					}
 				}
@@ -2947,7 +2950,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void onStartInvUI(uGUI_InventoryTab gui) {
-			C2CUtil.createRescuePDAButton();
+			RescueSystem.createRescuePDAButton();
 		}
 
 		/*
