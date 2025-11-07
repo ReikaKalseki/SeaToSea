@@ -208,4 +208,26 @@
 		
 	</pda>
   </GhostLeviathanSampleCooldown>
+  <VentClick>
+	<name>
+		
+	</name>
+	<desc>
+		Travel through pipes
+	</desc>
+	<pda>
+		
+	</pda>
+  </VentClick>
+  <VentClickDeny>
+	<name>
+		
+	</name>
+	<desc>
+		Travel not yet possible - pipe network unmapped
+	</desc>
+	<pda>
+		
+	</pda>
+  </VentClickDeny>
 </Root>
