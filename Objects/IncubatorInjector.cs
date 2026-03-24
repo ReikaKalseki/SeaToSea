@@ -157,9 +157,9 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void OnHandClick(GUIHand hand) {
-			if (SeaToSeaMod.enviroSimulation.isUnlocked()) {
-				storage.Open();
-			}
+			//if (SeaToSeaMod.enviroSimulation.isUnlocked()) {
+			//	storage.Open();
+			//}
 		}
 	}
 }

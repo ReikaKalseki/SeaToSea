@@ -637,6 +637,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void getSwimSpeed(DIHooks.SwimSpeedCalculation ch) {
+			if (GameModeUtils.currentGameMode != GameModeOption.Survival)
+				return;
 			float morale = MoraleSystem.instance.moralePercentage;
 			if (morale < 25) {
 				ch.setValue(ch.getValue() * Mathf.Lerp(0.5F, 1F, morale / 25F));
@@ -724,7 +726,7 @@ namespace ReikaKalseki.SeaToSea {
 			else {
 				calc.craftingDuration *= 1.5F;
 			}
-			if (!QModManager.API.QModServices.Main.ModPresent("AgonyRadialCraftingTabs")) {
+			if (GameModeUtils.currentGameMode == GameModeOption.Survival && !QModManager.API.QModServices.Main.ModPresent("AgonyRadialCraftingTabs")) {
 				float morale = MoraleSystem.instance.moralePercentage;
 				float f = 1;
 				if (morale < 10) {
@@ -746,6 +748,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static float getRadialTabAnimSpeed(float orig) {
+			if (GameModeUtils.currentGameMode != GameModeOption.Survival)
+				return orig;
 			float morale = MoraleSystem.instance.moralePercentage;
 			float f = 1;
 			if (morale < 10) {
@@ -1502,6 +1506,8 @@ namespace ReikaKalseki.SeaToSea {
 					root = new GameObject("CollisionHolder");
 					root.transform.SetParent(go.transform);
 				}
+				root.EnsureComponent<TechTag>().type = SeaToSeaMod.lavaCastleSmoker;
+				root.layer = LayerID.Useable;
 				Utils.ZeroTransform(root.transform);
 				Bounds bounds = go.GetComponent<Renderer>().bounds;
 				Vector3 lim = bounds.max;
@@ -1521,6 +1527,7 @@ namespace ReikaKalseki.SeaToSea {
 					Vector3 offset = i == 0 ? Vector3.one*12 : Vector3.zero;
 					sph.transform.position = go.transform.position + offset + dxz * f + Vector3.up * dy * Mathf.Pow(f, 0.475F);
 					sph.transform.localScale = Vector3.one * ((1 + f) * 12 + 2) * 2;
+					sph.layer = LayerID.Useable;
 					sph.GetComponent<Collider>().isTrigger = true;
 					sph.GetComponent<Renderer>().enabled = false;
 					sph.EnsureComponent<LavaCastleSmokeVolumeTrigger>();
@@ -2840,6 +2847,8 @@ namespace ReikaKalseki.SeaToSea {
 				return false;
 			if (VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position) < 400)
 				return false;
+			if (WorldUtil.isInRocket())
+				return true;
 			if (ep.currentEscapePod)
 				return true;
 			if (ep.radiationAmount > 0 && !(Inventory.main.equipment.GetCount(TechType.RadiationSuit) > 0 && Inventory.main.equipment.GetCount(TechType.RadiationGloves) > 0 && Inventory.main.equipment.GetCount(TechType.RadiationHelmet) > 0))
@@ -3088,6 +3097,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void affectFoodRate(DIHooks.FoodRateCalculation calc) {
+			if (GameModeUtils.currentGameMode != GameModeOption.Survival)
+				return;
 			float morale = MoraleSystem.instance.moralePercentage;
 			if (morale < 40) {
 				calc.rate *= Mathf.Lerp(2.5F, 1, morale / 40F);
@@ -3098,6 +3109,8 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static float getAmbientHealAmount(float orig) {
+			if (GameModeUtils.currentGameMode != GameModeOption.Survival)
+				return orig;
 			float ret = orig;
 			float morale = MoraleSystem.instance.moralePercentage;
 			if (morale <= 20) {

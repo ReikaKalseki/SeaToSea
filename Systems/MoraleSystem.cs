@@ -190,6 +190,8 @@ namespace ReikaKalseki.SeaToSea {
 			this.registerPersistentEffect(ep => SNUtil.isPlayerCured(), 5, 20); //permanent +5/+20 after cure
 			this.registerPermanentGoalEffect(StoryGoals.ROCKET_COMPLETE, 5, 10); //another permanent +5/+10 after rocket built
 
+			this.registerPersistentEffect(ep => WorldUtil.isInPCFTank(ep.gameObject), 0, 20);
+
 			//boosts from a few major milestones
 			goalMorale[StoryGoals.REPAIR_LIFEPOD] = 25;
 			goalMorale[StoryGoals.MAKE_SEAMOTH] = 50;

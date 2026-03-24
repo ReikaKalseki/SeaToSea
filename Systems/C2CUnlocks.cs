@@ -34,6 +34,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType, CraftingItems.getItem(CraftingItems.Items.CrystalLens).TechType);
 
+			TechnologyUnlockSystem.instance.addDirectUnlock(TechType.HatchingEnzymes, CraftingItems.getItem(CraftingItems.Items.SmartPolymer).TechType);
+
 			TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.BioEnzymes).TechType, C2CRecipes.getAlternateEnzyme().TechType);
 
 			TechnologyUnlockSystem.instance.addDirectUnlock(CraftingItems.getItem(CraftingItems.Items.TreaderEnzymes).TechType, Bioprocessor.getRecipeReferenceItem(TechType.SeaTreaderPoop));

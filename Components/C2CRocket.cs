@@ -49,7 +49,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (time - lastPDAUpdate >= 0.5F) {
 				lastPDAUpdate = time;
 				List<ItemsContainer> li = lockers.Where(l => (bool)l).Select(sc => sc.GetComponent<StorageContainer>().container).ToList();
-				if (Player.main.precursorOutOfWater && Player.main.transform.position.y > 30) //in rocket
+				if (WorldUtil.isInRocket())
 					li.Add(Inventory.main.container);
 				FinalLaunchAdditionalRequirementSystem.instance.updateContentsAndPDAPageChecklist(rocket, li);
 			}

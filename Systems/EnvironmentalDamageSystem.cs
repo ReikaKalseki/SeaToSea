@@ -48,8 +48,6 @@ namespace ReikaKalseki.SeaToSea {
 		private readonly Dictionary<string, float> lrPoisonDamage = new Dictionary<string, float>();
 		private readonly Dictionary<string, float> lrLeakage = new Dictionary<string, float>();
 
-		private readonly Bounds prisonAquariumExpanded;
-
 		private readonly SoundManager.SoundData pdaBeep;
 
 		internal CustomHUDWarning lrPoisonHUDWarning;
@@ -137,9 +135,6 @@ namespace ReikaKalseki.SeaToSea {
 				lrPoisonDamage[kvp + "_LakePit"] = lrPoisonDamage[kvp] * 1.5F;
 			}
 
-			prisonAquariumExpanded = new Bounds(Creature.prisonAquriumBounds.center, Creature.prisonAquriumBounds.extents * 2);
-			prisonAquariumExpanded.Expand(new Vector3(2, 10, 2));
-
 			pdaBeep = SoundManager.registerPDASound(SeaToSeaMod.modDLL, "pda_beep", "Sounds/pdabeep.ogg");
 		}
 
@@ -170,19 +165,20 @@ namespace ReikaKalseki.SeaToSea {
 
 		public bool isInPrecursor(GameObject go) {
 			string biome = this.getBiome(go).ToLowerInvariant();
-			return biome.Contains("prison") || biome.Contains("precursor") || prisonAquariumExpanded.Contains(go.transform.position);
+			return biome.Contains("prison") || biome.Contains("precursor") || WorldUtil.isInPCFTank(go);
 		}
+
 		/*
-    	private GameObject getRippleCylinder() {
-    		if (!prawnBayHeatRippleCylinder) {/*
-	    		GameObject go = ObjectUtil.lookupPrefab("3877d31d-37a5-4c94-8eef-881a500c58bc");
-	    		go = go.getChildObject("Extinguishable_Fire_medium");
-	    		prawnBayHeatRippleCylinder = go.getChildObject("x_Fire_Cylindrical").clone();
-	    		prawnBayHeatRippleCylinder.transform.localScale = new Vector3(0.1F, 0.5F, 0.1F);
-	    		Material m = prawnBayHeatRippleCylinder.GetComponentInChildren<Renderer>().materials[0];
-	    		m.color = new Color(0.07F, 0, 0, 0);
-	    		m.SetColor("_ColorStrength", Color.clear);
-	    		*/
+private GameObject getRippleCylinder() {
+	if (!prawnBayHeatRippleCylinder) {/*
+		GameObject go = ObjectUtil.lookupPrefab("3877d31d-37a5-4c94-8eef-881a500c58bc");
+		go = go.getChildObject("Extinguishable_Fire_medium");
+		prawnBayHeatRippleCylinder = go.getChildObject("x_Fire_Cylindrical").clone();
+		prawnBayHeatRippleCylinder.transform.localScale = new Vector3(0.1F, 0.5F, 0.1F);
+		Material m = prawnBayHeatRippleCylinder.GetComponentInChildren<Renderer>().materials[0];
+		m.color = new Color(0.07F, 0, 0, 0);
+		m.SetColor("_ColorStrength", Color.clear);
+		*/
 		/*
                     }
                     return prawnBayHeatRippleCylinder;

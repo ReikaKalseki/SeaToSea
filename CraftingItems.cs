@@ -266,7 +266,7 @@ namespace ReikaKalseki.SeaToSea {
 			[Item(typeof(BasicCraftingItem),    TechCategory.VehicleUpgrades,   TechType.GasPod,            "WorldEntities/Natural/polyaniline")]Chlorine,
 			[Item(typeof(NotFabricable),        TechCategory.VehicleUpgrades,   TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]Luminol,
 			[Item(typeof(BasicCraftingItem),    TechCategory.VehicleUpgrades,   TechType.SnakeMushroomSpore,"WorldEntities/Natural/polyaniline")]DimLuminol,
-			[Item(typeof(NotFabricable),        TechCategory.AdvancedMaterials, TechType.HatchingEnzymes,   "WorldEntities/Natural/FiberMesh")]SmartPolymer,
+			[Item(typeof(NotFabricable),        TechCategory.AdvancedMaterials, TechType.Unobtanium,		"WorldEntities/Natural/FiberMesh")]SmartPolymer,
 			[Item(typeof(BasicCraftingItem),    TechCategory.VehicleUpgrades,   TechType.AcidMushroom,      "WorldEntities/Natural/hydrochloricacid")]WeakAcid,
 			[Item(typeof(BasicCraftingItem),    TechCategory.Electronics,       TechType.Lubricant,         "WorldEntities/Natural/Lubricant")]Motor,
 			[Item(typeof(BasicCraftingItem),    TechCategory.VehicleUpgrades,   TechType.SeaTreaderPoop,    "WorldEntities/Natural/polyaniline")]TreaderEnzymes,
