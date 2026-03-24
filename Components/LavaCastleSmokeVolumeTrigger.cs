@@ -60,6 +60,8 @@ namespace ReikaKalseki.SeaToSea {
 				sparkleObject = gameObject.getChildObject("Sparkle");
 				particles = sparkleObject.GetComponentsInChildren<ParticleSystem>();
 			}
+			sparkleObject.layer = LayerID.Useable;
+			gameObject.layer = LayerID.Useable;
 
 			foreach (ParticleSystem p in particles) {
 				ParticleSystem.MainModule main = p.main;

@@ -545,6 +545,25 @@
 		DownloadedData/Precursor/Terminal
 	</category>
   </stepcaveterminal>
+	<LavaCastleSmoke>
+		<name>
+			Lava Castle Smoker
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			Surplus heat and pressure from within the Lava Castle has driven several concentrated upwellings of smoky, mineral-laden water out of fissures in the structure. As the water hits the comparatively cool - if still superheated - temperatures in this main chamber, some of these minerals are deposited on the surface of the rock, which, over geological aeons, has formed numerous tall chimney-like structures through which the dark water continues to flow.
+			
+			Feeding on the minerals within these flows is a subspecies of thermophilic plankton which intermittently and briefly luminesces, perhaps in response to disturbances caused by the local fauna. Given the low biodiversity in this area, especially plant life, this plankton serves as critical base of the local food chain, and its prevalence is probably one indicator of overall ecosystem health.
+		</pda>
+		<header>
+			LavaCastleSmoke
+		</header>
+		<category>
+			PlanetaryGeology
+		</category>
+	</LavaCastleSmoke>
   <captaindoor>
 	<name>
 		Captain's Quarters Door Code

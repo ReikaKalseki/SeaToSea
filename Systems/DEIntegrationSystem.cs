@@ -217,6 +217,10 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		public bool isEgg(TechType tt) {
+			return eggs.Contains(tt);
+		}
+
 		internal class C2CGulper : MonoBehaviour { //stay out of my damn biome
 
 			private SwimBehaviour swim;

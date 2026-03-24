@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 using AhoCorasick;
@@ -29,6 +30,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private readonly string oldSaveDir;
 		private readonly string saveFileName = "lifeform_scans.dat";
+
+		//private static readonly Regex eggRegex = new Regex("(?i).*\begg\b.*(?-i)");
 
 		private readonly Dictionary<TechType, LifeformEntry> requiredLifeforms = new Dictionary<TechType, LifeformEntry>();
 		private readonly SortedDictionary<string, List<LifeformEntry>> byCategory = new SortedDictionary<string, List<LifeformEntry>>();
@@ -201,7 +204,9 @@ namespace ReikaKalseki.SeaToSea {
 				return true;
 			else if (BasicCustomPlant.getPlant(tt) != null)
 				return true;
-			else if (tt == Ecocean.EcoceanMod.glowOil.TechType || tt == Ecocean.EcoceanMod.celeryTree || tt == Ecocean.EcoceanMod.piezo.TechType || tt == Ecocean.EcoceanMod.plankton.TechType || tt == Ecocean.EcoceanMod.voidBubble.TechType)
+			else if (tt == Ecocean.EcoceanMod.glowOil.TechType || tt == Ecocean.EcoceanMod.tongue.TechType) //NOT the hand collected one or the abyssal terror!
+				return false;
+			else if (tt == Ecocean.EcoceanMod.naturalOil.TechType || tt == Ecocean.EcoceanMod.celeryTree || tt == Ecocean.EcoceanMod.piezo.TechType || tt == Ecocean.EcoceanMod.plankton.TechType || tt == Ecocean.EcoceanMod.voidBubble.TechType)
 				return true;
 			else if (DEIntegrationSystem.instance.isLoaded() && tt == DEIntegrationSystem.instance.getVoidThalassacean().TechType)
 				return true;
@@ -290,6 +295,8 @@ namespace ReikaKalseki.SeaToSea {
 					category = Language.main.Get("EncyPath_Lifeforms/Fauna");
 				else if (tt == TechType.PrecursorIonCrystal)
 					category = Language.main.Get("EncyPath_PlanetaryGeology");
+				if (DEIntegrationSystem.instance.isLoaded() && DEIntegrationSystem.instance.isEgg(tt))
+					category = "Fauna Eggs";
 
 				hint = this.getHint(false);
 				GameObject pfb = ObjectUtil.lookupPrefab(tt);

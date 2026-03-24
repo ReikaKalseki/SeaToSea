@@ -98,7 +98,9 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("kyanite", Finding.fromStory("Kyanite")).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Blue)).addFinding("ion", Finding.fromUnlock(TechType.PrecursorIonBattery)).addFinding("tap", Finding.fromUnlock(AqueousEngineering.AqueousEngineeringMod.atpTapBlock));
 
 			p = this.addPage(TrackerPages.ILZ, new BiomeTrigger(VanillaBiomes.ILZ));
-			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter)).addFinding("covedome", Finding.fromScan(SeaToSeaMod.postCoveDome.TechType)).addFinding("security", Finding.fromScan(SeaToSeaMod.securityNodeLive.TechType)).addFinding("lavaplankton", Finding.fromStory("LavaPlankton"));
+			p.addFinding("castle", Finding.fromTracker(TrackerPages.LAVACASTLE)).addFinding("azurite", Finding.fromStory("ILZAzurite")).addFinding("kyanite", Finding.fromScan(TechType.Kyanite)).addFinding("mushroom", Finding.fromScan(Ecocean.EcoceanMod.lavaShroom)).addFinding("obsidian", Finding.fromStory("Obsidian")).addFinding("pit", Finding.fromScan(Auroresource.AuroresourceMod.lavaPitCenter)).addFinding("covedome", Finding.fromScan(SeaToSeaMod.postCoveDome.TechType)).addFinding("security", Finding.fromScan(SeaToSeaMod.securityNodeLive.TechType)).addFinding("lavaplankton", Finding.fromScan(SeaToSeaMod.lavaCastleSmoker));
+			if (hard)
+				p.addFinding("levi", Finding.fromScan(TechType.SeaDragon));
 
 			p = this.addPage(TrackerPages.CRAG, new BiomeTrigger(VanillaBiomes.CRAG));
 			p.addFinding("pod7", Finding.fromEncy(StoryGoals.POD7)).addFinding("scoop", Finding.fromUnlock(Ecocean.EcoceanMod.planktonScoop)).addFinding("arch", Finding.fromStory(C2CProgression.instance.getLocationGoal("CRAG_ARCH"))).addFinding("emperor", Finding.fromEncy("SeaEmperorBaby").setVisible("SeaEmperorBabiesSpawnedOutsideOfPrisonAquarium"));
@@ -153,7 +155,7 @@ namespace ReikaKalseki.SeaToSea {
 			p.addFinding("end", Finding.fromEncy(StoryGoals.PAUL_DEATH_LOG)).addFinding("destroy", Finding.fromEncy(StoryGoals.FINAL_DEGASI_LOG)).addFinding("tablet", Finding.fromUnlock(TechType.PrecursorKey_Orange)).addFinding("rebreather", Finding.fromUnlock(C2CItems.rebreatherCharger));
 
 			p = this.addPage(TrackerPages.VOID, new TrackerPageAnyFindingsTrigger(TrackerPages.VOID));
-			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating))).addFinding("heat", Finding.fromScan(EcoceanMod.heatColumnShell)).addFinding("tongue", Finding.fromEncy(EcoceanMod.tongue.pdaPage));
+			p.addFinding("spikes", Finding.fromTracker(TrackerPages.VOIDSPIKES)).addFinding("destroy", Finding.fromEncy(VoidSpikesBiome.PDA_KEY)).addFinding("bubble", Finding.fromScan(Ecocean.EcoceanMod.voidBubble)).addFinding("databox", Finding.fromUnlock(CraftingItems.getItem(CraftingItems.Items.HullPlating))).addFinding("heat", Finding.fromScan(EcoceanMod.heatColumnShell)).addFinding("tongue", Finding.fromEncy(EcoceanMod.tongue.pdaPage).setOptional(false));
 
 			p = this.addPage(TrackerPages.VOIDSPIKES, new StoryTrigger(VoidSpikesBiome.instance.discoveryGoal));
 			p.addFinding("end", Finding.fromEncy(VoidSpikeWreck.PDA_KEY)).addFinding("items", Finding.fromStory("PressureCrystals")).addFinding("bladderfish", Finding.fromScan(C2CItems.voltaicBladderfish));//TODO .addFinding("levi", Finding.fromScan(C2CItems.voidSpikeLevi));

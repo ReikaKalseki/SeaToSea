@@ -77,6 +77,9 @@ namespace ReikaKalseki.SeaToSea {
 		public static PCFSecurityNode securityNodeBroken;
 		public static PrecursorPipeFastTravelConsole pipeConsole;
 
+		public static TechType lavaCastleSmoker;
+		public static PDAManager.PDAPage lavaCastleSmokerPDA;
+
 		public static PowerSealModuleFragment powersealModuleFragment;
 		public static EjectedHeatSink ejectedHeatSink;
 
@@ -122,9 +125,6 @@ namespace ReikaKalseki.SeaToSea {
 		// public static DataChit vehicleSpeedBoost;
 
 		public static PrecursorFabricatorConsole prisonEnzymeConsole;
-
-		public static TechType prisonPipeRoomTank;
-		public static PDAManager.PDAPage enviroSimulation;
 
 		//internal static VoidLeviElecSphere leviPulse;
 
@@ -327,6 +327,10 @@ namespace ReikaKalseki.SeaToSea {
 			prisonEnzymeConsole = new PrecursorFabricatorConsole(C2CRecipes.getHatchingEnzymeFab(), "PrecursorEnzymes", new Color(0.8F, 0.8F, 0.8F)).addStoryGate("PrecursorPrisonAquariumIncubatorActive", mouseoverLocale.getEntry("EnzymesNotKnown").desc);
 			prisonEnzymeConsole.Patch();
 
+			e = pdaLocale.getEntry("LavaCastleSmoke");
+			lavaCastleSmoker = TechTypeHandler.AddTechType(modDLL, e.key, e.name, e.desc);
+			lavaCastleSmokerPDA = SNUtil.addPDAEntry(lavaCastleSmoker, e.key, e.name, 2, e.getString("category"), e.pda, e.getString("header"));
+
 			CustomLocaleKeyDatabase.registerKeys(mouseoverLocale);
 
 			//leviPulse = new VoidLeviElecSphere();
@@ -364,26 +368,7 @@ namespace ReikaKalseki.SeaToSea {
 			pipeConsole.Patch();
 
 			addPDAEntries();
-			/*
-	    e = SeaToSeaMod.pdaLocale.getEntry("envirosim");
-	    prisonPipeRoomTank = TechTypeHandler.AddTechType(modDLL, e.key, e.getString("scanprompt"), e.desc);
-	    //prisonPipeRoomTank = new TechType[4];
-	    //for (int i = 0; i < prisonPipeRoomTank.Length; i++)
-	    //	prisonPipeRoomTank[i] = TechTypeHandler.AddTechType(modDLL, e.key+"_"+i, e.name, e.desc);
-	    //SNUtil.addPDAEntry(prisonPipeRoomTank, e.key, e.name, 1, e.getString("category"), e.pda, e.getString("header"));
-	    enviroSimulation = PDAManager.getPage(e.key);
-	    
-		PDAScanner.EntryData se = new PDAScanner.EntryData();
-		se.key = prisonPipeRoomTank;
-		se.blueprint = TechType.None;
-		se.destroyAfterScan = false;
-		se.locked = true;
-		se.totalFragments = 4;
-		se.isFragment = true;
-		se.scanTime = 1;
-		se.encyclopedia = enviroSimulation.id;
-		PDAHandler.AddCustomScannerEntry(se);
-        */
+
 			addOreGen();
 
 			GenUtil.registerWorldgen(new PositionedPrefab(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).ClassID, Azurite.mountainBaseAzurite, Quaternion.Euler(0, 202.4F, 33.2F)));

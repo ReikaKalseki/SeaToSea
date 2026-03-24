@@ -266,7 +266,7 @@ namespace ReikaKalseki.SeaToSea {
 			altFiberMesh.Patch();
 
 			rec = new TechData();
-			rec.Ingredients.Add(new Ingredient(TechType.Sulphur, 4));
+			rec.Ingredients.Add(new Ingredient(TechType.Sulphur, 6));
 			rec.Ingredients.Add(new Ingredient(TechType.BigFilteredWater, 2));
 			rec.Ingredients.Add(new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM).TechType, 1));
 			altSulfurAcid = new DuplicateRecipeDelegateWithRecipe(CraftingItems.getItem(CraftingItems.Items.SulfurAcid), rec);
@@ -276,7 +276,7 @@ namespace ReikaKalseki.SeaToSea {
 			altSulfurAcid.craftingMenuTree = new string[] { "Resources", "C2Chemistry" };
 			altSulfurAcid.ownerMod = SeaToSeaMod.modDLL;
 			altSulfurAcid.craftTime = 9;
-			altSulfurAcid.setRecipe(5);
+			altSulfurAcid.setRecipe(8);
 			altSulfurAcid.unlock = TechType.Sulphur;
 			altSulfurAcid.allowUnlockPopups = true;
 			altSulfurAcid.Patch();
@@ -381,6 +381,10 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.sealSuit.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 3).addIngredient(sealedFabric, 5).addIngredient(TechType.Titanium, 1).addIngredient(TechType.CrashPowder, 2);
 			C2CItems.t2Battery.addIngredient(TechType.Battery, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), 1).addIngredient(TechType.Polyaniline, 1).addIngredient(TechType.MercuryOre, 2).addIngredient(TechType.Lithium, 2).addIngredient(TechType.Silicone, 1);
 			C2CItems.rebreatherV2.addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.PLATINUM), 4).addIngredient(microfilter, 2).addIngredient(sealedFabric, 3).addIngredient(TechType.Rebreather, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.Motor), 1).addIngredient(C2CItems.t2Battery, 1);
+			if (hard) {
+				C2CItems.rebreatherV2.addIngredient(TechType.ComputerChip, 1);
+				C2CItems.rebreatherV2.addIngredient(TechType.Pipe, 5);
+			}
 			C2CItems.breathingFluid.addIngredient(TechType.Benzene, 1).addIngredient(SeaToSeaMod.geogel, 4).addIngredient(TechType.MembrainTreeSeed, 2).addIngredient(TechType.Eyeye, 2).addIngredient(C2CItems.bkelpBumpWormItem.TechType, 1).addIngredient(TechType.OrangeMushroomSpore, 1).addIngredient(TechType.SpottedLeavesPlantSeed, 2).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE), 2);
 			C2CItems.liquidTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(C2CItems.breathingFluid, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.HoneycombComposite), 1).addIngredient(sealedFabric, 2);
 			//C2CItems.oxygeniteTank.addIngredient(TechType.HighCapacityTank, 1).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.OXYGENITE), 15);

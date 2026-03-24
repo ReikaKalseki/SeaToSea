@@ -135,7 +135,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			pipeRoomTechs.Add(TechType.PrecursorPipeRoomIncomingPipe);
 			pipeRoomTechs.Add(TechType.PrecursorPipeRoomOutgoingPipe);
-			pipeRoomTechs.Add(SeaToSeaMod.prisonPipeRoomTank);
+			//pipeRoomTechs.Add(SeaToSeaMod.prisonPipeRoomTank);
 
 			gatedTechnologies.Add(TechType.Kyanite);
 			gatedTechnologies.Add(TechType.Sulphur);
@@ -285,7 +285,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (!PDAScanner.complete.Contains(tt))
 						return;
 				}
-				SeaToSeaMod.enviroSimulation.unlock();
+				//SeaToSeaMod.enviroSimulation.unlock();
 			}
 		}
 
