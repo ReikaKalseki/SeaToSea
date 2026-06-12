@@ -29,8 +29,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		private readonly XMLLocale.LocaleEntry locale;
 
-		internal VoidThalassacean(XMLLocale.LocaleEntry e)
-			: base(e.key, e.name, e.desc, (GameObject)getECCField(template, "model"), null) {
+		internal VoidThalassacean(XMLLocale.LocaleEntry e) : base(e.key, e.name, e.desc, (GameObject)getECCField(template, "model"), null) {
 			locale = e;
 			typeof(CreatureAsset).GetField("sprite", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, (Atlas.Sprite)getECCField(template, "sprite"));
 		}
@@ -252,7 +251,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		private GameObject getTarget(out bool vehicle) {
-			if (GameModeUtils.IsInvisible()) {
+			if (GameModeUtils.IsInvisible() || Ecocean.ECHooks.isVoidHeatColumn(Player.main.transform.position, out Vector3 trash)) {
 				vehicle = false;
 				return null;
 			}
@@ -327,8 +326,7 @@ namespace ReikaKalseki.SeaToSea {
 				behavior.SwimTo(runAwayTarget, (runAwayTarget - transform.position).normalized, attack.swimVelocity * 0.67F);
 				timeFleeing += dT;
 			}
-			else
-			if (aggressionLevel >= 1 && this.tryAllocateAggroToken()) {
+			else if (aggressionLevel >= 1 && this.tryAllocateAggroToken()) {
 				attack.lastTarget.target = go;
 				attack.currentTarget = go;
 				behavior.Attack(go.transform.position, (go.transform.position - transform.position).normalized, attack.swimVelocity);
@@ -350,9 +348,7 @@ namespace ReikaKalseki.SeaToSea {
 			if (timeAggressive > 30)
 				this.resetAggro(true);
 
-			c = aggressionColorFade > 0
-				? Color.Lerp(warnColor, attackingColor, aggressionColorFade)
-				: Color.Lerp(calmColor, warnColor, aggressionLevel);
+			c = aggressionColorFade > 0 ? Color.Lerp(warnColor, attackingColor, aggressionColorFade) : Color.Lerp(calmColor, warnColor, aggressionLevel);
 
 			float f = body.velocity.magnitude / attack.swimVelocity;
 			if (!flag2) //fast while fading from yellow to red

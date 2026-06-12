@@ -97,6 +97,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		public bool hasVoidStealth = false;
 
+		public float lastAttackTime { get; internal set; }
+
 		//private Renderer deepStalkerStorageDamage;
 
 		private static uGUI_SeamothHUD seamothHUD;
@@ -303,7 +305,7 @@ namespace ReikaKalseki.SeaToSea {
 			}
 
 			if (hasVoidStealth && body) {
-				voidStealthStoredEnergy += tickTime * 0.2F * body.velocity.magnitude;
+				voidStealthStoredEnergy += tickTime * (hard ? 0.5F : 0.33F) * body.velocity.magnitude;
 				if (voidStealthStoredEnergy >= MAX_VOIDSTEALTH_ENERGY)
 					seamoth.liveMixin.Kill(DamageType.Explosive);
 			}

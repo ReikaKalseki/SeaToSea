@@ -118,7 +118,7 @@ namespace ReikaKalseki.SeaToSea {
 
 	}
 
-	abstract class PCFSecurityNodeTag : MonoBehaviour {
+	abstract class PCFSecurityNodeTag : ImmuneToPropulsioncannon, DIHooks.ImmuneToStasis {
 
 		//private GameObject baseObject;
 		protected GameObject fxObject;
@@ -132,6 +132,8 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly SoundManager.SoundData breakSound = SoundManager.registerSound(SeaToSeaMod.modDLL, "pcfnodebreak", "Sounds/pcfnodebreak.ogg", SoundManager.soundMode3D);
 
 		void Start() {
+			immuneToRepulsionCannon = true;
+
 			//baseObject = gameObject.getChildObject("Base");
 			fxObject = gameObject.getChildObject("FX");
 
@@ -170,8 +172,9 @@ namespace ReikaKalseki.SeaToSea {
 	}
 
 	class PCFSecurityNodeRelay : MonoBehaviour {
-		void BashHit() { //prawn hit
-			GetComponentInParent<PCFSecurityNodeTag>().BashHit();
+		void BashHit(IExosuitArm arm) { //prawn hit
+			if (arm is ExosuitClawArm)
+				GetComponentInParent<PCFSecurityNodeTag>().BashHit();
 		}
 	}
 }

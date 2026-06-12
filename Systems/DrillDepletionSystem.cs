@@ -136,7 +136,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		void Update() {
 			if (allowedOreField == null) {
-				Type t = FCSIntegrationSystem.instance.getFCSDrillOreManager();
+				Type t = FCSIntegrationSystem.instance.drillOreManager;
 				allowedOreField = t.GetProperty("AllowedOres", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				oresPerDayField = t.GetField("_oresPerDay", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				oresPerDaySet = t.GetMethod("SetOresPerDay", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -148,8 +148,8 @@ namespace ReikaKalseki.SeaToSea {
 				filterListField = drillerDisplay.GetField("_trackedFilterState", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				storageText = drillerDisplay.GetField("_itemCounter", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-				controllerStorage = FCSIntegrationSystem.instance.getFCSDrillController().GetProperty("DeepDrillerContainer", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-				storageCapacity = FCSIntegrationSystem.instance.getFCSDrillStorage().GetField("_storageSize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+				controllerStorage = FCSIntegrationSystem.instance.drillController.GetProperty("DeepDrillerContainer", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+				storageCapacity = FCSIntegrationSystem.instance.drillStorage.GetField("_storageSize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
 				//currentGridPage = gridHelper.GetField("_currentPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				showGridPage = typeof(GridHelper).GetMethod("DrawPage", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[0], null);
@@ -165,7 +165,7 @@ namespace ReikaKalseki.SeaToSea {
 			float time = DayNightCycle.main.timePassedAsFloat;
 			if (time - lastOreTableAssignTime >= 1) {
 				lastOreTableAssignTime = time;
-				Component com = this.GetComponent(FCSIntegrationSystem.instance.getFCSDrillOreManager());
+				Component com = this.GetComponent(FCSIntegrationSystem.instance.drillOreManager);
 				if (com) {
 					allowedOreField.SetValue(com, deposit.getAllAvailableResources());
 
@@ -177,7 +177,7 @@ namespace ReikaKalseki.SeaToSea {
 					this.rebuildDisplay();
 				}
 
-				Component com2 = this.GetComponent(FCSIntegrationSystem.instance.getFCSDrillController());
+				Component com2 = this.GetComponent(FCSIntegrationSystem.instance.drillController);
 				if (com2) {
 					object storage = controllerStorage.GetValue(com2);
 					storageCapacity.SetValue(storage, MOTHERLODE_STORAGE_CAPACITY); //defaults to 300

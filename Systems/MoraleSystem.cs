@@ -27,6 +27,7 @@ using Story;
 using UnityEngine;
 using UnityEngine.UI;
 using Oculus.Newtonsoft.Json;
+using JetBrains.Annotations;
 
 namespace ReikaKalseki.SeaToSea {
 	public class MoraleSystem {
@@ -53,6 +54,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float BASE_MORALE_GAIN_SPEED = 1F/(MINUTE_DURATION_TO_PER_SECOND_CONVERSION*BASE_MORALE_TIME_TO_FILL);
 
 		private static readonly float PRAWN_MORALE_COOLDOWN = 600; //10 min
+		private static readonly float SEAMOTH_BREACH_MORALE_COOLDOWN = 300; //5 min
 
 		private static readonly float INITIAL_MORALE = 50;
 		private static readonly float INITIAL_REAL_MORALE = 10;
@@ -68,7 +70,10 @@ namespace ReikaKalseki.SeaToSea {
 		private static readonly float INITIAL_MORALE_BASELINE = 20;
 		private static readonly float MORALE_RESTORATION_RATE = 0.05F;
 
-		public static readonly float MORALE_DAMAGE_COEFFICIENT = 1;
+		private static readonly float MORALE_DAMAGE_COEFFICIENT = 1;
+		private static readonly float MORALE_LEVIATHAN_EFFECT = 20; // -20%/s
+
+		private static readonly float SEAMOTH_BREACH_MORALE_BOOST = 60; //60%/s, so max about 30%
 
 		public static uint printMoraleForDebug = 0;
 
@@ -82,13 +87,17 @@ namespace ReikaKalseki.SeaToSea {
 		private MoraleBar bar;
 
 		private float lastDecoCheckTime;
-		private float currentDecoLevel;
+		private float currentSlidingDecoLevel;
+		private float currentRoomDecoLevel;
 		private BaseRoomSpecializationSystem.RoomTypes currentRoom;
 
 		private float lastBaselineCheckTime;
 
 		private float timeInPrawn;
 		private float prawnMoraleCooldown;
+
+		private float timeSinceLastSeamothBreachMorale = 999;
+		private bool wasBreachingSeamothLastTick;
 
 		private float timeUntilMoraleAdoptsRealValue;
 
@@ -98,6 +107,25 @@ namespace ReikaKalseki.SeaToSea {
 		public float maxMorale { get; private set; }
 		public float currentMoraleBaseline { get; private set; }
 		public float currentMoraleForce { get; private set; }
+		public float lastDamageMoraleTime { get; private set; }
+		public float lastLeviathanSeekTime { get; private set; }
+
+		public float adrenalinOverride { 
+			get {
+				float time = DayNightCycle.main.timePassedAsFloat;
+				float timeSinceHurt = time-lastDamageMoraleTime;
+				float fd = (float)MathUtil.linterpolate(timeSinceHurt, 0, 10, 1, 0, true);
+
+				Survival s = Player.main.GetComponent<Survival>();
+				float lowest = Mathf.Min(Player.main.liveMixin.health, s ? s.food : 999, s ? s.water : 999);
+				float fs = (float)MathUtil.linterpolate(lowest, 0, 10, 1, 0, true);
+
+				float timeSinceLevi = time-lastLeviathanSeekTime;
+				float fl = Mathf.Sqrt((float)MathUtil.linterpolate(timeSinceLevi, 0, 60, 1, 0, true));
+
+				return Mathf.Max(fd, fs, fl);
+			}
+		}
 
 		//private MoraleVisual moraleVisual;
 
@@ -187,10 +215,11 @@ namespace ReikaKalseki.SeaToSea {
 			this.registerPermanentGoalEffect(StoryGoals.getRadioPlayGoal(StoryGoals.ALTERRA_HQ), 0, 5); //+5 from knowing there is a rocket plan
 			this.registerPermanentGoalEffect(StoryGoals.ROCKET_INFO, 0, 5); //permanent +5 to baseline after rocket known
 
-			this.registerPersistentEffect(ep => SNUtil.isPlayerCured(), 5, 20); //permanent +5/+20 after cure
-			this.registerPermanentGoalEffect(StoryGoals.ROCKET_COMPLETE, 5, 10); //another permanent +5/+10 after rocket built
+			this.registerPersistentEffect(ep => SNUtil.isPlayerCured(), 1, 20); //permanent +5/+20 after cure
+			this.registerPermanentGoalEffect(StoryGoals.ROCKET_COMPLETE, 1, 10); //another permanent +5/+10 after rocket built
 
 			this.registerPersistentEffect(ep => WorldUtil.isInPCFTank(ep.gameObject), 0, 20);
+			this.registerPersistentEffect(ep => ep.currentEscapePod && StoryGoalManager.main.completedGoals.Contains(ep.currentEscapePod.fixPanelGoal.key), 0, 20);
 
 			//boosts from a few major milestones
 			goalMorale[StoryGoals.REPAIR_LIFEPOD] = 25;
@@ -469,7 +498,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public void tick(Player ep) {
-			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic() || LaunchRocket.launchStarted || StoryGoalManager.main.IsGoalComplete(StoryGoals.LAUNCH_ROCKET) || !MainCameraControl.main.enabled) {
+			if (!ep || !ep.liveMixin || GameModeUtils.currentEffectiveMode == GameModeOption.Creative || GameModeUtils.currentEffectiveMode == GameModeOption.Freedom || !DIHooks.isWorldLoaded() || /*ep.cinematicModeActive*/IntroVignette.isIntroActive || EscapePod.main.IsPlayingIntroCinematic() || (Player.main.isPiloting && Player.main.currentSub != null) || LaunchRocket.launchStarted || StoryGoalManager.main.IsGoalComplete(StoryGoals.LAUNCH_ROCKET) || !MainCameraControl.main.enabled) {
 				if (MainCameraControl.main.enabled) //do not re-set morale just because you are in a camera
 					setMorale(75);
 				if (bar)
@@ -536,25 +565,27 @@ namespace ReikaKalseki.SeaToSea {
 				this.resetPrawnTime();
 				if (time - lastDecoCheckTime > 0.5F) {
 					lastDecoCheckTime = time;
-					currentRoom = BaseRoomSpecializationSystem.instance.getPlayerRoomType(ep, out currentDecoLevel, out float thresh);
+					currentRoom = BaseRoomSpecializationSystem.instance.getPlayerRoomType(ep, out currentRoomDecoLevel, out float thresh);
 				}
+
+				currentSlidingDecoLevel += Math.Sign(currentRoomDecoLevel - currentSlidingDecoLevel) * dT * 0.4F; //2 deco points per 5s, one min for leisure
 
 				bool cyclops = ep.currentSub.isCyclops;
 				env = cyclops ? EnvContext.CYCLOPS : EnvContext.SEABASE;
 				float min = cyclops ? CYCLOPS_MIN_DECO : BASE_MIN_DECO;
 
-				if (currentDecoLevel < min) {
+				if (currentSlidingDecoLevel < min) {
 					float lossLim = cyclops ? CYCLOPS_MORALE_LOSS_SPEED : BASE_MORALE_LOSS_SPEED;
-					delta = -(float)MathUtil.linterpolate(currentDecoLevel, 0, min, lossLim, 0, true);
+					delta = -(float)MathUtil.linterpolate(currentSlidingDecoLevel, 0, min, lossLim, 0, true);
 				}
 				else {
 					float gainCeil = cyclops ? CYCLOPS_MAX_DECO : BASE_MAX_DECO;
 					float gainLim = cyclops ? CYCLOPS_MORALE_GAIN_SPEED : BASE_MORALE_GAIN_SPEED;
-					delta = (float)MathUtil.linterpolate(currentDecoLevel, min, gainCeil, 0, gainLim, true);
+					delta = (float)MathUtil.linterpolate(currentSlidingDecoLevel, min, gainCeil, 0, gainLim, true);
 				}
 
 				if (checkMoraleDebugFlag(MoraleDebugFlags.DECO))
-					SNUtil.writeToChat("Base deco morale " + delta.ToString("0.00") + "/s from " + currentDecoLevel);
+					SNUtil.writeToChat("Base deco morale " + delta.ToString("0.00") + "/s from " + currentSlidingDecoLevel+" to "+currentRoomDecoLevel);
 
 				delta *= SeaToSeaMod.config.getFloat(C2CConfig.ConfigEntries.MORALESPEED);
 
@@ -576,6 +607,16 @@ namespace ReikaKalseki.SeaToSea {
 					delta += (float)MathUtil.linterpolate(sm.useRigidbody.velocity.magnitude, 5, 20, 0, 0.75); //up to 0.75% per second if moving fast
 					if (amb != null)
 						delta += amb.seamoth.moralePerSecondForce.getValue(ep);
+					if (v.transform.position.y > 0 && sm.useRigidbody.velocity.magnitude > 5 && (timeSinceLastSeamothBreachMorale >= SEAMOTH_BREACH_MORALE_COOLDOWN || wasBreachingSeamothLastTick)) {
+						SNUtil.writeToChat("Seamoth breach ("+(v.transform.position.y > 5) +")");
+						delta += dT* (v.transform.position.y > 5 ? 2 : 1) * SEAMOTH_BREACH_MORALE_BOOST; //double if you can get it really high
+						timeSinceLastSeamothBreachMorale = 0;
+						wasBreachingSeamothLastTick = true;
+					}
+					else {
+						wasBreachingSeamothLastTick = false;
+						timeSinceLastSeamothBreachMorale += dT;
+					}
 				}
 				else if (v is Exosuit p) {
 					env = EnvContext.PRAWN;
@@ -642,7 +683,7 @@ namespace ReikaKalseki.SeaToSea {
             else if (temp > 40)
                 delta -= (float)MathUtil.linterpolate(temp, 40, 90, 0, 10, true);
             */
-			prawnMoraleCooldown = Mathf.Max(prawnMoraleCooldown - (dT / PRAWN_MORALE_COOLDOWN), 0);
+			prawnMoraleCooldown = Mathf.Max(prawnMoraleCooldown - dT, 0);
 
 			if (checkMoraleDebugFlag(MoraleDebugFlags.CORE))
 				SNUtil.writeToChat("Core sim computed to delta "+delta);
@@ -712,6 +753,18 @@ namespace ReikaKalseki.SeaToSea {
 			}
 			else {
 				shiftMorale(diff < 300 ? -15 : -5);
+			}
+		}
+
+		internal void doMoraleDamage(float dmg, DamageType type) {
+			lastDamageMoraleTime = DayNightCycle.main.timePassedAsFloat;
+			shiftMorale(-dmg * MORALE_DAMAGE_COEFFICIENT);
+		}
+
+		internal void markLeviathanPursuit(Creature c) {
+			if (c is ReaperLeviathan || c is GhostLeviathan || c is GhostLeviatanVoid || c is SeaDragon) {
+				lastLeviathanSeekTime = DayNightCycle.main.timePassedAsFloat;
+				shiftMorale(Time.deltaTime * MORALE_LEVIATHAN_EFFECT);
 			}
 		}
 

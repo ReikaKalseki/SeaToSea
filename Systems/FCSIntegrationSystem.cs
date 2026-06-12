@@ -58,29 +58,31 @@ namespace ReikaKalseki.SeaToSea {
 
 		public static readonly FCSIntegrationSystem instance = new FCSIntegrationSystem();
 
-		private bool isFCSLoaded;
+		public bool isFCSLoaded { get; private set; }
 
-		private Type drillController;
-		private Type drillOreManager;
-		private Type drillStorage;
+		public Type drillController { get; private set; }
+		public Type drillOreManager { get; private set; }
+		public Type drillStorage { get; private set; }
 
-		private Type teleporterController;
-		private Type teleporterCharger;
+		public Type teleporterController { get; private set; }
+		public Type teleporterCharger { get; private set; }
 
-		private TechType fcsBiofuel;
-		private DuplicateRecipeDelegateWithRecipe fcsBiofuelAlt;
+		public TechType fcsBiofuel { get; private set; }
+		public DuplicateRecipeDelegateWithRecipe fcsBiofuelAlt { get; private set; }
 
-		private TechType fcsTeleportCard;
-		private TechType vehiclePad;
+		public TechType fcsTeleportCard { get; private set; }
+		public TechType vehiclePad { get; private set; }
+		public TechType oreConsumer { get; private set; }
 
 		private readonly HashSet<TechType> peeperBarFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> registeredEffectFoods = new HashSet<TechType>();
 		private readonly HashSet<TechType> notBuyableTechs = new HashSet<TechType>();
 		private readonly HashSet<TechType> replacedTechRecipes = new HashSet<TechType>();
 
-		internal BasicCraftingItem fcsDrillFuel;
-		internal BasicCraftingItem luminolDrop;
-		internal BasicCraftingItem paint;
+		public BasicCraftingItem fcsDrillFuel { get; private set; }
+		public BasicCraftingItem luminolDrop { get; private set; }
+		public DuplicateRecipeDelegateWithRecipe luminolDropFromPurple { get; private set; }
+		public BasicCraftingItem paint { get; private set; }
 
 		private float lastTimeUnlock = -1;
 		private HashSet<TechType> unlocksRightNow = new HashSet<TechType>();
@@ -101,44 +103,8 @@ namespace ReikaKalseki.SeaToSea {
 			return isFCSLoaded;
 		}
 
-		public Type getFCSDrillController() {
-			return drillController;
-		}
-
-		public Type getFCSDrillOreManager() {
-			return drillOreManager;
-		}
-
-		public Type getFCSDrillStorage() {
-			return drillStorage;
-		}
-
-		public Type getTeleporterController() {
-			return teleporterController;
-		}
-
-		public Type getTeleporterCharger() {
-			return teleporterCharger;
-		}
-
 		public bool isUnlockingTypePurchase(TechType tt) {
 			return replacedTechRecipes.Contains(tt) && !notBuyableTechs.Contains(tt);
-		}
-
-		public TechType getBiofuel() {
-			return fcsBiofuel;
-		}
-
-		public TechType getBiofuelAlt() {
-			return fcsBiofuelAlt.TechType;
-		}
-
-		public TechType getTeleportCard() {
-			return fcsTeleportCard;
-		}
-
-		public TechType getVehiclePad() {
-			return vehiclePad;
 		}
 
 		internal void modifyPeeperFood(Pickupable pp) {
@@ -218,7 +184,7 @@ namespace ReikaKalseki.SeaToSea {
 
 			void Update() {
 				if (setState == null) {
-					Type t = FCSIntegrationSystem.instance.getTeleporterController();
+					Type t = instance.teleporterController;
 					setState = t.GetMethod("TeleporterState", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 				}
 
@@ -232,7 +198,7 @@ namespace ReikaKalseki.SeaToSea {
 					if (sub && sub.isBase) {
 						//if (sub.powerRelay.GetPower() <= 10)
 						//	return false;
-						charger = (FcsDevice)sub.GetComponentInChildren(FCSIntegrationSystem.instance.getTeleporterCharger());
+						charger = (FcsDevice)sub.GetComponentInChildren(instance.teleporterCharger);
 					}
 				}
 				bool state = false;
@@ -402,6 +368,7 @@ namespace ReikaKalseki.SeaToSea {
 			oreValues[TechType.MercuryOre] = (decimal)Mathf.Lerp((float)oreValues[TechType.Gold], (float)oreValues[TechType.Nickel], 0.5F);
 			oreValues[TechType.Salt] = oreValues[TechType.Titanium] * 0.2M;
 			oreValues[CraftingItems.getItem(CraftingItems.Items.TraceMetals).TechType] = oreValues[TechType.Copper];
+			oreValues[CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType] = (decimal)((float)(oreValues[TechType.Quartz]) * 1.5F);
 			oreValues[CraftingItems.getItem(CraftingItems.Items.GeyserMinerals).TechType] = oreValues[TechType.Lead];
 			oreValues[CraftingItems.getItem(CraftingItems.Items.Nanocarbon).TechType] = oreValues[TechType.Kyanite] * 4;
 
@@ -523,6 +490,19 @@ namespace ReikaKalseki.SeaToSea {
 			luminolDrop.sprite = TextureManager.getSprite(SeaToSeaMod.modDLL, "Textures/Items/LuminolDrop");
 			luminolDrop.addIngredient(CraftingItems.getItem(CraftingItems.Items.Luminol).TechType, 1);
 			luminolDrop.Patch();
+			StoryHandler.instance.registerTrigger(new TechTrigger(CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType), new TechUnlockEffect(luminolDrop.TechType));
+
+			TechData rec = new TechData();
+			rec.Ingredients.Add(new Ingredient(CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType, 1));
+			rec.Ingredients.Add(new Ingredient(EcoceanMod.glowOil.TechType, 2));
+			luminolDropFromPurple = new DuplicateRecipeDelegateWithRecipe(luminolDrop, rec);
+			luminolDropFromPurple.ownerMod = SeaToSeaMod.modDLL;
+			luminolDropFromPurple.craftTime = luminolDrop.craftingTime;
+			luminolDropFromPurple.setRecipe(luminolDrop.numberCrafted/2);
+			luminolDropFromPurple.unlock = TechType.Unobtanium;
+			luminolDropFromPurple.allowUnlockPopups = true;
+			luminolDropFromPurple.Patch();
+			StoryHandler.instance.registerTrigger(new TechTrigger(CraftingItems.getItem(CraftingItems.Items.DimLuminol).TechType), new TechUnlockEffect(luminolDropFromPurple.TechType));
 
 			paint = new BasicCraftingItem(SeaToSeaMod.itemLocale.getEntry("Paint"), "WorldEntities/Natural/Lubricant");
 			paint.numberCrafted = 4;
@@ -604,7 +584,9 @@ namespace ReikaKalseki.SeaToSea {
 
 			notBuyableTechs.Add(this.doAssignRecipe("AlterraHubDepot", 6, this.electronicsTier2(1)));
 			notBuyableTechs.Add(this.doAssignRecipe("DronePortPad", 8, this.reinforcedStrong(2)));
-			notBuyableTechs.Add(this.doAssignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1)));
+			oreConsumer = this.doAssignRecipe("OreConsumer", 5, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 3), new Ingredient(TechType.Polyaniline, 1), new Ingredient(TechType.CrashPowder, 2), new Ingredient(TechType.Diamond, 2), new Ingredient(TechType.AdvancedWiringKit, 1));
+			notBuyableTechs.Add(oreConsumer);
+			
 			this.assignRecipe("PatreonStatue", 2, new Ingredient[] { new Ingredient(TechType.Quartz, 1) }, this.electronicsTier1());
 
 			this.doAssignRecipe("AlterraGen", 5, new Ingredient[] { new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 1), new Ingredient(TechType.AdvancedWiringKit, 1) });
@@ -676,7 +658,7 @@ namespace ReikaKalseki.SeaToSea {
 			CraftDataHandler.SetCraftingTime(fcsBiofuel, 10);
 			BioReactorHandler.SetBioReactorCharge(fcsBiofuel, 18000);
 
-			TechData rec = RecipeUtil.copyRecipe(td);
+			rec = RecipeUtil.copyRecipe(td);
 			rec.Ingredients.Add(new Ingredient(C2CItems.purpleBoomerang.TechType, 2));
 			rec.Ingredients.Add(new Ingredient(TechType.Benzene, 1));
 			rec.Ingredients.Add(new Ingredient(C2CItems.sanctuaryPlant.seed.TechType, 1));

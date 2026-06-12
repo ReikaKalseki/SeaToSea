@@ -159,8 +159,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		public bool isPlayerInOcean() {
 			Player ep = Player.main;
-			bool inWater = !ep.IsInsideWalkable() && Player.main.IsUnderwater() && ep.IsSwimming();
-			return inWater && !ep.currentWaterPark && !(this.isInPrecursor(ep.gameObject) && ep.transform.position.y < -1300);
+			return ep.isFreeSwimming() && !(this.isInPrecursor(ep.gameObject) && ep.transform.position.y < -1300);
 		}
 
 		public bool isInPrecursor(GameObject go) {

@@ -89,7 +89,7 @@ namespace ReikaKalseki.SeaToSea {
 			EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.BLOODDMG, f => Mathf.Clamp(f, 1F, 3F));
 			EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.PLANKTONRATE, f => Mathf.Clamp(f, 2F, 4F));
 			EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.GLOBALCOMPASS, f => Mathf.Clamp(f, hard ? 0.75F : 0.25F, 1F));
-			EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.LEVIIMMUNE, f => hard ? 1 : 0.75F);
+			//EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.LEVIIMMUNE, f => hard ? 1 : 0.75F);
 			EcoceanMod.config.attachOverride(ECConfig.ConfigEntries.DEFENSECLAMP, f => hard ? 10 : 20F);
 		}
 

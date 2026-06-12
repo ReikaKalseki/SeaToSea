@@ -1832,6 +1832,48 @@ namespace ReikaKalseki.SeaToSea {
 			}
 		}
 
+		[HarmonyPatch(typeof(AggressiveWhenSeeTarget))]
+		[HarmonyPatch("ScanForAggressionTarget")]
+		public static class AggressionTickHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList(instructions);
+				try {
+					codes.patchEveryReturnPre(new CodeInstruction(OpCodes.Ldarg_0), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "tickAggression", false, typeof(AggressiveWhenSeeTarget)));
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
+		[HarmonyPatch(typeof(Bubble))]
+		[HarmonyPatch("Pop")]
+		public static class BubblePopHook {
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+				InstructionHandlers.logPatchStart(MethodBase.GetCurrentMethod(), instructions);
+				InsnList codes = new InsnList(instructions);
+				try {
+					codes.patchInitialHook(new CodeInstruction(OpCodes.Ldarg_0), new CodeInstruction(OpCodes.Ldarg_1), InstructionHandlers.createMethodCall("ReikaKalseki.SeaToSea.C2CHooks", "onBubblePop", false, typeof(Bubble), typeof(bool)));
+					InstructionHandlers.logCompletedPatch(MethodBase.GetCurrentMethod(), instructions);
+				}
+				catch (Exception e) {
+					InstructionHandlers.logErroredPatch(MethodBase.GetCurrentMethod());
+					FileLog.Log(e.Message);
+					FileLog.Log(e.StackTrace);
+					FileLog.Log(e.ToString());
+				}
+				return codes.AsEnumerable();
+			}
+		}
+
 	}
 
 	static class PatchLib {

@@ -901,6 +901,27 @@
 			postcovedome
 		</header>
 	</POST_COVE_DOME>
+	<CAVE_BRAIN_CORAL>
+		<name>
+			Stygian Brain Coral
+		</name>
+		<desc>
+			
+		</desc>
+		<pda>
+			The presence of these specimens demonstrate that 4546B brain coral is in fact a eutroglophillic species, where most specimens live in open environments but a subset have adapted for life inside cave systems.
+			
+			While generally equivalent to their surface counterparts, these variants do have to survive on a comparatively meager amount of available energy, and as such their bodies have lost much of their pigmentation and are laced with metabolism-slowing organic compounds, some of which leak into the air they produce.
+			
+			Assessment: Provides a safe location for a repreive from harsh conditions and pressing survival needs.
+		</pda>
+		<category>
+			Lifeforms/Coral
+		</category>
+		<header>
+			cavebraincoral
+		</header>
+	</CAVE_BRAIN_CORAL>
 	<PCF_SECURITY>
 		<name>
 			Precursor Security Perimeter Node
@@ -909,7 +930,9 @@
 			
 		</desc>
 		<pda>
-			One node in a large security perimeter. Unclear purpose or extent. Encryption algorithms prevent direct override of security parameters, but the mechanism may have other methods by which the security system can be neutralized.
+			One node in a large security perimeter. Unclear purpose or extent.
+			
+			Encryption algorithms prevent direct override of security parameters, but the mechanism may have other methods by which it, and thus the security system, can be neutralized.
 		</pda>
 		<category>
 			DownloadedData/Precursor

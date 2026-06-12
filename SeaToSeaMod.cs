@@ -105,6 +105,7 @@ namespace ReikaKalseki.SeaToSea {
 		private static TrailerBaseConverter bioBreaker;
 		private static TerrainLootSpawner mercuryLootSpawner;
 		private static TerrainLootSpawner calciteLootSpawner;
+		private static TerrainLootSpawner extraNickelLootSpawner;
 		private static ObjectSpawner stepCaveTunnelSpawner;
 		private static ObjectSpawner stepCaveTunnelSpawnerSmall;
 		private static StepCaveTunnelAtmo stepCaveTunnelAtmo;
@@ -288,6 +289,8 @@ namespace ReikaKalseki.SeaToSea {
 			mercuryLootSpawner.Patch();
 			calciteLootSpawner = new TerrainLootSpawner("CalciteLootSpawner", CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).ClassID);
 			calciteLootSpawner.Patch();
+			extraNickelLootSpawner = new TerrainLootSpawner("ExtraNickelLootSpawner", VanillaResources.NICKEL.prefab);
+			extraNickelLootSpawner.Patch();
 
 			WeightedRandom<PrefabReference> stepCavePlants = new WeightedRandom<PrefabReference>();
 			stepCavePlants.addEntry(VanillaFlora.VIOLET_BEAU, 40);
@@ -588,6 +591,13 @@ namespace ReikaKalseki.SeaToSea {
 				}
 			}
 
+			/*
+			LootDistributionHandler.EditLootDistributionData(VanillaResources.NICKEL.prefab, BiomeType.GhostTree_LedgeSide, 0.5F, 1);
+			LootDistributionHandler.EditLootDistributionData(VanillaResources.NICKEL.prefab, BiomeType.GhostTree_LedgeTop, 0.4F, 1);
+			LootDistributionHandler.EditLootDistributionData(VanillaResources.NICKEL.prefab, BiomeType.Canyon_Wall, 0.6F, 1);
+			LootDistributionHandler.EditLootDistributionData(VanillaResources.NICKEL.prefab, BiomeType.TreeCove_Wall, 0.8F, 1);
+			*/
+
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ExplorationTrackerPages).TypeHandle);
 
 			C2CIntegration.addPostCompat();
@@ -742,6 +752,14 @@ namespace ReikaKalseki.SeaToSea {
 
 			foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in C2CUtil.calciteSpawners) {
 				GenUtil.registerWorldgen(new PositionedPrefab(calciteLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3)));
+			}
+
+			foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in C2CUtil.extraNickelSpawners) {
+				Tuple<float, int, float> vals = kvp.Value; //exclusion radius, target count, max range
+				int count = vals.Item2;
+				if (config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
+					count = Math.Max(1, count * 2 / 3);
+				GenUtil.registerWorldgen(new PositionedPrefab(extraNickelLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
 			}
 
 			//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);

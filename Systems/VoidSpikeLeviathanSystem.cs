@@ -582,6 +582,8 @@ namespace ReikaKalseki.SeaToSea {
 			if (this.isLeviathanEnabled() && VoidSpikesBiome.instance.isPlayerInLeviathanZone(ep.transform.position))
 				return 0;
 			float time = DayNightCycle.main.timePassedAsFloat;
+			if (sm.liveMixin.GetHealthFraction() < 0.25F && time - sm.GetComponent<C2CMoth>().lastAttackTime < 15 && InventoryUtil.vehicleHasUpgrade(sm, C2CItems.voidStealth.TechType))
+				return 1;
 			SeamothStealthManager ping = sm.gameObject.EnsureComponent<SeamothStealthManager>();
 			if (ping.nextStealthValidityTime >= 0 && time < ping.nextStealthValidityTime)
 				return 0;
@@ -590,7 +592,7 @@ namespace ReikaKalseki.SeaToSea {
 				float dist = Vector3.Distance(go.transform.position, sm.transform.position);
 				minDist = Math.Min(dist, minDist);
 			}
-			double frac2 = double.IsPositiveInfinity(minDist) || double.IsNaN(minDist) ? 0 : Math.Max(0, 1-(minDist/120D));
+			double frac2 = double.IsPositiveInfinity(minDist) || double.IsNaN(minDist) ? 0 : MathUtil.linterpolate(minDist, 20, 80, 1, 0);
 			//SNUtil.writeToChat(minDist.ToString("000.0")+" > "+frac2.ToString("0.0000"));
 			if (frac2 >= 1)
 				return 0;

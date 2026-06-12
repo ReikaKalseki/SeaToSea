@@ -394,16 +394,7 @@ namespace ReikaKalseki.SeaToSea {
 			C2CItems.treatment.addIngredient(C2CItems.bandage, 1).addIngredient(TechType.Glass, 1).addIngredient(TechType.Titanium, 1).addIngredient(CraftingItems.getItem(CraftingItems.Items.WeakEnzyme42), 2);
 			C2CItems.chargeFinRelay.addIngredient(CraftingItems.getItem(CraftingItems.Items.Electrolytes), 4).addIngredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL), 1).addIngredient(TechType.AdvancedWiringKit, 1).addIngredient(TechType.Magnetite, 4);
 			C2CItems.addMainItems();
-			/*
-            rec = RecipeUtil.createUncrafting(t2Battery.TechType, CraftingItems.getItem(CraftingItems.Items.DenseAzurite).TechType);
-            rec.Ingredients.Add(new Ingredient(t2Battery.TechType, 1));
-            item = new DuplicateRecipeDelegateWithRecipe(CraftingItems.getItem(CraftingItems.Items.DenseAzurite), rec);
-            item.craftTime = 6;
-            item.craftingType = CraftTree.Type.Fabricator;
-            item.category = TechCategory.Electronics;
-            item.group = TechGroup.Resources;
-            item.craftingMenuTree = new string[]{"Resources", "Electronics"};
-            item.Patch();*/
+
 			UncraftingRecipeItem t2un = new UncraftingRecipeItem(C2CItems.t2Battery);
 			t2un.craftTime = 6;
 			t2un.ownerMod = SeaToSeaMod.modDLL;
@@ -484,7 +475,13 @@ namespace ReikaKalseki.SeaToSea {
 
 			addItemToRecipe(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.PHASE_CRYSTAL).TechType, 6);
 			RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.Battery);
-			addItemToRecipe(TechType.StasisRifle, C2CItems.t2Battery.TechType, 2);
+			addItemToRecipe(TechType.StasisRifle, C2CItems.t2Battery.TechType, 1);
+			RecipeUtil.removeIngredient(TechType.StasisRifle, TechType.ComputerChip);
+			addItemToRecipe(TechType.StasisRifle, CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 4);
+			addItemToRecipe(TechType.StasisRifle, TechType.AdvancedWiringKit, 1);
+			addItemToRecipe(TechType.StasisRifle, CraftingItems.getItem(CraftingItems.Items.Tungsten).TechType, 5);
+			if (hard) //this is safe because depth3 already needs calcite = LR...but it also means liqbr requires no stasis (= dunes arch, very doable)
+				addItemToRecipe(TechType.StasisRifle, electro.TechType, 2);
 
 			RecipeUtil.modifyIngredients(TechType.ReinforcedDiveSuit, i => { if (i.techType == TechType.Diamond) i.amount = 4; return i.techType == TechType.Titanium || i.techType == TechType.AramidFibers; });
 			addItemToRecipe(TechType.ReinforcedDiveSuit, CustomMaterials.getItem(CustomMaterials.Materials.PRESSURE_CRYSTALS).TechType, 9);

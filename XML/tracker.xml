@@ -262,6 +262,9 @@
 		<geogel>
 			Cave systems inside the larger islands, and fissures within them leaking tarry compounds
 		</geogel>
+		<fcswreck>
+			A wreck near the crater edge, containing blueprints for industrial machinery
+		</fcswreck>
 	</UNDERISLANDS>
 	<BKELPTRENCH>
 		<name>
@@ -474,6 +477,9 @@
 		<emperor>
 			A juvenile Sea Emperor, patrolling the open water and distributing curative enzymes
 		</emperor>
+		<fcsmain>
+			A sunken technology center, containing a damaged and code-locked antenna, the reactivation of which enabled the purchase of additional technology blueprints
+		</fcsmain>
 	</CRAG>
 	<FLOATISLAND>
 		<name>

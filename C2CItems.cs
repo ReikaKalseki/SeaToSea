@@ -62,6 +62,8 @@ namespace ReikaKalseki.SeaToSea {
 		//public static TechType postCoveTreeCommon;
 		//public static readonly Dictionary<DecoPlants, PostCoveTree> postCoveTrees = new Dictionary<DecoPlants, PostCoveTree>();
 
+		public static TechType caveBrainCoral;
+
 		public static BrokenTablet brokenRedTablet;
 		public static BrokenTablet brokenWhiteTablet;
 		public static BrokenTablet brokenOrangeTablet;
@@ -345,6 +347,11 @@ namespace ReikaKalseki.SeaToSea {
             postCoveTreeCommon = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
             PostCoveTree.postRegister().encyclopedia = SNUtil.addPDAEntry(postCoveTreeCommon, e.key, e.name, 5, e.getString("category"), e.pda, e.getString("header")).id;
             */
+
+			e = SeaToSeaMod.itemLocale.getEntry("CAVE_BRAIN_CORAL");
+			caveBrainCoral = TechTypeHandler.AddTechType(SeaToSeaMod.modDLL, e.key, e.name, e.desc);
+			SNUtil.addPDAEntry(caveBrainCoral, e.key, e.name, 5, e.getString("category"), e.pda, e.getString("header"));
+
 			BioReactorHandler.Main.SetBioReactorCharge(alkali.seed.TechType, BaseBioReactor.GetCharge(TechType.RedBushSeed) * 1.5F);
 			BioReactorHandler.Main.SetBioReactorCharge(kelp.seed.TechType, BaseBioReactor.GetCharge(TechType.BloodOil) * 0.8F);
 			BioReactorHandler.Main.SetBioReactorCharge(healFlower.seed.TechType, BaseBioReactor.GetCharge(TechType.Peeper));
