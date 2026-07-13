@@ -44,5 +44,6 @@ obj/*
 bin/*
 XML/WorldgenSets-temp/*
 XML/WorldgenSets/*
+Systems/ExplorationTrackerPages.cs
 
 npp session
