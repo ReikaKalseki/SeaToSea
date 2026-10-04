@@ -27,6 +27,9 @@ namespace ReikaKalseki.SeaToSea {
 		internal static readonly WeightedRandom<string> resourceTableCool = new WeightedRandom<string>();
 		internal static readonly WeightedRandom<string> resourceTableHot = new WeightedRandom<string>();
 
+		internal static Dictionary<Vector3, float> domePositionChecks = new Dictionary<Vector3, float>();
+		internal static Dictionary<Vector3, Quaternion> expectedDomeRotations = new Dictionary<Vector3, Quaternion>();
+
 		private Quaternion rotation;
 
 		static PostCoveDomeGenerator() {
@@ -34,6 +37,7 @@ namespace ReikaKalseki.SeaToSea {
 			resourceTableCool.addEntry(VanillaResources.DIAMOND.prefab, 30);
 			resourceTableCool.addEntry(VanillaResources.QUARTZ.prefab, 70);
 			resourceTableCool.addEntry(CustomMaterials.getItem(CustomMaterials.Materials.CALCITE).ClassID, 20);
+			resourceTableHot.addEntry(VanillaResources.URANIUM.prefab, 5);
 
 			resourceTableHot.addEntry(VanillaResources.RUBY.prefab, 20);
 			resourceTableHot.addEntry(VanillaResources.DIAMOND.prefab, 50);
@@ -43,6 +47,56 @@ namespace ReikaKalseki.SeaToSea {
 
 			coolResourceDome.Patch();
 			hotResourceDome.Patch();
+		}
+
+		internal static void registerLiveDome(PostCoveDomeTag dome) {
+			Vector3 at = dome.transform.position;
+			foreach (Vector3 pos in domePositionChecks.Keys.ToList()) { //toList to make wrapper to avoid concurrent modification
+				if ((pos-at).sqrMagnitude < 1) {
+					domePositionChecks[pos] = DayNightCycle.main.timePassedAsFloat;
+					return;
+				}
+			}
+			SNUtil.writeToChat("Glass coral @ "+at+" was in an unexpected place!");
+		}
+
+		private static float spawnCheckTimer = 0;
+
+		internal static void registerExpectedSpawns(WorldgenDatabase gen) {
+			foreach (PostCoveDomeGenerator pos in gen.getPositions<PostCoveDomeGenerator>()) {
+				domePositionChecks[pos.position] = -1;
+				expectedDomeRotations[pos.position] = pos.rotation;
+			}
+		}
+
+		internal static void tickSpawnValidation(Player ep) {
+			if (domePositionChecks.Keys.Count == 0)
+				return;
+			Vector3 root = domePositionChecks.Keys.First();
+			Vector3 at = ep.transform.position;
+			if (ep && (at - root).sqrMagnitude <= 40000) {
+				spawnCheckTimer += Time.deltaTime;
+				if (spawnCheckTimer >= 20) {
+					doSpawnCheck(at);
+					spawnCheckTimer = 0;
+				}
+			}
+			else {
+				spawnCheckTimer = 0;
+			}
+		}
+
+		private static void doSpawnCheck(Vector3 at) {
+			float time = DayNightCycle.main.timePassedAsFloat;
+			foreach (KeyValuePair<Vector3, float> kvp in domePositionChecks) {
+				Vector3 pos = kvp.Key;
+				if (time-kvp.Value >= 20 && (at-pos).sqrMagnitude <= 10000 && WorldUtil.getObjectsNearOfClassID(pos, 10, SeaToSeaMod.postCoveDome.ClassID).Count == 0) {
+					SNUtil.writeToChat("Regenerating glass coral @ "+pos);
+					PostCoveDomeGenerator gen = new PostCoveDomeGenerator(pos);
+					gen.rotation = expectedDomeRotations[pos];
+					GenUtil.fireGenerator(gen, new List<GameObject>());
+				}
+			}
 		}
 
 		class ResourceDome : Spawnable {

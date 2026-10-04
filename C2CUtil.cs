@@ -42,18 +42,18 @@ namespace ReikaKalseki.SeaToSea {
 			{ new Vector3(-719.4F, -673.7F, -39.6F), Tuple.Create(4F, 5, 48F) },
 			{ new Vector3(-864.5F, -672.7F, -128.6F), Tuple.Create(4F, 8, 48F) },
 		};
-
+		/*
 		internal static readonly Dictionary<Vector3, Tuple<float, int, float>> extraNickelSpawners = new Dictionary<Vector3, Tuple<float, int, float>>() {
 			{ new Vector3(-648, -578, 1038), Tuple.Create(8F, 2, 100F) },
 			{ new Vector3(-725, -578, 1031), Tuple.Create(8F, 2, 100F) },
 			{ new Vector3(-788, -582, 1057), Tuple.Create(8F, 2, 100F) },
 			{ new Vector3(-1081, -641, -501), Tuple.Create(8F, 2, 90F) },
-			{ new Vector3(-692, -652, -769), Tuple.Create(8F, 2, 60F) },
-			{ new Vector3(-742, -653, -759), Tuple.Create(8F, 2, 60F) },
+			{ new Vector3(-692, -652, -769), Tuple.Create(8F, 1, 60F) },
+			{ new Vector3(-742, -653, -759), Tuple.Create(8F, 1, 60F) },
 			{ new Vector3(-1107, -663, -209), Tuple.Create(8F, 2, 80F) },
 			{ new Vector3(-1119, -667, -87), Tuple.Create(8F, 2, 80F) },
 		};
-
+		*/
 		private static readonly HashSet<string> floaterRocks = new HashSet<string>() {
 			"44396d05-0910-4b4d-a046-119fab3512a5",
 			"7637d968-4878-46a5-adf5-aa9e21fe3ddc",

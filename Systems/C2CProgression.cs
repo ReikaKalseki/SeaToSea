@@ -156,6 +156,7 @@ namespace ReikaKalseki.SeaToSea {
 			gatedTechnologies.Add(TechType.ExosuitDrillArmModule);
 			gatedTechnologies.Add(TechType.ExoHullModule1);
 			gatedTechnologies.Add(TechType.ExoHullModule2);
+			gatedTechnologies.Add(TechType.VehicleHullModule1);
 			gatedTechnologies.Add(TechType.VehicleHullModule2);
 			gatedTechnologies.Add(TechType.VehicleHullModule3);
 			gatedTechnologies.Add(TechType.SeamothElectricalDefense);
@@ -178,6 +179,7 @@ namespace ReikaKalseki.SeaToSea {
 			gatedTechnologies.Add(TechType.PrecursorKey_Purple);
 			gatedTechnologies.Add(TechType.HeatBlade);
 			gatedTechnologies.Add(TechType.ReactorRod);
+			gatedTechnologies.Add(TechType.PlasteelIngot);
 
 			//requiredProgression.Add();
 		}

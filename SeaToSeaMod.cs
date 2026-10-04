@@ -573,6 +573,9 @@ namespace ReikaKalseki.SeaToSea {
 				GenUtil.registerWorldgen(new BKelpBumpWormSpawner(pos + (Vector3.down * 3)));
 			}
 
+			PostCoveDomeGenerator.registerExpectedSpawns(worldgen);
+			PCFSecurityNode.registerExpectedSpawns(worldgen);
+
 			AvoliteSpawner.instance.postRegister();
 			DataboxTypingMap.instance.load();
 			DataboxTypingMap.instance.addValue(-789.81, -216.10, -711.02, C2CItems.bandage.TechType);
@@ -753,14 +756,14 @@ namespace ReikaKalseki.SeaToSea {
 			foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in C2CUtil.calciteSpawners) {
 				GenUtil.registerWorldgen(new PositionedPrefab(calciteLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3)));
 			}
-
+			/*
 			foreach (KeyValuePair<Vector3, Tuple<float, int, float>> kvp in C2CUtil.extraNickelSpawners) {
 				Tuple<float, int, float> vals = kvp.Value; //exclusion radius, target count, max range
 				int count = vals.Item2;
 				if (config.getBoolean(C2CConfig.ConfigEntries.HARDMODE))
 					count = Math.Max(1, count * 2 / 3);
 				GenUtil.registerWorldgen(new PositionedPrefab(extraNickelLootSpawner.ClassID, kvp.Key, Quaternion.identity, new Vector3(vals.Item1, count, vals.Item3)));
-			}
+			}*/
 
 			//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Dunes_CaveFloor, 0.05F, 1);
 			//LootDistributionHandler.EditLootDistributionData(VanillaResources.MERCURY.prefab, BiomeType.Mountains_CaveFloor, 0.05F, 1);

@@ -84,6 +84,16 @@ namespace ReikaKalseki.SeaToSea {
 			light.transform.localPosition = Vector3.up * 3;
 			light.shadows = LightShadows.Soft;
 			this.Invoke("spawnOffspring", 30);
+			this.InvokeRepeating("registerSelf", 1, 10);
+		}
+
+		void OnDisable() {
+			OnDestroy();
+		}
+
+		void OnDestroy() {
+			CancelInvoke("spawnOffspring");
+			CancelInvoke("registerSelf");
 		}
 
 		void Update() {
@@ -104,6 +114,10 @@ namespace ReikaKalseki.SeaToSea {
 		void OnScanned() {
 			scanned = true;
 			SNUtil.addBlueprintNotification(CraftingItems.getItem(CraftingItems.Items.ObsidianGlass).TechType);
+		}
+
+		void registerSelf() {
+			PostCoveDomeGenerator.registerLiveDome(this);
 		}
 
 		public static int maximumDomeChildren = 16;

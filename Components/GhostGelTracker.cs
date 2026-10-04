@@ -30,10 +30,15 @@ namespace ReikaKalseki.SeaToSea {
 		public static readonly float REGEN_RATE = 60*30; //30 min per harvest
 
 		private Sealed cutter;
+		private Creature leviathan;
+		private PrefabIdentifier prefab;
 
 		private float harvestCount;
 
 		public void setup() {
+			leviathan = gameObject.GetComponent<Creature>();
+			prefab = gameObject.GetComponent<PrefabIdentifier>();
+
 			cutter = gameObject.EnsureComponent<Sealed>();
 			cutter._sealed = true;
 			cutter.maxOpenedAmount = 200;
@@ -72,7 +77,13 @@ namespace ReikaKalseki.SeaToSea {
 
 		public bool canHarvest { 
 			get {
-				return harvestCount < 3;
+				return harvestCount < maxHarvestCount;
+			}
+		}
+
+		public int maxHarvestCount {
+			get {
+				return SNUtil.match(prefab, VanillaCreatures.GHOST_LEVIATHAN.prefab) ? 4 : 3;
 			}
 		}
 

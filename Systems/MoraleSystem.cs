@@ -714,6 +714,10 @@ namespace ReikaKalseki.SeaToSea {
 
 			//SNUtil.writeToChat("Adjusting morale by "+delta.ToString("0.00")+"/s because of "+currentDecoLevel.ToString("0.0"));
 			this.shiftMorale(delta * dT);
+
+			if (moralePercentage <= 20 && DayNightCycle.main.timePassedAsFloat > 1800) {
+				PDAManager.getPage("c2cmorale").unlock();
+			}
 		}
 
 		private void resetPrawnTime() {

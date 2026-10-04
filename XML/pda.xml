@@ -621,7 +621,7 @@
 		Emergency Rescue Warp
 	</name>
 	<pda>
-		All Alterra suits contain the necessary hardware to use "Alterra Emergency Rescue Warp™" technology. This highly experimental technology is capable of returning you to the surface from any intact Alterra Seabase™.
+		All Alterra™ suits contain the necessary hardware to use "Alterra™ Emergency Rescue Warp™" technology. This highly experimental technology is capable of returning you to the surface from any intact Alterra Seabase™.
 		
 		Note: The warp field is highly unstable and can only transport your own body and select Alterra™ equipment. Any unrecognized materials or tools with high power flow risk disrupting the field and safety interlocks will engage to prevent use in this circumstance.
 		
@@ -631,6 +631,25 @@
 		Welcome/StartGear
 	</category>
   </rescuewarp>
+  <c2cmorale>
+	<name>
+		Alterra™ Human Asset™ Psychological Maintenance
+	</name>
+	<pda>
+		The nature of your situation on 4546B is likely to incur significant emotional distress. In particular, you are likely to suffer lasting emotional impact from nutrient depletion, injury, unpleasant environments, reminders of your circumstances, and more.
+		
+		Alterra™-led psychological experimentation on human assets™ has identified multiple mechanisms by which your mental state can negatively impact your productivity or survivability, including but not limited to:
+		* Lack of motivation to properly perform survival and other tasks in an efficient and speedy manner
+		* Decreased muscle tone
+		* Less effective nutrient absorption
+		* Suppressed natural healing rate
+		
+		It is therefore advised to safeguard your emotional state against unnecessary negative influences, and to introduce positive experiences into your routine and environment, such as by building comfortable and aesthetically pleasing living spaces, by engaging in pleasant activities, and by achieving major milestones in personal survival and long-term plans.
+	</pda>
+	<category>
+		Advanced
+	</category>
+  </c2cmorale>
   <needlaunchcargo>
 	<name>
 		Alterra Desired Research Sample Manifest

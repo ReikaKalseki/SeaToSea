@@ -80,30 +80,28 @@ namespace ReikaKalseki.SeaToSea {
 			return LargeWorldEntity.CellLevel.Far;
 		}
 
-		private static float bkelpCheckTimer = 0;
+		private static float spawnCheckTimer = 0;
 
 		public static void tickSpawnValidation(Player ep) {
 			Vector3 root = C2CProgression.instance.bkelpNestBumps[0];
 			if (ep && (ep.transform.position - root).sqrMagnitude <= 10000) {
-				bkelpCheckTimer += Time.deltaTime;
-				if (bkelpCheckTimer >= 30) {
+				spawnCheckTimer += Time.deltaTime;
+				if (spawnCheckTimer >= 20) {
 					doSpawnCheck();
-					bkelpCheckTimer = 0;
+					spawnCheckTimer = 0;
 				}
 			}
 			else {
-				bkelpCheckTimer = 0;
+				spawnCheckTimer = 0;
 			}
 		}
 
 		private static void doSpawnCheck() {
 			HashSet<Vector3> empty = new HashSet<Vector3>(C2CProgression.instance.bkelpNestBumps.ToList());
 			foreach (Vector3 pos in C2CProgression.instance.bkelpNestBumps) {
-				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearWithComponent<PrefabIdentifier>(pos, 25)) {
-					if (pi.ClassId == SeaToSeaMod.bkelpBumpWorm.ClassID) {
-						empty.Remove(pos);
-						break;
-					}
+				foreach (PrefabIdentifier pi in WorldUtil.getObjectsNearOfClassID(pos, 25, SeaToSeaMod.bkelpBumpWorm.ClassID)) {
+					empty.Remove(pos);
+					break;
 				}
 			}
 			if (empty.Count > 0) {

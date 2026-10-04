@@ -357,7 +357,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public static void tickBase(BaseRoot sub) {
-			if (sub.IsLeaking()) {
+			if (sub && sub.IsLeaking() && sub.flood && sub.powerRelay) {
 				float leak = EnvironmentalDamageSystem.instance.getLRPowerLeakage(sub.gameObject); //ranges from 1 to 1.75
 				float f = 1+leak*4; //1/s base, LR 5-8/s
 				float[] arr = sub.flood.cellWaterLevel;
@@ -424,8 +424,11 @@ namespace ReikaKalseki.SeaToSea {
 
 			ItemUnlockLegitimacySystem.instance.tick(ep);
 
-			if (Time.deltaTime > 0)
+			if (Time.deltaTime > 0) {
 				BKelpBumpWormSpawner.tickSpawnValidation(ep);
+				PostCoveDomeGenerator.tickSpawnValidation(ep);
+				PCFSecurityNode.tickSpawnValidation(ep);
+			}
 
 			if (LiquidBreathingSystem.instance.hasTankButNoMask()) {
 				Oxygen ox = Inventory.main.equipment.GetItemInSlot("Tank").item.gameObject.GetComponent<Oxygen>();
@@ -2402,6 +2405,8 @@ namespace ReikaKalseki.SeaToSea {
 			if (ep.currentSub && ep.currentSub.powerRelay && ep.currentSub.powerRelay.GetPower() > 0)
 				return !ep.currentSub.isFlooded;
 			if (ep.precursorOutOfWater)
+				return true;
+			if (ECHooks.isVoidHeatColumn(ep.transform.position, out Vector3 trash))
 				return true;
 			if (BiomeBase.getBiome(ep.transform.position) == VanillaBiomes.ALZ || WaterTemperatureSimulation.main.GetTemperature(ep.transform.position) > 150)
 				return false;

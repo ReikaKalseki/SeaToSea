@@ -593,7 +593,7 @@ namespace ReikaKalseki.SeaToSea {
 			this.doAssignRecipe("AlterraSolarCluster", 0, new Ingredient[] { new Ingredient(C2CItems.getIngot(TechType.Quartz).ingot, 1), new Ingredient(TechType.TitaniumIngot, 1), new Ingredient(TechType.CopperWire, 2), new Ingredient(TechType.Gold, 3), new Ingredient(TechType.WiringKit, 1) });
 			this.doAssignRecipe("JetStreamT242", 4, new Ingredient(CraftingItems.getItem(CraftingItems.Items.Motor).TechType, 2), new Ingredient(TechType.Silicone, 4));
 			this.doAssignRecipe("PowerStorage", 6, new Ingredient(TechType.Silver, 2), new Ingredient(TechType.ComputerChip, 1), new Ingredient(TechType.PowerCell, 4));
-			this.assignRecipe("TelepowerPylon", 4, new Ingredient[] { new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 3) }, this.electronicsTier3());
+			this.assignRecipe("TelepowerPylon", 4, new Ingredient[] { new Ingredient(CustomMaterials.getItem(CustomMaterials.Materials.VENT_CRYSTAL).TechType, 1) }, this.electronicsTier3());
 			this.doAssignRecipe("UniversalCharger", 2, this.electronicsTier2(4));
 
 			TechType plat = this.findFCSItem("WindSurferPlatform_Kit");
