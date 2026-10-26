@@ -264,6 +264,8 @@ namespace ReikaKalseki.SeaToSea {
 
 			BrokenTablet.updateLocale();
 
+			CustomBiome.registerBiomeMusic(VanillaBiomes.VOID.mainID, SoundManager.registerSound(SeaToSeaMod.modDLL, "voidost", "Sounds/ost/void.ogg", SoundManager.soundMode2D, null, SoundSystem.musicBus).asset);
+
 			PDAScanner.mapping[TechType.SeaEmperorJuvenile] = PDAScanner.mapping[TechType.SeaEmperorBaby]; //make juveniles scannable into baby page, so not missable
 
 			PDAManager.getPage("rescuewarp").unlock(false);
@@ -534,7 +536,7 @@ namespace ReikaKalseki.SeaToSea {
 					}
 				}
 				else {
-					VanillaMusic.WRECK.disable();
+					VanillaMusic.WRECK.stop();
 				}
 			}
 		}
@@ -588,13 +590,13 @@ namespace ReikaKalseki.SeaToSea {
 			if (skipBiomeCheck)
 				return;
 			if (VoidSpikesBiome.instance.isInBiome(b.position)) {
-				b.setValue(VoidSpikesBiome.instance.biomeName);
+				b.setValue(VoidSpikesBiome.instance.mainID);
 				b.lockValue();
 				//if (BiomeBase.logBiomeFetch)
 				//	SNUtil.writeToChat("Biome WBM fetch overridden to "+VoidSpikesBiome.biomeName);
 			}
 			else if (UnderwaterIslandsFloorBiome.instance.isInBiome(b.originalValue, b.position)) {
-				b.setValue(UnderwaterIslandsFloorBiome.instance.biomeName);
+				b.setValue(UnderwaterIslandsFloorBiome.instance.mainID);
 				b.lockValue();
 				//if (BiomeBase.logBiomeFetch)
 				//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);
@@ -604,7 +606,7 @@ namespace ReikaKalseki.SeaToSea {
 	    		b.lockValue();
 	   		}*/
 			else if (CrashZoneSanctuaryBiome.instance.isInBiome(b.position)) {
-				b.setValue(CrashZoneSanctuaryBiome.instance.biomeName);
+				b.setValue(CrashZoneSanctuaryBiome.instance.mainID);
 				b.lockValue();
 				//if (BiomeBase.logBiomeFetch)
 				//	SNUtil.writeToChat("Biome WBM fetch overridden to "+UnderwaterIslandsFloorBiome.biomeName);

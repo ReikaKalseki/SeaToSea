@@ -68,7 +68,7 @@ namespace ReikaKalseki.SeaToSea {
 					this.mapBiome(cb, cb.discoveryGoal.key);
 				}
 				else {
-					this.createTrigger(cb, cb.biomeName);
+					this.createTrigger(cb, cb.mainID);
 				}
 			}
 

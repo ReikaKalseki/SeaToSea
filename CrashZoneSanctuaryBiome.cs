@@ -28,7 +28,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 
-		private CrashZoneSanctuaryBiome() : base("Glowing Sanctuary", 1F) {
+		private CrashZoneSanctuaryBiome() : base("sanctuary", "Glowing Sanctuary", 1F) {
 			creatureCounts[VanillaCreatures.BLADDERFISH.prefab] = 36;
 			creatureCounts[VanillaCreatures.BOOMERANG.prefab] = 48;
 			creatureCounts[VanillaCreatures.CAVECRAWLER.prefab] = 27;
@@ -40,6 +40,8 @@ namespace ReikaKalseki.SeaToSea {
 			creatureCounts[VanillaCreatures.SCHOOL_HOLEFISH.prefab] = 3;
 			creatureCounts[VanillaCreatures.SCHOOL_BOOMERANG.prefab] = 6;
 			creatureCounts[VanillaCreatures.SCHOOL_BLADDERFISH.prefab] = 3;
+
+			customMusic = SoundManager.registerSound(SeaToSeaMod.modDLL, "sanctuaryost", "Sounds/ost/sanctuary.ogg", SoundManager.soundMode2D, null, SoundSystem.musicBus);
 		}
 
 		public override void register() {
@@ -71,7 +73,7 @@ namespace ReikaKalseki.SeaToSea {
 			return WorldUtil.getSkybox("sparseReef");
 		}
 
-		public override VanillaMusic[] getMusicOptions() {
+		public VanillaMusic[] getMusicOptions() {
 			return new VanillaMusic[] { VanillaMusic.COVE };
 		}
 

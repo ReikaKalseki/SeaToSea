@@ -959,12 +959,12 @@ private GameObject getRippleCylinder() {
 		internal readonly Func<Player, bool> applicability;
 		internal bool wasActiveLastTick = false;
 
-		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, SoundManager.SoundData? snd) {
+		internal EnviroAlert(RebreatherDepthWarnings warn, Func<Player, bool> f, string pda, SoundManager.SoundData snd) {
 			if (!string.IsNullOrEmpty(pda)) {
 				alert = warn.gameObject.AddComponent<PDANotification>();
 				alert.text = pda;
-				if (snd != null && snd.HasValue)
-					alert.sound = snd.Value.asset;
+				if (snd != null && snd != null)
+					alert.sound = snd.asset;
 			}
 			applicability = f;
 		}

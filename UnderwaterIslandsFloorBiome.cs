@@ -39,8 +39,8 @@ namespace ReikaKalseki.SeaToSea {
 
 		private readonly Dictionary<string, int> creatureCounts = new Dictionary<string, int>();
 
-		private UnderwaterIslandsFloorBiome() : base("Glass Forest", 0.8F) {
-
+		private UnderwaterIslandsFloorBiome() : base("glassforest", "Glass Forest", 0.8F) {
+			customMusic = SoundManager.registerSound(SeaToSeaMod.modDLL, "glassforestost", "Sounds/ost/glassforest.ogg", SoundManager.soundMode2D, null, SoundSystem.musicBus);
 		}
 
 		public override void register() {
@@ -83,7 +83,7 @@ namespace ReikaKalseki.SeaToSea {
 			return WorldUtil.getSkybox(VanillaBiomes.UNDERISLANDS.getIDs().First());
 		}
 
-		public override VanillaMusic[] getMusicOptions() {
+		public VanillaMusic[] getMusicOptions() {
 			return new VanillaMusic[] { VanillaMusic.ILZ, VanillaMusic.JELLYSHROOM, VanillaMusic.AURORA };
 		}
 
@@ -125,7 +125,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		public bool isInBiome(string orig, Vector3 pos) {
-			if (orig == biomeName)
+			if (orig == mainID)
 				return true;
 			if (orig == null || pos.y > -minimumDepth)
 				return false;
@@ -187,7 +187,7 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fog.dayNightColor.colorKeys = keys;
 			//vol.fog.dayNightColor.
 			*/
-			vol.overrideBiome = UnderwaterIslandsFloorBiome.instance.biomeName;
+			vol.overrideBiome = UnderwaterIslandsFloorBiome.instance.displayName;
 		}
 	}
 }

@@ -56,7 +56,7 @@ namespace ReikaKalseki.SeaToSea {
 
 		private SignalManager.ModSignal signal;
 
-		private VoidSpikesBiome() : base("Void Spikes", 0.4F) {
+		private VoidSpikesBiome() : base("vspikes", "Void Spikes", 0.4F) {
 			generator = new VoidSpikes((end500m + end900m) / 2);
 			generator.count = CLUSTER_COUNT;
 			//generator.scaleXZ = 16;
@@ -70,9 +70,11 @@ namespace ReikaKalseki.SeaToSea {
 			generator.shouldRerollCounts = false;
 
 			debris = new VoidDebris(signalLocation + (Vector3.down * 0.2F));
+
+			customMusic = SoundManager.registerSound(SeaToSeaMod.modDLL, "voidspikeost", "Sounds/ost/voidspikes.ogg", SoundManager.soundMode2D, null, SoundSystem.musicBus);
 		}
 
-		public override VanillaMusic[] getMusicOptions() {
+		public VanillaMusic[] getMusicOptions() {
 			return new VanillaMusic[] { VanillaMusic.DUNES, VanillaMusic.BKELP, VanillaMusic.KOOSH, VanillaMusic.DEEPGRAND };
 		}
 
@@ -309,7 +311,7 @@ namespace ReikaKalseki.SeaToSea {
 			vol.fogMaxDistance = 100;
 			vol.fogStartDistance = 20;
 			vol.fogColor = new Color(vol.fogColor.r * 0.75F, vol.fogColor.g, Mathf.Min(1, vol.fogColor.b * 1.25F), vol.fogColor.a);
-			vol.overrideBiome = VoidSpikesBiome.instance.biomeName;
+			vol.overrideBiome = VoidSpikesBiome.instance.displayName;
 		}
 	}
 }

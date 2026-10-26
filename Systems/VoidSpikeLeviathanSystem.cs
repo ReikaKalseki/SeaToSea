@@ -298,7 +298,7 @@ namespace ReikaKalseki.SeaToSea {
 		}
 
 		internal void doDistantRoar(Player ep, bool forceSpark = false, bool forceEMP = false) {
-			SoundManager.SoundData? roar = null;
+			SoundManager.SoundData roar = null;
 			double dist = VoidSpikesBiome.instance.getDistanceToBiome(ep.transform.position, true);
 			string biome = ep.GetBiomeString();
 			//SNUtil.writeToChat(dist+" @ "+biome);
@@ -310,15 +310,15 @@ namespace ReikaKalseki.SeaToSea {
 				vol = Mathf.Clamp01(2 - (dd / 400F));
 				inBiome = true;
 			}
-			else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.instance.biomeName || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
+			else if (dist <= 1000 && (biome == null || biome == VoidSpikesBiome.instance.mainID || string.Equals(biome, "void", StringComparison.InvariantCultureIgnoreCase))) {
 				roar = distantRoars[0];
 				vol = 1 - (float)Math.Max(0, Math.Min(1, (dist - 250) / 1000D));
 			}
-			if (roar != null && roar.HasValue) {
+			if (roar != null) {
 				float delta = (float)Math.Max(30, UnityEngine.Random.Range(30F, 120F)*dist/1000);
 				nextDistantRoarTime = DayNightCycle.main.timePassedAsFloat + delta;
 				//SNUtil.writeToChat(dist+" @ "+biome+" > "+roar+"/"+vol+" >> "+delta);
-				SoundManager.playSoundAt(roar.Value, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
+				SoundManager.playSoundAt(roar, MathUtil.getRandomVectorAround(ep.transform.position, 100), false, -1, vol);
 			}
 			if (forceSpark || (inBiome && !Story.StoryGoalManager.main.completedGoals.Contains(PASSIVATION_GOAL))) {
 				Vector3 pos = this.spawnJustVisibleDistanceFX(ep.transform);
