@@ -22,6 +22,7 @@ using SMLHelper.V2.Utility;
 using UnityEngine;
 
 namespace ReikaKalseki.SeaToSea {
+
 	[QModCore]
 	public static class SeaToSeaMod {
 
